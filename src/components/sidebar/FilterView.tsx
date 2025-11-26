@@ -28,7 +28,7 @@ interface FilterViewProps {
 
   // Filter data
   nodeTypeItems: Array<{ key: string; count: number; color: string }>;
-  platformItems: Array<{ key: string; count: number; color: any }>;
+  platformItems: Array<{ key: string; count: number; color: string }>;
   projectItems: Array<{ key: string; count: number; color: string }>;
   packageItems: Array<{ key: string; count: number; color: string }>;
 

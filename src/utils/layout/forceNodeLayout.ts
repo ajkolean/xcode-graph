@@ -14,7 +14,7 @@ interface ForceNode {
   vx: number;
   vy: number;
   radius: number;
-  metadata: any;
+  metadata: Record<string, unknown>;
 }
 
 /**

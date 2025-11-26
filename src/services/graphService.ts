@@ -157,10 +157,12 @@ export function getGraphStats(
 } {
   const depCounts = new Map<string, number>();
 
-  nodes.forEach((node) => depCounts.set(node.id, 0));
-  edges.forEach((edge) => {
+  for (const node of nodes) {
+    depCounts.set(node.id, 0);
+  }
+  for (const edge of edges) {
     depCounts.set(edge.source, (depCounts.get(edge.source) || 0) + 1);
-  });
+  }
 
   const counts = Array.from(depCounts.values());
   const totalDeps = counts.reduce((sum, c) => sum + c, 0);

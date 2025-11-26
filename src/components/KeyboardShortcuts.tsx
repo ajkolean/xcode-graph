@@ -69,9 +69,9 @@ export function KeyboardShortcuts() {
 
       <div className="p-3 max-h-96 overflow-y-auto">
         <div className="space-y-2">
-          {shortcuts.map((shortcut, idx) => (
+          {shortcuts.map((shortcut) => (
             <div
-              key={idx}
+              key={shortcut.description}
               className="flex items-center justify-between py-2 px-2 rounded transition-smooth-fast hover:bg-[var(--color-muted)]"
               style={{ borderRadius: 'var(--radius)' }}
             >
@@ -85,9 +85,9 @@ export function KeyboardShortcuts() {
                 {shortcut.description}
               </span>
               <div className="flex items-center gap-1">
-                {shortcut.keys.map((key, keyIdx) => (
+                {shortcut.keys.map((key) => (
                   <span
-                    key={keyIdx}
+                    key={key}
                     className="px-2 py-0.5 rounded"
                     style={{
                       backgroundColor: 'var(--color-muted)',

@@ -2,19 +2,21 @@
  * Stub component for testing GraphTab
  */
 
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+
 interface GraphVisualizationStubProps {
-  nodes: any[];
-  edges: any[];
-  selectedNode: any;
-  onNodeSelect: (node: any) => void;
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  selectedNode: GraphNode | null;
+  onNodeSelect: (node: GraphNode | null) => void;
   searchQuery: string;
   viewMode: string;
   zoom: number;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onZoomReset: () => void;
-  transitiveDeps: any;
-  transitiveDependents: any;
+  transitiveDeps: Set<string>;
+  transitiveDependents: Set<string>;
 }
 
 export function GraphVisualizationStub(_props: GraphVisualizationStubProps) {

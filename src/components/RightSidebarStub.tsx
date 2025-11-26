@@ -2,18 +2,21 @@
  * Stub component for testing GraphTab
  */
 
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { FilterState } from '../types/app';
+
 interface RightSidebarStubProps {
-  filters: any;
-  onFiltersChange: (filters: any) => void;
-  allNodes: any[];
-  allEdges: any[];
-  filteredNodes: any[];
-  filteredEdges: any[];
-  selectedNode: any;
-  onNodeSelect: (node: any) => void;
-  onFocusNode: (node: any) => void;
-  onShowDependents: (node: any) => void;
-  onShowImpact: (node: any) => void;
+  filters: FilterState;
+  onFiltersChange: (filters: FilterState) => void;
+  allNodes: GraphNode[];
+  allEdges: GraphEdge[];
+  filteredNodes: GraphNode[];
+  filteredEdges: GraphEdge[];
+  selectedNode: GraphNode | null;
+  onNodeSelect: (node: GraphNode | null) => void;
+  onFocusNode: (node: GraphNode) => void;
+  onShowDependents: (node: GraphNode) => void;
+  onShowImpact: (node: GraphNode) => void;
   viewMode: string;
   searchQuery: string;
   onSearchChange: (query: string) => void;

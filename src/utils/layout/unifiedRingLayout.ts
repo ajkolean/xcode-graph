@@ -6,7 +6,7 @@
 
 export interface LayoutNode {
   id: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export interface LayoutEdge {

@@ -219,6 +219,7 @@ describe('clusterAnalysis', () => {
     });
 
     it('should return utility for unknown types', () => {
+      // biome-ignore lint/suspicious/noExplicitAny: Testing with invalid type intentionally
       const node = createNode({ id: 'unknown', name: 'Unknown', type: 'unknown' as any });
       const role = determineRole(node, false, false, 0);
 

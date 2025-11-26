@@ -55,25 +55,27 @@ function buildClusterGraph(clusters: Cluster[], allEdges: GraphEdge[]): Map<stri
   const clusterGraph = new Map<string, Set<string>>();
 
   // Initialize
-  clusters.forEach((c) => clusterGraph.set(c.id, new Set()));
+  for (const c of clusters) {
+    clusterGraph.set(c.id, new Set());
+  }
 
   // Build node-to-cluster mapping
   const nodeToCluster = new Map<string, string>();
-  clusters.forEach((cluster) => {
-    cluster.nodes.forEach((node) => {
+  for (const cluster of clusters) {
+    for (const node of cluster.nodes) {
       nodeToCluster.set(node.id, cluster.id);
-    });
-  });
+    }
+  }
 
   // Add cross-cluster edges
-  allEdges.forEach((edge) => {
+  for (const edge of allEdges) {
     const srcCluster = nodeToCluster.get(edge.source);
     const tgtCluster = nodeToCluster.get(edge.target);
 
     if (srcCluster && tgtCluster && srcCluster !== tgtCluster) {
       clusterGraph.get(srcCluster)!.add(tgtCluster);
     }
-  });
+  }
 
   return clusterGraph;
 }
@@ -133,21 +135,23 @@ function computeDAGLayers(
 
   // Topological sort with depth tracking
   const inDegree = new Map<string, number>();
-  clusters.forEach((c) => inDegree.set(c.id, 0));
+  for (const c of clusters) {
+    inDegree.set(c.id, 0);
+  }
 
-  clusterGraph.forEach((targets) => {
-    targets.forEach((target) => {
+  for (const targets of clusterGraph.values()) {
+    for (const target of targets) {
       inDegree.set(target, (inDegree.get(target) || 0) + 1);
-    });
-  });
+    }
+  }
 
   // Start with zero in-degree nodes (roots)
   const queue: { id: string; depth: number }[] = [];
-  clusters.forEach((cluster) => {
+  for (const cluster of clusters) {
     if (inDegree.get(cluster.id) === 0) {
       queue.push({ id: cluster.id, depth: 0 });
     }
-  });
+  }
 
   // BFS to assign layers
   const depths = new Map<string, number>();

@@ -122,7 +122,9 @@ function reduceCrossingsIteration(
   // Current positions (index in layer)
   const position = new Map<string, number>();
   for (const [_layer, nodes] of layerToNodes.entries()) {
-    nodes.forEach((node, idx) => position.set(node.id, idx));
+    for (let idx = 0; idx < nodes.length; idx++) {
+      position.set(nodes[idx].id, idx);
+    }
   }
 
   const layers = Array.from(layerToNodes.keys()).sort((a, b) => a - b);
@@ -150,7 +152,9 @@ function reduceCrossingsIteration(
 
     // Update positions
     const sorted = scored.map((s) => s.node);
-    sorted.forEach((node, idx) => position.set(node.id, idx));
+    for (let idx = 0; idx < sorted.length; idx++) {
+      position.set(sorted[idx].id, idx);
+    }
     result.set(layer, sorted);
   }
 
