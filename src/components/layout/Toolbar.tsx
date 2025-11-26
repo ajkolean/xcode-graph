@@ -4,8 +4,6 @@
  * Uses design system CSS variables
  */
 
-import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
-
 interface ToolbarProps {
   zoom: number;
   onZoomIn: () => void;
@@ -15,13 +13,6 @@ interface ToolbarProps {
   edgeCount: number;
 }
 
-export function Toolbar({
-  zoom,
-  onZoomIn,
-  onZoomOut,
-  onZoomReset,
-  nodeCount,
-  edgeCount
-}: ToolbarProps) {
+export function Toolbar(_props: ToolbarProps) {
   return null;
 }

@@ -1,12 +1,17 @@
-import { GraphNode } from '../data/mockGraphData';
-import { Cluster, PositionedNode, ClusterLayoutConfig, DEFAULT_CLUSTER_CONFIG } from '../types/cluster';
+import type { GraphNode } from '../data/mockGraphData';
+import {
+  type Cluster,
+  type ClusterLayoutConfig,
+  DEFAULT_CLUSTER_CONFIG,
+  type PositionedNode,
+} from '../types/cluster';
 
 /**
  * Calculates initial radial positions for nodes in a cluster
  */
 export function calculateRadialPositions(
   cluster: Cluster,
-  config: ClusterLayoutConfig = DEFAULT_CLUSTER_CONFIG
+  config: ClusterLayoutConfig = DEFAULT_CLUSTER_CONFIG,
 ): PositionedNode[] {
   const positioned: PositionedNode[] = [];
   const centerX = 0;
@@ -16,9 +21,9 @@ export function calculateRadialPositions(
   const nodesByLayer = new Map<number, GraphNode[]>();
   const testNodes: GraphNode[] = [];
 
-  cluster.nodes.forEach(node => {
+  cluster.nodes.forEach((node) => {
     const metadata = cluster.metadata.get(node.id)!;
-    
+
     if (metadata.role === 'test') {
       testNodes.push(node);
     } else {
@@ -32,23 +37,23 @@ export function calculateRadialPositions(
 
   // Position non-test nodes by layer with angular grouping by role
   const layers = Array.from(nodesByLayer.keys()).sort((a, b) => a - b);
-  
-  layers.forEach(layer => {
+
+  layers.forEach((layer) => {
     const nodesInLayer = nodesByLayer.get(layer)!;
     const baseRadius = layer === 0 ? 0 : config.layerSpacing * layer;
-    
+
     // Calculate required spacing for this layer
     // Account for node size + label space (labels are ~30px below nodes)
     const nodeSpacing = config.minNodeSpacing;
     const requiredCircumference = nodesInLayer.length * nodeSpacing;
     const minRadiusForSpacing = requiredCircumference / (2 * Math.PI);
-    
+
     // Use the larger of base radius or required radius for proper spacing
     const adjustedRadius = layer === 0 ? 0 : Math.max(baseRadius, minRadiusForSpacing);
 
     // Group nodes by role for angular positioning
     const nodesByRole = new Map<string, GraphNode[]>();
-    nodesInLayer.forEach(node => {
+    nodesInLayer.forEach((node) => {
       const metadata = cluster.metadata.get(node.id)!;
       const role = metadata.role;
       if (!nodesByRole.has(role)) {
@@ -59,11 +64,11 @@ export function calculateRadialPositions(
 
     // Define angular sectors for each role (in radians)
     const roleSectors: Record<string, { start: number; end: number }> = {
-      'entry': { start: -Math.PI / 2, end: Math.PI / 6 },           // Top (270° to 30°)
-      'internal-framework': { start: Math.PI / 6, end: 2 * Math.PI / 3 }, // Right (30° to 120°)
-      'internal-lib': { start: 2 * Math.PI / 3, end: 7 * Math.PI / 6 },   // Bottom (120° to 210°)
-      'utility': { start: 7 * Math.PI / 6, end: 3 * Math.PI / 2 },  // Left (210° to 270°)
-      'tool': { start: 3 * Math.PI / 2, end: 2 * Math.PI }          // Left-top (270° to 360°)
+      entry: { start: -Math.PI / 2, end: Math.PI / 6 }, // Top (270° to 30°)
+      'internal-framework': { start: Math.PI / 6, end: (2 * Math.PI) / 3 }, // Right (30° to 120°)
+      'internal-lib': { start: (2 * Math.PI) / 3, end: (7 * Math.PI) / 6 }, // Bottom (120° to 210°)
+      utility: { start: (7 * Math.PI) / 6, end: (3 * Math.PI) / 2 }, // Left (210° to 270°)
+      tool: { start: (3 * Math.PI) / 2, end: 2 * Math.PI }, // Left-top (270° to 360°)
     };
 
     // If there's only one role with all nodes, distribute evenly around full circle
@@ -71,8 +76,8 @@ export function calculateRadialPositions(
     const useSectors = activeRoles.length > 1 || nodesInLayer.length <= 6;
 
     // Position each role group within its sector (or full circle if single role)
-    let nodeIndex = 0;
-    ['entry', 'internal-framework', 'internal-lib', 'utility', 'tool'].forEach(role => {
+    let _nodeIndex = 0;
+    ['entry', 'internal-framework', 'internal-lib', 'utility', 'tool'].forEach((role) => {
       const nodesForRole = nodesByRole.get(role) || [];
       if (nodesForRole.length === 0) return;
 
@@ -83,23 +88,23 @@ export function calculateRadialPositions(
         const sector = roleSectors[role];
         startAngle = sector.start;
         let endAngle = sector.end;
-        
+
         // Handle wraparound for sectors crossing 0
         if (endAngle < startAngle) {
           endAngle += 2 * Math.PI;
         }
-        
+
         angleSpan = endAngle - startAngle;
       } else {
         // Single role: use full circle
         startAngle = 0;
         angleSpan = 2 * Math.PI;
       }
-      
+
       // Distribute nodes within the sector/circle
       nodesForRole.forEach((node, i) => {
         const metadata = cluster.metadata.get(node.id)!;
-        
+
         // Calculate angle within sector
         let angle: number;
         if (nodesForRole.length === 1) {
@@ -109,12 +114,12 @@ export function calculateRadialPositions(
           // Multiple nodes: evenly distributed with padding at edges
           const padding = useSectors ? 0.1 : 0; // Small padding for sectors
           const usableSpan = angleSpan * (1 - padding * 2);
-          angle = startAngle + (angleSpan * padding) + (i / (nodesForRole.length - 1)) * usableSpan;
+          angle = startAngle + angleSpan * padding + (i / (nodesForRole.length - 1)) * usableSpan;
         }
-        
+
         // Normalize angle to [-π, π]
         angle = ((angle + Math.PI) % (2 * Math.PI)) - Math.PI;
-        
+
         const x = centerX + adjustedRadius * Math.cos(angle);
         const y = centerY + adjustedRadius * Math.sin(angle);
 
@@ -127,10 +132,10 @@ export function calculateRadialPositions(
           localX: x,
           localY: y,
           targetRadius: adjustedRadius,
-          targetAngle: angle
+          targetAngle: angle,
         });
-        
-        nodeIndex++;
+
+        _nodeIndex++;
       });
     });
   });
@@ -151,17 +156,17 @@ function positionTestNodes(
   config: ClusterLayoutConfig,
   centerX: number,
   centerY: number,
-  layers: number[]
+  layers: number[],
 ): void {
-  testNodes.forEach(testNode => {
+  testNodes.forEach((testNode) => {
     const metadata = cluster.metadata.get(testNode.id)!;
     const subjects = metadata.testSubjects || [];
-    
+
     if (subjects.length === 0) {
       // No clear subject, place in outer ring
       const maxRadius = Math.max(
         config.layerSpacing * (layers.length + 1),
-        config.layerSpacing * 2
+        config.layerSpacing * 2,
       );
       positioned.push({
         node: testNode,
@@ -172,14 +177,23 @@ function positionTestNodes(
         localX: maxRadius,
         localY: 0,
         targetRadius: maxRadius,
-        targetAngle: 0
+        targetAngle: 0,
       });
       return;
     }
 
     // Position around primary subject (or between multiple subjects)
     if (subjects.length === 1) {
-      positionSingleSubjectTest(testNode, subjects[0], cluster, positioned, config, centerX, centerY, testNodes);
+      positionSingleSubjectTest(
+        testNode,
+        subjects[0],
+        cluster,
+        positioned,
+        config,
+        centerX,
+        centerY,
+        testNodes,
+      );
     } else {
       positionMultiSubjectTest(testNode, subjects, cluster, positioned, config, centerX, centerY);
     }
@@ -197,11 +211,11 @@ function positionSingleSubjectTest(
   config: ClusterLayoutConfig,
   centerX: number,
   centerY: number,
-  testNodes: GraphNode[]
+  testNodes: GraphNode[],
 ): void {
-  const subjectPos = positioned.find(p => p.node.id === subjectId);
+  const subjectPos = positioned.find((p) => p.node.id === subjectId);
   const metadata = cluster.metadata.get(testNode.id)!;
-  
+
   if (!subjectPos) {
     // Subject not found, place at origin
     positioned.push({
@@ -213,20 +227,20 @@ function positionSingleSubjectTest(
       localX: 0,
       localY: config.testOrbitRadius,
       targetRadius: config.testOrbitRadius,
-      targetAngle: Math.PI / 2
+      targetAngle: Math.PI / 2,
     });
     return;
   }
 
   // Calculate satellite position
   // Count how many tests this subject has
-  const testsForSubject = testNodes.filter(tn => {
+  const testsForSubject = testNodes.filter((tn) => {
     const tm = cluster.metadata.get(tn.id)!;
     return tm.testSubjects?.includes(subjectId);
   });
   const testIndex = testsForSubject.indexOf(testNode);
   const testCount = testsForSubject.length;
-  
+
   // Distribute tests evenly around subject
   const angle = (testIndex / testCount) * 2 * Math.PI;
   const x = subjectPos.x + config.testOrbitRadius * Math.cos(angle);
@@ -241,7 +255,7 @@ function positionSingleSubjectTest(
     localX: x,
     localY: y,
     targetRadius: config.testOrbitRadius,
-    targetAngle: angle
+    targetAngle: angle,
   });
 }
 
@@ -255,13 +269,13 @@ function positionMultiSubjectTest(
   positioned: PositionedNode[],
   config: ClusterLayoutConfig,
   centerX: number,
-  centerY: number
+  centerY: number,
 ): void {
   const metadata = cluster.metadata.get(testNode.id)!;
   const subjectPositions = subjects
-    .map(subjectId => positioned.find(p => p.node.id === subjectId))
+    .map((subjectId) => positioned.find((p) => p.node.id === subjectId))
     .filter((p): p is PositionedNode => p !== undefined);
-  
+
   if (subjectPositions.length === 0) {
     // No subjects found, place at origin
     positioned.push({
@@ -273,20 +287,20 @@ function positionMultiSubjectTest(
       localX: 0,
       localY: config.testOrbitRadius,
       targetRadius: config.testOrbitRadius,
-      targetAngle: Math.PI / 2
+      targetAngle: Math.PI / 2,
     });
     return;
   }
-  
+
   // Calculate centroid of subject positions
   const centroidX = subjectPositions.reduce((sum, p) => sum + p.x, 0) / subjectPositions.length;
   const centroidY = subjectPositions.reduce((sum, p) => sum + p.y, 0) / subjectPositions.length;
-  
+
   // Position slightly outward from centroid
   const angle = Math.atan2(centroidY, centroidX);
   const distance = Math.sqrt(centroidX * centroidX + centroidY * centroidY);
   const offsetDist = distance + config.testOrbitRadius;
-  
+
   const x = offsetDist * Math.cos(angle);
   const y = offsetDist * Math.sin(angle);
 
@@ -299,7 +313,7 @@ function positionMultiSubjectTest(
     localX: x,
     localY: y,
     targetRadius: offsetDist,
-    targetAngle: angle
+    targetAngle: angle,
   });
 }
 
@@ -309,7 +323,7 @@ function positionMultiSubjectTest(
  */
 export function calculateClusterBounds(
   positionedNodes: PositionedNode[],
-  config: ClusterLayoutConfig = DEFAULT_CLUSTER_CONFIG
+  config: ClusterLayoutConfig = DEFAULT_CLUSTER_CONFIG,
 ): { width: number; height: number; x: number; y: number } {
   // Safety check
   if (!positionedNodes || positionedNodes.length === 0) {
@@ -323,14 +337,14 @@ export function calculateClusterBounds(
   let minY = Infinity;
   let maxY = -Infinity;
 
-  positionedNodes.forEach(posNode => {
+  positionedNodes.forEach((posNode) => {
     const x = posNode.localX || posNode.x;
     const y = posNode.localY || posNode.y;
-    
+
     // Account for node size (radius) + label height (~25px below node)
     const nodeRadius = 20;
     const labelSpace = 25;
-    
+
     minX = Math.min(minX, x - nodeRadius);
     maxX = Math.max(maxX, x + nodeRadius);
     minY = Math.min(minY, y - nodeRadius);
@@ -339,8 +353,8 @@ export function calculateClusterBounds(
 
   // Calculate dimensions with padding
   const padding = config.clusterPadding;
-  const width = (maxX - minX) + (padding * 2);
-  const height = (maxY - minY) + (padding * 2);
+  const width = maxX - minX + padding * 2;
+  const height = maxY - minY + padding * 2;
 
   // Use actual content size - no artificial minimums!
   // The ring radius scaling already handles visual variety
@@ -350,13 +364,15 @@ export function calculateClusterBounds(
   // Debug logging to see actual calculations
   if (positionedNodes.length > 0) {
     const clusterName = positionedNodes[0].clusterId;
-    console.log(`Cluster ${clusterName}: ${positionedNodes.length} nodes, bounds: ${Math.round(finalWidth)}x${Math.round(finalHeight)}`);
+    console.log(
+      `Cluster ${clusterName}: ${positionedNodes.length} nodes, bounds: ${Math.round(finalWidth)}x${Math.round(finalHeight)}`,
+    );
   }
 
   return {
     width: finalWidth,
     height: finalHeight,
     x: (minX + maxX) / 2,
-    y: (minY + maxY) / 2
+    y: (minY + maxY) / 2,
   };
 }

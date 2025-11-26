@@ -4,12 +4,15 @@
  */
 
 import { useMemo, useRef } from 'react';
-import { GraphNode, GraphEdge } from '../../data/mockGraphData';
-import { NodePosition, ClusterPosition } from '../../types/simulation';
-import { ClusterLayoutConfig, DEFAULT_CLUSTER_CONFIG } from '../../types/cluster';
-import { Cluster } from '../../types/cluster';
-import { groupIntoClusters } from '../../utils/clusterGrouping';
+import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
+import {
+  type Cluster,
+  type ClusterLayoutConfig,
+  DEFAULT_CLUSTER_CONFIG,
+} from '../../types/cluster';
+import type { ClusterPosition, NodePosition } from '../../types/simulation';
 import { analyzeCluster } from '../../utils/clusterAnalysis';
+import { groupIntoClusters } from '../../utils/clusterGrouping';
 import { computeHierarchicalLayout } from '../../utils/hierarchicalLayout';
 
 interface DeterministicLayoutOptions {
@@ -20,19 +23,25 @@ interface DeterministicLayoutOptions {
 
 // Create a stable fingerprint for nodes/edges to prevent unnecessary recalculations
 function createDataFingerprint(nodes: GraphNode[], edges: GraphEdge[]): string {
-  const nodeIds = nodes.map(n => n.id).sort().join(',');
-  const edgeIds = edges.map(e => `${e.source}->${e.target}`).sort().join(',');
+  const nodeIds = nodes
+    .map((n) => n.id)
+    .sort()
+    .join(',');
+  const edgeIds = edges
+    .map((e) => `${e.source}->${e.target}`)
+    .sort()
+    .join(',');
   return `${nodeIds}::${edgeIds}`;
 }
 
 export function useDeterministicLayout(
   nodes: GraphNode[],
   edges: GraphEdge[],
-  options: DeterministicLayoutOptions = {}
+  options: DeterministicLayoutOptions = {},
 ) {
   const config: ClusterLayoutConfig = {
     ...DEFAULT_CLUSTER_CONFIG,
-    ...options.config
+    ...options.config,
   };
 
   // Cache previous results
@@ -50,7 +59,7 @@ export function useDeterministicLayout(
       return {
         nodePositions: new Map<string, NodePosition>(),
         clusterPositions: new Map<string, ClusterPosition>(),
-        clusters: [] as Cluster[]
+        clusters: [] as Cluster[],
       };
     }
 
@@ -62,9 +71,9 @@ export function useDeterministicLayout(
 
     // Step 1: Group nodes into clusters and analyze
     const analyzedClusters = groupIntoClusters(nodes, edges);
-    
+
     // Analyze each cluster (modifies in place)
-    analyzedClusters.forEach(cluster => {
+    analyzedClusters.forEach((cluster) => {
       analyzeCluster(cluster, edges);
     });
 
@@ -72,14 +81,14 @@ export function useDeterministicLayout(
     const { clusterPositions, nodePositions, clusters } = computeHierarchicalLayout(
       nodes,
       edges,
-      analyzedClusters
+      analyzedClusters,
     );
 
     // Step 3: Enhance node positions with metadata
     const enhancedNodePositions = new Map<string, NodePosition>();
-    
+
     for (const [nodeId, pos] of nodePositions.entries()) {
-      const node = nodes.find(n => n.id === nodeId);
+      const node = nodes.find((n) => n.id === nodeId);
       if (!node) continue;
 
       enhancedNodePositions.set(nodeId, {
@@ -87,20 +96,20 @@ export function useDeterministicLayout(
         id: nodeId,
         radius: config.normalNodeSize,
         isAnchor: node.type === 'app' || node.type === 'framework' || node.type === 'cli',
-        isTest: node.type === 'test'
+        isTest: node.type === 'test',
       });
     }
 
     const newResult = {
       nodePositions: enhancedNodePositions,
       clusterPositions,
-      clusters
+      clusters,
     };
 
     // Cache the result
     cacheRef.current = {
       fingerprint,
-      result: newResult
+      result: newResult,
     };
 
     return newResult;

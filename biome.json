@@ -15,7 +15,14 @@
       "recommended": true,
       "complexity": {
         "noUselessFragments": "warn",
-        "useOptionalChain": "warn"
+        "useOptionalChain": "warn",
+        "noBannedTypes": "off",
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": {
+            "maxAllowedComplexity": 10
+          }
+        }
       },
       "correctness": {
         "noUnusedImports": "warn",
@@ -29,15 +36,6 @@
       "suspicious": {
         "noExplicitAny": "warn",
         "noArrayIndexKey": "warn"
-      },
-      "complexity": {
-        "noBannedTypes": "off",
-        "noExcessiveCognitiveComplexity": {
-          "level": "warn",
-          "options": {
-            "maxAllowedComplexity": 10
-          }
-        }
       }
     }
   },
@@ -60,6 +58,7 @@
       "!**/node_modules",
       "!**/build",
       "!**/dist",
+      "!**/coverage",
       "!**/pnpm-lock.yaml"
     ]
   }

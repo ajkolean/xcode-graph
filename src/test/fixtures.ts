@@ -3,7 +3,7 @@
  * Provides reusable test data builders for GraphNode, GraphEdge, Cluster, and FilterState
  */
 
-import type { GraphNode, GraphEdge } from '../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import type { FilterState } from '../types/app';
 import type { Cluster, ClusterNodeMetadata, NodeRole } from '../types/cluster';
 
@@ -14,7 +14,9 @@ import type { Cluster, ClusterNodeMetadata, NodeRole } from '../types/cluster';
 /**
  * Create a single test node with sensible defaults
  */
-export function createNode(overrides: Partial<GraphNode> & { id: string; name: string }): GraphNode {
+export function createNode(
+  overrides: Partial<GraphNode> & { id: string; name: string },
+): GraphNode {
   return {
     type: 'framework',
     platform: 'iOS',
@@ -96,7 +98,12 @@ export function createProjectGraph(): { nodes: GraphNode[]; edges: GraphEdge[] }
 
     // Feature modules
     createNode({ id: 'feature-home', name: 'HomeFeature', type: 'framework', project: 'Features' }),
-    createNode({ id: 'feature-profile', name: 'ProfileFeature', type: 'framework', project: 'Features' }),
+    createNode({
+      id: 'feature-profile',
+      name: 'ProfileFeature',
+      type: 'framework',
+      project: 'Features',
+    }),
 
     // Core modules
     createNode({ id: 'core', name: 'Core', type: 'framework', project: 'Core' }),
@@ -141,14 +148,62 @@ export function createProjectGraph(): { nodes: GraphNode[]; edges: GraphEdge[] }
  */
 export function createNodesForFilterTesting(): GraphNode[] {
   return [
-    createNode({ id: '1', name: 'App1', type: 'app', platform: 'iOS', origin: 'local', project: 'Main' }),
-    createNode({ id: '2', name: 'Framework1', type: 'framework', platform: 'iOS', origin: 'local', project: 'Core' }),
-    createNode({ id: '3', name: 'Library1', type: 'library', platform: 'macOS', origin: 'local', project: 'Core' }),
-    createNode({ id: '4', name: 'Test1', type: 'test-unit', platform: 'iOS', origin: 'local', project: 'Core' }),
-    createNode({ id: '5', name: 'TestUI1', type: 'test-ui', platform: 'iOS', origin: 'local', project: 'Main' }),
-    createNode({ id: '6', name: 'CLI1', type: 'cli', platform: 'macOS', origin: 'local', project: 'Tools' }),
+    createNode({
+      id: '1',
+      name: 'App1',
+      type: 'app',
+      platform: 'iOS',
+      origin: 'local',
+      project: 'Main',
+    }),
+    createNode({
+      id: '2',
+      name: 'Framework1',
+      type: 'framework',
+      platform: 'iOS',
+      origin: 'local',
+      project: 'Core',
+    }),
+    createNode({
+      id: '3',
+      name: 'Library1',
+      type: 'library',
+      platform: 'macOS',
+      origin: 'local',
+      project: 'Core',
+    }),
+    createNode({
+      id: '4',
+      name: 'Test1',
+      type: 'test-unit',
+      platform: 'iOS',
+      origin: 'local',
+      project: 'Core',
+    }),
+    createNode({
+      id: '5',
+      name: 'TestUI1',
+      type: 'test-ui',
+      platform: 'iOS',
+      origin: 'local',
+      project: 'Main',
+    }),
+    createNode({
+      id: '6',
+      name: 'CLI1',
+      type: 'cli',
+      platform: 'macOS',
+      origin: 'local',
+      project: 'Tools',
+    }),
     createNode({ id: '7', name: 'Package1', type: 'package', platform: 'iOS', origin: 'external' }),
-    createNode({ id: '8', name: 'Package2', type: 'package', platform: 'visionOS', origin: 'external' }),
+    createNode({
+      id: '8',
+      name: 'Package2',
+      type: 'package',
+      platform: 'visionOS',
+      origin: 'external',
+    }),
   ];
 }
 
@@ -218,7 +273,7 @@ export function createNodeTypeFilter(types: GraphNode['type'][]): FilterState {
  */
 export function createNodeMetadata(
   nodeId: string,
-  overrides: Partial<ClusterNodeMetadata> = {}
+  overrides: Partial<ClusterNodeMetadata> = {},
 ): ClusterNodeMetadata {
   return {
     nodeId,
@@ -244,11 +299,14 @@ export function createCluster(overrides: Partial<Cluster> = {}): Cluster {
 
   const metadata = new Map<string, ClusterNodeMetadata>();
   defaultNodes.forEach((node, index) => {
-    metadata.set(node.id, createNodeMetadata(node.id, {
-      role: index === 0 ? 'entry' : index === 2 ? 'test' : 'internal-lib',
-      layer: index === 0 ? 0 : 1,
-      isAnchor: index === 0,
-    }));
+    metadata.set(
+      node.id,
+      createNodeMetadata(node.id, {
+        role: index === 0 ? 'entry' : index === 2 ? 'test' : 'internal-lib',
+        layer: index === 0 ? 0 : 1,
+        isAnchor: index === 0,
+      }),
+    );
   });
 
   return {
@@ -275,17 +333,22 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
     const isAnchor = i === 0;
     const isTest = i === nodeCount - 1 && nodeCount > 2;
 
-    nodes.push(createNode({
-      id,
-      name: `Node${i}`,
-      type: isTest ? 'test-unit' : isAnchor ? 'framework' : 'library',
-    }));
+    nodes.push(
+      createNode({
+        id,
+        name: `Node${i}`,
+        type: isTest ? 'test-unit' : isAnchor ? 'framework' : 'library',
+      }),
+    );
 
-    metadata.set(id, createNodeMetadata(id, {
-      role: isAnchor ? 'entry' : isTest ? 'test' : 'internal-lib',
-      layer: isAnchor ? 0 : 1,
-      isAnchor,
-    }));
+    metadata.set(
+      id,
+      createNodeMetadata(id, {
+        role: isAnchor ? 'entry' : isTest ? 'test' : 'internal-lib',
+        layer: isAnchor ? 0 : 1,
+        isAnchor,
+      }),
+    );
   }
 
   return {
@@ -307,7 +370,7 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
  * Convert edges from {from, to} format to {source, target} format
  */
 export function convertEdgeFormat(edges: Array<{ from: string; to: string }>): GraphEdge[] {
-  return edges.map(e => ({ source: e.from, target: e.target }));
+  return edges.map((e) => ({ source: e.from, target: e.target }));
 }
 
 /**
@@ -353,5 +416,5 @@ export function createCircularPositions(nodeIds: string[], radius: number = 100)
  * Create node positions at origin
  */
 export function createCenteredPositions(nodeIds: string[]): TestPosition[] {
-  return nodeIds.map(id => ({ id, x: 0, y: 0, ring: 0 }));
+  return nodeIds.map((id) => ({ id, x: 0, y: 0, ring: 0 }));
 }

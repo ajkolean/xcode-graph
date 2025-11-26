@@ -1,12 +1,12 @@
-import { GraphNode, GraphEdge } from '../data/mockGraphData';
-import { Cluster } from '../types/cluster';
-import { NodeHeader } from './nodeDetails/NodeHeader';
-import { NodeActions } from './nodeDetails/NodeActions';
-import { MetricsSection } from './nodeDetails/MetricsSection';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import { useNodeDependencies } from '../hooks/useNodeDependencies';
+import type { Cluster } from '../types/cluster';
 import { DependenciesList } from './nodeDetails/DependenciesList';
 import { DependentsList } from './nodeDetails/DependentsList';
+import { MetricsSection } from './nodeDetails/MetricsSection';
+import { NodeActions } from './nodeDetails/NodeActions';
+import { NodeHeader } from './nodeDetails/NodeHeader';
 import { NodeInfo } from './nodeDetails/NodeInfo';
-import { useNodeDependencies } from '../hooks/useNodeDependencies';
 
 interface NodeDetailsPanelProps {
   node: GraphNode;
@@ -39,21 +39,26 @@ export function NodeDetailsPanel({
   onShowDependents,
   onShowImpact,
   viewMode,
-  zoom
+  zoom,
 }: NodeDetailsPanelProps) {
-  const { dependencies, dependents, metrics } = useNodeDependencies(node, allNodes, edges, filteredEdges);
+  const { dependencies, dependents, metrics } = useNodeDependencies(
+    node,
+    allNodes,
+    edges,
+    filteredEdges,
+  );
 
   return (
     <>
       {/* Node Card Header */}
-      <NodeHeader 
-        node={node} 
+      <NodeHeader
+        node={node}
         onClose={onClose}
         onClusterClick={onClusterSelect}
         clusters={clusters}
         zoom={zoom}
       />
-      
+
       <MetricsSection
         dependenciesCount={metrics.dependencyCount}
         dependentsCount={metrics.dependentCount}
@@ -76,13 +81,13 @@ export function NodeDetailsPanel({
         onNodeSelect={onNodeSelect}
         onNodeHover={onNodeHover}
       />
-      
+
       <DependentsList
         dependents={dependents}
         onNodeSelect={onNodeSelect}
         onNodeHover={onNodeHover}
       />
-      
+
       {/* Node Info at bottom */}
       <NodeInfo node={node} />
     </>

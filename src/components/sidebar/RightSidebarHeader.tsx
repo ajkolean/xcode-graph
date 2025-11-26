@@ -11,13 +11,13 @@ interface RightSidebarHeaderProps {
   onToggleCollapse: () => void;
 }
 
-export function RightSidebarHeader({ 
-  title, 
-  isCollapsed, 
-  onToggleCollapse 
+export function RightSidebarHeader({
+  title,
+  isCollapsed,
+  onToggleCollapse,
 }: RightSidebarHeaderProps) {
   return (
-    <div 
+    <div
       className="px-4 py-3 shrink-0 flex items-center justify-between"
       style={{ borderBottom: '1px solid var(--color-sidebar-border)' }}
     >
@@ -27,7 +27,7 @@ export function RightSidebarHeader({
             fontFamily: 'DM Sans, sans-serif',
             fontSize: 'var(--text-h2)',
             fontWeight: 'var(--font-weight-medium)',
-            color: 'var(--color-foreground)'
+            color: 'var(--color-foreground)',
           }}
         >
           {title}
@@ -38,7 +38,7 @@ export function RightSidebarHeader({
         className="p-1.5 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)] ml-auto"
         style={{
           color: 'var(--color-muted-foreground)',
-          borderRadius: 'var(--radius)'
+          borderRadius: 'var(--radius)',
         }}
         title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >

@@ -3,8 +3,8 @@
  * Provides single source of truth for all graph data operations
  */
 
-import { GraphNode, GraphEdge } from '../data/mockGraphData';
-import { Cluster } from '../types/cluster';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { Cluster } from '../types/cluster';
 
 export class GraphDataService {
   private nodes: GraphNode[];
@@ -15,14 +15,14 @@ export class GraphDataService {
   constructor(nodes: GraphNode[], edges: GraphEdge[]) {
     this.nodes = nodes;
     this.edges = edges;
-    
+
     // Create lookup maps for O(1) access
-    this.nodeMap = new Map(nodes.map(n => [n.id, n]));
-    this.edgeMap = new Map(edges.map(e => [`${e.source}->${e.target}`, e]));
+    this.nodeMap = new Map(nodes.map((n) => [n.id, n]));
+    this.edgeMap = new Map(edges.map((e) => [`${e.source}->${e.target}`, e]));
   }
 
   // ==================== Node Operations ====================
-  
+
   /**
    * Get all nodes
    */
@@ -41,28 +41,28 @@ export class GraphDataService {
    * Get nodes by type
    */
   getNodesByType(type: string): GraphNode[] {
-    return this.nodes.filter(n => n.type === type);
+    return this.nodes.filter((n) => n.type === type);
   }
 
   /**
    * Get nodes by project
    */
   getNodesByProject(project: string): GraphNode[] {
-    return this.nodes.filter(n => n.project === project);
+    return this.nodes.filter((n) => n.project === project);
   }
 
   /**
    * Get nodes by platform
    */
   getNodesByPlatform(platform: string): GraphNode[] {
-    return this.nodes.filter(n => n.platforms?.includes(platform));
+    return this.nodes.filter((n) => n.platforms?.includes(platform));
   }
 
   /**
    * Get nodes by origin
    */
   getNodesByOrigin(origin: 'local' | 'external'): GraphNode[] {
-    return this.nodes.filter(n => n.origin === origin);
+    return this.nodes.filter((n) => n.origin === origin);
   }
 
   /**
@@ -70,14 +70,14 @@ export class GraphDataService {
    */
   searchNodes(query: string): GraphNode[] {
     const lowerQuery = query.toLowerCase();
-    return this.nodes.filter(n => 
-      n.name.toLowerCase().includes(lowerQuery) ||
-      n.project?.toLowerCase().includes(lowerQuery)
+    return this.nodes.filter(
+      (n) =>
+        n.name.toLowerCase().includes(lowerQuery) || n.project?.toLowerCase().includes(lowerQuery),
     );
   }
 
   // ==================== Edge Operations ====================
-  
+
   /**
    * Get all edges
    */
@@ -96,49 +96,41 @@ export class GraphDataService {
    * Get outgoing edges from a node (dependencies)
    */
   getOutgoingEdges(nodeId: string): GraphEdge[] {
-    return this.edges.filter(e => e.source === nodeId);
+    return this.edges.filter((e) => e.source === nodeId);
   }
 
   /**
    * Get incoming edges to a node (dependents)
    */
   getIncomingEdges(nodeId: string): GraphEdge[] {
-    return this.edges.filter(e => e.target === nodeId);
+    return this.edges.filter((e) => e.target === nodeId);
   }
 
   /**
    * Get all edges for a node (both directions)
    */
   getNodeEdges(nodeId: string): GraphEdge[] {
-    return this.edges.filter(e => e.source === nodeId || e.target === nodeId);
+    return this.edges.filter((e) => e.source === nodeId || e.target === nodeId);
   }
 
   // ==================== Dependency Operations ====================
-  
+
   /**
    * Get direct dependencies of a node
    */
   getDirectDependencies(nodeId: string): GraphNode[] {
-    const depIds = this.edges
-      .filter(e => e.source === nodeId)
-      .map(e => e.target);
-    
-    return depIds
-      .map(id => this.nodeMap.get(id))
-      .filter((n): n is GraphNode => n !== undefined);
+    const depIds = this.edges.filter((e) => e.source === nodeId).map((e) => e.target);
+
+    return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
   }
 
   /**
    * Get direct dependents of a node
    */
   getDirectDependents(nodeId: string): GraphNode[] {
-    const depIds = this.edges
-      .filter(e => e.target === nodeId)
-      .map(e => e.source);
-    
-    return depIds
-      .map(id => this.nodeMap.get(id))
-      .filter((n): n is GraphNode => n !== undefined);
+    const depIds = this.edges.filter((e) => e.target === nodeId).map((e) => e.source);
+
+    return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
   }
 
   /**
@@ -156,12 +148,12 @@ export class GraphDataService {
 
     while (queue.length > 0) {
       const { id, depth } = queue.shift()!;
-      
+
       const outgoing = this.getOutgoingEdges(id);
-      
+
       for (const edge of outgoing) {
         edges.add(`${edge.source}->${edge.target}`);
-        
+
         if (!visited.has(edge.target)) {
           visited.add(edge.target);
           depths.set(edge.target, depth + 1);
@@ -188,12 +180,12 @@ export class GraphDataService {
 
     while (queue.length > 0) {
       const { id, depth } = queue.shift()!;
-      
+
       const incoming = this.getIncomingEdges(id);
-      
+
       for (const edge of incoming) {
         edges.add(`${edge.source}->${edge.target}`);
-        
+
         if (!visited.has(edge.source)) {
           visited.add(edge.source);
           depths.set(edge.source, depth + 1);
@@ -206,14 +198,15 @@ export class GraphDataService {
   }
 
   // ==================== Cluster Operations ====================
-  
+
   /**
    * Get all nodes in a cluster
    */
   getClusterNodes(clusterId: string): GraphNode[] {
-    return this.nodes.filter(n => 
-      (n.project === clusterId && n.type !== 'package') || 
-      (n.type === 'package' && n.name === clusterId)
+    return this.nodes.filter(
+      (n) =>
+        (n.project === clusterId && n.type !== 'package') ||
+        (n.type === 'package' && n.name === clusterId),
     );
   }
 
@@ -222,21 +215,21 @@ export class GraphDataService {
    */
   getCluster(clusterId: string): Cluster | null {
     const clusterNodes = this.getClusterNodes(clusterId);
-    
+
     if (clusterNodes.length === 0) {
       return null;
     }
 
     const firstNode = clusterNodes[0];
     const clusterType = firstNode?.type === 'package' ? 'package' : 'project';
-    const clusterOrigin = clusterNodes.some(n => n.origin === 'external') ? 'external' : 'local';
-    
+    const clusterOrigin = clusterNodes.some((n) => n.origin === 'external') ? 'external' : 'local';
+
     return {
       id: clusterId,
       name: clusterId,
       type: clusterType,
       origin: clusterOrigin,
-      nodes: clusterNodes
+      nodes: clusterNodes,
     } as Cluster;
   }
 
@@ -245,9 +238,7 @@ export class GraphDataService {
    */
   getAllProjects(): Set<string> {
     return new Set(
-      this.nodes
-        .map(n => n.project)
-        .filter((p): p is string => p !== undefined && p !== '')
+      this.nodes.map((n) => n.project).filter((p): p is string => p !== undefined && p !== ''),
     );
   }
 
@@ -255,15 +246,11 @@ export class GraphDataService {
    * Get all unique packages
    */
   getAllPackages(): Set<string> {
-    return new Set(
-      this.nodes
-        .filter(n => n.type === 'package')
-        .map(n => n.name)
-    );
+    return new Set(this.nodes.filter((n) => n.type === 'package').map((n) => n.name));
   }
 
   // ==================== Statistics ====================
-  
+
   /**
    * Get node statistics
    */
@@ -282,7 +269,7 @@ export class GraphDataService {
       dependencies: deps.length,
       dependents: dependents.length,
       transitiveDeps: transitiveDeps.nodes.size - 1, // Exclude self
-      transitiveDependents: transitiveDependents.nodes.size - 1 // Exclude self
+      transitiveDependents: transitiveDependents.nodes.size - 1, // Exclude self
     };
   }
 
@@ -296,27 +283,19 @@ export class GraphDataService {
     platforms: Set<string>;
   } {
     const clusterNodes = this.getClusterNodes(clusterId);
-    const clusterNodeIds = new Set(clusterNodes.map(n => n.id));
+    const clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
 
-    const dependencies = this.edges.filter(e => 
-      clusterNodeIds.has(e.source)
-    ).length;
+    const dependencies = this.edges.filter((e) => clusterNodeIds.has(e.source)).length;
 
-    const dependents = this.edges.filter(e => 
-      clusterNodeIds.has(e.target)
-    ).length;
+    const dependents = this.edges.filter((e) => clusterNodeIds.has(e.target)).length;
 
-    const platforms = new Set(
-      clusterNodes
-        .flatMap(n => n.platforms || [])
-        .filter(Boolean)
-    );
+    const platforms = new Set(clusterNodes.flatMap((n) => n.platforms || []).filter(Boolean));
 
     return {
       nodeCount: clusterNodes.length,
       dependencies,
       dependents,
-      platforms
+      platforms,
     };
   }
 }

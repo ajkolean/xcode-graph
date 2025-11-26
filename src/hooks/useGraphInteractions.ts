@@ -2,8 +2,8 @@
  * Custom hook for graph pan, zoom, and drag interactions
  */
 
-import { useState, useRef, RefObject } from 'react';
-import { NodePosition } from '../types/simulation';
+import { useRef, useState } from 'react';
+import type { NodePosition } from '../types/simulation';
 
 interface UseGraphInteractionsProps {
   zoom: number;
@@ -16,7 +16,7 @@ export function useGraphInteractions({
   zoom,
   nodePositions,
   clusterPositions,
-  setNodePositions
+  setNodePositions,
 }: UseGraphInteractionsProps) {
   const [pan, setPan] = useState({ x: 400, y: 300 });
   const [isDragging, setIsDragging] = useState(false);
@@ -36,24 +36,24 @@ export function useGraphInteractions({
       // Pan the canvas
       setPan({
         x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
+        y: e.clientY - dragStart.y,
       });
     } else if (draggedNode) {
       // Drag a node
       const svg = svgRef.current;
       if (!svg) return;
-      
+
       const rect = svg.getBoundingClientRect();
       const node = nodePositions.get(draggedNode);
       if (!node) return;
-      
+
       const cluster = clusterPositions.get(node.clusterId);
       if (!cluster) return;
-      
+
       const x = (e.clientX - rect.left - pan.x) / zoom - cluster.x;
       const y = (e.clientY - rect.top - pan.y) / zoom - cluster.y;
-      
-      setNodePositions(prev => {
+
+      setNodePositions((prev) => {
         const next = new Map(prev);
         const nodePos = next.get(draggedNode);
         if (nodePos) {
@@ -86,6 +86,6 @@ export function useGraphInteractions({
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleNodeDragStart
+    handleNodeDragStart,
   };
 }

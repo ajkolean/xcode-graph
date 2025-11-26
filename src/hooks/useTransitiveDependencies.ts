@@ -5,8 +5,8 @@
  */
 
 import { useMemo } from 'react';
-import { GraphNode, GraphEdge } from '../data/mockGraphData';
-import { ViewMode } from '../types/app';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { ViewMode } from '../types/app';
 
 interface UseTransitiveDependenciesProps {
   viewMode: ViewMode;
@@ -14,19 +14,19 @@ interface UseTransitiveDependenciesProps {
   edges: GraphEdge[];
 }
 
-export function useTransitiveDependencies({ 
-  viewMode, 
-  selectedNode, 
-  edges 
+export function useTransitiveDependencies({
+  viewMode,
+  selectedNode,
+  edges,
 }: UseTransitiveDependenciesProps) {
   // Calculate transitive dependencies when in focused mode
   const transitiveDeps = useMemo(() => {
     if ((viewMode !== 'focused' && viewMode !== 'both') || !selectedNode) {
-      return { 
-        nodes: new Set<string>(), 
+      return {
+        nodes: new Set<string>(),
         edges: new Set<string>(),
         edgeDepths: new Map<string, number>(),
-        maxDepth: 0
+        maxDepth: 0,
       };
     }
 
@@ -42,7 +42,7 @@ export function useTransitiveDependencies({
       maxDepth = Math.max(maxDepth, depth);
 
       // Find all outgoing edges (dependencies)
-      edges.forEach(edge => {
+      edges.forEach((edge) => {
         if (edge.source === nodeId) {
           const edgeKey = `${edge.source}->${edge.target}`;
           visitedEdges.add(edgeKey);
@@ -63,11 +63,11 @@ export function useTransitiveDependencies({
   // Calculate transitive dependents when in dependents mode (reverse direction)
   const transitiveDependents = useMemo(() => {
     if ((viewMode !== 'dependents' && viewMode !== 'both') || !selectedNode) {
-      return { 
-        nodes: new Set<string>(), 
+      return {
+        nodes: new Set<string>(),
         edges: new Set<string>(),
         edgeDepths: new Map<string, number>(),
-        maxDepth: 0
+        maxDepth: 0,
       };
     }
 
@@ -83,7 +83,7 @@ export function useTransitiveDependencies({
       maxDepth = Math.max(maxDepth, depth);
 
       // Find all incoming edges (dependents)
-      edges.forEach(edge => {
+      edges.forEach((edge) => {
         if (edge.target === nodeId) {
           const edgeKey = `${edge.source}->${edge.target}`;
           visitedEdges.add(edgeKey);
@@ -103,6 +103,6 @@ export function useTransitiveDependencies({
 
   return {
     transitiveDeps,
-    transitiveDependents
+    transitiveDependents,
   };
 }

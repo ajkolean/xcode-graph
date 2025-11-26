@@ -3,7 +3,7 @@
  * Extracts pan/zoom state and handlers from GraphVisualization
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 interface PanZoomState {
   pan: { x: number; y: number };
@@ -25,52 +25,63 @@ interface UseGraphPanZoomResult {
   handleWheel: (e: React.WheelEvent) => void;
 }
 
-export function useGraphPanZoom({ 
-  zoom, 
-  onZoomChange 
+export function useGraphPanZoom({
+  zoom,
+  onZoomChange,
 }: UseGraphPanZoomProps): UseGraphPanZoomResult {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const lastPanRef = useRef({ x: 0, y: 0 });
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    // Only start dragging on canvas background (not on nodes)
-    if ((e.target as HTMLElement).tagName === 'svg' || 
-        (e.target as HTMLElement).tagName === 'rect') {
-      setIsDragging(true);
-      dragStartRef.current = { x: e.clientX, y: e.clientY };
-      lastPanRef.current = pan;
-    }
-  }, [pan]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      // Only start dragging on canvas background (not on nodes)
+      if (
+        (e.target as HTMLElement).tagName === 'svg' ||
+        (e.target as HTMLElement).tagName === 'rect'
+      ) {
+        setIsDragging(true);
+        dragStartRef.current = { x: e.clientX, y: e.clientY };
+        lastPanRef.current = pan;
+      }
+    },
+    [pan],
+  );
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging || !dragStartRef.current) return;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging || !dragStartRef.current) return;
 
-    const dx = e.clientX - dragStartRef.current.x;
-    const dy = e.clientY - dragStartRef.current.y;
+      const dx = e.clientX - dragStartRef.current.x;
+      const dy = e.clientY - dragStartRef.current.y;
 
-    setPan({
-      x: lastPanRef.current.x + dx,
-      y: lastPanRef.current.y + dy
-    });
-  }, [isDragging]);
+      setPan({
+        x: lastPanRef.current.x + dx,
+        y: lastPanRef.current.y + dy,
+      });
+    },
+    [isDragging],
+  );
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
     dragStartRef.current = null;
   }, []);
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    
-    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    const newZoom = Math.min(2, Math.max(0.2, zoom + delta));
-    
-    if (onZoomChange) {
-      onZoomChange(newZoom);
-    }
-  }, [zoom, onZoomChange]);
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      e.preventDefault();
+
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      const newZoom = Math.min(2, Math.max(0.2, zoom + delta));
+
+      if (onZoomChange) {
+        onZoomChange(newZoom);
+      }
+    },
+    [zoom, onZoomChange],
+  );
 
   return {
     pan,
@@ -78,6 +89,6 @@ export function useGraphPanZoom({
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleWheel
+    handleWheel,
   };
 }

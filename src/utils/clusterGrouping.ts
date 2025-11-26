@@ -1,19 +1,16 @@
-import { GraphNode, GraphEdge } from '../data/mockGraphData';
-import { Cluster, ClusterLayoutConfig, DEFAULT_CLUSTER_CONFIG } from '../types/cluster';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import { type Cluster, type ClusterLayoutConfig, DEFAULT_CLUSTER_CONFIG } from '../types/cluster';
 import { analyzeCluster } from './clusterAnalysis';
 
 /**
  * Groups nodes into clusters by project/package
  */
-export function groupIntoClusters(
-  nodes: GraphNode[],
-  edges: GraphEdge[]
-): Cluster[] {
+export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Cluster[] {
   const clusterMap = new Map<string, Cluster>();
 
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     const clusterId = node.project || node.name;
-    
+
     if (!clusterMap.has(clusterId)) {
       clusterMap.set(clusterId, {
         id: clusterId,
@@ -22,7 +19,7 @@ export function groupIntoClusters(
         origin: node.origin,
         nodes: [],
         metadata: new Map(),
-        anchors: []
+        anchors: [],
       });
     }
 
@@ -30,7 +27,7 @@ export function groupIntoClusters(
   });
 
   // Analyze each cluster and assign metadata
-  clusterMap.forEach(cluster => {
+  clusterMap.forEach((cluster) => {
     analyzeCluster(cluster, edges);
   });
 
@@ -42,10 +39,10 @@ export function groupIntoClusters(
  */
 export function arrangeClusterGrid(
   clusters: Cluster[],
-  config: ClusterLayoutConfig = DEFAULT_CLUSTER_CONFIG
+  config: ClusterLayoutConfig = DEFAULT_CLUSTER_CONFIG,
 ): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
-  
+
   // Sort clusters: local first, then by size
   const sortedClusters = [...clusters].sort((a, b) => {
     if (a.origin !== b.origin) {
@@ -61,7 +58,7 @@ export function arrangeClusterGrid(
   let maxHeightInRow = 0;
   let col = 0;
 
-  sortedClusters.forEach((cluster, index) => {
+  sortedClusters.forEach((cluster, _index) => {
     positions.set(cluster.id, { x, y });
 
     const bounds = cluster.bounds || { width: 300, height: 300 };

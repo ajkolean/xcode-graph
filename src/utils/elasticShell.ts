@@ -1,45 +1,45 @@
 /**
  * Elastic Shell: Cluster boundaries as flexible membranes
- * 
+ *
  * Each cluster has a circular boundary that behaves like a soft elastic membrane:
  * - Shell applies inward compression (wants to stay small)
  * - Nodes apply outward pressure (based on mass, ring, distance)
  * - Equilibrium finds the minimum necessary radius
- * 
+ *
  * Result: Tight when nodes are few, expands for high-mass systems
  */
 
-import { NodeMass } from './massCalculation';
+import type { NodeMass } from './massCalculation';
 
 export interface ElasticShellConfig {
-  baseRadius: number;           // Starting point
-  compressionFactor: number;    // How hard shell resists expansion
-  alpha: number;                // Damping (convergence speed)
-  iterations: number;           // Number of relaxation steps
-  minRadius: number;            // Floor (never smaller than this)
-  maxRadius: number;            // Ceiling (never larger than this)
+  baseRadius: number; // Starting point
+  compressionFactor: number; // How hard shell resists expansion
+  alpha: number; // Damping (convergence speed)
+  iterations: number; // Number of relaxation steps
+  minRadius: number; // Floor (never smaller than this)
+  maxRadius: number; // Ceiling (never larger than this)
 }
 
 const DEFAULT_ELASTIC_CONFIG: ElasticShellConfig = {
-  baseRadius: 60,              // Reduced from 80
-  compressionFactor: 0.35,     // Increased from 0.25 (shell pulls even harder!)
+  baseRadius: 60, // Reduced from 80
+  compressionFactor: 0.35, // Increased from 0.25 (shell pulls even harder!)
   alpha: 0.15,
   iterations: 25,
-  minRadius: 50,               // Reduced from 60
-  maxRadius: 280               // Reduced from 300
+  minRadius: 50, // Reduced from 60
+  maxRadius: 280, // Reduced from 300
 };
 
 export interface NodeWithPosition {
   id: string;
-  x: number;  // Relative to cluster center
-  y: number;  // Relative to cluster center
+  x: number; // Relative to cluster center
+  y: number; // Relative to cluster center
   ring: number;
   mass?: number;
 }
 
 /**
  * Compute elastic shell radius for a cluster
- * 
+ *
  * The shell finds equilibrium between:
  * - Inward compression (shell wants to shrink)
  * - Outward pressure from nodes (mass-based)
@@ -47,13 +47,13 @@ export interface NodeWithPosition {
 export function computeElasticShellRadius(
   nodes: NodeWithPosition[],
   masses: Map<string, NodeMass>,
-  config: ElasticShellConfig = DEFAULT_ELASTIC_CONFIG
+  config: ElasticShellConfig = DEFAULT_ELASTIC_CONFIG,
 ): number {
   if (nodes.length === 0) return config.minRadius;
 
   // Step 1: Initial guess based on maximum ring
-  const maxRing = Math.max(...nodes.map(n => n.ring), 0);
-  let radius = config.baseRadius + (maxRing * 40); // Reduced from 65 to 40
+  const maxRing = Math.max(...nodes.map((n) => n.ring), 0);
+  let radius = config.baseRadius + maxRing * 40; // Reduced from 65 to 40
 
   // Ensure within bounds
   radius = Math.max(config.minRadius, Math.min(config.maxRadius, radius));
@@ -62,20 +62,20 @@ export function computeElasticShellRadius(
   for (let iter = 0; iter < config.iterations; iter++) {
     // Compute outward pressure from nodes
     const outwardPressure = computeOutwardPressure(nodes, masses);
-    
+
     // Compute inward compression from shell
-    const idealRadius = config.baseRadius + (maxRing * 40); // Reduced from 65 to 40
+    const idealRadius = config.baseRadius + maxRing * 40; // Reduced from 65 to 40
     const inwardCompression = (radius - idealRadius) * config.compressionFactor;
-    
+
     // Net force
     const netForce = outwardPressure - inwardCompression;
-    
+
     // Update radius
     radius += netForce * config.alpha;
-    
+
     // Clamp to bounds
     radius = Math.max(config.minRadius, Math.min(config.maxRadius, radius));
-    
+
     // Early exit if converged
     if (Math.abs(netForce) < 0.5) {
       break;
@@ -92,16 +92,13 @@ export function computeElasticShellRadius(
 
 /**
  * Compute total outward pressure from all nodes
- * 
+ *
  * Each node pushes outward based on:
  * - Its mass (heavier nodes push harder)
  * - Its distance from center (outer nodes push more)
  * - Its ring index (inner rings push less)
  */
-function computeOutwardPressure(
-  nodes: NodeWithPosition[],
-  masses: Map<string, NodeMass>
-): number {
+function computeOutwardPressure(nodes: NodeWithPosition[], masses: Map<string, NodeMass>): number {
   let totalPressure = 0;
 
   for (const node of nodes) {
@@ -111,12 +108,12 @@ function computeOutwardPressure(
 
     // Distance from cluster center
     const distFromCenter = Math.sqrt(node.x * node.x + node.y * node.y);
-    
+
     // Avoid division by zero
     if (distFromCenter < 1) continue;
 
     // Ring influence (inner rings push less, outer rings push more)
-    const ringFactor = 1 + (node.ring * 0.3);
+    const ringFactor = 1 + node.ring * 0.3;
 
     // Pressure formula: mass × ringFactor / distance²
     // (Inverse square law - like gravity!)
@@ -130,13 +127,13 @@ function computeOutwardPressure(
 
 /**
  * Compute elastic shell with mass-weighted influence
- * 
+ *
  * Alternative approach: weight by mass more aggressively
  */
 export function computeMassWeightedShellRadius(
   nodes: NodeWithPosition[],
   masses: Map<string, NodeMass>,
-  config: ElasticShellConfig = DEFAULT_ELASTIC_CONFIG
+  config: ElasticShellConfig = DEFAULT_ELASTIC_CONFIG,
 ): number {
   if (nodes.length === 0) return config.minRadius;
 
@@ -171,14 +168,14 @@ export function computeMassWeightedShellRadius(
 
 /**
  * Compute adaptive shell radius based on node density
- * 
+ *
  * Creates tighter clusters when nodes are dense,
  * looser clusters when nodes are sparse
  */
 export function computeAdaptiveShellRadius(
   nodes: NodeWithPosition[],
   masses: Map<string, NodeMass>,
-  config: ElasticShellConfig = DEFAULT_ELASTIC_CONFIG
+  config: ElasticShellConfig = DEFAULT_ELASTIC_CONFIG,
 ): number {
   if (nodes.length === 0) return config.minRadius;
 
@@ -198,7 +195,7 @@ export function computeAdaptiveShellRadius(
 
   // Current area
   const currentArea = Math.PI * maxDistance * maxDistance;
-  const density = currentArea > 0 ? totalMass / currentArea : 0;
+  const _density = currentArea > 0 ? totalMass / currentArea : 0;
 
   // Target density (higher = tighter clusters)
   const targetDensity = 0.15;
@@ -234,7 +231,7 @@ export interface ShellDebugInfo {
 export function computeElasticShellWithDebug(
   nodes: NodeWithPosition[],
   masses: Map<string, NodeMass>,
-  config: ElasticShellConfig = DEFAULT_ELASTIC_CONFIG
+  config: ElasticShellConfig = DEFAULT_ELASTIC_CONFIG,
 ): ShellDebugInfo {
   if (nodes.length === 0) {
     return {
@@ -243,12 +240,12 @@ export function computeElasticShellWithDebug(
       inwardCompression: 0,
       netForce: 0,
       iterations: 0,
-      converged: true
+      converged: true,
     };
   }
 
-  const maxRing = Math.max(...nodes.map(n => n.ring), 0);
-  let radius = config.baseRadius + (maxRing * 40); // Reduced from 65 to 40
+  const maxRing = Math.max(...nodes.map((n) => n.ring), 0);
+  let radius = config.baseRadius + maxRing * 40; // Reduced from 65 to 40
   radius = Math.max(config.minRadius, Math.min(config.maxRadius, radius));
 
   let finalOutward = 0;
@@ -258,15 +255,15 @@ export function computeElasticShellWithDebug(
 
   for (let iter = 0; iter < config.iterations; iter++) {
     finalOutward = computeOutwardPressure(nodes, masses);
-    
-    const idealRadius = config.baseRadius + (maxRing * 40); // Reduced from 65 to 40
+
+    const idealRadius = config.baseRadius + maxRing * 40; // Reduced from 65 to 40
     finalInward = (radius - idealRadius) * config.compressionFactor;
-    
+
     finalNet = finalOutward - finalInward;
-    
+
     radius += finalNet * config.alpha;
     radius = Math.max(config.minRadius, Math.min(config.maxRadius, radius));
-    
+
     if (Math.abs(finalNet) < 0.5) {
       converged = true;
       break;
@@ -283,6 +280,6 @@ export function computeElasticShellWithDebug(
     inwardCompression: finalInward,
     netForce: finalNet,
     iterations: config.iterations,
-    converged
+    converged,
   };
 }

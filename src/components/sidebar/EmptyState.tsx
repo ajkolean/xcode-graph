@@ -12,7 +12,7 @@ export function EmptyState({ hasActiveFilters, onClearFilters }: EmptyStateProps
           fontFamily: 'Inter, sans-serif',
           fontSize: 'var(--text-base)',
           fontWeight: 'var(--font-weight-medium)',
-          color: 'var(--color-foreground)'
+          color: 'var(--color-foreground)',
         }}
       >
         No nodes match filters
@@ -22,7 +22,7 @@ export function EmptyState({ hasActiveFilters, onClearFilters }: EmptyStateProps
           fontFamily: 'Inter, sans-serif',
           fontSize: 'var(--text-small)',
           color: 'var(--color-muted-foreground)',
-          marginBottom: 'var(--spacing-md)'
+          marginBottom: 'var(--spacing-md)',
         }}
       >
         Try adjusting your filter settings
@@ -38,7 +38,7 @@ export function EmptyState({ hasActiveFilters, onClearFilters }: EmptyStateProps
             fontSize: 'var(--text-label)',
             color: 'rgba(168, 157, 255, 1)',
             fontWeight: 'var(--font-weight-medium)',
-            borderRadius: 'var(--radius)'
+            borderRadius: 'var(--radius)',
           }}
         >
           Clear all filters

@@ -6,14 +6,14 @@
 const iconColor = 'rgba(168, 157, 255, 0.7)';
 
 export const ProductTypesIcon = () => (
-  <svg 
-    width="18" 
-    height="18" 
-    viewBox="0 0 24 24" 
-    fill="none" 
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
     stroke={iconColor}
-    strokeWidth="2" 
-    strokeLinecap="round" 
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
     className="shrink-0"
   >
@@ -25,14 +25,14 @@ export const ProductTypesIcon = () => (
 );
 
 export const PlatformsIcon = () => (
-  <svg 
-    width="18" 
-    height="18" 
-    viewBox="0 0 24 24" 
-    fill="none" 
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
     stroke={iconColor}
-    strokeWidth="2" 
-    strokeLinecap="round" 
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
     className="shrink-0"
   >
@@ -53,14 +53,14 @@ export const PlatformsIcon = () => (
 );
 
 export const ProjectsIcon = () => (
-  <svg 
-    width="18" 
-    height="18" 
-    viewBox="0 0 24 24" 
-    fill="none" 
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
     stroke={iconColor}
-    strokeWidth="2" 
-    strokeLinecap="round" 
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
     className="shrink-0"
   >
@@ -69,14 +69,14 @@ export const ProjectsIcon = () => (
 );
 
 export const PackagesIcon = () => (
-  <svg 
-    width="18" 
-    height="18" 
-    viewBox="0 0 24 24" 
-    fill="none" 
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
     stroke={iconColor}
-    strokeWidth="2" 
-    strokeLinecap="round" 
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
     className="shrink-0"
   >

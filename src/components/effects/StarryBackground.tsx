@@ -16,10 +16,10 @@ export function StarryBackground() {
     }
 
     console.log('Rendering stars...');
-    
+
     const width = window.innerWidth;
     const height = window.innerHeight;
-    
+
     canvas.width = width;
     canvas.height = height;
 
@@ -39,7 +39,7 @@ export function StarryBackground() {
     ctx.fillRect(100, 100, 5, 5);
     ctx.fillRect(200, 200, 5, 5);
     ctx.fillRect(300, 150, 5, 5);
-    
+
     console.log('Drew test squares');
 
     // Generate 300 stars
@@ -47,7 +47,7 @@ export function StarryBackground() {
       const x = Math.random() * width;
       const y = Math.random() * height;
       const radius = Math.random() * 2 + 1;
-      
+
       ctx.fillStyle = 'white';
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, Math.PI * 2);

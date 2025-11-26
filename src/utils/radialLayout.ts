@@ -3,7 +3,7 @@
  * Implements sector-based positioning for consistent cluster orientation
  */
 
-import { buildAdjacency, AdjacencyList } from './graphAlgorithms';
+import { type AdjacencyList, buildAdjacency } from './graphAlgorithms';
 
 export interface NodePolar {
   id: string;
@@ -24,11 +24,11 @@ export interface NodeCartesian {
 /**
  * Node role determines angular sector placement
  */
-export type NodeRole = 
-  | 'anchor'          // App, CLI - TOP sector (330°-30°)
-  | 'framework'       // Frameworks - RIGHT sector (30°-150°)
-  | 'internal'        // Utilities, libs - BOTTOM sector (150°-240°)
-  | 'test';           // Tests - orbiting satellites (not on rings)
+export type NodeRole =
+  | 'anchor' // App, CLI - TOP sector (330°-30°)
+  | 'framework' // Frameworks - RIGHT sector (30°-150°)
+  | 'internal' // Utilities, libs - BOTTOM sector (150°-240°)
+  | 'test'; // Tests - orbiting satellites (not on rings)
 
 export interface RadialLayoutOptions {
   baseRadius?: number;
@@ -44,16 +44,13 @@ export interface RadialLayoutOptions {
 export function selectAnchors(
   nodes: Array<{ id: string; type: string }>,
   hasExternalDependents: Set<string>,
-  anchorTypes: string[] = ['app', 'cli']
+  anchorTypes: string[] = ['app', 'cli'],
 ): string[] {
-  const anchors = nodes.filter(n =>
-    anchorTypes.includes(n.type) ||
-    hasExternalDependents.has(n.id)
+  const anchors = nodes.filter(
+    (n) => anchorTypes.includes(n.type) || hasExternalDependents.has(n.id),
   );
 
-  return anchors.length > 0
-    ? anchors.map(a => a.id)
-    : [nodes[0]?.id].filter(Boolean);
+  return anchors.length > 0 ? anchors.map((a) => a.id) : [nodes[0]?.id].filter(Boolean);
 }
 
 /**
@@ -63,7 +60,7 @@ export function selectAnchors(
 export function computeDepths(
   anchors: string[],
   adj: AdjacencyList,
-  maxDepth = 2
+  maxDepth = 2,
 ): Record<string, number> {
   const depth: Record<string, number> = {};
   const queue: string[] = [];
@@ -108,13 +105,12 @@ function computeDesiredAngle(
   currentRing: number,
   depth: Record<string, number>,
   adj: AdjacencyList,
-  polarById: Map<string, NodePolar>
+  polarById: Map<string, NodePolar>,
 ): number {
   // Find neighbors in inner rings (lower depth)
-  const neighbors = [
-    ...(adj.forward.get(nodeId) || []),
-    ...(adj.reverse.get(nodeId) || [])
-  ].filter(n => (depth[n] ?? 99) < currentRing);
+  const neighbors = [...(adj.forward.get(nodeId) || []), ...(adj.reverse.get(nodeId) || [])].filter(
+    (n) => (depth[n] ?? 99) < currentRing,
+  );
 
   if (neighbors.length === 0) return 0;
 
@@ -140,21 +136,21 @@ export function radialLayout(
   edges: Array<{ from: string; to: string }>,
   centerX: number,
   centerY: number,
-  options: RadialLayoutOptions = {}
+  options: RadialLayoutOptions = {},
 ): NodeCartesian[] {
   const {
     baseRadius = 40,
     ringSpacing = 60,
     maxDepth = 2,
     anchorTypes = ['app', 'cli'],
-    testOrbitRadius = 100
+    testOrbitRadius = 100,
   } = options;
 
   if (nodes.length === 0) return [];
 
   const adj = buildAdjacency(
-    nodes.map(n => n.id),
-    edges
+    nodes.map((n) => n.id),
+    edges,
   );
 
   // Determine which nodes are anchors
@@ -182,7 +178,7 @@ export function radialLayout(
         ring: 0,
         angle,
         radius: baseRadius,
-        role: 'anchor'
+        role: 'anchor',
       };
       polar.push(p);
       polarById.set(n.id, p);
@@ -195,9 +191,9 @@ export function radialLayout(
     if (ringNodes.length === 0) continue;
 
     // Compute desired angle for each node based on inner neighbors
-    const scored = ringNodes.map(n => ({
+    const scored = ringNodes.map((n) => ({
       node: n,
-      angle: computeDesiredAngle(n.id, ring, depth, adj, polarById)
+      angle: computeDesiredAngle(n.id, ring, depth, adj, polarById),
     }));
 
     // Sort by desired angle
@@ -214,7 +210,7 @@ export function radialLayout(
         ring,
         angle,
         radius,
-        role: 'internal'
+        role: 'internal',
       };
       polar.push(p);
       polarById.set(s.node.id, p);
@@ -222,7 +218,7 @@ export function radialLayout(
   }
 
   // Add test nodes in orbit
-  const testNodes = nodes.filter(n => n.type === 'test');
+  const testNodes = nodes.filter((n) => n.type === 'test');
   for (const n of testNodes) {
     const angle = Math.random() * 2 * Math.PI;
     const p: NodePolar = {
@@ -230,19 +226,19 @@ export function radialLayout(
       ring: 0,
       angle,
       radius: testOrbitRadius,
-      role: 'test'
+      role: 'test',
     };
     polar.push(p);
     polarById.set(n.id, p);
   }
 
   // Convert polar to cartesian
-  const result: NodeCartesian[] = polar.map(p => ({
+  const result: NodeCartesian[] = polar.map((p) => ({
     id: p.id,
     ring: p.ring,
     x: centerX + p.radius * Math.cos(p.angle),
     y: centerY + p.radius * Math.sin(p.angle),
-    role: p.role
+    role: p.role,
   }));
 
   return result;
@@ -256,9 +252,9 @@ export function relaxOnRings(
   nodes: NodeCartesian[],
   centerX: number,
   centerY: number,
-  iterations = 10  // Reduced from 25 to 10 for better performance
+  iterations = 10, // Reduced from 25 to 10 for better performance
 ): NodeCartesian[] {
-  const result = nodes.map(n => ({ ...n }));
+  const result = nodes.map((n) => ({ ...n }));
 
   // Group by ring
   const byRing = new Map<number, NodeCartesian[]>();
@@ -270,27 +266,27 @@ export function relaxOnRings(
   const minSpacing = (12 * Math.PI) / 180; // 12 degrees minimum
 
   for (let iter = 0; iter < iterations; iter++) {
-    for (const [ring, ringNodes] of byRing.entries()) {
+    for (const [_ring, ringNodes] of byRing.entries()) {
       if (ringNodes.length <= 1) continue;
 
       // Compute current angles
-      const angles = ringNodes.map(n => ({
+      const angles = ringNodes.map((n) => ({
         node: n,
-        angle: Math.atan2(n.y - centerY, n.x - centerX)
+        angle: Math.atan2(n.y - centerY, n.x - centerX),
       }));
 
       // Pairwise repulsion if too close
       for (let i = 0; i < angles.length; i++) {
         for (let j = i + 1; j < angles.length; j++) {
           let diff = angles[i].angle - angles[j].angle;
-          
+
           // Normalize to [-π, π]
           while (diff > Math.PI) diff -= 2 * Math.PI;
           while (diff < -Math.PI) diff += 2 * Math.PI;
-          
+
           const ad = Math.abs(diff);
           if (ad < minSpacing && ad > 1e-6) {
-            const push = (minSpacing - ad) * 0.3;  // Increased push force for faster convergence
+            const push = (minSpacing - ad) * 0.3; // Increased push force for faster convergence
             const sign = diff > 0 ? 1 : -1;
             angles[i].angle += push * sign;
             angles[j].angle -= push * sign;

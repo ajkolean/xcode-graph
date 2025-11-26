@@ -1,15 +1,36 @@
-import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useGraphFilters } from './useGraphFilters';
-import type { GraphNode, GraphEdge } from '../data/mockGraphData';
+import { describe, expect, it } from 'vitest';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import type { FilterState } from '../types/app';
+import { useGraphFilters } from './useGraphFilters';
 
 // Test fixtures
 const createTestNodes = (): GraphNode[] => [
-  { id: '1', name: 'CoreFramework', type: 'framework', platform: 'iOS', origin: 'local', project: 'Core' },
+  {
+    id: '1',
+    name: 'CoreFramework',
+    type: 'framework',
+    platform: 'iOS',
+    origin: 'local',
+    project: 'Core',
+  },
   { id: '2', name: 'UIKit', type: 'framework', platform: 'iOS', origin: 'local', project: 'UI' },
-  { id: '3', name: 'TestUtils', type: 'test-unit', platform: 'iOS', origin: 'local', project: 'Core' },
-  { id: '4', name: 'MacFramework', type: 'framework', platform: 'macOS', origin: 'local', project: 'Core' },
+  {
+    id: '3',
+    name: 'TestUtils',
+    type: 'test-unit',
+    platform: 'iOS',
+    origin: 'local',
+    project: 'Core',
+  },
+  {
+    id: '4',
+    name: 'MacFramework',
+    type: 'framework',
+    platform: 'macOS',
+    origin: 'local',
+    project: 'Core',
+  },
   { id: '5', name: 'Alamofire', type: 'package', platform: 'iOS', origin: 'external' },
   { id: '6', name: 'MainApp', type: 'app', platform: 'iOS', origin: 'local', project: 'App' },
 ];
@@ -41,11 +62,11 @@ describe('useGraphFilters', () => {
       };
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
       expect(result.current.filteredNodes).toHaveLength(3);
-      expect(result.current.filteredNodes.every(n => n.type === 'framework')).toBe(true);
+      expect(result.current.filteredNodes.every((n) => n.type === 'framework')).toBe(true);
     });
 
     it('should include all types when all are selected', () => {
@@ -54,7 +75,7 @@ describe('useGraphFilters', () => {
       const filters = createAllInclusiveFilters();
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
       expect(result.current.filteredNodes).toHaveLength(6);
@@ -71,7 +92,7 @@ describe('useGraphFilters', () => {
       };
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
       expect(result.current.filteredNodes).toHaveLength(1);
@@ -89,10 +110,10 @@ describe('useGraphFilters', () => {
       };
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
-      expect(result.current.filteredNodes.every(n => n.origin === 'local')).toBe(true);
+      expect(result.current.filteredNodes.every((n) => n.origin === 'local')).toBe(true);
       expect(result.current.filteredNodes).toHaveLength(5);
     });
 
@@ -105,10 +126,10 @@ describe('useGraphFilters', () => {
       };
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
-      expect(result.current.filteredNodes.every(n => n.origin === 'external')).toBe(true);
+      expect(result.current.filteredNodes.every((n) => n.origin === 'external')).toBe(true);
       expect(result.current.filteredNodes).toHaveLength(1);
     });
   });
@@ -123,11 +144,11 @@ describe('useGraphFilters', () => {
       };
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
       // Should include Core project nodes and packages (packages filter separately)
-      const coreNodes = result.current.filteredNodes.filter(n => n.project === 'Core');
+      const coreNodes = result.current.filteredNodes.filter((n) => n.project === 'Core');
       expect(coreNodes.length).toBeGreaterThan(0);
     });
   });
@@ -139,7 +160,7 @@ describe('useGraphFilters', () => {
       const filters = createAllInclusiveFilters();
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: 'core' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: 'core' }),
       );
 
       expect(result.current.filteredNodes).toHaveLength(1);
@@ -152,7 +173,7 @@ describe('useGraphFilters', () => {
       const filters = createAllInclusiveFilters();
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: 'framework' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: 'framework' }),
       );
 
       expect(result.current.searchResults).toBe(2);
@@ -164,7 +185,7 @@ describe('useGraphFilters', () => {
       const filters = createAllInclusiveFilters();
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
       expect(result.current.searchResults).toBeNull();
@@ -181,18 +202,18 @@ describe('useGraphFilters', () => {
       };
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
       // Check all edges have visible source and target
       const visibleNodeIds = result.current.filteredNodeIds;
-      result.current.filteredEdges.forEach(edge => {
+      result.current.filteredEdges.forEach((edge) => {
         expect(visibleNodeIds.has(edge.source)).toBe(true);
         expect(visibleNodeIds.has(edge.target)).toBe(true);
       });
 
       // Edge to Alamofire should be excluded (package filtered out)
-      expect(result.current.filteredEdges.some(e => e.target === '5')).toBe(false);
+      expect(result.current.filteredEdges.some((e) => e.target === '5')).toBe(false);
     });
 
     it('should return empty edges when no nodes match', () => {
@@ -204,7 +225,7 @@ describe('useGraphFilters', () => {
       };
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
       expect(result.current.filteredNodes).toHaveLength(0);
@@ -222,7 +243,7 @@ describe('useGraphFilters', () => {
       };
 
       const { result } = renderHook(() =>
-        useGraphFilters({ nodes, edges, filters, searchQuery: '' })
+        useGraphFilters({ nodes, edges, filters, searchQuery: '' }),
       );
 
       expect(result.current.filteredNodeIds).toBeInstanceOf(Set);

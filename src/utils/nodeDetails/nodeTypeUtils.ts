@@ -10,13 +10,13 @@ export function getNodeTypeColor(type: string, project?: string): string {
 
 export function getNodeTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    'app': 'App Target',
-    'framework': 'Framework',
-    'library': 'Static Library',
+    app: 'App Target',
+    framework: 'Framework',
+    library: 'Static Library',
     'test-unit': 'Unit Test Bundle',
     'test-ui': 'UI Test Bundle',
-    'cli': 'CLI Tool',
-    'package': 'External Package'
+    cli: 'CLI Tool',
+    package: 'External Package',
   };
   return labels[type] || type;
 }

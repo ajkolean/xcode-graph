@@ -1,7 +1,7 @@
 /**
  * Simple cluster layout with ring-based positioning
  * Updated to use mass-based anchor selection
- * 
+ *
  * The "sun" of each solar system is determined by gravitational mass:
  * - Fan-in (how many depend on it)
  * - Fan-out (how many dependencies)
@@ -9,8 +9,8 @@
  * - Centrality in graph structure
  */
 
-import { selectMassBasedAnchor } from './massCalculation';
 import { computeElasticShellRadius } from './elasticShell';
+import { selectMassBasedAnchor } from './massCalculation';
 
 export interface NodeCartesian {
   id: string;
@@ -37,7 +37,7 @@ interface AdjacencyList {
  */
 function buildAdjacency(
   nodeIds: string[],
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): AdjacencyList {
   const forward = new Map<string, string[]>();
   const reverse = new Map<string, string[]>();
@@ -66,7 +66,7 @@ function findTestTarget(
   testId: string,
   testName: string,
   nodes: Array<{ id: string; name: string; type: string }>,
-  adj: AdjacencyList
+  adj: AdjacencyList,
 ): string | undefined {
   // Heuristic 1: Name pattern matching
   // "FooTests" -> "Foo", "FooFeatureTests" -> "FooFeature", etc.
@@ -85,7 +85,7 @@ function findTestTarget(
     if (match) {
       const baseName = match[1];
       // Look for exact or similar name
-      const target = nodes.find(n => {
+      const target = nodes.find((n) => {
         if (n.type.startsWith('test')) return false;
         const nName = n.name.toLowerCase();
         const bName = baseName.toLowerCase();
@@ -98,7 +98,7 @@ function findTestTarget(
   // Heuristic 2: First non-test dependency
   const deps = adj.forward.get(testId) || [];
   for (const dep of deps) {
-    const depNode = nodes.find(n => n.id === dep);
+    const depNode = nodes.find((n) => n.id === dep);
     if (depNode && !depNode.type.startsWith('test')) {
       return dep;
     }
@@ -112,28 +112,31 @@ function findTestTarget(
  */
 function selectAnchors(
   nodes: Array<{ id: string; type: string }>,
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): string[] {
   // Use mass-based anchor selection
   const anchor = selectMassBasedAnchor(nodes, edges);
-  
+
   if (anchor) {
     return [anchor];
   }
-  
+
   // Fallback: nodes with no incoming edges (roots)
-  const adj = buildAdjacency(nodes.map(n => n.id), edges);
-  const roots = nodes.filter(n => {
+  const adj = buildAdjacency(
+    nodes.map((n) => n.id),
+    edges,
+  );
+  const roots = nodes.filter((n) => {
     const incoming = adj.reverse.get(n.id) || [];
     return incoming.length === 0 && !n.type.startsWith('test');
   });
-  
+
   if (roots.length > 0) {
-    return roots.map(r => r.id);
+    return roots.map((r) => r.id);
   }
-  
+
   // Last fallback: first non-test node
-  const firstNonTest = nodes.find(n => !n.type.startsWith('test'));
+  const firstNonTest = nodes.find((n) => !n.type.startsWith('test'));
   return firstNonTest ? [firstNonTest.id] : [];
 }
 
@@ -145,7 +148,7 @@ function computeRingDepth(
   nodeIds: string[],
   anchors: string[],
   adj: AdjacencyList,
-  maxDepth: number
+  maxDepth: number,
 ): Map<string, number> {
   const depth = new Map<string, number>();
   const queue: string[] = [];
@@ -191,17 +194,14 @@ function computeIdealAngle(
   nodeId: string,
   ring: number,
   adj: AdjacencyList,
-  positionMap: Map<string, { angle: number; ring: number }>
+  positionMap: Map<string, { angle: number; ring: number }>,
 ): number {
   // Get neighbors (both directions)
-  const allNeighbors = [
-    ...(adj.forward.get(nodeId) || []),
-    ...(adj.reverse.get(nodeId) || [])
-  ];
+  const allNeighbors = [...(adj.forward.get(nodeId) || []), ...(adj.reverse.get(nodeId) || [])];
 
   // Only consider neighbors in inner rings (already placed)
   const innerNeighbors = allNeighbors
-    .map(nId => positionMap.get(nId))
+    .map((nId) => positionMap.get(nId))
     .filter((pos): pos is { angle: number; ring: number } => pos !== undefined && pos.ring < ring);
 
   if (innerNeighbors.length === 0) {
@@ -227,33 +227,28 @@ export function simpleClusterLayout(
   edges: Array<{ from: string; to: string }>,
   centerX: number,
   centerY: number,
-  options: SimpleLayoutOptions = {}
+  options: SimpleLayoutOptions = {},
 ): NodeCartesian[] {
-  const {
-    baseRadius = 40,
-    ringSpacing = 65,
-    maxDepth = 3,
-    testOffset = 28
-  } = options;
+  const { baseRadius = 40, ringSpacing = 65, maxDepth = 3, testOffset = 28 } = options;
 
   if (nodes.length === 0) return [];
 
   const adj = buildAdjacency(
-    nodes.map(n => n.id),
-    edges
+    nodes.map((n) => n.id),
+    edges,
   );
 
   // Separate tests from main nodes
-  const mainNodes = nodes.filter(n => !n.type.startsWith('test'));
-  const testNodes = nodes.filter(n => n.type.startsWith('test'));
+  const mainNodes = nodes.filter((n) => !n.type.startsWith('test'));
+  const testNodes = nodes.filter((n) => n.type.startsWith('test'));
 
   // Find anchors and compute ring depths for main nodes
   const anchors = selectAnchors(mainNodes, edges);
   const ringDepth = computeRingDepth(
-    mainNodes.map(n => n.id),
+    mainNodes.map((n) => n.id),
     anchors,
     adj,
-    maxDepth
+    maxDepth,
   );
 
   // Group main nodes by ring
@@ -283,14 +278,14 @@ export function simpleClusterLayout(
           x: centerX + radius * Math.cos(angle),
           y: centerY + radius * Math.sin(angle),
           angle,
-          ring
+          ring,
         });
       });
     } else {
       // Outer rings: Position based on connections to inner rings
-      const scored = ringNodes.map(node => ({
+      const scored = ringNodes.map((node) => ({
         node,
-        idealAngle: computeIdealAngle(node.id, ring, adj, positionMap)
+        idealAngle: computeIdealAngle(node.id, ring, adj, positionMap),
       }));
 
       // Sort by ideal angle
@@ -304,7 +299,7 @@ export function simpleClusterLayout(
           x: centerX + radius * Math.cos(angle),
           y: centerY + radius * Math.sin(angle),
           angle,
-          ring
+          ring,
         });
       });
     }
@@ -324,7 +319,7 @@ export function simpleClusterLayout(
         x: centerX + testRadius * Math.cos(angle),
         y: centerY + testRadius * Math.sin(angle),
         angle,
-        ring: -1 // Special: test node
+        ring: -1, // Special: test node
       });
     } else {
       // No target found - place in outer ring
@@ -335,7 +330,7 @@ export function simpleClusterLayout(
         x: centerX + outerRadius * Math.cos(angle),
         y: centerY + outerRadius * Math.sin(angle),
         angle,
-        ring: -1
+        ring: -1,
       });
     }
   }
@@ -346,7 +341,7 @@ export function simpleClusterLayout(
     x: pos.x,
     y: pos.y,
     ring: pos.ring,
-    isTest: testNodes.some(t => t.id === id)
+    isTest: testNodes.some((t) => t.id === id),
   }));
 }
 
@@ -360,18 +355,18 @@ export function computeMEC(
   positions: NodeCartesian[],
   centerX: number,
   centerY: number,
-  masses?: Map<string, import('./massCalculation').NodeMass>
+  masses?: Map<string, import('./massCalculation').NodeMass>,
 ): number {
   if (positions.length === 0) return 100;
 
   // If masses provided, use elastic shell computation
   if (masses && masses.size > 0) {
     // Convert positions to relative coordinates
-    const nodesWithPos = positions.map(p => ({
+    const nodesWithPos = positions.map((p) => ({
       id: p.id,
       x: p.x - centerX,
       y: p.y - centerY,
-      ring: p.ring
+      ring: p.ring,
     }));
 
     return computeElasticShellRadius(nodesWithPos, masses);

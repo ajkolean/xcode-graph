@@ -4,15 +4,15 @@
  * All styling uses design system CSS variables
  */
 
-import { GraphNode, GraphEdge } from '../data/mockGraphData';
-import { Cluster } from '../types/cluster';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import { useClusterStats } from '../hooks/useClusterStats';
+import type { Cluster } from '../types/cluster';
 import { generateColor } from '../utils/colorGenerator';
 import { adjustColorForZoom } from '../utils/zoomColorUtils';
-import { useClusterStats } from '../hooks/useClusterStats';
 import { ClusterHeader } from './clusterDetails/ClusterHeader';
-import { ClusterTypeBadge } from './clusterDetails/ClusterTypeBadge';
 import { ClusterStats } from './clusterDetails/ClusterStats';
 import { ClusterTargetsList } from './clusterDetails/ClusterTargetsList';
+import { ClusterTypeBadge } from './clusterDetails/ClusterTypeBadge';
 
 interface ClusterDetailsPanelProps {
   cluster: Cluster;
@@ -29,13 +29,13 @@ interface ClusterDetailsPanelProps {
 export function ClusterDetailsPanel({
   cluster,
   clusterNodes,
-  allNodes,
+  allNodes: _allNodes,
   edges,
   filteredEdges,
   onClose,
   onNodeSelect,
   onNodeHover,
-  zoom
+  zoom,
 }: ClusterDetailsPanelProps) {
   const baseClusterColor = generateColor(cluster.name, cluster.type);
   const clusterColor = adjustColorForZoom(baseClusterColor, zoom);
@@ -48,18 +48,21 @@ export function ClusterDetailsPanel({
     filteredDependents,
     totalDependents,
     filteredTargetsCount,
-    platforms
+    platforms,
   } = useClusterStats(clusterNodes, edges, filteredEdges);
 
   // Group nodes by type
-  const nodesByType = clusterNodes.reduce((acc, node) => {
-    const type = node.type;
-    if (!acc[type]) {
-      acc[type] = [];
-    }
-    acc[type].push(node);
-    return acc;
-  }, {} as Record<string, GraphNode[]>);
+  const nodesByType = clusterNodes.reduce(
+    (acc, node) => {
+      const type = node.type;
+      if (!acc[type]) {
+        acc[type] = [];
+      }
+      acc[type].push(node);
+      return acc;
+    },
+    {} as Record<string, GraphNode[]>,
+  );
 
   return (
     <div className="h-full flex flex-col">
@@ -73,10 +76,7 @@ export function ClusterDetailsPanel({
       />
 
       {/* Cluster Type Badge */}
-      <ClusterTypeBadge
-        clusterType={cluster.type}
-        clusterColor={clusterColor}
-      />
+      <ClusterTypeBadge clusterType={cluster.type} clusterColor={clusterColor} />
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">

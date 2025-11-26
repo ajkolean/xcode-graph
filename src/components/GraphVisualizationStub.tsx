@@ -17,19 +17,17 @@ interface GraphVisualizationStubProps {
   transitiveDependents: any;
 }
 
-export function GraphVisualizationStub(props: GraphVisualizationStubProps) {
+export function GraphVisualizationStub(_props: GraphVisualizationStubProps) {
   return (
-    <div 
+    <div
       className="w-full h-full flex items-center justify-center"
       style={{
         backgroundColor: 'var(--color-background)',
         color: 'var(--color-foreground)',
-        fontFamily: 'Inter, sans-serif'
+        fontFamily: 'Inter, sans-serif',
       }}
     >
-      <div style={{ fontSize: 'var(--text-lg)' }}>
-        Graph Visualization Loading...
-      </div>
+      <div style={{ fontSize: 'var(--text-lg)' }}>Graph Visualization Loading...</div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface GraphClusterProps {
   clusterId: string;
@@ -27,11 +27,11 @@ export function GraphCluster({
   isHovered,
   onMouseEnter,
   onMouseLeave,
-  children
+  children,
 }: GraphClusterProps) {
   return (
-    <g 
-      onMouseEnter={onMouseEnter} 
+    <g
+      onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       style={{ transition: 'all 0.3s ease' }}
     >
@@ -51,7 +51,7 @@ export function GraphCluster({
           style={{ transition: 'opacity 0.3s ease, stroke-width 0.3s ease' }}
         />
       )}
-      
+
       {/* Cluster background with subtle gradient */}
       <defs>
         <radialGradient id={`cluster-bg-${clusterId}`} cx="50%" cy="50%" r="70%">
@@ -64,7 +64,7 @@ export function GraphCluster({
           <stop offset="100%" stopColor="rgba(0, 0, 0, 0.1)" />
         </linearGradient>
       </defs>
-      
+
       {/* Background with gradient */}
       <rect
         x={x - width / 2}
@@ -77,7 +77,7 @@ export function GraphCluster({
         opacity={isHovered ? 0.9 : 0.7}
         style={{ transition: 'opacity 0.3s ease' }}
       />
-      
+
       {/* Inner shadow for depth */}
       <rect
         x={x - width / 2}
@@ -90,7 +90,7 @@ export function GraphCluster({
         opacity={0.3}
         pointerEvents="none"
       />
-      
+
       {/* Cluster border - softer and more subtle */}
       <rect
         x={x - width / 2}
@@ -117,7 +117,7 @@ export function GraphCluster({
           fontSize: '14px',
           fontWeight: 'var(--font-weight-medium)',
           filter: isHovered ? 'url(#glow)' : 'none',
-          transition: 'filter 0.3s ease'
+          transition: 'filter 0.3s ease',
         }}
       >
         {clusterId}
@@ -131,7 +131,7 @@ export function GraphCluster({
         style={{
           fontFamily: 'Inter, sans-serif',
           fontSize: '10px',
-          transition: 'opacity 0.3s ease'
+          transition: 'opacity 0.3s ease',
         }}
       >
         {origin === 'external' ? 'EXTERNAL' : 'LOCAL'} · {nodeCount} targets

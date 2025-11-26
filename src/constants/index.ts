@@ -3,7 +3,7 @@
  * Single import point for all application constants
  */
 
-export * from './tabs';
 export * from './nodeTypes';
 export * from './platforms';
+export * from './tabs';
 export * from './viewModes';

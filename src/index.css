@@ -2,8 +2,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 /*! tailwindcss v4.1.3 | MIT License | https://tailwindcss.com */
 @layer properties {
-  @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
-    *, :before, :after, ::backdrop {
+  @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or
+    ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
+    *,
+    :before,
+    :after,
+    ::backdrop {
       --tw-translate-x: 0;
       --tw-translate-y: 0;
       --tw-translate-z: 0;
@@ -47,19 +51,24 @@
 }
 
 @layer theme {
-  :root, :host {
-    --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  :root,
+  :host {
+    --font-sans:
+      ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji";
+    --font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+      monospace;
     --color-white: #fff;
-    --spacing: .25rem;
+    --spacing: 0.25rem;
     --text-base: 1rem;
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
-    --ease-out: cubic-bezier(0, 0, .2, 1);
-    --ease-in-out: cubic-bezier(.4, 0, .2, 1);
-    --default-transition-duration: .15s;
-    --default-transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --default-transition-duration: 0.15s;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
     --default-font-feature-settings: var(--font-sans--font-feature-settings);
     --default-font-variation-settings: var(--font-sans--font-variation-settings);
@@ -81,7 +90,10 @@
 }
 
 @layer base {
-  *, :after, :before, ::backdrop {
+  *,
+  :after,
+  :before,
+  ::backdrop {
     box-sizing: border-box;
     border: 0 solid;
     margin: 0;
@@ -95,11 +107,21 @@
     padding: 0;
   }
 
-  html, :host {
+  html,
+  :host {
     -webkit-text-size-adjust: 100%;
     tab-size: 4;
     line-height: 1.5;
-    font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-family: var(
+      --default-font-family,
+      ui-sans-serif,
+      system-ui,
+      sans-serif,
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol",
+      "Noto Color Emoji"
+    );
     font-feature-settings: var(--default-font-feature-settings, normal);
     font-variation-settings: var(--default-font-variation-settings, normal);
     -webkit-tap-highlight-color: transparent;
@@ -120,7 +142,12 @@
     text-decoration: underline dotted;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-size: inherit;
     font-weight: inherit;
   }
@@ -132,12 +159,26 @@
     text-decoration: inherit;
   }
 
-  b, strong {
+  b,
+  strong {
     font-weight: bolder;
   }
 
-  code, kbd, samp, pre {
-    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(
+      --default-mono-font-family,
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace
+    );
     font-feature-settings: var(--default-mono-font-feature-settings, normal);
     font-variation-settings: var(--default-mono-font-variation-settings, normal);
     font-size: 1em;
@@ -147,7 +188,8 @@
     font-size: 80%;
   }
 
-  sub, sup {
+  sub,
+  sup {
     vertical-align: baseline;
     font-size: 75%;
     line-height: 0;
@@ -155,11 +197,11 @@
   }
 
   sub {
-    bottom: -.25em;
+    bottom: -0.25em;
   }
 
   sup {
-    top: -.5em;
+    top: -0.5em;
   }
 
   table {
@@ -180,21 +222,35 @@
     display: list-item;
   }
 
-  ol, ul, menu {
+  ol,
+  ul,
+  menu {
     list-style: none;
   }
 
-  img, svg, video, canvas, audio, iframe, embed, object {
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
     vertical-align: middle;
     display: block;
   }
 
-  img, video {
+  img,
+  video {
     max-width: 100%;
     height: auto;
   }
 
-  button, input, select, optgroup, textarea {
+  button,
+  input,
+  select,
+  optgroup,
+  textarea {
     font: inherit;
     font-feature-settings: inherit;
     font-variation-settings: inherit;
@@ -300,7 +356,8 @@
     box-shadow: none;
   }
 
-  button, input:where([type="button"], [type="reset"], [type="submit"]) {
+  button,
+  input:where([type="button"], [type="reset"], [type="submit"]) {
     appearance: button;
   }
 
@@ -317,7 +374,7 @@
   }
 
   [hidden]:where(:not([hidden="until-found"])) {
-    display: none !important;
+    display: none;
   }
 
   * {
@@ -348,56 +405,78 @@
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) h1 {
-    font-family: DM Sans, sans-serif;
+    font-family:
+      DM Sans,
+      sans-serif;
     font-size: var(--text-h1);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) h2 {
-    font-family: DM Sans, sans-serif;
+    font-family:
+      DM Sans,
+      sans-serif;
     font-size: var(--text-h2);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) h3 {
-    font-family: Inter Variable, Inter, sans-serif;
+    font-family:
+      Inter Variable,
+      Inter,
+      sans-serif;
     font-size: var(--text-h3);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) h4 {
-    font-family: Inter Variable, Inter, sans-serif;
+    font-family:
+      Inter Variable,
+      Inter,
+      sans-serif;
     font-size: var(--text-h4);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) p {
-    font-family: Inter Variable, Inter, sans-serif;
+    font-family:
+      Inter Variable,
+      Inter,
+      sans-serif;
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) label {
-    font-family: Inter Variable, Inter, sans-serif;
+    font-family:
+      Inter Variable,
+      Inter,
+      sans-serif;
     font-size: var(--text-label);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) button {
-    font-family: Inter Variable, Inter, sans-serif;
+    font-family:
+      Inter Variable,
+      Inter,
+      sans-serif;
     font-size: var(--text-h4);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) input {
-    font-family: Inter Variable, Inter, sans-serif;
+    font-family:
+      Inter Variable,
+      Inter,
+      sans-serif;
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
@@ -602,7 +681,7 @@
   }
 
   .w-0\.5 {
-    width: calc(var(--spacing) * .5);
+    width: calc(var(--spacing) * 0.5);
   }
 
   .w-3 {
@@ -655,7 +734,8 @@
   }
 
   .transform {
-    transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);
+    transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x)
+      var(--tw-skew-y);
   }
 
   .cursor-default {
@@ -720,8 +800,8 @@
 
   :where(.space-y-0\.5 > :not(:last-child)) {
     --tw-space-y-reverse: 0;
-    margin-block-start: calc(calc(var(--spacing) * .5) * var(--tw-space-y-reverse));
-    margin-block-end: calc(calc(var(--spacing) * .5) * calc(1 - var(--tw-space-y-reverse)));
+    margin-block-start: calc(calc(var(--spacing) * 0.5) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 0.5) * calc(1 - var(--tw-space-y-reverse)));
   }
 
   :where(.space-y-1 > :not(:last-child)) {
@@ -757,7 +837,7 @@
   }
 
   .rounded {
-    border-radius: .25rem;
+    border-radius: 0.25rem;
   }
 
   .rounded-full {
@@ -773,7 +853,7 @@
   }
 
   .rounded-xl {
-    border-radius: calc(var(--radius-card)  + 4px);
+    border-radius: calc(var(--radius-card) + 4px);
   }
 
   .border {
@@ -827,7 +907,7 @@
   }
 
   .py-0\.5 {
-    padding-block: calc(var(--spacing) * .5);
+    padding-block: calc(var(--spacing) * 0.5);
   }
 
   .py-1 {
@@ -899,20 +979,22 @@
   }
 
   .opacity-40 {
-    opacity: .4;
+    opacity: 0.4;
   }
 
   .opacity-50 {
-    opacity: .5;
+    opacity: 0.5;
   }
 
   .opacity-60 {
-    opacity: .6;
+    opacity: 0.6;
   }
 
   .ring {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    box-shadow:
+      var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+      var(--tw-ring-shadow), var(--tw-shadow);
   }
 
   .blur {
@@ -921,7 +1003,8 @@
   }
 
   .drop-shadow {
-    --tw-drop-shadow-size: drop-shadow(0 1px 2px var(--tw-drop-shadow-color, #0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color, #0000000f));
+    --tw-drop-shadow-size: drop-shadow(0 1px 2px var(--tw-drop-shadow-color, #0000001a))
+      drop-shadow(0 1px 1px var(--tw-drop-shadow-color, #0000000f));
     --tw-drop-shadow: drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);
     filter: var(--tw-blur, ) var(--tw-brightness, ) var(--tw-contrast, ) var(--tw-grayscale, ) var(--tw-hue-rotate, ) var(--tw-invert, ) var(--tw-saturate, ) var(--tw-sepia, ) var(--tw-drop-shadow, );
   }
@@ -931,7 +1014,8 @@
   }
 
   .transition {
-    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter;
+    transition-property:
+      color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
@@ -943,7 +1027,9 @@
   }
 
   .transition-colors {
-    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-property:
+      color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
+      --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
@@ -976,7 +1062,7 @@
 
   @media (hover: hover) {
     .group-hover\:opacity-80:is(:where(.group):hover *) {
-      opacity: .8;
+      opacity: 0.8;
     }
   }
 
@@ -988,7 +1074,7 @@
 
   @media (hover: hover) {
     .group-hover\/item\:opacity-90:is(:where(.group\/item):hover *) {
-      opacity: .9;
+      opacity: 0.9;
     }
   }
 
@@ -1024,18 +1110,16 @@
 
   @media (hover: hover) {
     .hover\:opacity-80:hover {
-      opacity: .8;
+      opacity: 0.8;
     }
   }
 
   @media (hover: hover) {
     .hover\:opacity-90:hover {
-      opacity: .9;
+      opacity: 0.9;
     }
   }
 }
-
-
 
 :root {
   --font-size: 16px;
@@ -1097,7 +1181,7 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   --stars-count: 200;
-  --stars-opacity: .4;
+  --stars-opacity: 0.4;
   --stars-color: #e8eaed;
   --stars-glow-color: #6f2cff;
 }
@@ -1117,12 +1201,13 @@ html {
 }
 
 @keyframes clusterPulse {
-  0%, 100% {
-    opacity: .6;
+  0%,
+  100% {
+    opacity: 0.6;
   }
 
   50% {
-    opacity: .8;
+    opacity: 0.8;
   }
 }
 
@@ -1137,11 +1222,17 @@ html {
 }
 
 .panel-shadow {
-  box-shadow: 0 4px 6px -1px #0000004d, 0 2px 4px -2px #0003, 0 0 0 1px #ffffff0f;
+  box-shadow:
+    0 4px 6px -1px #0000004d,
+    0 2px 4px -2px #0003,
+    0 0 0 1px #ffffff0f;
 }
 
 .panel-shadow-lg {
-  box-shadow: 0 10px 15px -3px #0006, 0 4px 6px -4px #0000004d, 0 0 0 1px #ffffff14;
+  box-shadow:
+    0 10px 15px -3px #0006,
+    0 4px 6px -4px #0000004d,
+    0 0 0 1px #ffffff14;
 }
 
 .glassmorphism {
@@ -1152,15 +1243,15 @@ html {
 }
 
 .transition-smooth {
-  transition: all .3s cubic-bezier(.4, 0, .2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .transition-smooth-fast {
-  transition: all .2s cubic-bezier(.4, 0, .2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .transition-smooth-slow {
-  transition: all .5s cubic-bezier(.4, 0, .2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .interactive-scale:hover {
@@ -1168,16 +1259,17 @@ html {
 }
 
 .interactive-scale:active {
-  transform: scale(.98);
+  transform: scale(0.98);
 }
 
 @keyframes skeleton-pulse {
-  0%, 100% {
-    opacity: .3;
+  0%,
+  100% {
+    opacity: 0.3;
   }
 
   50% {
-    opacity: .6;
+    opacity: 0.6;
   }
 }
 
@@ -1281,7 +1373,7 @@ html {
 
 @property --tw-shadow-color {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-shadow-alpha {
@@ -1298,7 +1390,7 @@ html {
 
 @property --tw-inset-shadow-color {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-inset-shadow-alpha {
@@ -1309,7 +1401,7 @@ html {
 
 @property --tw-ring-color {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-ring-shadow {
@@ -1320,7 +1412,7 @@ html {
 
 @property --tw-inset-ring-color {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-inset-ring-shadow {
@@ -1331,7 +1423,7 @@ html {
 
 @property --tw-ring-inset {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-ring-offset-width {
@@ -1354,57 +1446,57 @@ html {
 
 @property --tw-blur {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-brightness {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-contrast {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-grayscale {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-hue-rotate {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-invert {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-opacity {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-saturate {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-sepia {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-drop-shadow {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-drop-shadow-color {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-drop-shadow-alpha {
@@ -1415,10 +1507,10 @@ html {
 
 @property --tw-drop-shadow-size {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }
 
 @property --tw-ease {
   syntax: "*";
-  inherits: false
+  inherits: false;
 }

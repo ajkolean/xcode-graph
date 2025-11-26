@@ -8,13 +8,13 @@ import { generateColor } from '../colorGenerator';
  * Color mapping for different node types
  */
 const NODE_TYPE_COLORS: Record<string, string> = {
-  'app': '#6F2CFF',
-  'framework': '#0280B9',
-  'library': '#28A745',
+  app: '#6F2CFF',
+  framework: '#0280B9',
+  library: '#28A745',
   'test-unit': '#9C27B0',
   'test-ui': '#E91E63',
-  'cli': '#FD791C',
-  'package': '#FF9800'
+  cli: '#FD791C',
+  package: '#FF9800',
 };
 
 const DEFAULT_NODE_COLOR = '#6F2CFF';

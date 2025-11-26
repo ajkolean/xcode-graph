@@ -3,7 +3,7 @@
  * All styling uses design system CSS variables
  */
 
-import { GraphNode, GraphEdge } from '../../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
 import { getNodeTypeLabel } from '../../utils/nodeIcons';
 import { ListItemRow } from '../shared/ListItemRow';
 
@@ -24,12 +24,12 @@ export function ClusterTargetsList({
   edges,
   onNodeSelect,
   onNodeHover,
-  zoom
+  zoom,
 }: ClusterTargetsListProps) {
   // Helper function to calculate dependencies and dependents for a node
   const getNodeStats = (nodeId: string) => {
-    const dependencies = edges.filter(e => e.target === nodeId).length;
-    const dependents = edges.filter(e => e.source === nodeId).length;
+    const dependencies = edges.filter((e) => e.target === nodeId).length;
+    const dependents = edges.filter((e) => e.source === nodeId).length;
     return { dependencies, dependents };
   };
 
@@ -41,7 +41,7 @@ export function ClusterTargetsList({
           fontSize: 'var(--text-base)',
           fontWeight: 'var(--font-weight-semibold)',
           color: 'var(--color-foreground)',
-          marginBottom: 'var(--spacing-md)'
+          marginBottom: 'var(--spacing-md)',
         }}
       >
         Targets ({filteredTargetsCount}/{totalTargetsCount})
@@ -58,24 +58,24 @@ export function ClusterTargetsList({
                 color: 'var(--color-muted-foreground)',
                 marginBottom: 'var(--spacing-sm)',
                 textTransform: 'uppercase',
-                letterSpacing: '0.05em'
+                letterSpacing: '0.05em',
               }}
             >
               {getNodeTypeLabel(type)} ({nodes.length})
             </div>
 
             <div className="space-y-1">
-              {nodes.map(node => {
+              {nodes.map((node) => {
                 const stats = getNodeStats(node.id);
                 const parts = [];
-                
+
                 if (stats.dependencies > 0) {
                   parts.push(`${stats.dependencies} dep${stats.dependencies !== 1 ? 's' : ''}`);
                 }
                 if (stats.dependents > 0) {
                   parts.push(`${stats.dependents} dependent${stats.dependents !== 1 ? 's' : ''}`);
                 }
-                
+
                 const subtitle = parts.length > 0 ? parts.join(' · ') : undefined;
 
                 return (

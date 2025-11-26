@@ -13,13 +13,10 @@ export function ClusterTypeBadge({ clusterType, clusterColor }: ClusterTypeBadge
   const isPackage = clusterType === 'package';
 
   return (
-    <div 
-      className="px-4 pt-4 pb-3 border-b"
-      style={{ borderColor: 'var(--color-border)' }}
-    >
+    <div className="px-4 pt-4 pb-3 border-b" style={{ borderColor: 'var(--color-border)' }}>
       <div className="flex items-center gap-2 flex-wrap">
         {/* Cluster type pill */}
-        <div 
+        <div
           className="inline-flex items-center px-2.5 py-1 rounded-full cursor-default transition-all"
           style={{
             backgroundColor: `${clusterColor}20`,
@@ -30,7 +27,7 @@ export function ClusterTypeBadge({ clusterType, clusterColor }: ClusterTypeBadge
             fontWeight: 'var(--font-weight-medium)',
             color: clusterColor,
             textTransform: 'uppercase',
-            letterSpacing: '0.02em'
+            letterSpacing: '0.02em',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = `${clusterColor}30`;

@@ -9,7 +9,7 @@ export function SearchBar({ searchQuery, onSearchChange }: SearchBarProps) {
   return (
     <div className="px-4 pb-3">
       <div className="relative group">
-        <Search 
+        <Search
           className="absolute left-3 top-1/2 -translate-y-1/2 size-4 transition-colors"
           style={{ color: 'var(--color-muted-foreground)' }}
         />
@@ -25,7 +25,7 @@ export function SearchBar({ searchQuery, onSearchChange }: SearchBarProps) {
             color: 'var(--color-foreground)',
             fontFamily: 'Inter, sans-serif',
             fontSize: 'var(--text-label)',
-            borderRadius: 'var(--radius)'
+            borderRadius: 'var(--radius)',
           }}
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
@@ -34,7 +34,7 @@ export function SearchBar({ searchQuery, onSearchChange }: SearchBarProps) {
             }
           }}
         />
-        
+
         {/* Clear button OR Keyboard hint - same position */}
         <div className="absolute right-3 top-1/2 -translate-y-1/2">
           {searchQuery ? (
@@ -43,13 +43,13 @@ export function SearchBar({ searchQuery, onSearchChange }: SearchBarProps) {
               className="p-1 rounded transition-smooth-fast hover:bg-[rgba(255,255,255,0.1)]"
               title="Clear search"
               style={{
-                color: 'var(--color-muted-foreground)'
+                color: 'var(--color-muted-foreground)',
               }}
             >
               <X className="size-3" />
             </button>
           ) : (
-            <div 
+            <div
               className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none px-1.5 py-0.5 rounded transition-opacity"
               style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.06)',
@@ -57,7 +57,7 @@ export function SearchBar({ searchQuery, onSearchChange }: SearchBarProps) {
                 fontFamily: 'var(--font-family-mono)',
                 fontSize: '10px',
                 color: 'var(--color-foreground)',
-                opacity: 0.3
+                opacity: 0.3,
               }}
             >
               ⌘F

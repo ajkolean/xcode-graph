@@ -1,12 +1,12 @@
 /**
  * Mass-based anchor selection for cluster layout
- * 
+ *
  * Computes "gravitational mass" for each target based on:
  * - Fan-in: How many targets depend on this module (incoming edges)
  * - Fan-out: How many dependencies it has (outgoing edges)
  * - Depth: Position in dependency hierarchy
  * - Centrality: How central it is to the cluster's structure
- * 
+ *
  * The target with greatest mass becomes the "sun" of the solar system.
  */
 
@@ -29,7 +29,7 @@ interface AdjacencyList {
  */
 function buildAdjacency(
   nodeIds: string[],
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): AdjacencyList {
   const forward = new Map<string, string[]>();
   const reverse = new Map<string, string[]>();
@@ -54,10 +54,7 @@ function buildAdjacency(
 /**
  * Compute depth of each node from roots (nodes with no dependencies)
  */
-function computeDepthFromRoots(
-  nodeIds: string[],
-  adj: AdjacencyList
-): Map<string, number> {
+function computeDepthFromRoots(nodeIds: string[], adj: AdjacencyList): Map<string, number> {
   const depth = new Map<string, number>();
   const queue: string[] = [];
 
@@ -99,12 +96,9 @@ function computeDepthFromRoots(
  * Compute betweenness centrality (simplified approximation)
  * Measures how often a node appears on shortest paths between other nodes
  */
-function computeCentrality(
-  nodeIds: string[],
-  adj: AdjacencyList
-): Map<string, number> {
+function computeCentrality(nodeIds: string[], adj: AdjacencyList): Map<string, number> {
   const centrality = new Map<string, number>();
-  
+
   // Initialize
   for (const id of nodeIds) {
     centrality.set(id, 0);
@@ -115,7 +109,7 @@ function computeCentrality(
     const distance = new Map<string, number>();
     const pathCount = new Map<string, number>();
     const queue: string[] = [source];
-    
+
     distance.set(source, 0);
     pathCount.set(source, 1);
 
@@ -152,10 +146,10 @@ function computeCentrality(
 
 /**
  * Calculate mass for all nodes in a cluster
- * 
+ *
  * Mass formula:
  * mass = (fanIn * 3) + (fanOut * 1) + (maxDepth - depth) * 2 + (centrality * 0.5)
- * 
+ *
  * Rationale:
  * - Fan-in weighted heavily (3x): Being depended upon = architectural importance
  * - Fan-out weighted lightly (1x): Dependencies contribute to mass but less
@@ -164,17 +158,15 @@ function computeCentrality(
  */
 export function computeNodeMasses(
   nodes: Array<{ id: string; type: string }>,
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): Map<string, NodeMass> {
   // Filter out test nodes - they don't participate in mass calculation
-  const mainNodes = nodes.filter(n => !n.type.startsWith('test'));
-  const mainNodeIds = mainNodes.map(n => n.id);
+  const mainNodes = nodes.filter((n) => !n.type.startsWith('test'));
+  const mainNodeIds = mainNodes.map((n) => n.id);
   const mainNodeSet = new Set(mainNodeIds);
 
   // Filter edges to only include main nodes
-  const mainEdges = edges.filter(e => 
-    mainNodeSet.has(e.from) && mainNodeSet.has(e.to)
-  );
+  const mainEdges = edges.filter((e) => mainNodeSet.has(e.from) && mainNodeSet.has(e.to));
 
   const adj = buildAdjacency(mainNodeIds, mainEdges);
   const depths = computeDepthFromRoots(mainNodeIds, adj);
@@ -190,16 +182,16 @@ export function computeNodeMasses(
     const fanOut = (adj.forward.get(node.id) || []).length;
     const depth = depths.get(node.id) || 0;
     const centrality = centralities.get(node.id) || 0;
-    
+
     // Normalize centrality to 0-1 range
     const normalizedCentrality = maxCentrality > 0 ? centrality / maxCentrality : 0;
 
     // Calculate mass
-    const mass = 
-      (fanIn * 3) +           // Fan-in: heavily weighted
-      (fanOut * 1) +          // Fan-out: lightly weighted
-      ((maxDepth - depth) * 2) + // Inverse depth: foundational nodes are heavier
-      (normalizedCentrality * 0.5); // Centrality: structural importance
+    const mass =
+      fanIn * 3 + // Fan-in: heavily weighted
+      fanOut * 1 + // Fan-out: lightly weighted
+      (maxDepth - depth) * 2 + // Inverse depth: foundational nodes are heavier
+      normalizedCentrality * 0.5; // Centrality: structural importance
 
     masses.set(node.id, {
       nodeId: node.id,
@@ -207,7 +199,7 @@ export function computeNodeMasses(
       fanIn,
       fanOut,
       depth,
-      centrality: normalizedCentrality
+      centrality: normalizedCentrality,
     });
   }
 
@@ -220,10 +212,10 @@ export function computeNodeMasses(
  */
 export function selectMassBasedAnchor(
   nodes: Array<{ id: string; type: string }>,
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): string | null {
   const masses = computeNodeMasses(nodes, edges);
-  
+
   if (masses.size === 0) return null;
 
   let maxMass = -Infinity;
@@ -246,15 +238,15 @@ export function selectMassBasedAnchor(
 export function selectMultipleMassBasedAnchors(
   nodes: Array<{ id: string; type: string }>,
   edges: Array<{ from: string; to: string }>,
-  maxAnchors: number = 3
+  maxAnchors: number = 3,
 ): string[] {
   const masses = computeNodeMasses(nodes, edges);
-  
+
   if (masses.size === 0) return [];
 
   // Sort by mass descending
   const sorted = Array.from(masses.values()).sort((a, b) => b.mass - a.mass);
 
   // Take top N
-  return sorted.slice(0, maxAnchors).map(m => m.nodeId);
+  return sorted.slice(0, maxAnchors).map((m) => m.nodeId);
 }

@@ -20,21 +20,19 @@ interface RightSidebarStubProps {
   zoom: number;
 }
 
-export function RightSidebarStub(props: RightSidebarStubProps) {
+export function RightSidebarStub(_props: RightSidebarStubProps) {
   return (
-    <div 
+    <div
       className="w-80 h-full shrink-0"
       style={{
         backgroundColor: 'var(--color-sidebar)',
         borderLeft: '1px solid var(--color-border)',
         color: 'var(--color-foreground)',
         fontFamily: 'Inter, sans-serif',
-        padding: 'var(--space-4, 16px)'
+        padding: 'var(--space-4, 16px)',
       }}
     >
-      <div style={{ fontSize: 'var(--text-base)' }}>
-        Right Sidebar
-      </div>
+      <div style={{ fontSize: 'var(--text-base)' }}>Right Sidebar</div>
     </div>
   );
 }

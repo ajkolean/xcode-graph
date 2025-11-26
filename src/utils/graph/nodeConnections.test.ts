@@ -1,11 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import type { GraphEdge } from '../../data/mockGraphData';
 import {
   getConnectedNodes,
   getConnectionCount,
   getDependencyCount,
   getDependentCount,
 } from './nodeConnections';
-import type { GraphEdge } from '../../data/mockGraphData';
 
 // Test fixtures
 const createTestEdges = (): GraphEdge[] => [

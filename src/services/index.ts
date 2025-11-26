@@ -3,5 +3,5 @@
  * Provides centralized access to all service layer functionality
  */
 
-export { GraphDataService } from './graphDataService';
 export { ColorService, colorService } from './colorService';
+export { GraphDataService } from './graphDataService';

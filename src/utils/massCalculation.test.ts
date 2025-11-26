@@ -1,9 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   computeNodeMasses,
   selectMassBasedAnchor,
   selectMultipleMassBasedAnchors,
-  type NodeMass,
 } from './massCalculation';
 
 // Test fixtures
@@ -97,9 +96,7 @@ describe('massCalculation', () => {
     });
 
     it('should handle nodes with no edges', () => {
-      const nodes = [
-        { id: 'isolated', type: 'framework' },
-      ];
+      const nodes = [{ id: 'isolated', type: 'framework' }];
 
       const masses = computeNodeMasses(nodes, []);
 

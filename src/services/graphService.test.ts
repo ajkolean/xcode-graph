@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import {
-  getConnectedNodes,
+  findCircularDependencies,
   findDependencyChain,
   findDependentsChain,
-  hasPath,
-  findCircularDependencies,
+  getConnectedNodes,
   getGraphStats,
+  hasPath,
 } from './graphService';
-import type { GraphNode, GraphEdge } from '../data/mockGraphData';
 
 // Test fixtures
 const createTestNodes = (): GraphNode[] => [
@@ -227,9 +227,7 @@ describe('graphService', () => {
         { id: 'B', name: 'B', type: 'framework', platform: 'iOS', origin: 'local' },
         { id: 'C', name: 'C', type: 'framework', platform: 'iOS', origin: 'local' },
       ];
-      const edges: GraphEdge[] = [
-        { source: 'A', target: 'B' },
-      ];
+      const edges: GraphEdge[] = [{ source: 'A', target: 'B' }];
 
       const stats = getGraphStats(nodes, edges);
 
@@ -252,9 +250,7 @@ describe('graphService', () => {
         { id: 'A', name: 'A', type: 'framework', platform: 'iOS', origin: 'local' },
         { id: 'B', name: 'B', type: 'framework', platform: 'iOS', origin: 'local' },
       ];
-      const edges: GraphEdge[] = [
-        { source: 'A', target: 'B' },
-      ];
+      const edges: GraphEdge[] = [{ source: 'A', target: 'B' }];
 
       const stats = getGraphStats(nodes, edges);
 

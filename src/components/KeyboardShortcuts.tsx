@@ -1,5 +1,5 @@
+import { Keyboard, X } from 'lucide-react';
 import { useState } from 'react';
-import { X, Keyboard } from 'lucide-react';
 
 export function KeyboardShortcuts() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +24,7 @@ export function KeyboardShortcuts() {
           backgroundColor: 'var(--color-card)',
           border: '1px solid var(--color-border)',
           color: 'var(--color-muted-foreground)',
-          borderRadius: 'var(--radius)'
+          borderRadius: 'var(--radius)',
         }}
         title="Keyboard shortcuts"
       >
@@ -34,25 +34,22 @@ export function KeyboardShortcuts() {
   }
 
   return (
-    <div 
+    <div
       className="fixed bottom-4 right-4 glassmorphism panel-shadow-lg z-20 w-80 transition-smooth"
       style={{ borderRadius: 'var(--radius-card)' }}
     >
-      <div 
+      <div
         className="p-4 flex items-center justify-between"
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         <div className="flex items-center gap-2">
-          <Keyboard 
-            className="size-4" 
-            style={{ color: 'var(--color-muted-foreground)' }} 
-          />
-          <h3 
+          <Keyboard className="size-4" style={{ color: 'var(--color-muted-foreground)' }} />
+          <h3
             style={{
               fontFamily: 'Inter, sans-serif',
               fontSize: 'var(--text-base)',
               fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--color-foreground)'
+              color: 'var(--color-foreground)',
             }}
           >
             Keyboard Shortcuts
@@ -63,13 +60,13 @@ export function KeyboardShortcuts() {
           className="p-1 rounded transition-smooth-fast hover:bg-[var(--color-muted)]"
           style={{
             color: 'var(--color-muted-foreground)',
-            borderRadius: 'var(--radius)'
+            borderRadius: 'var(--radius)',
           }}
         >
           <X className="size-4" />
         </button>
       </div>
-      
+
       <div className="p-3 max-h-96 overflow-y-auto">
         <div className="space-y-2">
           {shortcuts.map((shortcut, idx) => (
@@ -78,11 +75,11 @@ export function KeyboardShortcuts() {
               className="flex items-center justify-between py-2 px-2 rounded transition-smooth-fast hover:bg-[var(--color-muted)]"
               style={{ borderRadius: 'var(--radius)' }}
             >
-              <span 
+              <span
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-label)',
-                  color: 'var(--color-muted-foreground)'
+                  color: 'var(--color-muted-foreground)',
                 }}
               >
                 {shortcut.description}
@@ -98,7 +95,7 @@ export function KeyboardShortcuts() {
                       fontFamily: 'var(--font-family-mono)',
                       fontSize: '11px',
                       color: 'var(--color-foreground)',
-                      borderRadius: 'var(--radius)'
+                      borderRadius: 'var(--radius)',
                     }}
                   >
                     {key}

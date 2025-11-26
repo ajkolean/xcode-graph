@@ -24,7 +24,7 @@ export function getAppIconPath(platform: string): string {
         M-4,12 
         L4,12
       `;
-      
+
     case 'macOS':
       // Monitor icon (macOS)
       return `
@@ -43,7 +43,7 @@ export function getAppIconPath(platform: string): string {
         M0,8
         L0,12
       `;
-      
+
     case 'visionOS':
       // Glasses icon (visionOS)
       return `
@@ -60,7 +60,7 @@ export function getAppIconPath(platform: string): string {
         M14,-6
         A8,8 0 0,1 6,-10
       `;
-      
+
     case 'tvOS':
       // TV icon (tvOS)
       return `
@@ -78,7 +78,7 @@ export function getAppIconPath(platform: string): string {
         L0,-6
         L8,-14
       `;
-      
+
     case 'watchOS':
       // Watch icon (watchOS)
       return `
@@ -102,7 +102,7 @@ export function getAppIconPath(platform: string): string {
         A2,2 0 0,1 16,0
         L10,0
       `;
-      
+
     default:
       // Default smartphone for unknown platforms
       return `
@@ -130,12 +130,12 @@ export function getNodeIconPath(type: string, platform?: string): string {
   if (type === 'app' && platform) {
     return getAppIconPath(platform);
   }
-  
+
   switch (type) {
     case 'app':
       // Default smartphone icon if no platform specified
       return getAppIconPath('iOS');
-      
+
     case 'framework':
       // Triangle (simple geometric shape)
       return `
@@ -144,7 +144,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         L-12,12
         Z
       `;
-      
+
     case 'library':
       // Pentagon (simple geometric shape)
       return `
@@ -155,7 +155,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         L-13,-4
         Z
       `;
-      
+
     case 'test-unit':
       // Flask icon (testing)
       return `
@@ -174,7 +174,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         M-8,8
         L8,8
       `;
-      
+
     case 'test-ui':
       // Microscope icon
       return `
@@ -196,7 +196,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         A2,2 0 0,1 -8,8
         A2,2 0 0,1 -6,6
       `;
-      
+
     case 'cli':
       // Terminal icon
       return `
@@ -216,7 +216,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         M2,4 
         L8,4
       `;
-      
+
     case 'package':
       // Package/Box icon
       return `
@@ -233,7 +233,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         L0,0 
         L12,-6
       `;
-      
+
     default:
       // Circle fallback
       return `
@@ -249,14 +249,14 @@ export function getNodeIconPath(type: string, platform?: string): string {
  */
 export function getNodeTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    'app': 'App Target',
-    'framework': 'Framework',
-    'library': 'Library',
+    app: 'App Target',
+    framework: 'Framework',
+    library: 'Library',
     'test-unit': 'Unit Test',
     'test-ui': 'UI Test',
-    'cli': 'CLI Tool',
-    'package': 'Swift Package'
+    cli: 'CLI Tool',
+    package: 'Swift Package',
   };
-  
+
   return labels[type] || type;
 }

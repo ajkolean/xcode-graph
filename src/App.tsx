@@ -4,40 +4,36 @@
  * All styling uses design system CSS variables
  */
 
-import { useState, useMemo } from 'react';
-import { mockGraphData, GraphNode } from './data/mockGraphData';
-import { ViewMode, FilterState } from './types/app';
-import { useGraphFilters } from './hooks/useGraphFilters';
-import { useTransitiveDependencies } from './hooks/useTransitiveDependencies';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { Sidebar, ActiveTab } from './components/layout/Sidebar';
-import { Header } from './components/layout/Header';
+import { useMemo, useState } from 'react';
 import { GraphTab } from './components/layout/GraphTab';
+import { Header } from './components/layout/Header';
 import { PlaceholderTab } from './components/layout/PlaceholderTab';
+import { type ActiveTab, Sidebar } from './components/layout/Sidebar';
+import { type GraphNode, mockGraphData } from './data/mockGraphData';
+import { useGraphFilters } from './hooks/useGraphFilters';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useTransitiveDependencies } from './hooks/useTransitiveDependencies';
+import type { FilterState, ViewMode } from './types/app';
 
 // Get all unique projects and packages from data
 const allProjects = new Set(
-  mockGraphData.nodes
-    .map(n => n.project)
-    .filter((p): p is string => p !== undefined && p !== '')
+  mockGraphData.nodes.map((n) => n.project).filter((p): p is string => p !== undefined && p !== ''),
 );
 
 const allPackages = new Set(
-  mockGraphData.nodes
-    .filter(n => n.type === 'package')
-    .map(n => n.name)
+  mockGraphData.nodes.filter((n) => n.type === 'package').map((n) => n.name),
 );
 
 const TAB_LABELS: Record<ActiveTab, string> = {
-  'overview': 'Overview',
-  'builds': 'Builds',
+  overview: 'Overview',
+  builds: 'Builds',
   'test-runs': 'Test Runs',
   'module-cache': 'Module Cache',
   'xcode-cache': 'Xcode Cache',
-  'previews': 'Previews',
-  'qa': 'QA',
-  'bundles': 'Bundles',
-  'graph': 'Graph'
+  previews: 'Previews',
+  qa: 'QA',
+  bundles: 'Bundles',
+  graph: 'Graph',
 };
 
 export default function App() {
@@ -50,28 +46,31 @@ export default function App() {
   const [zoom, setZoom] = useState(1);
   const [activeTab, setActiveTab] = useState<ActiveTab>('graph');
   const [enableAnimation, setEnableAnimation] = useState(false); // Space ballet animation
-  const [previewFilter, setPreviewFilter] = useState<{ type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster', value: string } | null>(null);
+  const [previewFilter, setPreviewFilter] = useState<{
+    type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
+    value: string;
+  } | null>(null);
 
   const [filters, setFilters] = useState<FilterState>({
     nodeTypes: new Set(['app', 'framework', 'library', 'test-unit', 'test-ui', 'cli', 'package']),
     platforms: new Set(['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS']),
     origins: new Set(['local', 'external']),
     projects: allProjects,
-    packages: allPackages
+    packages: allPackages,
   });
 
   // Custom hooks for logic extraction
-  const { filteredNodes, filteredEdges, searchResults } = useGraphFilters({
+  const { filteredNodes, filteredEdges } = useGraphFilters({
     nodes: mockGraphData.nodes,
     edges: mockGraphData.edges,
     filters,
-    searchQuery
+    searchQuery,
   });
 
   const { transitiveDeps, transitiveDependents } = useTransitiveDependencies({
     viewMode,
     selectedNode,
-    edges: mockGraphData.edges
+    edges: mockGraphData.edges,
   });
 
   useKeyboardShortcuts({
@@ -82,19 +81,19 @@ export default function App() {
     onResetView: () => {
       setViewMode('full');
       setZoom(1);
-    }
+    },
   });
 
   // Display filtering based on view mode
   const displayNodes = useMemo(() => {
     if (viewMode === 'focused' && selectedNode) {
-      return filteredNodes.filter(node => transitiveDeps.nodes.has(node.id));
+      return filteredNodes.filter((node) => transitiveDeps.nodes.has(node.id));
     } else if (viewMode === 'dependents' && selectedNode) {
-      return filteredNodes.filter(node => transitiveDependents.nodes.has(node.id));
+      return filteredNodes.filter((node) => transitiveDependents.nodes.has(node.id));
     } else if (viewMode === 'both' && selectedNode) {
       // Show both dependencies AND dependents
-      return filteredNodes.filter(node => 
-        transitiveDeps.nodes.has(node.id) || transitiveDependents.nodes.has(node.id)
+      return filteredNodes.filter(
+        (node) => transitiveDeps.nodes.has(node.id) || transitiveDependents.nodes.has(node.id),
       );
     }
     return filteredNodes;
@@ -102,14 +101,19 @@ export default function App() {
 
   const displayEdges = useMemo(() => {
     if (viewMode === 'focused' && selectedNode) {
-      return filteredEdges.filter(edge => transitiveDeps.edges.has(`${edge.source}->${edge.target}`));
+      return filteredEdges.filter((edge) =>
+        transitiveDeps.edges.has(`${edge.source}->${edge.target}`),
+      );
     } else if (viewMode === 'dependents' && selectedNode) {
-      return filteredEdges.filter(edge => transitiveDependents.edges.has(`${edge.source}->${edge.target}`));
+      return filteredEdges.filter((edge) =>
+        transitiveDependents.edges.has(`${edge.source}->${edge.target}`),
+      );
     } else if (viewMode === 'both' && selectedNode) {
       // Show both dependency AND dependent edges
-      return filteredEdges.filter(edge => 
-        transitiveDeps.edges.has(`${edge.source}->${edge.target}`) || 
-        transitiveDependents.edges.has(`${edge.source}->${edge.target}`)
+      return filteredEdges.filter(
+        (edge) =>
+          transitiveDeps.edges.has(`${edge.source}->${edge.target}`) ||
+          transitiveDependents.edges.has(`${edge.source}->${edge.target}`),
       );
     }
     return filteredEdges;
@@ -166,12 +170,12 @@ export default function App() {
   };
 
   return (
-    <div 
+    <div
       className="h-screen flex flex-col overflow-hidden relative"
       style={{
         backgroundColor: 'var(--color-background)',
         color: 'var(--color-foreground)',
-        fontFamily: 'Inter, sans-serif'
+        fontFamily: 'Inter, sans-serif',
       }}
     >
       {/* Top Header - spans full width */}
@@ -219,9 +223,7 @@ export default function App() {
               onPreviewFilterChange={setPreviewFilter}
             />
           ) : (
-            <PlaceholderTab 
-              title={TAB_LABELS[activeTab]} 
-            />
+            <PlaceholderTab title={TAB_LABELS[activeTab]} />
           )}
         </div>
       </div>

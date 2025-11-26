@@ -10,10 +10,10 @@ export const NODE_TYPES = {
   TEST_UNIT: 'test-unit',
   TEST_UI: 'test-ui',
   CLI: 'cli',
-  PACKAGE: 'package'
+  PACKAGE: 'package',
 } as const;
 
-export type NodeType = typeof NODE_TYPES[keyof typeof NODE_TYPES];
+export type NodeType = (typeof NODE_TYPES)[keyof typeof NODE_TYPES];
 
 export const NODE_TYPE_LABELS: Record<string, string> = {
   [NODE_TYPES.APP]: 'App',
@@ -22,7 +22,7 @@ export const NODE_TYPE_LABELS: Record<string, string> = {
   [NODE_TYPES.TEST_UNIT]: 'Unit Test',
   [NODE_TYPES.TEST_UI]: 'UI Test',
   [NODE_TYPES.CLI]: 'CLI',
-  [NODE_TYPES.PACKAGE]: 'Package'
+  [NODE_TYPES.PACKAGE]: 'Package',
 };
 
 export const DEFAULT_NODE_TYPES = new Set<string>([
@@ -32,5 +32,5 @@ export const DEFAULT_NODE_TYPES = new Set<string>([
   NODE_TYPES.TEST_UNIT,
   NODE_TYPES.TEST_UI,
   NODE_TYPES.CLI,
-  NODE_TYPES.PACKAGE
+  NODE_TYPES.PACKAGE,
 ]);

@@ -2,8 +2,8 @@
  * Force calculations for radial cluster simulation
  */
 
-import { NodePosition } from '../../types/simulation';
-import { ClusterLayoutConfig } from '../../types/cluster';
+import type { ClusterLayoutConfig } from '../../types/cluster';
+import type { NodePosition } from '../../types/simulation';
 
 /**
  * Applies anchor pinning force to keep entry points centered
@@ -12,7 +12,7 @@ export function applyAnchorForce(
   node: NodePosition,
   nodeAlpha: number,
   config: ClusterLayoutConfig,
-  draggedNode: string | null
+  draggedNode: string | null,
 ): void {
   if (draggedNode && node.id === draggedNode) return;
   if (!node.isAnchor) return;
@@ -30,7 +30,7 @@ export function applyRadialPositionForce(
   node: NodePosition,
   nodeAlpha: number,
   config: ClusterLayoutConfig,
-  draggedNode: string | null
+  draggedNode: string | null,
 ): void {
   if (draggedNode && node.id === draggedNode) return;
   if (node.isTest || node.isAnchor) return;
@@ -38,7 +38,7 @@ export function applyRadialPositionForce(
 
   const targetX = node.targetRadius * Math.cos(node.targetAngle);
   const targetY = node.targetRadius * Math.sin(node.targetAngle);
-  
+
   node.vx += (targetX - node.x) * config.forceStrength.radial * nodeAlpha;
   node.vy += (targetY - node.y) * config.forceStrength.radial * nodeAlpha;
 }
@@ -51,7 +51,7 @@ export function applyTestSatelliteForce(
   nodePositions: Map<string, NodePosition>,
   nodeAlpha: number,
   config: ClusterLayoutConfig,
-  draggedNode: string | null
+  draggedNode: string | null,
 ): void {
   if (draggedNode && node.id === draggedNode) return;
   if (!node.isTest || !node.testSubject) return;
@@ -63,11 +63,11 @@ export function applyTestSatelliteForce(
   const dy = node.y - subjectPos.y;
   const distance = Math.sqrt(dx * dx + dy * dy) || 1;
   const targetDist = config.testOrbitRadius;
-  
+
   const force = (distance - targetDist) * config.forceStrength.testSatellite * nodeAlpha;
   const fx = (dx / distance) * force;
   const fy = (dy / distance) * force;
-  
+
   node.vx -= fx;
   node.vy -= fy;
 }
@@ -79,23 +79,23 @@ export function applyCollisionForce(
   a: NodePosition,
   b: NodePosition,
   nodeAlpha: number,
-  config: ClusterLayoutConfig
+  config: ClusterLayoutConfig,
 ): void {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
   if (distance === 0) return;
-  
+
   // Account for vertical label space below nodes (~30px)
   const verticalLabelSpace = Math.abs(dy) < 5 ? 25 : 0;
   const minSeparation = a.radius + b.radius + 12 + verticalLabelSpace;
-  
+
   if (distance < minSeparation) {
     const overlap = minSeparation - distance;
     const force = overlap * config.forceStrength.collision * nodeAlpha;
     const fx = (dx / distance) * force;
     const fy = (dy / distance) * force;
-    
+
     a.vx -= fx;
     a.vy -= fy;
     b.vx += fx;
@@ -112,7 +112,7 @@ export function applyBoundaryConstraints(
   maxY: number,
   nodeAlpha: number,
   config: ClusterLayoutConfig,
-  draggedNode: string | null
+  draggedNode: string | null,
 ): void {
   if (draggedNode && node.id === draggedNode) return;
 
@@ -123,25 +123,25 @@ export function applyBoundaryConstraints(
     const excess = Math.abs(node.x) - maxX;
     node.vx -= Math.sign(node.x) * excess * 0.1;
   }
-  
+
   if (Math.abs(node.y) > maxY) {
     node.y = Math.sign(node.y) * maxY;
     node.vy *= -0.5;
     const excess = Math.abs(node.y) - maxY;
     node.vy -= Math.sign(node.y) * excess * 0.1;
   }
-  
+
   // Additional soft boundary force before hitting edge
   const softBoundaryPadding = 20;
   const softMaxX = maxX - softBoundaryPadding;
   const softMaxY = maxY - softBoundaryPadding;
-  
+
   if (Math.abs(node.x) > softMaxX) {
     const excess = Math.abs(node.x) - softMaxX;
     const force = excess * config.forceStrength.boundary * nodeAlpha;
     node.vx -= Math.sign(node.x) * force;
   }
-  
+
   if (Math.abs(node.y) > softMaxY) {
     const excess = Math.abs(node.y) - softMaxY;
     const force = excess * config.forceStrength.boundary * nodeAlpha;

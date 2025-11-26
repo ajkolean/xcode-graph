@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
+  assignLayers,
   buildAdjacency,
+  computeNodeScores,
   tarjanSCC,
   topoSort,
-  assignLayers,
-  computeNodeScores,
 } from './graphAlgorithms';
 
 describe('graphAlgorithms', () => {
@@ -166,7 +166,7 @@ describe('graphAlgorithms', () => {
       expect(sccs.length).toBe(4);
 
       // Find the SCC containing B and C
-      const cycleScc = sccs.find(scc => scc.includes('B') && scc.includes('C'));
+      const cycleScc = sccs.find((scc) => scc.includes('B') && scc.includes('C'));
       expect(cycleScc).toBeDefined();
       expect(cycleScc!.sort()).toEqual(['B', 'C']);
     });
@@ -254,7 +254,7 @@ describe('graphAlgorithms', () => {
 
       const layers = assignLayers(nodes, edges);
 
-      expect(layers['A']).toBe(0);
+      expect(layers.A).toBe(0);
     });
 
     it('should assign increasing layers along chain', () => {
@@ -267,10 +267,10 @@ describe('graphAlgorithms', () => {
 
       const layers = assignLayers(nodes, edges);
 
-      expect(layers['A']).toBe(0);
-      expect(layers['B']).toBe(1);
-      expect(layers['C']).toBe(2);
-      expect(layers['D']).toBe(3);
+      expect(layers.A).toBe(0);
+      expect(layers.B).toBe(1);
+      expect(layers.C).toBe(2);
+      expect(layers.D).toBe(3);
     });
 
     it('should use longest path for layer assignment (diamond)', () => {
@@ -284,10 +284,10 @@ describe('graphAlgorithms', () => {
 
       const layers = assignLayers(nodes, edges);
 
-      expect(layers['A']).toBe(0);
-      expect(layers['B']).toBe(1);
-      expect(layers['C']).toBe(1);
-      expect(layers['D']).toBe(2); // Max of B+1 and C+1
+      expect(layers.A).toBe(0);
+      expect(layers.B).toBe(1);
+      expect(layers.C).toBe(1);
+      expect(layers.D).toBe(2); // Max of B+1 and C+1
     });
 
     it('should handle isolated nodes', () => {
@@ -296,9 +296,9 @@ describe('graphAlgorithms', () => {
 
       const layers = assignLayers(nodes, edges);
 
-      expect(layers['A']).toBe(0);
-      expect(layers['B']).toBe(0);
-      expect(layers['C']).toBe(0);
+      expect(layers.A).toBe(0);
+      expect(layers.B).toBe(0);
+      expect(layers.C).toBe(0);
     });
 
     it('should handle empty graph', () => {
@@ -320,9 +320,9 @@ describe('graphAlgorithms', () => {
 
       const layers = assignLayers(nodes, edges);
 
-      expect(layers['A']).toBe(0);
-      expect(layers['E']).toBe(0);
-      expect(layers['D']).toBe(3); // Longest path: A -> B -> C -> D
+      expect(layers.A).toBe(0);
+      expect(layers.E).toBe(0);
+      expect(layers.D).toBe(3); // Longest path: A -> B -> C -> D
     });
   });
 
@@ -336,9 +336,9 @@ describe('graphAlgorithms', () => {
 
       const { fanIn } = computeNodeScores(nodes, edges);
 
-      expect(fanIn['A']).toBe(0);
-      expect(fanIn['B']).toBe(0);
-      expect(fanIn['C']).toBe(2);
+      expect(fanIn.A).toBe(0);
+      expect(fanIn.B).toBe(0);
+      expect(fanIn.C).toBe(2);
     });
 
     it('should compute fanOut correctly', () => {
@@ -350,9 +350,9 @@ describe('graphAlgorithms', () => {
 
       const { fanOut } = computeNodeScores(nodes, edges);
 
-      expect(fanOut['A']).toBe(2);
-      expect(fanOut['B']).toBe(0);
-      expect(fanOut['C']).toBe(0);
+      expect(fanOut.A).toBe(2);
+      expect(fanOut.B).toBe(0);
+      expect(fanOut.C).toBe(0);
     });
 
     it('should compute coreScore as fanIn*2 + fanOut', () => {
@@ -366,16 +366,16 @@ describe('graphAlgorithms', () => {
       const { fanIn, fanOut, coreScore } = computeNodeScores(nodes, edges);
 
       // A: fanIn=0, fanOut=2 -> coreScore = 0*2 + 2 = 2
-      expect(coreScore['A']).toBe(fanIn['A'] * 2 + fanOut['A']);
-      expect(coreScore['A']).toBe(2);
+      expect(coreScore.A).toBe(fanIn.A * 2 + fanOut.A);
+      expect(coreScore.A).toBe(2);
 
       // B: fanIn=1, fanOut=1 -> coreScore = 1*2 + 1 = 3
-      expect(coreScore['B']).toBe(fanIn['B'] * 2 + fanOut['B']);
-      expect(coreScore['B']).toBe(3);
+      expect(coreScore.B).toBe(fanIn.B * 2 + fanOut.B);
+      expect(coreScore.B).toBe(3);
 
       // C: fanIn=2, fanOut=0 -> coreScore = 2*2 + 0 = 4
-      expect(coreScore['C']).toBe(fanIn['C'] * 2 + fanOut['C']);
-      expect(coreScore['C']).toBe(4);
+      expect(coreScore.C).toBe(fanIn.C * 2 + fanOut.C);
+      expect(coreScore.C).toBe(4);
     });
 
     it('should handle empty graph', () => {
@@ -392,12 +392,12 @@ describe('graphAlgorithms', () => {
 
       const { fanIn, fanOut, coreScore } = computeNodeScores(nodes, edges);
 
-      expect(fanIn['A']).toBe(0);
-      expect(fanIn['B']).toBe(0);
-      expect(fanOut['A']).toBe(0);
-      expect(fanOut['B']).toBe(0);
-      expect(coreScore['A']).toBe(0);
-      expect(coreScore['B']).toBe(0);
+      expect(fanIn.A).toBe(0);
+      expect(fanIn.B).toBe(0);
+      expect(fanOut.A).toBe(0);
+      expect(fanOut.B).toBe(0);
+      expect(coreScore.A).toBe(0);
+      expect(coreScore.B).toBe(0);
     });
 
     it('should identify high-fanIn nodes as important', () => {

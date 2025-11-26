@@ -1,7 +1,6 @@
-import { GraphNode as GraphNodeType } from '../../data/mockGraphData';
+import type { GraphNode as GraphNodeType } from '../../data/mockGraphData';
 import { getNodeIconPath } from '../../utils/nodeIcons';
 import { adjustColorForZoom, adjustOpacityForZoom } from '../../utils/zoomColorUtils';
-import { useState } from 'react';
 
 interface GraphNodeProps {
   node: GraphNodeType;
@@ -32,24 +31,23 @@ export function GraphNode({
   onMouseEnter,
   onMouseLeave,
   onMouseDown,
-  onClick
+  onClick,
 }: GraphNodeProps) {
   const iconPath = getNodeIconPath(node.type, node.platform);
-  const r = size;
-  
+  const _r = size;
+
   // Adjust color based on zoom level
   const zoomAdjustedColor = adjustColorForZoom(color, zoom);
   const glowOpacity = adjustOpacityForZoom(0.3, zoom);
-  
+
   // Scale effect on hover or selected - keep larger size when selected
-  const scale = (isHovered || isSelected) ? 1.05 : 1;
-  
+  const scale = isHovered || isSelected ? 1.05 : 1;
+
   // Truncate label if too long
   const maxLabelLength = 20;
-  const displayName = node.name.length > maxLabelLength 
-    ? node.name.substring(0, maxLabelLength) + '...'
-    : node.name;
-  
+  const displayName =
+    node.name.length > maxLabelLength ? `${node.name.substring(0, maxLabelLength)}...` : node.name;
+
   // Show full name on hover
   const showTooltip = isHovered && node.name.length > maxLabelLength;
 
@@ -59,9 +57,9 @@ export function GraphNode({
       onMouseLeave={onMouseLeave}
       onMouseDown={onMouseDown}
       onClick={onClick}
-      style={{ 
+      style={{
         cursor: 'pointer',
-        transition: 'opacity 0.3s ease, transform 0.2s ease'
+        transition: 'opacity 0.3s ease, transform 0.2s ease',
       }}
       opacity={isDimmed ? 0.3 : 1}
       transform={`scale(${scale})`}
@@ -94,7 +92,7 @@ export function GraphNode({
               repeatCount="indefinite"
             />
           </circle>
-          
+
           {/* Second pulse ring (delayed) */}
           <circle
             cx={x}
@@ -121,7 +119,7 @@ export function GraphNode({
               repeatCount="indefinite"
             />
           </circle>
-          
+
           {/* Third pulse ring (more delayed) */}
           <circle
             cx={x}
@@ -148,7 +146,7 @@ export function GraphNode({
               repeatCount="indefinite"
             />
           </circle>
-          
+
           {/* Fourth pulse ring (most delayed) */}
           <circle
             cx={x}
@@ -193,9 +191,9 @@ export function GraphNode({
       )}
 
       {/* Icon shape (no background) */}
-      <g 
+      <g
         transform={`translate(${x}, ${y})`}
-        filter={(isSelected || isHovered) ? 'url(#glow)' : undefined}
+        filter={isSelected || isHovered ? 'url(#glow)' : undefined}
       >
         <path
           d={iconPath}
@@ -222,17 +220,17 @@ export function GraphNode({
               fontSize: '11px',
               fontWeight: isSelected ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)',
               pointerEvents: 'none',
-              filter: `drop-shadow(0 0 8px rgba(15, 15, 20, 0.9)) drop-shadow(0 0 4px rgba(15, 15, 20, 1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8))`
+              filter: `drop-shadow(0 0 8px rgba(15, 15, 20, 0.9)) drop-shadow(0 0 4px rgba(15, 15, 20, 1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8))`,
             }}
           >
             {displayName}
           </text>
-          
+
           {/* Tooltip for truncated names */}
           {showTooltip && (
             <>
               <rect
-                x={x - (node.name.length * 3.5)}
+                x={x - node.name.length * 3.5}
                 y={y - size - 35}
                 width={node.name.length * 7}
                 height={22}
@@ -251,7 +249,7 @@ export function GraphNode({
                   fontFamily: 'Inter, sans-serif',
                   fontSize: '11px',
                   fontWeight: 'var(--font-weight-normal)',
-                  pointerEvents: 'none'
+                  pointerEvents: 'none',
                 }}
               >
                 {node.name}

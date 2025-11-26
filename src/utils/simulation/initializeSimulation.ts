@@ -2,9 +2,8 @@
  * Initialization logic for cluster simulation
  */
 
-import { GraphNode } from '../../data/mockGraphData';
-import { NodePosition, ClusterPosition } from '../../types/simulation';
-import { Cluster, PositionedNode, ClusterLayoutConfig } from '../../types/cluster';
+import type { Cluster, ClusterLayoutConfig, PositionedNode } from '../../types/cluster';
+import type { ClusterPosition, NodePosition } from '../../types/simulation';
 
 /**
  * Initializes node positions from positioned nodes
@@ -12,14 +11,14 @@ import { Cluster, PositionedNode, ClusterLayoutConfig } from '../../types/cluste
 export function initializeNodePositions(
   positionedNodes: PositionedNode[],
   existingPositions: Map<string, NodePosition>,
-  config: ClusterLayoutConfig
+  config: ClusterLayoutConfig,
 ): Map<string, NodePosition> {
   const positions = new Map<string, NodePosition>();
 
-  positionedNodes.forEach(posNode => {
+  positionedNodes.forEach((posNode) => {
     const existing = existingPositions.get(posNode.node.id);
     const metadata = posNode.metadata;
-    
+
     // Determine node radius based on role/type
     let nodeRadius = config.normalNodeSize;
     if (metadata.isAnchor) {
@@ -27,7 +26,7 @@ export function initializeNodePositions(
     } else if (metadata.role === 'test') {
       nodeRadius = config.testNodeSize;
     }
-    
+
     positions.set(posNode.node.id, {
       id: posNode.node.id,
       x: existing?.x ?? posNode.localX!,
@@ -40,7 +39,7 @@ export function initializeNodePositions(
       targetAngle: posNode.targetAngle,
       isAnchor: metadata.isAnchor,
       isTest: metadata.role === 'test',
-      testSubject: metadata.testSubjects?.[0]
+      testSubject: metadata.testSubjects?.[0],
     });
   });
 
@@ -53,17 +52,17 @@ export function initializeNodePositions(
 export function initializeClusterPositions(
   clusters: Cluster[],
   clusterGridPositions: Map<string, { x: number; y: number }>,
-  existingPositions: Map<string, ClusterPosition>
+  existingPositions: Map<string, ClusterPosition>,
 ): Map<string, ClusterPosition> {
   const positions = new Map<string, ClusterPosition>();
 
-  clusters.forEach(cluster => {
+  clusters.forEach((cluster) => {
     const gridPos = clusterGridPositions.get(cluster.id) || { x: 0, y: 0 };
     const bounds = cluster.bounds || { width: 300, height: 300, x: 0, y: 0 };
-    
+
     // Keep existing position if cluster already exists
     const existing = existingPositions.get(cluster.id);
-    
+
     positions.set(cluster.id, {
       id: cluster.id,
       x: existing?.x ?? gridPos.x,
@@ -72,7 +71,7 @@ export function initializeClusterPositions(
       vy: existing?.vy ?? 0,
       width: bounds.width,
       height: bounds.height,
-      nodeCount: cluster.nodes.length
+      nodeCount: cluster.nodes.length,
     });
   });
 
@@ -84,9 +83,7 @@ export function initializeClusterPositions(
  */
 export function getClusterNodes(
   cluster: Cluster,
-  nodePositions: Map<string, NodePosition>
+  nodePositions: Map<string, NodePosition>,
 ): NodePosition[] {
-  return cluster.nodes
-    .map(n => nodePositions.get(n.id)!)
-    .filter(Boolean);
+  return cluster.nodes.map((n) => nodePositions.get(n.id)!).filter(Boolean);
 }

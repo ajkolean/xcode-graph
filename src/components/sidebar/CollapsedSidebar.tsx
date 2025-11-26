@@ -1,4 +1,4 @@
-import { GraphNode, GraphEdge } from '../../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
 
 interface CollapsedSidebarProps {
   filteredNodes: GraphNode[];
@@ -25,7 +25,7 @@ export function CollapsedSidebar({
   platformsFilterSize,
   projectsFilterSize,
   packagesFilterSize,
-  onExpandToSection
+  onExpandToSection,
 }: CollapsedSidebarProps) {
   return (
     <div className="flex-1 flex flex-col items-center py-4 gap-4">
@@ -35,11 +35,20 @@ export function CollapsedSidebar({
         className="relative p-2 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)]"
         style={{
           color: 'rgba(168, 157, 255, 0.8)',
-          borderRadius: 'var(--radius)'
+          borderRadius: 'var(--radius)',
         }}
         title="Product Types"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <rect x="3" y="3" width="7" height="7" />
           <rect x="14" y="3" width="7" height="7" />
           <rect x="14" y="14" width="7" height="7" />
@@ -54,7 +63,7 @@ export function CollapsedSidebar({
               fontSize: '9px',
               fontFamily: 'Inter, sans-serif',
               fontWeight: 'var(--font-weight-semibold)',
-              color: 'rgba(168, 157, 255, 1)'
+              color: 'rgba(168, 157, 255, 1)',
             }}
           >
             {nodeTypesFilterSize}
@@ -68,11 +77,20 @@ export function CollapsedSidebar({
         className="relative p-2 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)]"
         style={{
           color: 'rgba(168, 157, 255, 0.8)',
-          borderRadius: 'var(--radius)'
+          borderRadius: 'var(--radius)',
         }}
         title="Platforms"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           {/* Outer rounded square */}
           <rect x="3" y="3" width="18" height="18" rx="4" />
           {/* Horizontal lines */}
@@ -96,7 +114,7 @@ export function CollapsedSidebar({
               fontSize: '9px',
               fontFamily: 'Inter, sans-serif',
               fontWeight: 'var(--font-weight-semibold)',
-              color: 'rgba(168, 157, 255, 1)'
+              color: 'rgba(168, 157, 255, 1)',
             }}
           >
             {platformsFilterSize}
@@ -110,11 +128,20 @@ export function CollapsedSidebar({
         className="relative p-2 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)]"
         style={{
           color: 'rgba(168, 157, 255, 0.8)',
-          borderRadius: 'var(--radius)'
+          borderRadius: 'var(--radius)',
         }}
         title="Projects"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
         </svg>
         {projectsFilterSize < projectCounts.size && (
@@ -126,7 +153,7 @@ export function CollapsedSidebar({
               fontSize: '9px',
               fontFamily: 'Inter, sans-serif',
               fontWeight: 'var(--font-weight-semibold)',
-              color: 'rgba(168, 157, 255, 1)'
+              color: 'rgba(168, 157, 255, 1)',
             }}
           >
             {projectsFilterSize}
@@ -140,11 +167,20 @@ export function CollapsedSidebar({
         className="relative p-2 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)]"
         style={{
           color: 'rgba(168, 157, 255, 0.8)',
-          borderRadius: 'var(--radius)'
+          borderRadius: 'var(--radius)',
         }}
         title="Packages"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M16.5 9.4 7.55 4.24" />
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
           <polyline points="3.29 7 12 12 20.71 7" />
@@ -159,7 +195,7 @@ export function CollapsedSidebar({
               fontSize: '9px',
               fontFamily: 'Inter, sans-serif',
               fontWeight: 'var(--font-weight-semibold)',
-              color: 'rgba(168, 157, 255, 1)'
+              color: 'rgba(168, 157, 255, 1)',
             }}
           >
             {packagesFilterSize}
@@ -168,31 +204,28 @@ export function CollapsedSidebar({
       </button>
 
       {/* Divider */}
-      <div 
-        className="w-8 h-px"
-        style={{ backgroundColor: 'var(--color-sidebar-border)' }}
-      />
+      <div className="w-8 h-px" style={{ backgroundColor: 'var(--color-sidebar-border)' }} />
 
       {/* Stats Summary */}
       <div className="flex flex-col items-center gap-2">
-        <div 
+        <div
           className="text-center"
           style={{
             fontSize: '10px',
             fontFamily: 'Inter, sans-serif',
             fontWeight: 'var(--font-weight-semibold)',
-            color: 'var(--color-muted-foreground)'
+            color: 'var(--color-muted-foreground)',
           }}
         >
           {filteredNodes.length}
         </div>
-        <div 
+        <div
           className="text-center"
           style={{
             fontSize: '8px',
             fontFamily: 'Inter, sans-serif',
             color: 'var(--color-foreground)',
-            opacity: 0.3
+            opacity: 0.3,
           }}
         >
           NODES
@@ -200,24 +233,24 @@ export function CollapsedSidebar({
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <div 
+        <div
           className="text-center"
           style={{
             fontSize: '10px',
             fontFamily: 'Inter, sans-serif',
             fontWeight: 'var(--font-weight-semibold)',
-            color: 'var(--color-muted-foreground)'
+            color: 'var(--color-muted-foreground)',
           }}
         >
           {filteredEdges.length}
         </div>
-        <div 
+        <div
           className="text-center"
           style={{
             fontSize: '8px',
             fontFamily: 'Inter, sans-serif',
             color: 'var(--color-foreground)',
-            opacity: 0.3
+            opacity: 0.3,
           }}
         >
           EDGES

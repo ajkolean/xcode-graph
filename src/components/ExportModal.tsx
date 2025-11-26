@@ -1,5 +1,5 @@
-import { X, Download, FileJson, Image as ImageIcon, FileText } from 'lucide-react';
-import { GraphNode, GraphEdge } from '../data/mockGraphData';
+import { Download, FileJson, FileText, Image as ImageIcon, X } from 'lucide-react';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 
 interface ExportModalProps {
   onClose: () => void;
@@ -35,20 +35,21 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
     let dot = 'digraph DependencyGraph {\n';
     dot += '  rankdir=LR;\n';
     dot += '  node [shape=box, style=rounded];\n\n';
-    
-    graphData.nodes.forEach(node => {
-      const color = node.type === 'package' ? 'orange' : node.project === 'TuistKit' ? 'blue' : 'purple';
+
+    graphData.nodes.forEach((node) => {
+      const color =
+        node.type === 'package' ? 'orange' : node.project === 'TuistKit' ? 'blue' : 'purple';
       dot += `  "${node.id}" [label="${node.name}", color=${color}];\n`;
     });
-    
+
     dot += '\n';
-    
-    graphData.edges.forEach(edge => {
+
+    graphData.edges.forEach((edge) => {
       dot += `  "${edge.source}" -> "${edge.target}";\n`;
     });
-    
+
     dot += '}\n';
-    
+
     const dataBlob = new Blob([dot], { type: 'text/plain' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
@@ -59,43 +60,43 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 flex items-center justify-center z-50 transition-smooth"
       style={{
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        backdropFilter: 'blur(8px)'
+        backdropFilter: 'blur(8px)',
       }}
       onClick={onClose}
     >
-      <div 
+      <div
         className="glassmorphism panel-shadow-lg w-full max-w-lg mx-4 transition-smooth interactive-scale"
         style={{
-          borderRadius: 'var(--radius-card)'
+          borderRadius: 'var(--radius-card)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div 
+        <div
           className="p-6 flex items-center justify-between"
           style={{ borderBottom: '1px solid var(--color-border)' }}
         >
           <div>
-            <h2 
+            <h2
               style={{
                 fontFamily: 'DM Sans, sans-serif',
                 fontSize: 'var(--text-h2)',
                 fontWeight: 'var(--font-weight-medium)',
                 color: 'var(--color-foreground)',
-                marginBottom: '4px'
+                marginBottom: '4px',
               }}
             >
               Export Graph
             </h2>
-            <p 
+            <p
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontSize: 'var(--text-label)',
-                color: 'var(--color-muted-foreground)'
+                color: 'var(--color-muted-foreground)',
               }}
             >
               Export the current graph view in various formats
@@ -106,7 +107,7 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
             className="p-2 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)]"
             style={{
               color: 'var(--color-muted-foreground)',
-              borderRadius: 'var(--radius)'
+              borderRadius: 'var(--radius)',
             }}
           >
             <X className="size-5" />
@@ -121,35 +122,35 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
             className="w-full p-4 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)] interactive-scale text-left flex items-center gap-4"
             style={{
               border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius)'
+              borderRadius: 'var(--radius)',
             }}
           >
-            <div 
+            <div
               className="p-2 rounded-lg"
               style={{
                 backgroundColor: 'rgba(111, 44, 255, 0.15)',
-                color: 'var(--color-primary)'
+                color: 'var(--color-primary)',
               }}
             >
               <FileJson className="size-5" />
             </div>
             <div className="flex-1">
-              <div 
+              <div
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-base)',
                   fontWeight: 'var(--font-weight-medium)',
                   color: 'var(--color-foreground)',
-                  marginBottom: '2px'
+                  marginBottom: '2px',
                 }}
               >
                 JSON Data
               </div>
-              <div 
+              <div
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-label)',
-                  color: 'var(--color-muted-foreground)'
+                  color: 'var(--color-muted-foreground)',
                 }}
               >
                 Raw graph data for processing
@@ -164,35 +165,35 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
             className="w-full p-4 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)] interactive-scale text-left flex items-center gap-4"
             style={{
               border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius)'
+              borderRadius: 'var(--radius)',
             }}
           >
-            <div 
+            <div
               className="p-2 rounded-lg"
               style={{
                 backgroundColor: 'rgba(2, 128, 185, 0.15)',
-                color: '#0280B9'
+                color: '#0280B9',
               }}
             >
               <ImageIcon className="size-5" />
             </div>
             <div className="flex-1">
-              <div 
+              <div
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-base)',
                   fontWeight: 'var(--font-weight-medium)',
                   color: 'var(--color-foreground)',
-                  marginBottom: '2px'
+                  marginBottom: '2px',
                 }}
               >
                 PNG Image
               </div>
-              <div 
+              <div
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-label)',
-                  color: 'var(--color-muted-foreground)'
+                  color: 'var(--color-muted-foreground)',
                 }}
               >
                 Raster image of current view
@@ -207,35 +208,35 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
             className="w-full p-4 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)] interactive-scale text-left flex items-center gap-4"
             style={{
               border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius)'
+              borderRadius: 'var(--radius)',
             }}
           >
-            <div 
+            <div
               className="p-2 rounded-lg"
               style={{
                 backgroundColor: 'rgba(40, 167, 69, 0.15)',
-                color: '#28A745'
+                color: '#28A745',
               }}
             >
               <ImageIcon className="size-5" />
             </div>
             <div className="flex-1">
-              <div 
+              <div
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-base)',
                   fontWeight: 'var(--font-weight-medium)',
                   color: 'var(--color-foreground)',
-                  marginBottom: '2px'
+                  marginBottom: '2px',
                 }}
               >
                 SVG Vector
               </div>
-              <div 
+              <div
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-label)',
-                  color: 'var(--color-muted-foreground)'
+                  color: 'var(--color-muted-foreground)',
                 }}
               >
                 Scalable vector graphics
@@ -250,35 +251,35 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
             className="w-full p-4 rounded-lg transition-smooth-fast hover:bg-[var(--color-muted)] interactive-scale text-left flex items-center gap-4"
             style={{
               border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius)'
+              borderRadius: 'var(--radius)',
             }}
           >
-            <div 
+            <div
               className="p-2 rounded-lg"
               style={{
                 backgroundColor: 'rgba(253, 121, 28, 0.15)',
-                color: '#FD791C'
+                color: '#FD791C',
               }}
             >
               <FileText className="size-5" />
             </div>
             <div className="flex-1">
-              <div 
+              <div
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-base)',
                   fontWeight: 'var(--font-weight-medium)',
                   color: 'var(--color-foreground)',
-                  marginBottom: '2px'
+                  marginBottom: '2px',
                 }}
               >
                 DOT Format
               </div>
-              <div 
+              <div
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 'var(--text-label)',
-                  color: 'var(--color-muted-foreground)'
+                  color: 'var(--color-muted-foreground)',
                 }}
               >
                 GraphViz compatible format
@@ -289,7 +290,7 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
         </div>
 
         {/* Footer */}
-        <div 
+        <div
           className="p-4 flex justify-end"
           style={{ borderTop: '1px solid var(--color-border)' }}
         >
@@ -301,7 +302,7 @@ export function ExportModal({ onClose, graphData }: ExportModalProps) {
               fontSize: 'var(--text-base)',
               fontWeight: 'var(--font-weight-medium)',
               color: 'var(--color-foreground)',
-              borderRadius: 'var(--radius)'
+              borderRadius: 'var(--radius)',
             }}
           >
             Cancel

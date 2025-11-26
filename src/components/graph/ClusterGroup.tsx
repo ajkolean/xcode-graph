@@ -4,14 +4,14 @@
  */
 
 import { useMemo, useState } from 'react';
-import { GraphNode as GraphNodeType, GraphEdge } from '../../data/mockGraphData';
-import { Cluster } from '../../types/cluster';
-import { NodePosition, ClusterPosition } from '../../types/simulation';
-import { GraphNode } from './GraphNode';
-import { GraphEdges } from './GraphEdges';
+import type { GraphEdge, GraphNode as GraphNodeType } from '../../data/mockGraphData';
+import type { ViewMode } from '../../types/app';
+import type { Cluster } from '../../types/cluster';
+import type { ClusterPosition, NodePosition } from '../../types/simulation';
 import { ClusterCard } from './ClusterCard';
-import { getNodeSize, getNodeTypeColor, getConnectedNodes } from './graphUtils';
-import { ViewMode } from '../../types/app';
+import { GraphEdges } from './GraphEdges';
+import { GraphNode } from './GraphNode';
+import { getConnectedNodes, getNodeSize, getNodeTypeColor } from './graphUtils';
 
 interface ClusterGroupProps {
   cluster: Cluster;
@@ -45,7 +45,10 @@ interface ClusterGroupProps {
     maxDepth: number;
   };
   isSelected?: boolean;
-  previewFilter?: { type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster', value: string } | null;
+  previewFilter?: {
+    type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
+    value: string;
+  } | null;
 }
 
 export function ClusterGroup({
@@ -70,13 +73,13 @@ export function ClusterGroup({
   transitiveDeps,
   transitiveDependents,
   isSelected = false,
-  previewFilter
+  previewFilter,
 }: ClusterGroupProps) {
   const [isClusterHovered, setIsClusterHovered] = useState(false);
-  
+
   const connectedNodes = useMemo(
-    () => selectedNode ? getConnectedNodes(selectedNode.id, edges) : new Set(),
-    [selectedNode, edges]
+    () => (selectedNode ? getConnectedNodes(selectedNode.id, edges) : new Set()),
+    [selectedNode, edges],
   );
 
   const clusterNodes = cluster.nodes;
@@ -125,31 +128,35 @@ export function ClusterGroup({
 
       {/* Nodes */}
       <g className="nodes">
-        {clusterNodes.map(node => {
+        {clusterNodes.map((node) => {
           const pos = finalNodePositions.get(node.id);
           if (!pos) return null;
 
           const isSelectedNode = selectedNode?.id === node.id;
           const isHovered = hoveredNode === node.id;
           const isConnected = selectedNode && connectedNodes.has(node.id);
-          const isSearchMatch = searchQuery &&
-            node.name.toLowerCase().includes(searchQuery.toLowerCase());
-          
+          const isSearchMatch =
+            searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
+
           // Check if node matches the preview filter
-          const matchesPreview = !previewFilter || 
+          const matchesPreview =
+            !previewFilter ||
             (previewFilter.type === 'nodeType' && node.type === previewFilter.value) ||
             (previewFilter.type === 'platform' && node.platform === previewFilter.value) ||
             (previewFilter.type === 'origin' && node.origin === previewFilter.value) ||
             (previewFilter.type === 'project' && node.project === previewFilter.value) ||
-            (previewFilter.type === 'package' && node.type === 'package' && node.name === previewFilter.value);
-          
-          const isDimmed = (searchQuery && !isSearchMatch) || 
-                          (selectedNode && !isSelectedNode && !isConnected) ||
-                          (previewFilter && !matchesPreview);
+            (previewFilter.type === 'package' &&
+              node.type === 'package' &&
+              node.name === previewFilter.value);
+
+          const isDimmed =
+            (searchQuery && !isSearchMatch) ||
+            (selectedNode && !isSelectedNode && !isConnected) ||
+            (previewFilter && !matchesPreview);
 
           const size = getNodeSize(node, edges);
           const color = getNodeTypeColor(node.type);
-          
+
           const x = clusterPosition.x + pos.x;
           const y = clusterPosition.y + pos.y;
 

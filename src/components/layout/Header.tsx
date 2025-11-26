@@ -8,7 +8,17 @@ import { Book } from 'lucide-react';
 
 // Selector icon (up/down arrows) from Tabler
 const SelectorIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <path d="M8 9l4 -4l4 4"></path>
     <path d="M16 15l-4 4l-4 -4"></path>
@@ -17,7 +27,17 @@ const SelectorIcon = () => (
 
 // Slash separator icon from Tabler
 const SlashIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <path d="M17 5l-10 14"></path>
   </svg>
@@ -25,12 +45,12 @@ const SlashIcon = () => (
 
 export function Header() {
   return (
-    <header 
+    <header
       className="h-12 px-4 flex items-center justify-between shrink-0 relative"
       style={{
         backgroundColor: '#18181B',
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        zIndex: 50
+        zIndex: 50,
       }}
     >
       {/* Left Section: Logo + Breadcrumbs */}
@@ -40,7 +60,7 @@ export function Header() {
           className="size-7 rounded flex items-center justify-center shrink-0 transition-smooth-fast interactive-scale"
           style={{
             background: 'linear-gradient(135deg, #6F2CFF 0%, #8B5CF6 100%)',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="none">
@@ -58,7 +78,7 @@ export function Header() {
               fontSize: '13px',
               fontWeight: 'var(--font-weight-medium)',
               color: 'var(--color-foreground)',
-              borderRadius: 'var(--radius)'
+              borderRadius: 'var(--radius)',
             }}
           >
             {/* Avatar with "T" initial */}
@@ -69,7 +89,7 @@ export function Header() {
                 fontFamily: 'DM Sans, sans-serif',
                 fontSize: '10px',
                 fontWeight: 'var(--font-weight-semibold)',
-                color: 'white'
+                color: 'white',
               }}
             >
               T
@@ -91,7 +111,7 @@ export function Header() {
               fontSize: '13px',
               fontWeight: 'var(--font-weight-medium)',
               color: 'var(--color-foreground)',
-              borderRadius: 'var(--radius)'
+              borderRadius: 'var(--radius)',
             }}
           >
             <span>tuist</span>
@@ -113,7 +133,7 @@ export function Header() {
           style={{
             color: 'rgba(232, 234, 237, 0.7)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 'var(--radius)'
+            borderRadius: 'var(--radius)',
           }}
           title="Documentation"
         >
@@ -128,7 +148,7 @@ export function Header() {
             fontFamily: 'DM Sans, sans-serif',
             fontSize: '12px',
             fontWeight: 'var(--font-weight-semibold)',
-            color: 'white'
+            color: 'white',
           }}
         >
           A

@@ -1,23 +1,22 @@
 /**
  * Animated hybrid layout: Architecture first, gentle physics polish
- * 
+ *
  * Shows a "space ballet" settling animation:
  * 1. Start with deterministic positions (rings, clusters, tests)
  * 2. Animate gentle forces for ~30 ticks
  * 3. Freeze into final static positions
- * 
+ *
  * This creates the organic "cosmic settling" effect while maintaining
  * structural integrity from the deterministic layout.
  */
 
-import { useState, useEffect, useRef } from 'react';
-import { GraphNode, GraphEdge } from '../../data/mockGraphData';
-import { NodePosition, ClusterPosition } from '../../types/simulation';
-import { Cluster } from '../../types/cluster';
-import { groupIntoClusters } from '../../utils/clusterGrouping';
+import { useEffect, useRef, useState } from 'react';
+import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
+import type { Cluster } from '../../types/cluster';
+import type { ClusterPosition, NodePosition } from '../../types/simulation';
 import { analyzeCluster } from '../../utils/clusterAnalysis';
+import { groupIntoClusters } from '../../utils/clusterGrouping';
 import { computeHierarchicalLayout } from '../../utils/hierarchicalLayout';
-import { computeNodeMasses } from '../../utils/massCalculation';
 
 interface AnimatedLayoutOptions {
   enableAnimation?: boolean;
@@ -27,18 +26,15 @@ interface AnimatedLayoutOptions {
 export function useAnimatedLayout(
   nodes: GraphNode[],
   edges: GraphEdge[],
-  options: AnimatedLayoutOptions = {}
+  options: AnimatedLayoutOptions = {},
 ) {
-  const {
-    enableAnimation = true,
-    animationTicks = 30
-  } = options;
+  const { enableAnimation = true, animationTicks = 30 } = options;
 
   const [nodePositions, setNodePositions] = useState<Map<string, NodePosition>>(new Map());
   const [clusterPositions, setClusterPositions] = useState<Map<string, ClusterPosition>>(new Map());
   const [clusters, setClusters] = useState<Cluster[]>([]);
   const [isSettling, setIsSettling] = useState(false);
-  
+
   const animationRef = useRef<number>();
   const tickCountRef = useRef(0);
 
@@ -52,12 +48,15 @@ export function useAnimatedLayout(
 
     // Step 1: Compute DETERMINISTIC layout (architecture first!)
     const analyzedClusters = groupIntoClusters(nodes, edges);
-    analyzedClusters.forEach(cluster => {
+    analyzedClusters.forEach((cluster) => {
       analyzeCluster(cluster, edges);
     });
 
-    const { clusterPositions: initialClusterPos, nodePositions: initialNodePos, clusters: layoutClusters } = 
-      computeHierarchicalLayout(nodes, edges, analyzedClusters);
+    const {
+      clusterPositions: initialClusterPos,
+      nodePositions: initialNodePos,
+      clusters: layoutClusters,
+    } = computeHierarchicalLayout(nodes, edges, analyzedClusters);
 
     // Add velocities for animation
     const animatedNodePos = new Map<string, NodePosition>();
@@ -85,37 +84,31 @@ export function useAnimatedLayout(
 
     const animate = () => {
       const tick = tickCountRef.current;
-      
+
       if (tick >= animationTicks) {
         // Animation complete - freeze positions
         setIsSettling(false);
-        
+
         // Zero out velocities
-        animatedNodePos.forEach(pos => {
+        animatedNodePos.forEach((pos) => {
           pos.vx = 0;
           pos.vy = 0;
         });
-        animatedClusterPos.forEach(pos => {
+        animatedClusterPos.forEach((pos) => {
           pos.vx = 0;
           pos.vy = 0;
         });
-        
+
         setNodePositions(new Map(animatedNodePos));
         setClusterPositions(new Map(animatedClusterPos));
         return;
       }
 
       // Alpha decay: 1.0 → 0.0 over animation ticks
-      const alpha = 1 - (tick / animationTicks);
-      
+      const alpha = 1 - tick / animationTicks;
+
       // Apply gentle forces
-      applyGentleForces(
-        animatedNodePos,
-        animatedClusterPos,
-        layoutClusters,
-        edges,
-        alpha
-      );
+      applyGentleForces(animatedNodePos, animatedClusterPos, layoutClusters, edges, alpha);
 
       // Update positions
       updatePositions(animatedNodePos, animatedClusterPos, alpha);
@@ -140,7 +133,7 @@ export function useAnimatedLayout(
     nodePositions,
     clusterPositions,
     clusters,
-    isSettling
+    isSettling,
   };
 }
 
@@ -153,12 +146,12 @@ function applyGentleForces(
   clusterPositions: Map<string, ClusterPosition>,
   clusters: Cluster[],
   edges: GraphEdge[],
-  alpha: number
+  alpha: number,
 ) {
   // 1. Gentle node collision (prevent overlaps within clusters)
-  clusters.forEach(cluster => {
+  clusters.forEach((cluster) => {
     const clusterNodes = cluster.nodes
-      .map(n => nodePositions.get(n.id))
+      .map((n) => nodePositions.get(n.id))
       .filter((p): p is NodePosition => p !== undefined);
 
     for (let i = 0; i < clusterNodes.length; i++) {
@@ -169,11 +162,11 @@ function applyGentleForces(
         const dx = b.x - a.x;
         const dy = b.y - a.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (distance === 0 || distance > 100) continue;
 
         const minSeparation = (a.radius || 10) + (b.radius || 10) + 8;
-        
+
         if (distance < minSeparation) {
           const overlap = minSeparation - distance;
           const force = overlap * 0.3 * alpha; // Gentle!
@@ -191,7 +184,7 @@ function applyGentleForces(
 
   // 2. Very gentle cluster spacing (prevent overlap)
   const clusterArray = Array.from(clusterPositions.values());
-  
+
   for (let i = 0; i < clusterArray.length; i++) {
     for (let j = i + 1; j < clusterArray.length; j++) {
       const a = clusterArray[i];
@@ -200,7 +193,7 @@ function applyGentleForces(
       const dx = b.x - a.x;
       const dy = b.y - a.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      
+
       if (distance === 0) continue;
 
       const aRadius = Math.sqrt(a.width * a.width + a.height * a.height) / 2;
@@ -222,22 +215,22 @@ function applyGentleForces(
   }
 
   // 3. Mild link attraction (smooth edge paths)
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     const source = nodePositions.get(edge.source);
     const target = nodePositions.get(edge.target);
-    
+
     if (!source || !target) return;
     if (source.clusterId !== target.clusterId) return; // Only internal edges
 
     const dx = target.x - source.x;
     const dy = target.y - source.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    
+
     if (distance === 0) return;
 
     const targetDist = 70;
     const force = (distance - targetDist) * 0.05 * alpha; // Very gentle!
-    
+
     const fx = (dx / distance) * force;
     const fy = (dy / distance) * force;
 
@@ -254,27 +247,27 @@ function applyGentleForces(
 function updatePositions(
   nodePositions: Map<string, NodePosition>,
   clusterPositions: Map<string, ClusterPosition>,
-  alpha: number
+  alpha: number,
 ) {
   // Update nodes with damping
-  nodePositions.forEach(pos => {
+  nodePositions.forEach((pos) => {
     if (!pos.vx || !pos.vy) return;
 
     pos.x += pos.vx * alpha;
     pos.y += pos.vy * alpha;
-    
+
     // Strong damping - we want quick settling
     pos.vx *= 0.7;
     pos.vy *= 0.7;
   });
 
   // Update clusters with damping
-  clusterPositions.forEach(pos => {
+  clusterPositions.forEach((pos) => {
     if (!pos.vx || !pos.vy) return;
 
     pos.x += pos.vx * alpha;
     pos.y += pos.vy * alpha;
-    
+
     // Strong damping
     pos.vx *= 0.7;
     pos.vy *= 0.7;

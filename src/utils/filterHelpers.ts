@@ -1,13 +1,13 @@
 import { generateColor } from './colorGenerator';
 
 export const NODE_TYPE_COLORS: Record<string, string> = {
-  'app': '#6F2CFF',
-  'framework': '#0280B9',
-  'library': '#28A745',
+  app: '#6F2CFF',
+  framework: '#0280B9',
+  library: '#28A745',
   'test-unit': '#9C27B0',
   'test-ui': '#E91E63',
-  'cli': '#FD791C',
-  'package': '#FF9800'
+  cli: '#FD791C',
+  package: '#FF9800',
 };
 
 export function getNodeTypeColor(type: string): string {
@@ -16,7 +16,7 @@ export function getNodeTypeColor(type: string): string {
 
 export function generateColorMap<T extends string>(
   keys: Iterable<T>,
-  category: 'platform' | 'project' | 'package'
+  category: 'platform' | 'project' | 'package',
 ): Map<T, string> {
   const colors = new Map<T, string>();
   for (const key of keys) {

@@ -4,8 +4,8 @@
  */
 
 import { useState } from 'react';
-import { GraphNode } from '../data/mockGraphData';
-import { ViewMode, DEFAULT_VIEW_MODE } from '../constants';
+import { DEFAULT_VIEW_MODE, type ViewMode } from '../constants';
+import type { GraphNode } from '../data/mockGraphData';
 
 interface GraphState {
   selectedNode: GraphNode | null;
@@ -15,8 +15,8 @@ interface GraphState {
   viewMode: ViewMode;
   zoom: number;
   enableAnimation: boolean;
-  previewFilter: { 
-    type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster'; 
+  previewFilter: {
+    type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
     value: string;
   } | null;
 }

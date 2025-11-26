@@ -4,8 +4,8 @@
  */
 
 export interface AdjacencyList {
-  forward: Map<string, string[]>;  // node -> dependencies
-  reverse: Map<string, string[]>;  // node -> dependents
+  forward: Map<string, string[]>; // node -> dependencies
+  reverse: Map<string, string[]>; // node -> dependents
 }
 
 /**
@@ -13,7 +13,7 @@ export interface AdjacencyList {
  */
 export function buildAdjacency(
   nodes: string[],
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): AdjacencyList {
   const forward = new Map<string, string[]>();
   const reverse = new Map<string, string[]>();
@@ -28,7 +28,7 @@ export function buildAdjacency(
     if (!forward.has(e.to)) forward.set(e.to, []);
     if (!reverse.has(e.from)) reverse.set(e.from, []);
     if (!reverse.has(e.to)) reverse.set(e.to, []);
-    
+
     forward.get(e.from)!.push(e.to);
     reverse.get(e.to)!.push(e.from);
   }
@@ -89,10 +89,7 @@ export function tarjanSCC(adj: Map<string, string[]>): string[][] {
 /**
  * Topological sort using Kahn's algorithm
  */
-export function topoSort(
-  nodes: string[],
-  edges: Array<{ from: string; to: string }>
-): string[] {
+export function topoSort(nodes: string[], edges: Array<{ from: string; to: string }>): string[] {
   const incoming: Record<string, number> = {};
   const outgoing: Record<string, string[]> = {};
 
@@ -129,7 +126,7 @@ export function topoSort(
  */
 export function assignLayers(
   nodes: string[],
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): Record<string, number> {
   const preds = new Map<string, string[]>();
   for (const n of nodes) preds.set(n, []);
@@ -145,7 +142,7 @@ export function assignLayers(
     if (p.length === 0) {
       depth[n] = 0;
     } else {
-      depth[n] = Math.max(...p.map(x => depth[x] ?? 0)) + 1;
+      depth[n] = Math.max(...p.map((x) => depth[x] ?? 0)) + 1;
     }
   }
 
@@ -157,7 +154,7 @@ export function assignLayers(
  */
 export function computeNodeScores(
   nodes: string[],
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): {
   fanIn: Record<string, number>;
   fanOut: Record<string, number>;

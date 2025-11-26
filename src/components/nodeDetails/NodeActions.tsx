@@ -2,8 +2,8 @@
  * Node action buttons component
  */
 
-import { Eye, Focus, EyeOff } from 'lucide-react';
-import { GraphNode } from '../../data/mockGraphData';
+import { Eye, EyeOff, Focus } from 'lucide-react';
+import type { GraphNode } from '../../data/mockGraphData';
 
 interface NodeActionsProps {
   node: GraphNode;
@@ -18,13 +18,13 @@ export function NodeActions({
   viewMode,
   onFocusNode,
   onShowDependents,
-  onShowImpact
+  onShowImpact,
 }: NodeActionsProps) {
   const isDependencyChainActive = viewMode === 'focused' || viewMode === 'both';
   const isDependentsChainActive = viewMode === 'dependents' || viewMode === 'both';
 
   return (
-    <div 
+    <div
       className="p-4 shrink-0 flex flex-col gap-2"
       style={{ borderBottom: '1px solid var(--color-border)' }}
     >
@@ -33,21 +33,23 @@ export function NodeActions({
         onClick={() => onFocusNode(node)}
         className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-md transition-all"
         style={{
-          backgroundColor: isDependencyChainActive 
-            ? (viewMode === 'both' 
-              ? 'color-mix(in srgb, var(--primary) 80%, transparent)' 
-              : 'var(--primary)') 
+          backgroundColor: isDependencyChainActive
+            ? viewMode === 'both'
+              ? 'color-mix(in srgb, var(--primary) 80%, transparent)'
+              : 'var(--primary)'
             : 'color-mix(in srgb, var(--primary) 10%, transparent)',
-          border: `1px solid ${isDependencyChainActive 
-            ? 'var(--primary)' 
-            : 'color-mix(in srgb, var(--primary) 30%, transparent)'}`,
+          border: `1px solid ${
+            isDependencyChainActive
+              ? 'var(--primary)'
+              : 'color-mix(in srgb, var(--primary) 30%, transparent)'
+          }`,
           fontFamily: 'Inter, sans-serif',
           fontSize: '12px',
           fontWeight: 'var(--font-weight-medium)',
           lineHeight: '18px',
-          color: isDependencyChainActive 
-            ? 'var(--primary-foreground)' 
-            : 'color-mix(in srgb, var(--primary) 120%, white)'
+          color: isDependencyChainActive
+            ? 'var(--primary-foreground)'
+            : 'color-mix(in srgb, var(--primary) 120%, white)',
         }}
       >
         {isDependencyChainActive ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -59,23 +61,27 @@ export function NodeActions({
         onClick={() => onShowDependents(node)}
         className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-md transition-all"
         style={{
-          backgroundColor: isDependentsChainActive 
-            ? (viewMode === 'both' 
-              ? 'color-mix(in srgb, var(--chart-3) 80%, transparent)' 
-              : 'color-mix(in srgb, var(--chart-3) 20%, transparent)') 
+          backgroundColor: isDependentsChainActive
+            ? viewMode === 'both'
+              ? 'color-mix(in srgb, var(--chart-3) 80%, transparent)'
+              : 'color-mix(in srgb, var(--chart-3) 20%, transparent)'
             : 'color-mix(in srgb, var(--chart-3) 10%, transparent)',
-          border: `1px solid ${isDependentsChainActive 
-            ? (viewMode === 'both' 
-              ? 'color-mix(in srgb, var(--chart-3) 60%, transparent)' 
-              : 'color-mix(in srgb, var(--chart-3) 50%, transparent)') 
-            : 'color-mix(in srgb, var(--chart-3) 30%, transparent)'}`,
+          border: `1px solid ${
+            isDependentsChainActive
+              ? viewMode === 'both'
+                ? 'color-mix(in srgb, var(--chart-3) 60%, transparent)'
+                : 'color-mix(in srgb, var(--chart-3) 50%, transparent)'
+              : 'color-mix(in srgb, var(--chart-3) 30%, transparent)'
+          }`,
           fontFamily: 'Inter, sans-serif',
           fontSize: '12px',
           fontWeight: 'var(--font-weight-medium)',
           lineHeight: '18px',
-          color: isDependentsChainActive 
-            ? (viewMode === 'both' ? 'var(--primary-foreground)' : 'var(--chart-3)') 
-            : 'var(--chart-3)'
+          color: isDependentsChainActive
+            ? viewMode === 'both'
+              ? 'var(--primary-foreground)'
+              : 'var(--chart-3)'
+            : 'var(--chart-3)',
         }}
       >
         <Focus className="size-4" style={{ transform: 'rotate(180deg)' }} />

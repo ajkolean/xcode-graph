@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { FilterState } from '../types/app';
+import type { FilterState } from '../types/app';
 
 interface FilterPanelProps {
   filters: FilterState;
@@ -53,10 +53,7 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
       {/* Header */}
       <div className="p-4 border-b border-zinc-800 flex items-center justify-between sticky top-0 bg-zinc-900">
         <h3 className="text-zinc-200">Filters</h3>
-        <button
-          onClick={onClose}
-          className="p-1 rounded hover:bg-zinc-800 text-zinc-400"
-        >
+        <button onClick={onClose} className="p-1 rounded hover:bg-zinc-800 text-zinc-400">
           <X className="size-4" />
         </button>
       </div>
@@ -74,21 +71,16 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
               { value: 'test-unit', label: 'Unit Tests' },
               { value: 'test-ui', label: 'UI Tests' },
               { value: 'cli', label: 'CLI Tools' },
-              { value: 'package', label: 'External Packages' }
+              { value: 'package', label: 'External Packages' },
             ].map(({ value, label }) => (
-              <label
-                key={value}
-                className="flex items-center gap-3 cursor-pointer group"
-              >
+              <label key={value} className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={filters.nodeTypes.has(value)}
                   onChange={() => toggleNodeType(value)}
                   className="size-4 rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
                 />
-                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">
-                  {label}
-                </span>
+                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">{label}</span>
               </label>
             ))}
           </div>
@@ -98,20 +90,15 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         <div>
           <div className="text-sm text-zinc-400 mb-3">Platform</div>
           <div className="space-y-2">
-            {['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS'].map(platform => (
-              <label
-                key={platform}
-                className="flex items-center gap-3 cursor-pointer group"
-              >
+            {['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS'].map((platform) => (
+              <label key={platform} className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={filters.platforms.has(platform)}
                   onChange={() => togglePlatform(platform)}
                   className="size-4 rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
                 />
-                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">
-                  {platform}
-                </span>
+                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">{platform}</span>
               </label>
             ))}
           </div>
@@ -150,20 +137,15 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         <div>
           <div className="text-sm text-zinc-400 mb-3">Project</div>
           <div className="space-y-2">
-            {['TuistCore', 'TuistKit'].map(project => (
-              <label
-                key={project}
-                className="flex items-center gap-3 cursor-pointer group"
-              >
+            {['TuistCore', 'TuistKit'].map((project) => (
+              <label key={project} className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={filters.projects.has(project)}
                   onChange={() => toggleProject(project)}
                   className="size-4 rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
                 />
-                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">
-                  {project}
-                </span>
+                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">{project}</span>
               </label>
             ))}
           </div>
@@ -173,10 +155,18 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         <button
           onClick={() => {
             onFiltersChange({
-              nodeTypes: new Set(['app', 'framework', 'library', 'test-unit', 'test-ui', 'cli', 'package']),
+              nodeTypes: new Set([
+                'app',
+                'framework',
+                'library',
+                'test-unit',
+                'test-ui',
+                'cli',
+                'package',
+              ]),
               platforms: new Set(['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS']),
               origins: new Set(['local', 'external']),
-              projects: new Set(['TuistCore', 'TuistKit'])
+              projects: new Set(['TuistCore', 'TuistKit']),
             });
           }}
           className="w-full px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-750 text-zinc-300 text-sm border border-zinc-700 transition-colors"

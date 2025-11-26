@@ -4,8 +4,8 @@
  * Uses design system CSS variables
  */
 
-import { GraphNode, GraphEdge } from '../../data/mockGraphData';
-import { ViewMode, FilterState } from '../../types/app';
+import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
+import type { FilterState, ViewMode } from '../../types/app';
 import { GraphVisualization } from '../GraphVisualization';
 import { RightSidebar } from '../RightSidebar';
 import { Toolbar } from './Toolbar';
@@ -18,7 +18,7 @@ interface GraphTabProps {
   filteredEdges: GraphEdge[];
   allNodes: GraphNode[];
   allEdges: GraphEdge[];
-  
+
   // State
   selectedNode: GraphNode | null;
   selectedCluster: string | null;
@@ -27,7 +27,7 @@ interface GraphTabProps {
   viewMode: ViewMode;
   zoom: number;
   filters: FilterState;
-  
+
   // Handlers
   onNodeSelect: (node: GraphNode | null) => void;
   onClusterSelect: (clusterId: string | null) => void;
@@ -40,7 +40,7 @@ interface GraphTabProps {
   onZoomReset: () => void;
   onFiltersChange: (filters: FilterState) => void;
   onSearchChange: (query: string) => void;
-  
+
   // Depth information for edge opacity
   transitiveDeps: {
     nodes: Set<string>;
@@ -54,14 +54,22 @@ interface GraphTabProps {
     edgeDepths: Map<string, number>;
     maxDepth: number;
   };
-  
+
   // Animation
   enableAnimation: boolean;
   onToggleAnimation: (enabled: boolean) => void;
-  
+
   // Filter preview
-  previewFilter: { type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster', value: string } | null;
-  onPreviewFilterChange: (preview: { type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster', value: string } | null) => void;
+  previewFilter: {
+    type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
+    value: string;
+  } | null;
+  onPreviewFilterChange: (
+    preview: {
+      type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
+      value: string;
+    } | null,
+  ) => void;
 }
 
 export function GraphTab({
@@ -94,7 +102,7 @@ export function GraphTab({
   enableAnimation,
   onToggleAnimation,
   previewFilter,
-  onPreviewFilterChange
+  onPreviewFilterChange,
 }: GraphTabProps) {
   return (
     <div className="flex-1 flex overflow-hidden">

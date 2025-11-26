@@ -1,35 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { GraphNode, GraphEdge } from '../../data/mockGraphData';
-import { 
-  groupIntoClusters, 
-  calculateRadialPositions,
-  calculateClusterBounds,
-  arrangeClustersBullseye
-} from '../../utils/clusterLayout';
-import { 
-  Cluster,
-  PositionedNode,
+import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
+import {
+  type Cluster,
+  type ClusterLayoutConfig,
   DEFAULT_CLUSTER_CONFIG,
-  ClusterLayoutConfig
+  type PositionedNode,
 } from '../../types/cluster';
-import { NodePosition, ClusterPosition } from '../../types/simulation';
-import { 
-  initializeNodePositions, 
-  initializeClusterPositions,
-  getClusterNodes
-} from '../../utils/simulation/initializeSimulation';
+import type { ClusterPosition, NodePosition } from '../../types/simulation';
 import {
-  applyAnchorForce,
-  applyRadialPositionForce,
-  applyTestSatelliteForce,
-  applyCollisionForce,
-  applyBoundaryConstraints
-} from '../../utils/simulation/radialForces';
-import {
-  applyClusterCollision,
-  applyClusterCenterForce,
-  updateClusterPosition
-} from '../../utils/simulation/clusterForces';
+  arrangeClustersBullseye,
+  calculateClusterBounds,
+  calculateRadialPositions,
+  groupIntoClusters,
+} from '../../utils/clusterLayout';
 
 interface UseRadialClusterSimulationOptions {
   nodes: GraphNode[];
@@ -42,10 +25,10 @@ export function useRadialClusterSimulation({
   nodes,
   edges,
   draggedNode,
-  config: customConfig
+  config: customConfig,
 }: UseRadialClusterSimulationOptions) {
   const config = { ...DEFAULT_CLUSTER_CONFIG, ...customConfig };
-  
+
   const [nodePositions, setNodePositions] = useState<Map<string, NodePosition>>(new Map());
   const [clusterPositions, setClusterPositions] = useState<Map<string, ClusterPosition>>(new Map());
   const [clusters, setClusters] = useState<Cluster[]>([]);
@@ -60,11 +43,11 @@ export function useRadialClusterSimulation({
 
     // 2. Calculate radial positions for each cluster
     const allPositioned: PositionedNode[] = [];
-    
-    analyzedClusters.forEach(cluster => {
+
+    analyzedClusters.forEach((cluster) => {
       const positioned = calculateRadialPositions(cluster, config);
       allPositioned.push(...positioned);
-      
+
       // Calculate and store cluster bounds
       cluster.bounds = calculateClusterBounds(positioned, config);
     });
@@ -74,13 +57,13 @@ export function useRadialClusterSimulation({
 
     // 4. Initialize cluster positions
     const initClusters = new Map<string, ClusterPosition>();
-    analyzedClusters.forEach(cluster => {
+    analyzedClusters.forEach((cluster) => {
       const gridPos = clusterGridPositions.get(cluster.id) || { x: 0, y: 0 };
       const bounds = cluster.bounds || { width: 300, height: 300, x: 0, y: 0 };
-      
+
       // Keep existing position if cluster already exists
       const existing = clusterPositions.get(cluster.id);
-      
+
       initClusters.set(cluster.id, {
         id: cluster.id,
         x: existing?.x ?? gridPos.x,
@@ -89,16 +72,16 @@ export function useRadialClusterSimulation({
         vy: existing?.vy ?? 0,
         width: bounds.width,
         height: bounds.height,
-        nodeCount: cluster.nodes.length
+        nodeCount: cluster.nodes.length,
       });
     });
 
     // 5. Initialize node positions
     const initPositions = new Map<string, NodePosition>();
-    allPositioned.forEach(posNode => {
+    allPositioned.forEach((posNode) => {
       const existing = nodePositions.get(posNode.node.id);
       const metadata = posNode.metadata;
-      
+
       // Determine node radius based on role/type
       let nodeRadius = config.normalNodeSize;
       if (metadata.isAnchor) {
@@ -106,7 +89,7 @@ export function useRadialClusterSimulation({
       } else if (metadata.role === 'test') {
         nodeRadius = config.testNodeSize;
       }
-      
+
       initPositions.set(posNode.node.id, {
         id: posNode.node.id,
         x: existing?.x ?? posNode.localX!,
@@ -119,7 +102,7 @@ export function useRadialClusterSimulation({
         targetAngle: posNode.targetAngle,
         isAnchor: metadata.isAnchor,
         isTest: metadata.role === 'test',
-        testSubject: metadata.testSubjects?.[0]
+        testSubject: metadata.testSubjects?.[0],
       });
     });
 
@@ -142,28 +125,28 @@ export function useRadialClusterSimulation({
       // === CLUSTER-LEVEL FORCES ===
       if (clusterAlpha > 0.005) {
         const clusterArray = Array.from(initClusters.values());
-        
+
         // Cluster collision
         for (let i = 0; i < clusterArray.length; i++) {
           for (let j = i + 1; j < clusterArray.length; j++) {
             const a = clusterArray[i];
             const b = clusterArray[j];
-            
+
             const dx = b.x - a.x;
             const dy = b.y - a.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             if (distance < 1) continue;
-            
+
             const aRadius = Math.sqrt(a.width * a.width + a.height * a.height) / 2;
             const bRadius = Math.sqrt(b.width * b.width + b.height * b.height) / 2;
             const minSeparation = aRadius + bRadius + config.clusterSpacing;
-            
+
             const overlap = minSeparation - distance;
             if (overlap > 0) {
               const force = overlap * 1.0 * clusterAlpha;
               const fx = (dx / distance) * force;
               const fy = (dy / distance) * force;
-              
+
               a.vx -= fx;
               a.vy -= fy;
               b.vx += fx;
@@ -171,33 +154,33 @@ export function useRadialClusterSimulation({
             }
           }
         }
-        
+
         // Weak center force
-        clusterArray.forEach(cluster => {
+        clusterArray.forEach((cluster) => {
           cluster.vx -= cluster.x * 0.008 * clusterAlpha;
           cluster.vy -= cluster.y * 0.008 * clusterAlpha;
         });
-        
+
         // Apply velocities
-        clusterArray.forEach(cluster => {
+        clusterArray.forEach((cluster) => {
           cluster.x += cluster.vx;
           cluster.y += cluster.vy;
           cluster.vx *= 0.82;
           cluster.vy *= 0.82;
         });
-        
+
         clusterAlpha *= CLUSTER_ALPHA_DECAY;
       }
 
       // === NODE-LEVEL FORCES (radial constraints) ===
       if (nodeAlpha > 0.001) {
-        analyzedClusters.forEach(cluster => {
+        analyzedClusters.forEach((cluster) => {
           const clusterPos = initClusters.get(cluster.id);
           if (!clusterPos) return;
 
-          const clusterNodes = cluster.nodes.map(n => initPositions.get(n.id)!).filter(Boolean);
-          
-          clusterNodes.forEach(node => {
+          const clusterNodes = cluster.nodes.map((n) => initPositions.get(n.id)!).filter(Boolean);
+
+          clusterNodes.forEach((node) => {
             // Skip if being dragged
             if (draggedNode && node.id === draggedNode) return;
 
@@ -208,16 +191,20 @@ export function useRadialClusterSimulation({
               node.vx += (centerX - node.x) * config.forceStrength.anchor * nodeAlpha;
               node.vy += (centerY - node.y) * config.forceStrength.anchor * nodeAlpha;
             }
-            
+
             // 2. Radial position force (for non-test, non-anchor nodes)
-            else if (!node.isTest && node.targetRadius !== undefined && node.targetAngle !== undefined) {
+            else if (
+              !node.isTest &&
+              node.targetRadius !== undefined &&
+              node.targetAngle !== undefined
+            ) {
               const targetX = node.targetRadius * Math.cos(node.targetAngle);
               const targetY = node.targetRadius * Math.sin(node.targetAngle);
-              
+
               node.vx += (targetX - node.x) * config.forceStrength.radial * nodeAlpha;
               node.vy += (targetY - node.y) * config.forceStrength.radial * nodeAlpha;
             }
-            
+
             // 3. Test satellite tether (bind to subject)
             else if (node.isTest && node.testSubject) {
               const subjectPos = initPositions.get(node.testSubject);
@@ -226,11 +213,12 @@ export function useRadialClusterSimulation({
                 const dy = node.y - subjectPos.y;
                 const distance = Math.sqrt(dx * dx + dy * dy) || 1;
                 const targetDist = config.testOrbitRadius;
-                
-                const force = (distance - targetDist) * config.forceStrength.testSatellite * nodeAlpha;
+
+                const force =
+                  (distance - targetDist) * config.forceStrength.testSatellite * nodeAlpha;
                 const fx = (dx / distance) * force;
                 const fy = (dy / distance) * force;
-                
+
                 node.vx -= fx;
                 node.vy -= fy;
               }
@@ -242,22 +230,22 @@ export function useRadialClusterSimulation({
             for (let j = i + 1; j < clusterNodes.length; j++) {
               const a = clusterNodes[i];
               const b = clusterNodes[j];
-              
+
               const dx = b.x - a.x;
               const dy = b.y - a.y;
               const distance = Math.sqrt(dx * dx + dy * dy);
               if (distance === 0) continue;
-              
+
               // Account for vertical label space below nodes (~30px)
               const verticalLabelSpace = Math.abs(dy) < 5 ? 25 : 0;
               const minSeparation = a.radius + b.radius + 12 + verticalLabelSpace;
-              
+
               if (distance < minSeparation) {
                 const overlap = minSeparation - distance;
                 const force = overlap * config.forceStrength.collision * nodeAlpha;
                 const fx = (dx / distance) * force;
                 const fy = (dy / distance) * force;
-                
+
                 a.vx -= fx;
                 a.vy -= fy;
                 b.vx += fx;
@@ -269,17 +257,17 @@ export function useRadialClusterSimulation({
           // Apply velocities and strong boundary constraints
           const bounds = cluster.bounds!;
           const padding = config.clusterPadding;
-          const maxX = (bounds.width / 2) - padding;
-          const maxY = (bounds.height / 2) - padding;
-          
-          clusterNodes.forEach(node => {
+          const maxX = bounds.width / 2 - padding;
+          const maxY = bounds.height / 2 - padding;
+
+          clusterNodes.forEach((node) => {
             if (draggedNode && node.id === draggedNode) return;
-            
+
             node.x += node.vx;
             node.y += node.vy;
             node.vx *= 0.88;
             node.vy *= 0.88;
-            
+
             // Strong boundary constraints - clamp position and add repelling force
             if (Math.abs(node.x) > maxX) {
               // Clamp to boundary
@@ -290,7 +278,7 @@ export function useRadialClusterSimulation({
               const excess = Math.abs(node.x) - maxX;
               node.vx -= Math.sign(node.x) * excess * 0.1;
             }
-            
+
             if (Math.abs(node.y) > maxY) {
               // Clamp to boundary
               node.y = Math.sign(node.y) * maxY;
@@ -300,18 +288,18 @@ export function useRadialClusterSimulation({
               const excess = Math.abs(node.y) - maxY;
               node.vy -= Math.sign(node.y) * excess * 0.1;
             }
-            
+
             // Additional soft boundary force before hitting edge
             const softBoundaryPadding = 20;
             const softMaxX = maxX - softBoundaryPadding;
             const softMaxY = maxY - softBoundaryPadding;
-            
+
             if (Math.abs(node.x) > softMaxX) {
               const excess = Math.abs(node.x) - softMaxX;
               const force = excess * config.forceStrength.boundary * nodeAlpha;
               node.vx -= Math.sign(node.x) * force;
             }
-            
+
             if (Math.abs(node.y) > softMaxY) {
               const excess = Math.abs(node.y) - softMaxY;
               const force = excess * config.forceStrength.boundary * nodeAlpha;
@@ -319,7 +307,7 @@ export function useRadialClusterSimulation({
             }
           });
         });
-        
+
         nodeAlpha *= NODE_ALPHA_DECAY;
       }
 
@@ -337,7 +325,7 @@ export function useRadialClusterSimulation({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [nodes, edges, draggedNode]);
+  }, [nodes, edges, draggedNode, clusterPositions.get, config, nodePositions.get]);
 
   return { nodePositions, clusterPositions, clusters, setNodePositions };
 }

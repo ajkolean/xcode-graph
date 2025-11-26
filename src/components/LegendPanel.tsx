@@ -1,8 +1,6 @@
+import { ChevronDown, ChevronUp, Glasses, Monitor, Smartphone, Tv, Watch } from 'lucide-react';
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Smartphone, Monitor, Glasses, Tv, Watch } from 'lucide-react';
 import { getNodeIconPath } from '../utils/nodeIcons';
-import AppGridIcon from '../imports/AppGrid1';
-import FlaskIcon from '../imports/Flask1';
 
 export function LegendPanel() {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -43,7 +41,7 @@ export function LegendPanel() {
                 </div>
                 <span className="text-xs text-zinc-400">App (platform-specific)</span>
               </div>
-              
+
               {/* Framework */}
               <div className="flex items-center gap-2">
                 <div className="size-5 flex items-center justify-center">
@@ -60,7 +58,7 @@ export function LegendPanel() {
                 </div>
                 <span className="text-xs text-zinc-400">Framework</span>
               </div>
-              
+
               {/* Library */}
               <div className="flex items-center gap-2">
                 <div className="size-5 flex items-center justify-center">
@@ -77,7 +75,7 @@ export function LegendPanel() {
                 </div>
                 <span className="text-xs text-zinc-400">Library</span>
               </div>
-              
+
               {/* Test Unit */}
               <div className="flex items-center gap-2">
                 <div className="size-5 flex items-center justify-center">
@@ -94,7 +92,7 @@ export function LegendPanel() {
                 </div>
                 <span className="text-xs text-zinc-400">Unit Test</span>
               </div>
-              
+
               {/* Test UI */}
               <div className="flex items-center gap-2">
                 <div className="size-5 flex items-center justify-center">
@@ -111,7 +109,7 @@ export function LegendPanel() {
                 </div>
                 <span className="text-xs text-zinc-400">UI Test</span>
               </div>
-              
+
               {/* CLI */}
               <div className="flex items-center gap-2">
                 <div className="size-5 flex items-center justify-center">
@@ -128,7 +126,7 @@ export function LegendPanel() {
                 </div>
                 <span className="text-xs text-zinc-400">CLI Tool</span>
               </div>
-              
+
               {/* Package */}
               <div className="flex items-center gap-2">
                 <div className="size-5 flex items-center justify-center">

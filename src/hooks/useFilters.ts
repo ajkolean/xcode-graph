@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
-import { FilterState } from '../types/app';
-import { GraphNode } from '../data/mockGraphData';
+import type { GraphNode } from '../data/mockGraphData';
+import type { FilterState } from '../types/app';
 
 export function useFilters(allNodes: GraphNode[]) {
   // Count nodes by type
   const typeCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    allNodes.forEach(node => {
+    allNodes.forEach((node) => {
       counts.set(node.type, (counts.get(node.type) || 0) + 1);
     });
     return counts;
@@ -15,7 +15,7 @@ export function useFilters(allNodes: GraphNode[]) {
   // Count nodes by platform
   const platformCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    allNodes.forEach(node => {
+    allNodes.forEach((node) => {
       counts.set(node.platform, (counts.get(node.platform) || 0) + 1);
     });
     return counts;
@@ -24,7 +24,7 @@ export function useFilters(allNodes: GraphNode[]) {
   // Count nodes by project
   const projectCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    allNodes.forEach(node => {
+    allNodes.forEach((node) => {
       if (node.project && node.type !== 'package') {
         counts.set(node.project, (counts.get(node.project) || 0) + 1);
       }
@@ -35,7 +35,7 @@ export function useFilters(allNodes: GraphNode[]) {
   // Count package nodes
   const packageCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    allNodes.forEach(node => {
+    allNodes.forEach((node) => {
       if (node.type === 'package') {
         counts.set(node.name, (counts.get(node.name) || 0) + 1);
       }
@@ -61,7 +61,7 @@ export function useFilters(allNodes: GraphNode[]) {
         platforms: new Set(platformCounts.keys()),
         origins: new Set(['local', 'external']),
         projects: new Set(projectCounts.keys()),
-        packages: new Set(packageCounts.keys())
+        packages: new Set(packageCounts.keys()),
       });
     };
   };
@@ -72,6 +72,6 @@ export function useFilters(allNodes: GraphNode[]) {
     projectCounts,
     packageCounts,
     hasActiveFilters,
-    createClearFilters
+    createClearFilters,
   };
 }

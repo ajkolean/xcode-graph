@@ -3,7 +3,7 @@
  * Based on Swift/Tuist architecture principles
  */
 
-import { buildAdjacency, AdjacencyList } from './graphAlgorithms';
+import { type AdjacencyList, buildAdjacency } from './graphAlgorithms';
 
 export interface NodePolar {
   id: string;
@@ -28,11 +28,11 @@ export interface NodeCartesian {
  * Node role determines angular sector placement
  * Sectors ensure consistent visual signature across all clusters
  */
-export type NodeRole = 
-  | 'anchor'          // App, CLI - TOP sector (330°-30° = -30° to +30°)
-  | 'framework'       // Frameworks - RIGHT sector (30°-150°)
-  | 'internal'        // Utilities, libs - BOTTOM sector (150°-240°)
-  | 'test';           // Tests - orbiting satellites (not on main rings)
+export type NodeRole =
+  | 'anchor' // App, CLI - TOP sector (330°-30° = -30° to +30°)
+  | 'framework' // Frameworks - RIGHT sector (30°-150°)
+  | 'internal' // Utilities, libs - BOTTOM sector (150°-240°)
+  | 'test'; // Tests - orbiting satellites (not on main rings)
 
 export interface SectorLayoutOptions {
   baseRadius?: number;
@@ -46,8 +46,8 @@ export interface SectorLayoutOptions {
  * Consistent orientation: TOP = apps, RIGHT = frameworks, BOTTOM = libs, LEFT = tests
  */
 const SECTORS = {
-  anchor: { start: -Math.PI / 6, end: Math.PI / 6 },          // -30° to +30° (TOP)
-  framework: { start: Math.PI / 6, end: (5 * Math.PI) / 6 },  // +30° to +150° (RIGHT)
+  anchor: { start: -Math.PI / 6, end: Math.PI / 6 }, // -30° to +30° (TOP)
+  framework: { start: Math.PI / 6, end: (5 * Math.PI) / 6 }, // +30° to +150° (RIGHT)
   internal: { start: (5 * Math.PI) / 6, end: (4 * Math.PI) / 3 }, // +150° to +240° (BOTTOM)
 };
 
@@ -56,8 +56,8 @@ const SECTORS = {
  */
 function classifyNode(
   node: { id: string; type: string },
-  adj: AdjacencyList,
-  anchorIds: Set<string>
+  _adj: AdjacencyList,
+  anchorIds: Set<string>,
 ): NodeRole {
   if (node.type === 'test') return 'test';
   if (node.type === 'app' || node.type === 'cli') return 'anchor';
@@ -73,9 +73,9 @@ function classifyNode(
 function findTestSubject(
   testId: string,
   nodes: Array<{ id: string; type: string; name?: string }>,
-  adj: AdjacencyList
+  adj: AdjacencyList,
 ): string | undefined {
-  const testNode = nodes.find(n => n.id === testId);
+  const testNode = nodes.find((n) => n.id === testId);
   if (!testNode) return undefined;
 
   // Heuristic 1: Name pattern (FooTests → Foo)
@@ -83,8 +83,8 @@ function findTestSubject(
   const match = name.match(/^(.+?)(Tests?|Spec|UnitTests?)$/i);
   if (match) {
     const baseName = match[1];
-    const subject = nodes.find(n => 
-      (n.name || n.id).toLowerCase() === baseName.toLowerCase() && n.type !== 'test'
+    const subject = nodes.find(
+      (n) => (n.name || n.id).toLowerCase() === baseName.toLowerCase() && n.type !== 'test',
     );
     if (subject) return subject.id;
   }
@@ -92,7 +92,7 @@ function findTestSubject(
   // Heuristic 2: First non-test dependency
   const deps = adj.forward.get(testId) || [];
   for (const dep of deps) {
-    const depNode = nodes.find(n => n.id === dep);
+    const depNode = nodes.find((n) => n.id === dep);
     if (depNode && depNode.type !== 'test') {
       return dep;
     }
@@ -107,7 +107,7 @@ function findTestSubject(
 function computeDepths(
   anchors: string[],
   adj: AdjacencyList,
-  maxDepth: number
+  maxDepth: number,
 ): Record<string, number> {
   const depth: Record<string, number> = {};
   const queue: string[] = [];
@@ -150,29 +150,24 @@ export function sectorLayout(
   edges: Array<{ from: string; to: string }>,
   centerX: number,
   centerY: number,
-  options: SectorLayoutOptions = {}
+  options: SectorLayoutOptions = {},
 ): NodeCartesian[] {
-  const {
-    baseRadius = 35,
-    ringSpacing = 55,
-    maxDepth = 2,
-    testOrbitRadius = 32
-  } = options;
+  const { baseRadius = 35, ringSpacing = 55, maxDepth = 2, testOrbitRadius = 32 } = options;
 
   if (nodes.length === 0) return [];
 
   const adj = buildAdjacency(
-    nodes.map(n => n.id),
-    edges
+    nodes.map((n) => n.id),
+    edges,
   );
 
   // Step 1: Identify anchors
-  const anchorNodes = nodes.filter(n => n.type === 'app' || n.type === 'cli');
-  const anchorIds = new Set(anchorNodes.map(n => n.id));
-  
+  const anchorNodes = nodes.filter((n) => n.type === 'app' || n.type === 'cli');
+  const anchorIds = new Set(anchorNodes.map((n) => n.id));
+
   // If no explicit anchors, use first framework or first node
   if (anchorIds.size === 0) {
-    const firstFramework = nodes.find(n => n.type === 'framework');
+    const firstFramework = nodes.find((n) => n.type === 'framework');
     const fallback = firstFramework || nodes[0];
     if (fallback) anchorIds.add(fallback.id);
   }
@@ -181,8 +176,8 @@ export function sectorLayout(
   const depth = computeDepths(Array.from(anchorIds), adj, maxDepth);
 
   // Step 3: Separate test nodes from main nodes
-  const mainNodes = nodes.filter(n => n.type !== 'test');
-  const testNodes = nodes.filter(n => n.type === 'test');
+  const mainNodes = nodes.filter((n) => n.type !== 'test');
+  const testNodes = nodes.filter((n) => n.type === 'test');
 
   // Step 4: Classify roles and group by ring + role
   interface RingRoleGroup {
@@ -192,12 +187,12 @@ export function sectorLayout(
   }
 
   const groups = new Map<string, RingRoleGroup>();
-  
+
   for (const node of mainNodes) {
     const ring = depth[node.id] ?? maxDepth;
     const role = classifyNode(node, adj, anchorIds);
     const key = `${ring}-${role}`;
-    
+
     if (!groups.has(key)) {
       groups.set(key, { ring, role, nodes: [] });
     }
@@ -227,7 +222,7 @@ export function sectorLayout(
         angle,
         radius,
         role: group.role,
-        isTest: false
+        isTest: false,
       };
       polar.push(p);
       polarById.set(node.id, p);
@@ -239,25 +234,27 @@ export function sectorLayout(
 
   for (const testNode of testNodes) {
     const subjectId = findTestSubject(testNode.id, nodes, adj);
-    
+
     if (subjectId && polarById.has(subjectId)) {
       // Orbit around subject
       const subject = polarById.get(subjectId)!;
-      
+
       // Find how many tests orbit this subject
-      const siblingsCount = testNodes.filter(t => 
-        findTestSubject(t.id, nodes, adj) === subjectId
+      const siblingsCount = testNodes.filter(
+        (t) => findTestSubject(t.id, nodes, adj) === subjectId,
       ).length;
-      
+
       const siblingIndex = testNodes
-        .filter(t => findTestSubject(t.id, nodes, adj) === subjectId)
+        .filter((t) => findTestSubject(t.id, nodes, adj) === subjectId)
         .indexOf(testNode);
 
       // Distribute test satellites around subject
-      const orbitAngle = subject.angle + (siblingIndex * 2 * Math.PI / Math.max(siblingsCount, 3));
-      const orbitX = subject.radius * Math.cos(subject.angle) + testOrbitRadius * Math.cos(orbitAngle);
-      const orbitY = subject.radius * Math.sin(subject.angle) + testOrbitRadius * Math.sin(orbitAngle);
-      
+      const orbitAngle = subject.angle + (siblingIndex * 2 * Math.PI) / Math.max(siblingsCount, 3);
+      const orbitX =
+        subject.radius * Math.cos(subject.angle) + testOrbitRadius * Math.cos(orbitAngle);
+      const orbitY =
+        subject.radius * Math.sin(subject.angle) + testOrbitRadius * Math.sin(orbitAngle);
+
       const testRadius = Math.hypot(orbitX, orbitY);
       const testAngle = Math.atan2(orbitY, orbitX);
 
@@ -268,33 +265,33 @@ export function sectorLayout(
         radius: testRadius,
         role: 'test',
         isTest: true,
-        testSubject: subjectId
+        testSubject: subjectId,
       });
     } else {
       // No subject found - place in outer orbit
       const angle = Math.random() * 2 * Math.PI;
       const radius = baseRadius + (maxDepth + 1) * ringSpacing;
-      
+
       testPolar.push({
         id: testNode.id,
         ring: -1,
         angle,
         radius,
         role: 'test',
-        isTest: true
+        isTest: true,
       });
     }
   }
 
   // Step 7: Convert to Cartesian
   const allPolar = [...polar, ...testPolar];
-  const result: NodeCartesian[] = allPolar.map(p => ({
+  const result: NodeCartesian[] = allPolar.map((p) => ({
     id: p.id,
     ring: p.ring,
     x: centerX + p.radius * Math.cos(p.angle),
     y: centerY + p.radius * Math.sin(p.angle),
     role: p.role,
-    isTest: p.isTest
+    isTest: p.isTest,
   }));
 
   return result;
@@ -305,13 +302,13 @@ export function sectorLayout(
  */
 export function computeMEC(positions: NodeCartesian[], centerX: number, centerY: number): number {
   if (positions.length === 0) return 100;
-  
+
   let maxDist = 0;
   for (const pos of positions) {
     const dist = Math.hypot(pos.x - centerX, pos.y - centerY);
     maxDist = Math.max(maxDist, dist);
   }
-  
+
   // Add padding for node size and visual breathing room
   return maxDist + 40;
 }

@@ -3,13 +3,13 @@
  * All styling uses design system CSS variables
  */
 
-import { FilterState } from '../../types/app';
-import { StatsCard } from './StatsCard';
-import { SearchBar } from './SearchBar';
+import type { FilterState } from '../../types/app';
 import { ClearFiltersButton } from './ClearFiltersButton';
-import { FilterSection } from './FilterSection';
 import { EmptyState } from './EmptyState';
-import { ProductTypesIcon, PlatformsIcon, ProjectsIcon, PackagesIcon } from './icons/FilterIcons';
+import { FilterSection } from './FilterSection';
+import { PackagesIcon, PlatformsIcon, ProductTypesIcon, ProjectsIcon } from './icons/FilterIcons';
+import { SearchBar } from './SearchBar';
+import { StatsCard } from './StatsCard';
 
 interface FilterViewProps {
   // Counts
@@ -17,29 +17,29 @@ interface FilterViewProps {
   totalNodesCount: number;
   filteredEdgesCount: number;
   totalEdgesCount: number;
-  
+
   // Filter state
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
-  
+
   // Search
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  
+
   // Filter data
   nodeTypeItems: Array<{ key: string; count: number; color: string }>;
   platformItems: Array<{ key: string; count: number; color: any }>;
   projectItems: Array<{ key: string; count: number; color: string }>;
   packageItems: Array<{ key: string; count: number; color: string }>;
-  
+
   // UI state
   expandedSections: Record<string, boolean>;
   onToggleSection: (section: string) => void;
-  
+
   // Actions
   isFiltersActive: boolean;
   onClearFilters: () => void;
-  
+
   // Preview
   zoom: number;
   onPreviewChange: (preview: { type: string; value: string } | null) => void;
@@ -63,7 +63,7 @@ export function FilterView({
   isFiltersActive,
   onClearFilters,
   zoom,
-  onPreviewChange
+  onPreviewChange,
 }: FilterViewProps) {
   // Filter toggle handlers
   const handleNodeTypeToggle = (type: string, checked: boolean) => {
@@ -132,10 +132,7 @@ export function FilterView({
       />
 
       {/* Search Bar */}
-      <SearchBar
-        searchQuery={searchQuery}
-        onSearchChange={onSearchChange}
-      />
+      <SearchBar searchQuery={searchQuery} onSearchChange={onSearchChange} />
 
       {/* Filter Content */}
       <div className="h-full overflow-y-auto">
@@ -156,11 +153,11 @@ export function FilterView({
           />
 
           {/* Section Divider */}
-          <div 
+          <div
             style={{
               height: '1px',
               backgroundColor: 'rgba(255, 255, 255, 0.06)',
-              margin: '24px -4px 0 -4px'
+              margin: '24px -4px 0 -4px',
             }}
           />
 
@@ -180,11 +177,11 @@ export function FilterView({
           />
 
           {/* Section Divider */}
-          <div 
+          <div
             style={{
               height: '1px',
               backgroundColor: 'rgba(255, 255, 255, 0.06)',
-              margin: '24px -4px 0 -4px'
+              margin: '24px -4px 0 -4px',
             }}
           />
 
@@ -205,11 +202,11 @@ export function FilterView({
 
           {/* Section Divider (only if packages exist) */}
           {packageItems.length > 0 && (
-            <div 
+            <div
               style={{
                 height: '1px',
                 backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                margin: '24px -4px 0 -4px'
+                margin: '24px -4px 0 -4px',
               }}
             />
           )}
@@ -235,10 +232,7 @@ export function FilterView({
 
       {/* Empty State */}
       {filteredNodesCount === 0 && (
-        <EmptyState
-          hasActiveFilters={isFiltersActive}
-          onClearFilters={onClearFilters}
-        />
+        <EmptyState hasActiveFilters={isFiltersActive} onClearFilters={onClearFilters} />
       )}
     </div>
   );

@@ -3,7 +3,7 @@
  * With barycentric crossing reduction for cleaner edge routing
  */
 
-import { tarjanSCC, assignLayers, computeNodeScores } from './graphAlgorithms';
+import { assignLayers, tarjanSCC } from './graphAlgorithms';
 
 export interface SuperNode {
   id: string;
@@ -30,7 +30,7 @@ export interface ClusterLayoutResult {
  */
 export function condenseToDAG(
   clusterIds: string[],
-  edges: Array<{ from: string; to: string }>
+  edges: Array<{ from: string; to: string }>,
 ): {
   superNodes: SuperNode[];
   superEdges: SuperEdge[];
@@ -70,7 +70,7 @@ export function condenseToDAG(
     }
   }
 
-  const superEdges: SuperEdge[] = Array.from(superEdgesSet).map(s => {
+  const superEdges: SuperEdge[] = Array.from(superEdgesSet).map((s) => {
     const [from, to] = s.split('::');
     return { from, to };
   });
@@ -82,18 +82,18 @@ export function condenseToDAG(
  * Compute barycenter (average position) of neighbors in an adjacent layer
  */
 function computeBarycenter(
-  nodeId: string,
+  _nodeId: string,
   neighborIds: string[],
-  positionMap: Map<string, number>
+  positionMap: Map<string, number>,
 ): number {
   if (neighborIds.length === 0) return 0;
-  
+
   const positions = neighborIds
-    .map(id => positionMap.get(id))
+    .map((id) => positionMap.get(id))
     .filter((p): p is number => p !== undefined);
-  
+
   if (positions.length === 0) return 0;
-  
+
   return positions.reduce((sum, p) => sum + p, 0) / positions.length;
 }
 
@@ -104,30 +104,30 @@ function computeBarycenter(
 function reduceCrossingsIteration(
   layerToNodes: Map<number, SuperNode[]>,
   superEdges: SuperEdge[],
-  direction: 'down' | 'up'
+  direction: 'down' | 'up',
 ): Map<number, SuperNode[]> {
   const result = new Map<number, SuperNode[]>();
-  
+
   // Build adjacency
   const parents = new Map<string, string[]>();
   const children = new Map<string, string[]>();
-  
+
   for (const edge of superEdges) {
     if (!parents.has(edge.to)) parents.set(edge.to, []);
     if (!children.has(edge.from)) children.set(edge.from, []);
     parents.get(edge.to)!.push(edge.from);
     children.get(edge.from)!.push(edge.to);
   }
-  
+
   // Current positions (index in layer)
   const position = new Map<string, number>();
-  for (const [layer, nodes] of layerToNodes.entries()) {
+  for (const [_layer, nodes] of layerToNodes.entries()) {
     nodes.forEach((node, idx) => position.set(node.id, idx));
   }
-  
+
   const layers = Array.from(layerToNodes.keys()).sort((a, b) => a - b);
   const orderedLayers = direction === 'down' ? layers : layers.reverse();
-  
+
   for (const layer of orderedLayers) {
     const nodes = layerToNodes.get(layer);
     if (!nodes || nodes.length <= 1) {
@@ -135,26 +135,25 @@ function reduceCrossingsIteration(
       result.set(layer, nodes || []);
       continue;
     }
-    
+
     // Compute barycenter for each node based on neighbors
-    const scored = nodes.map(node => {
-      const neighborIds = direction === 'down' 
-        ? (parents.get(node.id) || [])
-        : (children.get(node.id) || []);
-      
+    const scored = nodes.map((node) => {
+      const neighborIds =
+        direction === 'down' ? parents.get(node.id) || [] : children.get(node.id) || [];
+
       const barycenter = computeBarycenter(node.id, neighborIds, position);
       return { node, barycenter };
     });
-    
+
     // Sort by barycenter
     scored.sort((a, b) => a.barycenter - b.barycenter);
-    
+
     // Update positions
-    const sorted = scored.map(s => s.node);
+    const sorted = scored.map((s) => s.node);
     sorted.forEach((node, idx) => position.set(node.id, idx));
     result.set(layer, sorted);
   }
-  
+
   return result;
 }
 
@@ -164,15 +163,15 @@ function reduceCrossingsIteration(
 function reduceCrossings(
   layerToNodes: Map<number, SuperNode[]>,
   superEdges: SuperEdge[],
-  iterations: number = 3
+  iterations: number = 3,
 ): Map<number, SuperNode[]> {
   let current = layerToNodes;
-  
+
   for (let i = 0; i < iterations; i++) {
     const direction = i % 2 === 0 ? 'down' : 'up';
     current = reduceCrossingsIteration(current, superEdges, direction);
   }
-  
+
   return current;
 }
 
@@ -186,17 +185,17 @@ export function layoutClusters(
   options: {
     layerGapY?: number;
     clusterGapX?: number;
-  } = {}
+  } = {},
 ): ClusterLayoutResult[] {
   const {
-    layerGapY = 280,        // Reduced from 450
-    clusterGapX = 60        // Reduced from 100
+    layerGapY = 280, // Reduced from 450
+    clusterGapX = 60, // Reduced from 100
   } = options;
 
   // Assign layers based on topological depth
   const superDepth = assignLayers(
-    superNodes.map(s => s.id),
-    superEdges
+    superNodes.map((s) => s.id),
+    superEdges,
   );
 
   // Group by layer
@@ -216,16 +215,18 @@ export function layoutClusters(
 
   for (const [layer, sns] of optimizedLayers.entries()) {
     // Compute actual widths for this layer based on cluster dimensions
-    const widths = sns.map(sn => {
+    const widths = sns.map((sn) => {
       // Get the first member's dimension (SCCs share same dimension)
       const firstMember = sn.members[0];
       const dimension = clusterDimensions.get(firstMember) || 250;
-      
-      console.log(`  Layer ${layer}, SCC ${sn.id}, members: [${sn.members.join(', ')}], firstMember: ${firstMember}, dimension: ${dimension}`);
-      
+
+      console.log(
+        `  Layer ${layer}, SCC ${sn.id}, members: [${sn.members.join(', ')}], firstMember: ${firstMember}, dimension: ${dimension}`,
+      );
+
       return dimension;
     });
-    
+
     // Calculate total layer width including gaps
     const totalGaps = (sns.length - 1) * clusterGapX;
     const totalWidth = widths.reduce((sum, w) => sum + w, 0);
@@ -236,7 +237,7 @@ export function layoutClusters(
     sns.forEach((sn, idx) => {
       const width = widths[idx];
       const height = width; // Square clusters
-      
+
       const x = currentX + width / 2;
       const y = layer * layerGapY;
 
@@ -247,9 +248,9 @@ export function layoutClusters(
         y,
         width,
         height,
-        layer
+        layer,
       });
-      
+
       currentX += width + clusterGapX;
     });
   }
@@ -263,19 +264,17 @@ export function layoutClusters(
 export function computeClusterLayout(
   clusterIds: string[],
   clusterEdges: Array<{ from: string; to: string }>,
-  clusterDimensions?: Map<string, number>
+  clusterDimensions?: Map<string, number>,
 ): {
   layouts: ClusterLayoutResult[];
   superNodes: SuperNode[];
   superEdges: SuperEdge[];
 } {
   const { superNodes, superEdges, nodeToSccId } = condenseToDAG(clusterIds, clusterEdges);
-  
+
   // Use provided dimensions or create default map
-  const dimensions = clusterDimensions || new Map(
-    clusterIds.map(id => [id, 250])
-  );
-  
+  const dimensions = clusterDimensions || new Map(clusterIds.map((id) => [id, 250]));
+
   const layouts = layoutClusters(superNodes, superEdges, dimensions);
 
   return { layouts, superNodes, superEdges };

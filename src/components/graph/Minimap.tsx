@@ -1,5 +1,5 @@
-import { GraphNode, GraphEdge } from '../../data/mockGraphData';
-import { NodePosition, ClusterPosition } from '../../types/simulation';
+import type { GraphNode } from '../../data/mockGraphData';
+import type { ClusterPosition, NodePosition } from '../../types/simulation';
 
 interface MinimapProps {
   nodes: GraphNode[];
@@ -14,7 +14,7 @@ interface MinimapProps {
 }
 
 const MINIMAP_SIZE = 200;
-const MINIMAP_PADDING = 20;
+const _MINIMAP_PADDING = 20;
 
 export function Minimap({
   nodes,
@@ -25,46 +25,46 @@ export function Minimap({
   viewportWidth,
   viewportHeight,
   zoom,
-  onViewportClick
+  onViewportClick,
 }: MinimapProps) {
   // Calculate bounds of entire graph
   const bounds = calculateGraphBounds(nodePositions, clusterPositions);
-  
+
   if (!bounds) return null;
-  
+
   // Calculate scale to fit graph in minimap
   const scaleX = MINIMAP_SIZE / bounds.width;
   const scaleY = MINIMAP_SIZE / bounds.height;
   const scale = Math.min(scaleX, scaleY, 1) * 0.85; // 85% to add padding
-  
+
   // Transform coordinates
   const transform = (x: number, y: number) => ({
     x: (x - bounds.minX) * scale + MINIMAP_SIZE / 2 - (bounds.width * scale) / 2,
-    y: (y - bounds.minY) * scale + MINIMAP_SIZE / 2 - (bounds.height * scale) / 2
+    y: (y - bounds.minY) * scale + MINIMAP_SIZE / 2 - (bounds.height * scale) / 2,
   });
-  
+
   // Viewport rectangle in minimap coordinates
   const viewportRect = {
     x: (viewportX - bounds.minX) * scale + MINIMAP_SIZE / 2 - (bounds.width * scale) / 2,
     y: (viewportY - bounds.minY) * scale + MINIMAP_SIZE / 2 - (bounds.height * scale) / 2,
-    width: viewportWidth * scale / zoom,
-    height: viewportHeight * scale / zoom
+    width: (viewportWidth * scale) / zoom,
+    height: (viewportHeight * scale) / zoom,
   };
-  
+
   const handleClick = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
-    
+
     // Transform click back to graph coordinates
     const graphX = (clickX - MINIMAP_SIZE / 2 + (bounds.width * scale) / 2) / scale + bounds.minX;
     const graphY = (clickY - MINIMAP_SIZE / 2 + (bounds.height * scale) / 2) / scale + bounds.minY;
-    
+
     onViewportClick(graphX, graphY);
   };
-  
+
   return (
-    <div 
+    <div
       className="absolute bottom-6 right-6 rounded-lg overflow-hidden shadow-2xl border"
       style={{
         width: MINIMAP_SIZE,
@@ -72,7 +72,7 @@ export function Minimap({
         backgroundColor: 'rgba(15, 15, 20, 0.85)',
         backdropFilter: 'blur(10px)',
         borderColor: 'var(--color-border-primary)',
-        zIndex: 50
+        zIndex: 50,
       }}
     >
       <svg
@@ -98,24 +98,16 @@ export function Minimap({
             />
           );
         })}
-        
+
         {/* Nodes */}
-        {nodes.map(node => {
+        {nodes.map((node) => {
           const pos = nodePositions.get(node.id);
           if (!pos) return null;
-          
+
           const t = transform(pos.x, pos.y);
-          return (
-            <circle
-              key={node.id}
-              cx={t.x}
-              cy={t.y}
-              r={2}
-              fill="rgba(139, 92, 246, 0.7)"
-            />
-          );
+          return <circle key={node.id} cx={t.x} cy={t.y} r={2} fill="rgba(139, 92, 246, 0.7)" />;
         })}
-        
+
         {/* Viewport indicator */}
         <rect
           x={viewportRect.x}
@@ -128,7 +120,7 @@ export function Minimap({
           rx={2}
           pointerEvents="none"
         />
-        
+
         {/* Crosshair at viewport center */}
         <g pointerEvents="none">
           <line
@@ -149,15 +141,15 @@ export function Minimap({
           />
         </g>
       </svg>
-      
+
       {/* Zoom level indicator */}
-      <div 
+      <div
         className="absolute bottom-2 left-2 px-2 py-1 rounded text-xs"
         style={{
           backgroundColor: 'rgba(15, 15, 20, 0.9)',
           color: 'var(--color-text-secondary)',
           fontFamily: 'var(--font-family-mono)',
-          fontSize: 'var(--font-size-xs)'
+          fontSize: 'var(--font-size-xs)',
         }}
       >
         {Math.round(zoom * 100)}%
@@ -168,15 +160,15 @@ export function Minimap({
 
 function calculateGraphBounds(
   nodePositions: Map<string, NodePosition>,
-  clusterPositions: Map<string, ClusterPosition>
+  clusterPositions: Map<string, ClusterPosition>,
 ) {
   let minX = Infinity;
   let maxX = -Infinity;
   let minY = Infinity;
   let maxY = -Infinity;
-  
+
   // Include cluster bounds
-  clusterPositions.forEach(pos => {
+  clusterPositions.forEach((pos) => {
     const halfWidth = pos.width / 2;
     const halfHeight = pos.height / 2;
     minX = Math.min(minX, pos.x - halfWidth);
@@ -184,23 +176,23 @@ function calculateGraphBounds(
     minY = Math.min(minY, pos.y - halfHeight);
     maxY = Math.max(maxY, pos.y + halfHeight);
   });
-  
+
   // Include node positions
-  nodePositions.forEach(pos => {
+  nodePositions.forEach((pos) => {
     minX = Math.min(minX, pos.x);
     maxX = Math.max(maxX, pos.x);
     minY = Math.min(minY, pos.y);
     maxY = Math.max(maxY, pos.y);
   });
-  
-  if (!isFinite(minX)) return null;
-  
+
+  if (!Number.isFinite(minX)) return null;
+
   return {
     minX,
     maxX,
     minY,
     maxY,
     width: maxX - minX,
-    height: maxY - minY
+    height: maxY - minY,
   };
 }

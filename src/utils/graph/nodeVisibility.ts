@@ -2,14 +2,14 @@
  * Utilities for determining node and edge visibility in the graph
  */
 
-import { GraphNode as GraphNodeType, GraphEdge } from '../../data/mockGraphData';
+import type { GraphEdge, GraphNode as GraphNodeType } from '../../data/mockGraphData';
 
 /**
  * Determines if a node matches the search query
  */
 export function matchesSearch(node: GraphNodeType, searchQuery: string): boolean {
   if (!searchQuery) return true;
-  
+
   const query = searchQuery.toLowerCase();
   return (
     node.name.toLowerCase().includes(query) ||
@@ -24,14 +24,14 @@ export function matchesSearch(node: GraphNodeType, searchQuery: string): boolean
  */
 export function getConnectedNodeIds(
   selectedNode: GraphNodeType | null,
-  edges: GraphEdge[]
+  edges: GraphEdge[],
 ): Set<string> {
   if (!selectedNode) return new Set();
 
   const connected = new Set<string>();
   connected.add(selectedNode.id);
 
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     if (edge.source === selectedNode.id) {
       connected.add(edge.target);
     }
@@ -50,7 +50,7 @@ export function shouldDimNode(
   node: GraphNodeType,
   selectedNode: GraphNodeType | null,
   connectedNodes: Set<string>,
-  searchQuery: string
+  searchQuery: string,
 ): boolean {
   // If there's a search query and node doesn't match, dim it
   if (searchQuery && !matchesSearch(node, searchQuery)) {
@@ -72,18 +72,18 @@ export function shouldShowEdge(
   edge: GraphEdge,
   selectedNode: GraphNodeType | null,
   searchQuery: string,
-  nodes: GraphNodeType[]
+  nodes: GraphNodeType[],
 ): boolean {
   // If there's a search query, only show edges where both nodes match
   if (searchQuery) {
-    const sourceNode = nodes.find(n => n.id === edge.source);
-    const targetNode = nodes.find(n => n.id === edge.target);
-    
+    const sourceNode = nodes.find((n) => n.id === edge.source);
+    const targetNode = nodes.find((n) => n.id === edge.target);
+
     if (!sourceNode || !targetNode) return false;
-    
+
     const sourceMatches = matchesSearch(sourceNode, searchQuery);
     const targetMatches = matchesSearch(targetNode, searchQuery);
-    
+
     return sourceMatches && targetMatches;
   }
 

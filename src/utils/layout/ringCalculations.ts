@@ -3,7 +3,7 @@
  * Used for deterministic radial node positioning
  */
 
-import { ClusterLayoutConfig } from '../../types/cluster';
+import type { ClusterLayoutConfig } from '../../types/cluster';
 
 /**
  * Calculates ring radius based on layer and node count
@@ -14,7 +14,7 @@ export function calculateRingRadius(
   layer: number,
   nodeCount: number,
   config: ClusterLayoutConfig,
-  totalClusterNodeCount?: number
+  totalClusterNodeCount?: number,
 ): number {
   // Scale base spacing based on cluster density
   // Small clusters (1-5 nodes): 0.7x spacing (tighter)
@@ -35,14 +35,14 @@ export function calculateRingRadius(
       scaleFactor = 1.4;
     }
   }
-  
+
   const baseRadius = config.layerSpacing * layer * scaleFactor;
-  
+
   // Ensure enough circumference for nodes
   const minSpacing = config.minNodeSpacing;
   const requiredCircumference = nodeCount * minSpacing;
   const minRadius = requiredCircumference / (2 * Math.PI);
-  
+
   return Math.max(baseRadius, minRadius);
 }
 
@@ -52,7 +52,7 @@ export function calculateRingRadius(
 export function calculateNodeAngle(
   index: number,
   totalNodes: number,
-  angleOffset: number = 0
+  angleOffset: number = 0,
 ): number {
   const angleStep = (Math.PI * 2) / totalNodes;
   return angleOffset + index * angleStep;
@@ -61,12 +61,9 @@ export function calculateNodeAngle(
 /**
  * Converts polar coordinates to cartesian
  */
-export function polarToCartesian(
-  radius: number,
-  angle: number
-): { x: number; y: number } {
+export function polarToCartesian(radius: number, angle: number): { x: number; y: number } {
   return {
     x: Math.cos(angle) * radius,
-    y: Math.sin(angle) * radius
+    y: Math.sin(angle) * radius,
   };
 }

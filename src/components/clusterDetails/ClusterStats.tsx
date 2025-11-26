@@ -4,8 +4,8 @@
  * All styling uses design system CSS variables
  */
 
+import { getPlatformIconPath, PLATFORM_COLOR } from '../../utils/platformIcons';
 import { StatsCard } from '../sidebar/StatsCard';
-import { PLATFORM_COLOR, getPlatformIconPath } from '../../utils/platformIcons';
 
 interface ClusterStatsProps {
   filteredDependencies: number;
@@ -20,23 +20,14 @@ export function ClusterStats({
   totalDependencies,
   filteredDependents,
   totalDependents,
-  platforms
+  platforms,
 }: ClusterStatsProps) {
   return (
-    <div 
-      className="px-4 py-4 border-b"
-      style={{ borderColor: 'var(--color-border)' }}
-    >
+    <div className="px-4 py-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
       <div className="grid grid-cols-2 gap-3">
-        <StatsCard
-          label="Dependencies"
-          value={`${filteredDependencies}/${totalDependencies}`}
-        />
-        
-        <StatsCard
-          label="Dependents"
-          value={`${filteredDependents}/${totalDependents}`}
-        />
+        <StatsCard label="Dependencies" value={`${filteredDependencies}/${totalDependencies}`} />
+
+        <StatsCard label="Dependents" value={`${filteredDependents}/${totalDependents}`} />
       </div>
 
       {/* Platforms */}
@@ -47,23 +38,23 @@ export function ClusterStats({
               fontFamily: 'Inter, sans-serif',
               fontSize: 'var(--text-small)',
               color: 'var(--color-muted-foreground)',
-              marginBottom: 'var(--spacing-sm)'
+              marginBottom: 'var(--spacing-sm)',
             }}
           >
             Platforms ({platforms.size})
           </div>
           <div className="flex flex-wrap gap-2">
-            {Array.from(platforms).map(platform => {
+            {Array.from(platforms).map((platform) => {
               const color = PLATFORM_COLOR[platform as keyof typeof PLATFORM_COLOR] || '#6F2CFF';
               const iconPath = getPlatformIconPath(platform);
-              
+
               return (
                 <div
                   key={platform}
                   className="inline-flex items-center gap-1.5 px-2 py-1 rounded"
                   style={{
                     backgroundColor: `${color}15`,
-                    border: `1px solid ${color}30`
+                    border: `1px solid ${color}30`,
                   }}
                 >
                   {iconPath && (
@@ -75,7 +66,7 @@ export function ClusterStats({
                     style={{
                       fontFamily: 'Inter, sans-serif',
                       fontSize: 'var(--text-small)',
-                      color: color
+                      color: color,
                     }}
                   >
                     {platform}

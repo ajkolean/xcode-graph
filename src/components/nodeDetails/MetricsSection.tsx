@@ -19,33 +19,30 @@ export function MetricsSection({
   totalDependenciesCount,
   totalDependentsCount,
   isHighFanIn,
-  isHighFanOut
+  isHighFanOut,
 }: MetricsSectionProps) {
   return (
     <div className="px-4 pt-3 pb-4 shrink-0">
       {/* Section Title */}
-      <div 
+      <div
         className="mb-3"
         style={{
           fontFamily: 'Inter, sans-serif',
           fontSize: 'var(--text-small)',
-          color: 'var(--color-muted-foreground)'
+          color: 'var(--color-muted-foreground)',
         }}
       >
         Metrics
       </div>
-      
+
       {/* Metrics Grid */}
       <div className="grid grid-cols-2 gap-3">
         <StatsCard
           label="Dependencies Out"
           value={`${dependenciesCount}/${totalDependenciesCount}`}
         />
-        
-        <StatsCard
-          label="Dependencies In"
-          value={`${dependentsCount}/${totalDependentsCount}`}
-        />
+
+        <StatsCard label="Dependencies In" value={`${dependentsCount}/${totalDependentsCount}`} />
       </div>
     </div>
   );
