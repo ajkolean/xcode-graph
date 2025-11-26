@@ -18,7 +18,7 @@ interface NodeHeaderProps {
   zoom: number;
 }
 
-export function NodeHeader({ node, onClose, onClusterClick, clusters, zoom }: NodeHeaderProps) {
+export function NodeHeader({ node, onClose, onClusterClick, clusters: _clusters, zoom }: NodeHeaderProps) {
   // Get icon path based on node type
   const iconPath = getNodeIconPath(node.type, node.type === 'app' ? node.platform : undefined);
 

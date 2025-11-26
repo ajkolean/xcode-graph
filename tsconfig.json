@@ -15,6 +15,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "isolatedDeclarations": true,
+    "composite": true,
 
     // Strict type checking
     "strict": true,

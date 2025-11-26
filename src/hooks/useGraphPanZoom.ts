@@ -5,12 +5,6 @@
 
 import { useCallback, useRef, useState } from 'react';
 
-interface PanZoomState {
-  pan: { x: number; y: number };
-  zoom: number;
-  isDragging: boolean;
-}
-
 interface UseGraphPanZoomProps {
   zoom: number;
   onZoomChange?: (zoom: number) => void;

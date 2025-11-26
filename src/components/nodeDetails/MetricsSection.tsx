@@ -18,8 +18,8 @@ export function MetricsSection({
   dependentsCount,
   totalDependenciesCount,
   totalDependentsCount,
-  isHighFanIn,
-  isHighFanOut,
+  isHighFanIn: _isHighFanIn,
+  isHighFanOut: _isHighFanOut,
 }: MetricsSectionProps) {
   return (
     <div className="px-4 pt-3 pb-4 shrink-0">

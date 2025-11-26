@@ -54,7 +54,7 @@ function hslToHex(h: number, s: number, l: number): string {
   s = s / 100;
   l = l / 100;
 
-  let r, g, b;
+  let r: number, g: number, b: number;
 
   if (s === 0) {
     r = g = b = l;

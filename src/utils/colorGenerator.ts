@@ -69,7 +69,7 @@ function adjustColor(rgb: number[], lightnessShift: number, saturationShift: num
     return p;
   };
 
-  let r2, g2, b2;
+  let r2: number, g2: number, b2: number;
   if (s === 0) {
     r2 = g2 = b2 = l;
   } else {

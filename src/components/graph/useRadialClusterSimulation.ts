@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
 import {
   type Cluster,
@@ -27,7 +27,10 @@ export function useRadialClusterSimulation({
   draggedNode,
   config: customConfig,
 }: UseRadialClusterSimulationOptions) {
-  const config = { ...DEFAULT_CLUSTER_CONFIG, ...customConfig };
+  const config = useMemo(
+    () => ({ ...DEFAULT_CLUSTER_CONFIG, ...customConfig }),
+    [customConfig],
+  );
 
   const [nodePositions, setNodePositions] = useState<Map<string, NodePosition>>(new Map());
   const [clusterPositions, setClusterPositions] = useState<Map<string, ClusterPosition>>(new Map());

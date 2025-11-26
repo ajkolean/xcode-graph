@@ -18,7 +18,7 @@ export function NodeActions({
   viewMode,
   onFocusNode,
   onShowDependents,
-  onShowImpact,
+  onShowImpact: _onShowImpact,
 }: NodeActionsProps) {
   const isDependencyChainActive = viewMode === 'focused' || viewMode === 'both';
   const isDependentsChainActive = viewMode === 'dependents' || viewMode === 'both';

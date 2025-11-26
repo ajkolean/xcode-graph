@@ -6,13 +6,6 @@
 import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
 import type { Cluster, ClusterLayoutConfig, PositionedNode } from '../../types/cluster';
 
-interface RingNode {
-  node: GraphNode;
-  ring: number;
-  angle: number;
-  metadata: any;
-}
-
 /**
  * Computes optimal layout for nodes within a cluster
  * Uses topological depth for ring assignment and spectral ordering for angular placement

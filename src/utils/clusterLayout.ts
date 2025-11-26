@@ -270,7 +270,7 @@ export function computeClusterLayout(
   superNodes: SuperNode[];
   superEdges: SuperEdge[];
 } {
-  const { superNodes, superEdges, nodeToSccId } = condenseToDAG(clusterIds, clusterEdges);
+  const { superNodes, superEdges } = condenseToDAG(clusterIds, clusterEdges);
 
   // Use provided dimensions or create default map
   const dimensions = clusterDimensions || new Map(clusterIds.map((id) => [id, 250]));

@@ -27,7 +27,7 @@ interface FilterSectionProps {
 }
 
 export function FilterSection({
-  id,
+  id: _id,
   title,
   icon,
   isExpanded,

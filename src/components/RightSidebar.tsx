@@ -70,7 +70,7 @@ export function RightSidebar({
   searchQuery,
   onSearchChange,
   zoom,
-  previewFilter,
+  previewFilter: _previewFilter,
   onPreviewFilterChange,
 }: RightSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
