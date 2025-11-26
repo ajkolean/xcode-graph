@@ -16,27 +16,25 @@ export interface HierarchicalLayoutResult {
   clusters: Cluster[];
 }
 
-/**
- * Compute complete hierarchical layout
- */
-export function computeHierarchicalLayout(
-  nodes: GraphNode[],
-  edges: GraphEdge[],
-  clusters: Cluster[],
-): HierarchicalLayoutResult {
-  // Step 1: Extract cluster-level graph
-  const clusterIds = clusters.map((c) => c.id);
-  const clusterEdges: Array<{ from: string; to: string }> = [];
-
-  // Build cluster-level edges from node edges
+// Helper: Build node to cluster mapping
+function buildNodeToClusterMap(clusters: Cluster[]): Map<string, string> {
   const nodeToCluster = new Map<string, string>();
   for (const cluster of clusters) {
     for (const node of cluster.nodes) {
       nodeToCluster.set(node.id, cluster.id);
     }
   }
+  return nodeToCluster;
+}
 
+// Helper: Extract cluster-level edges
+function extractClusterEdges(
+  edges: GraphEdge[],
+  nodeToCluster: Map<string, string>,
+): Array<{ from: string; to: string }> {
+  const clusterEdges: Array<{ from: string; to: string }> = [];
   const clusterEdgeSet = new Set<string>();
+
   for (const edge of edges) {
     const fromCluster = nodeToCluster.get(edge.source);
     const toCluster = nodeToCluster.get(edge.target);
@@ -49,137 +47,143 @@ export function computeHierarchicalLayout(
     }
   }
 
-  // Step 2: PRE-COMPUTE actual cluster dimensions using elastic shell
-  const clusterDimensions = new Map<string, number>();
+  return clusterEdges;
+}
 
-  console.log('🔍 Pre-computing cluster dimensions...');
+// Helper: Compute dimension for a single cluster
+function computeClusterDimension(
+  cluster: Cluster,
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+): number {
+  const clusterNodes = nodes.filter((n) => cluster.nodes.some((cn) => cn.id === n.id));
 
-  for (const cluster of clusters) {
-    const clusterNodes = nodes.filter((n) => cluster.nodes.some((cn) => cn.id === n.id));
-
-    if (clusterNodes.length === 0) {
-      console.log(`  ⚠️ Cluster ${cluster.id}: No nodes, using minimum (180px)`);
-      clusterDimensions.set(cluster.id, 180); // Minimum
-      continue;
-    }
-
-    // Compute internal edges
-    const clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
-    const internalEdges = edges.filter(
-      (e) => clusterNodeIds.has(e.source) && clusterNodeIds.has(e.target),
-    );
-
-    // Simple ring-based layout
-    const positions = simpleClusterLayout(
-      clusterNodes.map((n) => ({ id: n.id, type: n.type, name: n.name })),
-      internalEdges.map((e) => ({ from: e.source, to: e.target })),
-      0,
-      0,
-      {
-        baseRadius: 25,
-        ringSpacing: 40,
-        maxDepth: 3,
-        testOffset: 20,
-      },
-    );
-
-    // Compute masses
-    const masses = computeNodeMasses(
-      clusterNodes.map((n) => ({ id: n.id, type: n.type })),
-      internalEdges.map((e) => ({ from: e.source, to: e.target })),
-    );
-
-    // Compute MEC using elastic shell
-    const mecRadius = computeMEC(positions, 0, 0, masses);
-    const dimension = Math.max(140, mecRadius * 2 + 30); // Tighter minimum
-
-    console.log(
-      `  ✓ Cluster ${cluster.id}: ${clusterNodes.length} nodes → ${Math.round(dimension)}px (mecRadius: ${Math.round(mecRadius)})`,
-    );
-
-    clusterDimensions.set(cluster.id, dimension);
+  if (clusterNodes.length === 0) {
+    console.log(`  ⚠️ Cluster ${cluster.id}: No nodes, using minimum (180px)`);
+    return 180;
   }
 
-  console.log(`📦 Total dimensions computed: ${clusterDimensions.size}`);
-  console.log(
-    '📊 Dimensions map:',
-    Array.from(clusterDimensions.entries()).map(([id, dim]) => `${id}: ${Math.round(dim)}px`),
+  const clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
+  const internalEdges = edges.filter(
+    (e) => clusterNodeIds.has(e.source) && clusterNodeIds.has(e.target),
   );
 
-  // Step 3: Compute cluster layout WITH actual dimensions
+  const positions = simpleClusterLayout(
+    clusterNodes.map((n) => ({ id: n.id, type: n.type, name: n.name })),
+    internalEdges.map((e) => ({ from: e.source, to: e.target })),
+    0, 0,
+    { baseRadius: 25, ringSpacing: 40, maxDepth: 3, testOffset: 20 },
+  );
+
+  const masses = computeNodeMasses(
+    clusterNodes.map((n) => ({ id: n.id, type: n.type })),
+    internalEdges.map((e) => ({ from: e.source, to: e.target })),
+  );
+
+  const mecRadius = computeMEC(positions, 0, 0, masses);
+  const dimension = Math.max(140, mecRadius * 2 + 30);
+
+  console.log(
+    `  ✓ Cluster ${cluster.id}: ${clusterNodes.length} nodes → ${Math.round(dimension)}px (mecRadius: ${Math.round(mecRadius)})`,
+  );
+
+  return dimension;
+}
+
+// Helper: Pre-compute all cluster dimensions
+function preComputeClusterDimensions(
+  clusters: Cluster[],
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+): Map<string, number> {
+  console.log('🔍 Pre-computing cluster dimensions...');
+  const dimensions = new Map<string, number>();
+
+  for (const cluster of clusters) {
+    dimensions.set(cluster.id, computeClusterDimension(cluster, nodes, edges));
+  }
+
+  console.log(`📦 Total dimensions computed: ${dimensions.size}`);
+  console.log(
+    '📊 Dimensions map:',
+    Array.from(dimensions.entries()).map(([id, dim]) => `${id}: ${Math.round(dim)}px`),
+  );
+
+  return dimensions;
+}
+
+// Helper: Position nodes within a single layout
+function positionNodesInLayout(
+  layout: { projectIds: string[]; x: number; y: number },
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+  nodeToCluster: Map<string, string>,
+  clusterPositions: Map<string, ClusterPosition>,
+  nodePositions: Map<string, NodePosition>,
+): void {
+  const clusterNodes = nodes.filter((n) =>
+    layout.projectIds.includes(nodeToCluster.get(n.id) || ''),
+  );
+
+  if (clusterNodes.length === 0) return;
+
+  const clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
+  const internalEdges = edges.filter(
+    (e) => clusterNodeIds.has(e.source) && clusterNodeIds.has(e.target),
+  );
+
+  const positions = simpleClusterLayout(
+    clusterNodes.map((n) => ({ id: n.id, type: n.type, name: n.name })),
+    internalEdges.map((e) => ({ from: e.source, to: e.target })),
+    0, 0,
+    { baseRadius: 25, ringSpacing: 40, maxDepth: 3, testOffset: 20 },
+  );
+
+  const masses = computeNodeMasses(
+    clusterNodes.map((n) => ({ id: n.id, type: n.type })),
+    internalEdges.map((e) => ({ from: e.source, to: e.target })),
+  );
+
+  const mecRadius = computeMEC(positions, 0, 0, masses);
+  const clusterDimension = Math.max(140, mecRadius * 2 + 30);
+
+  for (const originalClusterId of layout.projectIds) {
+    clusterPositions.set(originalClusterId, {
+      x: layout.x,
+      y: layout.y,
+      width: clusterDimension,
+      height: clusterDimension,
+      vx: 0,
+      vy: 0,
+    });
+  }
+
+  for (const pos of positions) {
+    nodePositions.set(pos.id, { x: pos.x, y: pos.y, vx: 0, vy: 0 });
+  }
+}
+
+/**
+ * Compute complete hierarchical layout
+ */
+export function computeHierarchicalLayout(
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+  clusters: Cluster[],
+): HierarchicalLayoutResult {
+  const clusterIds = clusters.map((c) => c.id);
+  const nodeToCluster = buildNodeToClusterMap(clusters);
+  const clusterEdges = extractClusterEdges(edges, nodeToCluster);
+  const clusterDimensions = preComputeClusterDimensions(clusters, nodes, edges);
+
   const { layouts } = computeClusterLayout(clusterIds, clusterEdges, clusterDimensions);
 
-  // Step 4: For each cluster, position nodes
   const clusterPositions = new Map<string, ClusterPosition>();
   const nodePositions = new Map<string, NodePosition>();
 
   for (const layout of layouts) {
-    // Get nodes in this cluster (handling SCC members)
-    const clusterNodes = nodes.filter((n) =>
-      layout.projectIds.includes(nodeToCluster.get(n.id) || ''),
-    );
-
-    if (clusterNodes.length === 0) continue;
-
-    // Compute internal edges
-    const clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
-    const internalEdges = edges.filter(
-      (e) => clusterNodeIds.has(e.source) && clusterNodeIds.has(e.target),
-    );
-
-    // Simple ring-based layout centered in cluster
-    const centerX = 0; // Relative to cluster
-    const centerY = 0;
-
-    const positions = simpleClusterLayout(
-      clusterNodes.map((n) => ({ id: n.id, type: n.type, name: n.name })),
-      internalEdges.map((e) => ({ from: e.source, to: e.target })),
-      centerX,
-      centerY,
-      {
-        baseRadius: 25, // Reduced from 40
-        ringSpacing: 40, // Reduced from 65
-        maxDepth: 3,
-        testOffset: 20, // Reduced from 28
-      },
-    );
-
-    // Compute masses for nodes in this cluster
-    const masses = computeNodeMasses(
-      clusterNodes.map((n) => ({ id: n.id, type: n.type })),
-      internalEdges.map((e) => ({ from: e.source, to: e.target })),
-    );
-
-    // Compute MEC for dynamic cluster sizing using elastic shell
-    const mecRadius = computeMEC(positions, centerX, centerY, masses);
-    const clusterDimension = Math.max(140, mecRadius * 2 + 30); // Match pre-computation
-
-    // Store cluster position using the ORIGINAL cluster IDs (not SCC IDs)
-    for (const originalClusterId of layout.projectIds) {
-      clusterPositions.set(originalClusterId, {
-        x: layout.x,
-        y: layout.y,
-        width: clusterDimension,
-        height: clusterDimension,
-        vx: 0,
-        vy: 0,
-      });
-    }
-
-    // Store node positions (relative to cluster center)
-    for (const pos of positions) {
-      nodePositions.set(pos.id, {
-        x: pos.x,
-        y: pos.y,
-        vx: 0,
-        vy: 0,
-      });
-    }
+    positionNodesInLayout(layout, nodes, edges, nodeToCluster, clusterPositions, nodePositions);
   }
 
-  return {
-    clusterPositions,
-    nodePositions,
-    clusters,
-  };
+  return { clusterPositions, nodePositions, clusters };
 }

@@ -25,65 +25,81 @@ function hashString(str: string): number {
   return Math.abs(hash);
 }
 
-// Adjust color lightness/saturation for variation
-function adjustColor(rgb: number[], lightnessShift: number, saturationShift: number): string {
-  // Convert RGB to HSL
-  const r = rgb[0] / 255;
-  const g = rgb[1] / 255;
-  const b = rgb[2] / 255;
-
+// Helper: Convert RGB to HSL
+function rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   let h = 0;
   let s = 0;
-  let l = (max + min) / 2;
+  const l = (max + min) / 2;
 
   if (max !== min) {
     const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-    switch (max) {
-      case r:
-        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-        break;
-      case g:
-        h = ((b - r) / d + 2) / 6;
-        break;
-      case b:
-        h = ((r - g) / d + 4) / 6;
-        break;
-    }
+    h = computeHue(r, g, b, max, d);
   }
 
-  // Apply shifts
-  s = Math.max(0, Math.min(1, s + saturationShift));
-  l = Math.max(0, Math.min(1, l + lightnessShift));
+  return { h, s, l };
+}
 
-  // Convert back to RGB
-  const hue2rgb = (p: number, q: number, t: number) => {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-  };
+// Helper: Compute hue component
+function computeHue(r: number, g: number, b: number, max: number, d: number): number {
+  switch (max) {
+    case r:
+      return ((g - b) / d + (g < b ? 6 : 0)) / 6;
+    case g:
+      return ((b - r) / d + 2) / 6;
+    case b:
+      return ((r - g) / d + 4) / 6;
+    default:
+      return 0;
+  }
+}
 
-  let r2: number, g2: number, b2: number;
+// Helper: Convert hue to RGB component
+function hue2rgb(p: number, q: number, t: number): number {
+  let adjustedT = t;
+  if (adjustedT < 0) adjustedT += 1;
+  if (adjustedT > 1) adjustedT -= 1;
+  if (adjustedT < 1 / 6) return p + (q - p) * 6 * adjustedT;
+  if (adjustedT < 1 / 2) return q;
+  if (adjustedT < 2 / 3) return p + (q - p) * (2 / 3 - adjustedT) * 6;
+  return p;
+}
+
+// Helper: Convert HSL to RGB components
+function hslToRgb(h: number, s: number, l: number): { r2: number; g2: number; b2: number } {
   if (s === 0) {
-    r2 = g2 = b2 = l;
-  } else {
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r2 = hue2rgb(p, q, h + 1 / 3);
-    g2 = hue2rgb(p, q, h);
-    b2 = hue2rgb(p, q, h - 1 / 3);
+    return { r2: l, g2: l, b2: l };
   }
 
-  const toHex = (n: number) => {
-    const hex = Math.round(n * 255).toString(16);
-    return hex.length === 1 ? `0${hex}` : hex;
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  return {
+    r2: hue2rgb(p, q, h + 1 / 3),
+    g2: hue2rgb(p, q, h),
+    b2: hue2rgb(p, q, h - 1 / 3),
   };
+}
+
+// Helper: Convert number to hex string
+function toHex(n: number): string {
+  const hex = Math.round(n * 255).toString(16);
+  return hex.length === 1 ? `0${hex}` : hex;
+}
+
+// Adjust color lightness/saturation for variation
+function adjustColor(rgb: number[], lightnessShift: number, saturationShift: number): string {
+  const r = rgb[0] / 255;
+  const g = rgb[1] / 255;
+  const b = rgb[2] / 255;
+
+  const { h, s, l } = rgbToHsl(r, g, b);
+
+  const adjustedS = Math.max(0, Math.min(1, s + saturationShift));
+  const adjustedL = Math.max(0, Math.min(1, l + lightnessShift));
+
+  const { r2, g2, b2 } = hslToRgb(h, adjustedS, adjustedL);
 
   return `#${toHex(r2)}${toHex(g2)}${toHex(b2)}`;
 }

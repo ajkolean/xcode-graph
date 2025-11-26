@@ -1,22 +1,6 @@
-export interface GraphNode {
-  id: string;
-  name: string;
-  type: 'app' | 'framework' | 'library' | 'test-unit' | 'test-ui' | 'cli' | 'package';
-  platform: 'iOS' | 'macOS' | 'visionOS' | 'tvOS' | 'watchOS';
-  origin: 'local' | 'external';
-  project?: string; // Project/Package name
-  targetCount?: number;
-}
-
-export interface GraphEdge {
-  source: string;
-  target: string;
-}
-
-export interface GraphData {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
-}
+// Re-export types from schemas for backwards compatibility
+export type { GraphNode, GraphEdge, GraphData } from '../schemas/graph.schema';
+import type { GraphNode, GraphData } from '../schemas/graph.schema';
 
 // Helper to add targets to nodes array with common properties
 function addTargetsToNodes(

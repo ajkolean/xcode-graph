@@ -6,6 +6,81 @@ import {
   type PositionedNode,
 } from '../types/cluster';
 
+// Helper: Calculate sector angles for a role
+function calculateSectorAngles(
+  role: string,
+  roleSectors: Record<string, { start: number; end: number }>,
+  useSectors: boolean,
+): { startAngle: number; angleSpan: number } {
+  if (!useSectors) {
+    return { startAngle: 0, angleSpan: 2 * Math.PI };
+  }
+
+  const sector = roleSectors[role];
+  const startAngle = sector.start;
+  let endAngle = sector.end;
+
+  if (endAngle < startAngle) {
+    endAngle += 2 * Math.PI;
+  }
+
+  return { startAngle, angleSpan: endAngle - startAngle };
+}
+
+// Helper: Calculate angle for a node within a sector
+function calculateNodeAngle(
+  nodeIndex: number,
+  totalNodes: number,
+  startAngle: number,
+  angleSpan: number,
+  useSectors: boolean,
+): number {
+  if (totalNodes === 1) {
+    return startAngle + angleSpan / 2;
+  }
+
+  const padding = useSectors ? 0.1 : 0;
+  const usableSpan = angleSpan * (1 - padding * 2);
+  const angle = startAngle + angleSpan * padding + (nodeIndex / (totalNodes - 1)) * usableSpan;
+
+  // Normalize angle to [-π, π]
+  return ((angle + Math.PI) % (2 * Math.PI)) - Math.PI;
+}
+
+// Helper: Position nodes within a sector
+function positionNodesInSector(
+  nodesForRole: GraphNode[],
+  startAngle: number,
+  angleSpan: number,
+  useSectors: boolean,
+  radius: number,
+  centerX: number,
+  centerY: number,
+  cluster: Cluster,
+  positioned: PositionedNode[],
+): void {
+  for (let i = 0; i < nodesForRole.length; i++) {
+    const node = nodesForRole[i];
+    const metadata = cluster.metadata.get(node.id)!;
+    const angle = calculateNodeAngle(i, nodesForRole.length, startAngle, angleSpan, useSectors);
+
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+
+    positioned.push({
+      node,
+      x,
+      y,
+      clusterId: cluster.id,
+      metadata,
+      localX: x,
+      localY: y,
+      targetRadius: radius,
+      targetAngle: angle,
+    });
+  }
+}
+
 /**
  * Calculates initial radial positions for nodes in a cluster
  */
@@ -76,68 +151,14 @@ export function calculateRadialPositions(
     const useSectors = activeRoles.length > 1 || nodesInLayer.length <= 6;
 
     // Position each role group within its sector (or full circle if single role)
-    let _nodeIndex = 0;
-    ['entry', 'internal-framework', 'internal-lib', 'utility', 'tool'].forEach((role) => {
+    const roles = ['entry', 'internal-framework', 'internal-lib', 'utility', 'tool'];
+    for (const role of roles) {
       const nodesForRole = nodesByRole.get(role) || [];
-      if (nodesForRole.length === 0) return;
+      if (nodesForRole.length === 0) continue;
 
-      let startAngle: number;
-      let angleSpan: number;
-
-      if (useSectors) {
-        const sector = roleSectors[role];
-        startAngle = sector.start;
-        let endAngle = sector.end;
-
-        // Handle wraparound for sectors crossing 0
-        if (endAngle < startAngle) {
-          endAngle += 2 * Math.PI;
-        }
-
-        angleSpan = endAngle - startAngle;
-      } else {
-        // Single role: use full circle
-        startAngle = 0;
-        angleSpan = 2 * Math.PI;
-      }
-
-      // Distribute nodes within the sector/circle
-      nodesForRole.forEach((node, i) => {
-        const metadata = cluster.metadata.get(node.id)!;
-
-        // Calculate angle within sector
-        let angle: number;
-        if (nodesForRole.length === 1) {
-          // Single node: center of sector
-          angle = startAngle + angleSpan / 2;
-        } else {
-          // Multiple nodes: evenly distributed with padding at edges
-          const padding = useSectors ? 0.1 : 0; // Small padding for sectors
-          const usableSpan = angleSpan * (1 - padding * 2);
-          angle = startAngle + angleSpan * padding + (i / (nodesForRole.length - 1)) * usableSpan;
-        }
-
-        // Normalize angle to [-π, π]
-        angle = ((angle + Math.PI) % (2 * Math.PI)) - Math.PI;
-
-        const x = centerX + adjustedRadius * Math.cos(angle);
-        const y = centerY + adjustedRadius * Math.sin(angle);
-
-        positioned.push({
-          node,
-          x,
-          y,
-          clusterId: cluster.id,
-          metadata,
-          localX: x,
-          localY: y,
-          targetRadius: adjustedRadius,
-          targetAngle: angle,
-        });
-
-        _nodeIndex++;
-      });
-    });
+      const { startAngle, angleSpan } = calculateSectorAngles(role, roleSectors, useSectors);
+      positionNodesInSector(nodesForRole, startAngle, angleSpan, useSectors, adjustedRadius, centerX, centerY, cluster, positioned);
+    }
   });
 
   // Position test nodes as satellites around their subjects

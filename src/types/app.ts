@@ -1,14 +1,7 @@
 /**
  * Shared application types
- * Prevents circular dependencies
+ * Re-exports from schemas for backwards compatibility
  */
 
-export type ViewMode = 'full' | 'focused' | 'path' | 'impact' | 'dependents' | 'both';
-
-export interface FilterState {
-  nodeTypes: Set<string>;
-  platforms: Set<string>;
-  origins: Set<string>;
-  projects: Set<string>;
-  packages: Set<string>;
-}
+export type { ViewMode, FilterState, FilterStateInput } from '../schemas/app.schema';
+export { serializeFilterState, VIEW_MODE_VALUES } from '../schemas/app.schema';

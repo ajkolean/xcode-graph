@@ -41,6 +41,52 @@ function calculateClusterConnectivity(
   return connectivity;
 }
 
+// Helper: Sort clusters by connectivity
+function sortClustersByConnectivity(
+  clusters: Cluster[],
+  connectivity: Map<string, number>,
+): ClusterConnectivity[] {
+  return clusters
+    .map((cluster) => ({
+      cluster,
+      edgeCount: connectivity.get(cluster.id) || 0,
+    }))
+    .sort((a, b) => b.edgeCount - a.edgeCount);
+}
+
+// Helper: Calculate ring radius
+function calculateRingRadius(ring: number, baseSpacing: number): number {
+  return ring === 0 ? baseSpacing * 0.5 : baseSpacing * (ring + 0.5);
+}
+
+// Helper: Position clusters in a single ring
+function positionClustersInRing(
+  sortedClusters: ClusterConnectivity[],
+  ring: number,
+  clustersInThisRing: number,
+  startIndex: number,
+  ringRadius: number,
+  positions: Map<string, { x: number; y: number }>,
+): number {
+  let clusterIndex = startIndex;
+
+  for (let i = 0; i < clustersInThisRing; i++) {
+    if (clusterIndex >= sortedClusters.length) break;
+
+    const cluster = sortedClusters[clusterIndex].cluster;
+    const angleOffset = ring * (Math.PI / 8);
+    const angle = (i / clustersInThisRing) * Math.PI * 2 + angleOffset;
+
+    positions.set(cluster.id, {
+      x: Math.cos(angle) * ringRadius,
+      y: Math.sin(angle) * ringRadius,
+    });
+    clusterIndex++;
+  }
+
+  return clusterIndex;
+}
+
 /**
  * Arranges clusters in a radial "bullseye" pattern based on connectivity
  * More connected clusters in center, less connected on edges
@@ -53,27 +99,17 @@ export function arrangeClustersBullseye(
 
   if (clusters.length === 0) return positions;
 
-  // Single cluster - center it
   if (clusters.length === 1) {
     positions.set(clusters[0].id, { x: 0, y: 0 });
     return positions;
   }
 
-  // Calculate connectivity for each cluster
   const connectivity = calculateClusterConnectivity(clusters, allEdges);
+  const sortedClusters = sortClustersByConnectivity(clusters, connectivity);
 
-  // Sort clusters by connectivity (descending)
-  const sortedClusters: ClusterConnectivity[] = clusters
-    .map((cluster) => ({
-      cluster,
-      edgeCount: connectivity.get(cluster.id) || 0,
-    }))
-    .sort((a, b) => b.edgeCount - a.edgeCount);
-
-  // Distribute clusters into rings based on connectivity
-  // Aim for 4-6 clusters per ring for good distribution
   const clustersPerRing = Math.min(6, Math.max(4, Math.ceil(Math.sqrt(clusters.length))));
   const numRings = Math.ceil(clusters.length / clustersPerRing);
+  const baseSpacing = 450;
 
   let clusterIndex = 0;
 
@@ -81,38 +117,13 @@ export function arrangeClustersBullseye(
     const clustersInThisRing = Math.min(clustersPerRing, sortedClusters.length - clusterIndex);
 
     if (ring === 0 && clustersInThisRing === 1) {
-      // Single cluster in center ring
-      const cluster = sortedClusters[0].cluster;
-      positions.set(cluster.id, { x: 0, y: 0 });
+      positions.set(sortedClusters[0].cluster.id, { x: 0, y: 0 });
       clusterIndex++;
       continue;
     }
 
-    // Calculate radius for this ring
-    // Inner rings are closer together, outer rings spread out more
-    const baseSpacing = 450;
-    const ringRadius =
-      ring === 0
-        ? baseSpacing * 0.5 // First ring closer to center
-        : baseSpacing * (ring + 0.5);
-
-    // Distribute clusters evenly around the ring
-    for (let i = 0; i < clustersInThisRing; i++) {
-      if (clusterIndex >= sortedClusters.length) break;
-
-      const cluster = sortedClusters[clusterIndex].cluster;
-
-      // Calculate angle for this position
-      // Add offset based on ring to create a spiral-like effect
-      const angleOffset = ring * (Math.PI / 8); // Offset each ring slightly
-      const angle = (i / clustersInThisRing) * Math.PI * 2 + angleOffset;
-
-      const x = Math.cos(angle) * ringRadius;
-      const y = Math.sin(angle) * ringRadius;
-
-      positions.set(cluster.id, { x, y });
-      clusterIndex++;
-    }
+    const ringRadius = calculateRingRadius(ring, baseSpacing);
+    clusterIndex = positionClustersInRing(sortedClusters, ring, clustersInThisRing, clusterIndex, ringRadius, positions);
   }
 
   return positions;
