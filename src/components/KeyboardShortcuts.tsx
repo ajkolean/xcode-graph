@@ -1,8 +1,8 @@
 import { Keyboard, X } from 'lucide-react';
-import { useState } from 'react';
+import { useKeyboardShortcutsMachine } from '../hooks/useKeyboardShortcutsMachine';
 
 export function KeyboardShortcuts() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, toggle, close } = useKeyboardShortcutsMachine();
 
   const shortcuts = [
     { keys: ['Esc'], description: 'Close panels and deselect' },
@@ -18,7 +18,7 @@ export function KeyboardShortcuts() {
   if (!isOpen) {
     return (
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={toggle}
         className="fixed bottom-4 right-4 p-3 rounded-lg transition-smooth-fast interactive-scale panel-shadow z-20"
         style={{
           backgroundColor: 'var(--color-card)',
@@ -56,7 +56,7 @@ export function KeyboardShortcuts() {
           </h3>
         </div>
         <button
-          onClick={() => setIsOpen(false)}
+          onClick={close}
           className="p-1 rounded transition-smooth-fast hover:bg-[var(--color-muted)]"
           style={{
             color: 'var(--color-muted-foreground)',

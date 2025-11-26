@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import type { FilterState } from '../types/app';
@@ -98,7 +98,7 @@ describe('RightSidebar', () => {
       expect(buttons.length).toBeGreaterThan(0);
     });
 
-    it('should toggle between expanded and collapsed', () => {
+    it('should toggle between expanded and collapsed', async () => {
       const { container } = render(<RightSidebar {...defaultProps} />);
 
       // Find the aside element
@@ -115,8 +115,10 @@ describe('RightSidebar', () => {
         fireEvent.click(toggleButton);
       }
 
-      // Should be collapsed (56px width)
-      expect(sidebar).toHaveStyle({ width: '56px' });
+      // Should be collapsed (56px width) - wait for state machine to update
+      await waitFor(() => {
+        expect(sidebar).toHaveStyle({ width: '56px' });
+      });
     });
   });
 

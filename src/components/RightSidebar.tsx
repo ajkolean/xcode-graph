@@ -4,9 +4,9 @@
  * All styling uses design system CSS variables
  */
 
-import { useState } from 'react';
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import { useFilters } from '../hooks/useFilters';
+import { type SidebarSection, useSidebarMachine } from '../hooks/useSidebarMachine';
 import type { FilterState } from '../types/app';
 import type { Cluster } from '../types/cluster';
 import { generateColorMap, getNodeTypeColor } from '../utils/filterHelpers';
@@ -73,14 +73,14 @@ export function RightSidebar({
   previewFilter: _previewFilter,
   onPreviewFilterChange,
 }: RightSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    productTypes: true,
-    platforms: true,
-    projects: true,
-    packages: true,
-  });
+  // Use sidebar state machine
+  const {
+    isCollapsed,
+    expandedSections,
+    toggle: toggleSidebar,
+    toggleSection: toggleSectionMachine,
+    expandToSection: expandToSectionMachine,
+  } = useSidebarMachine();
 
   // Use custom hook for filter logic
   const {
@@ -100,7 +100,7 @@ export function RightSidebar({
   const packageColors = generateColorMap(packageCounts.keys(), 'package');
 
   const toggleSection = (section: string) => {
-    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+    toggleSectionMachine(section as SidebarSection);
   };
 
   const expandToSection = (section: string) => {
@@ -108,8 +108,8 @@ export function RightSidebar({
     if (selectedNode) onNodeSelect(null);
     if (selectedCluster) onClusterSelect(null);
 
-    setIsCollapsed(false);
-    setExpandedSections((prev) => ({ ...prev, [section]: true }));
+    // Use machine to expand to section
+    expandToSectionMachine(section as SidebarSection);
 
     // Small delay to allow sidebar to expand before scrolling
     setTimeout(() => {
@@ -163,7 +163,7 @@ export function RightSidebar({
       <RightSidebarHeader
         title={headerTitle}
         isCollapsed={isCollapsed}
-        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+        onToggleCollapse={toggleSidebar}
       />
 
       {/* Collapsed State */}
