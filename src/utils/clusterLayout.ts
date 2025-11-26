@@ -97,18 +97,10 @@ function computeBarycenter(
   return positions.reduce((sum, p) => sum + p, 0) / positions.length;
 }
 
-/**
- * Perform one iteration of barycentric crossing reduction
- * Processes layers in alternating directions (down then up)
- */
-function reduceCrossingsIteration(
-  layerToNodes: Map<number, SuperNode[]>,
+// Helper: Build parent-child adjacency from edges
+function buildParentChildAdjacency(
   superEdges: SuperEdge[],
-  direction: 'down' | 'up',
-): Map<number, SuperNode[]> {
-  const result = new Map<number, SuperNode[]>();
-
-  // Build adjacency
+): { parents: Map<string, string[]>; children: Map<string, string[]> } {
   const parents = new Map<string, string[]>();
   const children = new Map<string, string[]>();
 
@@ -119,13 +111,57 @@ function reduceCrossingsIteration(
     children.get(edge.from)!.push(edge.to);
   }
 
-  // Current positions (index in layer)
+  return { parents, children };
+}
+
+// Helper: Initialize position map from layer nodes
+function initPositionMap(layerToNodes: Map<number, SuperNode[]>): Map<string, number> {
   const position = new Map<string, number>();
   for (const [_layer, nodes] of layerToNodes.entries()) {
     for (let idx = 0; idx < nodes.length; idx++) {
       position.set(nodes[idx].id, idx);
     }
   }
+  return position;
+}
+
+// Helper: Sort nodes by barycenter and update positions
+function sortLayerByBarycenter(
+  nodes: SuperNode[],
+  direction: 'down' | 'up',
+  parents: Map<string, string[]>,
+  children: Map<string, string[]>,
+  position: Map<string, number>,
+): SuperNode[] {
+  const scored = nodes.map((node) => {
+    const neighborIds =
+      direction === 'down' ? parents.get(node.id) || [] : children.get(node.id) || [];
+    const barycenter = computeBarycenter(node.id, neighborIds, position);
+    return { node, barycenter };
+  });
+
+  scored.sort((a, b) => a.barycenter - b.barycenter);
+
+  const sorted = scored.map((s) => s.node);
+  for (let idx = 0; idx < sorted.length; idx++) {
+    position.set(sorted[idx].id, idx);
+  }
+
+  return sorted;
+}
+
+/**
+ * Perform one iteration of barycentric crossing reduction
+ * Processes layers in alternating directions (down then up)
+ */
+function reduceCrossingsIteration(
+  layerToNodes: Map<number, SuperNode[]>,
+  superEdges: SuperEdge[],
+  direction: 'down' | 'up',
+): Map<number, SuperNode[]> {
+  const result = new Map<number, SuperNode[]>();
+  const { parents, children } = buildParentChildAdjacency(superEdges);
+  const position = initPositionMap(layerToNodes);
 
   const layers = Array.from(layerToNodes.keys()).sort((a, b) => a - b);
   const orderedLayers = direction === 'down' ? layers : layers.reverse();
@@ -133,28 +169,11 @@ function reduceCrossingsIteration(
   for (const layer of orderedLayers) {
     const nodes = layerToNodes.get(layer);
     if (!nodes || nodes.length <= 1) {
-      // Keep as-is for single-node or empty layers
       result.set(layer, nodes || []);
       continue;
     }
 
-    // Compute barycenter for each node based on neighbors
-    const scored = nodes.map((node) => {
-      const neighborIds =
-        direction === 'down' ? parents.get(node.id) || [] : children.get(node.id) || [];
-
-      const barycenter = computeBarycenter(node.id, neighborIds, position);
-      return { node, barycenter };
-    });
-
-    // Sort by barycenter
-    scored.sort((a, b) => a.barycenter - b.barycenter);
-
-    // Update positions
-    const sorted = scored.map((s) => s.node);
-    for (let idx = 0; idx < sorted.length; idx++) {
-      position.set(sorted[idx].id, idx);
-    }
+    const sorted = sortLayerByBarycenter(nodes, direction, parents, children, position);
     result.set(layer, sorted);
   }
 

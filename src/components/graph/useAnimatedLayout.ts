@@ -137,54 +137,44 @@ export function useAnimatedLayout(
   };
 }
 
-/**
- * Apply gentle forces for organic settling
- * Very light forces - just polish, don't rearrange
- */
-function applyGentleForces(
-  nodePositions: Map<string, NodePosition>,
-  clusterPositions: Map<string, ClusterPosition>,
-  clusters: Cluster[],
-  edges: GraphEdge[],
+// Helper: Apply gentle node collision within a single cluster
+function applyNodeCollisionWithinCluster(
+  clusterNodes: NodePosition[],
   alpha: number,
-) {
-  // 1. Gentle node collision (prevent overlaps within clusters)
-  clusters.forEach((cluster) => {
-    const clusterNodes = cluster.nodes
-      .map((n) => nodePositions.get(n.id))
-      .filter((p): p is NodePosition => p !== undefined);
+): void {
+  for (let i = 0; i < clusterNodes.length; i++) {
+    for (let j = i + 1; j < clusterNodes.length; j++) {
+      const a = clusterNodes[i];
+      const b = clusterNodes[j];
 
-    for (let i = 0; i < clusterNodes.length; i++) {
-      for (let j = i + 1; j < clusterNodes.length; j++) {
-        const a = clusterNodes[i];
-        const b = clusterNodes[j];
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance === 0 || distance > 100) continue;
 
-        if (distance === 0 || distance > 100) continue;
+      const minSeparation = (a.radius || 10) + (b.radius || 10) + 8;
 
-        const minSeparation = (a.radius || 10) + (b.radius || 10) + 8;
+      if (distance < minSeparation) {
+        const overlap = minSeparation - distance;
+        const force = overlap * 0.3 * alpha;
+        const fx = (dx / distance) * force;
+        const fy = (dy / distance) * force;
 
-        if (distance < minSeparation) {
-          const overlap = minSeparation - distance;
-          const force = overlap * 0.3 * alpha; // Gentle!
-          const fx = (dx / distance) * force;
-          const fy = (dy / distance) * force;
-
-          a.vx = (a.vx || 0) - fx;
-          a.vy = (a.vy || 0) - fy;
-          b.vx = (b.vx || 0) + fx;
-          b.vy = (b.vy || 0) + fy;
-        }
+        a.vx = (a.vx || 0) - fx;
+        a.vy = (a.vy || 0) - fy;
+        b.vx = (b.vx || 0) + fx;
+        b.vy = (b.vy || 0) + fy;
       }
     }
-  });
+  }
+}
 
-  // 2. Very gentle cluster spacing (prevent overlap)
-  const clusterArray = Array.from(clusterPositions.values());
-
+// Helper: Apply cluster spacing forces
+function applyClusterSpacing(
+  clusterArray: ClusterPosition[],
+  alpha: number,
+): void {
   for (let i = 0; i < clusterArray.length; i++) {
     for (let j = i + 1; j < clusterArray.length; j++) {
       const a = clusterArray[i];
@@ -202,7 +192,7 @@ function applyGentleForces(
 
       if (distance < minSeparation) {
         const overlap = minSeparation - distance;
-        const force = overlap * 0.4 * alpha; // Gentle!
+        const force = overlap * 0.4 * alpha;
         const fx = (dx / distance) * force;
         const fy = (dy / distance) * force;
 
@@ -213,24 +203,29 @@ function applyGentleForces(
       }
     }
   }
+}
 
-  // 3. Mild link attraction (smooth edge paths)
-  edges.forEach((edge) => {
+// Helper: Apply edge link forces for internal edges
+function applyInternalLinkForces(
+  edges: GraphEdge[],
+  nodePositions: Map<string, NodePosition>,
+  alpha: number,
+): void {
+  for (const edge of edges) {
     const source = nodePositions.get(edge.source);
     const target = nodePositions.get(edge.target);
 
-    if (!source || !target) return;
-    if (source.clusterId !== target.clusterId) return; // Only internal edges
+    if (!source || !target) continue;
+    if (source.clusterId !== target.clusterId) continue;
 
     const dx = target.x - source.x;
     const dy = target.y - source.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance === 0) return;
+    if (distance === 0) continue;
 
     const targetDist = 70;
-    const force = (distance - targetDist) * 0.05 * alpha; // Very gentle!
-
+    const force = (distance - targetDist) * 0.05 * alpha;
     const fx = (dx / distance) * force;
     const fy = (dy / distance) * force;
 
@@ -238,7 +233,33 @@ function applyGentleForces(
     source.vy = (source.vy || 0) + fy * 0.5;
     target.vx = (target.vx || 0) - fx * 0.5;
     target.vy = (target.vy || 0) - fy * 0.5;
-  });
+  }
+}
+
+/**
+ * Apply gentle forces for organic settling
+ * Very light forces - just polish, don't rearrange
+ */
+function applyGentleForces(
+  nodePositions: Map<string, NodePosition>,
+  clusterPositions: Map<string, ClusterPosition>,
+  clusters: Cluster[],
+  edges: GraphEdge[],
+  alpha: number,
+) {
+  // 1. Gentle node collision (prevent overlaps within clusters)
+  for (const cluster of clusters) {
+    const clusterNodes = cluster.nodes
+      .map((n) => nodePositions.get(n.id))
+      .filter((p): p is NodePosition => p !== undefined);
+    applyNodeCollisionWithinCluster(clusterNodes, alpha);
+  }
+
+  // 2. Very gentle cluster spacing (prevent overlap)
+  applyClusterSpacing(Array.from(clusterPositions.values()), alpha);
+
+  // 3. Mild link attraction (smooth edge paths)
+  applyInternalLinkForces(edges, nodePositions, alpha);
 }
 
 /**

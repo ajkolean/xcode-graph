@@ -39,7 +39,9 @@ export function layoutNodesInClusterPractical(
 
   // Build reverse adjacency (who depends on this node)
   const revAdj = new Map<string, Set<string>>();
-  nodes.forEach((n) => revAdj.set(n.id, new Set()));
+  for (const n of nodes) {
+    revAdj.set(n.id, new Set());
+  }
 
   internalEdges.forEach((edge) => {
     revAdj.get(edge.target)?.add(edge.source);
@@ -187,10 +189,14 @@ function computeRings(
   const rings = new Map<string, number>();
 
   // Initialize all nodes to infinity
-  nodes.forEach((n) => rings.set(n.id, Infinity));
+  for (const n of nodes) {
+    rings.set(n.id, Infinity);
+  }
 
   // Anchors are ring 0
-  anchors.forEach((a) => rings.set(a.id, 0));
+  for (const a of anchors) {
+    rings.set(a.id, 0);
+  }
 
   // BFS from anchors (following reverse edges = who depends on anchors)
   const queue: { id: string; ring: number }[] = anchors.map((a) => ({
@@ -271,7 +277,9 @@ function findMostConnectedNode(nodes: GraphNode[], edges: GraphEdge[]): GraphNod
   const nodeIds = new Set(nodes.map((n) => n.id));
   const connections = new Map<string, number>();
 
-  nodes.forEach((n) => connections.set(n.id, 0));
+  for (const n of nodes) {
+    connections.set(n.id, 0);
+  }
 
   edges.forEach((edge) => {
     if (nodeIds.has(edge.source)) {

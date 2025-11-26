@@ -59,6 +59,59 @@ function buildAdjacency(
   return { forward, reverse };
 }
 
+// Test name patterns for matching tests to their targets
+const TEST_NAME_PATTERNS = [
+  /^(.+?)(Tests?)$/i,
+  /^(.+?)(Test)$/i,
+  /^(.+?)(UnitTests?)$/i,
+  /^(.+?)(UITests?)$/i,
+  /^(.+?)(IntegrationTests?)$/i,
+  /^(.+?)(AcceptanceTests?)$/i,
+  /^(.+?)(E2ETests?)$/i,
+];
+
+/**
+ * Try to match test name to a target node using name patterns
+ */
+function findTargetByNamePattern(
+  testName: string,
+  nodes: Array<{ id: string; name: string; type: string }>,
+): string | undefined {
+  for (const pattern of TEST_NAME_PATTERNS) {
+    const match = testName.match(pattern);
+    if (!match) continue;
+
+    const baseName = match[1];
+    const target = nodes.find((n) => {
+      if (n.type.startsWith('test')) return false;
+      const nName = n.name.toLowerCase();
+      const bName = baseName.toLowerCase();
+      return nName === bName || nName.startsWith(bName) || bName.startsWith(nName);
+    });
+
+    if (target) return target.id;
+  }
+  return undefined;
+}
+
+/**
+ * Find target by first non-test dependency
+ */
+function findTargetByDependency(
+  testId: string,
+  nodes: Array<{ id: string; name: string; type: string }>,
+  adj: AdjacencyList,
+): string | undefined {
+  const deps = adj.forward.get(testId) || [];
+  for (const dep of deps) {
+    const depNode = nodes.find((n) => n.id === dep);
+    if (depNode && !depNode.type.startsWith('test')) {
+      return dep;
+    }
+  }
+  return undefined;
+}
+
 /**
  * Find what a test targets using heuristics
  */
@@ -68,43 +121,12 @@ function findTestTarget(
   nodes: Array<{ id: string; name: string; type: string }>,
   adj: AdjacencyList,
 ): string | undefined {
-  // Heuristic 1: Name pattern matching
-  // "FooTests" -> "Foo", "FooFeatureTests" -> "FooFeature", etc.
-  const patterns = [
-    /^(.+?)(Tests?)$/i,
-    /^(.+?)(Test)$/i,
-    /^(.+?)(UnitTests?)$/i,
-    /^(.+?)(UITests?)$/i,
-    /^(.+?)(IntegrationTests?)$/i,
-    /^(.+?)(AcceptanceTests?)$/i,
-    /^(.+?)(E2ETests?)$/i,
-  ];
+  // Try name pattern matching first
+  const byName = findTargetByNamePattern(testName, nodes);
+  if (byName) return byName;
 
-  for (const pattern of patterns) {
-    const match = testName.match(pattern);
-    if (match) {
-      const baseName = match[1];
-      // Look for exact or similar name
-      const target = nodes.find((n) => {
-        if (n.type.startsWith('test')) return false;
-        const nName = n.name.toLowerCase();
-        const bName = baseName.toLowerCase();
-        return nName === bName || nName.startsWith(bName) || bName.startsWith(nName);
-      });
-      if (target) return target.id;
-    }
-  }
-
-  // Heuristic 2: First non-test dependency
-  const deps = adj.forward.get(testId) || [];
-  for (const dep of deps) {
-    const depNode = nodes.find((n) => n.id === dep);
-    if (depNode && !depNode.type.startsWith('test')) {
-      return dep;
-    }
-  }
-
-  return undefined;
+  // Fall back to dependency analysis
+  return findTargetByDependency(testId, nodes, adj);
 }
 
 /**
@@ -219,6 +241,103 @@ function computeIdealAngle(
   return Math.atan2(sumY, sumX);
 }
 
+type PositionInfo = { x: number; y: number; angle: number; ring: number };
+
+/**
+ * Position nodes in ring 0 (anchors)
+ */
+function positionRingZero(
+  ringNodes: Array<{ id: string; name: string; type: string }>,
+  centerX: number,
+  centerY: number,
+  radius: number,
+  positionMap: Map<string, PositionInfo>,
+): void {
+  const angleStep = (2 * Math.PI) / Math.max(ringNodes.length, 1);
+  for (let idx = 0; idx < ringNodes.length; idx++) {
+    const node = ringNodes[idx];
+    const angle = idx * angleStep;
+    positionMap.set(node.id, {
+      x: centerX + radius * Math.cos(angle),
+      y: centerY + radius * Math.sin(angle),
+      angle,
+      ring: 0,
+    });
+  }
+}
+
+/**
+ * Position nodes in outer rings based on connections
+ */
+function positionOuterRing(
+  ringNodes: Array<{ id: string; name: string; type: string }>,
+  ring: number,
+  centerX: number,
+  centerY: number,
+  radius: number,
+  adj: AdjacencyList,
+  positionMap: Map<string, PositionInfo>,
+): void {
+  const scored = ringNodes.map((node) => ({
+    node,
+    idealAngle: computeIdealAngle(node.id, ring, adj, positionMap),
+  }));
+
+  scored.sort((a, b) => a.idealAngle - b.idealAngle);
+
+  const angleStep = (2 * Math.PI) / scored.length;
+  for (let idx = 0; idx < scored.length; idx++) {
+    const item = scored[idx];
+    const angle = idx * angleStep;
+    positionMap.set(item.node.id, {
+      x: centerX + radius * Math.cos(angle),
+      y: centerY + radius * Math.sin(angle),
+      angle,
+      ring,
+    });
+  }
+}
+
+/**
+ * Position test nodes adjacent to their targets
+ */
+function positionTestNodes(
+  testNodes: Array<{ id: string; name: string; type: string }>,
+  mainNodes: Array<{ id: string; name: string; type: string }>,
+  adj: AdjacencyList,
+  positionMap: Map<string, PositionInfo>,
+  centerX: number,
+  centerY: number,
+  baseRadius: number,
+  ringSpacing: number,
+  testOffset: number,
+  maxDepth: number,
+): void {
+  for (const testNode of testNodes) {
+    const targetId = findTestTarget(testNode.id, testNode.name, mainNodes, adj);
+    const targetPos = targetId ? positionMap.get(targetId) : undefined;
+
+    if (targetPos) {
+      const testRadius = targetPos.ring * ringSpacing + baseRadius + testOffset;
+      positionMap.set(testNode.id, {
+        x: centerX + testRadius * Math.cos(targetPos.angle),
+        y: centerY + testRadius * Math.sin(targetPos.angle),
+        angle: targetPos.angle,
+        ring: -1,
+      });
+    } else {
+      const outerRadius = baseRadius + (maxDepth + 1) * ringSpacing;
+      const angle = Math.random() * 2 * Math.PI;
+      positionMap.set(testNode.id, {
+        x: centerX + outerRadius * Math.cos(angle),
+        y: centerY + outerRadius * Math.sin(angle),
+        angle,
+        ring: -1,
+      });
+    }
+  }
+}
+
 /**
  * Simple radial cluster layout with tests adjacent to targets
  */
@@ -262,7 +381,7 @@ export function simpleClusterLayout(
   }
 
   // Position main nodes ring by ring
-  const positionMap = new Map<string, { x: number; y: number; angle: number; ring: number }>();
+  const positionMap = new Map<string, PositionInfo>();
   const sortedRings = Array.from(ringGroups.keys()).sort((a, b) => a - b);
 
   for (const ring of sortedRings) {
@@ -270,70 +389,25 @@ export function simpleClusterLayout(
     const radius = baseRadius + ring * ringSpacing;
 
     if (ring === 0) {
-      // Ring 0: Evenly distribute anchors
-      const angleStep = (2 * Math.PI) / Math.max(ringNodes.length, 1);
-      ringNodes.forEach((node, idx) => {
-        const angle = idx * angleStep;
-        positionMap.set(node.id, {
-          x: centerX + radius * Math.cos(angle),
-          y: centerY + radius * Math.sin(angle),
-          angle,
-          ring,
-        });
-      });
+      positionRingZero(ringNodes, centerX, centerY, radius, positionMap);
     } else {
-      // Outer rings: Position based on connections to inner rings
-      const scored = ringNodes.map((node) => ({
-        node,
-        idealAngle: computeIdealAngle(node.id, ring, adj, positionMap),
-      }));
-
-      // Sort by ideal angle
-      scored.sort((a, b) => a.idealAngle - b.idealAngle);
-
-      // Distribute evenly around the ring
-      const angleStep = (2 * Math.PI) / scored.length;
-      scored.forEach((item, idx) => {
-        const angle = idx * angleStep;
-        positionMap.set(item.node.id, {
-          x: centerX + radius * Math.cos(angle),
-          y: centerY + radius * Math.sin(angle),
-          angle,
-          ring,
-        });
-      });
+      positionOuterRing(ringNodes, ring, centerX, centerY, radius, adj, positionMap);
     }
   }
 
   // Position tests adjacent to their targets
-  for (const testNode of testNodes) {
-    const targetId = findTestTarget(testNode.id, testNode.name, mainNodes, adj);
-    const targetPos = targetId ? positionMap.get(targetId) : undefined;
-
-    if (targetPos) {
-      // Place test slightly outside its target (same angle, larger radius)
-      const testRadius = targetPos.ring * ringSpacing + baseRadius + testOffset;
-      const angle = targetPos.angle;
-
-      positionMap.set(testNode.id, {
-        x: centerX + testRadius * Math.cos(angle),
-        y: centerY + testRadius * Math.sin(angle),
-        angle,
-        ring: -1, // Special: test node
-      });
-    } else {
-      // No target found - place in outer ring
-      const outerRadius = baseRadius + (maxDepth + 1) * ringSpacing;
-      const angle = Math.random() * 2 * Math.PI;
-
-      positionMap.set(testNode.id, {
-        x: centerX + outerRadius * Math.cos(angle),
-        y: centerY + outerRadius * Math.sin(angle),
-        angle,
-        ring: -1,
-      });
-    }
-  }
+  positionTestNodes(
+    testNodes,
+    mainNodes,
+    adj,
+    positionMap,
+    centerX,
+    centerY,
+    baseRadius,
+    ringSpacing,
+    testOffset,
+    maxDepth,
+  );
 
   // Convert to result format
   return Array.from(positionMap.entries()).map(([id, pos]) => ({

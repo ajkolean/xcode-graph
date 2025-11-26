@@ -18,6 +18,24 @@ export interface GraphData {
   edges: GraphEdge[];
 }
 
+// Helper to add targets to nodes array with common properties
+function addTargetsToNodes(
+  nodes: GraphNode[],
+  targets: Array<{ id: string; name: string; type: GraphNode['type']; platform?: GraphNode['platform'] }>,
+  defaults: { platform: GraphNode['platform']; origin: GraphNode['origin']; project: string },
+): void {
+  for (const t of targets) {
+    nodes.push({
+      id: t.id,
+      name: t.name,
+      type: t.type,
+      platform: t.platform ?? defaults.platform,
+      origin: defaults.origin,
+      project: defaults.project,
+    });
+  }
+}
+
 // Helper to generate realistic dependency graph data
 function generateMockData(): GraphData {
   const nodes: GraphNode[] = [];
@@ -44,14 +62,7 @@ function generateMockData(): GraphData {
     { id: 'tuistcore-integration', name: 'TuistIntegrationTests', type: 'test-ui' as const },
   ];
 
-  tuistCoreTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'local',
-      project: 'TuistCore',
-    }),
-  );
+  addTargetsToNodes(nodes, tuistCoreTargets, { platform: 'iOS', origin: 'local', project: 'TuistCore' });
 
   // 2. TuistKit - CLI tools project (12 targets)
   const tuistKitTargets = [
@@ -69,14 +80,7 @@ function generateMockData(): GraphData {
     { id: 'tuistkit-e2e', name: 'TuistE2ETests', type: 'test-ui' as const },
   ];
 
-  tuistKitTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'macOS',
-      origin: 'local',
-      project: 'TuistKit',
-    }),
-  );
+  addTargetsToNodes(nodes, tuistKitTargets, { platform: 'macOS', origin: 'local', project: 'TuistKit' });
 
   // 3. FeatureKit - App features project (10 targets)
   const featureKitTargets = [
@@ -92,14 +96,7 @@ function generateMockData(): GraphData {
     { id: 'featurekit-ui-tests', name: 'FeatureKitUITests', type: 'test-ui' as const },
   ];
 
-  featureKitTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'local',
-      project: 'FeatureKit',
-    }),
-  );
+  addTargetsToNodes(nodes, featureKitTargets, { platform: 'iOS', origin: 'local', project: 'FeatureKit' });
 
   // 4. UIKit - Shared UI components (8 targets)
   const uiKitTargets = [
@@ -113,14 +110,7 @@ function generateMockData(): GraphData {
     { id: 'uikit-accessibility', name: 'AccessibilityTests', type: 'test-ui' as const },
   ];
 
-  uiKitTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'local',
-      project: 'UIKit',
-    }),
-  );
+  addTargetsToNodes(nodes, uiKitTargets, { platform: 'iOS', origin: 'local', project: 'UIKit' });
 
   // 5. NetworkKit - Networking layer (7 targets)
   const networkKitTargets = [
@@ -133,14 +123,7 @@ function generateMockData(): GraphData {
     { id: 'networkkit-mocks', name: 'NetworkMocks', type: 'framework' as const },
   ];
 
-  networkKitTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'local',
-      project: 'NetworkKit',
-    }),
-  );
+  addTargetsToNodes(nodes, networkKitTargets, { platform: 'iOS', origin: 'local', project: 'NetworkKit' });
 
   // 6. DataKit - Data persistence (9 targets)
   const dataKitTargets = [
@@ -155,14 +138,7 @@ function generateMockData(): GraphData {
     { id: 'datakit-performance', name: 'DataPerformanceTests', type: 'test-ui' as const },
   ];
 
-  dataKitTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'local',
-      project: 'DataKit',
-    }),
-  );
+  addTargetsToNodes(nodes, dataKitTargets, { platform: 'iOS', origin: 'local', project: 'DataKit' });
 
   // 7. App - Main application target (4 targets)
   const appTargets = [
@@ -177,7 +153,7 @@ function generateMockData(): GraphData {
     },
   ];
 
-  appTargets.forEach((t) =>
+  for (const t of appTargets) {
     nodes.push({
       id: t.id,
       name: t.name,
@@ -185,8 +161,8 @@ function generateMockData(): GraphData {
       platform: t.platform,
       origin: 'local',
       project: 'MainApp',
-    }),
-  );
+    });
+  }
 
   // 8. UtilsKit - Shared utilities (6 targets)
   const utilsKitTargets = [
@@ -198,14 +174,7 @@ function generateMockData(): GraphData {
     { id: 'utilskit-performance', name: 'UtilsPerformanceTests', type: 'test-ui' as const },
   ];
 
-  utilsKitTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'local',
-      project: 'UtilsKit',
-    }),
-  );
+  addTargetsToNodes(nodes, utilsKitTargets, { platform: 'iOS', origin: 'local', project: 'UtilsKit' });
 
   // ==================== EXTERNAL PACKAGES ====================
 
@@ -216,14 +185,7 @@ function generateMockData(): GraphData {
     { id: 'alamofire-tests', name: 'AlamofireTests', type: 'test-unit' as const },
   ];
 
-  alamofireTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'Alamofire',
-    }),
-  );
+  addTargetsToNodes(nodes, alamofireTargets, { platform: 'iOS', origin: 'external', project: 'Alamofire' });
 
   // 10. SwiftUI Navigation (2 targets)
   const navigationTargets = [
@@ -231,14 +193,7 @@ function generateMockData(): GraphData {
     { id: 'nav-tests', name: 'NavigationTests', type: 'test-unit' as const },
   ];
 
-  navigationTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'ComposableNavigation',
-    }),
-  );
+  addTargetsToNodes(nodes, navigationTargets, { platform: 'iOS', origin: 'external', project: 'ComposableNavigation' });
 
   // 11. Logging Package (2 targets)
   const loggingTargets = [
@@ -246,14 +201,7 @@ function generateMockData(): GraphData {
     { id: 'logging-tests', name: 'LoggingTests', type: 'test-unit' as const },
   ];
 
-  loggingTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'SwiftLog',
-    }),
-  );
+  addTargetsToNodes(nodes, loggingTargets, { platform: 'iOS', origin: 'external', project: 'SwiftLog' });
 
   // 12. Kingfisher (4 targets)
   const kingfisherTargets = [
@@ -263,14 +211,7 @@ function generateMockData(): GraphData {
     { id: 'kingfisher-ui-tests', name: 'KingfisherUITests', type: 'test-ui' as const },
   ];
 
-  kingfisherTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'Kingfisher',
-    }),
-  );
+  addTargetsToNodes(nodes, kingfisherTargets, { platform: 'iOS', origin: 'external', project: 'Kingfisher' });
 
   // 13. SnapKit (2 targets)
   const snapkitTargets = [
@@ -278,14 +219,7 @@ function generateMockData(): GraphData {
     { id: 'snapkit-tests', name: 'SnapKitTests', type: 'test-unit' as const },
   ];
 
-  snapkitTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'SnapKit',
-    }),
-  );
+  addTargetsToNodes(nodes, snapkitTargets, { platform: 'iOS', origin: 'external', project: 'SnapKit' });
 
   // 14. Combine Extensions (2 targets)
   const combineTargets = [
@@ -293,14 +227,7 @@ function generateMockData(): GraphData {
     { id: 'combine-tests', name: 'CombineExtTests', type: 'test-unit' as const },
   ];
 
-  combineTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'CombineExt',
-    }),
-  );
+  addTargetsToNodes(nodes, combineTargets, { platform: 'iOS', origin: 'external', project: 'CombineExt' });
 
   // 15. SwiftProtobuf (3 targets)
   const protobufTargets = [
@@ -309,14 +236,7 @@ function generateMockData(): GraphData {
     { id: 'protobuf-tests', name: 'SwiftProtobufTests', type: 'test-unit' as const },
   ];
 
-  protobufTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'SwiftProtobuf',
-    }),
-  );
+  addTargetsToNodes(nodes, protobufTargets, { platform: 'iOS', origin: 'external', project: 'SwiftProtobuf' });
 
   // 16. Nimble (2 targets)
   const nimbleTargets = [
@@ -324,14 +244,7 @@ function generateMockData(): GraphData {
     { id: 'nimble-objc', name: 'NimbleObjectiveC', type: 'package' as const },
   ];
 
-  nimbleTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'Nimble',
-    }),
-  );
+  addTargetsToNodes(nodes, nimbleTargets, { platform: 'iOS', origin: 'external', project: 'Nimble' });
 
   // 17. Quick (2 targets)
   const quickTargets = [
@@ -339,14 +252,7 @@ function generateMockData(): GraphData {
     { id: 'quick-tests', name: 'QuickTests', type: 'test-unit' as const },
   ];
 
-  quickTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'Quick',
-    }),
-  );
+  addTargetsToNodes(nodes, quickTargets, { platform: 'iOS', origin: 'external', project: 'Quick' });
 
   // 18. Firebase (6 targets)
   const firebaseTargets = [
@@ -358,14 +264,7 @@ function generateMockData(): GraphData {
     { id: 'firebase-messaging', name: 'FirebaseMessaging', type: 'package' as const },
   ];
 
-  firebaseTargets.forEach((t) =>
-    nodes.push({
-      ...t,
-      platform: 'iOS',
-      origin: 'external',
-      project: 'Firebase',
-    }),
-  );
+  addTargetsToNodes(nodes, firebaseTargets, { platform: 'iOS', origin: 'external', project: 'Firebase' });
 
   // ==================== EDGES (Dependencies) ====================
 

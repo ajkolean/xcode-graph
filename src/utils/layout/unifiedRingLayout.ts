@@ -69,13 +69,15 @@ function buildReverseAdjacency(nodes: LayoutNode[], edges: LayoutEdge[]): Map<st
   const nodeIds = new Set(nodes.map((n) => n.id));
   const revAdj = new Map<string, Set<string>>();
 
-  nodes.forEach((n) => revAdj.set(n.id, new Set()));
+  for (const n of nodes) {
+    revAdj.set(n.id, new Set());
+  }
 
-  edges.forEach((edge) => {
+  for (const edge of edges) {
     if (nodeIds.has(edge.source) && nodeIds.has(edge.target)) {
       revAdj.get(edge.target)?.add(edge.source);
     }
-  });
+  }
 
   return revAdj;
 }
@@ -94,10 +96,14 @@ function computeRingAssignment(
   const rings = new Map<string, number>();
 
   // Initialize all to infinity
-  nodes.forEach((n) => rings.set(n.id, Infinity));
+  for (const n of nodes) {
+    rings.set(n.id, Infinity);
+  }
 
   // Anchors are ring 0
-  anchors.forEach((a) => rings.set(a.id, 0));
+  for (const a of anchors) {
+    rings.set(a.id, 0);
+  }
 
   // BFS from anchors
   const queue: { id: string; ring: number }[] = anchors.map((a) => ({
@@ -253,16 +259,18 @@ function findMostConnectedNode(nodes: LayoutNode[], edges: LayoutEdge[]): Layout
   const nodeIds = new Set(nodes.map((n) => n.id));
   const connections = new Map<string, number>();
 
-  nodes.forEach((n) => connections.set(n.id, 0));
+  for (const n of nodes) {
+    connections.set(n.id, 0);
+  }
 
-  edges.forEach((edge) => {
+  for (const edge of edges) {
     if (nodeIds.has(edge.source)) {
       connections.set(edge.source, (connections.get(edge.source) || 0) + 1);
     }
     if (nodeIds.has(edge.target)) {
       connections.set(edge.target, (connections.get(edge.target) || 0) + 1);
     }
-  });
+  }
 
   let maxNode = nodes[0];
   let maxCount = 0;

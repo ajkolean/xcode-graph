@@ -51,23 +51,28 @@ function buildAdjacency(
   return { forward, reverse };
 }
 
-/**
- * Compute depth of each node from roots (nodes with no dependencies)
- */
-function computeDepthFromRoots(nodeIds: string[], adj: AdjacencyList): Map<string, number> {
-  const depth = new Map<string, number>();
-  const queue: string[] = [];
-
-  // Find roots (nodes with no incoming edges)
+// Helper: Find root nodes (no incoming edges)
+function findRoots(nodeIds: string[], adj: AdjacencyList): string[] {
+  const roots: string[] = [];
   for (const id of nodeIds) {
     const incoming = adj.reverse.get(id) || [];
     if (incoming.length === 0) {
-      depth.set(id, 0);
-      queue.push(id);
+      roots.push(id);
     }
   }
+  return roots;
+}
 
-  // BFS from roots
+// Helper: BFS to compute depths from roots
+function bfsDepths(roots: string[], adj: AdjacencyList): Map<string, number> {
+  const depth = new Map<string, number>();
+  const queue: string[] = [];
+
+  for (const id of roots) {
+    depth.set(id, 0);
+    queue.push(id);
+  }
+
   while (queue.length > 0) {
     const id = queue.shift()!;
     const d = depth.get(id)!;
@@ -81,15 +86,77 @@ function computeDepthFromRoots(nodeIds: string[], adj: AdjacencyList): Map<strin
     }
   }
 
-  // Nodes not reachable from roots get max depth
+  return depth;
+}
+
+// Helper: Assign max depth to unreachable nodes
+function assignUnreachableDepths(
+  nodeIds: string[],
+  depth: Map<string, number>,
+): void {
   const maxDepth = Math.max(...Array.from(depth.values()), 0);
   for (const id of nodeIds) {
     if (!depth.has(id)) {
       depth.set(id, maxDepth + 1);
     }
   }
+}
 
+/**
+ * Compute depth of each node from roots (nodes with no dependencies)
+ */
+function computeDepthFromRoots(nodeIds: string[], adj: AdjacencyList): Map<string, number> {
+  const roots = findRoots(nodeIds, adj);
+  const depth = bfsDepths(roots, adj);
+  assignUnreachableDepths(nodeIds, depth);
   return depth;
+}
+
+// Helper: BFS for shortest paths from a single source
+function bfsShortestPaths(
+  source: string,
+  adj: AdjacencyList,
+): { distance: Map<string, number>; pathCount: Map<string, number> } {
+  const distance = new Map<string, number>();
+  const pathCount = new Map<string, number>();
+  const queue: string[] = [source];
+
+  distance.set(source, 0);
+  pathCount.set(source, 1);
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    const currentDist = distance.get(current)!;
+    const currentPaths = pathCount.get(current)!;
+
+    const neighbors = adj.forward.get(current) || [];
+    for (const neighbor of neighbors) {
+      if (!distance.has(neighbor)) {
+        distance.set(neighbor, currentDist + 1);
+        pathCount.set(neighbor, 0);
+        queue.push(neighbor);
+      }
+
+      if (distance.get(neighbor) === currentDist + 1) {
+        pathCount.set(neighbor, (pathCount.get(neighbor) || 0) + currentPaths);
+      }
+    }
+  }
+
+  return { distance, pathCount };
+}
+
+// Helper: Accumulate centrality from path counts
+function accumulateCentrality(
+  source: string,
+  pathCount: Map<string, number>,
+  centrality: Map<string, number>,
+): void {
+  for (const [node, paths] of pathCount.entries()) {
+    if (node !== source && paths > 0) {
+      centrality.set(node, (centrality.get(node) || 0) + paths);
+    }
+  }
 }
 
 /**
@@ -99,46 +166,13 @@ function computeDepthFromRoots(nodeIds: string[], adj: AdjacencyList): Map<strin
 function computeCentrality(nodeIds: string[], adj: AdjacencyList): Map<string, number> {
   const centrality = new Map<string, number>();
 
-  // Initialize
   for (const id of nodeIds) {
     centrality.set(id, 0);
   }
 
-  // For each node as source
   for (const source of nodeIds) {
-    const distance = new Map<string, number>();
-    const pathCount = new Map<string, number>();
-    const queue: string[] = [source];
-
-    distance.set(source, 0);
-    pathCount.set(source, 1);
-
-    // BFS to find shortest paths
-    while (queue.length > 0) {
-      const current = queue.shift()!;
-      const currentDist = distance.get(current)!;
-      const currentPaths = pathCount.get(current)!;
-
-      const neighbors = adj.forward.get(current) || [];
-      for (const neighbor of neighbors) {
-        if (!distance.has(neighbor)) {
-          distance.set(neighbor, currentDist + 1);
-          pathCount.set(neighbor, 0);
-          queue.push(neighbor);
-        }
-
-        if (distance.get(neighbor) === currentDist + 1) {
-          pathCount.set(neighbor, (pathCount.get(neighbor) || 0) + currentPaths);
-        }
-      }
-    }
-
-    // Accumulate centrality scores
-    for (const [node, paths] of pathCount.entries()) {
-      if (node !== source && paths > 0) {
-        centrality.set(node, (centrality.get(node) || 0) + paths);
-      }
-    }
+    const { pathCount } = bfsShortestPaths(source, adj);
+    accumulateCentrality(source, pathCount, centrality);
   }
 
   return centrality;

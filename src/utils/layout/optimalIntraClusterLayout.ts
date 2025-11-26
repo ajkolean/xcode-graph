@@ -177,7 +177,9 @@ function computeTopologicalDepth(
 
   // Build adjacency list (forward edges only - dependencies)
   const adjacency = new Map<string, string[]>();
-  nodes.forEach((n) => adjacency.set(n.id, []));
+  for (const n of nodes) {
+    adjacency.set(n.id, []);
+  }
 
   edges.forEach((edge) => {
     const targets = adjacency.get(edge.source);
@@ -272,7 +274,9 @@ function findMostConnectedNode(nodes: GraphNode[], edges: GraphEdge[]): GraphNod
   const nodeIds = new Set(nodes.map((n) => n.id));
   const connections = new Map<string, number>();
 
-  nodes.forEach((n) => connections.set(n.id, 0));
+  for (const n of nodes) {
+    connections.set(n.id, 0);
+  }
 
   edges.forEach((edge) => {
     if (nodeIds.has(edge.source)) {

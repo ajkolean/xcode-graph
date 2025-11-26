@@ -27,28 +27,36 @@ export function ClusterCard({
   zoom = 1.0,
   onClick,
 }: ClusterCardProps) {
-  const _isExternal = cluster.origin === 'external';
-
   // Generate color based on cluster type and name to match sidebar filters
   const clusterColor = generateColor(cluster.name, cluster.type);
 
   // Adjust colors based on zoom level
   const zoomAdjustedColor = adjustColorForZoom(clusterColor, zoom);
-  const borderOpacity = adjustOpacityForZoom(0.5, zoom); // Moderate opacity for clean borders
+  const borderOpacity = adjustOpacityForZoom(0.5, zoom);
 
-  // Use zoom-adjusted colors
-  const borderColor = zoomAdjustedColor;
-  const labelColor = zoomAdjustedColor;
-
-  // Different stroke patterns for project vs package clusters
-  // Longer dashes with bigger gaps for cleaner look - matching reference design
-  // Project clusters: dashed line (8px dash, 8px gap)
-  // Package clusters: dotted line (3px dot, 8px gap)
+  // Pre-compute common conditional values to reduce complexity
+  const isActive = isHighlighted || isSelected;
+  const cursorStyle = onClick ? 'pointer' : 'default';
   const strokeDasharray = cluster.type === 'project' ? '8 8' : '3 8';
+  const fillAlpha = isActive ? '08' : '18';
+  const textOpacity = isActive ? 1.0 : 0.6;
+  const fontWeight = isActive ? 'var(--font-weight-semibold)' : 'var(--font-weight-medium)';
+  const textShadow = isActive
+    ? `0 0 8px ${zoomAdjustedColor}40, 0 0 16px ${zoomAdjustedColor}20`
+    : 'none';
+
+  const labelStyle = {
+    fontWeight,
+    pointerEvents: 'none' as const,
+    opacity: textOpacity,
+    textShadow,
+    transition:
+      'opacity 0.2s ease-in-out, font-weight 0.2s ease-in-out, text-shadow 0.2s ease-in-out',
+  };
 
   return (
     <g opacity={isDimmed ? 0.3 : 1}>
-      {/* Background fill - visible by default, becomes MORE transparent on hover/selected */}
+      {/* Background fill */}
       <rect
         x={x}
         y={y}
@@ -56,16 +64,13 @@ export function ClusterCard({
         height={height}
         rx={8}
         ry={8}
-        fill={`${zoomAdjustedColor}${isHighlighted || isSelected ? '08' : '18'}`}
+        fill={`${zoomAdjustedColor}${fillAlpha}`}
         stroke="none"
         onClick={onClick}
-        style={{
-          transition: 'fill 0.2s ease-in-out',
-          cursor: onClick ? 'pointer' : 'default',
-        }}
+        style={{ transition: 'fill 0.2s ease-in-out', cursor: cursorStyle }}
       />
 
-      {/* Border with type-specific pattern, pulse on hover, marching ants on selected */}
+      {/* Border with type-specific pattern */}
       <rect
         x={x}
         y={y}
@@ -74,40 +79,25 @@ export function ClusterCard({
         rx={8}
         ry={8}
         fill="none"
-        stroke={borderColor}
+        stroke={zoomAdjustedColor}
         strokeWidth={3.5}
-        strokeOpacity={isHighlighted || isSelected ? 0.9 : borderOpacity}
+        strokeOpacity={isActive ? 0.9 : borderOpacity}
         strokeDasharray={strokeDasharray}
         strokeLinecap="round"
         onClick={onClick}
         style={{
           transition: 'stroke-opacity 0.2s ease-in-out',
-          cursor: onClick ? 'pointer' : 'default',
+          cursor: cursorStyle,
           animation: isSelected ? 'marchingAnts 0.8s linear infinite' : undefined,
         }}
       />
 
-      {/* Cluster label at top */}
+      {/* Cluster label */}
       <text
         x={x + 12}
         y={y + 20}
-        fill={labelColor}
-        style={{
-          fontFamily: 'DM Sans, sans-serif',
-          fontSize: '12px',
-          fontWeight:
-            isHighlighted || isSelected
-              ? 'var(--font-weight-semibold)'
-              : 'var(--font-weight-medium)',
-          pointerEvents: 'none',
-          opacity: isHighlighted || isSelected ? 1.0 : 0.6,
-          textShadow:
-            isHighlighted || isSelected
-              ? `0 0 8px ${zoomAdjustedColor}40, 0 0 16px ${zoomAdjustedColor}20`
-              : 'none',
-          transition:
-            'opacity 0.2s ease-in-out, font-weight 0.2s ease-in-out, text-shadow 0.2s ease-in-out',
-        }}
+        fill={zoomAdjustedColor}
+        style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', ...labelStyle }}
       >
         {cluster.name}
       </text>
@@ -117,23 +107,8 @@ export function ClusterCard({
         x={x + width - 12}
         y={y + 20}
         textAnchor="end"
-        fill={labelColor}
-        style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '11px',
-          fontWeight:
-            isHighlighted || isSelected
-              ? 'var(--font-weight-semibold)'
-              : 'var(--font-weight-medium)',
-          pointerEvents: 'none',
-          opacity: isHighlighted || isSelected ? 1.0 : 0.6,
-          textShadow:
-            isHighlighted || isSelected
-              ? `0 0 8px ${zoomAdjustedColor}40, 0 0 16px ${zoomAdjustedColor}20`
-              : 'none',
-          transition:
-            'opacity 0.2s ease-in-out, font-weight 0.2s ease-in-out, text-shadow 0.2s ease-in-out',
-        }}
+        fill={zoomAdjustedColor}
+        style={{ fontFamily: 'Inter, sans-serif', fontSize: '11px', ...labelStyle }}
       >
         {cluster.nodes.length} targets
       </text>

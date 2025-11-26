@@ -36,6 +36,65 @@ export function buildAdjacency(
   return { forward, reverse };
 }
 
+// Helper: Process a neighbor in Tarjan's algorithm
+function processNeighbor(
+  w: string,
+  v: string,
+  index: Map<string, number>,
+  lowlink: Map<string, number>,
+  onStack: Set<string>,
+  stack: string[],
+  sccs: string[][],
+  adj: Map<string, string[]>,
+  currentIndex: { value: number },
+): void {
+  if (!index.has(w)) {
+    strongconnectImpl(w, index, lowlink, onStack, stack, sccs, adj, currentIndex);
+    lowlink.set(v, Math.min(lowlink.get(v)!, lowlink.get(w)!));
+  } else if (onStack.has(w)) {
+    lowlink.set(v, Math.min(lowlink.get(v)!, index.get(w)!));
+  }
+}
+
+// Helper: Extract SCC when root is found
+function extractSCC(v: string, onStack: Set<string>, stack: string[]): string[] {
+  const scc: string[] = [];
+  let w: string;
+  do {
+    w = stack.pop()!;
+    onStack.delete(w);
+    scc.push(w);
+  } while (w !== v);
+  return scc;
+}
+
+// Helper: Main strongconnect implementation
+function strongconnectImpl(
+  v: string,
+  index: Map<string, number>,
+  lowlink: Map<string, number>,
+  onStack: Set<string>,
+  stack: string[],
+  sccs: string[][],
+  adj: Map<string, string[]>,
+  currentIndex: { value: number },
+): void {
+  index.set(v, currentIndex.value);
+  lowlink.set(v, currentIndex.value);
+  currentIndex.value++;
+  stack.push(v);
+  onStack.add(v);
+
+  const neighbors = adj.get(v) || [];
+  for (const w of neighbors) {
+    processNeighbor(w, v, index, lowlink, onStack, stack, sccs, adj, currentIndex);
+  }
+
+  if (lowlink.get(v) === index.get(v)) {
+    sccs.push(extractSCC(v, onStack, stack));
+  }
+}
+
 /**
  * Tarjan's algorithm for finding strongly connected components
  */
@@ -46,50 +105,22 @@ export function tarjanSCC(adj: Map<string, string[]>): string[][] {
   const onStack: Set<string> = new Set();
   const stack: string[] = [];
   const sccs: string[][] = [];
-  let currentIndex = 0;
-
-  function strongconnect(v: string) {
-    index.set(v, currentIndex);
-    lowlink.set(v, currentIndex);
-    currentIndex++;
-    stack.push(v);
-    onStack.add(v);
-
-    const neighbors = adj.get(v) || [];
-    for (const w of neighbors) {
-      if (!index.has(w)) {
-        strongconnect(w);
-        lowlink.set(v, Math.min(lowlink.get(v)!, lowlink.get(w)!));
-      } else if (onStack.has(w)) {
-        lowlink.set(v, Math.min(lowlink.get(v)!, index.get(w)!));
-      }
-    }
-
-    if (lowlink.get(v) === index.get(v)) {
-      const scc: string[] = [];
-      let w: string;
-      do {
-        w = stack.pop()!;
-        onStack.delete(w);
-        scc.push(w);
-      } while (w !== v);
-      sccs.push(scc);
-    }
-  }
+  const currentIndex = { value: 0 };
 
   for (const v of nodes) {
     if (!index.has(v)) {
-      strongconnect(v);
+      strongconnectImpl(v, index, lowlink, onStack, stack, sccs, adj, currentIndex);
     }
   }
 
   return sccs;
 }
 
-/**
- * Topological sort using Kahn's algorithm
- */
-export function topoSort(nodes: string[], edges: Array<{ from: string; to: string }>): string[] {
+// Helper: Initialize incoming/outgoing counts for topoSort
+function initTopoSortStructures(
+  nodes: string[],
+  edges: Array<{ from: string; to: string }>,
+): { incoming: Record<string, number>; outgoing: Record<string, string[]> } {
   const incoming: Record<string, number> = {};
   const outgoing: Record<string, string[]> = {};
 
@@ -103,10 +134,24 @@ export function topoSort(nodes: string[], edges: Array<{ from: string; to: strin
     outgoing[e.from].push(e.to);
   }
 
+  return { incoming, outgoing };
+}
+
+// Helper: Find initial nodes with no incoming edges
+function findInitialNodes(nodes: string[], incoming: Record<string, number>): string[] {
   const queue: string[] = [];
   for (const n of nodes) {
     if (incoming[n] === 0) queue.push(n);
   }
+  return queue;
+}
+
+/**
+ * Topological sort using Kahn's algorithm
+ */
+export function topoSort(nodes: string[], edges: Array<{ from: string; to: string }>): string[] {
+  const { incoming, outgoing } = initTopoSortStructures(nodes, edges);
+  const queue = findInitialNodes(nodes, incoming);
 
   const result: string[] = [];
   while (queue.length > 0) {

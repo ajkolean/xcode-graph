@@ -120,6 +120,80 @@ export function identifyAnchors(
   return sorted.length > 0 ? [sorted[0]] : [];
 }
 
+// Helper: Count internal dependencies for a node
+function countInternalDependencies(
+  nodeId: string,
+  deps: Set<string>,
+  nodeIds: Set<string>,
+  testNodes: Set<string>,
+): number {
+  let count = 0;
+  for (const depId of deps) {
+    if (nodeIds.has(depId) && !testNodes.has(depId)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+// Helper: Count internal dependents for a node
+function countInternalDependents(
+  nodeId: string,
+  nodes: GraphNode[],
+  dependencies: Map<string, Set<string>>,
+  testNodes: Set<string>,
+): number {
+  let count = 0;
+  for (const otherNode of nodes) {
+    if (otherNode.id !== nodeId && !testNodes.has(otherNode.id)) {
+      const otherDeps = dependencies.get(otherNode.id) || new Set();
+      if (otherDeps.has(nodeId)) {
+        count++;
+      }
+    }
+  }
+  return count;
+}
+
+// Helper: Calculate internal edge counts for all nodes
+function calculateInternalEdgeCounts(
+  nodes: GraphNode[],
+  dependencies: Map<string, Set<string>>,
+  testNodes: Set<string>,
+): Map<string, number> {
+  const internalEdgeCounts = new Map<string, number>();
+  const nodeIds = new Set(nodes.map((n) => n.id));
+
+  for (const node of nodes) {
+    if (testNodes.has(node.id)) continue;
+
+    const deps = dependencies.get(node.id) || new Set();
+    const depsCount = countInternalDependencies(node.id, deps, nodeIds, testNodes);
+    const dependentsCount = countInternalDependents(node.id, nodes, dependencies, testNodes);
+    internalEdgeCounts.set(node.id, depsCount + dependentsCount);
+  }
+
+  return internalEdgeCounts;
+}
+
+// Helper: Distribute nodes into layers
+function distributeIntoLayers(
+  sortedNodes: GraphNode[],
+  layers: Map<string, number>,
+): void {
+  if (sortedNodes.length === 0) return;
+
+  const targetNodesPerLayer = 4;
+  const numLayers = Math.max(2, Math.ceil(sortedNodes.length / targetNodesPerLayer));
+  const nodesPerLayer = Math.ceil(sortedNodes.length / numLayers);
+
+  for (let index = 0; index < sortedNodes.length; index++) {
+    const node = sortedNodes[index];
+    const layer = Math.min(numLayers, Math.floor(index / nodesPerLayer) + 1);
+    layers.set(node.id, layer);
+  }
+}
+
 /**
  * Assigns layer numbers based on internal connectivity (edge count within cluster)
  * Nodes with more internal edges are placed in inner rings (lower layer numbers)
@@ -132,43 +206,12 @@ export function assignLayers(
   testNodes: Set<string>,
 ): Map<string, number> {
   const layers = new Map<string, number>();
-
-  // Calculate internal edge count for each node
-  const internalEdgeCounts = new Map<string, number>();
-
-  nodes.forEach((node) => {
-    if (testNodes.has(node.id)) return;
-
-    const deps = dependencies.get(node.id) || new Set();
-    const nodeIds = new Set(nodes.map((n) => n.id));
-
-    // Count edges that are within this cluster (both dependencies and dependents)
-    let internalCount = 0;
-
-    // Count internal dependencies
-    deps.forEach((depId) => {
-      if (nodeIds.has(depId) && !testNodes.has(depId)) {
-        internalCount++;
-      }
-    });
-
-    // Count internal dependents (reverse edges)
-    nodes.forEach((otherNode) => {
-      if (otherNode.id !== node.id && !testNodes.has(otherNode.id)) {
-        const otherDeps = dependencies.get(otherNode.id) || new Set();
-        if (otherDeps.has(node.id)) {
-          internalCount++;
-        }
-      }
-    });
-
-    internalEdgeCounts.set(node.id, internalCount);
-  });
+  const internalEdgeCounts = calculateInternalEdgeCounts(nodes, dependencies, testNodes);
 
   // Anchors always get layer 0
-  anchors.forEach((anchor) => {
+  for (const anchor of anchors) {
     layers.set(anchor.id, 0);
-  });
+  }
 
   // Sort remaining nodes by internal edge count (descending)
   const nonAnchorNodes = nodes.filter(
@@ -178,22 +221,10 @@ export function assignLayers(
   const sortedByConnectivity = [...nonAnchorNodes].sort((a, b) => {
     const countA = internalEdgeCounts.get(a.id) || 0;
     const countB = internalEdgeCounts.get(b.id) || 0;
-    return countB - countA; // Higher connectivity first
+    return countB - countA;
   });
 
-  // Distribute into layers with balanced node counts
-  // Aim for 3-6 nodes per layer for optimal radial distribution
-  if (sortedByConnectivity.length > 0) {
-    const targetNodesPerLayer = 4; // Optimal for radial layout
-    const numLayers = Math.max(2, Math.ceil(sortedByConnectivity.length / targetNodesPerLayer));
-    const nodesPerLayer = Math.ceil(sortedByConnectivity.length / numLayers);
-
-    sortedByConnectivity.forEach((node, index) => {
-      // Assign layer based on position in sorted array
-      const layer = Math.min(numLayers, Math.floor(index / nodesPerLayer) + 1);
-      layers.set(node.id, layer);
-    });
-  }
+  distributeIntoLayers(sortedByConnectivity, layers);
 
   return layers;
 }

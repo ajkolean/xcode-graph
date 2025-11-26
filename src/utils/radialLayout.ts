@@ -244,6 +244,65 @@ export function radialLayout(
   return result;
 }
 
+// Helper: Normalize angle to [-π, π]
+function normalizeAngle(angle: number): number {
+  let result = angle;
+  while (result > Math.PI) result -= 2 * Math.PI;
+  while (result < -Math.PI) result += 2 * Math.PI;
+  return result;
+}
+
+// Helper: Apply pairwise angular repulsion
+function applyAngularRepulsion(
+  angles: Array<{ node: NodeCartesian; angle: number }>,
+  minSpacing: number,
+): void {
+  for (let i = 0; i < angles.length; i++) {
+    for (let j = i + 1; j < angles.length; j++) {
+      const diff = normalizeAngle(angles[i].angle - angles[j].angle);
+      const ad = Math.abs(diff);
+
+      if (ad < minSpacing && ad > 1e-6) {
+        const push = (minSpacing - ad) * 0.3;
+        const sign = diff > 0 ? 1 : -1;
+        angles[i].angle += push * sign;
+        angles[j].angle -= push * sign;
+      }
+    }
+  }
+}
+
+// Helper: Update node positions from angles
+function updatePositionsFromAngles(
+  angles: Array<{ node: NodeCartesian; angle: number }>,
+  centerX: number,
+  centerY: number,
+): void {
+  for (const a of angles) {
+    const r = Math.hypot(a.node.x - centerX, a.node.y - centerY);
+    a.node.x = centerX + r * Math.cos(a.angle);
+    a.node.y = centerY + r * Math.sin(a.angle);
+  }
+}
+
+// Helper: Relax a single ring of nodes
+function relaxRing(
+  ringNodes: NodeCartesian[],
+  centerX: number,
+  centerY: number,
+  minSpacing: number,
+): void {
+  if (ringNodes.length <= 1) return;
+
+  const angles = ringNodes.map((n) => ({
+    node: n,
+    angle: Math.atan2(n.y - centerY, n.x - centerX),
+  }));
+
+  applyAngularRepulsion(angles, minSpacing);
+  updatePositionsFromAngles(angles, centerX, centerY);
+}
+
 /**
  * Relax nodes on their rings to reduce angular overlap
  * Nodes stay on their ring (radius fixed), only angle changes
@@ -252,7 +311,7 @@ export function relaxOnRings(
   nodes: NodeCartesian[],
   centerX: number,
   centerY: number,
-  iterations = 10, // Reduced from 25 to 10 for better performance
+  iterations = 10,
 ): NodeCartesian[] {
   const result = nodes.map((n) => ({ ...n }));
 
@@ -266,40 +325,8 @@ export function relaxOnRings(
   const minSpacing = (12 * Math.PI) / 180; // 12 degrees minimum
 
   for (let iter = 0; iter < iterations; iter++) {
-    for (const [_ring, ringNodes] of byRing.entries()) {
-      if (ringNodes.length <= 1) continue;
-
-      // Compute current angles
-      const angles = ringNodes.map((n) => ({
-        node: n,
-        angle: Math.atan2(n.y - centerY, n.x - centerX),
-      }));
-
-      // Pairwise repulsion if too close
-      for (let i = 0; i < angles.length; i++) {
-        for (let j = i + 1; j < angles.length; j++) {
-          let diff = angles[i].angle - angles[j].angle;
-
-          // Normalize to [-π, π]
-          while (diff > Math.PI) diff -= 2 * Math.PI;
-          while (diff < -Math.PI) diff += 2 * Math.PI;
-
-          const ad = Math.abs(diff);
-          if (ad < minSpacing && ad > 1e-6) {
-            const push = (minSpacing - ad) * 0.3; // Increased push force for faster convergence
-            const sign = diff > 0 ? 1 : -1;
-            angles[i].angle += push * sign;
-            angles[j].angle -= push * sign;
-          }
-        }
-      }
-
-      // Write back positions
-      for (const a of angles) {
-        const r = Math.hypot(a.node.x - centerX, a.node.y - centerY);
-        a.node.x = centerX + r * Math.cos(a.angle);
-        a.node.y = centerY + r * Math.sin(a.angle);
-      }
+    for (const ringNodes of byRing.values()) {
+      relaxRing(ringNodes, centerX, centerY, minSpacing);
     }
   }
 

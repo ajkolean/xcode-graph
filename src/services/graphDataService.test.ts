@@ -228,7 +228,9 @@ describe('GraphDataService', () => {
         const outgoing = service.getOutgoingEdges('A');
 
         expect(outgoing).toHaveLength(2);
-        outgoing.forEach((e) => expect(e.source).toBe('A'));
+        for (const e of outgoing) {
+          expect(e.source).toBe('A');
+        }
       });
 
       it('should return empty for leaf nodes', () => {
@@ -247,7 +249,9 @@ describe('GraphDataService', () => {
         const incoming = service.getIncomingEdges('D');
 
         expect(incoming).toHaveLength(2);
-        incoming.forEach((e) => expect(e.target).toBe('D'));
+        for (const e of incoming) {
+          expect(e.target).toBe('D');
+        }
       });
 
       it('should return empty for root nodes', () => {
