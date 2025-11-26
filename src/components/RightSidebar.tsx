@@ -2,12 +2,15 @@
  * Right sidebar component - main orchestrator
  * Refactored for better modularity and maintainability
  * All styling uses design system CSS variables
+ * Reads state from Zustand stores
  */
 
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import { useFilters } from '../hooks/useFilters';
 import { type SidebarSection, useSidebarMachine } from '../hooks/useSidebarMachine';
-import type { FilterState } from '../types/app';
+import { useGraphStore } from '../stores/graphStore';
+import { useFilterStore } from '../stores/filterStore';
+import { useUIStore } from '../stores/uiStore';
 import type { Cluster } from '../types/cluster';
 import { generateColorMap, getNodeTypeColor } from '../utils/filterHelpers';
 import { PLATFORM_COLOR } from '../utils/platformIcons';
@@ -18,62 +21,43 @@ import { FilterView } from './sidebar/FilterView';
 import { RightSidebarHeader } from './sidebar/RightSidebarHeader';
 
 interface RightSidebarProps {
-  filters: FilterState;
-  onFiltersChange: (filters: FilterState) => void;
+  // Data - still passed as props
   allNodes: GraphNode[];
   allEdges: GraphEdge[];
   filteredNodes: GraphNode[];
   filteredEdges: GraphEdge[];
-  selectedNode: GraphNode | null;
-  selectedCluster: string | null;
-  onNodeSelect: (node: GraphNode | null) => void;
-  onClusterSelect: (clusterId: string | null) => void;
-  onNodeHover: (nodeId: string | null) => void;
-  onClose?: () => void;
-  onFocusNode: (node: GraphNode) => void;
-  onShowDependents: (node: GraphNode) => void;
-  onShowImpact: (node: GraphNode) => void;
-  viewMode?: string;
   clusters?: Cluster[];
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  zoom: number;
-  previewFilter: {
-    type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
-    value: string;
-  } | null;
-  onPreviewFilterChange: (
-    preview: {
-      type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
-      value: string;
-    } | null,
-  ) => void;
 }
 
 export function RightSidebar({
-  filters,
-  onFiltersChange,
   allNodes,
   allEdges,
   filteredNodes,
   filteredEdges,
-  selectedNode,
-  selectedCluster,
-  onNodeSelect,
-  onClusterSelect,
-  onNodeHover,
-  onFocusNode,
-  onShowDependents,
-  onShowImpact,
-  viewMode,
   clusters,
-  searchQuery,
-  onSearchChange,
-  zoom,
-  previewFilter: _previewFilter,
-  onPreviewFilterChange,
 }: RightSidebarProps) {
-  // Use sidebar state machine
+  // Graph store
+  const selectedNode = useGraphStore((s) => s.selectedNode);
+  const selectedCluster = useGraphStore((s) => s.selectedCluster);
+  const viewMode = useGraphStore((s) => s.viewMode);
+  const selectNode = useGraphStore((s) => s.selectNode);
+  const selectCluster = useGraphStore((s) => s.selectCluster);
+  const setHoveredNode = useGraphStore((s) => s.setHoveredNode);
+  const focusNode = useGraphStore((s) => s.focusNode);
+  const showDependents = useGraphStore((s) => s.showDependents);
+  const showImpact = useGraphStore((s) => s.showImpact);
+
+  // Filter store
+  const filters = useFilterStore((s) => s.filters);
+  const searchQuery = useFilterStore((s) => s.searchQuery);
+  const setFilters = useFilterStore((s) => s.setFilters);
+  const setSearchQuery = useFilterStore((s) => s.setSearchQuery);
+
+  // UI store
+  const zoom = useUIStore((s) => s.zoom);
+  const setPreviewFilter = useUIStore((s) => s.setPreviewFilter);
+
+  // Use sidebar state machine (Zag)
   const {
     isCollapsed,
     expandedSections,
@@ -93,7 +77,7 @@ export function RightSidebar({
   } = useFilters(allNodes);
 
   const isFiltersActive = hasActiveFilters(filters);
-  const clearAllFilters = createClearFilters(onFiltersChange);
+  const clearAllFilters = createClearFilters(setFilters);
 
   // Generate color maps
   const projectColors = generateColorMap(projectCounts.keys(), 'project');
@@ -105,8 +89,8 @@ export function RightSidebar({
 
   const expandToSection = (section: string) => {
     // Clear any node/cluster selection first
-    if (selectedNode) onNodeSelect(null);
-    if (selectedCluster) onClusterSelect(null);
+    if (selectedNode) selectNode(null);
+    if (selectedCluster) selectCluster(null);
 
     // Use machine to expand to section
     expandToSectionMachine(section as SidebarSection);
@@ -199,13 +183,13 @@ export function RightSidebar({
               edges={allEdges}
               filteredEdges={filteredEdges}
               clusters={clusters}
-              onClose={() => onNodeSelect(null)}
-              onNodeSelect={onNodeSelect}
-              onClusterSelect={onClusterSelect}
-              onNodeHover={onNodeHover}
-              onFocusNode={onFocusNode}
-              onShowDependents={onShowDependents}
-              onShowImpact={onShowImpact}
+              onClose={() => selectNode(null)}
+              onNodeSelect={selectNode}
+              onClusterSelect={selectCluster}
+              onNodeHover={setHoveredNode}
+              onFocusNode={focusNode}
+              onShowDependents={showDependents}
+              onShowImpact={showImpact}
               viewMode={viewMode}
               zoom={zoom}
             />
@@ -249,9 +233,9 @@ export function RightSidebar({
               allNodes={allNodes}
               edges={allEdges}
               filteredEdges={filteredEdges}
-              onClose={() => onClusterSelect(null)}
-              onNodeSelect={onNodeSelect}
-              onNodeHover={onNodeHover}
+              onClose={() => selectCluster(null)}
+              onNodeSelect={selectNode}
+              onNodeHover={setHoveredNode}
               zoom={zoom}
             />
           </div>
@@ -263,9 +247,9 @@ export function RightSidebar({
             filteredEdgesCount={filteredEdges.length}
             totalEdgesCount={allEdges.length}
             filters={filters}
-            onFiltersChange={onFiltersChange}
+            onFiltersChange={setFilters}
             searchQuery={searchQuery}
-            onSearchChange={onSearchChange}
+            onSearchChange={setSearchQuery}
             nodeTypeItems={nodeTypeItems}
             platformItems={platformItems}
             projectItems={projectItems}
@@ -275,7 +259,7 @@ export function RightSidebar({
             isFiltersActive={isFiltersActive}
             onClearFilters={clearAllFilters}
             zoom={zoom}
-            onPreviewChange={onPreviewFilterChange}
+            onPreviewChange={setPreviewFilter}
           />
         ))}
     </aside>

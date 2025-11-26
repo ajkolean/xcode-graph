@@ -2,16 +2,19 @@
  * Graph tab content component
  * Extracted from App.tsx for better modularity
  * Uses design system CSS variables
+ * Reads state from Zustand stores
  */
 
 import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
-import type { FilterState, ViewMode } from '../../types/app';
+import { useGraphStore } from '../../stores/graphStore';
+import { useFilterStore } from '../../stores/filterStore';
+import { useUIStore } from '../../stores/uiStore';
 import { GraphVisualization } from '../GraphVisualization';
 import { RightSidebar } from '../RightSidebar';
 import { Toolbar } from './Toolbar';
 
 interface GraphTabProps {
-  // Data
+  // Data - still passed as props (computed in App)
   displayNodes: GraphNode[];
   displayEdges: GraphEdge[];
   filteredNodes: GraphNode[];
@@ -19,29 +22,7 @@ interface GraphTabProps {
   allNodes: GraphNode[];
   allEdges: GraphEdge[];
 
-  // State
-  selectedNode: GraphNode | null;
-  selectedCluster: string | null;
-  hoveredNode: string | null;
-  searchQuery: string;
-  viewMode: ViewMode;
-  zoom: number;
-  filters: FilterState;
-
-  // Handlers
-  onNodeSelect: (node: GraphNode | null) => void;
-  onClusterSelect: (clusterId: string | null) => void;
-  onNodeHover: (nodeId: string | null) => void;
-  onFocusNode: (node: GraphNode) => void;
-  onShowDependents: (node: GraphNode) => void;
-  onShowImpact: (node: GraphNode) => void;
-  onZoomIn: () => void;
-  onZoomOut: () => void;
-  onZoomReset: () => void;
-  onFiltersChange: (filters: FilterState) => void;
-  onSearchChange: (query: string) => void;
-
-  // Depth information for edge opacity
+  // Depth information for edge opacity (computed in App)
   transitiveDeps: {
     nodes: Set<string>;
     edges: Set<string>;
@@ -54,22 +35,6 @@ interface GraphTabProps {
     edgeDepths: Map<string, number>;
     maxDepth: number;
   };
-
-  // Animation
-  enableAnimation: boolean;
-  onToggleAnimation: (enabled: boolean) => void;
-
-  // Filter preview
-  previewFilter: {
-    type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
-    value: string;
-  } | null;
-  onPreviewFilterChange: (
-    preview: {
-      type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
-      value: string;
-    } | null,
-  ) => void;
 }
 
 export function GraphTab({
@@ -79,40 +44,39 @@ export function GraphTab({
   filteredEdges,
   allNodes,
   allEdges,
-  selectedNode,
-  selectedCluster,
-  hoveredNode,
-  searchQuery,
-  viewMode,
-  zoom,
-  filters,
-  onNodeSelect,
-  onClusterSelect,
-  onNodeHover,
-  onFocusNode,
-  onShowDependents,
-  onShowImpact,
-  onZoomIn,
-  onZoomOut,
-  onZoomReset,
-  onFiltersChange,
-  onSearchChange,
   transitiveDeps,
   transitiveDependents,
-  enableAnimation,
-  onToggleAnimation,
-  previewFilter,
-  onPreviewFilterChange,
 }: GraphTabProps) {
+  // Graph store - only what GraphVisualization needs
+  const selectedNode = useGraphStore((s) => s.selectedNode);
+  const selectedCluster = useGraphStore((s) => s.selectedCluster);
+  const hoveredNode = useGraphStore((s) => s.hoveredNode);
+  const viewMode = useGraphStore((s) => s.viewMode);
+  const selectNode = useGraphStore((s) => s.selectNode);
+  const selectCluster = useGraphStore((s) => s.selectCluster);
+  const setHoveredNode = useGraphStore((s) => s.setHoveredNode);
+
+  // Filter store - only searchQuery for GraphVisualization
+  const searchQuery = useFilterStore((s) => s.searchQuery);
+
+  // UI store - for Toolbar and GraphVisualization
+  const zoom = useUIStore((s) => s.zoom);
+  const enableAnimation = useUIStore((s) => s.enableAnimation);
+  const previewFilter = useUIStore((s) => s.previewFilter);
+  const zoomIn = useUIStore((s) => s.zoomIn);
+  const zoomOut = useUIStore((s) => s.zoomOut);
+  const resetZoom = useUIStore((s) => s.resetZoom);
+  const setEnableAnimation = useUIStore((s) => s.setEnableAnimation);
+
   return (
     <div className="flex-1 flex overflow-hidden">
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Toolbar */}
         <Toolbar
           zoom={zoom}
-          onZoomIn={onZoomIn}
-          onZoomOut={onZoomOut}
-          onZoomReset={onZoomReset}
+          onZoomIn={zoomIn}
+          onZoomOut={zoomOut}
+          onZoomReset={resetZoom}
           nodeCount={filteredNodes.length}
           edgeCount={filteredEdges.length}
         />
@@ -125,47 +89,31 @@ export function GraphTab({
               nodes={displayNodes}
               edges={displayEdges}
               selectedNode={selectedNode}
-              onNodeSelect={onNodeSelect}
-              onClusterSelect={onClusterSelect}
+              onNodeSelect={selectNode}
+              onClusterSelect={selectCluster}
               searchQuery={searchQuery}
               viewMode={viewMode}
               zoom={zoom}
-              onZoomIn={onZoomIn}
-              onZoomOut={onZoomOut}
-              onZoomReset={onZoomReset}
+              onZoomIn={zoomIn}
+              onZoomOut={zoomOut}
+              onZoomReset={resetZoom}
               transitiveDeps={transitiveDeps}
               transitiveDependents={transitiveDependents}
               enableAnimation={enableAnimation}
-              onToggleAnimation={onToggleAnimation}
+              onToggleAnimation={setEnableAnimation}
               selectedCluster={selectedCluster}
               hoveredNode={hoveredNode}
-              onNodeHover={onNodeHover}
+              onNodeHover={setHoveredNode}
               previewFilter={previewFilter}
             />
           </div>
 
           {/* Right Sidebar with Filters and Node/Cluster Details */}
           <RightSidebar
-            filters={filters}
-            onFiltersChange={onFiltersChange}
             allNodes={allNodes}
             allEdges={allEdges}
             filteredNodes={filteredNodes}
             filteredEdges={filteredEdges}
-            selectedNode={selectedNode}
-            selectedCluster={selectedCluster}
-            onNodeSelect={onNodeSelect}
-            onClusterSelect={onClusterSelect}
-            onNodeHover={onNodeHover}
-            onFocusNode={onFocusNode}
-            onShowDependents={onShowDependents}
-            onShowImpact={onShowImpact}
-            viewMode={viewMode}
-            searchQuery={searchQuery}
-            onSearchChange={onSearchChange}
-            zoom={zoom}
-            previewFilter={previewFilter}
-            onPreviewFilterChange={onPreviewFilterChange}
           />
         </div>
       </div>
