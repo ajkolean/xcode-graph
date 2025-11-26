@@ -10,6 +10,7 @@
  */
 
 import { selectMassBasedAnchor } from './massCalculation';
+import { computeElasticShellRadius } from './elasticShell';
 
 export interface NodeCartesian {
   id: string;
@@ -365,8 +366,6 @@ export function computeMEC(
 
   // If masses provided, use elastic shell computation
   if (masses && masses.size > 0) {
-    const { computeElasticShellRadius } = require('./elasticShell');
-    
     // Convert positions to relative coordinates
     const nodesWithPos = positions.map(p => ({
       id: p.id,
