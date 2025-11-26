@@ -29,6 +29,15 @@
       "suspicious": {
         "noExplicitAny": "warn",
         "noArrayIndexKey": "warn"
+      },
+      "complexity": {
+        "noBannedTypes": "off",
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": {
+            "maxAllowedComplexity": 10
+          }
+        }
       }
     }
   },
@@ -46,6 +55,12 @@
     }
   },
   "files": {
-    "includes": ["**", "!**/node_modules", "!**/build", "!**/dist", "!**/pnpm-lock.yaml"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/build",
+      "!**/dist",
+      "!**/pnpm-lock.yaml"
+    ]
   }
 }
