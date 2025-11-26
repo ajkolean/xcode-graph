@@ -64,7 +64,8 @@ describe('FilterPanel', () => {
 
       expect(screen.getByText('Origin')).toBeInTheDocument();
       expect(screen.getByText('Local Projects')).toBeInTheDocument();
-      expect(screen.getByText('External Packages')).toBeInTheDocument();
+      // "External Packages" appears in both Origin section and Node Types section
+      expect(screen.getAllByText('External Packages').length).toBeGreaterThanOrEqual(1);
     });
 
     it('should render reset button', () => {
