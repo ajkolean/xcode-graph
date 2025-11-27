@@ -18,7 +18,6 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import { computeNodeDependencies } from '@/utils/nodeUtils';
 import './node-header';
@@ -26,31 +25,35 @@ import './node-info';
 import './node-actions';
 import './dependencies-list';
 import './dependents-list';
+import type { Cluster } from '@/types/cluster';
 
 export class GraphNodeDetailsPanel extends LitElement {
+  static properties = {
+    node: { attribute: false },
+    allNodes: { attribute: false },
+    edges: { attribute: false },
+    filteredEdges: { attribute: false },
+    clusters: { attribute: false },
+    viewMode: { type: String, attribute: 'view-mode' },
+    zoom: { type: Number },
+  };
+
   // ========================================
   // Properties
   // ========================================
 
-  @property({ attribute: false })
   declare node: GraphNode;
 
-  @property({ attribute: false })
   declare allNodes: GraphNode[];
 
-  @property({ attribute: false })
   declare edges: GraphEdge[];
 
-  @property({ attribute: false })
   declare filteredEdges: GraphEdge[] | undefined;
 
-  @property({ attribute: false })
   declare clusters: Cluster[] | undefined;
 
-  @property({ type: String, attribute: 'view-mode' })
   declare viewMode: string;
 
-  @property({ type: Number })
   declare zoom: number;
 
   // ========================================

@@ -23,7 +23,6 @@
  */
 
 import { LitElement, html } from 'lit';
-import { property, state } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
 import type { Cluster } from '@/types/cluster';
@@ -34,6 +33,25 @@ import './graph-edges';
 import './graph-node';
 
 export class GraphClusterGroup extends LitElement {
+  static properties = {
+    cluster: { attribute: false },
+    clusterPosition: { attribute: false },
+    nodes: { attribute: false },
+    edges: { attribute: false },
+    finalNodePositions: { attribute: false },
+    selectedNode: { attribute: false },
+    hoveredNode: { attribute: false },
+    hoveredClusterId: { attribute: false },
+    searchQuery: { type: String, attribute: 'search-query' },
+    zoom: { type: Number },
+    viewMode: { type: String, attribute: 'view-mode' },
+    transitiveDeps: { attribute: false },
+    transitiveDependents: { attribute: false },
+    isSelected: { type: Boolean, attribute: 'is-selected' },
+    previewFilter: { attribute: false },
+    isClusterHovered: { state: true },
+  };
+
   // No Shadow DOM for SVG
   protected createRenderRoot() {
     return this;
@@ -43,53 +61,22 @@ export class GraphClusterGroup extends LitElement {
   // Properties
   // ========================================
 
-  @property({ attribute: false })
-  declare cluster: Cluster;
-
-  @property({ attribute: false })
-  declare clusterPosition: ClusterPosition;
-
-  @property({ attribute: false })
-  declare nodes: GraphNodeType[];
-
-  @property({ attribute: false })
-  declare edges: GraphEdge[];
-
-  @property({ attribute: false })
-  declare finalNodePositions: Map<string, NodePosition>;
-
-  @property({ attribute: false })
-  declare selectedNode: GraphNodeType | null;
-
-  @property({ attribute: false })
-  declare hoveredNode: string | null;
-
-  @property({ attribute: false })
-  declare hoveredClusterId: string | null;
-
-  @property({ type: String, attribute: 'search-query' })
-  searchQuery: string = '';
-
-  @property({ type: Number })
-  zoom: number = 1.0;
-
-  @property({ type: String, attribute: 'view-mode' })
-  viewMode: ViewMode = 'full';
-
-  @property({ attribute: false })
+  declare cluster: Cluster | undefined;
+  declare clusterPosition: ClusterPosition | undefined;
+  declare nodes: GraphNodeType[] | undefined;
+  declare edges: GraphEdge[] | undefined;
+  declare finalNodePositions: Map<string, NodePosition> | undefined;
+  declare selectedNode: GraphNodeType | null | undefined;
+  declare hoveredNode: string | null | undefined;
+  declare hoveredClusterId: string | null | undefined;
+  declare searchQuery: string | undefined;
+  declare zoom: number | undefined;
+  declare viewMode: ViewMode | undefined;
   declare transitiveDeps: any;
-
-  @property({ attribute: false })
   declare transitiveDependents: any;
-
-  @property({ type: Boolean, attribute: 'is-selected' })
-  isSelected: boolean = false;
-
-  @property({ attribute: false })
+  declare isSelected: boolean | undefined;
   declare previewFilter: any;
-
-  @state()
-  private declare isClusterHovered: boolean;
+  private declare isClusterHovered: boolean | undefined;
 
   // ========================================
   // Event Handlers
@@ -136,6 +123,12 @@ export class GraphClusterGroup extends LitElement {
     if (!this.cluster || !this.clusterPosition) return html``;
 
     const clusterPositionsMap = new Map([[this.cluster.id, this.clusterPosition]]);
+    const zoom = this.zoom ?? 1.0;
+    const viewMode = this.viewMode ?? 'full';
+    const searchQuery = this.searchQuery ?? '';
+    const isSelected = this.isSelected ?? false;
+    const finalNodePositions = this.finalNodePositions ?? new Map<string, NodePosition>();
+    const edges = this.edges ?? [];
 
     return html`
       <g
@@ -154,8 +147,8 @@ export class GraphClusterGroup extends LitElement {
           .width=${this.clusterPosition.width}
           .height=${this.clusterPosition.height}
           .isHighlighted=${this.isClusterHovered}
-          .isSelected=${this.isSelected}
-          .zoom=${this.zoom}
+          .isSelected=${isSelected}
+          .zoom=${zoom}
           .clickable=${true}
           @cluster-click=${this.handleClusterClick}
         ></graph-cluster-card>
@@ -163,32 +156,32 @@ export class GraphClusterGroup extends LitElement {
         <!-- Internal edges -->
         <g class="internal-edges">
           <graph-edges
-            .edges=${this.edges}
+            .edges=${edges}
             .nodes=${this.nodes}
-            .finalNodePositions=${this.finalNodePositions}
+            .finalNodePositions=${finalNodePositions}
             .clusterPositions=${clusterPositionsMap}
             .selectedNode=${this.selectedNode}
             .hoveredNode=${this.hoveredNode}
             cluster-id=${this.cluster.id}
             .hoveredClusterId=${this.hoveredClusterId}
-            view-mode=${this.viewMode}
+            view-mode=${viewMode}
             .transitiveDeps=${this.transitiveDeps}
             .transitiveDependents=${this.transitiveDependents}
-            .zoom=${this.zoom}
+            .zoom=${zoom}
           ></graph-edges>
         </g>
 
         <!-- Nodes -->
         <g class="nodes">
           ${this.clusterNodes.map((node) => {
-            const pos = this.finalNodePositions.get(node.id);
+            const pos = finalNodePositions.get(node.id);
             if (!pos) return null;
 
             const isSelectedNode = this.selectedNode?.id === node.id;
             const isHovered = this.hoveredNode === node.id;
             const isConnected = this.selectedNode && this.connectedNodes.has(node.id);
             const isSearchMatch =
-              this.searchQuery && node.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+              searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
 
             const matchesPreview =
               !this.previewFilter ||
@@ -201,11 +194,11 @@ export class GraphClusterGroup extends LitElement {
                 node.name === this.previewFilter.value);
 
             const isDimmed =
-              (this.searchQuery && !isSearchMatch) ||
+              (searchQuery && !isSearchMatch) ||
               (this.selectedNode && !isSelectedNode && !isConnected) ||
               (this.previewFilter && !matchesPreview);
 
-            const size = getNodeSize(node, this.edges);
+            const size = getNodeSize(node, edges);
             const color = getNodeTypeColor(node.type);
             const x = this.clusterPosition.x + pos.x;
             const y = this.clusterPosition.y + pos.y;
@@ -220,7 +213,7 @@ export class GraphClusterGroup extends LitElement {
                 .isSelected=${isSelectedNode}
                 .isHovered=${isHovered}
                 .isDimmed=${isDimmed}
-                .zoom=${this.zoom}
+                .zoom=${zoom}
                 @node-mouseenter=${() =>
                   this.dispatchEvent(
                     new CustomEvent('node-mouseenter', {

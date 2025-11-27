@@ -21,7 +21,7 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { property, state, query } from 'lit/decorators.js';
+import { state, query } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
 import { AnimatedLayoutController } from '@/controllers/animated-layout.controller';
@@ -39,41 +39,33 @@ export class GraphVisualization extends LitElement {
   // Properties
   // ========================================
 
-  @property({ attribute: false })
-  declare nodes: GraphNodeType[];
+  static properties = {
+    nodes: { attribute: false },
+    edges: { attribute: false },
+    selectedNode: { attribute: false },
+    selectedCluster: { attribute: false },
+    hoveredNode: { attribute: false },
+    searchQuery: { type: String, attribute: 'search-query' },
+    viewMode: { type: String, attribute: 'view-mode' },
+    zoom: { type: Number },
+    enableAnimation: { type: Boolean, attribute: 'enable-animation' },
+    transitiveDeps: { attribute: false },
+    transitiveDependents: { attribute: false },
+    previewFilter: { attribute: false },
+  };
 
-  @property({ attribute: false })
-  declare edges: GraphEdge[];
-
-  @property({ attribute: false })
-  declare selectedNode: GraphNodeType | null;
-
-  @property({ attribute: false })
-  declare selectedCluster: string | null;
-
-  @property({ attribute: false })
-  declare hoveredNode: string | null;
-
-  @property({ type: String, attribute: 'search-query' })
-  searchQuery: string = '';
-
-  @property({ type: String, attribute: 'view-mode' })
-  viewMode: ViewMode = 'full';
-
-  @property({ type: Number })
-  zoom: number = 1.0;
-
-  @property({ type: Boolean, attribute: 'enable-animation' })
-  enableAnimation: boolean = true;
-
-  @property({ attribute: false })
+  declare nodes: GraphNodeType[] | undefined;
+  declare edges: GraphEdge[] | undefined;
+  declare selectedNode: GraphNodeType | null | undefined;
+  declare selectedCluster: string | null | undefined;
+  declare hoveredNode: string | null | undefined;
+  declare searchQuery: string | undefined;
+  declare viewMode: ViewMode | undefined;
+  declare zoom: number | undefined;
+  declare enableAnimation: boolean | undefined;
   declare transitiveDeps: any;
-
-  @property({ attribute: false })
   declare transitiveDependents: any;
-
-  @property({ attribute: false })
-  previewFilter: any = null;
+  declare previewFilter: any;
 
   // ========================================
   // Internal State
@@ -135,6 +127,11 @@ export class GraphVisualization extends LitElement {
       this.layout.computeLayout(this.nodes, this.edges);
     }
 
+    // Update animation when enableAnimation changes
+    if (changedProps.has('enableAnimation')) {
+      this.layout.enableAnimation = this.enableAnimation;
+    }
+
     // Update interaction config when zoom changes
     if (changedProps.has('zoom')) {
       this.interaction.updateConfig({
@@ -145,7 +142,7 @@ export class GraphVisualization extends LitElement {
     }
 
     // Set SVG element reference
-    if (this.svgElement && !this.interaction['svgElement']) {
+    if (this.svgElement && !this.interaction.hasSvgElement()) {
       this.interaction.setSvgElement(this.svgElement);
     }
   }
@@ -229,8 +226,8 @@ export class GraphVisualization extends LitElement {
 
       <graph-controls
         .zoom=${this.zoom}
-        node-count=${this.nodes.length}
-        edge-count=${this.edges.length}
+        node-count=${this.nodes?.length ?? 0}
+        edge-count=${this.edges?.length ?? 0}
         ?enable-animation=${this.enableAnimation}
         @zoom-in=${() => this.dispatchEvent(new CustomEvent('zoom-in', { bubbles: true, composed: true }))}
         @zoom-out=${() =>
@@ -253,7 +250,7 @@ export class GraphVisualization extends LitElement {
         <graph-svg-defs></graph-svg-defs>
 
         <g transform="translate(${this.interaction.pan.x}, ${this.interaction.pan.y}) scale(${this.zoom})">
-          ${this.nodes.length
+          ${this.nodes?.length
             ? html`
                 <!-- Cross-cluster edges -->
                 <g class="cluster-edges">
@@ -333,7 +330,7 @@ export class GraphVisualization extends LitElement {
         </g>
       </svg>
 
-      ${this.nodes.length === 0
+      ${this.nodes?.length === 0
         ? html`<graph-visualization-empty-state></graph-visualization-empty-state>`
         : ''}
     `;

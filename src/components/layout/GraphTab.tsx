@@ -9,7 +9,7 @@ import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
 import { useGraphStore } from '../../stores/graphStore';
 import { useFilterStore } from '../../stores/filterStore';
 import { useUIStore } from '../../stores/uiStore';
-import { GraphVisualization } from '../GraphVisualization';
+import { GraphVisualization } from '../../components-lit/wrappers/GraphVisualization';
 import { RightSidebar } from '../../components-lit/wrappers/RightSidebar';
 import { Toolbar } from './Toolbar';
 
@@ -89,22 +89,22 @@ export function GraphTab({
               nodes={displayNodes}
               edges={displayEdges}
               selectedNode={selectedNode}
-              onNodeSelect={selectNode}
-              onClusterSelect={selectCluster}
+              selectedCluster={selectedCluster}
+              hoveredNode={hoveredNode}
               searchQuery={searchQuery}
               viewMode={viewMode}
               zoom={zoom}
-              onZoomIn={zoomIn}
-              onZoomOut={zoomOut}
-              onZoomReset={resetZoom}
+              enableAnimation={enableAnimation}
               transitiveDeps={transitiveDeps}
               transitiveDependents={transitiveDependents}
-              enableAnimation={enableAnimation}
-              onToggleAnimation={setEnableAnimation}
-              selectedCluster={selectedCluster}
-              hoveredNode={hoveredNode}
-              onNodeHover={setHoveredNode}
               previewFilter={previewFilter}
+              onNodeSelect={(e) => selectNode(e.detail.node)}
+              onClusterSelect={(e) => selectCluster(e.detail.clusterId)}
+              onNodeHover={(e) => setHoveredNode(e.detail.nodeId)}
+              onZoomIn={() => zoomIn()}
+              onZoomOut={() => zoomOut()}
+              onZoomReset={() => resetZoom()}
+              onToggleAnimation={() => setEnableAnimation(!enableAnimation)}
             />
           </div>
 

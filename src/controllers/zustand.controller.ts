@@ -55,6 +55,9 @@ export class ZustandController<TState, TSelected> implements ReactiveController 
    * Subscribes to the Zustand store.
    */
   hostConnected(): void {
+    // Defensive cleanup of any existing subscription
+    this.unsubscribe?.();
+
     this.unsubscribe = this.store.subscribe((state) => {
       const newValue = this.selector(state);
       // Only trigger update if the selected value has changed

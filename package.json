@@ -38,6 +38,8 @@
     "@vaadin/date-picker": "^24.9.6",
     "@zag-js/core": "^1.30.0",
     "@zag-js/react": "^1.30.0",
+    "@zag-js/store": "^1.30.0",
+    "@zag-js/utils": "1.30.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

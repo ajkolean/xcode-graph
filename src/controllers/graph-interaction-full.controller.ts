@@ -55,6 +55,10 @@ export class GraphInteractionFullController implements ReactiveController {
     this.svgElement = element;
   }
 
+  hasSvgElement(): boolean {
+    return this.svgElement !== null;
+  }
+
   updateConfig(config: Partial<GraphInteractionConfig>) {
     if (config.zoom !== undefined) this.zoom = config.zoom;
     if (config.finalNodePositions) this.finalNodePositions = config.finalNodePositions;

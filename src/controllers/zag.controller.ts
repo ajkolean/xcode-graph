@@ -36,7 +36,8 @@
  */
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import { createMachine, type Machine, type MachineSchema, type Service } from '@zag-js/core';
+import { MachineStatus, type Machine, type MachineSchema, type Service } from '@zag-js/core';
+import { VanillaMachine } from '@/lib/vanilla-machine';
 
 /**
  * A Lit Reactive Controller for Zag.js state machines.
@@ -46,7 +47,7 @@ import { createMachine, type Machine, type MachineSchema, type Service } from '@
  */
 export class ZagController<TSchema extends MachineSchema> implements ReactiveController {
   private host: ReactiveControllerHost;
-  private machine: Machine<TSchema>;
+  private instance: VanillaMachine;
   private _service: Service<TSchema>;
   private unsubscribe?: () => void;
 
@@ -83,11 +84,8 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
     props: TSchema['props']
   ) {
     this.host = host;
-    this.machine = machine;
-    // createMachine returns a machine, call start() to initialize and return itself
-    const machineInstance: any = createMachine(machine, props);
-    machineInstance.start();
-    this._service = machineInstance;
+    this.instance = new VanillaMachine(machine, props);
+    this._service = this.instance.service as Service<TSchema>;
     host.addController(this);
   }
 
@@ -96,11 +94,15 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * Subscribes to machine state changes.
    */
   hostConnected(): void {
-    // Subscribe to state changes
-    this.unsubscribe = this._service.subscribe(() => {
-      // Trigger Lit re-render when machine state changes
+    // Defensive cleanup of any existing subscription
+    this.unsubscribe?.();
+
+    this.unsubscribe = this.instance.subscribe(() => {
       this.host.requestUpdate();
     });
+    if (this._service.getStatus() !== MachineStatus.Started) {
+      this.instance.start();
+    }
   }
 
   /**
@@ -109,7 +111,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    */
   hostDisconnected(): void {
     this.unsubscribe?.();
-    this._service.stop();
+    this.instance.stop();
   }
 
   /**

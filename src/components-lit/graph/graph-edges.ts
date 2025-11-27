@@ -25,6 +25,21 @@ import { getNodeTypeColor } from '@/components/graph/graphUtils';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {
+  static properties = {
+    edges: { attribute: false },
+    nodes: { attribute: false },
+    finalNodePositions: { attribute: false },
+    clusterPositions: { attribute: false },
+    selectedNode: { attribute: false },
+    hoveredNode: { attribute: false },
+    clusterId: { type: String, attribute: 'cluster-id' },
+    hoveredClusterId: { type: String, attribute: 'hovered-cluster-id' },
+    viewMode: { type: String, attribute: 'view-mode' },
+    transitiveDeps: { attribute: false },
+    transitiveDependents: { attribute: false },
+    zoom: { type: Number },
+  };
+
   // No Shadow DOM for SVG
   protected createRenderRoot() {
     return this;
@@ -34,74 +49,55 @@ export class GraphEdges extends LitElement {
   // Properties
   // ========================================
 
-  @property({ attribute: false })
-  declare edges: GraphEdgeType[];
-
-  @property({ attribute: false })
-  declare nodes: GraphNode[];
-
-  @property({ attribute: false })
-  declare finalNodePositions: Map<string, NodePosition>;
-
-  @property({ attribute: false })
-  declare clusterPositions: Map<string, ClusterPosition>;
-
-  @property({ attribute: false })
-  declare selectedNode: GraphNode | null;
-
-  @property({ attribute: false })
-  declare hoveredNode: string | null;
-
-  @property({ type: String, attribute: 'cluster-id' })
-  clusterId: string | undefined;
-
-  @property({ type: String, attribute: 'hovered-cluster-id' })
-  hoveredClusterId: string | null = null;
-
-  @property({ type: String, attribute: 'view-mode' })
-  viewMode: ViewMode = 'full';
-
-  @property({ attribute: false })
-  declare transitiveDeps: {
-    nodes: Set<string>;
-    edges: Set<string>;
-    edgeDepths: Map<string, number>;
-    maxDepth: number;
-  } | undefined;
-
-  @property({ attribute: false })
-  declare transitiveDependents: {
-    nodes: Set<string>;
-    edges: Set<string>;
-    edgeDepths: Map<string, number>;
-    maxDepth: number;
-  } | undefined;
-
-  @property({ type: Number })
-  zoom: number = 1.0;
+  declare edges: GraphEdgeType[] | undefined;
+  declare nodes: GraphNode[] | undefined;
+  declare finalNodePositions: Map<string, NodePosition> | undefined;
+  declare clusterPositions: Map<string, ClusterPosition> | undefined;
+  declare selectedNode: GraphNode | null | undefined;
+  declare hoveredNode: string | null | undefined;
+  declare clusterId: string | undefined;
+  declare hoveredClusterId: string | null | undefined;
+  declare viewMode: ViewMode | undefined;
+  declare transitiveDeps:
+    | {
+        nodes: Set<string>;
+        edges: Set<string>;
+        edgeDepths: Map<string, number>;
+        maxDepth: number;
+      }
+    | undefined;
+  declare transitiveDependents:
+    | {
+        nodes: Set<string>;
+        edges: Set<string>;
+        edgeDepths: Map<string, number>;
+        maxDepth: number;
+      }
+    | undefined;
+  declare zoom: number | undefined;
 
   // ========================================
   // Helpers
   // ========================================
 
-  private getEdgeOpacity(edge: GraphEdgeType): number {
+  private getEdgeOpacity(edge: GraphEdgeType, viewMode: ViewMode): number {
     const edgeKey = `${edge.source}->${edge.target}`;
     const inDepsChain = this.transitiveDeps?.edges.has(edgeKey);
     const inDependentsChain = this.transitiveDependents?.edges.has(edgeKey);
 
-    if (this.viewMode === 'focused' && inDepsChain && this.transitiveDeps) {
+    if (viewMode === 'focused' && inDepsChain && this.transitiveDeps) {
       const depth = this.transitiveDeps.edgeDepths.get(edgeKey) || 0;
       const maxDepth = this.transitiveDeps.maxDepth || 1;
       return 1.0 - (depth / maxDepth) * 0.7;
     }
 
-    if (this.viewMode === 'dependents' && inDependentsChain && this.transitiveDependents) {
+    if (viewMode === 'dependents' && inDependentsChain && this.transitiveDependents) {
       const depth = this.transitiveDependents.edgeDepths.get(edgeKey) || 0;
       const maxDepth = this.transitiveDependents.maxDepth || 1;
       return 1.0 - (depth / maxDepth) * 0.7;
     }
 
-    if (this.viewMode === 'both' && (inDepsChain || inDependentsChain)) {
+    if (viewMode === 'both' && (inDepsChain || inDependentsChain)) {
       if (inDepsChain && this.transitiveDeps) {
         const depth = this.transitiveDeps.edgeDepths.get(edgeKey) || 0;
         const maxDepth = this.transitiveDeps.maxDepth || 1;
@@ -123,6 +119,10 @@ export class GraphEdges extends LitElement {
 
   render() {
     if (!this.edges || !this.nodes) return html``;
+
+    const viewMode = this.viewMode ?? 'full';
+    const zoom = this.zoom ?? 1.0;
+    const hoveredClusterId = this.hoveredClusterId ?? null;
 
     return html`
       ${this.edges.map((edge) => {
@@ -157,15 +157,17 @@ export class GraphEdges extends LitElement {
         const isFocused = this.hoveredNode === edge.source || this.hoveredNode === edge.target;
 
         const isConnectedToHoveredCluster =
-          this.hoveredClusterId &&
-          (sourceClusterId === this.hoveredClusterId || targetClusterId === this.hoveredClusterId);
+          hoveredClusterId &&
+          (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
 
-        const shouldDim = this.hoveredClusterId && !isConnectedToHoveredCluster;
+        const shouldDim = hoveredClusterId && !isConnectedToHoveredCluster;
         const edgeColor = getNodeTypeColor(targetNode.type);
         const isCrossCluster = !this.clusterId;
         const shouldAnimate = isFocused || isHighlighted;
 
-        const opacity = shouldDim ? this.getEdgeOpacity(edge) * 0.08 : this.getEdgeOpacity(edge);
+        const opacity = shouldDim
+          ? this.getEdgeOpacity(edge, viewMode) * 0.08
+          : this.getEdgeOpacity(edge, viewMode);
 
         return html`
           <graph-edge
@@ -177,7 +179,7 @@ export class GraphEdges extends LitElement {
             .isHighlighted=${isHighlighted || isFocused}
             .isDependent=${isCrossCluster}
             .opacity=${opacity}
-            .zoom=${this.zoom}
+            .zoom=${zoom}
             .animated=${shouldAnimate}
           ></graph-edge>
         `;

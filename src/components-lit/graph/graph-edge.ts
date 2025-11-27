@@ -21,10 +21,22 @@
  */
 
 import { LitElement, svg } from 'lit';
-import { property } from 'lit/decorators.js';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 
 export class GraphEdge extends LitElement {
+  static properties = {
+    x1: { type: Number },
+    y1: { type: Number },
+    x2: { type: Number },
+    y2: { type: Number },
+    color: { type: String },
+    isHighlighted: { type: Boolean, attribute: 'is-highlighted' },
+    isDependent: { type: Boolean, attribute: 'is-dependent' },
+    opacity: { type: Number },
+    zoom: { type: Number },
+    animated: { type: Boolean },
+  };
+
   // No Shadow DOM for SVG elements - must be in same SVG context
   protected createRenderRoot() {
     return this;
@@ -34,35 +46,16 @@ export class GraphEdge extends LitElement {
   // Properties
   // ========================================
 
-  @property({ type: Number })
-  declare x1: number;
-
-  @property({ type: Number })
-  declare y1: number;
-
-  @property({ type: Number })
-  declare x2: number;
-
-  @property({ type: Number })
-  declare y2: number;
-
-  @property({ type: String })
-  declare color: string;
-
-  @property({ type: Boolean, attribute: 'is-highlighted' })
-  declare isHighlighted: boolean;
-
-  @property({ type: Boolean, attribute: 'is-dependent' })
-  isDependent: boolean = false;
-
-  @property({ type: Number })
-  opacity: number = 1.0;
-
-  @property({ type: Number })
-  zoom: number = 1.0;
-
-  @property({ type: Boolean })
-  animated: boolean = false;
+  declare x1: number | undefined;
+  declare y1: number | undefined;
+  declare x2: number | undefined;
+  declare y2: number | undefined;
+  declare color: string | undefined;
+  declare isHighlighted: boolean | undefined;
+  declare isDependent: boolean | undefined;
+  declare opacity: number | undefined;
+  declare zoom: number | undefined;
+  declare animated: boolean | undefined;
 
   // ========================================
   // Helpers
@@ -89,42 +82,53 @@ export class GraphEdge extends LitElement {
   // ========================================
 
   render() {
+    const x1 = this.x1 ?? 0;
+    const y1 = this.y1 ?? 0;
+    const x2 = this.x2 ?? 0;
+    const y2 = this.y2 ?? 0;
+    const color = this.color ?? '#888';
+    const zoom = this.zoom ?? 1.0;
+    const opacity = this.opacity ?? 1.0;
+    const isDependent = this.isDependent ?? false;
+    const animated = this.animated ?? false;
+    const isHighlighted = this.isHighlighted ?? false;
+
     // Calculate distance to determine if we should use bezier curve
-    const dx = this.x2 - this.x1;
-    const dy = this.y2 - this.y1;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
     const distance = Math.sqrt(dx * dx + dy * dy);
     const useBezier = distance > 150;
 
     // Adjust color based on zoom level
-    const zoomAdjustedColor = adjustColorForZoom(this.color, this.zoom);
+    const zoomAdjustedColor = adjustColorForZoom(color, zoom);
 
     // Base opacity: highlighted (0.8), normal (0.3)
-    const baseOpacity = this.isHighlighted ? 0.8 : 0.3;
-    const zoomOpacity = adjustOpacityForZoom(baseOpacity, this.zoom);
-    const finalOpacity = zoomOpacity * this.opacity;
+    const baseOpacity = isHighlighted ? 0.8 : 0.3;
+    const zoomOpacity = adjustOpacityForZoom(baseOpacity, zoom);
+    const finalOpacity = zoomOpacity * opacity;
 
     // Cross-cluster = long dashes "8,4", Regular = short dashes "4,2"
-    const dashPattern = this.isDependent ? '8,4' : '4,2';
+    const dashPattern = isDependent ? '8,4' : '4,2';
 
     // Generate path (bezier curve or straight line)
     const path = useBezier
-      ? this.generateBezierPath(this.x1, this.y1, this.x2, this.y2)
-      : `M ${this.x1},${this.y1} L ${this.x2},${this.y2}`;
+      ? this.generateBezierPath(x1, y1, x2, y2)
+      : `M ${x1},${y1} L ${x2},${y2}`;
 
     return svg`
       <g class="graph-edge" style="transition: opacity 0.3s ease">
         ${
-          this.isHighlighted
+          isHighlighted
             ? svg`
                 <path
                   d="${path}"
                   stroke="${zoomAdjustedColor}"
                   stroke-width="3"
                   fill="none"
-                  opacity="${adjustOpacityForZoom(0.3, this.zoom) * this.opacity}"
+                  opacity="${adjustOpacityForZoom(0.3, zoom) * opacity}"
                   filter="url(#glow-strong)"
                   stroke-dasharray="${dashPattern}"
-                  class="${this.animated ? 'flow-animation' : ''}"
+                  class="${animated ? 'flow-animation' : ''}"
                   shape-rendering="geometricPrecision"
                 />
               `
@@ -133,11 +137,11 @@ export class GraphEdge extends LitElement {
         <path
           d="${path}"
           stroke="${zoomAdjustedColor}"
-          stroke-width="${this.isHighlighted ? 2 : 1}"
+          stroke-width="${isHighlighted ? 2 : 1}"
           fill="none"
           opacity="${finalOpacity}"
           stroke-dasharray="${dashPattern}"
-          class="${this.animated ? 'flow-animation' : ''}"
+          class="${animated ? 'flow-animation' : ''}"
           shape-rendering="geometricPrecision"
           style="transition: opacity 0.3s ease, stroke-width 0.2s ease"
         />

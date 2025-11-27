@@ -1,6 +1,7 @@
-import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
+import './components-lit/graph-app';
 import './index.css';
 import './styles/tokens.css';
 
-createRoot(document.getElementById('root')!).render(<App />);
+// Render full Lit app
+const root = document.getElementById('root')!;
+root.innerHTML = '<graph-app></graph-app>';

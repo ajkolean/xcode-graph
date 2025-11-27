@@ -21,12 +21,24 @@
  */
 
 import { LitElement, svg } from 'lit';
-import { property } from 'lit/decorators.js';
 import type { Cluster } from '@/types/cluster';
 import { generateColor } from '@/utils/colorGenerator';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 
 export class GraphClusterCard extends LitElement {
+  static properties = {
+    cluster: { attribute: false },
+    x: { type: Number },
+    y: { type: Number },
+    width: { type: Number },
+    height: { type: Number },
+    isHighlighted: { type: Boolean, attribute: 'is-highlighted' },
+    isDimmed: { type: Boolean, attribute: 'is-dimmed' },
+    isSelected: { type: Boolean, attribute: 'is-selected' },
+    zoom: { type: Number },
+    clickable: { type: Boolean },
+  };
+
   // No Shadow DOM for SVG
   protected createRenderRoot() {
     return this;
@@ -36,35 +48,16 @@ export class GraphClusterCard extends LitElement {
   // Properties
   // ========================================
 
-  @property({ attribute: false })
-  declare cluster: Cluster;
-
-  @property({ type: Number })
-  declare x: number;
-
-  @property({ type: Number })
-  declare y: number;
-
-  @property({ type: Number })
-  declare width: number;
-
-  @property({ type: Number })
-  declare height: number;
-
-  @property({ type: Boolean, attribute: 'is-highlighted' })
-  isHighlighted: boolean = false;
-
-  @property({ type: Boolean, attribute: 'is-dimmed' })
-  isDimmed: boolean = false;
-
-  @property({ type: Boolean, attribute: 'is-selected' })
-  isSelected: boolean = false;
-
-  @property({ type: Number })
-  zoom: number = 1.0;
-
-  @property({ type: Boolean })
-  clickable: boolean = false;
+  declare cluster: Cluster | undefined;
+  declare x: number | undefined;
+  declare y: number | undefined;
+  declare width: number | undefined;
+  declare height: number | undefined;
+  declare isHighlighted: boolean | undefined;
+  declare isDimmed: boolean | undefined;
+  declare isSelected: boolean | undefined;
+  declare zoom: number | undefined;
+  declare clickable: boolean | undefined;
 
   // ========================================
   // Event Handlers
@@ -96,12 +89,22 @@ export class GraphClusterCard extends LitElement {
   render() {
     if (!this.cluster) return svg``;
 
-    const clusterColor = generateColor(this.cluster.name, this.cluster.type);
-    const zoomAdjustedColor = adjustColorForZoom(clusterColor, this.zoom);
-    const borderOpacity = adjustOpacityForZoom(0.5, this.zoom);
+    const x = this.x ?? 0;
+    const y = this.y ?? 0;
+    const width = this.width ?? 0;
+    const height = this.height ?? 0;
+    const zoom = this.zoom ?? 1.0;
+    const isHighlighted = this.isHighlighted ?? false;
+    const isDimmed = this.isDimmed ?? false;
+    const isSelected = this.isSelected ?? false;
+    const clickable = this.clickable ?? false;
 
-    const isActive = this.isHighlighted || this.isSelected;
-    const cursorStyle = this.clickable ? 'pointer' : 'default';
+    const clusterColor = generateColor(this.cluster.name, this.cluster.type);
+    const zoomAdjustedColor = adjustColorForZoom(clusterColor, zoom);
+    const borderOpacity = adjustOpacityForZoom(0.5, zoom);
+
+    const isActive = isHighlighted || isSelected;
+    const cursorStyle = clickable ? 'pointer' : 'default';
     const strokeDasharray = this.cluster.type === 'project' ? '8 8' : '3 8';
     const fillAlpha = isActive ? '08' : '18';
     const textOpacity = isActive ? 1.0 : 0.6;
@@ -112,19 +115,19 @@ export class GraphClusterCard extends LitElement {
 
     return svg`
       <g
-        opacity="${this.isDimmed ? 0.3 : 1}"
-        role="${this.clickable ? 'button' : ''}"
-        tabindex="${this.clickable ? 0 : -1}"
-        aria-label="${this.clickable ? `${this.cluster.name} cluster, ${this.cluster.nodes.length} targets` : ''}"
+        opacity="${isDimmed ? 0.3 : 1}"
+        role="${clickable ? 'button' : ''}"
+        tabindex="${clickable ? 0 : -1}"
+        aria-label="${clickable ? `${this.cluster.name} cluster, ${this.cluster.nodes.length} targets` : ''}"
         @click=${this.handleClick}
         @keydown=${this.handleKeyDown}
       >
         <!-- Background fill -->
         <rect
-          x="${this.x}"
-          y="${this.y}"
-          width="${this.width}"
-          height="${this.height}"
+          x="${x}"
+          y="${y}"
+          width="${width}"
+          height="${height}"
           rx="8"
           ry="8"
           fill="${zoomAdjustedColor}${fillAlpha}"
@@ -134,10 +137,10 @@ export class GraphClusterCard extends LitElement {
 
         <!-- Border -->
         <rect
-          x="${this.x}"
-          y="${this.y}"
-          width="${this.width}"
-          height="${this.height}"
+          x="${x}"
+          y="${y}"
+          width="${width}"
+          height="${height}"
           rx="8"
           ry="8"
           fill="none"
@@ -149,14 +152,14 @@ export class GraphClusterCard extends LitElement {
           style="
             transition: stroke-opacity 0.2s ease-in-out;
             cursor: ${cursorStyle};
-            ${this.isSelected ? 'animation: marchingAnts 0.8s linear infinite' : ''}
+            ${isSelected ? 'animation: marchingAnts 0.8s linear infinite' : ''}
           "
         />
 
         <!-- Cluster label -->
         <text
-          x="${this.x + 12}"
-          y="${this.y + 20}"
+          x="${x + 12}"
+          y="${y + 20}"
           fill="${zoomAdjustedColor}"
           style="
             font-family: DM Sans, sans-serif;
@@ -173,8 +176,8 @@ export class GraphClusterCard extends LitElement {
 
         <!-- Target count -->
         <text
-          x="${this.x + this.width - 12}"
-          y="${this.y + 20}"
+          x="${x + width - 12}"
+          y="${y + 20}"
           text-anchor="end"
           fill="${zoomAdjustedColor}"
           style="

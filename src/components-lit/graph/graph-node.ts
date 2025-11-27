@@ -25,12 +25,23 @@
  */
 
 import { LitElement, svg } from 'lit';
-import { property } from 'lit/decorators.js';
 import type { GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import { getNodeIconPath } from '@/utils/nodeIcons';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 
 export class GraphNode extends LitElement {
+  static properties = {
+    node: { attribute: false },
+    x: { type: Number },
+    y: { type: Number },
+    size: { type: Number },
+    color: { type: String },
+    isSelected: { type: Boolean, attribute: 'is-selected' },
+    isHovered: { type: Boolean, attribute: 'is-hovered' },
+    isDimmed: { type: Boolean, attribute: 'is-dimmed' },
+    zoom: { type: Number },
+  };
+
   // No Shadow DOM for SVG elements
   protected createRenderRoot() {
     return this;
@@ -40,32 +51,15 @@ export class GraphNode extends LitElement {
   // Properties
   // ========================================
 
-  @property({ attribute: false })
-  declare node: GraphNodeType;
-
-  @property({ type: Number })
-  declare x: number;
-
-  @property({ type: Number })
-  declare y: number;
-
-  @property({ type: Number })
-  declare size: number;
-
-  @property({ type: String })
-  declare color: string;
-
-  @property({ type: Boolean, attribute: 'is-selected' })
-  isSelected: boolean = false;
-
-  @property({ type: Boolean, attribute: 'is-hovered' })
-  isHovered: boolean = false;
-
-  @property({ type: Boolean, attribute: 'is-dimmed' })
-  isDimmed: boolean = false;
-
-  @property({ type: Number })
-  zoom: number = 1.0;
+  declare node: GraphNodeType | undefined;
+  declare x: number | undefined;
+  declare y: number | undefined;
+  declare size: number | undefined;
+  declare color: string | undefined;
+  declare isSelected: boolean | undefined;
+  declare isHovered: boolean | undefined;
+  declare isDimmed: boolean | undefined;
+  declare zoom: number | undefined;
 
   // ========================================
   // Event Handlers
@@ -113,15 +107,13 @@ export class GraphNode extends LitElement {
   // Helpers
   // ========================================
 
-  private get displayName(): string {
+  private getDisplayName(nodeName: string): string {
     const maxLabelLength = 20;
-    return this.node.name.length > maxLabelLength
-      ? `${this.node.name.substring(0, maxLabelLength)}...`
-      : this.node.name;
+    return nodeName.length > maxLabelLength ? `${nodeName.substring(0, maxLabelLength)}...` : nodeName;
   }
 
-  private get showTooltip(): boolean {
-    return this.isHovered && this.node.name.length > 20;
+  private getShowTooltip(nodeName: string, isHovered: boolean): boolean {
+    return isHovered && nodeName.length > 20;
   }
 
   // ========================================
@@ -131,10 +123,21 @@ export class GraphNode extends LitElement {
   render() {
     if (!this.node) return svg``;
 
+    const x = this.x ?? 0;
+    const y = this.y ?? 0;
+    const size = this.size ?? 12;
+    const color = this.color ?? '#888';
+    const zoom = this.zoom ?? 1.0;
+    const isSelected = this.isSelected ?? false;
+    const isHovered = this.isHovered ?? false;
+    const isDimmed = this.isDimmed ?? false;
+
     const iconPath = getNodeIconPath(this.node.type, this.node.platform);
-    const zoomAdjustedColor = adjustColorForZoom(this.color, this.zoom);
-    const glowOpacity = adjustOpacityForZoom(0.3, this.zoom);
-    const scale = this.isHovered || this.isSelected ? 1.05 : 1;
+    const zoomAdjustedColor = adjustColorForZoom(color, zoom);
+    const glowOpacity = adjustOpacityForZoom(0.3, zoom);
+    const scale = isHovered || isSelected ? 1.05 : 1;
+    const displayName = this.getDisplayName(this.node.name);
+    const showTooltip = this.getShowTooltip(this.node.name, isHovered);
 
     return svg`
       <g
@@ -143,18 +146,18 @@ export class GraphNode extends LitElement {
         @mousedown=${this.handleMouseDown}
         @click=${this.handleClick}
         style="cursor: pointer; transition: opacity 0.3s ease, transform 0.2s ease"
-        opacity="${this.isDimmed ? 0.3 : 1}"
+        opacity="${isDimmed ? 0.3 : 1}"
         transform="scale(${scale})"
-        transform-origin="${this.x}px ${this.y}px"
+        transform-origin="${x}px ${y}px"
       >
         ${
-          this.isSelected
+          isSelected
             ? svg`
                 <!-- Sonar pulse rings -->
                 <circle
-                  cx="${this.x}"
-                  cy="${this.y}"
-                  r="${this.size}"
+                  cx="${x}"
+                  cy="${y}"
+                  r="${size}"
                   fill="none"
                   stroke="${zoomAdjustedColor}"
                   stroke-width="2"
@@ -162,8 +165,8 @@ export class GraphNode extends LitElement {
                 >
                   <animate
                     attributeName="r"
-                    from="${this.size}"
-                    to="${this.size * 4}"
+                    from="${size}"
+                    to="${size * 4}"
                     dur="3.5s"
                     repeatCount="indefinite"
                   />
@@ -175,9 +178,9 @@ export class GraphNode extends LitElement {
                   />
                 </circle>
                 <circle
-                  cx="${this.x}"
-                  cy="${this.y}"
-                  r="${this.size}"
+                  cx="${x}"
+                  cy="${y}"
+                  r="${size}"
                   fill="none"
                   stroke="${zoomAdjustedColor}"
                   stroke-width="2"
@@ -185,8 +188,8 @@ export class GraphNode extends LitElement {
                 >
                   <animate
                     attributeName="r"
-                    from="${this.size}"
-                    to="${this.size * 4}"
+                    from="${size}"
+                    to="${size * 4}"
                     dur="3.5s"
                     begin="0.875s"
                     repeatCount="indefinite"
@@ -200,9 +203,9 @@ export class GraphNode extends LitElement {
                   />
                 </circle>
                 <circle
-                  cx="${this.x}"
-                  cy="${this.y}"
-                  r="${this.size}"
+                  cx="${x}"
+                  cy="${y}"
+                  r="${size}"
                   fill="none"
                   stroke="${zoomAdjustedColor}"
                   stroke-width="2"
@@ -210,8 +213,8 @@ export class GraphNode extends LitElement {
                 >
                   <animate
                     attributeName="r"
-                    from="${this.size}"
-                    to="${this.size * 4}"
+                    from="${size}"
+                    to="${size * 4}"
                     dur="3.5s"
                     begin="1.75s"
                     repeatCount="indefinite"
@@ -225,9 +228,9 @@ export class GraphNode extends LitElement {
                   />
                 </circle>
                 <circle
-                  cx="${this.x}"
-                  cy="${this.y}"
-                  r="${this.size}"
+                  cx="${x}"
+                  cy="${y}"
+                  r="${size}"
                   fill="none"
                   stroke="${zoomAdjustedColor}"
                   stroke-width="2"
@@ -235,8 +238,8 @@ export class GraphNode extends LitElement {
                 >
                   <animate
                     attributeName="r"
-                    from="${this.size}"
-                    to="${this.size * 4}"
+                    from="${size}"
+                    to="${size * 4}"
                     dur="3.5s"
                     begin="2.625s"
                     repeatCount="indefinite"
@@ -255,12 +258,12 @@ export class GraphNode extends LitElement {
 
         <!-- Outer glow ring -->
         ${
-          this.isSelected || this.isHovered
+          isSelected || isHovered
             ? svg`
                 <circle
-                  cx="${this.x}"
-                  cy="${this.y}"
-                  r="${this.size + 8}"
+                  cx="${x}"
+                  cy="${y}"
+                  r="${size + 8}"
                   fill="none"
                   stroke="${zoomAdjustedColor}"
                   stroke-width="2"
@@ -273,14 +276,14 @@ export class GraphNode extends LitElement {
 
         <!-- Icon shape -->
         <g
-          transform="translate(${this.x}, ${this.y})"
-          filter="${this.isSelected || this.isHovered ? 'url(#glow)' : ''}"
+          transform="translate(${x}, ${y})"
+          filter="${isSelected || isHovered ? 'url(#glow)' : ''}"
         >
           <path
             d="${iconPath}"
             fill="rgba(15, 15, 20, 0.95)"
             stroke="${zoomAdjustedColor}"
-            stroke-width="${this.isSelected ? 2.5 : 2}"
+            stroke-width="${isSelected ? 2.5 : 2}"
             stroke-linecap="round"
             stroke-linejoin="round"
             style="pointer-events: all"
@@ -289,31 +292,31 @@ export class GraphNode extends LitElement {
 
         <!-- Label -->
         ${
-          this.zoom >= 0.5
+          zoom >= 0.5
             ? svg`
                 <g>
                   <text
-                    x="${this.x}"
-                    y="${this.y + this.size + 22}"
+                    x="${x}"
+                    y="${y + size + 22}"
                     fill="${zoomAdjustedColor}"
                     text-anchor="middle"
                     style="
                       font-family: Inter, sans-serif;
                       font-size: 11px;
-                      font-weight: ${this.isSelected ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)'};
+                      font-weight: ${isSelected ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)'};
                       pointer-events: none;
                       filter: drop-shadow(0 0 8px rgba(15, 15, 20, 0.9)) drop-shadow(0 0 4px rgba(15, 15, 20, 1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
                     "
                   >
-                    ${this.displayName}
+                    ${displayName}
                   </text>
 
                   ${
-                    this.showTooltip
+                    showTooltip
                       ? svg`
                           <rect
-                            x="${this.x - this.node.name.length * 3.5}"
-                            y="${this.y - this.size - 35}"
+                            x="${x - this.node.name.length * 3.5}"
+                            y="${y - size - 35}"
                             width="${this.node.name.length * 7}"
                             height="22"
                             rx="4"
@@ -323,8 +326,8 @@ export class GraphNode extends LitElement {
                             filter="url(#glow)"
                           />
                           <text
-                            x="${this.x}"
-                            y="${this.y - this.size - 20}"
+                            x="${x}"
+                            y="${y - size - 20}"
                             fill="${zoomAdjustedColor}"
                             text-anchor="middle"
                             style="
