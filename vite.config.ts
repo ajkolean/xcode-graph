@@ -4,10 +4,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
-    react({
-      // Exclude Lit components from React SWC transformation
-      exclude: ['**/components-lit/**'],
-    }),
+    react(),
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],

@@ -53,6 +53,23 @@ const preview: Preview = {
       delay: 1000,
       // Pause animations for consistent snapshots
       pauseAnimationAtEnd: true,
+      // Test light and dark modes with desktop viewport
+      modes: {
+        light: {
+          backgrounds: { value: 'rgba(255, 255, 255, 1)' },
+          viewport: {
+            name: 'desktop',
+            styles: { width: '1280px', height: '720px' }
+          },
+        },
+        dark: {
+          backgrounds: { value: 'rgba(0, 0, 0, 1)' },
+          viewport: {
+            name: 'desktop',
+            styles: { width: '1280px', height: '720px' }
+          },
+        },
+      },
     },
   },
 };

@@ -94,6 +94,6 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test-storybook": "test-storybook",
-    "chromatic": "dotenv -e .env.local chromatic"
+    "chromatic": "dotenv -e .env.local chromatic --only-changed"
   }
 }
