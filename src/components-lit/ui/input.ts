@@ -3,7 +3,7 @@ import { LitElement, html, css } from 'lit';
 /**
  * Graph Input - A Lit Web Component for text input fields
  *
- * Uses Light DOM for Panda CSS styling.
+ * Uses Shadow DOM with native Lit CSS for proper encapsulation.
  *
  * @example
  * ```html

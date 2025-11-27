@@ -3,7 +3,7 @@ import { LitElement, html, css } from 'lit';
 /**
  * Graph Textarea - A Lit Web Component for multiline text input
  *
- * Uses Light DOM for Panda CSS styling.
+ * Uses Shadow DOM with native Lit CSS for proper encapsulation.
  *
  * @example
  * ```html

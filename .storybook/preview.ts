@@ -53,6 +53,8 @@ const preview: Preview = {
       delay: 1000,
       // Pause animations for consistent snapshots
       pauseAnimationAtEnd: true,
+      // Disable interaction tests (Shadow DOM components don't work with test queries)
+      disableInteractions: true,
       // Test light and dark modes with desktop viewport
       modes: {
         light: {
