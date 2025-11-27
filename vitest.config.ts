@@ -4,6 +4,7 @@ import path from 'node:path';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vitest/config';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { playwright } from '@vitest/browser/providers/playwright';
 
 const reactPlugin = {
   ...react({
@@ -71,7 +72,7 @@ export default defineConfig({
     browser: {
       enabled: true,
       name: 'chromium',
-      provider: 'playwright',
+      provider: playwright(),
       headless: true,
     },
     // Increase timeouts for browser mode
