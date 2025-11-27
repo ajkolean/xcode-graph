@@ -22,5 +22,5 @@ export const LitSkeletonElement = createComponent({
  * ```
  */
 export function LitSkeleton({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
-  return <LitSkeletonElement className={className} {...props} />;
+  return <LitSkeletonElement className={className} data-slot="skeleton" {...props} />;
 }

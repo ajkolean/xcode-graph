@@ -1,0 +1,474 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction/Testing Guide" />
+
+# Testing Guide
+
+<div style={{ padding: '2rem', background: 'rgba(220, 38, 38, 0.1)', borderRadius: '8px', marginBottom: '2rem' }}>
+  <p style={{ fontSize: '1.1rem', marginBottom: 0 }}>
+    Our testing strategy ensures component reliability across both React and Lit implementations,
+    with special attention to Shadow DOM encapsulation and accessibility.
+  </p>
+</div>
+
+## Testing Stack
+
+Our comprehensive testing approach uses:
+
+- **Vitest** - Fast unit test runner with Vite integration
+- **Testing Library** - User-centric testing utilities
+- **Playwright** - E2E and interaction testing
+- **Storybook Test** - Interaction testing in stories
+- **Chromatic** - Visual regression testing
+- **axe-core** - Accessibility testing
+
+## Shadow DOM Testing
+
+Lit components use Shadow DOM, which requires special testing utilities to query elements inside the shadow root.
+
+### Why Shadow DOM Testing is Different
+
+Standard DOM queries cannot penetrate the shadow boundary:
+
+```tsx
+// ❌ This won't work for Lit components
+const button = screen.getByRole('button'); // Can't find elements in shadow DOM
+```
+
+### Using Shadow DOM Testing Library
+
+We use `shadow-dom-testing-library` to query elements inside shadow roots:
+
+```tsx
+import { within as withinShadow } from 'shadow-dom-testing-library';
+
+// ✅ This works for Lit components
+const container = withinShadow(element);
+const button = await container.findByShadowRole('button');
+```
+
+### Global Configuration
+
+Our Storybook is configured to automatically inject shadow DOM queries into the canvas:
+
+```tsx
+// In .storybook/preview.ts
+beforeEach({ canvasElement, canvas }) {
+  // Inject shadow-aware query methods into canvas
+  Object.assign(canvas, { ...withinShadow(canvasElement) });
+}
+```
+
+This means in your play functions, you can use `canvas.findByShadowRole` directly:
+
+```tsx
+export const MyStory: Story = {
+  play: async ({ canvas }) => {
+    // Wait for Lit components to register (important!)
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Query shadow DOM elements
+    const button = await canvas.findByShadowRole('button', { name: 'Click me' });
+    await userEvent.click(button);
+
+    expect(button).toHaveAccessibleName('Click me');
+  },
+};
+```
+
+### Available Shadow DOM Queries
+
+All Testing Library queries have shadow DOM equivalents:
+
+| Standard Query | Shadow DOM Query |
+|---------------|------------------|
+| `getByRole` | `getByShadowRole` |
+| `findByRole` | `findByShadowRole` |
+| `queryByRole` | `queryByShadowRole` |
+| `getAllByRole` | `getAllByShadowRole` |
+| `findAllByRole` | `findAllByShadowRole` |
+| `getByText` | `getByShadowText` |
+| `findByText` | `findByShadowText` |
+| `getByLabelText` | `getByShadowLabelText` |
+
+### Important: Wait for Lit Components
+
+Lit components register asynchronously. Always wait before querying:
+
+```tsx
+play: async ({ canvas }) => {
+  // ✅ Wait for custom elements to register
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  const element = await canvas.findByShadowRole('button');
+}
+```
+
+## Interaction Testing
+
+Interaction tests verify user behavior using play functions.
+
+### Basic Interaction Test
+
+```tsx
+import { expect, userEvent } from '@storybook/test';
+
+export const ClickButton: Story = {
+  args: {
+    label: 'Click me',
+    onClick: fn(), // Mock function to spy on
+  },
+  play: async ({ canvas, args }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const button = await canvas.findByShadowRole('button', { name: 'Click me' });
+
+    // Simulate user interaction
+    await userEvent.click(button);
+
+    // Assert expectations
+    expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
+```
+
+### Form Interaction Test
+
+```tsx
+export const FormSubmission: Story = {
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find form elements
+    const input = await canvas.findByShadowRole('textbox', { name: 'Username' });
+    const submitButton = await canvas.findByShadowRole('button', { name: 'Submit' });
+
+    // Type into input
+    await userEvent.type(input, 'johndoe');
+    expect(input).toHaveValue('johndoe');
+
+    // Submit form
+    await userEvent.click(submitButton);
+
+    // Verify result
+    const successMessage = await canvas.findByShadowText(/success/i);
+    expect(successMessage).toBeInTheDocument();
+  },
+};
+```
+
+### Keyboard Navigation Test
+
+```tsx
+export const KeyboardNav: Story = {
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const buttons = await canvas.findAllByShadowRole('button');
+
+    // Tab to first button
+    await userEvent.tab();
+    expect(buttons[0]).toHaveFocus();
+
+    // Tab to second button
+    await userEvent.tab();
+    expect(buttons[1]).toHaveFocus();
+
+    // Activate with keyboard
+    await userEvent.keyboard('{Enter}');
+  },
+};
+```
+
+## Unit Testing
+
+Vitest tests run independently of Storybook and test component logic.
+
+### Testing React Components
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import { Button } from './button';
+
+describe('Button', () => {
+  it('renders with correct text', () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByRole('button')).toHaveTextContent('Click me');
+  });
+
+  it('handles click events', async () => {
+    const handleClick = vi.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+
+    await userEvent.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalledOnce();
+  });
+});
+```
+
+### Testing Lit Components
+
+```tsx
+import { fixture, expect } from '@open-wc/testing';
+import { within as withinShadow } from 'shadow-dom-testing-library';
+import './badge';
+
+describe('graph-badge', () => {
+  it('renders with correct variant', async () => {
+    const el = await fixture('<graph-badge variant="secondary">Badge</graph-badge>');
+
+    const container = withinShadow(el);
+    const badge = container.getByShadowText('Badge');
+
+    expect(badge).toBeInTheDocument();
+  });
+});
+```
+
+## Accessibility Testing
+
+Every story is automatically checked for accessibility violations using axe-core.
+
+### Global Accessibility Configuration
+
+Configured in `.storybook/preview.ts`:
+
+```tsx
+parameters: {
+  a11y: {
+    config: {
+      rules: [
+        { id: 'color-contrast', enabled: true },
+        { id: 'label', enabled: true },
+        { id: 'button-name', enabled: true },
+      ],
+    },
+    options: {
+      runOnly: {
+        type: 'tag',
+        values: ['wcag2a', 'wcag2aa', 'wcag21aa'],
+      },
+    },
+  },
+}
+```
+
+### Story-Level Accessibility Tests
+
+Override or extend accessibility config for specific stories:
+
+```tsx
+export const HighContrast: Story = {
+  parameters: {
+    backgrounds: { default: 'dark' },
+    a11y: {
+      config: {
+        rules: [
+          // Focus on contrast for this story
+          { id: 'color-contrast', enabled: true },
+        ],
+      },
+    },
+  },
+};
+```
+
+### Running Accessibility Tests
+
+1. **In Storybook UI**: Check the "Accessibility" panel for violations
+2. **In CI**: Tests run automatically via Chromatic
+3. **Locally**: Run `pnpm test-storybook` with accessibility checks enabled
+
+### Common Accessibility Issues
+
+- Missing button text or `aria-label`
+- Insufficient color contrast
+- Missing form labels
+- Incorrect heading hierarchy
+- Missing alt text on images
+
+## Visual Regression Testing
+
+Chromatic captures screenshots and compares them against baselines.
+
+### Chromatic Configuration
+
+Configured in `.storybook/preview.ts`:
+
+```tsx
+chromatic: {
+  delay: 1000, // Wait for Lit components
+  pauseAnimationAtEnd: true, // Consistent snapshots
+  modes: {
+    light_desktop: { backgrounds: { value: 'white' }, viewport: 'desktop' },
+    dark_desktop: { backgrounds: { value: 'black' }, viewport: 'desktop' },
+    light_mobile: { backgrounds: { value: 'white' }, viewport: 'mobile' },
+    dark_mobile: { backgrounds: { value: 'black' }, viewport: 'mobile' },
+  },
+}
+```
+
+### Running Visual Tests
+
+```bash
+# Run visual tests locally (requires Chromatic token)
+pnpm chromatic
+
+# In CI: Automated on every push
+```
+
+### Visual Test Workflow
+
+1. **Create baseline**: First run establishes baseline screenshots
+2. **Detect changes**: Subsequent runs compare against baseline
+3. **Review diffs**: Approve or reject changes in Chromatic UI
+4. **Update baseline**: Approved changes become new baseline
+
+## Test Coverage
+
+Generate coverage reports to identify untested code:
+
+```bash
+# Run tests with coverage
+pnpm test:coverage
+
+# View coverage report
+open coverage/index.html
+```
+
+### Coverage Configuration
+
+Configured in `vitest.config.ts`:
+
+```tsx
+coverage: {
+  provider: 'v8',
+  reporter: ['text', 'json', 'html'],
+  exclude: ['node_modules/', 'src/test/', '**/*.d.ts'],
+}
+```
+
+### Coverage in Storybook UI
+
+With the Vitest addon, coverage is visible directly in Storybook:
+1. Enable coverage in test widget
+2. Run component tests
+3. View coverage summary in test results
+
+## CI/CD Integration
+
+Tests run automatically in GitHub Actions:
+
+```yaml
+# .github/workflows/chromatic.yml
+- name: Install Playwright browsers
+  run: pnpm exec playwright install --with-deps chromium
+
+- name: Build Storybook
+  run: pnpm build-storybook --quiet
+
+- name: Run interaction tests
+  run: pnpm test-storybook
+
+- name: Publish to Chromatic
+  uses: chromaui/action@latest
+  with:
+    projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+    storybookBuildDir: storybook-static
+```
+
+## Best Practices
+
+### ✅ Do's
+
+- **Wait for Lit components** before querying (300ms minimum)
+- **Use shadow DOM queries** for Lit components
+- **Test user behavior** not implementation details
+- **Write accessible components** that pass axe checks
+- **Add interaction tests** for critical user flows
+- **Mock external dependencies** in unit tests
+
+### ❌ Don'ts
+
+- Don't use regular DOM queries for Shadow DOM elements
+- Don't test implementation details (state, lifecycle)
+- Don't skip accessibility checks
+- Don't write tests that depend on timing
+- Don't commit failing accessibility tests
+
+## Common Patterns
+
+### Testing Parity Components
+
+```tsx
+export const ParityTest: Story = {
+  render: () => (
+    <ParityComparison
+      react={<Button variant="default">React</Button>}
+      lit={<LitButton variant="default">Lit</LitButton>}
+    />
+  ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Test both implementations
+    const buttons = await canvas.findAllByRole('button');
+    expect(buttons).toHaveLength(2);
+
+    // Both should have identical behavior
+    for (const button of buttons) {
+      await userEvent.click(button);
+      expect(button).toHaveAccessibleName(/React|Lit/);
+    }
+  },
+};
+```
+
+### Testing Error States
+
+```tsx
+export const ErrorState: Story = {
+  args: {
+    error: 'Invalid input',
+  },
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const errorMessage = await canvas.findByShadowText(/Invalid input/i);
+    expect(errorMessage).toHaveAttribute('role', 'alert');
+    expect(errorMessage).toHaveAttribute('aria-live', 'polite');
+  },
+};
+```
+
+## Debugging Tests
+
+### Enable Debugging
+
+```tsx
+play: async ({ canvas }) => {
+  // Pause execution for debugging
+  await new Promise(resolve => setTimeout(resolve, 10000));
+
+  // Log element for inspection
+  const button = await canvas.findByShadowRole('button');
+  console.log(button);
+}
+```
+
+### View Test Results
+
+1. **Storybook UI**: Interaction panel shows test execution
+2. **Terminal**: `pnpm test-storybook` shows detailed output
+3. **Chromatic**: Visual diff comparison
+4. **Coverage Report**: HTML report shows untested lines
+
+---
+
+<div style={{ padding: '1.5rem', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '8px', marginTop: '2rem' }}>
+  <strong>Questions?</strong>
+  <p style={{ marginBottom: 0, marginTop: '0.5rem' }}>
+    See the <a href="/story/foundations-accessibility--keyboard-navigation">Accessibility Guide</a> for a11y testing examples,
+    or check out our <a href="/story/introduction-parity-testing">Parity Testing Guide</a> for dual-implementation testing patterns.
+  </p>
+</div>

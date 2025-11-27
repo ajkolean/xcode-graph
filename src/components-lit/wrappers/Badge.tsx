@@ -54,6 +54,7 @@ export function LitBadge({
       variant={variant}
       className={combinedClass}
       style={style as any}
+      data-slot="badge"
       {...props}
     >
       {children}

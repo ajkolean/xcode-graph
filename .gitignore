@@ -38,3 +38,10 @@ lerna-debug.log*
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Playwright MCP
+.playwright-mcp/
+
+# Storybook
+screenshots/
+storybook-static/

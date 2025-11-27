@@ -9,17 +9,23 @@ import './button';
 import './card';
 import './checkbox';
 import './collapsible';
+import './form';
+import './hover-card';
 import './input';
+import './input-otp';
 import './label';
 import './progress';
 import './radio-group';
+import './select';
 import './separator';
 import './skeleton';
 import './slider';
 import './switch';
+import './table';
 import './tabs';
 import './textarea';
 import './toggle';
+import './toggle-group';
 import './tooltip';
 
 export function registerLitComponents() {

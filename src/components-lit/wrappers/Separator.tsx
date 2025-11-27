@@ -39,6 +39,7 @@ export function LitSeparator({
       orientation={orientation}
       decorative={decorative}
       className={className}
+      data-slot="separator-root"
       {...props}
     />
   );
