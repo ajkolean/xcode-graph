@@ -89,8 +89,25 @@ export {
   type LitInputOTPSeparatorProps,
 } from './InputOTP';
 export { LitLabel, type LitLabelProps } from './Label';
+export {
+  LitPagination,
+  LitPaginationContent,
+  LitPaginationItem,
+  LitPaginationLink,
+  LitPaginationPrevious,
+  LitPaginationNext,
+  LitPaginationEllipsis,
+  type LitPaginationProps,
+  type LitPaginationContentProps,
+  type LitPaginationItemProps,
+  type LitPaginationLinkProps,
+  type LitPaginationPreviousProps,
+  type LitPaginationNextProps,
+  type LitPaginationEllipsisProps,
+} from './Pagination';
 export { LitProgress, type LitProgressProps } from './Progress';
 export { LitRadioGroup, LitRadioItem, type LitRadioGroupProps, type LitRadioItemProps } from './RadioGroup';
+export { LitScrollArea, LitScrollBar, type LitScrollAreaProps, type LitScrollBarProps } from './ScrollArea';
 export {
   LitSelect,
   LitSelectTrigger,

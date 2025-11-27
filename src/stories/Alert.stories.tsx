@@ -10,7 +10,7 @@ import {
 } from '../components-lit/wrappers/Alert';
 
 const meta: Meta = {
-  title: 'Components/Alert',
+  title: 'Components/Feedback/Alert',
   parameters: {
     chromatic: { delay: 1000 },
   },

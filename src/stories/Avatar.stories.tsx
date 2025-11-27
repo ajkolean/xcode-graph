@@ -4,7 +4,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '../components/ui/avatar';
 import { LitAvatar, LitAvatarImage, LitAvatarFallback } from '../components-lit/wrappers/Avatar';
 
 const meta: Meta = {
-  title: 'Components/Avatar',
+  title: 'Components/Data Display/Avatar',
   parameters: {
     chromatic: { delay: 1000 },
   },

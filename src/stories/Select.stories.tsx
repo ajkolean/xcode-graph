@@ -22,7 +22,7 @@ import {
 } from '../components-lit/wrappers/Select';
 
 const meta: Meta = {
-  title: 'Components/Select',
+  title: 'Components/Forms/Select',
   parameters: {
     chromatic: { delay: 1500 },
   },

@@ -11,7 +11,7 @@ import { Button } from '../components/ui/button';
 import { LitButton } from '../components-lit/wrappers/Button';
 
 const meta: Meta = {
-  title: 'Components/Collapsible',
+  title: 'Components/Layout/Collapsible',
   parameters: {
     chromatic: { delay: 1000 },
   },

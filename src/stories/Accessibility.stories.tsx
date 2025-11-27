@@ -31,7 +31,7 @@ export const KeyboardNavigation: Story = {
         Try pressing <kbd>Tab</kbd> to focus each button, then <kbd>Enter</kbd> or <kbd>Space</kbd> to activate.
       </p>
       <div style={{ display: 'flex', gap: '0.5rem' }}>
-        <Button>First Button</LitButton>
+        <LitButton>First Button</LitButton>
         <LitButton variant="secondary">Second Button</LitButton>
         <LitButton variant="ghost">Third Button</LitButton>
       </div>
@@ -86,7 +86,7 @@ export const HighContrast: Story = {
         <LitButton variant="destructive">Destructive</LitButton>
       </div>
       <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        <Badge>Default</LitBadge>
+        <LitBadge>Default</LitBadge>
         <LitBadge variant="secondary">Secondary</LitBadge>
         <LitBadge variant="outline">Outline</LitBadge>
         <LitBadge variant="destructive">Destructive</LitBadge>
@@ -116,7 +116,7 @@ export const FormLabels: Story = {
         <label htmlFor="username-input" style={{ display: 'block', marginBottom: '0.5rem' }}>
           Username
         </label>
-        <GraphInput
+        <LitInput
           id="username-input"
           placeholder="Enter your username"
           aria-describedby="username-help"
@@ -130,7 +130,7 @@ export const FormLabels: Story = {
         <label htmlFor="email-input" style={{ display: 'block', marginBottom: '0.5rem' }}>
           Email <span aria-label="required">*</span>
         </label>
-        <GraphInput
+        <LitInput
           id="email-input"
           type="email"
           placeholder="email@example.com"
@@ -210,7 +210,7 @@ export const FocusIndicators: Story = {
           Press <kbd>Tab</kbd> to see focus indicators on each element.
         </p>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Button>Focus Me</LitButton>
+          <LitButton>Focus Me</LitButton>
           <LitButton variant="outline">Then Me</LitButton>
           <LitButton variant="ghost">And Me</LitButton>
         </div>

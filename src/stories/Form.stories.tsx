@@ -11,7 +11,7 @@ import { LitInput } from '../components-lit/wrappers/Input';
 import { LitButton } from '../components-lit/wrappers/Button';
 
 const meta: Meta = {
-  title: 'Components/Form',
+  title: 'Components/Forms/Form',
   parameters: {
     chromatic: { delay: 1000 },
   },

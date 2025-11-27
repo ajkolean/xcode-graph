@@ -4,7 +4,7 @@ import { AspectRatio } from '../components/ui/aspect-ratio';
 import { LitAspectRatio } from '../components-lit/wrappers/AspectRatio';
 
 const meta: Meta = {
-  title: 'Components/AspectRatio',
+  title: 'Components/Layout/AspectRatio',
   parameters: {
     chromatic: { delay: 1000 },
   },

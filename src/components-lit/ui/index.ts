@@ -58,8 +58,18 @@ export {
   GraphInputOTPSeparator,
 } from './input-otp';
 export { GraphLabel } from './label';
+export {
+  GraphPagination,
+  GraphPaginationContent,
+  GraphPaginationItem,
+  GraphPaginationLink,
+  GraphPaginationPrevious,
+  GraphPaginationNext,
+  GraphPaginationEllipsis,
+} from './pagination';
 export { GraphProgress } from './progress';
 export { GraphRadioGroup, GraphRadioItem } from './radio-group';
+export { GraphScrollArea, GraphScrollBar, type ScrollOrientation } from './scroll-area';
 export {
   GraphSelect,
   GraphSelectTrigger,

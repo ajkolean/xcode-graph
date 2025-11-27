@@ -22,7 +22,7 @@ import {
 } from '../components-lit/wrappers/Table';
 
 const meta: Meta = {
-  title: 'Components/Table',
+  title: 'Components/Data Display/Table',
   parameters: {
     chromatic: { delay: 1000 },
   },

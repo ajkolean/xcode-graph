@@ -21,7 +21,7 @@ import {
 } from '../components-lit/wrappers/Breadcrumb';
 
 const meta: Meta = {
-  title: 'Components/Breadcrumb',
+  title: 'Components/Navigation/Breadcrumb',
   parameters: {
     chromatic: { delay: 1000 },
   },

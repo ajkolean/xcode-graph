@@ -1,0 +1,558 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Design Tokens" />
+
+# Design Tokens
+
+<div style={{ padding: '2rem', background: 'linear-gradient(135deg, rgba(111, 44, 255, 0.1), rgba(2, 128, 185, 0.1))', borderRadius: '8px', marginBottom: '2rem' }}>
+  <p style={{ fontSize: '1.1rem', marginBottom: 0 }}>
+    Our design token system provides a comprehensive set of CSS custom properties that work seamlessly
+    across both React and Lit components, ensuring visual consistency throughout the component library.
+  </p>
+</div>
+
+## Overview
+
+Design tokens are stored as **CSS custom properties** in `src/styles/tokens.css` and are available in both:
+- **Light DOM** (`:root`) - For React components
+- **Shadow DOM** (`:host`) - For Lit components
+
+This dual-context approach ensures maximum compatibility and consistent styling across frameworks.
+
+**Total Tokens**: 75+ design tokens across 7 categories
+
+---
+
+## Color Palette
+
+Our color system features **35 color tokens** organized by semantic purpose.
+
+### Core Colors
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+  <div style={{ padding: '1rem', background: 'var(--colors-background)', border: '1px solid var(--colors-border)', borderRadius: 'var(--radii-md)' }}>
+    <div style={{ width: '100%', height: '60px', background: 'var(--colors-background)', borderRadius: 'var(--radii-sm)', marginBottom: '0.5rem', border: '1px solid rgba(255,255,255,0.1)' }}></div>
+    <code style={{ fontSize: '11px' }}>--colors-background</code>
+    <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '4px' }}>rgba(0, 0, 0, 1)</div>
+  </div>
+
+  <div style={{ padding: '1rem', background: 'var(--colors-background)', border: '1px solid var(--colors-border)', borderRadius: 'var(--radii-md)' }}>
+    <div style={{ width: '100%', height: '60px', background: 'var(--colors-foreground)', borderRadius: 'var(--radii-sm)', marginBottom: '0.5rem' }}></div>
+    <code style={{ fontSize: '11px' }}>--colors-foreground</code>
+    <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '4px' }}>rgba(232, 234, 237, 1)</div>
+  </div>
+</div>
+
+### Primary Colors
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+  <div style={{ padding: '1rem', background: 'var(--colors-background)', border: '1px solid var(--colors-border)', borderRadius: 'var(--radii-md)' }}>
+    <div style={{ width: '100%', height: '60px', background: 'var(--colors-primary)', borderRadius: 'var(--radii-sm)', marginBottom: '0.5rem' }}></div>
+    <code style={{ fontSize: '11px' }}>--colors-primary</code>
+    <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '4px' }}>rgba(111, 44, 255, 1)</div>
+  </div>
+
+  <div style={{ padding: '1rem', background: 'var(--colors-primary)', border: '1px solid var(--colors-primary)', borderRadius: 'var(--radii-md)' }}>
+    <div style={{ width: '100%', height: '60px', background: 'var(--colors-primary-foreground)', borderRadius: 'var(--radii-sm)', marginBottom: '0.5rem' }}></div>
+    <code style={{ fontSize: '11px', color: 'var(--colors-primary-foreground)' }}>--colors-primary-foreground</code>
+    <div style={{ fontSize: '10px', color: 'var(--colors-primary-foreground)', opacity: 0.8, marginTop: '4px' }}>rgba(253, 253, 253, 1)</div>
+  </div>
+</div>
+
+### Semantic Colors
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+  <div style={{ padding: '1rem', background: 'var(--colors-background)', border: '1px solid var(--colors-border)', borderRadius: 'var(--radii-md)' }}>
+    <div style={{ width: '100%', height: '60px', background: 'var(--colors-destructive)', borderRadius: 'var(--radii-sm)', marginBottom: '0.5rem' }}></div>
+    <code style={{ fontSize: '11px' }}>--colors-destructive</code>
+    <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '4px' }}>rgba(229, 28, 1, 1)</div>
+  </div>
+
+  <div style={{ padding: '1rem', background: 'var(--colors-background)', border: '1px solid var(--colors-border)', borderRadius: 'var(--radii-md)' }}>
+    <div style={{ width: '100%', height: '60px', background: 'var(--colors-accent)', borderRadius: 'var(--radii-sm)', marginBottom: '0.5rem' }}></div>
+    <code style={{ fontSize: '11px' }}>--colors-accent</code>
+    <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '4px' }}>rgba(111, 44, 255, 0.15)</div>
+  </div>
+
+  <div style={{ padding: '1rem', background: 'var(--colors-background)', border: '1px solid var(--colors-border)', borderRadius: 'var(--radii-md)' }}>
+    <div style={{ width: '100%', height: '60px', background: 'var(--colors-muted)', borderRadius: 'var(--radii-sm)', marginBottom: '0.5rem', border: '1px solid rgba(255,255,255,0.1)' }}></div>
+    <code style={{ fontSize: '11px' }}>--colors-muted</code>
+    <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '4px' }}>rgba(255, 255, 255, 0.05)</div>
+  </div>
+
+  <div style={{ padding: '1rem', background: 'var(--colors-background)', border: '1px solid var(--colors-border)', borderRadius: 'var(--radii-md)' }}>
+    <div style={{ width: '100%', height: '60px', background: 'var(--colors-ring)', borderRadius: 'var(--radii-sm)', marginBottom: '0.5rem' }}></div>
+    <code style={{ fontSize: '11px' }}>--colors-ring</code>
+    <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '4px' }}>Focus indicator</div>
+  </div>
+</div>
+
+### Chart Colors
+
+<div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+  {[1, 2, 3, 4, 5].map((i) => (
+    <div key={i} style={{ textAlign: 'center' }}>
+      <div style={{ width: '60px', height: '60px', background: `var(--colors-chart-${i})`, borderRadius: 'var(--radii-sm)' }}></div>
+      <code style={{ fontSize: '10px', display: 'block', marginTop: '4px' }}>chart-{i}</code>
+    </div>
+  ))}
+</div>
+
+**Usage**: Graph visualizations and data representations
+
+---
+
+## Typography
+
+### Font Families
+
+**Heading**: `--fonts-heading` → 'DM Sans', sans-serif
+**Body**: `--fonts-body` → 'Inter', sans-serif
+**Monospace**: `--fonts-mono` → 'SF Mono', 'Monaco', 'Consolas', monospace
+
+### Font Sizes
+
+<div style={{ marginBottom: '2rem' }}>
+  <div style={{ fontSize: 'var(--font-sizes-h1)', fontFamily: 'var(--fonts-heading)', fontWeight: 'var(--font-weights-bold)', marginBottom: '0.5rem' }}>
+    Heading 1 (40px)
+  </div>
+  <div style={{ fontSize: 'var(--font-sizes-h2)', fontFamily: 'var(--fonts-heading)', fontWeight: 'var(--font-weights-semibold)', marginBottom: '0.5rem' }}>
+    Heading 2 (18px)
+  </div>
+  <div style={{ fontSize: 'var(--font-sizes-h3)', fontFamily: 'var(--fonts-heading)', fontWeight: 'var(--font-weights-semibold)', marginBottom: '0.5rem' }}>
+    Heading 3 (16px)
+  </div>
+  <div style={{ fontSize: 'var(--font-sizes-h4)', fontFamily: 'var(--fonts-heading)', fontWeight: 'var(--font-weights-medium)', marginBottom: '0.5rem' }}>
+    Heading 4 (14px)
+  </div>
+  <div style={{ fontSize: 'var(--font-sizes-base)', marginBottom: '0.5rem' }}>
+    Base text (14px)
+  </div>
+  <div style={{ fontSize: 'var(--font-sizes-label)', marginBottom: '0.5rem' }}>
+    Label text (12px)
+  </div>
+  <div style={{ fontSize: 'var(--font-sizes-sm)', marginBottom: '0.5rem' }}>
+    Small text (11px)
+  </div>
+  <div style={{ fontSize: 'var(--font-sizes-xs)' }}>
+    Extra small text (10px)
+  </div>
+</div>
+
+### Font Weights
+
+<div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+  <div>
+    <div style={{ fontWeight: 'var(--font-weights-normal)' }}>Normal (400)</div>
+    <code style={{ fontSize: '10px', opacity: 0.6 }}>--font-weights-normal</code>
+  </div>
+  <div>
+    <div style={{ fontWeight: 'var(--font-weights-medium)' }}>Medium (500)</div>
+    <code style={{ fontSize: '10px', opacity: 0.6 }}>--font-weights-medium</code>
+  </div>
+  <div>
+    <div style={{ fontWeight: 'var(--font-weights-semibold)' }}>Semibold (600)</div>
+    <code style={{ fontSize: '10px', opacity: 0.6 }}>--font-weights-semibold</code>
+  </div>
+  <div>
+    <div style={{ fontWeight: 'var(--font-weights-bold)' }}>Bold (700)</div>
+    <code style={{ fontSize: '10px', opacity: 0.6 }}>--font-weights-bold</code>
+  </div>
+</div>
+
+### Line Heights
+
+<div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+  <div>
+    <div style={{ lineHeight: 'var(--line-heights-none)', border: '1px dashed rgba(255,255,255,0.2)', padding: '0.5rem' }}>
+      None (1.0)
+    </div>
+    <code style={{ fontSize: '10px', opacity: 0.6 }}>--line-heights-none</code>
+  </div>
+  <div>
+    <div style={{ lineHeight: 'var(--line-heights-tight)', border: '1px dashed rgba(255,255,255,0.2)', padding: '0.5rem' }}>
+      Tight (1.25)
+    </div>
+    <code style={{ fontSize: '10px', opacity: 0.6 }}>--line-heights-tight</code>
+  </div>
+  <div>
+    <div style={{ lineHeight: 'var(--line-heights-normal)', border: '1px dashed rgba(255,255,255,0.2)', padding: '0.5rem' }}>
+      Normal (1.5)
+    </div>
+    <code style={{ fontSize: '10px', opacity: 0.6 }}>--line-heights-normal</code>
+  </div>
+  <div>
+    <div style={{ lineHeight: 'var(--line-heights-relaxed)', border: '1px dashed rgba(255,255,255,0.2)', padding: '0.5rem' }}>
+      Relaxed (1.75)
+    </div>
+    <code style={{ fontSize: '10px', opacity: 0.6 }}>--line-heights-relaxed</code>
+  </div>
+</div>
+
+---
+
+## Spacing Scale
+
+**13 spacing tokens** with a numeric scale (0-12) and semantic aliases.
+
+### Numeric Scale
+
+<div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap' }}>
+  {[0, 1, 2, 3, 4, 5, 6, 8, 10, 12].map((value) => (
+    <div key={value} style={{ textAlign: 'center' }}>
+      <div style={{
+        width: '40px',
+        height: `${value * 4}px`,
+        background: 'var(--colors-primary)',
+        borderRadius: 'var(--radii-sm)',
+        marginBottom: '0.5rem'
+      }}></div>
+      <code style={{ fontSize: '10px', display: 'block' }}>{value}</code>
+      <div style={{ fontSize: '9px', opacity: 0.6 }}>{value * 4}px</div>
+    </div>
+  ))}
+</div>
+
+### Semantic Aliases
+
+| Alias | Value | Pixels |
+|-------|-------|--------|
+| `--spacing-xs` | `--spacing-1` | 4px |
+| `--spacing-sm` | `--spacing-2` | 8px |
+| `--spacing-md` | `--spacing-4` | 16px |
+| `--spacing-lg` | `--spacing-6` | 24px |
+| `--spacing-xl` | `--spacing-8` | 32px |
+
+**Usage**:
+```css
+/* Use numeric scale for precise control */
+padding: var(--spacing-4); /* 16px */
+
+/* Use semantic aliases for common patterns */
+margin-bottom: var(--spacing-md); /* 16px */
+gap: var(--spacing-sm); /* 8px */
+```
+
+---
+
+## Border Radius
+
+**6 radius tokens** from sharp corners to fully rounded.
+
+<div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+  {[
+    { name: 'none', value: '0' },
+    { name: 'sm', value: '4px' },
+    { name: 'md', value: '6px' },
+    { name: 'lg', value: '16px' },
+    { name: 'xl', value: '20px' },
+    { name: 'full', value: '9999px' }
+  ].map((radius) => (
+    <div key={radius.name} style={{ textAlign: 'center' }}>
+      <div style={{
+        width: '60px',
+        height: '60px',
+        background: 'var(--colors-primary)',
+        borderRadius: `var(--radii-${radius.name})`,
+        marginBottom: '0.5rem'
+      }}></div>
+      <code style={{ fontSize: '10px', display: 'block' }}>{radius.name}</code>
+      <div style={{ fontSize: '9px', opacity: 0.6 }}>{radius.value}</div>
+    </div>
+  ))}
+</div>
+
+**Usage**:
+```css
+/* Buttons, cards */
+border-radius: var(--radii-md); /* 6px */
+
+/* Pills, badges */
+border-radius: var(--radii-full); /* 9999px */
+
+/* Large containers */
+border-radius: var(--radii-lg); /* 16px */
+```
+
+---
+
+## Shadows & Elevation
+
+**3 shadow tokens** for subtle depth and hierarchy.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+  <div style={{ padding: '2rem', background: 'var(--colors-card)', borderRadius: 'var(--radii-md)', boxShadow: 'var(--shadows-sm)' }}>
+    <code style={{ fontSize: '11px', display: 'block', marginBottom: '0.5rem' }}>--shadows-sm</code>
+    <div style={{ fontSize: '10px', opacity: 0.6 }}>Small elevation</div>
+  </div>
+
+  <div style={{ padding: '2rem', background: 'var(--colors-card)', borderRadius: 'var(--radii-md)', boxShadow: 'var(--shadows-md)' }}>
+    <code style={{ fontSize: '11px', display: 'block', marginBottom: '0.5rem' }}>--shadows-md</code>
+    <div style={{ fontSize: '10px', opacity: 0.6 }}>Medium elevation</div>
+  </div>
+
+  <div style={{ padding: '2rem', background: 'var(--colors-card)', borderRadius: 'var(--radii-md)', boxShadow: 'var(--shadows-lg)' }}>
+    <code style={{ fontSize: '11px', display: 'block', marginBottom: '0.5rem' }}>--shadows-lg</code>
+    <div style={{ fontSize: '10px', opacity: 0.6 }}>Large elevation</div>
+  </div>
+</div>
+
+**Usage**:
+- `sm` - Subtle cards, borders
+- `md` - Dropdowns, modals
+- `lg` - Popovers, tooltips
+
+---
+
+## Animation
+
+### Durations
+
+**4 duration tokens** for consistent timing:
+
+| Token | Value | Use Case |
+|-------|-------|----------|
+| `--durations-fast` | 150ms | Hover effects, highlights |
+| `--durations-normal` | 200ms | Standard transitions |
+| `--durations-slow` | 300ms | Panel expansions, reveals |
+| `--durations-slower` | 500ms | Page transitions, complex animations |
+
+### Easings
+
+**4 easing functions** for natural motion:
+
+| Token | Value | Use Case |
+|-------|-------|----------|
+| `--easings-default` | cubic-bezier(0.4, 0, 0.2, 1) | General purpose |
+| `--easings-in` | cubic-bezier(0.4, 0, 1, 1) | Elements entering |
+| `--easings-out` | cubic-bezier(0, 0, 0.2, 1) | Elements exiting |
+| `--easings-in-out` | cubic-bezier(0.4, 0, 0.2, 1) | Bidirectional |
+
+**Usage**:
+```css
+transition: all var(--durations-normal) var(--easings-default);
+```
+
+---
+
+## Using Design Tokens
+
+### In React Components
+
+```tsx
+// Using inline styles
+<div style={{
+  padding: 'var(--spacing-md)',
+  background: 'var(--colors-card)',
+  borderRadius: 'var(--radii-md)',
+  boxShadow: 'var(--shadows-sm)',
+}}>
+  Content
+</div>
+
+// Using className (if using utility classes)
+<div className="p-md bg-card rounded-md shadow-sm">
+  Content
+</div>
+```
+
+### In Lit Components
+
+Tokens are available in Shadow DOM via `:host`:
+
+```typescript
+@customElement('graph-card')
+export class GraphCard extends LitElement {
+  static styles = css`
+    :host {
+      display: block;
+      padding: var(--spacing-md);
+      background: var(--colors-card);
+      border-radius: var(--radii-md);
+      box-shadow: var(--shadows-sm);
+    }
+  `;
+}
+```
+
+### In CSS Files
+
+```css
+.my-component {
+  /* Colors */
+  color: var(--colors-foreground);
+  background: var(--colors-background);
+
+  /* Spacing */
+  padding: var(--spacing-4);
+  gap: var(--spacing-2);
+
+  /* Typography */
+  font-family: var(--fonts-body);
+  font-size: var(--font-sizes-base);
+  font-weight: var(--font-weights-medium);
+  line-height: var(--line-heights-normal);
+
+  /* Borders */
+  border-radius: var(--radii-md);
+  border: 1px solid var(--colors-border);
+
+  /* Effects */
+  box-shadow: var(--shadows-sm);
+  transition: all var(--durations-normal) var(--easings-default);
+}
+```
+
+---
+
+## Token Categories Reference
+
+### Complete Token List
+
+**Colors** (35 tokens):
+- Core: `background`, `foreground`
+- UI: `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`
+- Form: `border`, `input`, `input-background`, `ring`
+- Charts: `chart-1` through `chart-5`
+- Sidebar: `sidebar`, `sidebar-foreground`, `sidebar-primary`, etc.
+- Semantic: `white`, `transparent`
+
+**Border Radius** (6 tokens):
+- `none`, `sm`, `md`, `lg`, `xl`, `full`
+
+**Typography** (19 tokens):
+- Font sizes: `xs`, `sm`, `label`, `base`, `h4`, `h3`, `h2`, `h1`
+- Font weights: `normal`, `medium`, `semibold`, `bold`
+- Font families: `heading`, `body`, `mono`
+- Line heights: `none`, `tight`, `normal`, `relaxed`
+
+**Spacing** (13 tokens):
+- Numeric: `0`, `1`, `2`, `3`, `4`, `5`, `6`, `8`, `10`, `12`
+- Semantic: `xs`, `sm`, `md`, `lg`, `xl`
+
+**Shadows** (3 tokens):
+- `sm`, `md`, `lg`
+
+**Animation** (8 tokens):
+- Durations: `fast`, `normal`, `slow`, `slower`
+- Easings: `default`, `in`, `out`, `in-out`
+
+**Sizes** (3 tokens):
+- `8`, `9`, `10` (used for icon sizes)
+
+---
+
+## Best Practices
+
+### ✅ Do's
+
+**Use Semantic Tokens First**
+```css
+/* ✅ Semantic names are self-documenting */
+padding: var(--spacing-md);
+color: var(--colors-primary);
+
+/* ⚠️ Numeric tokens are less clear */
+padding: var(--spacing-4);
+```
+
+**Maintain Consistency**
+```tsx
+// ✅ Use tokens everywhere
+<Button style={{ padding: 'var(--spacing-md)' }} />
+
+// ❌ Don't mix tokens and hard-coded values
+<Button style={{ padding: '16px' }} />
+```
+
+**Compose Tokens**
+```css
+/* ✅ Combine multiple tokens */
+.card {
+  padding: var(--spacing-lg);
+  background: var(--colors-card);
+  border-radius: var(--radii-md);
+  box-shadow: var(--shadows-md);
+}
+```
+
+### ❌ Don'ts
+
+**Don't Hard-Code Values**
+```css
+/* ❌ Hard-coded values break design system */
+color: #6f2cff;
+padding: 24px;
+font-size: 14px;
+
+/* ✅ Use tokens instead */
+color: var(--colors-primary);
+padding: var(--spacing-6);
+font-size: var(--font-sizes-base);
+```
+
+**Don't Create Custom Tokens Without Review**
+```css
+/* ❌ Ad-hoc tokens fragment the system */
+--my-custom-spacing: 15px;
+
+/* ✅ Use existing tokens or propose new ones */
+padding: var(--spacing-4); /* 16px, close enough */
+```
+
+---
+
+## Extending the Design System
+
+### Adding New Tokens
+
+To add new design tokens:
+
+1. **Add to `src/styles/tokens.css`**:
+   ```css
+   :where(:root, :host) {
+     --colors-my-new-color: rgba(100, 200, 50, 1);
+   }
+   ```
+
+2. **Document in this file** (DesignTokens.mdx)
+
+3. **Update TypeScript types** (if applicable)
+
+4. **Use in components**:
+   ```tsx
+   <div style={{ color: 'var(--colors-my-new-color)' }}>
+   ```
+
+5. **Test in both React and Lit** to ensure compatibility
+
+### Token Naming Convention
+
+Follow the pattern: `--[category]-[name]`
+
+Examples:
+- `--colors-primary`
+- `--spacing-md`
+- `--font-sizes-h1`
+- `--radii-lg`
+- `--durations-fast`
+
+---
+
+## Resources
+
+- [Panda CSS Documentation](https://panda-css.com/)
+- [Design Tokens Community](https://www.designtokens.org/)
+- [CSS Custom Properties (MDN)](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
+
+---
+
+<div style={{ padding: '1.5rem', background: 'rgba(2, 128, 185, 0.1)', borderRadius: '8px', marginTop: '2rem' }}>
+  <strong>Want to see tokens in action?</strong>
+  <p style={{ marginBottom: 0, marginTop: '0.5rem' }}>
+    Explore our component stories to see how design tokens create consistent,
+    reusable patterns across the entire component library. Check out
+    <a href="/story/parity-button--default"> Parity/Button</a> to see identical styling
+    achieved with shared tokens!
+  </p>
+</div>

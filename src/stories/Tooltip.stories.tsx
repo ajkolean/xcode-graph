@@ -3,7 +3,7 @@ import * as React from 'react';
 import '../components-lit/ui/tooltip';
 
 const meta = {
-  title: 'Components/Tooltip',
+  title: 'Components/Feedback/Tooltip',
   parameters: {
     layout: 'centered',
   },
