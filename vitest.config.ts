@@ -3,14 +3,13 @@
 import path from 'node:path';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vitest/config';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { playwright } from '@vitest/browser-playwright';
 
 export default defineConfig({
   plugins: [
     react({
       include: /\.(jsx|tsx)$/,
     }),
-    storybookTest({ configDir: '.storybook' }),
   ],
   esbuild: {
     target: 'esnext',
@@ -22,6 +21,7 @@ export default defineConfig({
     },
   },
   test: {
+    name: 'unit',
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
@@ -31,7 +31,7 @@ export default defineConfig({
       inline: ['lit', '@lit/reactive-element', '@lit/task'],
     },
     coverage: {
-      provider: 'istanbul',
+      provider: 'v8',
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
@@ -44,9 +44,12 @@ export default defineConfig({
     },
     browser: {
       enabled: true,
-      name: 'chromium',
-      provider: 'playwright',
-      headless: true,
+      provider: playwright(),
+      instances: [
+        {
+          browser: 'chromium',
+        },
+      ],
     },
     testTimeout: 10000,
     hookTimeout: 10000,
