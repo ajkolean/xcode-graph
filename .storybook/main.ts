@@ -15,7 +15,6 @@ const config: StorybookConfig = {
     '@chromatic-com/storybook',
     '@storybook/addon-docs',
     '@storybook/addon-mcp',
-    '@storybook/addon-interactions',
     // Conditionally disable vitest addon in Chromatic environment
     // The addon starts a test runner which times out during Chromatic builds
     ...(!isChromatic() ? ['@storybook/addon-vitest'] : [])

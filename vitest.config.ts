@@ -40,14 +40,23 @@ const resolveConfig = {
 };
 
 export default defineConfig({
-  plugins: [reactPlugin],
+  plugins: [
+    reactPlugin,
+    storybookTest({
+      configDir: '.storybook',
+      // Use istanbul coverage for storybook tests (required for preview browser mode)
+      coverage: {
+        provider: 'istanbul',
+      },
+    }),
+  ],
   esbuild: {
     ...esbuildConfig,
   },
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['.storybook/vitest.setup.ts'],
+    setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', 'build', 'dist', 'src/test/visual-parity.test.ts'],
     // Required for Lit component testing
@@ -55,44 +64,21 @@ export default defineConfig({
       inline: ['lit', '@lit/reactive-element', '@lit/task'],
     },
     coverage: {
-      provider: 'v8',
+      provider: 'istanbul',
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'src/test/', '**/*.d.ts', '**/*.config.*', '**/types/*', 'styled-system/'],
     },
+    browser: {
+      enabled: true,
+      name: 'chromium',
+      provider: 'playwright',
+      headless: true,
+    },
+    // Increase timeouts for browser mode
+    testTimeout: 10000,
+    hookTimeout: 10000,
   },
   resolve: {
     ...resolveConfig,
   },
-  projects: [
-    {
-      plugins: [
-        // Storybook Vitest addon – run stories in browser mode
-        storybookTest({ configDir: '.storybook' }),
-        reactPlugin,
-      ],
-      esbuild: {
-        ...esbuildConfig,
-      },
-      resolve: {
-        ...resolveConfig,
-      },
-      test: {
-        name: 'storybook',
-        browser: {
-          enabled: true,
-          name: 'chromium',
-          provider: 'playwright',
-          headless: true,
-        },
-        setupFiles: ['.storybook/vitest.setup.ts'],
-        include: ['src/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
-        deps: {
-          inline: ['lit', '@lit/reactive-element', '@lit/task'],
-        },
-        // Increase timeouts for browser mode
-        testTimeout: 10000,
-        hookTimeout: 10000,
-      },
-    },
-  ],
 });
