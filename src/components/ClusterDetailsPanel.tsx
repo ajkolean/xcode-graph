@@ -13,6 +13,7 @@ import { ClusterHeader } from './clusterDetails/ClusterHeader';
 import { ClusterStats } from './clusterDetails/ClusterStats';
 import { ClusterTargetsList } from './clusterDetails/ClusterTargetsList';
 import { ClusterTypeBadge } from './clusterDetails/ClusterTypeBadge';
+import { LitClusterTypeBadge } from '../components-lit/wrappers/ClusterTypeBadge';
 
 interface ClusterDetailsPanelProps {
   cluster: Cluster;
@@ -76,7 +77,7 @@ export function ClusterDetailsPanel({
       />
 
       {/* Cluster Type Badge */}
-      <ClusterTypeBadge clusterType={cluster.type} clusterColor={clusterColor} />
+      <LitClusterTypeBadge clusterType={cluster.type} clusterColor={clusterColor} />
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">

@@ -5,11 +5,13 @@
 
 import type { FilterState } from '../../types/app';
 import { ClearFiltersButton } from './ClearFiltersButton';
+import { LitClearFiltersButton } from '../../components-lit/wrappers/ClearFiltersButton';
 import { EmptyState } from './EmptyState';
 import { FilterSection } from './FilterSection';
 import { PackagesIcon, PlatformsIcon, ProductTypesIcon, ProjectsIcon } from './icons/FilterIcons';
 import { SearchBar } from './SearchBar';
 import { StatsCard } from './StatsCard';
+import { LitStatsCard } from '../../components-lit/wrappers/StatsCard';
 
 interface FilterViewProps {
   // Counts
@@ -123,9 +125,9 @@ export function FilterView({
       </div>
 
       {/* Clear Filters Button */}
-      <ClearFiltersButton
+      <LitClearFiltersButton
         isActive={isFiltersActive || !!searchQuery}
-        onClick={() => {
+        onClearFilters={() => {
           onClearFilters();
           onSearchChange('');
         }}

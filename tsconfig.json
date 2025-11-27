@@ -34,7 +34,6 @@
     "noErrorTruncation": true,
 
     /* Path aliases */
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@lit-components/*": ["./src/components-lit/*"]
