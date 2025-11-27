@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react';
+import { createPreview } from '@storybook/react';
 import { within as withinShadow } from 'shadow-dom-testing-library';
 
 // Import global styles
@@ -7,24 +7,15 @@ import '../src/styles/tokens.css';
 
 // Import all Lit components to register custom elements
 // This ensures customElements.define() is called before stories render
-import '../src/components-lit/ui/skeleton';
-import '../src/components-lit/ui/separator';
-import '../src/components-lit/ui/card';
-import '../src/components-lit/ui/button';
-import '../src/components-lit/ui/input';
-import '../src/components-lit/ui/label';
-import '../src/components-lit/ui/textarea';
-import '../src/components-lit/ui/checkbox';
-import '../src/components-lit/ui/switch';
-import '../src/components-lit/ui/slider';
-import '../src/components-lit/ui/radio-group';
-import '../src/components-lit/ui/progress';
-import '../src/components-lit/ui/toggle';
-import '../src/components-lit/ui/tabs';
-import '../src/components-lit/ui/accordion';
-import '../src/components-lit/ui/tooltip';
+import '../src/components-lit/ui/clear-filters-button';
+import '../src/components-lit/ui/cluster-type-badge';
+import '../src/components-lit/ui/empty-state';
+import '../src/components-lit/ui/filter-icons';
+import '../src/components-lit/ui/search-bar';
+import '../src/components-lit/ui/sidebar-collapse-icon';
+import '../src/components-lit/ui/stats-card';
 
-const preview: Preview = {
+const preview = createPreview({
   beforeEach({ canvasElement, canvas }) {
     // Inject shadow-aware query methods into canvas
     Object.assign(canvas, { ...withinShadow(canvasElement) });
@@ -125,6 +116,13 @@ const preview: Preview = {
       value: 'dark'
     }
   }
-};
+});
+
+// 👇 Extend TypeScript types for shadow DOM queries
+export type ShadowQueries = ReturnType<typeof withinShadow>;
+
+declare module 'storybook/internal/csf' {
+  interface Canvas extends ShadowQueries {}
+}
 
 export default preview;

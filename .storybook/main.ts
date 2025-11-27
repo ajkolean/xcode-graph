@@ -20,15 +20,49 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
+  tags: {
+    // Tag filtering configuration for React/Lit parity testing
+    react: {
+      title: 'React',
+      description: 'React implementation stories',
+    },
+    lit: {
+      title: 'Lit',
+      description: 'Lit Web Components implementation stories',
+    },
+    parity: {
+      title: 'Parity',
+      description: 'Stories used for visual parity comparison',
+    },
+    comparison: {
+      title: 'Comparison',
+      description: 'Side-by-side comparison stories',
+    },
+    test: {
+      title: 'Tests',
+      description: 'Stories with attached tests',
+      defaultFilterSelection: 'exclude', // Hide tests from sidebar by default
+    },
+    interactive: {
+      title: 'Interactive',
+      description: 'Interactive demonstration stories',
+    },
+    showcase: {
+      title: 'Showcase',
+      description: 'Stories showcasing all variants',
+    },
+  },
   viteFinal: async (config) => {
-    // Exclude Lit components from React SWC transformation
+    // Exclude Lit components from React SWC transformation and React Docgen
     if (config.plugins) {
       config.plugins = config.plugins.map((plugin) => {
-        if (plugin && typeof plugin === 'object' && 'name' in plugin && plugin.name === 'vite:react-swc') {
-          return {
-            ...plugin,
-            exclude: [/components-lit/],
-          };
+        if (plugin && typeof plugin === 'object' && 'name' in plugin) {
+          if (plugin.name === 'vite:react-swc' || plugin.name === 'storybook:react-docgen-plugin') {
+            return {
+              ...plugin,
+              exclude: [/components-lit/],
+            };
+          }
         }
         return plugin;
       });

@@ -4,6 +4,7 @@
  */
 
 import { SidebarCollapseIcon } from './icons/SidebarCollapseIcon';
+import { SidebarCollapseIcon as LitSidebarCollapseIcon } from '../../components-lit/wrappers/SidebarCollapseIcon';
 
 interface RightSidebarHeaderProps {
   title: string;
@@ -42,7 +43,7 @@ export function RightSidebarHeader({
         }}
         title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
-        <SidebarCollapseIcon isCollapsed={isCollapsed} />
+        <LitSidebarCollapseIcon isCollapsed={isCollapsed} />
       </button>
     </div>
   );

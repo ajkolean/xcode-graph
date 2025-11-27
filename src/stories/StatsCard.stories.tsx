@@ -2,79 +2,85 @@
  * StatsCard Component Stories
  *
  * Demonstrates both React and Lit versions of StatsCard for visual parity testing.
+ * Using CSF Factories for better TypeScript support.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { within, expect } from '@storybook/test';
+import preview from '../../.storybook/preview';
 import { StatsCard as ReactStatsCard } from '../components/sidebar/StatsCard';
 import { LitStatsCard } from '../components-lit/wrappers/StatsCard';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/StatsCard',
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta;
-
-export default meta;
-
-type Story = StoryObj<typeof meta>;
+});
 
 // ========================================
 // React Version Stories
 // ========================================
 
-export const ReactDefault: Story = {
+export const ReactDefault = meta.story({
   name: 'React - Default',
+  tags: ['react', 'parity'],
   render: () => <ReactStatsCard label="Total Nodes" value="42" />,
-};
+});
 
-export const ReactWithNumber: Story = {
+export const ReactWithNumber = meta.story({
   name: 'React - Number Value',
+  tags: ['react'],
   render: () => <ReactStatsCard label="Count" value={123} />,
-};
+});
 
-export const ReactHighlighted: Story = {
+export const ReactHighlighted = meta.story({
   name: 'React - Highlighted',
+  tags: ['react', 'parity'],
   render: () => <ReactStatsCard label="Selected" value="10" highlighted />,
-};
+});
 
-export const ReactLargeValue: Story = {
+export const ReactLargeValue = meta.story({
   name: 'React - Large Value',
+  tags: ['react'],
   render: () => <ReactStatsCard label="Total Dependencies" value="1,234" />,
-};
+});
 
 // ========================================
 // Lit Version Stories
 // ========================================
 
-export const LitDefault: Story = {
+export const LitDefault = meta.story({
   name: 'Lit - Default',
+  tags: ['lit', 'parity'],
   render: () => <LitStatsCard label="Total Nodes" value="42" />,
-};
+});
 
-export const LitWithNumber: Story = {
+export const LitWithNumber = meta.story({
   name: 'Lit - Number Value',
+  tags: ['lit'],
   render: () => <LitStatsCard label="Count" value={123} />,
-};
+});
 
-export const LitHighlighted: Story = {
+export const LitHighlighted = meta.story({
   name: 'Lit - Highlighted',
+  tags: ['lit', 'parity'],
   render: () => <LitStatsCard label="Selected" value="10" highlighted />,
-};
+});
 
-export const LitLargeValue: Story = {
+export const LitLargeValue = meta.story({
   name: 'Lit - Large Value',
+  tags: ['lit'],
   render: () => <LitStatsCard label="Total Dependencies" value="1,234" />,
-};
+});
 
 // ========================================
 // Parity Comparison
 // ========================================
 
-export const ParityComparison: Story = {
+export const ParityComparison = meta.story({
   name: '🔍 Parity Comparison',
+  tags: ['parity', 'comparison'],
   render: () => (
     <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start', width: '600px' }}>
       <div style={{ flex: 1 }}>
@@ -114,14 +120,15 @@ export const ParityComparison: Story = {
       </div>
     </div>
   ),
-};
+});
 
 // ========================================
 // All Variants
 // ========================================
 
-export const AllVariants: Story = {
+export const AllVariants = meta.story({
   name: '📚 All Variants',
+  tags: ['lit', 'showcase'],
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '24px' }}>
       <div>
@@ -158,14 +165,15 @@ export const AllVariants: Story = {
       </div>
     </div>
   ),
-};
+});
 
 // ========================================
 // Interactive Test
 // ========================================
 
-export const InteractiveHover: Story = {
+export const InteractiveHover = meta.story({
   name: '🎯 Interactive - Hover Effects',
+  tags: ['lit', 'interactive', 'test'],
   render: () => (
     <div style={{ padding: '40px' }}>
       <p style={{ marginBottom: '16px', color: 'var(--color-muted-foreground)' }}>
@@ -177,13 +185,55 @@ export const InteractiveHover: Story = {
       </div>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Wait for components to render
+  play: async ({ canvas }) => {
+    // Wait for Lit components to render
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // Note: Shadow DOM interaction testing would require
-    // custom helpers to query into shadow root
+    // 👇 Now we can query inside shadow DOM!
+    const labels = await canvas.findAllByShadowText(/Hover Me|Highlighted/i);
+
+    // Verify both cards rendered
+    await expect(labels.length).toBeGreaterThanOrEqual(2);
+
+    // Find elements by their shadow DOM structure
+    const value42 = await canvas.findByShadowText('42');
+    await expect(value42).toBeTruthy();
+
+    const value100 = await canvas.findByShadowText('100');
+    await expect(value100).toBeTruthy();
   },
-};
+});
+
+// ========================================
+// Experimental Test Syntax
+// ========================================
+
+// Test: Verify LitStatsCard renders with correct attributes
+LitDefault.test('should render with correct label and value', async ({ canvas, expect }) => {
+  // Wait for Lit component to render
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  const statsCard = canvas.getByText('Total Nodes');
+  await expect(statsCard).toBeTruthy();
+
+  const value = canvas.getByText('42');
+  await expect(value).toBeTruthy();
+});
+
+// Test: Verify highlighted state applies correct styling
+LitHighlighted.test('should apply highlighted styling', async ({ canvas, expect }) => {
+  // Wait for Lit component to render
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  // Find the stats-card custom element
+  const statsCardElement = canvas.getByText('Selected').closest('stats-card');
+  await expect(statsCardElement).toBeTruthy();
+
+  // Verify the highlighted attribute is present
+  if (statsCardElement) {
+    const hasHighlighted = statsCardElement.hasAttribute('highlighted');
+    await expect(hasHighlighted).toBe(true);
+  }
+});
+
+export default meta;

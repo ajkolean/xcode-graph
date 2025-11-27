@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@chromatic-com/playwright';
 import { compareVisualParity, waitForLitComponents } from './visual-parity-helpers';
 
 test.describe('Visual Parity: React vs Lit Pixel Comparison', () => {

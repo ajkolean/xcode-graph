@@ -10,7 +10,14 @@ import { EmptyState } from './EmptyState';
 import { LitEmptyState } from '../../components-lit/wrappers/EmptyState';
 import { FilterSection } from './FilterSection';
 import { PackagesIcon, PlatformsIcon, ProductTypesIcon, ProjectsIcon } from './icons/FilterIcons';
+import {
+  PackagesIcon as LitPackagesIcon,
+  PlatformsIcon as LitPlatformsIcon,
+  ProductTypesIcon as LitProductTypesIcon,
+  ProjectsIcon as LitProjectsIcon,
+} from '../../components-lit/wrappers/FilterIcons';
 import { SearchBar } from './SearchBar';
+import { SearchBar as LitSearchBar } from '../../components-lit/wrappers/SearchBar';
 import { StatsCard } from './StatsCard';
 import { LitStatsCard } from '../../components-lit/wrappers/StatsCard';
 
@@ -135,7 +142,11 @@ export function FilterView({
       />
 
       {/* Search Bar */}
-      <SearchBar searchQuery={searchQuery} onSearchChange={onSearchChange} />
+      <LitSearchBar
+        searchQuery={searchQuery}
+        onSearchChange={(e) => onSearchChange(e.detail.query)}
+        onSearchClear={() => onSearchChange('')}
+      />
 
       {/* Filter Content */}
       <div className="h-full overflow-y-auto">
@@ -144,7 +155,7 @@ export function FilterView({
           <FilterSection
             id="productTypes"
             title="Product Types"
-            icon={<ProductTypesIcon />}
+            icon={<LitProductTypesIcon />}
             isExpanded={expandedSections.productTypes}
             onToggle={() => onToggleSection('productTypes')}
             items={nodeTypeItems}
@@ -168,7 +179,7 @@ export function FilterView({
           <FilterSection
             id="platforms"
             title="Platforms"
-            icon={<PlatformsIcon />}
+            icon={<LitPlatformsIcon />}
             isExpanded={expandedSections.platforms}
             onToggle={() => onToggleSection('platforms')}
             items={platformItems}
@@ -192,7 +203,7 @@ export function FilterView({
           <FilterSection
             id="projects"
             title="Projects"
-            icon={<ProjectsIcon />}
+            icon={<LitProjectsIcon />}
             isExpanded={expandedSections.projects}
             onToggle={() => onToggleSection('projects')}
             items={projectItems}
@@ -219,7 +230,7 @@ export function FilterView({
             <FilterSection
               id="packages"
               title="Packages"
-              icon={<PackagesIcon />}
+              icon={<LitPackagesIcon />}
               isExpanded={expandedSections.packages}
               onToggle={() => onToggleSection('packages')}
               items={packageItems}
