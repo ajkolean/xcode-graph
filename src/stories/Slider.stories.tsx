@@ -155,6 +155,19 @@ export const Ranges: Story = {
       />
     </div>
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find all sliders (should be 4 total - 2 ranges × 2 implementations)
+    const sliders = canvas.getAllByRole('slider', { hidden: true });
+    expect(sliders.length).toBeGreaterThanOrEqual(4);
+
+    // Verify different ranges are set
+    for (const slider of sliders) {
+      const max = slider.getAttribute('aria-valuemax');
+      expect(max).toBeTruthy();
+    }
+  },
 };
 
 /**
@@ -203,6 +216,13 @@ export const Steps: Story = {
       />
     </div>
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find all sliders (should be 4 total - 2 steps × 2 implementations)
+    const sliders = canvas.getAllByRole('slider', { hidden: true });
+    expect(sliders.length).toBeGreaterThanOrEqual(4);
+  },
 };
 
 /**
@@ -224,4 +244,16 @@ export const Disabled: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find disabled sliders
+    const sliders = canvas.getAllByRole('slider', { hidden: true });
+    expect(sliders.length).toBeGreaterThanOrEqual(2);
+
+    // Verify sliders are disabled
+    for (const slider of sliders) {
+      expect(slider).toBeDisabled();
+    }
+  },
 };

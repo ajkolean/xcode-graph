@@ -103,6 +103,22 @@ export const WithDelay: Story = {
       </graph-tooltip-content>
     </graph-tooltip>
   ),
+  play: async ({ canvas, userEvent }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const trigger = await canvas.findByShadowRole('button', { name: /Hover and wait/i });
+    expect(trigger).toBeInTheDocument();
+
+    // Hover over trigger
+    await userEvent.hover(trigger);
+
+    // Wait for delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Tooltip should appear
+    const tooltip = await canvas.findByShadowText(/This appeared after 700ms/i);
+    expect(tooltip).toBeInTheDocument();
+  },
 };
 
 /**

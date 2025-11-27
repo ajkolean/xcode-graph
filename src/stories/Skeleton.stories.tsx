@@ -78,6 +78,13 @@ export const Sizes: Story = {
       />
     </div>
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find all skeleton elements (should be 6 total - 3 sizes × 2 implementations)
+    const skeletons = canvas.getAllByTestId(/skeleton/i, { hidden: true });
+    expect(skeletons.length).toBeGreaterThanOrEqual(6);
+  },
 };
 
 /**
@@ -117,6 +124,13 @@ export const CardSkeleton: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Card skeleton has multiple skeleton elements
+    const skeletons = canvas.getAllByTestId(/skeleton/i, { hidden: true });
+    expect(skeletons.length).toBeGreaterThanOrEqual(10); // Multiple skeletons per card
+  },
 };
 
 /**
@@ -154,4 +168,11 @@ export const ListSkeleton: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // List skeleton has 4 items, each with multiple skeleton elements
+    const skeletons = canvas.getAllByTestId(/skeleton/i, { hidden: true });
+    expect(skeletons.length).toBeGreaterThanOrEqual(16); // 4 items × 2 skeletons each × 2 implementations
+  },
 };

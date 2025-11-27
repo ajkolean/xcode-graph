@@ -103,6 +103,16 @@ export const ShortText: Story = {
       litComponent={<LitBadge variant={args.variant}>{args.children}</LitBadge>}
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const badges = await canvas.findAllByShadowText('New');
+    expect(badges).toHaveLength(2);
+
+    for (const badge of badges) {
+      expect(badge).toHaveAttribute('data-slot', 'badge');
+    }
+  },
 };
 
 /**
@@ -120,6 +130,12 @@ export const LongText: Story = {
       litComponent={<LitBadge variant={args.variant}>{args.children}</LitBadge>}
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const badges = await canvas.findAllByShadowText('In Development');
+    expect(badges).toHaveLength(2);
+  },
 };
 
 /**
@@ -137,6 +153,17 @@ export const WithNumber: Story = {
       litComponent={<LitBadge variant={args.variant}>{args.children}</LitBadge>}
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const badges = await canvas.findAllByShadowText('42');
+    expect(badges).toHaveLength(2);
+
+    // Verify number is displayed correctly
+    for (const badge of badges) {
+      expect(badge.textContent).toContain('42');
+    }
+  },
 };
 
 /**
@@ -162,4 +189,16 @@ export const MultipleBadges: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Should have 6 badges total (3 per implementation)
+    const reactBadge = await canvas.findAllByShadowText('React');
+    const tsBadge = await canvas.findAllByShadowText('TypeScript');
+    const viteBadge = await canvas.findAllByShadowText('Vite');
+
+    expect(reactBadge).toHaveLength(2);
+    expect(tsBadge).toHaveLength(2);
+    expect(viteBadge).toHaveLength(2);
+  },
 };

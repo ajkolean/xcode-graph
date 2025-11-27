@@ -110,6 +110,16 @@ export const Simple: Story = {
       }
     />
   ),
+  play: async ({ canvasElement }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const cards = canvasElement.querySelectorAll('[data-slot="card"]');
+    expect(cards.length).toBe(2);
+
+    // Verify cards contain content
+    const content = await within(canvasElement).findAllByShadowText(/simple card with just content/i);
+    expect(content.length).toBeGreaterThanOrEqual(1);
+  },
 };
 
 /**
@@ -163,4 +173,17 @@ export const WithHeader: Story = {
       }
     />
   ),
+  play: async ({ canvasElement }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const cards = canvasElement.querySelectorAll('[data-slot="card"]');
+    expect(cards.length).toBe(2);
+
+    // Verify header elements are present
+    const titles = await within(canvasElement).findAllByShadowText(/Notifications/i);
+    expect(titles.length).toBeGreaterThanOrEqual(2);
+
+    const descriptions = await within(canvasElement).findAllByShadowText(/3 unread messages/i);
+    expect(descriptions.length).toBeGreaterThanOrEqual(2);
+  },
 };

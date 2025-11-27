@@ -76,7 +76,7 @@ export async function compareVisualParity(
   let litImagePath: string | undefined;
 
   if (!match) {
-    const outputDir = join(process.cwd(), 'test-results', 'visual-parity');
+    const outputDir = join(process.cwd(), '.visual-parity-diffs');
     const safeName = testName.replace(/[^a-z0-9]/gi, '-').toLowerCase();
 
     reactImagePath = join(outputDir, `${safeName}-react.png`);

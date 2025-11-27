@@ -103,6 +103,7 @@
     "test:visual-parity": "playwright test src/test/visual-parity.test.ts",
     "test:visual-parity:ui": "playwright test src/test/visual-parity.test.ts --ui",
     "test:visual-parity:headed": "playwright test src/test/visual-parity.test.ts --headed",
+    "clean:visual": "rm -rf .visual-parity-diffs .playwright-results test-results playwright-report",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test-storybook": "test-storybook",

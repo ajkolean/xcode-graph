@@ -196,6 +196,18 @@ export const AllSizes: Story = {
       />
     </div>
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Should have 8 avatars total (4 sizes × 2 implementations)
+    const avatars = canvas.getAllByRole('img', { hidden: true });
+    expect(avatars.length).toBeGreaterThanOrEqual(8);
+
+    // Verify each has alt text for accessibility
+    for (const avatar of avatars) {
+      expect(avatar).toHaveAttribute('alt');
+    }
+  },
 };
 
 export const Group: Story = {

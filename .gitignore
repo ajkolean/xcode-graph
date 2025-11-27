@@ -45,3 +45,9 @@ vite.config.ts.timestamp-*
 # Storybook
 screenshots/
 storybook-static/
+
+# Visual Parity Testing
+.visual-parity-diffs/
+.playwright-results/
+test-results/
+playwright-report/

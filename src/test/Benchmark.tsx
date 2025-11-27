@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button } from '../components/ui/button';
 import { LitButton } from '../components-lit/wrappers/Button';
 
 export function Benchmark() {
@@ -84,7 +83,7 @@ export function Benchmark() {
         {mode === 'react' && (
           <div className="flex flex-wrap gap-2">
             {Array.from({ length: 1000 }).map((_, i) => (
-              <Button key={i} variant="default" size="sm">Button {i}</Button>
+              <LitButton key={i} variant="default" size="sm">Button {i}</LitButton>
             ))}
           </div>
         )}

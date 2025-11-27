@@ -123,6 +123,24 @@ export const Values: Story = {
       />
     </div>
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find all progress bars (should be 8 total - 4 values × 2 implementations)
+    const progressBars = canvas.getAllByRole('progressbar', { hidden: true });
+    expect(progressBars.length).toBeGreaterThanOrEqual(8);
+
+    // Verify different values are set correctly
+    const progress0 = progressBars.filter(p => p.getAttribute('aria-valuenow') === '0');
+    const progress25 = progressBars.filter(p => p.getAttribute('aria-valuenow') === '25');
+    const progress75 = progressBars.filter(p => p.getAttribute('aria-valuenow') === '75');
+    const progress100 = progressBars.filter(p => p.getAttribute('aria-valuenow') === '100');
+
+    expect(progress0.length).toBeGreaterThanOrEqual(2);
+    expect(progress25.length).toBeGreaterThanOrEqual(2);
+    expect(progress75.length).toBeGreaterThanOrEqual(2);
+    expect(progress100.length).toBeGreaterThanOrEqual(2);
+  },
 };
 
 /**
@@ -164,5 +182,19 @@ export const Animated: Story = {
         }
       />
     );
+  },
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find progress bars
+    const progressBars = canvas.getAllByRole('progressbar', { hidden: true });
+    expect(progressBars.length).toBeGreaterThanOrEqual(2);
+
+    // Wait for animation to progress
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    // Verify progress has changed from 0
+    const currentValue = parseInt(progressBars[0].getAttribute('aria-valuenow') || '0');
+    expect(currentValue).toBeGreaterThan(0);
   },
 };
