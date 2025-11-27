@@ -92,7 +92,9 @@
     "shadow-dom-testing-library": "^1.13.1",
     "storybook": "^10.1.0",
     "vite": "7.2.4",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.14",
+    "playwright": "^1.57.0",
+    "@vitest/coverage-v8": "^4.0.14"
   },
   "scripts": {
     "dev": "vite",
