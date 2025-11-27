@@ -4,7 +4,7 @@ import path from 'node:path';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vitest/config';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-import { playwright } from '@vitest/browser/providers/playwright';
+import { playwright } from '@vitest/browser-playwright';
 
 const reactPlugin = {
   ...react({
