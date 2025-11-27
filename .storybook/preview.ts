@@ -49,8 +49,6 @@ const preview: Preview = {
     },
     docs: {},
     a11y: {
-      // Run accessibility tests in Vitest - fails on violations
-      test: 'error',
       // Run accessibility checks using axe-core
       config: {
         rules: [

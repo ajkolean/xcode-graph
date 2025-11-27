@@ -4,6 +4,7 @@
  */
 
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { FilterState } from '../types/app';
 
 export interface ClusterStatsResult {
   filteredDependencies: number;
@@ -122,5 +123,65 @@ export function computeClusterStats(
     totalDependents,
     filteredTargetsCount,
     platforms,
+  };
+}
+
+/**
+ * Compute filter counts and utilities
+ * Converted from useFilters hook
+ */
+export function computeFilters(allNodes: GraphNode[]) {
+  const typeCounts = new Map<string, number>();
+  allNodes.forEach((node) => {
+    typeCounts.set(node.type, (typeCounts.get(node.type) || 0) + 1);
+  });
+
+  const platformCounts = new Map<string, number>();
+  allNodes.forEach((node) => {
+    platformCounts.set(node.platform, (platformCounts.get(node.platform) || 0) + 1);
+  });
+
+  const projectCounts = new Map<string, number>();
+  allNodes.forEach((node) => {
+    if (node.project && node.type !== 'package') {
+      projectCounts.set(node.project, (projectCounts.get(node.project) || 0) + 1);
+    }
+  });
+
+  const packageCounts = new Map<string, number>();
+  allNodes.forEach((node) => {
+    if (node.type === 'package') {
+      packageCounts.set(node.name, (packageCounts.get(node.name) || 0) + 1);
+    }
+  });
+
+  const hasActiveFilters = (filters: FilterState): boolean => {
+    return (
+      filters.nodeTypes.size < typeCounts.size ||
+      filters.platforms.size < platformCounts.size ||
+      filters.projects.size < projectCounts.size ||
+      filters.packages.size < packageCounts.size
+    );
+  };
+
+  const createClearFilters = (onFiltersChange: (filters: FilterState) => void) => {
+    return () => {
+      onFiltersChange({
+        nodeTypes: new Set(typeCounts.keys()),
+        platforms: new Set(platformCounts.keys()),
+        origins: new Set(['local', 'external']),
+        projects: new Set(projectCounts.keys()),
+        packages: new Set(packageCounts.keys()),
+      });
+    };
+  };
+
+  return {
+    typeCounts,
+    platformCounts,
+    projectCounts,
+    packageCounts,
+    hasActiveFilters,
+    createClearFilters,
   };
 }

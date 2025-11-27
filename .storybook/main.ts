@@ -1,10 +1,24 @@
 // This file has been automatically migrated to valid ESM format by Storybook.
-import { fileURLToPath } from "node:url";
+import type { AddonOptionsVite } from '@storybook/addon-coverage';
 import type { StorybookConfig } from '@storybook/react-vite';
 import path, { dirname } from 'node:path';
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Coverage addon configuration for Vite
+const coverageConfig: AddonOptionsVite = {
+  istanbul: {
+    include: ['src/**/*.{ts,tsx}'],
+    exclude: [
+      'src/**/*.stories.{ts,tsx}',
+      'src/**/*.test.{ts,tsx}',
+      'src/test/**',
+      'src/**/*.d.ts',
+    ],
+  },
+};
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -14,6 +28,10 @@ const config: StorybookConfig = {
     '@chromatic-com/storybook',
     '@storybook/addon-docs',
     '@storybook/addon-mcp',
+    {
+      name: '@storybook/addon-coverage',
+      options: coverageConfig,
+    },
   ],
   framework: {
     name: '@storybook/react-vite',

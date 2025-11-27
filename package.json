@@ -66,6 +66,7 @@
     "@open-wc/testing": "^4.0.0",
     "@playwright/test": "^1.57.0",
     "@storybook/addon-a11y": "^10.1.0",
+    "@storybook/addon-coverage": "^3.0.0",
     "@storybook/addon-docs": "^10.1.0",
     "@storybook/addon-links": "^10.1.0",
     "@storybook/addon-mcp": "^0.1.4",
