@@ -19,7 +19,6 @@ export class GraphTextarea extends LitElement {
     required: { type: Boolean },
     name: { type: String },
     rows: { type: Number },
-    className: { type: String, attribute: 'class' },
   };
 
   declare value: string;
@@ -28,7 +27,6 @@ export class GraphTextarea extends LitElement {
   declare required: boolean;
   declare name: string;
   declare rows: number;
-  declare className: string;
 
   constructor() {
     super();
@@ -38,7 +36,6 @@ export class GraphTextarea extends LitElement {
     this.required = false;
     this.name = '';
     this.rows = 3;
-    this.className = '';
   }
 
   static override styles = css`

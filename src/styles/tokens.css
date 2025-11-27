@@ -1,9 +1,9 @@
 /**
  * Design Tokens
- * Extracted from panda.config.ts
  *
- * These CSS custom properties are available in both Light DOM (:root)
- * and Shadow DOM (:host) contexts for maximum compatibility.
+ * Comprehensive design token system using CSS custom properties.
+ * Available in both Light DOM (:root) and Shadow DOM (:host) contexts
+ * for maximum compatibility across React and Lit components.
  */
 
 :where(:root, :host) {
@@ -120,14 +120,11 @@
 
   /* ========================================
      SPACING (13 tokens)
+     Numeric scale (0-12) with semantic aliases
      ======================================== */
 
+  /* Numeric scale */
   --spacing-0: 0;
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
   --spacing-1: 4px;
   --spacing-2: 8px;
   --spacing-3: 12px;
@@ -137,6 +134,13 @@
   --spacing-8: 32px;
   --spacing-10: 40px;
   --spacing-12: 48px;
+
+  /* Semantic aliases (point to numeric scale) */
+  --spacing-xs: var(--spacing-1);
+  --spacing-sm: var(--spacing-2);
+  --spacing-md: var(--spacing-4);
+  --spacing-lg: var(--spacing-6);
+  --spacing-xl: var(--spacing-8);
 
   /* ========================================
      SHADOWS / ELEVATION (3 tokens)

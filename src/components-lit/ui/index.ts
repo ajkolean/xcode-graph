@@ -1,5 +1,5 @@
 // UI Primitives - Lit Web Components
-// Each component uses the graph-* prefix and Light DOM for Panda CSS styling
+// Each component uses the graph-* prefix and Shadow DOM with native Lit CSS
 
 export { GraphBadge, type BadgeVariant } from './badge';
 export { GraphSkeleton } from './skeleton';

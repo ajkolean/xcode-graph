@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/react';
 import { themes } from '@storybook/theming';
+import { within as withinShadow } from 'shadow-dom-testing-library';
 
 // Import global styles (includes Panda CSS)
 import '../src/index.css';
@@ -24,6 +25,10 @@ import '../src/components-lit/ui/tabs';
 import '../src/components-lit/ui/accordion';
 
 const preview: Preview = {
+  beforeEach({ canvasElement, canvas }) {
+    // Inject shadow-aware query methods into canvas
+    Object.assign(canvas, { ...withinShadow(canvasElement) });
+  },
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {

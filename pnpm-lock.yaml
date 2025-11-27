@@ -228,6 +228,9 @@ importers:
       jsdom:
         specifier: ^27.2.0
         version: 27.2.0
+      shadow-dom-testing-library:
+        specifier: ^1.13.1
+        version: 1.13.1(@testing-library/dom@10.4.1)
       storybook:
         specifier: ^8.6.14
         version: 8.6.14(prettier@3.2.5)
@@ -4617,6 +4620,12 @@ packages:
 
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
+
+  shadow-dom-testing-library@1.13.1:
+    resolution: {integrity: sha512-X73VDI3KumYeYuz/C2yjn4/1bsUN68JleYI3NwFJUDa+5fWhO//s+02gdxdetY+mVRYZosVokkkmIhdzjABnmQ==}
+    engines: {node: '>= 14', npm: '>= 7'}
+    peerDependencies:
+      '@testing-library/dom': '>= 8'
 
   shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
@@ -10050,6 +10059,10 @@ snapshots:
   setprototypeof@1.1.0: {}
 
   setprototypeof@1.2.0: {}
+
+  shadow-dom-testing-library@1.13.1(@testing-library/dom@10.4.1):
+    dependencies:
+      '@testing-library/dom': 10.4.1
 
   shebang-command@2.0.0:
     dependencies:

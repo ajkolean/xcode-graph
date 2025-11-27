@@ -1120,69 +1120,89 @@
   }
 }
 
+/**
+ * Legacy tokens for React components
+ * TODO: Migrate React components to use new --colors-* tokens from tokens.css
+ */
 :root {
   --font-size: 16px;
-  --background: #000;
-  --foreground: #e8eaed;
-  --card: #0a0a0b;
-  --card-foreground: #e8eaed;
-  --popover: #1a1a1d;
-  --popover-foreground: #e8eaed;
-  --primary: #6f2cff;
-  --primary-foreground: #fdfdfd;
-  --secondary: #ffffff0d;
-  --secondary-foreground: #e8eaed;
-  --muted: #ffffff0d;
-  --muted-foreground: #e8eaed80;
-  --accent: #6f2cff26;
-  --accent-foreground: #e8eaed;
-  --destructive: #e51c01;
-  --destructive-foreground: #fdfdfd;
-  --border: #ffffff14;
-  --input: #ffffff0d;
-  --input-background: #ffffff0d;
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --ring: #6f2cff;
-  --elevation-sm: 0px 1px 1px 0px #0000004d, 0px 0px 0px 1px #ffffff0f, 0px 1px 1px 0px #0006;
-  --chart-1: #6f2cff;
-  --chart-2: #0280b9;
-  --chart-3: #28a745;
-  --chart-4: #fd791c;
-  --chart-5: #e51c01;
-  --radius: 6px;
-  --radius-card: 16px;
-  --radius-button: 6px;
-  --sidebar: #0a0a0b;
-  --sidebar-foreground: #e8eaed;
-  --sidebar-primary: #6f2cff;
-  --sidebar-primary-foreground: #fdfdfd;
-  --sidebar-accent: #6f2cff26;
-  --sidebar-accent-foreground: #e8eaed;
-  --sidebar-border: #ffffff0f;
-  --sidebar-ring: #6f2cff;
-  --text-h1: 40px;
-  --text-h2: 18px;
-  --text-h3: 16px;
-  --text-h4: 14px;
-  --text-base: 14px;
-  --text-label: 12px;
-  --text-xs: 10px;
-  --text-small: 11px;
-  --font-family-heading: "DM Sans", sans-serif;
-  --font-family-body: "Inter", sans-serif;
-  --font-family-mono: "SF Mono", "Monaco", "Consolas", monospace;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+
+  /* Colors - Aliased to new token system */
+  --background: var(--colors-background);
+  --foreground: var(--colors-foreground);
+  --card: var(--colors-card);
+  --card-foreground: var(--colors-card-foreground);
+  --popover: var(--colors-popover);
+  --popover-foreground: var(--colors-popover-foreground);
+  --primary: var(--colors-primary);
+  --primary-foreground: var(--colors-primary-foreground);
+  --secondary: var(--colors-secondary);
+  --secondary-foreground: var(--colors-secondary-foreground);
+  --muted: var(--colors-muted);
+  --muted-foreground: var(--colors-muted-foreground);
+  --accent: var(--colors-accent);
+  --accent-foreground: var(--colors-accent-foreground);
+  --destructive: var(--colors-destructive);
+  --destructive-foreground: var(--colors-destructive-foreground);
+  --border: var(--colors-border);
+  --input: var(--colors-input);
+  --input-background: var(--colors-input-background);
+  --ring: var(--colors-ring);
+
+  /* Chart colors */
+  --chart-1: var(--colors-chart-1);
+  --chart-2: var(--colors-chart-2);
+  --chart-3: var(--colors-chart-3);
+  --chart-4: var(--colors-chart-4);
+  --chart-5: var(--colors-chart-5);
+
+  /* Sidebar colors */
+  --sidebar: var(--colors-sidebar);
+  --sidebar-foreground: var(--colors-sidebar-foreground);
+  --sidebar-primary: var(--colors-sidebar-primary);
+  --sidebar-primary-foreground: var(--colors-sidebar-primary-foreground);
+  --sidebar-accent: var(--colors-sidebar-accent);
+  --sidebar-accent-foreground: var(--colors-sidebar-accent-foreground);
+  --sidebar-border: var(--colors-sidebar-border);
+  --sidebar-ring: var(--colors-sidebar-ring);
+
+  /* Typography - Aliased to new tokens */
+  --text-h1: var(--font-sizes-h1);
+  --text-h2: var(--font-sizes-h2);
+  --text-h3: var(--font-sizes-h3);
+  --text-h4: var(--font-sizes-h4);
+  --text-base: var(--font-sizes-base);
+  --text-label: var(--font-sizes-label);
+  --text-xs: var(--font-sizes-xs);
+  --text-small: var(--font-sizes-sm);
+  --font-family-heading: var(--fonts-heading);
+  --font-family-body: var(--fonts-body);
+  --font-family-mono: var(--fonts-mono);
+  --font-weight-medium: var(--font-weights-medium);
+  --font-weight-semibold: var(--font-weights-semibold);
+  --font-weight-normal: var(--font-weights-normal);
+  --font-weight-bold: var(--font-weights-bold);
+
+  /* Spacing - Aliased to new tokens */
+  --spacing-xs: var(--spacing-1);
+  --spacing-sm: var(--spacing-2);
+  --spacing-md: var(--spacing-4);
+  --spacing-lg: var(--spacing-6);
+  --spacing-xl: var(--spacing-8);
+
+  /* Border radius - Aliased to new tokens */
+  --radius: var(--radii-md);
+  --radius-card: var(--radii-lg);
+  --radius-button: var(--radii-md);
+
+  /* Shadows - Aliased to new tokens */
+  --elevation-sm: var(--shadows-sm);
+
+  /* Stars effect (specific to this app) */
   --stars-count: 200;
   --stars-opacity: 0.4;
-  --stars-color: #e8eaed;
-  --stars-glow-color: #6f2cff;
+  --stars-color: var(--colors-stars-color);
+  --stars-glow-color: var(--colors-stars-glow);
 }
 
 html {

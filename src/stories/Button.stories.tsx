@@ -92,14 +92,12 @@ export const Default: Story = {
       </>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ canvas }) => {
     // Wait for Lit components to render (important for Chromatic)
-    await waitForLitElements(canvasElement);
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Find both buttons
-    const buttons = canvas.getAllByRole('button', { name: 'Click me' });
+    // Find both buttons using shadow DOM queries
+    const buttons = await canvas.findAllByShadowRole('button', { name: 'Click me' });
     expect(buttons).toHaveLength(2);
 
     // Click both buttons
@@ -175,11 +173,12 @@ export const Disabled: Story = {
       litComponent={<LitButton disabled={args.disabled}>{args.children}</LitButton>}
     />
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async ({ canvas }) => {
+    // Wait for Lit components
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Find both buttons
-    const buttons = canvas.getAllByRole('button');
+    // Find both buttons using shadow DOM queries
+    const buttons = await canvas.findAllByShadowRole('button');
     expect(buttons).toHaveLength(2);
 
     // Verify both are disabled
@@ -232,11 +231,12 @@ export const WithIcon: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async ({ canvas }) => {
+    // Wait for Lit components
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Find both buttons
-    const buttons = canvas.getAllByRole('button');
+    // Find both buttons using shadow DOM queries
+    const buttons = await canvas.findAllByShadowRole('button');
     expect(buttons).toHaveLength(2);
 
     // Verify both contain SVG

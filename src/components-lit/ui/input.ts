@@ -20,7 +20,6 @@ export class GraphInput extends LitElement {
     disabled: { type: Boolean, reflect: true },
     required: { type: Boolean },
     name: { type: String },
-    className: { type: String, attribute: 'class' },
   };
 
   declare type: string;
@@ -29,7 +28,6 @@ export class GraphInput extends LitElement {
   declare disabled: boolean;
   declare required: boolean;
   declare name: string;
-  declare className: string;
 
   constructor() {
     super();
@@ -39,7 +37,6 @@ export class GraphInput extends LitElement {
     this.disabled = false;
     this.required = false;
     this.name = '';
-    this.className = '';
   }
 
   static override styles = css`
