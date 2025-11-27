@@ -1,34 +1,30 @@
 /**
  * Interaction Testing Examples
  *
- * This file demonstrates all the interaction testing capabilities:
- * - Shadow DOM queries for Lit components
- * - User event simulations (click, type, hover)
- * - Function spying with fn()
- * - Grouped steps for clarity
- * - Assertions with expect()
- * - The .test() syntax
+ * Demonstrates interaction testing with Shadow DOM queries and user events.
  */
 
+import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { expect, fn, userEvent } from 'storybook/test';
-import preview from '../../.storybook/preview';
 import { LitClearFiltersButton } from '../components-lit/wrappers/ClearFiltersButton';
 import { LitStatsCard } from '../components-lit/wrappers/StatsCard';
 
-const meta = preview.meta({
+const meta: Meta = {
   title: 'Testing/Interaction Examples',
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-});
+};
+
+type Story = StoryObj<typeof meta>;
 
 // ========================================
 // Example 1: Basic Shadow DOM Query
 // ========================================
 
-export const BasicShadowDOMQuery = meta.story({
+export const BasicShadowDOMQuery: Story = {
   name: '1️⃣ Basic Shadow DOM Query',
   tags: ['test'],
   render: () => <LitStatsCard label="Total Items" value="42" />,
@@ -38,7 +34,6 @@ export const BasicShadowDOMQuery = meta.story({
     });
 
     await step('Query text inside shadow DOM', async () => {
-      // 👇 This works because we configured shadow-dom-testing-library
       const labelElement = await canvas.findByShadowText('Total Items');
       await expect(labelElement).toBeTruthy();
 
@@ -46,13 +41,13 @@ export const BasicShadowDOMQuery = meta.story({
       await expect(valueElement).toBeTruthy();
     });
   },
-});
+};
 
 // ========================================
 // Example 2: User Interactions with Shadow DOM
 // ========================================
 
-export const UserInteractionsWithShadowDOM = meta.story({
+export const UserInteractionsWithShadowDOM: Story = {
   name: '2️⃣ User Interactions (Click)',
   tags: ['test'],
   args: {
@@ -82,13 +77,13 @@ export const UserInteractionsWithShadowDOM = meta.story({
       await expect(args.onClearFilters).toHaveBeenCalledTimes(1);
     });
   },
-});
+};
 
 // ========================================
 // Example 3: Multiple Interactions
 // ========================================
 
-export const MultipleInteractions = meta.story({
+export const MultipleInteractions: Story = {
   name: '3️⃣ Multiple Interactions',
   tags: ['test'],
   render: () => {
@@ -132,19 +127,18 @@ export const MultipleInteractions = meta.story({
     });
 
     await step('Verify count updated to 3', async () => {
-      // Wait for state update
       await new Promise((resolve) => setTimeout(resolve, 100));
       const updatedValue = await canvas.findByShadowText('3');
       await expect(updatedValue).toBeTruthy();
     });
   },
-});
+};
 
 // ========================================
 // Example 4: Querying Multiple Elements
 // ========================================
 
-export const QueryingMultipleElements = meta.story({
+export const QueryingMultipleElements: Story = {
   name: '4️⃣ Querying Multiple Elements',
   tags: ['test'],
   render: () => (
@@ -179,13 +173,13 @@ export const QueryingMultipleElements = meta.story({
       await expect(value8).toBeTruthy();
     });
   },
-});
+};
 
 // ========================================
 // Example 5: Testing Component States
 // ========================================
 
-export const TestingComponentStates = meta.story({
+export const TestingComponentStates: Story = {
   name: '5️⃣ Testing Component States',
   tags: ['test'],
   render: () => (
@@ -219,39 +213,13 @@ export const TestingComponentStates = meta.story({
       }
     });
   },
-});
+};
 
 // ========================================
-// Example 6: Using .test() Syntax
+// Example 6: Hover Interactions
 // ========================================
 
-BasicShadowDOMQuery.test('should render label and value', async ({ canvas, expect }) => {
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  const label = await canvas.findByShadowText('Total Items');
-  await expect(label).toBeTruthy();
-
-  const value = await canvas.findByShadowText('42');
-  await expect(value).toBeTruthy();
-});
-
-UserInteractionsWithShadowDOM.test(
-  'should call callback on click',
-  async ({ canvas, args, expect }) => {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    const button = await canvas.findByShadowRole('button');
-    await userEvent.click(button);
-
-    await expect(args.onClearFilters).toHaveBeenCalled();
-  },
-);
-
-// ========================================
-// Example 7: Hover Interactions
-// ========================================
-
-export const HoverInteractions = meta.story({
+export const HoverInteractions: Story = {
   name: '6️⃣ Hover Interactions',
   tags: ['test'],
   render: () => (
@@ -268,14 +236,10 @@ export const HoverInteractions = meta.story({
     });
 
     await step('Find and hover over the stats card', async () => {
-      // Find text inside shadow DOM
       const label = await canvas.findByShadowText('Hover Me');
       await expect(label).toBeTruthy();
 
-      // Hover over the element
       await userEvent.hover(label);
-
-      // Wait to see hover effect
       await new Promise((resolve) => setTimeout(resolve, 500));
     });
 
@@ -284,13 +248,13 @@ export const HoverInteractions = meta.story({
       await userEvent.unhover(label);
     });
   },
-});
+};
 
 // ========================================
-// Example 8: Complex Scenario
+// Example 7: Complex Scenario
 // ========================================
 
-export const ComplexScenario = meta.story({
+export const ComplexScenario: Story = {
   name: '7️⃣ Complex Scenario',
   tags: ['test'],
   render: () => {
@@ -374,11 +338,8 @@ export const ComplexScenario = meta.story({
     await step('Toggle highlight state', async () => {
       const toggleButton = await canvas.findByRole('button', { name: /toggle highlight/i });
       await userEvent.click(toggleButton);
-
-      // Wait for state update
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      // Verify highlighted attribute changed
       const label = await canvas.findByShadowText('Total');
       const statsCard = label.closest('stats-card');
 
@@ -388,6 +349,6 @@ export const ComplexScenario = meta.story({
       }
     });
   },
-});
+};
 
 export default meta;

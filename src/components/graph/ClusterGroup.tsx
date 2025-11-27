@@ -84,8 +84,18 @@ export function ClusterGroup({
 
   const clusterNodes = cluster.nodes;
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClusterClick();
+    }
+  };
+
   return (
     <g
+      role="button"
+      aria-label={`${cluster.name} cluster, ${cluster.nodes.length} targets`}
+      tabIndex={0}
       onMouseEnter={() => {
         setIsClusterHovered(true);
         onClusterMouseEnter();
@@ -94,6 +104,7 @@ export function ClusterGroup({
         setIsClusterHovered(false);
         onClusterMouseLeave();
       }}
+      onKeyDown={handleKeyDown}
     >
       {/* Cluster card background */}
       <ClusterCard

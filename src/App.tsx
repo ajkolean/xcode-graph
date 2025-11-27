@@ -12,6 +12,7 @@ import { Header as LitHeader } from './components-lit/wrappers/Header';
 import { PlaceholderTab } from './components/layout/PlaceholderTab';
 import { PlaceholderTab as LitPlaceholderTab } from './components-lit/wrappers/PlaceholderTab';
 import { Sidebar } from './components/layout/Sidebar';
+import { Sidebar as LitSidebar } from './components-lit/wrappers/Sidebar';
 import { mockGraphData } from './data/mockGraphData';
 import { useGraphFilters } from './hooks/useGraphFilters';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -136,7 +137,7 @@ export default function App() {
       {/* Main Layout: Sidebar + Content */}
       <div className="flex-1 flex overflow-hidden relative" style={{ zIndex: 20 }}>
         {/* Left Sidebar */}
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <LitSidebar activeTab={activeTab} onTabChange={(e) => setActiveTab(e.detail.tab)} />
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">

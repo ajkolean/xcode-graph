@@ -17,6 +17,27 @@ interface ClusterTargetsListProps {
   zoom: number;
 }
 
+// Helper: Calculate dependencies and dependents for a node
+function getNodeStats(nodeId: string, edges: GraphEdge[]) {
+  const dependencies = edges.filter((e) => e.target === nodeId).length;
+  const dependents = edges.filter((e) => e.source === nodeId).length;
+  return { dependencies, dependents };
+}
+
+// Helper: Format node statistics as subtitle text
+function formatNodeStatsSubtitle(stats: { dependencies: number; dependents: number }): string | undefined {
+  const parts: string[] = [];
+
+  if (stats.dependencies > 0) {
+    parts.push(`${stats.dependencies} dep${stats.dependencies !== 1 ? 's' : ''}`);
+  }
+  if (stats.dependents > 0) {
+    parts.push(`${stats.dependents} dependent${stats.dependents !== 1 ? 's' : ''}`);
+  }
+
+  return parts.length > 0 ? parts.join(' · ') : undefined;
+}
+
 export function ClusterTargetsList({
   nodesByType,
   filteredTargetsCount,
@@ -26,12 +47,6 @@ export function ClusterTargetsList({
   onNodeHover,
   zoom,
 }: ClusterTargetsListProps) {
-  // Helper function to calculate dependencies and dependents for a node
-  const getNodeStats = (nodeId: string) => {
-    const dependencies = edges.filter((e) => e.target === nodeId).length;
-    const dependents = edges.filter((e) => e.source === nodeId).length;
-    return { dependencies, dependents };
-  };
 
   return (
     <div className="px-4 py-4">
@@ -66,17 +81,8 @@ export function ClusterTargetsList({
 
             <div className="space-y-1">
               {nodes.map((node) => {
-                const stats = getNodeStats(node.id);
-                const parts = [];
-
-                if (stats.dependencies > 0) {
-                  parts.push(`${stats.dependencies} dep${stats.dependencies !== 1 ? 's' : ''}`);
-                }
-                if (stats.dependents > 0) {
-                  parts.push(`${stats.dependents} dependent${stats.dependents !== 1 ? 's' : ''}`);
-                }
-
-                const subtitle = parts.length > 0 ? parts.join(' · ') : undefined;
+                const stats = getNodeStats(node.id, edges);
+                const subtitle = formatNodeStatsSubtitle(stats);
 
                 return (
                   <ListItemRow

@@ -54,8 +54,21 @@ export function ClusterCard({
       'opacity 0.2s ease-in-out, font-weight 0.2s ease-in-out, text-shadow 0.2s ease-in-out',
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <g opacity={isDimmed ? 0.3 : 1}>
+    <g
+      opacity={isDimmed ? 0.3 : 1}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? `${cluster.name} cluster, ${cluster.nodes.length} targets` : undefined}
+      onKeyDown={handleKeyDown}
+    >
       {/* Background fill */}
       <rect
         x={x}

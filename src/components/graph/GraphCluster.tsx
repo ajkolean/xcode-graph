@@ -29,10 +29,21 @@ export function GraphCluster({
   onMouseLeave,
   children,
 }: GraphClusterProps) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onMouseEnter();
+    }
+  };
+
   return (
     <g
+      role="group"
+      aria-label={`${clusterId} cluster, ${nodeCount} targets, ${origin === 'external' ? 'external' : 'local'}`}
+      tabIndex={0}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onKeyDown={handleKeyDown}
       style={{ transition: 'all 0.3s ease' }}
     >
       {/* Hover glow with smooth transition */}

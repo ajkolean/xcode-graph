@@ -2,15 +2,19 @@
  * ClusterTypeBadge Component Stories
  *
  * Demonstrates both React and Lit versions for visual parity testing.
- * Using CSF Factories for better TypeScript support.
  */
 
+import type { Meta, StoryObj } from '@storybook/react';
 import { expect } from 'storybook/test';
-import preview from '../../.storybook/preview';
-import { ClusterTypeBadge as ReactClusterTypeBadge } from '../components/clusterDetails/ClusterTypeBadge';
 import { LitClusterTypeBadge } from '../components-lit/wrappers/ClusterTypeBadge';
+import { ClusterTypeBadge as ReactClusterTypeBadge } from '../components/clusterDetails/ClusterTypeBadge';
 
-const meta = preview.meta({
+type ClusterTypeBadgeArgs = {
+  clusterType: 'package' | 'project';
+  clusterColor: string;
+};
+
+const meta = {
   title: 'Components/ClusterTypeBadge',
   component: ReactClusterTypeBadge,
   parameters: {
@@ -24,13 +28,16 @@ const meta = preview.meta({
     clusterColor: { control: 'color' },
   },
   tags: ['autodocs'],
-});
+} satisfies Meta<ClusterTypeBadgeArgs>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 // ========================================
 // React Version Stories
 // ========================================
 
-export const ReactPlayground = meta.story({
+export const ReactPlayground: Story = {
   name: 'React - Playground',
   tags: ['react', 'controls'],
   args: {
@@ -38,25 +45,25 @@ export const ReactPlayground = meta.story({
     clusterColor: '#8B5CF6',
   },
   render: (args) => <ReactClusterTypeBadge {...args} />,
-});
+};
 
-export const ReactPackage = meta.story({
+export const ReactPackage: Story = {
   name: 'React - Package (Purple)',
   tags: ['react', 'parity'],
   render: () => <ReactClusterTypeBadge clusterType="package" clusterColor="#8B5CF6" />,
-});
+};
 
-export const ReactProject = meta.story({
+export const ReactProject: Story = {
   name: 'React - Project (Green)',
   tags: ['react', 'parity'],
   render: () => <ReactClusterTypeBadge clusterType="project" clusterColor="#10B981" />,
-});
+};
 
 // ========================================
 // Lit Version Stories
 // ========================================
 
-export const LitPlayground = meta.story({
+export const LitPlayground: Story = {
   name: 'Lit - Playground',
   tags: ['lit', 'controls'],
   args: {
@@ -64,25 +71,52 @@ export const LitPlayground = meta.story({
     clusterColor: '#8B5CF6',
   },
   render: (args) => <LitClusterTypeBadge {...args} />,
-});
+};
 
-export const LitPackage = meta.story({
+export const LitPackage: Story = {
   name: 'Lit - Package (Purple)',
   tags: ['lit', 'parity'],
   render: () => <LitClusterTypeBadge clusterType="package" clusterColor="#8B5CF6" />,
-});
+  play: async ({ canvas }) => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
-export const LitProject = meta.story({
+    const packageText = canvas.getByText('Package');
+    await expect(packageText).toBeTruthy();
+
+    const badgeElement = packageText.closest('graph-cluster-type-badge');
+    await expect(badgeElement).toBeTruthy();
+
+    if (badgeElement) {
+      await expect(badgeElement.getAttribute('cluster-type')).toBe('package');
+      await expect(badgeElement.getAttribute('cluster-color')).toBe('#8B5CF6');
+    }
+  },
+};
+
+export const LitProject: Story = {
   name: 'Lit - Project (Green)',
   tags: ['lit', 'parity'],
   render: () => <LitClusterTypeBadge clusterType="project" clusterColor="#10B981" />,
-});
+  play: async ({ canvas }) => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const projectText = canvas.getByText('Project');
+    await expect(projectText).toBeTruthy();
+
+    const badgeElement = projectText.closest('graph-cluster-type-badge');
+    await expect(badgeElement).toBeTruthy();
+
+    if (badgeElement) {
+      await expect(badgeElement.getAttribute('cluster-type')).toBe('project');
+    }
+  },
+};
 
 // ========================================
 // Parity Comparison
 // ========================================
 
-export const ParityComparison = meta.story({
+export const ParityComparison: Story = {
   name: '🔍 Parity Comparison',
   tags: ['parity', 'comparison'],
   render: () => (
@@ -126,19 +160,21 @@ export const ParityComparison = meta.story({
       </div>
     </div>
   ),
-});
+};
 
 // ========================================
 // All Colors
 // ========================================
 
-export const AllColors = meta.story({
+export const AllColors: Story = {
   name: '📚 Color Variants',
   tags: ['lit', 'showcase'],
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '24px' }}>
       <div>
-        <h4 style={{ marginBottom: '12px', color: 'var(--color-foreground)' }}>Package Badges</h4>
+        <h4 style={{ marginBottom: '12px', color: 'var(--color-foreground)' }}>
+          Package Badges
+        </h4>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <LitClusterTypeBadge clusterType="package" clusterColor="#8B5CF6" />
           <LitClusterTypeBadge clusterType="package" clusterColor="#F59E0B" />
@@ -149,7 +185,9 @@ export const AllColors = meta.story({
       </div>
 
       <div>
-        <h4 style={{ marginBottom: '12px', color: 'var(--color-foreground)' }}>Project Badges</h4>
+        <h4 style={{ marginBottom: '12px', color: 'var(--color-foreground)' }}>
+          Project Badges
+        </h4>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <LitClusterTypeBadge clusterType="project" clusterColor="#10B981" />
           <LitClusterTypeBadge clusterType="project" clusterColor="#06B6D4" />
@@ -179,61 +217,4 @@ export const AllColors = meta.story({
       </div>
     </div>
   ),
-});
-
-// ========================================
-// Experimental Test Syntax
-// ========================================
-
-// Test: Package badge should render with correct type
-LitPackage.test('should render package badge with correct styling', async ({ canvas }) => {
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  // Find the badge text
-  const packageText = canvas.getByText('Package');
-  await expect(packageText).toBeTruthy();
-
-  // Verify the cluster-type-badge custom element exists
-  const badgeElement = packageText.closest('cluster-type-badge');
-  await expect(badgeElement).toBeTruthy();
-
-  if (badgeElement) {
-    const clusterType = badgeElement.getAttribute('clustertype');
-    await expect(clusterType).toBe('package');
-  }
-});
-
-// Test: Project badge should render with correct type
-LitProject.test('should render project badge with correct styling', async ({ canvas }) => {
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  // Find the badge text
-  const projectText = canvas.getByText('Project');
-  await expect(projectText).toBeTruthy();
-
-  // Verify the cluster-type-badge custom element exists
-  const badgeElement = projectText.closest('cluster-type-badge');
-  await expect(badgeElement).toBeTruthy();
-
-  if (badgeElement) {
-    const clusterType = badgeElement.getAttribute('clustertype');
-    await expect(clusterType).toBe('project');
-  }
-});
-
-// Test: Verify color is applied correctly
-LitPackage.test('should apply cluster color correctly', async ({ canvas }) => {
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  const packageText = canvas.getByText('Package');
-  const badgeElement = packageText.closest('cluster-type-badge');
-
-  await expect(badgeElement).toBeTruthy();
-
-  if (badgeElement) {
-    const clusterColor = badgeElement.getAttribute('clustercolor');
-    await expect(clusterColor).toBe('#8B5CF6');
-  }
-});
-
-export default meta;
+};
