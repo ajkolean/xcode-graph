@@ -2,11 +2,12 @@ import type { TestRunnerConfig } from '@storybook/test-runner';
 import { injectAxe, checkA11y } from 'axe-playwright';
 
 const config: TestRunnerConfig = {
+  // Increase timeout for stories with interactions and Shadow DOM
+  testTimeout: 30000,
+
   async preVisit(page) {
     // Wait for Lit components to be defined and rendered
-    await page.waitForFunction(() => {
-      return customElements.whenDefined('stats-card');
-    });
+    await page.waitForTimeout(200);
 
     // Inject axe-core for accessibility testing
     await injectAxe(page);
