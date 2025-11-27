@@ -140,11 +140,22 @@ export class GraphVisualization extends LitElement {
   // Lifecycle
   // ========================================
 
-  updated(changedProps: Map<string, any>) {
+  private previousNodes?: typeof this.nodes;
+  private previousEdges?: typeof this.edges;
+
+  willUpdate(changedProps: Map<string, any>) {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
-      this.layout.enableAnimation = this.enableAnimation;
-      this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
+      // Only recompute if data actually changed (avoid recomputing on every render)
+      const nodesChanged = this.nodes !== this.previousNodes;
+      const edgesChanged = this.edges !== this.previousEdges;
+
+      if (nodesChanged || edgesChanged) {
+        this.layout.enableAnimation = this.enableAnimation;
+        this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
+        this.previousNodes = this.nodes;
+        this.previousEdges = this.edges;
+      }
     }
 
     // Update animation when enableAnimation changes
@@ -160,7 +171,9 @@ export class GraphVisualization extends LitElement {
         clusterPositions: this.layout.clusterPositions,
       });
     }
+  }
 
+  updated(changedProps: Map<string, any>) {
     // Set SVG element reference
     if (this.svgElement && !this.interaction.hasSvgElement()) {
       this.interaction.setSvgElement(this.svgElement);

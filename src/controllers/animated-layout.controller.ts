@@ -56,7 +56,6 @@ export class AnimatedLayoutController implements ReactiveController {
       this.nodePositions = new Map();
       this.clusterPositions = new Map();
       this.clusters = [];
-      this.host.requestUpdate();
       return;
     }
 
@@ -86,7 +85,6 @@ export class AnimatedLayoutController implements ReactiveController {
     if (!this.enableAnimation) {
       this.nodePositions = animatedNodePos;
       this.clusterPositions = animatedClusterPos;
-      this.host.requestUpdate();
       return;
     }
 
