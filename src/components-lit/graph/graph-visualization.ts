@@ -140,22 +140,11 @@ export class GraphVisualization extends LitElement {
   // Lifecycle
   // ========================================
 
-  private previousNodes?: typeof this.nodes;
-  private previousEdges?: typeof this.edges;
-
   willUpdate(changedProps: Map<string, any>) {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
-      // Only recompute if data actually changed (avoid recomputing on every render)
-      const nodesChanged = this.nodes !== this.previousNodes;
-      const edgesChanged = this.edges !== this.previousEdges;
-
-      if (nodesChanged || edgesChanged) {
-        this.layout.enableAnimation = this.enableAnimation;
-        this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
-        this.previousNodes = this.nodes;
-        this.previousEdges = this.edges;
-      }
+      this.layout.enableAnimation = this.enableAnimation;
+      this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
     }
 
     // Update animation when enableAnimation changes
