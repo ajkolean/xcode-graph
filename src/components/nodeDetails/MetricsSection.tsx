@@ -3,6 +3,7 @@
  */
 
 import { StatsCard } from '../sidebar/StatsCard';
+import { LitStatsCard } from '../../components-lit/wrappers/StatsCard';
 
 interface MetricsSectionProps {
   dependenciesCount: number;
@@ -37,12 +38,12 @@ export function MetricsSection({
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-2 gap-3">
-        <StatsCard
+        <LitStatsCard
           label="Dependencies Out"
           value={`${dependenciesCount}/${totalDependenciesCount}`}
         />
 
-        <StatsCard label="Dependencies In" value={`${dependentsCount}/${totalDependentsCount}`} />
+        <LitStatsCard label="Dependencies In" value={`${dependentsCount}/${totalDependentsCount}`} />
       </div>
     </div>
   );

@@ -4,8 +4,33 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
-    react(),
+    {
+      ...react(),
+      enforce: 'pre',
+      apply(config, { command }) {
+        // Only apply during specific conditions
+        return true;
+      },
+      transform(code, id) {
+        // Skip Lit components
+        if (id.includes('components-lit') || id.endsWith('.lit.ts')) {
+          return null; // Let esbuild handle it
+        }
+        // Let react plugin handle it
+        return;
+      },
+    },
   ],
+  esbuild: {
+    // Enable decorators for Lit components
+    target: 'esnext',
+    tsconfigRaw: {
+      compilerOptions: {
+        experimentalDecorators: true,
+        useDefineForClassFields: true,
+      },
+    },
+  },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {

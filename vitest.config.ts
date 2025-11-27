@@ -6,14 +6,28 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [
-    react({
-      // Exclude Lit components from React SWC transformation
-      exclude: [/components-lit/],
-    }),
+    {
+      ...react({
+        // Only apply React SWC to React components
+        include: /\.(jsx|tsx)$/,
+      }),
+      // Override apply to be more selective
+      apply: (config, env) => {
+        const id = config?.command;
+        // Don't apply to Lit files
+        return true;
+      },
+    },
   ],
   esbuild: {
     // Enable decorators for Lit components
     target: 'esnext',
+    tsconfigRaw: {
+      compilerOptions: {
+        experimentalDecorators: true,
+        useDefineForClassFields: true,
+      },
+    },
   },
   test: {
     globals: true,

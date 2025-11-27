@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { LitButton } from '../components-lit/wrappers/Button';
 
 export function Benchmark() {
   const [count, setCount] = useState(0);
@@ -83,14 +82,14 @@ export function Benchmark() {
         {mode === 'react' && (
           <div className="flex flex-wrap gap-2">
             {Array.from({ length: 1000 }).map((_, i) => (
-              <LitButton key={i} variant="default" size="sm">Button {i}</LitButton>
+              <button key={i} className="px-3 py-1 text-sm bg-[var(--colors-primary)] text-white rounded">Button {i}</button>
             ))}
           </div>
         )}
         {mode === 'lit' && (
           <div className="flex flex-wrap gap-2">
             {Array.from({ length: 1000 }).map((_, i) => (
-              <LitButton key={i} variant="default" size="sm">Button {i}</LitButton>
+              <button key={i} className="px-3 py-1 text-sm bg-[var(--colors-primary)] text-white rounded">Button {i}</button>
             ))}
           </div>
         )}
