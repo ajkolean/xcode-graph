@@ -84,14 +84,12 @@ export const InputComparison: Story = {
       </>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ canvas }) => {
     // Wait for Lit components to render
-    await waitForLitElements(canvasElement);
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Find both inputs
-    const inputs = canvas.getAllByPlaceholderText('Enter username...');
+    // Find both inputs using shadow DOM queries
+    const inputs = await canvas.findAllByShadowRole('textbox');
     expect(inputs).toHaveLength(2);
 
     // Type in both inputs
@@ -156,14 +154,12 @@ export const CheckboxComparison: Story = {
       </>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ canvas }) => {
     // Wait for Lit components to render
-    await waitForLitElements(canvasElement);
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Find both checkboxes
-    const checkboxes = canvas.getAllByRole('checkbox');
+    // Find both checkboxes using shadow DOM queries
+    const checkboxes = await canvas.findAllByShadowRole('checkbox');
     expect(checkboxes).toHaveLength(2);
 
     // Click both checkboxes
@@ -228,14 +224,12 @@ export const SwitchComparison: Story = {
       </>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ canvas }) => {
     // Wait for Lit components to render
-    await waitForLitElements(canvasElement);
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Find both switches (using role button since switches are button elements)
-    const switches = canvas.getAllByRole('button');
+    // Find both switches using shadow DOM queries (switches have role 'switch')
+    const switches = await canvas.findAllByShadowRole('switch');
     expect(switches).toHaveLength(2);
 
     // Click both switches
