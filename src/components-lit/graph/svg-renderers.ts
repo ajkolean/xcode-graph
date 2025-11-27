@@ -93,7 +93,10 @@ export function renderClusterCard(options: ClusterCardOptions) {
         stroke-opacity="${isActive ? 0.9 : borderOpacity}"
         stroke-dasharray="${strokeDasharray}"
         stroke-linecap="round"
-        style="transition: stroke-opacity 0.2s ease-in-out"
+        style="
+          transition: stroke-opacity 0.2s ease-in-out;
+          ${isSelected ? 'animation: marchingAnts 0.8s linear infinite' : ''}
+        "
       />
 
       <!-- Cluster label -->
@@ -302,52 +305,239 @@ export function renderGraphNode(options: GraphNodeOptions) {
 // ========================================
 
 export interface GraphEdgeOptions {
-  edge: GraphEdge;
-  sourcePos: { x: number; y: number };
-  targetPos: { x: number; y: number };
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  color: string;
   isHighlighted?: boolean;
-  isDimmed?: boolean;
+  isDependent?: boolean;
+  opacity?: number;
   zoom?: number;
-  color?: string;
+  animated?: boolean;
+}
+
+function generateBezierPath(x1: number, y1: number, x2: number, y2: number): string {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  // Control point offset (creates gentle curve)
+  const offset = Math.min(Math.abs(dx), Math.abs(dy)) * 0.3;
+
+  // Control points for smooth S-curve
+  const cx1 = x1 + offset;
+  const cy1 = y1;
+  const cx2 = x2 - offset;
+  const cy2 = y2;
+
+  return `M ${x1},${y1} C ${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
 }
 
 export function renderGraphEdge(options: GraphEdgeOptions) {
   const {
-    edge,
-    sourcePos,
-    targetPos,
+    x1,
+    y1,
+    x2,
+    y2,
+    color,
     isHighlighted = false,
-    isDimmed = false,
+    isDependent = false,
+    opacity: opacityMultiplier = 1.0,
     zoom = 1.0,
-    color = '#666',
+    animated = false,
   } = options;
 
+  // Calculate distance to determine if we should use bezier curve
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const useBezier = distance > 150;
+
+  // Adjust color based on zoom level
   const zoomAdjustedColor = adjustColorForZoom(color, zoom);
-  const opacity = isDimmed ? 0.1 : isHighlighted ? 0.8 : 0.3;
-  const strokeWidth = isHighlighted ? 2 : 1;
 
-  // Calculate control point for curved edges
-  const midX = (sourcePos.x + targetPos.x) / 2;
-  const midY = (sourcePos.y + targetPos.y) / 2;
-  const dx = targetPos.x - sourcePos.x;
-  const dy = targetPos.y - sourcePos.y;
-  const curvature = 0.2;
-  const ctrlX = midX - dy * curvature;
-  const ctrlY = midY + dx * curvature;
+  // Base opacity: highlighted (0.8), normal (0.3)
+  const baseOpacity = isHighlighted ? 0.8 : 0.3;
+  const zoomOpacity = adjustOpacityForZoom(baseOpacity, zoom);
+  const finalOpacity = zoomOpacity * opacityMultiplier;
 
-  const pathD = `M ${sourcePos.x} ${sourcePos.y} Q ${ctrlX} ${ctrlY} ${targetPos.x} ${targetPos.y}`;
+  // Cross-cluster = long dashes "8,4", Regular = short dashes "4,2"
+  const dashPattern = isDependent ? '8,4' : '4,2';
+
+  // Generate path (bezier curve or straight line)
+  const path = useBezier ? generateBezierPath(x1, y1, x2, y2) : `M ${x1},${y1} L ${x2},${y2}`;
 
   return svg`
-    <path
-      d="${pathD}"
-      fill="none"
-      stroke="${zoomAdjustedColor}"
-      stroke-width="${strokeWidth}"
-      stroke-opacity="${opacity}"
-      stroke-linecap="round"
-      marker-end="url(#arrowhead)"
-      style="transition: stroke-opacity 0.3s"
-    />
+    <g class="graph-edge" style="transition: opacity 0.3s ease">
+      ${isHighlighted ? svg`
+        <path
+          d="${path}"
+          stroke="${zoomAdjustedColor}"
+          stroke-width="3"
+          fill="none"
+          opacity="${adjustOpacityForZoom(0.3, zoom) * opacityMultiplier}"
+          filter="url(#glow-strong)"
+          stroke-dasharray="${dashPattern}"
+          class="${animated ? 'flow-animation' : ''}"
+          shape-rendering="geometricPrecision"
+        />
+      ` : nothing}
+      <path
+        d="${path}"
+        stroke="${zoomAdjustedColor}"
+        stroke-width="${isHighlighted ? 2 : 1}"
+        fill="none"
+        opacity="${finalOpacity}"
+        stroke-dasharray="${dashPattern}"
+        class="${animated ? 'flow-animation' : ''}"
+        shape-rendering="geometricPrecision"
+        style="transition: opacity 0.3s ease, stroke-width 0.2s ease"
+      />
+    </g>
+  `;
+}
+
+// ========================================
+// Graph Edges Renderer (renders multiple edges)
+// ========================================
+
+export interface GraphEdgesOptions {
+  edges: GraphEdge[];
+  nodes: GraphNode[];
+  finalNodePositions: Map<string, NodePosition>;
+  clusterPositions: Map<string, ClusterPosition>;
+  selectedNode: GraphNode | null;
+  hoveredNode: string | null;
+  clusterId?: string | null;
+  hoveredClusterId?: string | null;
+  viewMode?: string;
+  transitiveDeps?: {
+    nodes: Set<string>;
+    edges: Set<string>;
+    edgeDepths: Map<string, number>;
+    maxDepth: number;
+  };
+  transitiveDependents?: {
+    nodes: Set<string>;
+    edges: Set<string>;
+    edgeDepths: Map<string, number>;
+    maxDepth: number;
+  };
+  zoom?: number;
+}
+
+function getEdgeOpacity(
+  edge: GraphEdge,
+  viewMode: string,
+  transitiveDeps?: GraphEdgesOptions['transitiveDeps'],
+  transitiveDependents?: GraphEdgesOptions['transitiveDependents']
+): number {
+  const edgeKey = `${edge.source}->${edge.target}`;
+  const inDepsChain = transitiveDeps?.edges.has(edgeKey);
+  const inDependentsChain = transitiveDependents?.edges.has(edgeKey);
+
+  if (viewMode === 'focused' && inDepsChain && transitiveDeps) {
+    const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
+    const maxDepth = transitiveDeps.maxDepth || 1;
+    return 1.0 - (depth / maxDepth) * 0.7;
+  }
+
+  if (viewMode === 'dependents' && inDependentsChain && transitiveDependents) {
+    const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
+    const maxDepth = transitiveDependents.maxDepth || 1;
+    return 1.0 - (depth / maxDepth) * 0.7;
+  }
+
+  if (viewMode === 'both' && (inDepsChain || inDependentsChain)) {
+    if (inDepsChain && transitiveDeps) {
+      const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
+      const maxDepth = transitiveDeps.maxDepth || 1;
+      return 1.0 - (depth / maxDepth) * 0.7;
+    }
+    if (inDependentsChain && transitiveDependents) {
+      const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
+      const maxDepth = transitiveDependents.maxDepth || 1;
+      return 1.0 - (depth / maxDepth) * 0.7;
+    }
+  }
+
+  return 1.0;
+}
+
+export function renderGraphEdges(options: GraphEdgesOptions) {
+  const {
+    edges,
+    nodes,
+    finalNodePositions,
+    clusterPositions,
+    selectedNode,
+    hoveredNode,
+    clusterId,
+    hoveredClusterId,
+    viewMode = 'full',
+    transitiveDeps,
+    transitiveDependents,
+    zoom = 1.0,
+  } = options;
+
+  return svg`
+    ${edges.map((edge) => {
+      const sourceNode = nodes.find((n) => n.id === edge.source);
+      const targetNode = nodes.find((n) => n.id === edge.target);
+      if (!sourceNode || !targetNode) return nothing;
+
+      const sourceClusterId = sourceNode.project || 'External';
+      const targetClusterId = targetNode.project || 'External';
+
+      // Filter based on cluster context
+      if (clusterId) {
+        if (sourceClusterId !== clusterId || targetClusterId !== clusterId) return nothing;
+      } else {
+        if (sourceClusterId === targetClusterId) return nothing;
+      }
+
+      const sourcePos = finalNodePositions.get(edge.source);
+      const targetPos = finalNodePositions.get(edge.target);
+      const sourceCluster = clusterPositions.get(sourceClusterId);
+      const targetCluster = clusterPositions.get(targetClusterId);
+
+      if (!sourcePos || !targetPos || !sourceCluster || !targetCluster) return nothing;
+
+      const x1 = sourceCluster.x + sourcePos.x;
+      const y1 = sourceCluster.y + sourcePos.y;
+      const x2 = targetCluster.x + targetPos.x;
+      const y2 = targetCluster.y + targetPos.y;
+
+      const isHighlighted =
+        selectedNode && (edge.source === selectedNode.id || edge.target === selectedNode.id);
+      const isFocused = hoveredNode === edge.source || hoveredNode === edge.target;
+
+      const isConnectedToHoveredCluster =
+        hoveredClusterId &&
+        (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
+
+      const shouldDim = hoveredClusterId && !isConnectedToHoveredCluster;
+      const edgeColor = getNodeTypeColor(targetNode.type);
+      const isCrossCluster = !clusterId;
+      const shouldAnimate = isFocused || isHighlighted;
+
+      const opacity = shouldDim
+        ? getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents) * 0.08
+        : getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
+
+      return renderGraphEdge({
+        x1,
+        y1,
+        x2,
+        y2,
+        color: edgeColor,
+        isHighlighted: isHighlighted || isFocused,
+        isDependent: isCrossCluster,
+        opacity,
+        zoom,
+        animated: shouldAnimate,
+      });
+    })}
   `;
 }
 

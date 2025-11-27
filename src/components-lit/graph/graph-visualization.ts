@@ -29,7 +29,7 @@ import { GraphInteractionFullController } from '@/controllers/graph-interaction-
 import { computeHierarchicalLayout } from '@/utils/hierarchicalLayout';
 import { groupIntoClusters } from '@/utils/clusterGrouping';
 import { analyzeCluster } from '@/utils/clusterAnalysis';
-import { renderClusterGroup } from './svg-renderers';
+import { renderClusterGroup, renderGraphEdges } from './svg-renderers';
 import './graph-svg-defs';
 import './cluster-group';
 import './graph-edges';
@@ -117,6 +117,22 @@ export class GraphVisualization extends LitElement {
 
     svg.dragging {
       cursor: grabbing;
+    }
+
+    @keyframes flowDashes {
+      to {
+        stroke-dashoffset: -12px;
+      }
+    }
+
+    @keyframes marchingAnts {
+      to {
+        stroke-dashoffset: -16px;
+      }
+    }
+
+    .flow-animation {
+      animation: flowDashes 1s linear infinite;
     }
   `;
 
@@ -255,22 +271,22 @@ export class GraphVisualization extends LitElement {
 
         <g transform="translate(${this.interaction.pan.x}, ${this.interaction.pan.y}) scale(${this.zoom ?? 1})">
           ${this.nodes?.length
-            ? html`
+            ? svg`
                 <!-- Cross-cluster edges -->
                 <g class="cluster-edges">
-                  <graph-edges
-                    .edges=${this.edges}
-                    .nodes=${this.nodes}
-                    .finalNodePositions=${this.finalNodePositions}
-                    .clusterPositions=${this.layout.clusterPositions}
-                    .selectedNode=${this.selectedNode}
-                    .hoveredNode=${this.hoveredNode}
-                    .hoveredClusterId=${this.hoveredCluster}
-                    view-mode=${this.viewMode}
-                    .transitiveDeps=${this.transitiveDeps}
-                    .transitiveDependents=${this.transitiveDependents}
-                    .zoom=${this.zoom}
-                  ></graph-edges>
+                  ${renderGraphEdges({
+                    edges: this.edges ?? [],
+                    nodes: this.nodes ?? [],
+                    finalNodePositions: this.finalNodePositions,
+                    clusterPositions: this.layout.clusterPositions,
+                    selectedNode: this.selectedNode ?? null,
+                    hoveredNode: this.hoveredNode ?? null,
+                    hoveredClusterId: this.hoveredCluster,
+                    viewMode: this.viewMode,
+                    transitiveDeps: this.transitiveDeps,
+                    transitiveDependents: this.transitiveDependents,
+                    zoom: this.zoom,
+                  })}
                 </g>
 
                 <!-- Clusters with nodes and internal edges -->
