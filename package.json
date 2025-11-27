@@ -2,6 +2,7 @@
   "name": "tuistgraph",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@floating-ui/dom": "^1.7.4",
     "@lit/react": "^1.0.8",
