@@ -5,15 +5,21 @@
  * Using CSF Factories for better TypeScript support.
  */
 
-import { within, expect } from '@storybook/test';
+import { within, expect } from 'storybook/test';
 import preview from '../../.storybook/preview';
 import { StatsCard as ReactStatsCard } from '../components/sidebar/StatsCard';
 import { LitStatsCard } from '../components-lit/wrappers/StatsCard';
 
 const meta = preview.meta({
   title: 'Components/StatsCard',
+  component: ReactStatsCard,
   parameters: {
     layout: 'centered',
+  },
+  argTypes: {
+    label: { control: 'text' },
+    value: { control: 'text' },
+    highlighted: { control: 'boolean' },
   },
   tags: ['autodocs'],
 });
@@ -21,6 +27,17 @@ const meta = preview.meta({
 // ========================================
 // React Version Stories
 // ========================================
+
+export const ReactPlayground = meta.story({
+  name: 'React - Playground',
+  tags: ['react', 'controls'],
+  args: {
+    label: 'Total Nodes',
+    value: '42',
+    highlighted: false,
+  },
+  render: (args) => <ReactStatsCard {...args} />,
+});
 
 export const ReactDefault = meta.story({
   name: 'React - Default',
@@ -49,6 +66,17 @@ export const ReactLargeValue = meta.story({
 // ========================================
 // Lit Version Stories
 // ========================================
+
+export const LitPlayground = meta.story({
+  name: 'Lit - Playground',
+  tags: ['lit', 'controls'],
+  args: {
+    label: 'Total Nodes',
+    value: '42',
+    highlighted: false,
+  },
+  render: (args) => <LitStatsCard {...args} />,
+});
 
 export const LitDefault = meta.story({
   name: 'Lit - Default',

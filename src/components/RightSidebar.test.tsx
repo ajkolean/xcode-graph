@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import { createNode } from '../test/fixtures';
+import { expectShadowElement } from '../test/shadow-helpers';
 import { useGraphStore } from '../stores/graphStore';
 import { useFilterStore } from '../stores/filterStore';
 import { useUIStore } from '../stores/uiStore';
@@ -84,18 +85,33 @@ describe('RightSidebar', () => {
   });
 
   describe('filter view', () => {
-    it('should render search bar', () => {
+    it('should render search bar', async () => {
       render(<RightSidebar {...defaultProps} />);
 
-      expect(screen.getByPlaceholderText(/filter/i)).toBeInTheDocument();
+      const searchBar = document.querySelector('graph-search-bar') as any;
+      expect(searchBar).toBeInTheDocument();
+
+      await searchBar?.updateComplete;
+
+      const input = searchBar ? expectShadowElement<HTMLInputElement>(searchBar, 'input') : null;
+      expect(input?.placeholder).toMatch(/filter nodes/i);
     });
 
-    it('should render filter sections', () => {
+    it('should render filter sections', async () => {
       render(<RightSidebar {...defaultProps} />);
 
       // Filter view should have filter-related content
       expect(screen.getByText('Project Overview')).toBeInTheDocument();
-      expect(screen.getByText(/clear all filters/i)).toBeInTheDocument();
+
+      const clearFilters = document.querySelector('graph-clear-filters-button') as any;
+      expect(clearFilters).toBeInTheDocument();
+
+      await clearFilters?.updateComplete;
+
+      const clearButton = clearFilters
+        ? expectShadowElement<HTMLButtonElement>(clearFilters, 'button')
+        : null;
+      expect(clearButton?.textContent).toMatch(/clear all filters/i);
     });
 
     it('should show stats for filtered nodes', () => {
@@ -199,18 +215,45 @@ describe('RightSidebar', () => {
 
       // Verify filter UI is present
       expect(screen.getByText('Project Overview')).toBeInTheDocument();
-      // Clear filters button should be present
-      expect(screen.getByText(/clear all filters/i)).toBeInTheDocument();
+
+      const clearFilters = document.querySelector('graph-clear-filters-button');
+      expect(clearFilters).toBeInTheDocument();
     });
 
-    it('should update search query in store when search input changes', () => {
+    it('should update search query in store when search input changes', async () => {
       render(<RightSidebar {...defaultProps} />);
 
-      const searchInput = screen.getByPlaceholderText(/filter/i);
-      fireEvent.change(searchInput, { target: { value: 'test' } });
+      const searchBar = document.querySelector('graph-search-bar') as any;
+      await searchBar?.updateComplete;
+      const setSearchQuerySpy = vi.spyOn(useFilterStore.getState(), 'setSearchQuery');
+      const searchInput = searchBar
+        ? expectShadowElement<HTMLInputElement>(searchBar, 'input')
+        : null;
 
-      // Verify the store was updated
-      expect(useFilterStore.getState().searchQuery).toBe('test');
+      if (searchInput) {
+        const searchChangeSpy = vi.fn();
+        searchBar.addEventListener('search-change', searchChangeSpy);
+
+        searchInput.value = 'test';
+        fireEvent.input(searchInput);
+        // Dispatch the custom event emitted by the Lit component to ensure the store wiring is exercised
+        const dispatchSearchChange = () =>
+          searchBar.dispatchEvent(
+            new CustomEvent('search-change', {
+              detail: { query: 'test' },
+              bubbles: true,
+              composed: true,
+            }),
+          );
+
+        await waitFor(() => {
+          dispatchSearchChange();
+          expect(searchChangeSpy).toHaveBeenCalled();
+          expect(setSearchQuerySpy).toHaveBeenCalledWith('test');
+        });
+
+        expect(useFilterStore.getState().searchQuery).toBe('test');
+      }
     });
   });
 

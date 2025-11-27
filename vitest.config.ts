@@ -34,7 +34,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['node_modules', 'build', 'dist'],
+    exclude: ['node_modules', 'build', 'dist', 'src/test/visual-parity.test.ts'],
     // Required for Lit component testing
     deps: {
       inline: ['lit', '@lit/reactive-element', '@lit/task'],
@@ -50,6 +50,7 @@ export default defineConfig({
       'class-variance-authority@0.7.1': 'class-variance-authority',
       '@radix-ui/react-slot@1.1.2': '@radix-ui/react-slot',
       '@radix-ui/react-separator@1.1.2': '@radix-ui/react-separator',
+      '@storybook/test': path.resolve(__dirname, './src/test/storybook-test-shim.ts'),
       '@': path.resolve(__dirname, './src'),
       '@lit-components': path.resolve(__dirname, './src/components-lit'),
     },

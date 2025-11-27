@@ -1,26 +1,56 @@
 import path from 'node:path';
 import react from '@vitejs/plugin-react-swc';
-import { defineConfig } from 'vite';
+import { defineConfig, transformWithEsbuild } from 'vite';
+
+const litDecoratorPlugin = {
+  name: 'lit-decorator-esbuild',
+  enforce: 'pre',
+  async transform(code: string, id: string) {
+    const isLitTsFile =
+      id.includes('components-lit') &&
+      /\.ts($|\?)/.test(id) &&
+      !/\.tsx($|\?)/.test(id);
+
+    if (!isLitTsFile) return null;
+
+    return transformWithEsbuild(code, id, {
+      loader: 'ts',
+      target: 'esnext',
+      tsconfigRaw: {
+        compilerOptions: {
+          experimentalDecorators: true,
+          useDefineForClassFields: true,
+        },
+      },
+    });
+  },
+};
+
+const reactPlugins = react({ tsDecorators: true });
+const reactPluginsWithLitGuard = reactPlugins.map((plugin) => {
+  if (typeof plugin === 'object' && plugin?.name === 'vite:react-swc' && plugin.transform) {
+    const originalTransform = plugin.transform;
+    return {
+      ...plugin,
+      async transform(code, id, options) {
+        const isLitDecoratorFile = id.includes('components-lit') && !id.endsWith('.tsx');
+
+        // Let esbuild handle Lit .ts files so legacy decorators work with the TS config
+        // but keep React/SWC for the React wrappers in components-lit (they're TSX).
+        if (isLitDecoratorFile || id.endsWith('.lit.ts')) {
+          return null;
+        }
+        return typeof originalTransform === 'function'
+          ? originalTransform.call(this, code, id, options)
+          : originalTransform;
+      },
+    };
+  }
+  return plugin;
+});
 
 export default defineConfig({
-  plugins: [
-    {
-      ...react(),
-      enforce: 'pre',
-      apply(config, { command }) {
-        // Only apply during specific conditions
-        return true;
-      },
-      transform(code, id) {
-        // Skip Lit components
-        if (id.includes('components-lit') || id.endsWith('.lit.ts')) {
-          return null; // Let esbuild handle it
-        }
-        // Let react plugin handle it
-        return;
-      },
-    },
-  ],
+  plugins: [litDecoratorPlugin, ...reactPluginsWithLitGuard],
   esbuild: {
     // Enable decorators for Lit components
     target: 'esnext',

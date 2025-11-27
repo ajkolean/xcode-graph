@@ -5,7 +5,7 @@
  * Using CSF Factories for better TypeScript support.
  */
 
-import { within, userEvent, expect, fn } from '@storybook/test';
+import { within, userEvent, expect, fn } from 'storybook/test';
 import { useState } from 'react';
 import preview from '../../.storybook/preview';
 import { ClearFiltersButton as ReactClearFiltersButton } from '../components/sidebar/ClearFiltersButton';
@@ -13,8 +13,14 @@ import { LitClearFiltersButton } from '../components-lit/wrappers/ClearFiltersBu
 
 const meta = preview.meta({
   title: 'Components/ClearFiltersButton',
+  component: ReactClearFiltersButton,
   parameters: {
     layout: 'centered',
+  },
+  argTypes: {
+    isActive: { control: 'boolean' },
+    onClick: { action: 'clicked' },
+    onClearFilters: { action: 'clear' },
   },
   tags: ['autodocs'],
 });
@@ -22,6 +28,15 @@ const meta = preview.meta({
 // ========================================
 // React Version Stories
 // ========================================
+
+export const ReactPlayground = meta.story({
+  name: 'React - Playground',
+  tags: ['react', 'controls'],
+  args: {
+    isActive: true,
+  },
+  render: (args) => <ReactClearFiltersButton {...args} />,
+});
 
 export const ReactActive = meta.story({
   name: 'React - Active',
@@ -63,6 +78,19 @@ export const ReactInteractive = meta.story({
 // ========================================
 // Lit Version Stories
 // ========================================
+
+export const LitPlayground = meta.story({
+  name: 'Lit - Playground',
+  tags: ['lit', 'controls'],
+  args: {
+    isActive: true,
+  },
+  render: (args) => (
+    <LitClearFiltersButton
+      {...args}
+    />
+  ),
+});
 
 export const LitActive = meta.story({
   name: 'Lit - Active',

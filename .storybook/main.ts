@@ -55,17 +55,19 @@ const config: StorybookConfig = {
   viteFinal: async (config) => {
     // Exclude Lit components from React SWC transformation and React Docgen
     if (config.plugins) {
-      config.plugins = config.plugins.map((plugin) => {
-        if (plugin && typeof plugin === 'object' && 'name' in plugin) {
-          if (plugin.name === 'vite:react-swc' || plugin.name === 'storybook:react-docgen-plugin') {
-            return {
-              ...plugin,
-              exclude: [/components-lit/],
-            };
+      config.plugins = config.plugins
+        .filter((plugin) => !(plugin && typeof plugin === 'object' && 'name' in plugin && plugin.name === 'storybook:react-docgen-plugin'))
+        .map((plugin) => {
+          if (plugin && typeof plugin === 'object' && 'name' in plugin) {
+            if (plugin.name === 'vite:react-swc' || plugin.name === 'storybook:react-docgen-plugin') {
+              return {
+                ...plugin,
+                exclude: [/components-lit/],
+              };
+            }
           }
-        }
-        return plugin;
-      });
+          return plugin;
+        });
     }
 
     // Add path aliases matching tsconfig.json
@@ -75,6 +77,7 @@ const config: StorybookConfig = {
       '@': path.resolve(__dirname, '../src'),
       '@lit-components': path.resolve(__dirname, '../src/components-lit'),
       'styled-system': path.resolve(__dirname, '../styled-system'),
+      '@storybook/test': path.resolve(__dirname, '../src/test/storybook-test-shim.ts'),
     };
 
     // Set esbuild target for Lit decorators

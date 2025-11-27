@@ -3,10 +3,9 @@
  * All styling uses design system CSS variables
  */
 
+import { useEffect, useRef } from 'react';
 import type { FilterState } from '../../types/app';
-import { ClearFiltersButton } from './ClearFiltersButton';
 import { LitClearFiltersButton } from '../../components-lit/wrappers/ClearFiltersButton';
-import { EmptyState } from './EmptyState';
 import { LitEmptyState } from '../../components-lit/wrappers/EmptyState';
 import { FilterSection } from './FilterSection';
 import { PackagesIcon, PlatformsIcon, ProductTypesIcon, ProjectsIcon } from './icons/FilterIcons';
@@ -16,10 +15,8 @@ import {
   ProductTypesIcon as LitProductTypesIcon,
   ProjectsIcon as LitProjectsIcon,
 } from '../../components-lit/wrappers/FilterIcons';
-import { SearchBar } from './SearchBar';
-import { SearchBar as LitSearchBar } from '../../components-lit/wrappers/SearchBar';
+import { LitSearchBarElement } from '../../components-lit/wrappers/SearchBar';
 import { StatsCard } from './StatsCard';
-import { LitStatsCard } from '../../components-lit/wrappers/StatsCard';
 
 interface FilterViewProps {
   // Counts
@@ -75,6 +72,30 @@ export function FilterView({
   zoom,
   onPreviewChange,
 }: FilterViewProps) {
+  const searchBarRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const node = searchBarRef.current;
+    if (!node) return;
+
+    const handleSearchChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ query: string }>).detail;
+      onSearchChange(detail?.query ?? '');
+    };
+
+    const handleSearchClear = () => {
+      onSearchChange('');
+    };
+
+    node.addEventListener('search-change', handleSearchChange as EventListener);
+    node.addEventListener('search-clear', handleSearchClear as EventListener);
+
+    return () => {
+      node.removeEventListener('search-change', handleSearchChange as EventListener);
+      node.removeEventListener('search-clear', handleSearchClear as EventListener);
+    };
+  }, [onSearchChange]);
+
   // Filter toggle handlers
   const handleNodeTypeToggle = (type: string, checked: boolean) => {
     const newTypes = new Set(filters.nodeTypes);
@@ -142,7 +163,8 @@ export function FilterView({
       />
 
       {/* Search Bar */}
-      <LitSearchBar
+      <LitSearchBarElement
+        ref={searchBarRef}
         searchQuery={searchQuery}
         onSearchChange={(e) => onSearchChange(e.detail.query)}
         onSearchClear={() => onSearchChange('')}

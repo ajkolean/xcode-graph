@@ -5,15 +5,23 @@
  * Using CSF Factories for better TypeScript support.
  */
 
-import { expect } from '@storybook/test';
+import { expect } from 'storybook/test';
 import preview from '../../.storybook/preview';
 import { ClusterTypeBadge as ReactClusterTypeBadge } from '../components/clusterDetails/ClusterTypeBadge';
 import { LitClusterTypeBadge } from '../components-lit/wrappers/ClusterTypeBadge';
 
 const meta = preview.meta({
   title: 'Components/ClusterTypeBadge',
+  component: ReactClusterTypeBadge,
   parameters: {
     layout: 'centered',
+  },
+  argTypes: {
+    clusterType: {
+      options: ['package', 'project'],
+      control: { type: 'radio' },
+    },
+    clusterColor: { control: 'color' },
   },
   tags: ['autodocs'],
 });
@@ -21,6 +29,16 @@ const meta = preview.meta({
 // ========================================
 // React Version Stories
 // ========================================
+
+export const ReactPlayground = meta.story({
+  name: 'React - Playground',
+  tags: ['react', 'controls'],
+  args: {
+    clusterType: 'package',
+    clusterColor: '#8B5CF6',
+  },
+  render: (args) => <ReactClusterTypeBadge {...args} />,
+});
 
 export const ReactPackage = meta.story({
   name: 'React - Package (Purple)',
@@ -37,6 +55,16 @@ export const ReactProject = meta.story({
 // ========================================
 // Lit Version Stories
 // ========================================
+
+export const LitPlayground = meta.story({
+  name: 'Lit - Playground',
+  tags: ['lit', 'controls'],
+  args: {
+    clusterType: 'package',
+    clusterColor: '#8B5CF6',
+  },
+  render: (args) => <LitClusterTypeBadge {...args} />,
+});
 
 export const LitPackage = meta.story({
   name: 'Lit - Package (Purple)',
