@@ -1,5 +1,5 @@
 {
-  "name": "Interactive Dependency Graph Viewer",
+  "name": "tuistgraph",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
