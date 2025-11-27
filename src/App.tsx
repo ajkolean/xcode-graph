@@ -8,7 +8,9 @@
 import { useEffect, useMemo } from 'react';
 import { GraphTab } from './components/layout/GraphTab';
 import { Header } from './components/layout/Header';
+import { Header as LitHeader } from './components-lit/wrappers/Header';
 import { PlaceholderTab } from './components/layout/PlaceholderTab';
+import { PlaceholderTab as LitPlaceholderTab } from './components-lit/wrappers/PlaceholderTab';
 import { Sidebar } from './components/layout/Sidebar';
 import { mockGraphData } from './data/mockGraphData';
 import { useGraphFilters } from './hooks/useGraphFilters';
@@ -129,7 +131,7 @@ export default function App() {
       }}
     >
       {/* Top Header - spans full width */}
-      <Header />
+      <LitHeader />
 
       {/* Main Layout: Sidebar + Content */}
       <div className="flex-1 flex overflow-hidden relative" style={{ zIndex: 20 }}>
@@ -153,7 +155,7 @@ export default function App() {
           ) : activeTab === 'qa' ? (
             <Benchmark />
           ) : (
-            <PlaceholderTab title={TAB_LABELS[activeTab]} />
+            <LitPlaceholderTab title={TAB_LABELS[activeTab]} />
           )}
         </div>
       </div>

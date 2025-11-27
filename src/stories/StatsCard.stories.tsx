@@ -5,7 +5,7 @@
  * Using CSF Factories for better TypeScript support.
  */
 
-import { within, expect } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 import preview from '../../.storybook/preview';
 import { StatsCard as ReactStatsCard } from '../components/sidebar/StatsCard';
 import { LitStatsCard } from '../components-lit/wrappers/StatsCard';

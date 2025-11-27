@@ -59,7 +59,6 @@ function computeClusterDimension(
   const clusterNodes = nodes.filter((n) => cluster.nodes.some((cn) => cn.id === n.id));
 
   if (clusterNodes.length === 0) {
-    console.log(`  ⚠️ Cluster ${cluster.id}: No nodes, using minimum (180px)`);
     return 180;
   }
 
@@ -83,10 +82,6 @@ function computeClusterDimension(
   const mecRadius = computeMEC(positions, 0, 0, masses);
   const dimension = Math.max(140, mecRadius * 2 + 30);
 
-  console.log(
-    `  ✓ Cluster ${cluster.id}: ${clusterNodes.length} nodes → ${Math.round(dimension)}px (mecRadius: ${Math.round(mecRadius)})`,
-  );
-
   return dimension;
 }
 
@@ -96,18 +91,11 @@ function preComputeClusterDimensions(
   nodes: GraphNode[],
   edges: GraphEdge[],
 ): Map<string, number> {
-  console.log('🔍 Pre-computing cluster dimensions...');
   const dimensions = new Map<string, number>();
 
   for (const cluster of clusters) {
     dimensions.set(cluster.id, computeClusterDimension(cluster, nodes, edges));
   }
-
-  console.log(`📦 Total dimensions computed: ${dimensions.size}`);
-  console.log(
-    '📊 Dimensions map:',
-    Array.from(dimensions.entries()).map(([id, dim]) => `${id}: ${Math.round(dim)}px`),
-  );
 
   return dimensions;
 }

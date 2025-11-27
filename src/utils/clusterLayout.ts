@@ -234,18 +234,12 @@ export function layoutClusters(
 
   const layouts: ClusterLayoutResult[] = [];
 
-  console.log('🎯 Laying out clusters with dimensions...');
-
   for (const [layer, sns] of optimizedLayers.entries()) {
     // Compute actual widths for this layer based on cluster dimensions
     const widths = sns.map((sn) => {
       // Get the first member's dimension (SCCs share same dimension)
       const firstMember = sn.members[0];
       const dimension = clusterDimensions.get(firstMember) || 250;
-
-      console.log(
-        `  Layer ${layer}, SCC ${sn.id}, members: [${sn.members.join(', ')}], firstMember: ${firstMember}, dimension: ${dimension}`,
-      );
 
       return dimension;
     });

@@ -2,16 +2,15 @@
  * ClearFiltersButton Component Stories
  *
  * Demonstrates both React and Lit versions for visual parity testing.
- * Using CSF Factories for better TypeScript support.
  */
 
-import { within, userEvent, expect, fn } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react';
+import { expect, fn, userEvent } from 'storybook/test';
 import { useState } from 'react';
-import preview from '../../.storybook/preview';
 import { ClearFiltersButton as ReactClearFiltersButton } from '../components/sidebar/ClearFiltersButton';
 import { LitClearFiltersButton } from '../components-lit/wrappers/ClearFiltersButton';
 
-const meta = preview.meta({
+const meta: Meta<typeof ReactClearFiltersButton> = {
   title: 'Components/ClearFiltersButton',
   component: ReactClearFiltersButton,
   parameters: {
@@ -23,34 +22,45 @@ const meta = preview.meta({
     onClearFilters: { action: 'clear' },
   },
   tags: ['autodocs'],
-});
+};
+
+type Story = StoryObj<typeof meta>;
 
 // ========================================
 // React Version Stories
 // ========================================
 
-export const ReactPlayground = meta.story({
+export const ReactPlayground: Story = {
   name: 'React - Playground',
   tags: ['react', 'controls'],
   args: {
     isActive: true,
   },
   render: (args) => <ReactClearFiltersButton {...args} />,
-});
+};
 
-export const ReactActive = meta.story({
+export const ReactActive: Story = {
   name: 'React - Active',
   tags: ['react', 'parity'],
-  render: () => <ReactClearFiltersButton isActive={true} onClick={() => alert('Filters cleared!')} />,
-});
+  render: () => (
+    <ReactClearFiltersButton isActive={true} onClick={() => alert('Filters cleared!')} />
+  ),
+  play: async ({ canvas }) => {
+    const button = await canvas.findByRole('button');
+    await expect(button).toBeTruthy();
+    await expect(button).not.toBeDisabled();
+  },
+};
 
-export const ReactInactive = meta.story({
+export const ReactInactive: Story = {
   name: 'React - Inactive',
   tags: ['react', 'parity'],
-  render: () => <ReactClearFiltersButton isActive={false} onClick={() => alert('Should not fire')} />,
-});
+  render: () => (
+    <ReactClearFiltersButton isActive={false} onClick={() => alert('Should not fire')} />
+  ),
+};
 
-export const ReactInteractive = meta.story({
+export const ReactInteractive: Story = {
   name: 'React - Interactive',
   tags: ['react', 'interactive'],
   render: () => {
@@ -60,10 +70,7 @@ export const ReactInteractive = meta.story({
         <p style={{ marginBottom: '12px', color: 'var(--color-muted-foreground)' }}>
           Current state: {isActive ? 'Active' : 'Inactive'}
         </p>
-        <ReactClearFiltersButton
-          isActive={isActive}
-          onClick={() => setIsActive(false)}
-        />
+        <ReactClearFiltersButton isActive={isActive} onClick={() => setIsActive(false)} />
         <button
           onClick={() => setIsActive(true)}
           style={{ marginTop: '12px', padding: '8px 16px' }}
@@ -73,48 +80,45 @@ export const ReactInteractive = meta.story({
       </div>
     );
   },
-});
+};
 
 // ========================================
 // Lit Version Stories
 // ========================================
 
-export const LitPlayground = meta.story({
+export const LitPlayground: Story = {
   name: 'Lit - Playground',
   tags: ['lit', 'controls'],
   args: {
     isActive: true,
   },
-  render: (args) => (
-    <LitClearFiltersButton
-      {...args}
-    />
-  ),
-});
+  render: (args) => <LitClearFiltersButton {...args} />,
+};
 
-export const LitActive = meta.story({
+export const LitActive: Story = {
   name: 'Lit - Active',
   tags: ['lit', 'parity'],
   render: () => (
-    <LitClearFiltersButton
-      isActive={true}
-      onClearFilters={() => alert('Filters cleared!')}
-    />
+    <LitClearFiltersButton isActive={true} onClearFilters={() => alert('Filters cleared!')} />
   ),
-});
+  play: async ({ canvas }) => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const button = await canvas.findByShadowRole('button');
+    await expect(button).toBeTruthy();
+    const buttonText = await canvas.findByShadowText(/clear/i);
+    await expect(buttonText).toBeTruthy();
+  },
+};
 
-export const LitInactive = meta.story({
+export const LitInactive: Story = {
   name: 'Lit - Inactive',
   tags: ['lit', 'parity'],
   render: () => (
-    <LitClearFiltersButton
-      isActive={false}
-      onClearFilters={() => alert('Should not fire')}
-    />
+    <LitClearFiltersButton isActive={false} onClearFilters={() => alert('Should not fire')} />
   ),
-});
+};
 
-export const LitInteractive = meta.story({
+export const LitInteractive: Story = {
   name: 'Lit - Interactive',
   tags: ['lit', 'interactive'],
   render: () => {
@@ -124,10 +128,7 @@ export const LitInteractive = meta.story({
         <p style={{ marginBottom: '12px', color: 'var(--color-muted-foreground)' }}>
           Current state: {isActive ? 'Active' : 'Inactive'}
         </p>
-        <LitClearFiltersButton
-          isActive={isActive}
-          onClearFilters={() => setIsActive(false)}
-        />
+        <LitClearFiltersButton isActive={isActive} onClearFilters={() => setIsActive(false)} />
         <button
           onClick={() => setIsActive(true)}
           style={{ marginTop: '12px', padding: '8px 16px' }}
@@ -137,13 +138,13 @@ export const LitInteractive = meta.story({
       </div>
     );
   },
-});
+};
 
 // ========================================
 // Parity Comparison
 // ========================================
 
-export const ParityComparison = meta.story({
+export const ParityComparison: Story = {
   name: '🔍 Parity Comparison',
   tags: ['parity', 'comparison'],
   render: () => (
@@ -183,13 +184,13 @@ export const ParityComparison = meta.story({
       </div>
     </div>
   ),
-});
+};
 
 // ========================================
 // All States
 // ========================================
 
-export const AllStates = meta.story({
+export const AllStates: Story = {
   name: '📚 All States',
   tags: ['lit', 'showcase'],
   render: () => (
@@ -201,17 +202,20 @@ export const AllStates = meta.story({
 
       <div>
         <h4 style={{ marginBottom: '12px', color: 'var(--color-foreground)' }}>Inactive State</h4>
-        <LitClearFiltersButton isActive={false} onClearFilters={() => console.log('Should not fire')} />
+        <LitClearFiltersButton
+          isActive={false}
+          onClearFilters={() => console.log('Should not fire')}
+        />
       </div>
     </div>
   ),
-});
+};
 
 // ========================================
 // Interactive Test with Shadow DOM
 // ========================================
 
-export const LitInteractiveTest = meta.story({
+export const LitInteractiveTest: Story = {
   name: '🎯 Lit - Click Test',
   tags: ['lit', 'interactive', 'test'],
   args: {
@@ -222,10 +226,7 @@ export const LitInteractiveTest = meta.story({
       <p style={{ marginBottom: '16px', color: 'var(--color-muted-foreground)' }}>
         Click the button to test the interaction
       </p>
-      <LitClearFiltersButton
-        isActive={true}
-        onClearFilters={args.onClearFilters}
-      />
+      <LitClearFiltersButton isActive={true} onClearFilters={args.onClearFilters} />
     </div>
   ),
   play: async ({ canvas, args, step }) => {
@@ -234,7 +235,7 @@ export const LitInteractiveTest = meta.story({
     });
 
     await step('Find and click the button using Shadow DOM queries', async () => {
-      // 👇 Query inside shadow DOM for the button
+      // Query inside shadow DOM for the button
       const button = await canvas.findByShadowRole('button');
       await expect(button).toBeTruthy();
 
@@ -243,34 +244,9 @@ export const LitInteractiveTest = meta.story({
     });
 
     await step('Verify the callback was called', async () => {
-      // Verify the onClearFilters callback was triggered
       await expect(args.onClearFilters).toHaveBeenCalledTimes(1);
     });
   },
-});
-
-// ========================================
-// Experimental Test Syntax
-// ========================================
-
-// Test: Active button should be clickable
-ReactActive.test('should handle click when active', async ({ canvas }) => {
-  const button = await canvas.findByRole('button');
-  await expect(button).toBeTruthy();
-  await expect(button).not.toBeDisabled();
-});
-
-// Test: Lit button can be found and clicked via Shadow DOM
-LitActive.test('should find button inside shadow DOM', async ({ canvas }) => {
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  // 👇 Use Shadow DOM query methods
-  const button = await canvas.findByShadowRole('button');
-  await expect(button).toBeTruthy();
-
-  // Verify button text is visible
-  const buttonText = await canvas.findByShadowText(/clear/i);
-  await expect(buttonText).toBeTruthy();
-});
+};
 
 export default meta;

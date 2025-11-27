@@ -12,7 +12,6 @@ import { adjustColorForZoom } from '../utils/zoomColorUtils';
 import { ClusterHeader } from './clusterDetails/ClusterHeader';
 import { ClusterStats } from './clusterDetails/ClusterStats';
 import { ClusterTargetsList } from './clusterDetails/ClusterTargetsList';
-import { ClusterTypeBadge } from './clusterDetails/ClusterTypeBadge';
 import { LitClusterTypeBadge } from '../components-lit/wrappers/ClusterTypeBadge';
 
 interface ClusterDetailsPanelProps {

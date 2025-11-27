@@ -382,14 +382,6 @@ export function calculateClusterBounds(
   const finalWidth = width;
   const finalHeight = height;
 
-  // Debug logging to see actual calculations
-  if (positionedNodes.length > 0) {
-    const clusterName = positionedNodes[0].clusterId;
-    console.log(
-      `Cluster ${clusterName}: ${positionedNodes.length} nodes, bounds: ${Math.round(finalWidth)}x${Math.round(finalHeight)}`,
-    );
-  }
-
   return {
     width: finalWidth,
     height: finalHeight,

@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import { within as withinShadow } from 'shadow-dom-testing-library';
 
 // Import global styles
 import '../src/index.css';
@@ -33,7 +34,6 @@ const preview: Preview = {
       },
       defaultViewport: 'desktop',
     },
-    actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -88,6 +88,17 @@ const preview: Preview = {
       },
     },
   },
+  beforeEach({ canvasElement, canvas }) {
+    // Augment the canvas with shadow DOM queries so Lit stories can be tested
+    Object.assign(canvas, { ...withinShadow(canvasElement) });
+  },
 };
+
+// 👇 Extend TypeScript types for shadow DOM queries
+export type ShadowQueries = ReturnType<typeof withinShadow>;
+
+declare module 'storybook/internal/csf' {
+  interface Canvas extends ShadowQueries {}
+}
 
 export default preview;
