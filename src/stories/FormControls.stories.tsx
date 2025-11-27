@@ -271,6 +271,20 @@ export const TextareaComparison: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const textareas = await canvas.findAllByShadowRole('textbox');
+    expect(textareas).toHaveLength(2);
+
+    // Type in both textareas
+    await userEvent.type(textareas[0], 'React textarea content');
+    await userEvent.type(textareas[1], 'Lit textarea content');
+
+    // Verify values
+    expect(textareas[0]).toHaveValue('React textarea content');
+    expect(textareas[1]).toHaveValue('Lit textarea content');
+  },
 };
 
 /**
@@ -296,6 +310,24 @@ export const DisabledInput: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const inputs = await canvas.findAllByShadowRole('textbox');
+    expect(inputs).toHaveLength(2);
+
+    // Verify both are disabled
+    expect(inputs[0]).toBeDisabled();
+    expect(inputs[1]).toBeDisabled();
+
+    // Try to type (should not work)
+    await userEvent.type(inputs[0], 'test');
+    await userEvent.type(inputs[1], 'test');
+
+    // Values should still be empty
+    expect(inputs[0]).toHaveValue('');
+    expect(inputs[1]).toHaveValue('');
+  },
 };
 
 /**
@@ -325,4 +357,19 @@ export const CheckboxIndeterminate: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const checkboxes = await canvas.findAllByShadowRole('checkbox');
+    expect(checkboxes).toHaveLength(2);
+
+    // Verify both are in indeterminate state
+    for (const checkbox of checkboxes) {
+      expect(checkbox).toHaveAttribute('data-state', 'indeterminate');
+    }
+
+    // Click to toggle state
+    await userEvent.click(checkboxes[0]);
+    await userEvent.click(checkboxes[1]);
+  },
 };

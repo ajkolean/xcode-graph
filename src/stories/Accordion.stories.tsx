@@ -123,4 +123,21 @@ export const SingleItem: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find both accordion triggers
+    const triggers = await canvas.findAllByShadowRole('button', { name: /Can I use this in my project/i });
+    expect(triggers).toHaveLength(2);
+
+    // Click to expand first accordion
+    await userEvent.click(triggers[0]);
+
+    // Verify content becomes visible
+    const content = await canvas.findByShadowText(/Free to use for personal and commercial projects/i);
+    expect(content).toBeInTheDocument();
+
+    // Click second accordion trigger
+    await userEvent.click(triggers[1]);
+  },
 };

@@ -1,3 +1,17 @@
+/**
+ * DEAD CODE - MARKED FOR DELETION
+ *
+ * Image component with fallback - not used anywhere in the codebase.
+ * Analysis date: 2025-11-26
+ *
+ * Can be safely deleted after verification that:
+ * 1. `pnpm dev` works correctly
+ * 2. `pnpm build` passes
+ * 3. No hidden dependencies exist
+ *
+ * If you need this component, remove this comment and update the analysis.
+ */
+
 import type React from 'react';
 import { useState } from 'react';
 

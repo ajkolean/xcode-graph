@@ -1,3 +1,17 @@
+/**
+ * DEAD CODE - MARKED FOR DELETION
+ *
+ * This component is not used in the main application (`pnpm dev`) or Storybook.
+ * Analysis date: 2025-11-26
+ *
+ * Can be safely deleted after verification that:
+ * 1. `pnpm dev` works correctly
+ * 2. `pnpm build` passes
+ * 3. No hidden dependencies exist
+ *
+ * If you need this component, remove this comment and update the analysis.
+ */
+
 import { cva } from 'class-variance-authority@0.7.1';
 import { ChevronDownIcon } from 'lucide-react@0.487.0';
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu@1.2.5';

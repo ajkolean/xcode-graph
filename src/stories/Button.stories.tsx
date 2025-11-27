@@ -134,6 +134,18 @@ export const AllVariants: Story = {
       </div>
     );
   },
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Should have 2 buttons per variant (6 variants = 12 buttons)
+    const buttons = await canvas.findAllByShadowRole('button');
+    expect(buttons.length).toBe(12);
+
+    // Verify each button is accessible
+    for (const button of buttons) {
+      expect(button).toHaveAccessibleName();
+    }
+  },
 };
 
 /**
@@ -155,6 +167,19 @@ export const AllSizes: Story = {
         ))}
       </div>
     );
+  },
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Should have 2 buttons per size (3 sizes = 6 buttons)
+    const buttons = await canvas.findAllByShadowRole('button');
+    expect(buttons.length).toBe(6);
+
+    // Test clicking different sized buttons
+    for (const button of buttons) {
+      await userEvent.click(button);
+      expect(button).toHaveAccessibleName();
+    }
   },
 };
 
@@ -293,5 +318,22 @@ export const IconOnly: Story = {
         }
       />
     );
+  },
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find both icon buttons
+    const buttons = await canvas.findAllByShadowRole('button', { name: 'Upload' });
+    expect(buttons).toHaveLength(2);
+
+    // Verify both have aria-label for accessibility
+    for (const button of buttons) {
+      expect(button).toHaveAccessibleName('Upload');
+      expect(button).toHaveAttribute('aria-label', 'Upload');
+    }
+
+    // Test interaction
+    await userEvent.click(buttons[0]);
+    await userEvent.click(buttons[1]);
   },
 };

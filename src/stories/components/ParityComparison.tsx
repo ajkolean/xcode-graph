@@ -22,6 +22,8 @@ export function ParityComparison({
     >
       {/* React pane (left) */}
       <div
+        data-testid="react-pane"
+        data-component={componentName}
         style={{
           border: '2px solid rgba(128, 128, 128, 0.3)',
           borderRadius: '6px',
@@ -71,6 +73,8 @@ export function ParityComparison({
 
       {/* Lit pane (right) */}
       <div
+        data-testid="lit-pane"
+        data-component={componentName}
         style={{
           border: '2px solid rgba(111, 44, 255, 0.5)',
           borderRadius: '6px',

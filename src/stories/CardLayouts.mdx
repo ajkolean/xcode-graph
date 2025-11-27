@@ -1,0 +1,345 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Patterns/Card Layouts" />
+
+# Card Layout Patterns
+
+<div style={{ padding: '2rem', background: 'linear-gradient(135deg, rgba(253, 121, 28, 0.1), rgba(229, 28, 1, 0.1))', borderRadius: '8px', marginBottom: '2rem' }}>
+  <p style={{ fontSize: '1.1rem', marginBottom: 0 }}>
+    Flexible card layout patterns for organizing content, displaying data, and creating
+    structured interfaces with consistent spacing and visual hierarchy.
+  </p>
+</div>
+
+## Card Composition Principles
+
+### Visual Structure
+- Use cards to group related content
+- Apply consistent padding (var(--spacing-4) or var(--spacing-6))
+- Include borders for definition
+- Add shadows for elevation when needed
+
+### Content Organization
+- Header for title/actions
+- Body for main content
+- Footer for metadata/actions
+- Use separators between sections
+
+### Responsive Behavior
+- Cards stack on mobile, grid on desktop
+- Content reflows gracefully
+- Touch targets maintain minimum size
+- Spacing scales with viewport
+
+---
+
+## Basic Card Pattern
+
+### Simple Content Card
+
+```tsx
+import { LitCard, LitCardHeader, LitCardTitle, LitCardDescription, LitCardContent } from '../components-lit/wrappers/Card';
+
+<LitCard style={{ width: '350px' }}>
+  <LitCardHeader>
+    <LitCardTitle>Card Title</LitCardTitle>
+    <LitCardDescription>
+      Brief description of the card content
+    </LitCardDescription>
+  </LitCardHeader>
+
+  <LitCardContent>
+    <p>Main card content goes here. This can include text, images, or other components.</p>
+  </LitCardContent>
+</LitCard>
+```
+
+**Structure**:
+- Header contains title and description
+- Content holds main information
+- Consistent internal spacing
+- Shadow DOM encapsulation (Lit)
+
+---
+
+## Card with Actions
+
+### Actionable Card Pattern
+
+```tsx
+<LitCard style={{ width: '350px' }}>
+  <LitCardHeader>
+    <LitCardTitle>Project Updates</LitCardTitle>
+    <LitCardDescription>3 new updates available</LitCardDescription>
+  </LitCardHeader>
+
+  <LitCardContent>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)' }}>
+      <div style={{ paddingBottom: 'var(--spacing-2)', borderBottom: '1px solid var(--colors-border)' }}>
+        <div style={{ fontWeight: 500 }}>Feature Added</div>
+        <div style={{ fontSize: 'var(--font-sizes-sm)', color: 'var(--colors-muted-foreground)' }}>
+          New dashboard widget available
+        </div>
+      </div>
+      <div style={{ paddingBottom: 'var(--spacing-2)', borderBottom: '1px solid var(--colors-border)' }}>
+        <div style={{ fontWeight: 500 }}>Bug Fixed</div>
+        <div style={{ fontSize: 'var(--font-sizes-sm)', color: 'var(--colors-muted-foreground)' }}>
+          Login issue resolved
+        </div>
+      </div>
+    </div>
+  </LitCardContent>
+
+  <LitCardFooter style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--spacing-2)' }}>
+    <LitButton variant="outline">Dismiss</LitButton>
+    <LitButton>View All</LitButton>
+  </LitCardFooter>
+</LitCard>
+```
+
+**Features**:
+- Multiple content items with separators
+- Footer with action buttons
+- Clear visual hierarchy
+- Accessible structure
+
+---
+
+## Card Grid Layout
+
+### Responsive Card Grid
+
+```tsx
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+  gap: 'var(--spacing-4)',
+  padding: 'var(--spacing-4)',
+}}>
+  {items.map((item) => (
+    <LitCard key={item.id}>
+      <LitCardHeader>
+        <LitCardTitle>{item.title}</LitCardTitle>
+        <LitCardDescription>{item.description}</LitCardDescription>
+      </LitCardHeader>
+      <LitCardContent>
+        <p>{item.content}</p>
+      </LitCardContent>
+    </LitCard>
+  ))}
+</div>
+```
+
+**Grid Properties**:
+- `auto-fill` creates responsive columns
+- `minmax(300px, 1fr)` sets min/max card width
+- Consistent gap between cards
+- Graceful stacking on mobile
+
+---
+
+## Dashboard Layout
+
+### Multi-Section Dashboard
+
+```tsx
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(12, 1fr)',
+  gap: 'var(--spacing-4)',
+  padding: 'var(--spacing-4)',
+}}>
+  {/* Hero Card - Full Width */}
+  <LitCard style={{ gridColumn: 'span 12' }}>
+    <LitCardHeader>
+      <LitCardTitle>Dashboard Overview</LitCardTitle>
+    </LitCardHeader>
+    <LitCardContent>
+      {/* Summary stats or charts */}
+    </LitCardContent>
+  </LitCard>
+
+  {/* Main Content - 2/3 Width */}
+  <LitCard style={{ gridColumn: 'span 8' }}>
+    <LitCardHeader>
+      <LitCardTitle>Recent Activity</LitCardTitle>
+    </LitCardHeader>
+    <LitCardContent>
+      {/* Activity feed */}
+    </LitCardContent>
+  </LitCard>
+
+  {/* Sidebar - 1/3 Width */}
+  <LitCard style={{ gridColumn: 'span 4' }}>
+    <LitCardHeader>
+      <LitCardTitle>Quick Actions</LitCardTitle>
+    </LitCardHeader>
+    <LitCardContent>
+      {/* Action buttons */}
+    </LitCardContent>
+  </LitCard>
+</div>
+```
+
+**Layout Strategy**:
+- 12-column grid system
+- Flexible column spans
+- Responsive breakpoints
+- Asymmetric layouts supported
+
+---
+
+## Card with Image
+
+### Image Header Card
+
+```tsx
+<LitCard style={{ width: '350px', overflow: 'hidden' }}>
+  {/* Image */}
+  <div style={{ width: '100%', height: '200px', overflow: 'hidden' }}>
+    <img
+      src="/path/to/image.jpg"
+      alt="Card image"
+      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+    />
+  </div>
+
+  {/* Content */}
+  <LitCardHeader>
+    <LitCardTitle>Image Card</LitCardTitle>
+    <LitCardDescription>Card with featured image</LitCardDescription>
+  </LitCardHeader>
+
+  <LitCardContent>
+    <p>Content with image header creates visual interest and context.</p>
+  </LitCardContent>
+
+  <LitCardFooter>
+    <LitButton variant="outline" style={{ width: '100%' }}>
+      Learn More
+    </LitButton>
+  </LitCardFooter>
+</LitCard>
+```
+
+---
+
+## Nested Cards
+
+### Card Within Card Pattern
+
+```tsx
+<LitCard style={{ width: '500px' }}>
+  <LitCardHeader>
+    <LitCardTitle>Parent Card</LitCardTitle>
+  </LitCardHeader>
+
+  <LitCardContent>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)' }}>
+      {/* Nested cards with lighter background */}
+      <div style={{
+        padding: 'var(--spacing-3)',
+        background: 'var(--colors-muted)',
+        borderRadius: 'var(--radii-sm)',
+        border: '1px solid var(--colors-border)',
+      }}>
+        <div style={{ fontWeight: 500, marginBottom: 'var(--spacing-2)' }}>Nested Item 1</div>
+        <div style={{ fontSize: 'var(--font-sizes-sm)', opacity: 0.7 }}>Content here</div>
+      </div>
+
+      <div style={{
+        padding: 'var(--spacing-3)',
+        background: 'var(--colors-muted)',
+        borderRadius: 'var(--radii-sm)',
+        border: '1px solid var(--colors-border)',
+      }}>
+        <div style={{ fontWeight: 500, marginBottom: 'var(--spacing-2)' }}>Nested Item 2</div>
+        <div style={{ fontSize: 'var(--font-sizes-sm)', opacity: 0.7 }}>Content here</div>
+      </div>
+    </div>
+  </LitCardContent>
+</LitCard>
+```
+
+**Visual Hierarchy**:
+- Parent card uses --colors-card
+- Nested items use --colors-muted
+- Smaller border radius for nested items
+- Clear nesting through background contrast
+
+---
+
+## Best Practices
+
+### ✅ Do's
+
+**Use Consistent Spacing**
+```tsx
+// ✅ Design token spacing
+<LitCard style={{ padding: 'var(--spacing-6)' }}>
+```
+
+**Provide Semantic Structure**
+```tsx
+// ✅ Header, Content, Footer structure
+<LitCard>
+  <LitCardHeader>...</LitCardHeader>
+  <LitCardContent>...</LitCardContent>
+  <LitCardFooter>...</LitCardFooter>
+</LitCard>
+```
+
+**Make Cards Responsive**
+```tsx
+// ✅ Responsive grid
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+  gap: 'var(--spacing-4)',
+}}>
+```
+
+### ❌ Don'ts
+
+**Don't Overcrowd Cards**
+```tsx
+// ❌ Too much content
+<LitCard>
+  <div style={{ padding: '2px' }}>
+    {/* Cramped content */}
+  </div>
+</LitCard>
+
+// ✅ Comfortable padding
+<LitCard>
+  <LitCardContent>
+    {/* Properly spaced content */}
+  </LitCardContent>
+</LitCard>
+```
+
+**Don't Nest Too Deeply**
+```tsx
+// ❌ Card > Card > Card (confusing)
+
+// ✅ Maximum 2 levels of nesting
+```
+
+---
+
+## Resources
+
+- [Card Component](/story/parity-card--default)
+- [Design Tokens](/story/foundations-design-tokens)
+- [Spacing System](/story/foundations-design-tokens)
+
+---
+
+<div style={{ padding: '1.5rem', background: 'rgba(253, 121, 28, 0.1)', borderRadius: '8px', marginTop: '2rem' }}>
+  <strong>Explore card examples!</strong>
+  <p style={{ marginBottom: 0, marginTop: '0.5rem' }}>
+    Visit the <a href="/story/parity-card--default">Parity/Card</a> story to see React and Lit
+    card implementations side-by-side, or check out the <strong>Components/Layout</strong> section
+    for more layout patterns.
+  </p>
+</div>

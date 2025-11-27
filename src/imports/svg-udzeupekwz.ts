@@ -1,3 +1,17 @@
+/**
+ * DEAD CODE - MARKED FOR DELETION
+ *
+ * Generated/imported SVG paths - not used anywhere in the codebase.
+ * Analysis date: 2025-11-26
+ *
+ * Can be safely deleted after verification that:
+ * 1. `pnpm dev` works correctly
+ * 2. `pnpm build` passes
+ * 3. No hidden dependencies exist
+ *
+ * If you need this file, remove this comment and update the analysis.
+ */
+
 export default {
   p1d5342f0:
     'M4.66667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V11.3333',

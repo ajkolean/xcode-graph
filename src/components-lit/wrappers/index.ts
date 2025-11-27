@@ -12,6 +12,26 @@ export {
   type LitAlertDescriptionProps,
   type LitAlertIconProps,
 } from './Alert';
+export {
+  LitAlertDialog,
+  LitAlertDialogTrigger,
+  LitAlertDialogContent,
+  LitAlertDialogHeader,
+  LitAlertDialogFooter,
+  LitAlertDialogTitle,
+  LitAlertDialogDescription,
+  LitAlertDialogAction,
+  LitAlertDialogCancel,
+  type LitAlertDialogProps,
+  type LitAlertDialogTriggerProps,
+  type LitAlertDialogContentProps,
+  type LitAlertDialogHeaderProps,
+  type LitAlertDialogFooterProps,
+  type LitAlertDialogTitleProps,
+  type LitAlertDialogDescriptionProps,
+  type LitAlertDialogActionProps,
+  type LitAlertDialogCancelProps,
+} from './AlertDialog';
 export { LitAspectRatio, type LitAspectRatioProps } from './AspectRatio';
 export {
   LitAvatar,
@@ -49,6 +69,38 @@ export {
   LitCardAction,
 } from './Card';
 export { LitCheckbox, type LitCheckboxProps } from './Checkbox';
+export {
+  LitDialog,
+  LitDialogTrigger,
+  LitDialogContent,
+  LitDialogHeader,
+  LitDialogFooter,
+  LitDialogTitle,
+  LitDialogDescription,
+  type LitDialogProps,
+  type LitDialogTriggerProps,
+  type LitDialogContentProps,
+  type LitDialogHeaderProps,
+  type LitDialogFooterProps,
+  type LitDialogTitleProps,
+  type LitDialogDescriptionProps,
+} from './Dialog';
+export {
+  LitDrawer,
+  LitDrawerTrigger,
+  LitDrawerContent,
+  LitDrawerHeader,
+  LitDrawerFooter,
+  LitDrawerTitle,
+  LitDrawerDescription,
+  type LitDrawerProps,
+  type LitDrawerTriggerProps,
+  type LitDrawerContentProps,
+  type LitDrawerHeaderProps,
+  type LitDrawerFooterProps,
+  type LitDrawerTitleProps,
+  type LitDrawerDescriptionProps,
+} from './Drawer';
 export {
   LitCollapsible,
   LitCollapsibleTrigger,
@@ -127,6 +179,22 @@ export {
   type LitSelectGroupProps,
 } from './Select';
 export { LitSeparator, type SeparatorOrientation } from './Separator';
+export {
+  LitSheet,
+  LitSheetTrigger,
+  LitSheetContent,
+  LitSheetHeader,
+  LitSheetFooter,
+  LitSheetTitle,
+  LitSheetDescription,
+  type LitSheetProps,
+  type LitSheetTriggerProps,
+  type LitSheetContentProps,
+  type LitSheetHeaderProps,
+  type LitSheetFooterProps,
+  type LitSheetTitleProps,
+  type LitSheetDescriptionProps,
+} from './Sheet';
 export { LitSkeleton } from './Skeleton';
 export { LitSlider, type LitSliderProps } from './Slider';
 export { LitSwitch, type LitSwitchProps } from './Switch';

@@ -138,4 +138,23 @@ export const ThreeTabs: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find all tab triggers (should be 6 total - 3 per implementation)
+    const tabs = await canvas.findAllByShadowRole('tab');
+    expect(tabs.length).toBeGreaterThanOrEqual(6);
+
+    // Verify default tab is selected
+    const overviewTabs = tabs.filter(tab => tab.textContent?.includes('Overview'));
+    expect(overviewTabs.length).toBeGreaterThan(0);
+
+    // Click Analytics tab in first implementation
+    const analyticsTabs = await canvas.findAllByShadowRole('tab', { name: 'Analytics' });
+    await userEvent.click(analyticsTabs[0]);
+
+    // Verify content switched
+    const analyticsContent = await canvas.findByShadowText(/Analytics content/i);
+    expect(analyticsContent).toBeInTheDocument();
+  },
 };

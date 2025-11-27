@@ -1,6 +1,7 @@
 // Explicitly import all Lit components to trigger their side-effects (customElements.define)
 import './accordion';
 import './alert';
+import './alert-dialog';
 import './aspect-ratio';
 import './avatar';
 import './badge';
@@ -8,6 +9,8 @@ import './breadcrumb';
 import './button';
 import './card';
 import './checkbox';
+import './dialog';
+import './drawer';
 import './collapsible';
 import './form';
 import './hover-card';
@@ -20,6 +23,7 @@ import './radio-group';
 import './scroll-area';
 import './select';
 import './separator';
+import './sheet';
 import './skeleton';
 import './slider';
 import './switch';

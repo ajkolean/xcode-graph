@@ -199,6 +199,19 @@ export const AllVariants: Story = {
       </div>
     );
   },
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Should have 4 toggles (2 variants × 2 implementations)
+    const toggles = await canvas.findAllByShadowRole('button');
+    expect(toggles).toHaveLength(4);
+
+    // Test each toggle can be pressed
+    for (const toggle of toggles) {
+      await userEvent.click(toggle);
+      expect(toggle).toHaveAttribute('data-state', 'on');
+    }
+  },
 };
 
 /**
@@ -257,6 +270,18 @@ export const AllSizes: Story = {
       </div>
     );
   },
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Should have 6 toggles (3 sizes × 2 implementations)
+    const toggles = await canvas.findAllByShadowRole('button');
+    expect(toggles).toHaveLength(6);
+
+    // Test toggling different sizes
+    await userEvent.click(toggles[0]); // Small
+    await userEvent.click(toggles[2]); // Default
+    await userEvent.click(toggles[4]); // Large
+  },
 };
 
 /**
@@ -304,4 +329,22 @@ export const WithText: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const toggles = await canvas.findAllByShadowRole('button');
+    expect(toggles).toHaveLength(2);
+
+    // Verify toggles have text content
+    for (const toggle of toggles) {
+      expect(toggle).toHaveTextContent('Italic');
+    }
+
+    // Test toggling
+    await userEvent.click(toggles[0]);
+    expect(toggles[0]).toHaveAttribute('data-state', 'on');
+
+    await userEvent.click(toggles[1]);
+    expect(toggles[1]).toHaveAttribute('data-state', 'on');
+  },
 };

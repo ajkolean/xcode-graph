@@ -145,6 +145,21 @@ export const WithDefaultValue: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find all radio buttons (should be 6 total - 3 per group)
+    const radios = await canvas.findAllByShadowRole('radio');
+    expect(radios.length).toBeGreaterThanOrEqual(6);
+
+    // Verify default selection (Comfortable should be checked)
+    const comfortableRadios = radios.filter(r => r.getAttribute('value') === 'comfortable');
+    expect(comfortableRadios[0]).toBeChecked();
+
+    // Click a different option
+    const compactRadios = radios.filter(r => r.getAttribute('value') === 'compact');
+    await userEvent.click(compactRadios[0]);
+  },
 };
 
 /**
@@ -180,4 +195,23 @@ export const DisabledOption: Story = {
       }
     />
   ),
+  play: async ({ canvas }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const radios = await canvas.findAllByShadowRole('radio');
+    expect(radios.length).toBeGreaterThanOrEqual(4);
+
+    // Find disabled radios
+    const disabledRadios = radios.filter(r => r.hasAttribute('disabled'));
+    expect(disabledRadios.length).toBeGreaterThanOrEqual(2);
+
+    // Verify disabled radios cannot be selected
+    for (const radio of disabledRadios) {
+      expect(radio).toBeDisabled();
+    }
+
+    // Try clicking enabled option
+    const enabledRadios = radios.filter(r => r.getAttribute('value') === 'default');
+    await userEvent.click(enabledRadios[0]);
+  },
 };

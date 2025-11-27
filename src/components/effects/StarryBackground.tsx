@@ -1,6 +1,16 @@
 /**
- * Static pre-rendered starfield canvas
- * Debug version with obvious stars
+ * DEAD CODE - MARKED FOR DELETION
+ *
+ * Static pre-rendered starfield canvas - not used anywhere in the codebase.
+ * Debug version with obvious stars.
+ * Analysis date: 2025-11-26
+ *
+ * Can be safely deleted after verification that:
+ * 1. `pnpm dev` works correctly
+ * 2. `pnpm build` passes
+ * 3. No hidden dependencies exist
+ *
+ * If you need this component, remove this comment and update the analysis.
  */
 
 import { useEffect, useRef } from 'react';

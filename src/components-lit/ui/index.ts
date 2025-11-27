@@ -8,6 +8,17 @@ export {
   GraphAccordionContent,
 } from './accordion';
 export { GraphAlert, type AlertVariant } from './alert';
+export {
+  GraphAlertDialog,
+  GraphAlertDialogTrigger,
+  GraphAlertDialogContent,
+  GraphAlertDialogHeader,
+  GraphAlertDialogFooter,
+  GraphAlertDialogTitle,
+  GraphAlertDialogDescription,
+  GraphAlertDialogAction,
+  GraphAlertDialogCancel,
+} from './alert-dialog';
 export { GraphAspectRatio } from './aspect-ratio';
 export { GraphAvatar } from './avatar';
 export { GraphBadge, type BadgeVariant } from './badge';
@@ -31,6 +42,25 @@ export {
   GraphCardAction,
 } from './card';
 export { GraphCheckbox } from './checkbox';
+export {
+  GraphDialog,
+  GraphDialogTrigger,
+  GraphDialogContent,
+  GraphDialogHeader,
+  GraphDialogFooter,
+  GraphDialogTitle,
+  GraphDialogDescription,
+} from './dialog';
+export {
+  GraphDrawer,
+  GraphDrawerTrigger,
+  GraphDrawerContent,
+  GraphDrawerHeader,
+  GraphDrawerFooter,
+  GraphDrawerTitle,
+  GraphDrawerDescription,
+  type DrawerDirection,
+} from './drawer';
 export {
   GraphCollapsible,
   GraphCollapsibleTrigger,
@@ -82,6 +112,16 @@ export {
   type SelectSize,
 } from './select';
 export { GraphSeparator, type SeparatorOrientation } from './separator';
+export {
+  GraphSheet,
+  GraphSheetTrigger,
+  GraphSheetContent,
+  GraphSheetHeader,
+  GraphSheetFooter,
+  GraphSheetTitle,
+  GraphSheetDescription,
+  type SheetSide,
+} from './sheet';
 export { GraphSkeleton } from './skeleton';
 export { GraphSlider } from './slider';
 export { GraphSwitch } from './switch';
