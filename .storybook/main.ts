@@ -39,34 +39,8 @@ const config: StorybookConfig = {
   },
   tags: {
     // Tag filtering configuration for React/Lit parity testing
-    react: {
-      title: 'React',
-      description: 'React implementation stories',
-    },
-    lit: {
-      title: 'Lit',
-      description: 'Lit Web Components implementation stories',
-    },
-    parity: {
-      title: 'Parity',
-      description: 'Stories used for visual parity comparison',
-    },
-    comparison: {
-      title: 'Comparison',
-      description: 'Side-by-side comparison stories',
-    },
     test: {
-      title: 'Tests',
-      description: 'Stories with attached tests',
       defaultFilterSelection: 'exclude', // Hide tests from sidebar by default
-    },
-    interactive: {
-      title: 'Interactive',
-      description: 'Interactive demonstration stories',
-    },
-    showcase: {
-      title: 'Showcase',
-      description: 'Stories showcasing all variants',
     },
   },
   viteFinal: async (config) => {
