@@ -18,6 +18,8 @@ import { useGraphStore } from './stores/graphStore';
 import { useFilterStore } from './stores/filterStore';
 import { useUIStore, type ActiveTab } from './stores/uiStore';
 
+import { Benchmark } from './test/Benchmark';
+
 // Get all unique projects and packages from data
 const allProjects = new Set(
   mockGraphData.nodes.map((n) => n.project).filter((p): p is string => p !== undefined && p !== ''),
@@ -148,6 +150,8 @@ export default function App() {
               transitiveDeps={transitiveDeps}
               transitiveDependents={transitiveDependents}
             />
+          ) : activeTab === 'qa' ? (
+            <Benchmark />
           ) : (
             <PlaceholderTab title={TAB_LABELS[activeTab]} />
           )}

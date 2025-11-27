@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { LitButton } from '../components-lit/wrappers/Button';
 import type { FilterState } from '../types/app';
 
 interface FilterPanelProps {
@@ -48,22 +49,69 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
     onFiltersChange({ ...filters, projects: newProjects });
   };
 
+  const sectionStyle: React.CSSProperties = {
+    marginBottom: 'var(--spacing-6)',
+  };
+
+  const sectionTitleStyle: React.CSSProperties = {
+    fontSize: 'var(--font-sizes-sm)',
+    color: 'var(--colors-muted-foreground)',
+    marginBottom: 'var(--spacing-3)',
+  };
+
+  const checkboxGroupStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-2)',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-3)',
+    cursor: 'pointer',
+  };
+
   return (
-    <div className="absolute left-0 top-0 bottom-0 w-80 bg-zinc-900 border-r border-zinc-800 z-10 overflow-y-auto">
+    <div
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: '320px',
+        backgroundColor: 'var(--colors-sidebar)',
+        borderRight: '1px solid var(--colors-border)',
+        zIndex: 10,
+        overflowY: 'auto',
+      }}
+    >
       {/* Header */}
-      <div className="p-4 border-b border-zinc-800 flex items-center justify-between sticky top-0 bg-zinc-900">
-        <h3 className="text-zinc-200">Filters</h3>
-        <button onClick={onClose} className="p-1 rounded hover:bg-zinc-800 text-zinc-400">
-          <X className="size-4" />
-        </button>
+      <div
+        style={{
+          padding: 'var(--spacing-4)',
+          borderBottom: '1px solid var(--colors-border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'sticky',
+          top: 0,
+          backgroundColor: 'var(--colors-sidebar)',
+          zIndex: 1,
+        }}
+      >
+        <h3 style={{ color: 'var(--colors-foreground)', margin: 0 }}>Filters</h3>
+        <LitButton variant="ghost" size="icon" onClick={onClose}>
+          <X style={{ width: 16, height: 16 }} />
+        </LitButton>
       </div>
 
       {/* Filter Sections */}
-      <div className="p-4 space-y-6">
+      <div style={{ padding: 'var(--spacing-4)' }}>
         {/* Node Types */}
-        <div>
-          <div className="text-sm text-zinc-400 mb-3">Target Type</div>
-          <div className="space-y-2">
+        <div style={sectionStyle}>
+          <div style={sectionTitleStyle}>Target Type</div>
+          <div style={checkboxGroupStyle}>
             {[
               { value: 'app', label: 'App Targets' },
               { value: 'framework', label: 'Frameworks' },
@@ -73,60 +121,64 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
               { value: 'cli', label: 'CLI Tools' },
               { value: 'package', label: 'External Packages' },
             ].map(({ value, label }) => (
-              <label key={value} className="flex items-center gap-3 cursor-pointer group">
+              <label key={value} style={labelStyle}>
                 <input
                   type="checkbox"
                   checked={filters.nodeTypes.has(value)}
                   onChange={() => toggleNodeType(value)}
-                  className="size-4 rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
+                  style={{ width: 16, height: 16, cursor: 'pointer' }}
                 />
-                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">{label}</span>
+                <span style={{ fontSize: 'var(--font-sizes-sm)', color: 'var(--colors-foreground)' }}>
+                  {label}
+                </span>
               </label>
             ))}
           </div>
         </div>
 
         {/* Platforms */}
-        <div>
-          <div className="text-sm text-zinc-400 mb-3">Platform</div>
-          <div className="space-y-2">
+        <div style={sectionStyle}>
+          <div style={sectionTitleStyle}>Platform</div>
+          <div style={checkboxGroupStyle}>
             {['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS'].map((platform) => (
-              <label key={platform} className="flex items-center gap-3 cursor-pointer group">
+              <label key={platform} style={labelStyle}>
                 <input
                   type="checkbox"
                   checked={filters.platforms.has(platform)}
                   onChange={() => togglePlatform(platform)}
-                  className="size-4 rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
+                  style={{ width: 16, height: 16, cursor: 'pointer' }}
                 />
-                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">{platform}</span>
+                <span style={{ fontSize: 'var(--font-sizes-sm)', color: 'var(--colors-foreground)' }}>
+                  {platform}
+                </span>
               </label>
             ))}
           </div>
         </div>
 
         {/* Origin */}
-        <div>
-          <div className="text-sm text-zinc-400 mb-3">Origin</div>
-          <div className="space-y-2">
-            <label className="flex items-center gap-3 cursor-pointer group">
+        <div style={sectionStyle}>
+          <div style={sectionTitleStyle}>Origin</div>
+          <div style={checkboxGroupStyle}>
+            <label style={labelStyle}>
               <input
                 type="checkbox"
                 checked={filters.origins.has('local')}
                 onChange={() => toggleOrigin('local')}
-                className="size-4 rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
+                style={{ width: 16, height: 16, cursor: 'pointer' }}
               />
-              <span className="text-sm text-zinc-300 group-hover:text-zinc-200">
+              <span style={{ fontSize: 'var(--font-sizes-sm)', color: 'var(--colors-foreground)' }}>
                 Local Projects
               </span>
             </label>
-            <label className="flex items-center gap-3 cursor-pointer group">
+            <label style={labelStyle}>
               <input
                 type="checkbox"
                 checked={filters.origins.has('external')}
                 onChange={() => toggleOrigin('external')}
-                className="size-4 rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
+                style={{ width: 16, height: 16, cursor: 'pointer' }}
               />
-              <span className="text-sm text-zinc-300 group-hover:text-zinc-200">
+              <span style={{ fontSize: 'var(--font-sizes-sm)', color: 'var(--colors-foreground)' }}>
                 External Packages
               </span>
             </label>
@@ -134,25 +186,28 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
         </div>
 
         {/* Projects */}
-        <div>
-          <div className="text-sm text-zinc-400 mb-3">Project</div>
-          <div className="space-y-2">
+        <div style={sectionStyle}>
+          <div style={sectionTitleStyle}>Project</div>
+          <div style={checkboxGroupStyle}>
             {['TuistCore', 'TuistKit'].map((project) => (
-              <label key={project} className="flex items-center gap-3 cursor-pointer group">
+              <label key={project} style={labelStyle}>
                 <input
                   type="checkbox"
                   checked={filters.projects.has(project)}
                   onChange={() => toggleProject(project)}
-                  className="size-4 rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-500 focus:ring-offset-0 focus:ring-2 cursor-pointer"
+                  style={{ width: 16, height: 16, cursor: 'pointer' }}
                 />
-                <span className="text-sm text-zinc-300 group-hover:text-zinc-200">{project}</span>
+                <span style={{ fontSize: 'var(--font-sizes-sm)', color: 'var(--colors-foreground)' }}>
+                  {project}
+                </span>
               </label>
             ))}
           </div>
         </div>
 
         {/* Reset Button */}
-        <button
+        <LitButton
+          variant="outline"
           onClick={() => {
             onFiltersChange({
               nodeTypes: new Set([
@@ -169,10 +224,10 @@ export function FilterPanel({ filters, onFiltersChange, onClose }: FilterPanelPr
               projects: new Set(['TuistCore', 'TuistKit']),
             });
           }}
-          className="w-full px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-750 text-zinc-300 text-sm border border-zinc-700 transition-colors"
+          style={{ width: '100%' }}
         >
           Reset All Filters
-        </button>
+        </LitButton>
       </div>
     </div>
   );
