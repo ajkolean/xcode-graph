@@ -1,0 +1,236 @@
+/**
+ * Design Tokens
+ * Extracted from panda.config.ts
+ *
+ * These CSS custom properties are available in both Light DOM (:root)
+ * and Shadow DOM (:host) contexts for maximum compatibility.
+ */
+
+:where(:root, :host) {
+  /* ========================================
+     COLORS (35 tokens)
+     ======================================== */
+
+  /* Core colors */
+  --colors-background: rgba(0, 0, 0, 1);
+  --colors-foreground: rgba(232, 234, 237, 1);
+
+  /* Card colors */
+  --colors-card: rgba(10, 10, 11, 1);
+  --colors-card-foreground: rgba(232, 234, 237, 1);
+
+  /* Popover colors */
+  --colors-popover: rgba(26, 26, 29, 1);
+  --colors-popover-foreground: rgba(232, 234, 237, 1);
+
+  /* Primary colors (purple) */
+  --colors-primary: rgba(111, 44, 255, 1);
+  --colors-primary-foreground: rgba(253, 253, 253, 1);
+
+  /* Secondary colors */
+  --colors-secondary: rgba(255, 255, 255, 0.05);
+  --colors-secondary-foreground: rgba(232, 234, 237, 1);
+
+  /* Muted colors */
+  --colors-muted: rgba(255, 255, 255, 0.05);
+  --colors-muted-foreground: rgba(232, 234, 237, 0.5);
+
+  /* Accent colors */
+  --colors-accent: rgba(111, 44, 255, 0.15);
+  --colors-accent-foreground: rgba(232, 234, 237, 1);
+
+  /* Destructive colors (red) */
+  --colors-destructive: rgba(229, 28, 1, 1);
+  --colors-destructive-foreground: rgba(253, 253, 253, 1);
+
+  /* Border and input */
+  --colors-border: rgba(255, 255, 255, 0.08);
+  --colors-input: rgba(255, 255, 255, 0.05);
+  --colors-input-background: rgba(255, 255, 255, 0.05);
+
+  /* Ring (focus indicator) */
+  --colors-ring: rgba(111, 44, 255, 1);
+
+  /* Chart colors */
+  --colors-chart-1: rgba(111, 44, 255, 1);
+  --colors-chart-2: rgba(2, 128, 185, 1);
+  --colors-chart-3: rgba(40, 167, 69, 1);
+  --colors-chart-4: rgba(253, 121, 28, 1);
+  --colors-chart-5: rgba(229, 28, 1, 1);
+
+  /* Sidebar colors */
+  --colors-sidebar: rgba(10, 10, 11, 1);
+  --colors-sidebar-foreground: rgba(232, 234, 237, 1);
+  --colors-sidebar-primary: rgba(111, 44, 255, 1);
+  --colors-sidebar-primary-foreground: rgba(253, 253, 253, 1);
+  --colors-sidebar-accent: rgba(111, 44, 255, 0.15);
+  --colors-sidebar-accent-foreground: rgba(232, 234, 237, 1);
+  --colors-sidebar-border: rgba(255, 255, 255, 0.06);
+  --colors-sidebar-ring: rgba(111, 44, 255, 1);
+
+  /* Stars (background effect) */
+  --colors-stars-color: rgba(232, 234, 237, 1);
+  --colors-stars-glow: rgba(111, 44, 255, 1);
+
+  /* Semantic colors */
+  --colors-white: #ffffff;
+  --colors-transparent: transparent;
+
+  /* ========================================
+     BORDER RADIUS (6 tokens)
+     ======================================== */
+
+  --radii-none: 0;
+  --radii-sm: 4px;
+  --radii-md: 6px;
+  --radii-lg: 16px;
+  --radii-xl: 20px;
+  --radii-full: 9999px;
+
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
+
+  /* Font sizes (8 tokens) */
+  --font-sizes-xs: 10px;
+  --font-sizes-sm: 11px;
+  --font-sizes-label: 12px;
+  --font-sizes-base: 14px;
+  --font-sizes-h4: 14px;
+  --font-sizes-h3: 16px;
+  --font-sizes-h2: 18px;
+  --font-sizes-h1: 40px;
+
+  /* Font weights (4 tokens) */
+  --font-weights-normal: 400;
+  --font-weights-medium: 500;
+  --font-weights-semibold: 600;
+  --font-weights-bold: 700;
+
+  /* Font families (3 tokens) */
+  --fonts-heading: 'DM Sans', sans-serif;
+  --fonts-body: 'Inter', sans-serif;
+  --fonts-mono: 'SF Mono', 'Monaco', 'Consolas', monospace;
+
+  /* Line heights (4 tokens) */
+  --line-heights-none: 1;
+  --line-heights-tight: 1.25;
+  --line-heights-normal: 1.5;
+  --line-heights-relaxed: 1.75;
+
+  /* ========================================
+     SPACING (13 tokens)
+     ======================================== */
+
+  --spacing-0: 0;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+
+  /* ========================================
+     SHADOWS / ELEVATION (3 tokens)
+     ======================================== */
+
+  --shadows-sm: 0px 1px 1px 0px rgba(0, 0, 0, 0.3),
+    0px 0px 0px 1px rgba(255, 255, 255, 0.06),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.4);
+
+  --shadows-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -2px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  --shadows-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -4px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+
+  /* ========================================
+     ANIMATION (8 tokens)
+     ======================================== */
+
+  /* Durations (4 tokens) */
+  --durations-fast: 150ms;
+  --durations-normal: 200ms;
+  --durations-slow: 300ms;
+  --durations-slower: 500ms;
+
+  /* Easings (4 tokens) */
+  --easings-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --easings-in: cubic-bezier(0.4, 0, 1, 1);
+  --easings-out: cubic-bezier(0, 0, 0.2, 1);
+  --easings-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ========================================
+     SIZES (3 tokens)
+     ======================================== */
+
+  --sizes-8: 32px;
+  --sizes-9: 36px;
+  --sizes-10: 40px;
+}
+
+/* ========================================
+   KEYFRAME ANIMATIONS
+   ======================================== */
+
+@keyframes flowDashes {
+  to {
+    stroke-dashoffset: -12px;
+  }
+}
+
+@keyframes clusterPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes marchingAnts {
+  to {
+    stroke-dashoffset: -16px;
+  }
+}
+
+@keyframes skeletonPulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

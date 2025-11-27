@@ -3,7 +3,12 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      // Exclude Lit components from React SWC transformation
+      exclude: ['**/components-lit/**'],
+    }),
+  ],
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
@@ -46,6 +51,7 @@ export default defineConfig({
       '@radix-ui/react-alert-dialog@1.1.6': '@radix-ui/react-alert-dialog',
       '@radix-ui/react-accordion@1.2.3': '@radix-ui/react-accordion',
       '@': path.resolve(__dirname, './src'),
+      '@lit-components': path.resolve(__dirname, './src/components-lit'),
     },
   },
   build: {

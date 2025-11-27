@@ -7,6 +7,16 @@ afterEach(() => {
   cleanup();
 });
 
+// Ensure customElements is available for Lit components
+if (!window.customElements) {
+  // @ts-expect-error - polyfill for testing environment
+  window.customElements = {
+    define: vi.fn(),
+    get: vi.fn(),
+    whenDefined: vi.fn().mockResolvedValue(undefined),
+  };
+}
+
 // Mock window.matchMedia (used by some UI components)
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
