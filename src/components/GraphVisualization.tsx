@@ -10,6 +10,7 @@ import { ClusterGroup } from './graph/ClusterGroup';
 import { GraphEdges } from './graph/GraphEdges';
 import { GraphBackground, GraphControls, GraphEmptyState } from './graph/GraphOverlays';
 import { GraphSVGDefs } from './graph/GraphSVGDefs';
+import { LitGraphSVGDefs } from '../components-lit/wrappers/GraphSVGDefs';
 import { useAnimatedLayout } from './graph/useAnimatedLayout';
 import { useDeterministicLayout } from './graph/useDeterministicLayout';
 import { useGraphInteraction } from './graph/useGraphInteraction';
@@ -201,7 +202,7 @@ export function GraphVisualization({
         }}
         onClick={handleCanvasClick}
       >
-        <GraphSVGDefs />
+        <LitGraphSVGDefs />
 
         <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
           {/* Cross-cluster edges */}

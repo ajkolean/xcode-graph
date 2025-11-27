@@ -7,6 +7,7 @@ import type { FilterState } from '../../types/app';
 import { ClearFiltersButton } from './ClearFiltersButton';
 import { LitClearFiltersButton } from '../../components-lit/wrappers/ClearFiltersButton';
 import { EmptyState } from './EmptyState';
+import { LitEmptyState } from '../../components-lit/wrappers/EmptyState';
 import { FilterSection } from './FilterSection';
 import { PackagesIcon, PlatformsIcon, ProductTypesIcon, ProjectsIcon } from './icons/FilterIcons';
 import { SearchBar } from './SearchBar';
@@ -234,7 +235,7 @@ export function FilterView({
 
       {/* Empty State */}
       {filteredNodesCount === 0 && (
-        <EmptyState hasActiveFilters={isFiltersActive} onClearFilters={onClearFilters} />
+        <LitEmptyState hasActiveFilters={isFiltersActive} onClearFilters={onClearFilters} />
       )}
     </div>
   );

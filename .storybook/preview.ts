@@ -7,7 +7,6 @@ import '../src/styles/tokens.css';
 
 // Import all Lit components to register custom elements
 // This ensures customElements.define() is called before stories render
-import '../src/components-lit/ui/badge';
 import '../src/components-lit/ui/skeleton';
 import '../src/components-lit/ui/separator';
 import '../src/components-lit/ui/card';
