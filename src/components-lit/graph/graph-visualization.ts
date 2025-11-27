@@ -123,8 +123,10 @@ export class GraphVisualization extends LitElement {
   updated(changedProps: Map<string, any>) {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
+      console.log('[GraphVisualization] updated - nodes:', this.nodes?.length, 'edges:', this.edges?.length);
       this.layout.enableAnimation = this.enableAnimation;
-      this.layout.computeLayout(this.nodes, this.edges);
+      this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
+      console.log('[GraphVisualization] after computeLayout - clusters:', this.layout.clusters.length, 'nodePositions:', this.layout.nodePositions.size);
     }
 
     // Update animation when enableAnimation changes
@@ -221,6 +223,7 @@ export class GraphVisualization extends LitElement {
   // ========================================
 
   render() {
+    console.log('[GraphVisualization] render - nodes:', this.nodes?.length, 'clusters:', this.layout.clusters.length, 'nodePositions:', this.layout.nodePositions.size);
     return html`
       <graph-background></graph-background>
 
@@ -333,6 +336,11 @@ export class GraphVisualization extends LitElement {
       ${this.nodes?.length === 0
         ? html`<graph-visualization-empty-state></graph-visualization-empty-state>`
         : ''}
+
+      <!-- Debug info -->
+      <div style="position: absolute; top: 60px; left: 20px; color: #ff0; font-size: 12px; background: rgba(0,0,0,0.8); padding: 8px; z-index: 9999;">
+        DEBUG: nodes=${this.nodes?.length ?? 0}, clusters=${this.layout.clusters.length}, positions=${this.layout.nodePositions.size}
+      </div>
     `;
   }
 }

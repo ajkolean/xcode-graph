@@ -150,6 +150,7 @@ export class GraphTab extends LitElement {
   // ========================================
 
   render() {
+    console.log('[GraphTab] render - displayNodes:', this.displayNodes?.length, 'displayEdges:', this.displayEdges?.length);
     return html`
       <div class="container">
         <!-- Graph + Sidebar -->
