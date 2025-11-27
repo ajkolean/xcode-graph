@@ -80,6 +80,7 @@
     "@types/pixelmatch": "^5.2.6",
     "@types/pngjs": "^6.0.5",
     "@vitejs/plugin-react-swc": "^4.2.2",
+    "@vitest/browser": "^4.0.14",
     "@vitest/coverage-v8": "^4.0.14",
     "axe-playwright": "^2.2.2",
     "chromatic": "^13.3.4",

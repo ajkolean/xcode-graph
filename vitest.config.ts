@@ -3,36 +3,51 @@
 import path from 'node:path';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vitest/config';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+
+const reactPlugin = {
+  ...react({
+    // Only apply React SWC to React components
+    include: /\.(jsx|tsx)$/,
+  }),
+  // Override apply to be more selective
+  apply: (config, env) => {
+    const id = config?.command;
+    // Don't apply to Lit files
+    return true;
+  },
+};
+
+const esbuildConfig = {
+  // Enable decorators for Lit components
+  target: 'esnext',
+  tsconfigRaw: {
+    compilerOptions: {
+      experimentalDecorators: true,
+      useDefineForClassFields: true,
+    },
+  },
+};
+
+const resolveConfig = {
+  alias: {
+    'class-variance-authority@0.7.1': 'class-variance-authority',
+    '@radix-ui/react-slot@1.1.2': '@radix-ui/react-slot',
+    '@radix-ui/react-separator@1.1.2': '@radix-ui/react-separator',
+    '@': path.resolve(__dirname, './src'),
+    '@lit-components': path.resolve(__dirname, './src/components-lit'),
+  },
+};
 
 export default defineConfig({
-  plugins: [
-    {
-      ...react({
-        // Only apply React SWC to React components
-        include: /\.(jsx|tsx)$/,
-      }),
-      // Override apply to be more selective
-      apply: (config, env) => {
-        const id = config?.command;
-        // Don't apply to Lit files
-        return true;
-      },
-    },
-  ],
+  plugins: [reactPlugin],
   esbuild: {
-    // Enable decorators for Lit components
-    target: 'esnext',
-    tsconfigRaw: {
-      compilerOptions: {
-        experimentalDecorators: true,
-        useDefineForClassFields: true,
-      },
-    },
+    ...esbuildConfig,
   },
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: ['.storybook/vitest.setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', 'build', 'dist', 'src/test/visual-parity.test.ts'],
     // Required for Lit component testing
@@ -46,13 +61,33 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: {
-      'class-variance-authority@0.7.1': 'class-variance-authority',
-      '@radix-ui/react-slot@1.1.2': '@radix-ui/react-slot',
-      '@radix-ui/react-separator@1.1.2': '@radix-ui/react-separator',
-      '@storybook/test': path.resolve(__dirname, './src/test/storybook-test-shim.ts'),
-      '@': path.resolve(__dirname, './src'),
-      '@lit-components': path.resolve(__dirname, './src/components-lit'),
-    },
+    ...resolveConfig,
   },
+  projects: [
+    {
+      plugins: [
+        // Storybook Vitest addon – run stories in browser mode
+        storybookTest({ configDir: '.storybook' }),
+        reactPlugin,
+      ],
+      esbuild: {
+        ...esbuildConfig,
+      },
+      resolve: {
+        ...resolveConfig,
+      },
+      test: {
+        name: 'storybook',
+        browser: {
+          enabled: true,
+          name: 'chromium',
+        },
+        setupFiles: ['.storybook/vitest.setup.ts'],
+        include: ['src/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
+        deps: {
+          inline: ['lit', '@lit/reactive-element', '@lit/task'],
+        },
+      },
+    },
+  ],
 });

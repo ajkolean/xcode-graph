@@ -77,7 +77,6 @@ const config: StorybookConfig = {
       '@': path.resolve(__dirname, '../src'),
       '@lit-components': path.resolve(__dirname, '../src/components-lit'),
       'styled-system': path.resolve(__dirname, '../styled-system'),
-      '@storybook/test': path.resolve(__dirname, '../src/test/storybook-test-shim.ts'),
     };
 
     // Set esbuild target for Lit decorators
