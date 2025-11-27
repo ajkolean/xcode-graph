@@ -19,12 +19,14 @@ export const LitDependenciesListElement = createComponent({
 
 export interface LitDependenciesListProps extends React.HTMLAttributes<HTMLElement> {
   dependencies?: GraphNode[];
+  zoom?: number;
   onNodeSelect?: (event: CustomEvent<{ node: GraphNode }>) => void;
   onNodeHover?: (event: CustomEvent<{ nodeId: string | null }>) => void;
 }
 
 export function DependenciesList({
   dependencies = [],
+  zoom = 1.0,
   className,
   onNodeSelect,
   onNodeHover,
@@ -33,6 +35,7 @@ export function DependenciesList({
   return (
     <LitDependenciesListElement
       dependencies={dependencies}
+      zoom={zoom}
       className={className}
       onNodeSelect={onNodeSelect}
       onNodeHover={onNodeHover}

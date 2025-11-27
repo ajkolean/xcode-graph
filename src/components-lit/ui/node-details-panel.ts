@@ -124,12 +124,14 @@ export class GraphNodeDetailsPanel extends LitElement {
 
       <graph-dependencies-list
         .dependencies=${dependencies}
+        .zoom=${this.zoom}
         @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
       ></graph-dependencies-list>
 
       <graph-dependents-list
         .dependents=${dependents}
+        .zoom=${this.zoom}
         @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
       ></graph-dependents-list>
