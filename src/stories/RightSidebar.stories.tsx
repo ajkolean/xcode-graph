@@ -8,7 +8,7 @@ import { mockGraphNodes } from './fixtures/mockNodes';
 import { mockGraphEdges } from './fixtures/mockEdges';
 
 const meta = {
-  title: 'Containers/RightSidebar',
+  title: 'Panels & Views/RightSidebar',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta;

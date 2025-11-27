@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ClusterCard } from '../../components-lit/wrappers/ClusterCard';
 
 const meta = {
-  title: 'Graph/ClusterCard',
+  title: 'Graph Visualization/ClusterCard',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta;

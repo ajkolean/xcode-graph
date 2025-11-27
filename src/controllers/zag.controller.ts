@@ -84,7 +84,10 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
   ) {
     this.host = host;
     this.machine = machine;
-    this._service = createMachine(machine, props);
+    // createMachine returns a machine, call start() to initialize and return itself
+    const machineInstance: any = createMachine(machine, props);
+    machineInstance.start();
+    this._service = machineInstance;
     host.addController(this);
   }
 
@@ -98,9 +101,6 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
       // Trigger Lit re-render when machine state changes
       this.host.requestUpdate();
     });
-
-    // Start the machine
-    this._service.start();
   }
 
   /**

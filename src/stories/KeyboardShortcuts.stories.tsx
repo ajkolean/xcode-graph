@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { KeyboardShortcuts as ReactKeyboardShortcuts } from '../components/KeyboardShortcuts';
 
 const meta = {
-  title: 'Complex/KeyboardShortcuts',
+  title: 'Utilities/KeyboardShortcuts',
   component: ReactKeyboardShortcuts,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

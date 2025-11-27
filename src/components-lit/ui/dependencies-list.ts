@@ -30,6 +30,11 @@ export class GraphDependenciesList extends LitElement {
   @property({ type: Number })
   declare zoom: number;
 
+  constructor() {
+    super();
+    this.zoom = 1;
+  }
+
   // ========================================
   // Styles
   // ========================================

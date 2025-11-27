@@ -13,7 +13,7 @@ import { NodeHeader as LitNodeHeader } from '../../components-lit/wrappers/NodeH
 import { allNodeTypes } from '../fixtures/mockNodes';
 
 const meta = {
-  title: 'Node Details/NodeHeader',
+  title: 'Features/Node Details/NodeHeader',
   component: ReactNodeHeader,
   parameters: {
     layout: 'centered',

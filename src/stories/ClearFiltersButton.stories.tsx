@@ -11,7 +11,7 @@ import { ClearFiltersButton as ReactClearFiltersButton } from '../components/sid
 import { LitClearFiltersButton } from '../components-lit/wrappers/ClearFiltersButton';
 
 const meta: Meta<typeof ReactClearFiltersButton> = {
-  title: 'Components/ClearFiltersButton',
+  title: 'Design System/UI Components/ClearFiltersButton',
   component: ReactClearFiltersButton,
   parameters: {
     layout: 'centered',

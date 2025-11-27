@@ -13,7 +13,7 @@ import { ListItemRow as LitListItemRow } from '../../components-lit/wrappers/Lis
 import { allNodeTypes, allPlatforms } from '../fixtures/mockNodes';
 
 const meta = {
-  title: 'UI/ListItemRow',
+  title: 'Design System/UI Components/ListItemRow',
   component: ReactListItemRow,
   parameters: {
     layout: 'centered',

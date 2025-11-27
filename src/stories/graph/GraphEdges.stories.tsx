@@ -5,7 +5,7 @@
 import type { Meta } from '@storybook/react';
 
 const meta = {
-  title: 'Graph/GraphEdges',
+  title: 'Graph Visualization/GraphEdges',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta;

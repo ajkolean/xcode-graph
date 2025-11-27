@@ -10,7 +10,7 @@ import { useGraphStore } from '../../stores/graphStore';
 import { useFilterStore } from '../../stores/filterStore';
 import { useUIStore } from '../../stores/uiStore';
 import { GraphVisualization } from '../GraphVisualization';
-import { RightSidebar } from '../RightSidebar';
+import { RightSidebar } from '../../components-lit/wrappers/RightSidebar';
 import { Toolbar } from './Toolbar';
 
 interface GraphTabProps {

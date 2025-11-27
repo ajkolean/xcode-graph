@@ -10,7 +10,7 @@ import { MetricsSection as LitMetricsSection } from '../../components-lit/wrappe
 import { allNodeTypes } from '../fixtures/mockNodes';
 
 const meta = {
-  title: 'Node Details/MetricsSection',
+  title: 'Features/Node Details/MetricsSection',
   component: ReactMetricsSection,
   parameters: {
     layout: 'centered',

@@ -11,7 +11,7 @@ import { GraphNode as LitGraphNode } from '../../components-lit/wrappers/GraphNo
 import { allNodeTypes } from '../fixtures/mockNodes';
 
 const meta = {
-  title: 'Graph/GraphNode',
+  title: 'Graph Visualization/GraphNode',
   component: ReactGraphNode,
   parameters: {
     layout: 'centered',

@@ -22,7 +22,7 @@ import {
 } from '../fixtures/mockFilters';
 
 const meta = {
-  title: 'UI/FilterSection',
+  title: 'Design System/UI Components/FilterSection',
   component: ReactFilterSection,
   parameters: {
     layout: 'centered',

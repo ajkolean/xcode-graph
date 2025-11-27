@@ -11,7 +11,7 @@ import { EmptyState as ReactEmptyState } from '../../components/sidebar/EmptySta
 import { EmptyState as LitEmptyState } from '../../components-lit/wrappers/EmptyState';
 
 const meta = {
-  title: 'UI/EmptyState',
+  title: 'Design System/UI Components/EmptyState',
   component: ReactEmptyState,
   parameters: {
     layout: 'centered',

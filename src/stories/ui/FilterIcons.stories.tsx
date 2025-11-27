@@ -13,7 +13,7 @@ import {
 } from '../../components-lit/wrappers/FilterIcons';
 
 const meta = {
-  title: 'UI/FilterIcons',
+  title: 'Design System/Icons/FilterIcons',
   parameters: {
     layout: 'centered',
   },

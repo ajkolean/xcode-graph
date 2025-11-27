@@ -105,6 +105,32 @@ export class GraphNodeActions extends LitElement {
       color: var(--primary-foreground);
     }
 
+    /* Impact Button (neutral/foreground) */
+    .impact-button {
+      background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+      border-color: color-mix(in srgb, var(--color-foreground) 25%, transparent);
+      color: var(--color-foreground);
+    }
+
+    .impact-button.active {
+      background-color: var(--color-foreground);
+      border-color: var(--color-foreground);
+      color: var(--color-background);
+    }
+
+    /* Impact Button (neutral/foreground) */
+    .impact-button {
+      background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+      border-color: color-mix(in srgb, var(--color-foreground) 25%, transparent);
+      color: var(--color-foreground);
+    }
+
+    .impact-button.active {
+      background-color: var(--color-foreground);
+      border-color: var(--color-foreground);
+      color: var(--color-background);
+    }
+
     .icon {
       display: inline-flex;
     }
@@ -131,6 +157,10 @@ export class GraphNodeActions extends LitElement {
     return this.viewMode === 'dependents' || this.viewMode === 'both';
   }
 
+  private get isImpactActive(): boolean {
+    return this.viewMode === 'impact';
+  }
+
   // ========================================
   // Event Handlers
   // ========================================
@@ -148,6 +178,16 @@ export class GraphNodeActions extends LitElement {
   private handleShowDependents() {
     this.dispatchEvent(
       new CustomEvent('show-dependents', {
+        detail: { node: this.node },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private handleShowImpact() {
+    this.dispatchEvent(
+      new CustomEvent('show-impact', {
         detail: { node: this.node },
         bubbles: true,
         composed: true,
@@ -174,6 +214,8 @@ export class GraphNodeActions extends LitElement {
         : 'active'
       : '';
 
+    const impactButtonClass = this.isImpactActive ? 'active' : '';
+
     return html`
       <div class="actions">
         <!-- Dependency Chain Button -->
@@ -194,6 +236,15 @@ export class GraphNodeActions extends LitElement {
         >
           <span class="icon rotated">${unsafeHTML(icons.Focus)}</span>
           ${this.isDependentsChainActive ? 'Hide Dependents Chain' : 'Show Dependents Chain'}
+        </button>
+
+        <!-- Impact View Button -->
+        <button
+          class="action-button impact-button ${impactButtonClass}"
+          @click=${this.handleShowImpact}
+        >
+          <span class="icon">${unsafeHTML(icons.Focus)}</span>
+          ${this.isImpactActive ? 'Impact Active' : 'Show Impact'}
         </button>
       </div>
     `;

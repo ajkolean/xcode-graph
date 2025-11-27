@@ -58,13 +58,13 @@ export class GraphControls extends LitElement {
   declare zoom: number;
 
   @property({ type: Number, attribute: 'node-count' })
-  nodeCount: number = 0;
+  declare nodeCount: number;
 
   @property({ type: Number, attribute: 'edge-count' })
-  edgeCount: number = 0;
+  declare edgeCount: number;
 
   @property({ type: Boolean, attribute: 'enable-animation' })
-  enableAnimation: boolean = false;
+  declare enableAnimation: boolean;
 
   static styles = css`
     :host {

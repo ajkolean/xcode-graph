@@ -1,0 +1,73 @@
+
+<Meta title="Design System/Overview" />
+
+# Design System
+
+The TuistGraph design system provides a consistent set of UI components, patterns, and guidelines used throughout the application.
+
+## 🎨 UI Components
+
+Core building blocks for the interface:
+
+### Interactive Components
+- **SearchBar**: Text input with clear button for filtering
+- **FilterSection**: Collapsible section with checkbox filters
+- **ClearFiltersButton**: Button to reset all active filters
+- **ListItemRow**: Reusable row component for node/dependency lists
+
+### Display Components
+- **StatsCard**: Metric display card (node count, edge count, etc.)
+- **EmptyState**: Message shown when no results match filters
+
+## 🏷️ Badges & Labels
+
+Visual indicators for types and states:
+- **ClusterTypeBadge**: Distinguishes between project and package clusters
+
+## 🎭 Icons
+
+SVG icons used throughout the interface:
+- **FilterIcons**: Product Types, Platforms, Projects, Packages
+- **SidebarCollapseIcon**: Expand/collapse control
+
+## 🎯 Design Principles
+
+### Consistency
+All components follow the same visual language:
+- **Colors**: Type-based color coding (apps=blue, frameworks=purple, etc.)
+- **Spacing**: Consistent padding and gaps using CSS variables
+- **Typography**: Inter for UI, DM Sans for headings
+- **Borders**: Rounded corners with `var(--radius)`
+
+### Dark Mode First
+All components are designed for dark backgrounds:
+- Background: `#0a0a0f` (graph) and `#0f0f14` (panels)
+- Foreground: Muted colors with varying opacity
+- Accents: High contrast for important elements
+
+### Interactive States
+Components provide clear visual feedback:
+- **Hover**: Subtle background color change
+- **Selected**: Border highlight and opacity increase
+- **Disabled**: Reduced opacity, no pointer events
+
+## 🧪 Testing Patterns
+
+Every component includes:
+1. **Playground**: Experiment with all props
+2. **State Variants**: See all possible states
+3. **Parity Comparison**: Verify React and Lit match
+4. **Interactive Tests**: Automated event validation
+
+## 🔄 React + Lit Parity
+
+All UI components exist in both implementations:
+- **React version**: Standard React component in `src/components/`
+- **Lit version**: Web component in `src/components-lit/ui/`
+- **Wrapper**: React wrapper in `src/components-lit/wrappers/`
+
+Parity testing ensures both behave identically for seamless migration and testing.
+
+---
+
+**Explore the components** to see these principles in action!

@@ -8,7 +8,7 @@ import { mockGraphNodes, getNodesForProject } from './fixtures/mockNodes';
 import { mockGraphEdges } from './fixtures/mockEdges';
 
 const meta = {
-  title: 'Containers/ClusterDetailsPanel',
+  title: 'Panels & Views/ClusterDetailsPanel',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta;

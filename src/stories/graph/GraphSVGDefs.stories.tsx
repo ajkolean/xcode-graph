@@ -8,7 +8,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { GraphSVGDefs } from '../../components-lit/wrappers/GraphSVGDefs';
 
 const meta = {
-  title: 'Graph/GraphSVGDefs',
+  title: 'Graph Visualization/GraphSVGDefs',
   parameters: {
     layout: 'centered',
   },

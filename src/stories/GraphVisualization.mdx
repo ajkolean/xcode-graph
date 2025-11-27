@@ -1,0 +1,108 @@
+
+<Meta title="Graph Visualization/Overview" />
+
+# Graph Visualization
+
+SVG-based components for rendering the dependency graph with nodes, edges, and clusters.
+
+## 🎨 SVG Architecture
+
+All graph components render within an SVG context and use **no Shadow DOM** (since SVG elements don't support it).
+
+### Key Characteristics
+- Direct SVG rendering for maximum performance
+- Zoom-aware sizing and colors
+- State-based styling (selected, hovered, dimmed)
+- Animated transitions for interactions
+
+## 🔵 Nodes & Edges
+
+### GraphNode
+Individual node (module) visualization:
+- **Icon rendering**: Type-based icons (app, framework, library, etc.)
+- **Color coding**: Platform and type-based colors
+- **States**: Default, selected, hovered, dimmed
+- **Zoom adaptation**: Icon size and color intensity adjust with zoom level
+
+**Usage**:
+```tsx
+<svg>
+  <GraphNode
+    node={nodeData}
+    x={400}
+    y={300}
+    isSelected={true}
+    zoom={1.0}
+  />
+</svg>
+```
+
+### GraphEdge
+Dependency line between two nodes:
+- **Curved paths**: Bezier curves for visual clarity
+- **Depth-based opacity**: Transitive dependencies fade with depth
+- **Highlighting**: Brighten when connected node is selected/hovered
+- **Animation**: Marching ants effect for active dependencies
+
+### GraphSVGDefs
+Reusable SVG definitions (gradients, patterns, filters) used by other graph components.
+
+## 📦 Clusters
+
+### ClusterCard
+Background card for cluster visualization:
+- **Type styling**: Projects use dashed border, packages use dotted
+- **Color generation**: Deterministic color based on cluster name
+- **Label display**: Cluster name and target count
+- **Interactive**: Clickable to view cluster details
+
+### ClusterGroup
+Container that orchestrates:
+- Cluster background (ClusterCard)
+- Internal nodes (GraphNode components)
+- Internal edges (GraphEdges component)
+
+## 🔗 Containers
+
+### GraphEdges
+Renders ALL edges in the graph with:
+- **Depth visualization**: Opacity based on transitive dependency depth
+- **Cross-cluster edges**: Only shown at full graph level
+- **Internal edges**: Only shown within cluster detail view
+- **Filtering**: Respects view mode (full, focused, dependents, both)
+
+## 🎛️ Overlays
+
+### GraphOverlays
+Provides UI overlays on top of the graph:
+- **GraphBackground**: Grid pattern background
+- **GraphControls**: Zoom controls and animation toggle
+- **GraphEmptyState**: Message when no nodes to display
+- **GraphInstructions**: Help text for interactions
+
+## 🎭 States & Interactions
+
+All graph components support these states:
+- **Default**: Normal appearance
+- **Selected**: Border highlight, increased opacity
+- **Hovered**: Slightly highlighted
+- **Dimmed**: Reduced opacity when other elements are focused
+
+## 🔍 Zoom Adaptation
+
+Components intelligently adapt to zoom level:
+- **Colors**: More vibrant at lower zoom (better visibility)
+- **Icons**: Larger at lower zoom
+- **Opacity**: Adjusted for optimal contrast
+- **Stroke width**: Scales appropriately
+
+## 💡 Performance Considerations
+
+- No Shadow DOM for SVG elements (not supported)
+- Direct manipulation for animations
+- Efficient re-rendering with Lit's reactive properties
+- Hardware-accelerated CSS transforms
+
+---
+
+**Explore individual components** to see SVG rendering patterns and state management!

@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { GraphBackground, GraphControls } from '../../components-lit/wrappers/GraphOverlays';
 
 const meta = {
-  title: 'Graph/GraphOverlays',
+  title: 'Graph Visualization/GraphOverlays',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta;

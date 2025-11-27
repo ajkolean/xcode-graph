@@ -12,7 +12,7 @@ import { ClusterTargetsList as LitClusterTargetsList } from '../../components-li
 import { mockGraphNodes } from '../fixtures/mockNodes';
 
 const meta = {
-  title: 'Cluster Details/ClusterTargetsList',
+  title: 'Features/Cluster Details/ClusterTargetsList',
   component: ReactClusterTargetsList,
   parameters: {
     layout: 'centered',

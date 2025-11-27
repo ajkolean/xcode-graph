@@ -12,7 +12,7 @@ import { DependentsList as LitDependentsList } from '../../components-lit/wrappe
 import { mockGraphNodes } from '../fixtures/mockNodes';
 
 const meta = {
-  title: 'Node Details/DependentsList',
+  title: 'Features/Node Details/DependentsList',
   component: ReactDependentsList,
   parameters: {
     layout: 'centered',

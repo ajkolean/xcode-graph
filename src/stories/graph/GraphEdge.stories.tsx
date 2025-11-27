@@ -10,7 +10,7 @@ import { GraphEdge as ReactGraphEdge } from '../../components/graph/GraphEdge';
 import { GraphEdge as LitGraphEdge } from '../../components-lit/wrappers/GraphEdge';
 
 const meta = {
-  title: 'Graph/GraphEdge',
+  title: 'Graph Visualization/GraphEdge',
   component: ReactGraphEdge,
   parameters: {
     layout: 'centered',

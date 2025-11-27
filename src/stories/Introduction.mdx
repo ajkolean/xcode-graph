@@ -1,0 +1,76 @@
+
+<Meta title="Introduction/Welcome" />
+
+# TuistGraph Component Library
+
+Welcome to the TuistGraph Storybook! This is your interactive guide to all UI components used in the dependency graph visualization application.
+
+## 🏗️ Architecture Overview
+
+TuistGraph uses a **hybrid React + Lit Web Components architecture**:
+
+- **React Components**: High-level orchestrators and containers that manage state and composition
+- **Lit Web Components**: Performant, framework-agnostic UI components with Shadow DOM encapsulation
+- **React Wrappers**: Bridge components that allow React to control Lit elements seamlessly
+
+This architecture provides:
+- ⚡ **Performance**: Lit's lightweight runtime for UI components
+- 🔄 **Reusability**: Web components work across any framework
+- 🎨 **Encapsulation**: Shadow DOM prevents style conflicts
+- 🧪 **Testability**: Parity testing ensures React and Lit behave identically
+
+## 📚 Component Categories
+
+### Design System
+Core UI building blocks used throughout the application:
+- **UI Components**: Buttons, inputs, cards, lists
+- **Icons**: Filter section icons, navigation icons
+- **Badges & Labels**: Type indicators, status badges
+
+### Features
+Feature-specific component collections:
+- **Node Details**: Components for displaying individual node information
+- **Cluster Details**: Components for displaying cluster/project information
+- **Filters**: Search and filter interface components
+
+### Graph Visualization
+SVG-based graph rendering components:
+- **Nodes & Edges**: Core graph elements
+- **Clusters**: Project/package grouping visualization
+- **Overlays**: Controls, backgrounds, empty states
+
+### Layout
+Application layout and navigation:
+- Headers, sidebars, toolbars
+
+### Panels & Views
+High-level container components that orchestrate child components
+
+### Utilities
+Helper components and tools
+
+## 🧪 Testing Patterns
+
+Each component includes:
+- **Playground**: Interactive controls for experimentation
+- **State Variants**: Different props and states
+- **Parity Comparison**: Side-by-side React vs Lit verification
+- **Interactive Tests**: Automated play functions testing events and interactions
+
+## 🎯 Using This Storybook
+
+1. **Browse by category** in the sidebar to explore components
+2. **Use Playground stories** to experiment with props
+3. **Check Parity Comparisons** to verify React/Lit consistency
+4. **Review Interactive Tests** to understand event handling
+5. **Use as documentation** when implementing features
+
+## 🔗 Key Resources
+
+- [Lit Documentation](https://lit.dev)
+- [Storybook Docs](https://storybook.js.org)
+- [Shadow DOM Testing Guide](?path=/docs/testing-interaction-examples)
+
+---
+
+**Ready to explore?** Start with the Design System section to see foundational components!

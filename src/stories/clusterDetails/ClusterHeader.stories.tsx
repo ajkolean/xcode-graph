@@ -11,7 +11,7 @@ import { ClusterHeader as ReactClusterHeader } from '../../components/clusterDet
 import { ClusterHeader as LitClusterHeader } from '../../components-lit/wrappers/ClusterHeader';
 
 const meta = {
-  title: 'Cluster Details/ClusterHeader',
+  title: 'Features/Cluster Details/ClusterHeader',
   component: ReactClusterHeader,
   parameters: {
     layout: 'centered',

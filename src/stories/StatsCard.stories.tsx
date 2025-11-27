@@ -16,7 +16,7 @@ type StatsCardArgs = {
 };
 
 const meta = {
-  title: 'Components/StatsCard',
+  title: 'Design System/UI Components/StatsCard',
   component: ReactStatsCard,
   parameters: {
     layout: 'centered',

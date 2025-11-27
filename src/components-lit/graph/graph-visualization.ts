@@ -180,6 +180,13 @@ export class GraphVisualization extends LitElement {
           composed: true,
         })
       );
+      this.dispatchEvent(
+        new CustomEvent('cluster-select', {
+          detail: { clusterId: null },
+          bubbles: true,
+          composed: true,
+        })
+      );
     }
   }
 
@@ -193,6 +200,23 @@ export class GraphVisualization extends LitElement {
         })
       );
     }
+  }
+
+  private handleWheel(e: WheelEvent) {
+    // Only zoom if Ctrl/Cmd key is pressed (also captures trackpad pinch)
+    if (!e.ctrlKey && !e.metaKey) {
+      return;
+    }
+
+    e.preventDefault();
+
+    const eventName = e.deltaY < 0 ? 'zoom-in' : 'zoom-out';
+    this.dispatchEvent(
+      new CustomEvent(eventName, {
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   // ========================================
@@ -222,7 +246,9 @@ export class GraphVisualization extends LitElement {
         @mousedown=${this.interaction.handleMouseDown}
         @mousemove=${this.interaction.handleMouseMove}
         @mouseup=${this.interaction.handleMouseUp}
+        @mouseleave=${this.interaction.handleMouseUp}
         @click=${this.handleCanvasClick}
+        @wheel=${this.handleWheel}
       >
         <graph-svg-defs></graph-svg-defs>
 

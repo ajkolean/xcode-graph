@@ -15,7 +15,7 @@ type ClusterTypeBadgeArgs = {
 };
 
 const meta = {
-  title: 'Components/ClusterTypeBadge',
+  title: 'Design System/Badges & Labels/ClusterTypeBadge',
   component: ReactClusterTypeBadge,
   parameters: {
     layout: 'centered',

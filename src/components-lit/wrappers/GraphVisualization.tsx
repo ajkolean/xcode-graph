@@ -13,11 +13,13 @@ export const LitGraphVisualizationElement = createComponent({
   elementClass: GraphVisualizationLit,
   react: React,
   events: {
-    onNodeClick: 'node-click',
+    onNodeSelect: 'node-select',
+    onClusterSelect: 'cluster-select',
     onNodeHover: 'node-hover',
-    onClusterClick: 'cluster-click',
-    onClusterHover: 'cluster-hover',
-    onBackgroundClick: 'background-click',
+    onZoomIn: 'zoom-in',
+    onZoomOut: 'zoom-out',
+    onZoomReset: 'zoom-reset',
+    onToggleAnimation: 'toggle-animation',
   },
 });
 
@@ -34,11 +36,13 @@ export interface LitGraphVisualizationProps extends React.HTMLAttributes<HTMLEle
   transitiveDeps?: any;
   transitiveDependents?: any;
   previewFilter?: any;
-  onNodeClick?: (event: CustomEvent<{ node: GraphNode }>) => void;
+  onNodeSelect?: (event: CustomEvent<{ node: GraphNode | null }>) => void;
+  onClusterSelect?: (event: CustomEvent<{ clusterId: string | null }>) => void;
   onNodeHover?: (event: CustomEvent<{ nodeId: string | null }>) => void;
-  onClusterClick?: (event: CustomEvent<{ clusterId: string }>) => void;
-  onClusterHover?: (event: CustomEvent<{ clusterId: string | null }>) => void;
-  onBackgroundClick?: (event: CustomEvent) => void;
+  onZoomIn?: (event: CustomEvent) => void;
+  onZoomOut?: (event: CustomEvent) => void;
+  onZoomReset?: (event: CustomEvent) => void;
+  onToggleAnimation?: (event: CustomEvent) => void;
 }
 
 export function GraphVisualization({
@@ -54,11 +58,13 @@ export function GraphVisualization({
   transitiveDeps,
   transitiveDependents,
   previewFilter,
-  onNodeClick,
+  onNodeSelect,
   onNodeHover,
-  onClusterClick,
-  onClusterHover,
-  onBackgroundClick,
+  onClusterSelect,
+  onZoomIn,
+  onZoomOut,
+  onZoomReset,
+  onToggleAnimation,
   ...props
 }: LitGraphVisualizationProps = {}) {
   return (
@@ -75,11 +81,13 @@ export function GraphVisualization({
       transitiveDeps={transitiveDeps}
       transitiveDependents={transitiveDependents}
       previewFilter={previewFilter}
-      onNodeClick={onNodeClick}
+      onNodeSelect={onNodeSelect}
       onNodeHover={onNodeHover}
-      onClusterClick={onClusterClick}
-      onClusterHover={onClusterHover}
-      onBackgroundClick={onBackgroundClick}
+      onClusterSelect={onClusterSelect}
+      onZoomIn={onZoomIn}
+      onZoomOut={onZoomOut}
+      onZoomReset={onZoomReset}
+      onToggleAnimation={onToggleAnimation}
       {...props}
     />
   );

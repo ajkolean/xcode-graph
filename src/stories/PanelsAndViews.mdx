@@ -1,0 +1,136 @@
+
+<Meta title="Panels & Views/Overview" />
+
+# Panels & Views
+
+High-level container components that orchestrate multiple child components to create complete feature experiences.
+
+## 🎯 What Are Panels & Views?
+
+Panels and Views are **orchestrator components** that:
+- Compose multiple smaller components together
+- Manage complex state and interactions
+- Handle data flow between children
+- Provide complete user experiences
+
+Unlike simple UI components, these components integrate with:
+- **Zustand stores** for global state management
+- **Zag state machines** for complex interaction flows
+- **Controllers** for layout, animation, and interaction handling
+
+## 📋 Components
+
+### NodeDetailsPanel
+Complete node detail view combining:
+- NodeHeader (with cluster breadcrumb)
+- MetricsSection (dependency counts)
+- NodeActions (focus, show dependents, show impact)
+- DependenciesList (scrollable list)
+- DependentsList (scrollable list)
+- NodeInfo (metadata)
+
+**Events**: Bubbles all child events up to parent
+**Data**: Uses `computeNodeDependencies` utility for dependency analysis
+
+### ClusterDetailsPanel
+Complete cluster detail view combining:
+- ClusterHeader (with type badge)
+- ClusterStats (dependencies, dependents, platforms)
+- ClusterTargetsList (grouped by type)
+
+**Events**: Bubbles node selection and hover events
+**Data**: Uses `computeClusterStats` utility
+
+### RightSidebar
+Main right sidebar orchestrator with Zag state machine:
+- Manages collapse/expand state
+- Switches between three views:
+  - Filters (default)
+  - Node Details (when node selected)
+  - Cluster Details (when cluster selected)
+
+**State Management**:
+- Zag sidebar machine for UI state
+- Zustand store subscriptions for graph state
+- Automatic view switching based on selections
+
+### GraphVisualization
+Complete graph rendering engine with:
+- AnimatedLayoutController (physics simulation)
+- GraphInteractionFullController (pan/zoom/drag)
+- Cluster grouping and positioning
+- Node and edge rendering
+- Transitive dependency visualization
+
+**Features**:
+- Animated or deterministic layout
+- Full interaction support (drag, pan, zoom)
+- View modes (full, focused, dependents, both)
+- Preview filter support
+
+### GraphTab
+Top-level graph tab orchestrator combining:
+- GraphVisualization
+- RightSidebar
+
+**Responsibilities**:
+- Coordinates graph and sidebar
+- Manages transitive dependency calculations
+- Provides complete graph experience
+
+## 🔄 Data Flow
+
+```
+User Action (click node)
+    ↓
+Event bubbles up (node-select)
+    ↓
+Zustand store updated (setSelectedNode)
+    ↓
+Store subscribers react
+    ↓
+RightSidebar switches to NodeDetailsPanel
+    ↓
+NodeDetailsPanel renders with node data
+```
+
+## 🎭 State Management Patterns
+
+### Zustand Stores
+- **useGraphStore**: Selected node/cluster, view mode, hovered node
+- **useFilterStore**: Active filters, search query
+- **useUIStore**: Zoom level, animation enabled, preview filter
+
+### Zag State Machines
+- **sidebarMachine**: Manages right sidebar collapse/expand
+- Clean, predictable state transitions
+- Time travel debugging support
+
+### Controllers
+- **AnimatedLayoutController**: Physics-based node positioning
+- **GraphInteractionFullController**: Pan, zoom, drag interactions
+- Reactive Lit controllers that trigger re-renders
+
+## 🧪 Testing Panels
+
+Due to their complexity, panel stories focus on:
+- **Integration**: How child components work together
+- **State management**: Verify store connections
+- **Event flow**: Ensure events bubble correctly
+- **Simplified data**: Use mock data, static layouts
+
+Full interaction testing happens in e2e tests, not Storybook.
+
+## 💡 When to Use What
+
+| Need | Use Component |
+|------|---------------|
+| Show node info in sidebar | NodeDetailsPanel |
+| Show cluster info in sidebar | ClusterDetailsPanel |
+| Full right sidebar with switching | RightSidebar |
+| Complete graph rendering | GraphVisualization |
+| Graph + sidebar together | GraphTab |
+
+---
+
+**Explore the panels** to see how components orchestrate together!

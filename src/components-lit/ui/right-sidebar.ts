@@ -32,6 +32,11 @@ import './right-sidebar-header';
 import './collapsed-sidebar';
 import './node-details-panel';
 import './cluster-details-panel';
+import './clear-filters-button';
+import './search-bar';
+import './filter-section';
+import './empty-state';
+import './stats-card';
 
 export class GraphRightSidebar extends LitElement {
   // ========================================
@@ -51,7 +56,7 @@ export class GraphRightSidebar extends LitElement {
   declare filteredEdges: GraphEdge[];
 
   @property({ attribute: false })
-  clusters: Cluster[] | undefined;
+  declare clusters: Cluster[] | undefined;
 
   // ========================================
   // State Management
@@ -74,6 +79,7 @@ export class GraphRightSidebar extends LitElement {
 
   // Zustand stores - UI
   private zoom = createStoreController(this, useUIStore, (s) => s.zoom);
+  private previewFilter = createStoreController(this, useUIStore, (s) => s.previewFilter);
 
   // ========================================
   // Styles
@@ -102,6 +108,31 @@ export class GraphRightSidebar extends LitElement {
       background-color: var(--color-sidebar);
       border-left: 1px solid var(--color-sidebar-border);
       box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .filter-scroll {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md) var(--spacing-md) 0;
+    }
+
+    .filter-sections {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      padding: var(--spacing-lg) var(--spacing-md);
     }
   `;
 
@@ -148,6 +179,58 @@ export class GraphRightSidebar extends LitElement {
   }
 
   // ========================================
+  // Event Helpers
+  // ========================================
+
+  private handleSearchChange(query: string) {
+    const setSearchQuery = this.searchQuery.getAction('setSearchQuery');
+    setSearchQuery(query);
+  }
+
+  private handleClearFilters() {
+    const setFilters = this.filters.getAction('setFilters');
+    const setSearchQuery = this.searchQuery.getAction('setSearchQuery');
+    const clearAll = this.filterData.createClearFilters(setFilters);
+    clearAll();
+    setSearchQuery('');
+  }
+
+  private handleItemToggle(
+    type: 'nodeType' | 'platform' | 'project' | 'package',
+    key: string,
+    checked: boolean,
+  ) {
+    const setFilters = this.filters.getAction('setFilters');
+    const current = this.filters.value;
+    const next = { ...current };
+
+    if (type === 'nodeType') {
+      const set = new Set(current.nodeTypes);
+      checked ? set.add(key) : set.delete(key);
+      next.nodeTypes = set;
+    } else if (type === 'platform') {
+      const set = new Set(current.platforms);
+      checked ? set.add(key) : set.delete(key);
+      next.platforms = set;
+    } else if (type === 'project') {
+      const set = new Set(current.projects);
+      checked ? set.add(key) : set.delete(key);
+      next.projects = set;
+    } else if (type === 'package') {
+      const set = new Set(current.packages);
+      checked ? set.add(key) : set.delete(key);
+      next.packages = set;
+    }
+
+    setFilters(next);
+  }
+
+  private handlePreviewChange(preview: { type: string; value: string } | null) {
+    const setPreviewFilter = this.previewFilter.getAction('setPreviewFilter');
+    setPreviewFilter(preview);
+  }
+
+  // ========================================
   // Event Handlers
   // ========================================
 
@@ -183,6 +266,37 @@ export class GraphRightSidebar extends LitElement {
   render() {
     const isCollapsed = this.isCollapsed;
     const expandedSections = this.sidebar.get('expandedSections');
+    const filterData = this.filterData;
+    const isFiltersActive = filterData.hasActiveFilters(this.filters.value);
+
+    const nodeTypeItems = Array.from(filterData.typeCounts.entries()).map(([type, count]) => ({
+      key: type,
+      count,
+      color: getNodeTypeColor(type),
+    }));
+
+    const platformItems = Array.from(filterData.platformCounts.entries()).map(
+      ([platform, count]) => ({
+        key: platform,
+        count,
+        color: PLATFORM_COLOR,
+      }),
+    );
+
+    const projectColors = generateColorMap(filterData.projectCounts.keys(), 'project');
+    const packageColors = generateColorMap(filterData.packageCounts.keys(), 'package');
+
+    const projectItems = Array.from(filterData.projectCounts.entries()).map(([project, count]) => ({
+      key: project,
+      count,
+      color: projectColors.get(project) || '#6F2CFF',
+    }));
+
+    const packageItems = Array.from(filterData.packageCounts.entries()).map(([pkg, count]) => ({
+      key: pkg,
+      count,
+      color: packageColors.get(pkg) || '#FF9800',
+    }));
 
     // Update host attribute for CSS
     if (isCollapsed) {
@@ -241,6 +355,8 @@ export class GraphRightSidebar extends LitElement {
                         this.selectedNode.getAction('focusNode')(e.detail.node)}
                       @show-dependents=${(e: CustomEvent) =>
                         this.selectedNode.getAction('showDependents')(e.detail.node)}
+                      @show-impact=${(e: CustomEvent) =>
+                        this.selectedNode.getAction('showImpact')(e.detail.node)}
                     ></graph-node-details-panel>
                   `
                 : this.selectedCluster.value
@@ -266,7 +382,109 @@ export class GraphRightSidebar extends LitElement {
                     `
                   : html`
                       <!-- FilterView - Using React wrapper that contains all Lit children -->
-                      <slot name="filter-view"></slot>
+                      <div class="filter-content">
+                        <div class="stats-row">
+                          <graph-stats-card
+                            label="Nodes"
+                            value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
+                            ?highlighted=${isFiltersActive}
+                          ></graph-stats-card>
+                          <graph-stats-card
+                            label="Dependencies"
+                            value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
+                            ?highlighted=${isFiltersActive}
+                          ></graph-stats-card>
+                        </div>
+
+                        <graph-clear-filters-button
+                          ?is-active=${isFiltersActive || !!this.searchQuery.value}
+                          @clear-filters=${() => this.handleClearFilters()}
+                        ></graph-clear-filters-button>
+
+                        <graph-search-bar
+                          search-query=${this.searchQuery.value || ''}
+                          @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
+                          @search-clear=${() => this.handleSearchChange('')}
+                        ></graph-search-bar>
+
+                        <div class="filter-scroll">
+                          <div class="filter-sections">
+                            <graph-filter-section
+                              id="productTypes"
+                              title="Product Types"
+                              icon-name="product-types"
+                              .items=${nodeTypeItems}
+                              .selectedItems=${this.filters.value.nodeTypes}
+                              ?is-expanded=${expandedSections.productTypes}
+                              filter-type="nodeType"
+                              .zoom=${this.zoom.value}
+                              @section-toggle=${() => this.handleToggleSection('productTypes')}
+                              @item-toggle=${(e: CustomEvent) =>
+                                this.handleItemToggle('nodeType', e.detail.key, e.detail.checked)}
+                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+                            ></graph-filter-section>
+
+                            <graph-filter-section
+                              id="platforms"
+                              title="Platforms"
+                              icon-name="platforms"
+                              .items=${platformItems}
+                              .selectedItems=${this.filters.value.platforms}
+                              ?is-expanded=${expandedSections.platforms}
+                              filter-type="platform"
+                              .zoom=${this.zoom.value}
+                              @section-toggle=${() => this.handleToggleSection('platforms')}
+                              @item-toggle=${(e: CustomEvent) =>
+                                this.handleItemToggle('platform', e.detail.key, e.detail.checked)}
+                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+                            ></graph-filter-section>
+
+                            <graph-filter-section
+                              id="projects"
+                              title="Projects"
+                              icon-name="projects"
+                              .items=${projectItems}
+                              .selectedItems=${this.filters.value.projects}
+                              ?is-expanded=${expandedSections.projects}
+                              filter-type="project"
+                              .zoom=${this.zoom.value}
+                              @section-toggle=${() => this.handleToggleSection('projects')}
+                              @item-toggle=${(e: CustomEvent) =>
+                                this.handleItemToggle('project', e.detail.key, e.detail.checked)}
+                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+                            ></graph-filter-section>
+
+                            ${packageItems.length
+                              ? html`
+                                  <graph-filter-section
+                                    id="packages"
+                                    title="Packages"
+                                    icon-name="packages"
+                                    .items=${packageItems}
+                                    .selectedItems=${this.filters.value.packages}
+                                    ?is-expanded=${expandedSections.packages}
+                                    filter-type="package"
+                                    .zoom=${this.zoom.value}
+                                    @section-toggle=${() => this.handleToggleSection('packages')}
+                                    @item-toggle=${(e: CustomEvent) =>
+                                      this.handleItemToggle('package', e.detail.key, e.detail.checked)}
+                                    @preview-change=${(e: CustomEvent) =>
+                                      this.handlePreviewChange(e.detail)}
+                                  ></graph-filter-section>
+                                `
+                              : ''}
+                          </div>
+
+                          ${this.filteredNodes?.length === 0
+                            ? html`
+                                <graph-empty-state
+                                  ?has-active-filters=${isFiltersActive || !!this.searchQuery.value}
+                                  @clear-filters=${() => this.handleClearFilters()}
+                                ></graph-empty-state>
+                              `
+                            : ''}
+                        </div>
+                      </div>
                     `}
             `}
       </aside>

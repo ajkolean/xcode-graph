@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { FilterView as ReactFilterView } from '../../components/sidebar/FilterView';
 
 const meta = {
-  title: 'Containers/FilterView',
+  title: 'Features/Filters/FilterView',
   component: ReactFilterView,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

@@ -11,7 +11,7 @@ import { LitClearFiltersButton } from '../components-lit/wrappers/ClearFiltersBu
 import { LitStatsCard } from '../components-lit/wrappers/StatsCard';
 
 const meta: Meta = {
-  title: 'Testing/Interaction Examples',
+  title: 'Testing/Shadow DOM Interaction Examples',
   parameters: {
     layout: 'centered',
   },

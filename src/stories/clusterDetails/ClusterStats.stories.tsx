@@ -9,7 +9,7 @@ import { ClusterStats as ReactClusterStats } from '../../components/clusterDetai
 import { ClusterStats as LitClusterStats } from '../../components-lit/wrappers/ClusterStats';
 
 const meta = {
-  title: 'Cluster Details/ClusterStats',
+  title: 'Features/Cluster Details/ClusterStats',
   component: ReactClusterStats,
   parameters: {
     layout: 'centered',

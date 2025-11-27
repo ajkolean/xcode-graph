@@ -10,7 +10,7 @@ import { NodeInfo as LitNodeInfo } from '../../components-lit/wrappers/NodeInfo'
 import { allNodeTypes } from '../fixtures/mockNodes';
 
 const meta = {
-  title: 'Node Details/NodeInfo',
+  title: 'Features/Node Details/NodeInfo',
   component: ReactNodeInfo,
   parameters: {
     layout: 'centered',

@@ -1,0 +1,82 @@
+
+<Meta title="Features/Overview" />
+
+# Features
+
+Feature-specific component collections that work together to provide core application functionality.
+
+## 📍 Node Details
+
+Components for displaying detailed information about individual nodes (modules) in the dependency graph:
+
+### Components
+- **NodeHeader**: Header with node name, icon, and back button
+  - Shows cluster breadcrumb if node belongs to a cluster
+  - Adapts icon size based on zoom level
+
+- **MetricsSection**: Displays dependency metrics
+  - Dependencies In count
+  - Dependencies Out count
+
+- **NodeActions**: Action buttons for graph interactions
+  - Focus Node: Center and highlight the selected node
+  - Show Dependents: Filter to show what depends on this node
+  - Show Impact: Visualize transitive dependency chain
+
+- **DependenciesList**: Scrollable list of direct dependencies
+  - Click to select dependency
+  - Hover to highlight in graph
+
+- **DependentsList**: Scrollable list of nodes that depend on this node
+  - Same interaction patterns as DependenciesList
+
+- **NodeInfo**: Detailed metadata about the node
+  - Type, platform, origin, project information
+
+### Usage Pattern
+These components work together in the `NodeDetailsPanel` to provide a complete node detail view in the right sidebar.
+
+## 🗂️ Cluster Details
+
+Components for displaying information about clusters (projects/packages):
+
+### Components
+- **ClusterHeader**: Header with cluster name and type badge
+  - Back button to return to full graph view
+
+- **ClusterStats**: Statistical overview
+  - Total dependencies count
+  - Total dependents count
+  - Number of platforms supported
+
+- **ClusterTargetsList**: List of all nodes within the cluster
+  - Grouped by node type
+  - Click to select individual nodes
+
+### Usage Pattern
+These components compose together in the `ClusterDetailsPanel` shown when a user clicks a cluster in the graph.
+
+## 🔍 Filters
+
+Filter interface components for narrowing down the graph view:
+
+### Components
+- **FilterView**: Complete filter interface orchestrator
+  - Combines search, stats, and filter sections
+  - Manages filter state and interactions
+
+This is a container component that uses SearchBar, StatsCard, FilterSection, and other UI components.
+
+## 💡 Integration Notes
+
+All feature components emit custom events that bubble up to parent containers:
+- `node-select`: When a node is clicked
+- `node-hover`: When a node is hovered
+- `cluster-click`: When a cluster link is clicked
+- `focus-node`, `show-dependents`, `show-impact`: Action button events
+
+These events are handled by the main application state management (Zustand stores).
+
+---
+
+**See individual component stories** for detailed props, states, and interaction patterns!

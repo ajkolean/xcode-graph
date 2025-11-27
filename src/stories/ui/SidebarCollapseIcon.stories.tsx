@@ -9,7 +9,7 @@ import { SidebarCollapseIcon as ReactSidebarCollapseIcon } from '../../component
 import { SidebarCollapseIcon as LitSidebarCollapseIcon } from '../../components-lit/wrappers/SidebarCollapseIcon';
 
 const meta = {
-  title: 'UI/SidebarCollapseIcon',
+  title: 'Design System/Icons/SidebarCollapseIcon',
   component: ReactSidebarCollapseIcon,
   parameters: {
     layout: 'centered',

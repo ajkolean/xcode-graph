@@ -11,7 +11,7 @@ import { NodeActions as ReactNodeActions } from '../../components/nodeDetails/No
 import { NodeActions as LitNodeActions } from '../../components-lit/wrappers/NodeActions';
 
 const meta = {
-  title: 'Node Details/NodeActions',
+  title: 'Features/Node Details/NodeActions',
   component: ReactNodeActions,
   parameters: {
     layout: 'centered',

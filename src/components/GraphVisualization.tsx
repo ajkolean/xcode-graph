@@ -6,10 +6,9 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { GraphEdge, GraphNode as GraphNodeType } from '../data/mockGraphData';
 import type { ViewMode } from '../types/app';
-import { ClusterGroup } from './graph/ClusterGroup';
-import { GraphEdges } from './graph/GraphEdges';
-import { GraphBackground, GraphControls, GraphEmptyState } from './graph/GraphOverlays';
-import { GraphSVGDefs } from './graph/GraphSVGDefs';
+import { ClusterGroup } from '../components-lit/wrappers/ClusterGroup';
+import { GraphEdges } from '../components-lit/wrappers/GraphEdges';
+import { GraphBackground, GraphControls, GraphEmptyState } from '../components-lit/wrappers/GraphOverlays';
 import { LitGraphSVGDefs } from '../components-lit/wrappers/GraphSVGDefs';
 import { useAnimatedLayout } from './graph/useAnimatedLayout';
 import { useDeterministicLayout } from './graph/useDeterministicLayout';

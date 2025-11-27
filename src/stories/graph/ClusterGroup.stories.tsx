@@ -5,7 +5,7 @@
 import type { Meta } from '@storybook/react';
 
 const meta = {
-  title: 'Graph/ClusterGroup',
+  title: 'Graph Visualization/ClusterGroup',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta;

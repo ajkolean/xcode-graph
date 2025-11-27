@@ -8,7 +8,7 @@ import { mockGraphNodes } from './fixtures/mockNodes';
 import { mockGraphEdges } from './fixtures/mockEdges';
 
 const meta = {
-  title: 'Complex/GraphVisualization',
+  title: 'Panels & Views/GraphVisualization',
   parameters: { layout: 'fullscreen' },
   tags: ['autodocs'],
 } satisfies Meta;

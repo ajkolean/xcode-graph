@@ -12,7 +12,7 @@ import { SearchBar as ReactSearchBar } from '../../components/sidebar/SearchBar'
 import { SearchBar as LitSearchBar } from '../../components-lit/wrappers/SearchBar';
 
 const meta = {
-  title: 'UI/SearchBar',
+  title: 'Design System/UI Components/SearchBar',
   component: ReactSearchBar,
   parameters: {
     layout: 'centered',
