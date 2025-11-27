@@ -63,7 +63,7 @@ export function GraphNode({
       }}
       opacity={isDimmed ? 0.3 : 1}
       transform={`scale(${scale})`}
-      transform-origin={`${x}px ${y}px`}
+      transformOrigin={`${x}px ${y}px`}
     >
       {/* Sonar pulse rings for selected node */}
       {isSelected && (

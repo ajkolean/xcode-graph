@@ -17,6 +17,8 @@ import {
 } from '../../components-lit/wrappers/FilterIcons';
 import { LitSearchBarElement } from '../../components-lit/wrappers/SearchBar';
 import { StatsCard } from './StatsCard';
+import { LitStatsCard } from '../../components-lit/wrappers/StatsCard';
+import { FilterSection as LitFilterSection } from '../../components-lit/wrappers/FilterSection';
 
 interface FilterViewProps {
   // Counts
@@ -141,12 +143,12 @@ export function FilterView({
     <div className="flex-1 overflow-y-auto">
       {/* Stats Cards */}
       <div className="p-4 flex gap-3">
-        <StatsCard
+        <LitStatsCard
           label="Nodes"
           value={`${filteredNodesCount}/${totalNodesCount}`}
           highlighted={isFiltersActive}
         />
-        <StatsCard
+        <LitStatsCard
           label="Dependencies"
           value={`${filteredEdgesCount}/${totalEdgesCount}`}
           highlighted={isFiltersActive}
@@ -174,15 +176,15 @@ export function FilterView({
       <div className="h-full overflow-y-auto">
         <div className="space-y-6 px-4 py-6">
           {/* Product Types */}
-          <FilterSection
+          <LitFilterSection
             id="productTypes"
             title="Product Types"
             icon={<LitProductTypesIcon />}
             isExpanded={expandedSections.productTypes}
-            onToggle={() => onToggleSection('productTypes')}
+            onSectionToggle={() => onToggleSection('productTypes')}
             items={nodeTypeItems}
             selectedItems={filters.nodeTypes}
-            onItemToggle={handleNodeTypeToggle}
+            onItemToggle={(e) => handleNodeTypeToggle(e.detail.key, e.detail.checked)}
             filterType="nodeType"
             zoom={zoom}
             onPreviewChange={onPreviewChange}
@@ -198,15 +200,15 @@ export function FilterView({
           />
 
           {/* Platforms */}
-          <FilterSection
+          <LitFilterSection
             id="platforms"
             title="Platforms"
             icon={<LitPlatformsIcon />}
             isExpanded={expandedSections.platforms}
-            onToggle={() => onToggleSection('platforms')}
+            onSectionToggle={() => onToggleSection('platforms')}
             items={platformItems}
             selectedItems={filters.platforms}
-            onItemToggle={handlePlatformToggle}
+            onItemToggle={(e) => handlePlatformToggle(e.detail.key, e.detail.checked)}
             filterType="platform"
             zoom={zoom}
             onPreviewChange={onPreviewChange}
@@ -222,15 +224,15 @@ export function FilterView({
           />
 
           {/* Projects */}
-          <FilterSection
+          <LitFilterSection
             id="projects"
             title="Projects"
             icon={<LitProjectsIcon />}
             isExpanded={expandedSections.projects}
-            onToggle={() => onToggleSection('projects')}
+            onSectionToggle={() => onToggleSection('projects')}
             items={projectItems}
             selectedItems={filters.projects}
-            onItemToggle={handleProjectToggle}
+            onItemToggle={(e) => handleProjectToggle(e.detail.key, e.detail.checked)}
             filterType="project"
             zoom={zoom}
             onPreviewChange={onPreviewChange}
@@ -249,15 +251,15 @@ export function FilterView({
 
           {/* Packages */}
           {packageItems.length > 0 && (
-            <FilterSection
+            <LitFilterSection
               id="packages"
               title="Packages"
               icon={<LitPackagesIcon />}
               isExpanded={expandedSections.packages}
-              onToggle={() => onToggleSection('packages')}
+              onSectionToggle={() => onToggleSection('packages')}
               items={packageItems}
               selectedItems={filters.packages}
-              onItemToggle={handlePackageToggle}
+              onItemToggle={(e) => handlePackageToggle(e.detail.key, e.detail.checked)}
               filterType="package"
               zoom={zoom}
               onPreviewChange={onPreviewChange}

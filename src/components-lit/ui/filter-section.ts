@@ -65,7 +65,7 @@ export class GraphFilterSection extends LitElement {
   declare filterType: FilterType;
 
   @property({ type: Number })
-  zoom: number = 1.0;
+  declare zoom: number;
 
   // ========================================
   // Styles

@@ -112,6 +112,8 @@ export class GraphNodeDetailsPanel extends LitElement {
         dependents-count=${metrics.dependentCount}
         total-dependencies-count=${metrics.totalDependencyCount}
         total-dependents-count=${metrics.totalDependentCount}
+        ?is-high-fan-in=${metrics.isHighFanIn}
+        ?is-high-fan-out=${metrics.isHighFanOut}
       ></graph-metrics-section>
 
       <graph-node-actions

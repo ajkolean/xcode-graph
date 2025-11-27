@@ -238,10 +238,8 @@ export class GraphRightSidebar extends LitElement {
                       ></graph-cluster-details-panel>
                     `
                   : html`
-                      <!-- FilterView placeholder - would need full migration -->
-                      <div style="padding: 16px; color: var(--color-foreground)">
-                        Filters (FilterView component needed)
-                      </div>
+                      <!-- FilterView - Using React wrapper that contains all Lit children -->
+                      <slot name="filter-view"></slot>
                     `}
             `}
       </aside>

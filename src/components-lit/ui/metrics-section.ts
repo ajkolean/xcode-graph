@@ -34,6 +34,12 @@ export class GraphMetricsSection extends LitElement {
   @property({ type: Number, attribute: 'total-dependents-count' })
   declare totalDependentsCount: number;
 
+  @property({ type: Boolean, attribute: 'is-high-fan-in' })
+  isHighFanIn: boolean = false;
+
+  @property({ type: Boolean, attribute: 'is-high-fan-out' })
+  isHighFanOut: boolean = false;
+
   // ========================================
   // Styles
   // ========================================
