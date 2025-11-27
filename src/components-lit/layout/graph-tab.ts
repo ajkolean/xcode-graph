@@ -17,6 +17,7 @@
 import { LitElement, html, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { Cluster } from '@/types/cluster';
 import { createStoreController } from '@/controllers/zustand.controller';
 import { useGraphStore } from '@/stores/graphStore';
 import { useFilterStore } from '@/stores/filterStore';
@@ -46,6 +47,9 @@ export class GraphTab extends LitElement {
 
   @property({ attribute: false })
   declare allEdges: GraphEdge[];
+
+  @property({ attribute: false })
+  declare clusters: Cluster[] | undefined;
 
   @property({ attribute: false })
   declare transitiveDeps: any;
@@ -181,7 +185,10 @@ export class GraphTab extends LitElement {
             .allEdges=${this.allEdges}
             .filteredNodes=${this.filteredNodes}
             .filteredEdges=${this.filteredEdges}
-          ></graph-right-sidebar>
+            .clusters=${this.clusters}
+          >
+            <slot name="filter-view" slot="filter-view"></slot>
+          </graph-right-sidebar>
         </div>
       </div>
     `;

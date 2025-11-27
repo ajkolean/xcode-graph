@@ -15,6 +15,9 @@ export const LitGraphSVGDefsElement = createComponent({
 
 export interface LitGraphSVGDefsProps extends React.HTMLAttributes<HTMLElement> {}
 
-export function LitGraphSVGDefs({ className, ...props }: LitGraphSVGDefsProps = {}) {
+export function GraphSVGDefs({ className, ...props }: LitGraphSVGDefsProps = {}) {
   return <LitGraphSVGDefsElement className={className} {...props} />;
 }
+
+// Alias for backwards compatibility
+export const LitGraphSVGDefs = GraphSVGDefs;

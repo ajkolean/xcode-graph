@@ -1,6 +1,5 @@
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import { useNodeDependencies } from '../hooks/useNodeDependencies';
-import type { Cluster } from '../types/cluster';
 import { NodeHeader } from '../components-lit/wrappers/NodeHeader';
 import { NodeInfo } from '../components-lit/wrappers/NodeInfo';
 import { NodeActions } from '../components-lit/wrappers/NodeActions';
@@ -13,7 +12,6 @@ interface NodeDetailsPanelProps {
   allNodes: GraphNode[];
   edges: GraphEdge[];
   filteredEdges?: GraphEdge[];
-  clusters?: Cluster[];
   onClose: () => void;
   onNodeSelect: (node: GraphNode) => void;
   onClusterSelect?: (clusterId: string) => void;
@@ -30,7 +28,6 @@ export function NodeDetailsPanel({
   allNodes,
   edges,
   filteredEdges,
-  clusters,
   onClose,
   onNodeSelect,
   onClusterSelect,

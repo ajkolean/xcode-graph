@@ -91,26 +91,16 @@ describe('NodeDetailsPanel', () => {
       expect(screen.getByText('TestNode')).toBeInTheDocument();
     });
 
-    it('should render with clusters', () => {
+    it('should render with onClusterSelect callback', () => {
       const { node, allNodes, edges } = createTestData();
-      const clusters = [
-        {
-          id: 'test-cluster',
-          name: 'TestCluster',
-          type: 'project' as const,
-          origin: 'local' as const,
-          nodes: allNodes,
-          metadata: new Map(),
-          anchors: [],
-        },
-      ];
+      const onClusterSelect = vi.fn();
 
       render(
         <NodeDetailsPanel
           node={node}
           allNodes={allNodes}
           edges={edges}
-          clusters={clusters}
+          onClusterSelect={onClusterSelect}
           {...defaultProps}
         />
       );

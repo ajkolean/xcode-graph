@@ -200,10 +200,6 @@ export class GraphVisualization extends LitElement {
   // ========================================
 
   render() {
-    if (this.nodes.length === 0) {
-      return html`<graph-empty-state></graph-empty-state>`;
-    }
-
     return html`
       <graph-background></graph-background>
 
@@ -231,81 +227,89 @@ export class GraphVisualization extends LitElement {
         <graph-svg-defs></graph-svg-defs>
 
         <g transform="translate(${this.interaction.pan.x}, ${this.interaction.pan.y}) scale(${this.zoom})">
-          <!-- Cross-cluster edges -->
-          <g class="cluster-edges">
-            <graph-edges
-              .edges=${this.edges}
-              .nodes=${this.nodes}
-              .finalNodePositions=${this.finalNodePositions}
-              .clusterPositions=${this.layout.clusterPositions}
-              .selectedNode=${this.selectedNode}
-              .hoveredNode=${this.hoveredNode}
-              .hoveredClusterId=${this.hoveredCluster}
-              view-mode=${this.viewMode}
-              .transitiveDeps=${this.transitiveDeps}
-              .transitiveDependents=${this.transitiveDependents}
-              .zoom=${this.zoom}
-            ></graph-edges>
-          </g>
+          ${this.nodes.length
+            ? html`
+                <!-- Cross-cluster edges -->
+                <g class="cluster-edges">
+                  <graph-edges
+                    .edges=${this.edges}
+                    .nodes=${this.nodes}
+                    .finalNodePositions=${this.finalNodePositions}
+                    .clusterPositions=${this.layout.clusterPositions}
+                    .selectedNode=${this.selectedNode}
+                    .hoveredNode=${this.hoveredNode}
+                    .hoveredClusterId=${this.hoveredCluster}
+                    view-mode=${this.viewMode}
+                    .transitiveDeps=${this.transitiveDeps}
+                    .transitiveDependents=${this.transitiveDependents}
+                    .zoom=${this.zoom}
+                  ></graph-edges>
+                </g>
 
-          <!-- Clusters with nodes and internal edges -->
-          ${this.layout.clusters.map((cluster) => {
-            const position = this.layout.clusterPositions.get(cluster.id);
-            if (!position) return null;
+                <!-- Clusters with nodes and internal edges -->
+                ${this.layout.clusters.map((cluster) => {
+                  const position = this.layout.clusterPositions.get(cluster.id);
+                  if (!position) return null;
 
-            const isSelected = this.selectedCluster === cluster.id;
+                  const isSelected = this.selectedCluster === cluster.id;
 
-            return html`
-              <graph-cluster-group
-                .cluster=${cluster}
-                .clusterPosition=${position}
-                .nodes=${this.nodes}
-                .edges=${this.edges}
-                .finalNodePositions=${this.finalNodePositions}
-                .selectedNode=${this.selectedNode}
-                .hoveredNode=${this.hoveredNode}
-                .hoveredClusterId=${this.hoveredCluster}
-                search-query=${this.searchQuery}
-                .zoom=${this.zoom}
-                view-mode=${this.viewMode}
-                .transitiveDeps=${this.transitiveDeps}
-                .transitiveDependents=${this.transitiveDependents}
-                ?is-selected=${isSelected}
-                .previewFilter=${this.previewFilter}
-                @node-mouseenter=${(e: CustomEvent) =>
-                  this.dispatchEvent(
-                    new CustomEvent('node-hover', {
-                      detail: e.detail,
-                      bubbles: true,
-                      composed: true,
-                    })
-                  )}
-                @node-mouseleave=${() =>
-                  this.dispatchEvent(
-                    new CustomEvent('node-hover', {
-                      detail: { nodeId: null },
-                      bubbles: true,
-                      composed: true,
-                    })
-                  )}
-                @node-mousedown=${(e: CustomEvent) =>
-                  this.interaction.handleNodeMouseDown(e.detail.nodeId, e.detail.originalEvent)}
-                @node-click=${this.handleNodeClick}
-                @cluster-mouseenter=${() => (this.hoveredCluster = cluster.id)}
-                @cluster-mouseleave=${() => (this.hoveredCluster = null)}
-                @cluster-click=${() =>
-                  this.dispatchEvent(
-                    new CustomEvent('cluster-select', {
-                      detail: { clusterId: cluster.id },
-                      bubbles: true,
-                      composed: true,
-                    })
-                  )}
-              ></graph-cluster-group>
-            `;
-          })}
+                  return html`
+                    <graph-cluster-group
+                      .cluster=${cluster}
+                      .clusterPosition=${position}
+                      .nodes=${this.nodes}
+                      .edges=${this.edges}
+                      .finalNodePositions=${this.finalNodePositions}
+                      .selectedNode=${this.selectedNode}
+                      .hoveredNode=${this.hoveredNode}
+                      .hoveredClusterId=${this.hoveredCluster}
+                      search-query=${this.searchQuery}
+                      .zoom=${this.zoom}
+                      view-mode=${this.viewMode}
+                      .transitiveDeps=${this.transitiveDeps}
+                      .transitiveDependents=${this.transitiveDependents}
+                      ?is-selected=${isSelected}
+                      .previewFilter=${this.previewFilter}
+                      @node-mouseenter=${(e: CustomEvent) =>
+                        this.dispatchEvent(
+                          new CustomEvent('node-hover', {
+                            detail: e.detail,
+                            bubbles: true,
+                            composed: true,
+                          })
+                        )}
+                      @node-mouseleave=${() =>
+                        this.dispatchEvent(
+                          new CustomEvent('node-hover', {
+                            detail: { nodeId: null },
+                            bubbles: true,
+                            composed: true,
+                          })
+                        )}
+                      @node-mousedown=${(e: CustomEvent) =>
+                        this.interaction.handleNodeMouseDown(e.detail.nodeId, e.detail.originalEvent)}
+                      @node-click=${this.handleNodeClick}
+                      @cluster-mouseenter=${() => (this.hoveredCluster = cluster.id)}
+                      @cluster-mouseleave=${() => (this.hoveredCluster = null)}
+                      @cluster-click=${() =>
+                        this.dispatchEvent(
+                          new CustomEvent('cluster-select', {
+                            detail: { clusterId: cluster.id },
+                            bubbles: true,
+                            composed: true,
+                          })
+                        )}
+                    ></graph-cluster-group>
+                  `;
+                })}
+              `
+            : ''}
         </g>
       </svg>
+
+      ${this.nodes.length === 0
+        ? html`<graph-visualization-empty-state></graph-visualization-empty-state>`
+        : ''}
     `;
   }
 }

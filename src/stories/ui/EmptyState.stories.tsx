@@ -5,8 +5,8 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent } from '@storybook/test';
-import { fn } from '@storybook/test';
+import { expect, userEvent } from 'storybook/test';
+import { fn } from 'storybook/test';
 import { EmptyState as ReactEmptyState } from '../../components/sidebar/EmptyState';
 import { EmptyState as LitEmptyState } from '../../components-lit/wrappers/EmptyState';
 

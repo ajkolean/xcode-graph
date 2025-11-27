@@ -113,6 +113,30 @@ export class GraphRightSidebar extends LitElement {
     return computeFilters(this.allNodes);
   }
 
+  private findClusterById(clusterId: string | null): Cluster | undefined {
+    if (!clusterId) return undefined;
+
+    const existing = this.clusters?.find((c) => c.id === clusterId);
+    if (existing) return existing;
+
+    const clusterNodes = this.allNodes.filter(
+      (n) => (n.type === 'package' ? n.name : n.project) === clusterId
+    );
+    if (clusterNodes.length === 0) return undefined;
+
+    const firstNode = clusterNodes[0];
+    const type = firstNode.type === 'package' ? 'package' : 'project';
+    const origin = clusterNodes.some((n) => n.origin === 'external') ? 'external' : 'local';
+
+    return {
+      id: clusterId,
+      name: clusterId,
+      type,
+      origin,
+      nodes: clusterNodes,
+    } as Cluster;
+  }
+
   private get isCollapsed(): boolean {
     return this.sidebar.matches('collapsed');
   }
@@ -184,6 +208,10 @@ export class GraphRightSidebar extends LitElement {
                 .platformCounts=${this.filterData.platformCounts}
                 node-types-filter-size=${this.filters.value.nodeTypes.size}
                 platforms-filter-size=${this.filters.value.platforms.size}
+                .projectCounts=${this.filterData.projectCounts}
+                .packageCounts=${this.filterData.packageCounts}
+                projects-filter-size=${this.filters.value.projects.size}
+                packages-filter-size=${this.filters.value.packages.size}
                 @expand-to-section=${(e: CustomEvent) =>
                   this.handleExpandToSection(e.detail.section as SidebarSection)}
               ></graph-collapsed-sidebar>
@@ -218,7 +246,7 @@ export class GraphRightSidebar extends LitElement {
                 : this.selectedCluster.value
                   ? html`
                       <graph-cluster-details-panel
-                        .cluster=${this.clusters?.find((c) => c.id === this.selectedCluster.value)}
+                        .cluster=${this.findClusterById(this.selectedCluster.value)}
                         .clusterNodes=${this.allNodes.filter(
                           (n) =>
                             (n.type === 'package' ? n.name : n.project) === this.selectedCluster.value,

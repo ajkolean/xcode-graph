@@ -20,7 +20,6 @@
 import { LitElement, html, css } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
-import type { Cluster } from '@/types/cluster';
 import { computeNodeDependencies } from '@/utils/nodeUtils';
 import './node-header';
 import './node-info';
@@ -43,13 +42,13 @@ export class GraphNodeDetailsPanel extends LitElement {
   declare edges: GraphEdge[];
 
   @property({ attribute: false })
-  filteredEdges: GraphEdge[] | undefined;
+  declare filteredEdges: GraphEdge[] | undefined;
 
   @property({ attribute: false })
-  clusters: Cluster[] | undefined;
+  declare clusters: Cluster[] | undefined;
 
   @property({ type: String, attribute: 'view-mode' })
-  viewMode: string = '';
+  declare viewMode: string;
 
   @property({ type: Number })
   declare zoom: number;

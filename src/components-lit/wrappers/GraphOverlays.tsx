@@ -7,7 +7,7 @@ import { createComponent } from '@lit/react';
 import {
   GraphBackground as GraphBackgroundLit,
   GraphControls as GraphControlsLit,
-  GraphEmptyState as GraphEmptyStateLit,
+  GraphEmptyStateOverlay as GraphEmptyStateLit,
   GraphInstructions as GraphInstructionsLit,
 } from '../graph/graph-overlays';
 
@@ -31,7 +31,7 @@ export const LitGraphControlsElement = createComponent({
   events: {
     onZoomIn: 'zoom-in',
     onZoomOut: 'zoom-out',
-    onResetZoom: 'reset-zoom',
+    onResetZoom: 'zoom-reset',
     onToggleAnimation: 'toggle-animation',
   },
 });
@@ -75,7 +75,7 @@ export function GraphControls({
 
 // GraphEmptyState
 export const LitGraphEmptyStateElement = createComponent({
-  tagName: 'graph-empty-state',
+  tagName: 'graph-visualization-empty-state',
   elementClass: GraphEmptyStateLit,
   react: React,
   events: {},

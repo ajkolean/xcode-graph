@@ -6,7 +6,6 @@ import React from 'react';
 import { createComponent } from '@lit/react';
 import { GraphNodeDetailsPanel } from '../ui/node-details-panel';
 import type { GraphNode, GraphEdge } from '@/data/mockGraphData';
-import type { Cluster } from '@/types/cluster';
 
 export const LitNodeDetailsPanelElement = createComponent({
   tagName: 'graph-node-details-panel',
@@ -28,7 +27,6 @@ export interface LitNodeDetailsPanelProps extends React.HTMLAttributes<HTMLEleme
   allNodes?: GraphNode[];
   edges?: GraphEdge[];
   filteredEdges?: GraphEdge[];
-  clusters?: Cluster[];
   viewMode?: string;
   zoom?: number;
   onClose?: (event: CustomEvent) => void;
@@ -45,7 +43,6 @@ export function NodeDetailsPanel({
   allNodes,
   edges,
   filteredEdges,
-  clusters,
   viewMode = '',
   zoom = 1.0,
   onClose,
@@ -63,7 +60,6 @@ export function NodeDetailsPanel({
       allNodes={allNodes}
       edges={edges}
       filteredEdges={filteredEdges}
-      clusters={clusters}
       view-mode={viewMode}
       zoom={zoom}
       onClose={onClose}

@@ -133,6 +133,7 @@ export class GraphDependenciesList extends LitElement {
                   <graph-list-item-row
                     .node=${dep}
                     subtitle=${subtitle}
+                    .zoom=${1.0}
                     @row-select=${this.handleNodeSelect}
                     @row-hover=${this.handleNodeHover}
                     @row-hover-end=${this.handleHoverEnd}

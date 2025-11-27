@@ -53,6 +53,11 @@ export class GraphListItemRow extends LitElement {
   @state()
   private declare isHovered: boolean;
 
+  constructor() {
+    super();
+    this.zoom = 1;
+  }
+
   // ========================================
   // Styles
   // ========================================
@@ -98,6 +103,10 @@ export class GraphListItemRow extends LitElement {
     .icon-container svg {
       width: 20px;
       height: 20px;
+    }
+
+    .icon-container svg path {
+      opacity: 0.95;
     }
 
     .content {

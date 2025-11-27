@@ -11,14 +11,13 @@ import { type SidebarSection, useSidebarMachine } from '../hooks/useSidebarMachi
 import { useGraphStore } from '../stores/graphStore';
 import { useFilterStore } from '../stores/filterStore';
 import { useUIStore } from '../stores/uiStore';
-import type { Cluster } from '../types/cluster';
 import { generateColorMap, getNodeTypeColor } from '../utils/filterHelpers';
 import { PLATFORM_COLOR } from '../utils/platformIcons';
-import { ClusterDetailsPanel } from './ClusterDetailsPanel';
-import { NodeDetailsPanel } from './NodeDetailsPanel';
-import { CollapsedSidebar } from './sidebar/CollapsedSidebar';
+import { ClusterDetailsPanel } from '../components-lit/wrappers/ClusterDetailsPanel';
+import { NodeDetailsPanel } from '../components-lit/wrappers/NodeDetailsPanel';
+import { CollapsedSidebar } from '../components-lit/wrappers/CollapsedSidebar';
 import { FilterView } from './sidebar/FilterView';
-import { RightSidebarHeader } from './sidebar/RightSidebarHeader';
+import { RightSidebarHeader } from '../components-lit/wrappers/RightSidebarHeader';
 
 interface RightSidebarProps {
   // Data - still passed as props
@@ -26,7 +25,6 @@ interface RightSidebarProps {
   allEdges: GraphEdge[];
   filteredNodes: GraphNode[];
   filteredEdges: GraphEdge[];
-  clusters?: Cluster[];
 }
 
 export function RightSidebar({
@@ -34,7 +32,6 @@ export function RightSidebar({
   allEdges,
   filteredNodes,
   filteredEdges,
-  clusters,
 }: RightSidebarProps) {
   // Graph store
   const selectedNode = useGraphStore((s) => s.selectedNode);
@@ -147,7 +144,7 @@ export function RightSidebar({
       <RightSidebarHeader
         title={headerTitle}
         isCollapsed={isCollapsed}
-        onToggleCollapse={toggleSidebar}
+        onToggleCollapse={() => toggleSidebar()}
       />
 
       {/* Collapsed State */}
@@ -157,13 +154,11 @@ export function RightSidebar({
           filteredEdges={filteredEdges}
           typeCounts={typeCounts}
           platformCounts={platformCounts}
-          projectCounts={projectCounts}
-          packageCounts={packageCounts}
           nodeTypesFilterSize={filters.nodeTypes.size}
           platformsFilterSize={filters.platforms.size}
           projectsFilterSize={filters.projects.size}
           packagesFilterSize={filters.packages.size}
-          onExpandToSection={expandToSection}
+          onExpandToSection={(e) => expandToSection(e.detail.section)}
         />
       )}
 
@@ -182,16 +177,15 @@ export function RightSidebar({
               allNodes={allNodes}
               edges={allEdges}
               filteredEdges={filteredEdges}
-              clusters={clusters}
-              onClose={() => selectNode(null)}
-              onNodeSelect={selectNode}
-              onClusterSelect={selectCluster}
-              onNodeHover={setHoveredNode}
-              onFocusNode={focusNode}
-              onShowDependents={showDependents}
-              onShowImpact={showImpact}
               viewMode={viewMode}
               zoom={zoom}
+              onClose={() => selectNode(null)}
+              onNodeSelect={(e) => selectNode(e.detail.node)}
+              onClusterSelect={(e) => selectCluster?.(e.detail.clusterId)}
+              onNodeHover={(e) => setHoveredNode(e.detail.nodeId)}
+              onFocusNode={(e) => focusNode(e.detail.node)}
+              onShowDependents={(e) => showDependents(e.detail.node)}
+              onShowImpact={(e) => showImpact(e.detail.node)}
             />
           </div>
         ) : selectedCluster ? (

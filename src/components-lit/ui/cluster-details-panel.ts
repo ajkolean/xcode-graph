@@ -43,10 +43,10 @@ export class GraphClusterDetailsPanel extends LitElement {
   declare edges: GraphEdge[];
 
   @property({ attribute: false })
-  filteredEdges: GraphEdge[] | undefined;
+  declare filteredEdges: GraphEdge[] | undefined;
 
   @property({ type: Number })
-  zoom: number = 1.0;
+  declare zoom: number;
 
   // ========================================
   // Styles
@@ -98,7 +98,7 @@ export class GraphClusterDetailsPanel extends LitElement {
   render() {
     if (!this.cluster) return html``;
 
-    const isExternal = this.cluster.name === 'External';
+    const isExternal = this.cluster.origin === 'external';
 
     return html`
       <graph-cluster-header
@@ -125,6 +125,16 @@ export class GraphClusterDetailsPanel extends LitElement {
 
         <graph-cluster-targets-list
           .clusterNodes=${this.clusterNodes}
+          .nodesByType=${this.clusterNodes.reduce((acc, node) => {
+            const type = node.type;
+            if (!acc[type]) acc[type] = [];
+            acc[type].push(node);
+            return acc;
+          }, {} as Record<string, GraphNode[]>)}
+          filtered-targets-count=${this.stats.filteredTargetsCount}
+          total-targets-count=${this.clusterNodes.length}
+          .edges=${this.edges}
+          .zoom=${this.zoom}
           @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
           @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
         ></graph-cluster-targets-list>

@@ -39,6 +39,11 @@ export class GraphNodeHeader extends LitElement {
   @property({ type: Boolean, attribute: 'show-cluster-link' })
   declare showClusterLink: boolean;
 
+  constructor() {
+    super();
+    this.showClusterLink = true;
+  }
+
   // ========================================
   // Styles
   // ========================================

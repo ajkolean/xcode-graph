@@ -37,6 +37,12 @@ export class GraphCollapsedSidebar extends LitElement {
   @property({ attribute: false })
   declare platformCounts: Map<string, number>;
 
+  @property({ attribute: false })
+  declare projectCounts: Map<string, number>;
+
+  @property({ attribute: false })
+  declare packageCounts: Map<string, number>;
+
   @property({ type: Number, attribute: 'node-types-filter-size' })
   declare nodeTypesFilterSize: number;
 
@@ -203,6 +209,8 @@ export class GraphCollapsedSidebar extends LitElement {
   render() {
     const showProductTypesBadge = this.nodeTypesFilterSize < (this.typeCounts?.size || 0);
     const showPlatformsBadge = this.platformsFilterSize < (this.platformCounts?.size || 0);
+    const showProjectsBadge = this.projectsFilterSize < (this.projectCounts?.size || 0);
+    const showPackagesBadge = this.packagesFilterSize < (this.packageCounts?.size || 0);
 
     return html`
       <!-- Product Types -->
@@ -236,6 +244,7 @@ export class GraphCollapsedSidebar extends LitElement {
         title="Projects"
       >
         ${this.renderProjectsIcon()}
+        ${showProjectsBadge ? html`<div class="badge">${this.projectsFilterSize}</div>` : ''}
       </button>
 
       <!-- Packages -->
@@ -245,6 +254,7 @@ export class GraphCollapsedSidebar extends LitElement {
         title="Packages"
       >
         ${this.renderPackagesIcon()}
+        ${showPackagesBadge ? html`<div class="badge">${this.packagesFilterSize}</div>` : ''}
       </button>
 
       <!-- Divider -->

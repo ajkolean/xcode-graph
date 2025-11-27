@@ -20,7 +20,7 @@ export interface LitEmptyStateProps extends React.HTMLAttributes<HTMLElement> {
   onClearFilters?: (event: CustomEvent) => void;
 }
 
-export function LitEmptyState({
+export function EmptyState({
   hasActiveFilters = false,
   className,
   onClearFilters,
@@ -35,3 +35,6 @@ export function LitEmptyState({
     />
   );
 }
+
+// Alias for backwards compatibility
+export const LitEmptyState = EmptyState;

@@ -5,8 +5,8 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent } from '@storybook/test';
-import { fn } from '@storybook/test';
+import { expect, userEvent } from 'storybook/test';
+import { fn } from 'storybook/test';
 import { useState } from 'react';
 import { SearchBar as ReactSearchBar } from '../../components/sidebar/SearchBar';
 import { SearchBar as LitSearchBar } from '../../components-lit/wrappers/SearchBar';

@@ -4,7 +4,6 @@
 
 import { ChevronLeft } from 'lucide-react';
 import type { GraphNode } from '../../data/mockGraphData';
-import type { Cluster } from '../../types/cluster';
 import { generateColor } from '../../utils/colorGenerator';
 import { getNodeTypeColor } from '../../utils/filterHelpers';
 import { getNodeIconPath, getNodeTypeLabel } from '../../utils/nodeIcons';
@@ -14,11 +13,10 @@ interface NodeHeaderProps {
   node: GraphNode;
   onClose: () => void;
   onClusterClick?: (clusterId: string) => void;
-  clusters?: Cluster[];
   zoom: number;
 }
 
-export function NodeHeader({ node, onClose, onClusterClick, clusters: _clusters, zoom }: NodeHeaderProps) {
+export function NodeHeader({ node, onClose, onClusterClick, zoom }: NodeHeaderProps) {
   // Get icon path based on node type
   const iconPath = getNodeIconPath(node.type, node.type === 'app' ? node.platform : undefined);
 

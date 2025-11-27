@@ -11,7 +11,7 @@
  * ```html
  * <graph-background></graph-background>
  * <graph-controls zoom="1.0"></graph-controls>
- * <graph-empty-state></graph-empty-state>
+ * <graph-visualization-empty-state></graph-visualization-empty-state>
  * ```
  */
 
@@ -316,7 +316,7 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-background': GraphBackground;
     'graph-controls': GraphControls;
-    'graph-empty-state': GraphEmptyStateOverlay;
+    'graph-visualization-empty-state': GraphEmptyStateOverlay;
     'graph-instructions': GraphInstructions;
   }
 }
@@ -324,4 +324,17 @@ declare global {
 // Register custom element with HMR support
 if (!customElements.get('graph-background')) {
   customElements.define('graph-background', GraphBackground);
+}
+
+if (!customElements.get('graph-controls')) {
+  customElements.define('graph-controls', GraphControls);
+}
+
+// Use a unique tag to avoid clashing with the sidebar empty state component
+if (!customElements.get('graph-visualization-empty-state')) {
+  customElements.define('graph-visualization-empty-state', GraphEmptyStateOverlay);
+}
+
+if (!customElements.get('graph-instructions')) {
+  customElements.define('graph-instructions', GraphInstructions);
 }
