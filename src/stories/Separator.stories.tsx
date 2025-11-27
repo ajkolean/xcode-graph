@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import type { Meta, StoryObj } from 'storybook/internal/csf';
+import { expect, within } from 'storybook/test';
 import * as React from 'react';
 import { Separator } from '../components/ui/separator';
 import { LitSeparator } from '../components-lit/wrappers/Separator';
@@ -56,10 +56,10 @@ export const Horizontal: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
-    await waitForLitElements(canvasElement);
-    const canvas = within(canvasElement);
+    // Wait for Lit components
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Find both separators
+    // Find both separators using data-slot attribute
     const separators = canvasElement.querySelectorAll('[data-slot="separator-root"]');
     expect(separators.length).toBe(2);
 
@@ -96,7 +96,10 @@ export const Vertical: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
-    await waitForLitElements(canvasElement);
+    // Wait for Lit components
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find both separators using data-slot attribute
     const separators = canvasElement.querySelectorAll('[data-slot="separator-root"]');
     expect(separators.length).toBe(2);
 

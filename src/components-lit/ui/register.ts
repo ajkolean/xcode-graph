@@ -1,20 +1,26 @@
 // Explicitly import all Lit components to trigger their side-effects (customElements.define)
+import './accordion';
+import './alert';
+import './aspect-ratio';
+import './avatar';
 import './badge';
-import './skeleton';
-import './separator';
-import './card';
+import './breadcrumb';
 import './button';
+import './card';
+import './checkbox';
+import './collapsible';
 import './input';
 import './label';
-import './textarea';
-import './checkbox';
-import './switch';
-import './slider';
-import './radio-group';
 import './progress';
-import './toggle';
+import './radio-group';
+import './separator';
+import './skeleton';
+import './slider';
+import './switch';
 import './tabs';
-import './accordion';
+import './textarea';
+import './toggle';
+import './tooltip';
 
 export function registerLitComponents() {
   // This function exists solely to force the bundler to include this file

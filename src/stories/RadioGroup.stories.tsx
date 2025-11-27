@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import type { Meta, StoryObj } from 'storybook/internal/csf';
+import { expect, userEvent, within } from 'storybook/test';
 import * as React from 'react';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';

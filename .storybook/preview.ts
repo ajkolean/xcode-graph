@@ -1,5 +1,4 @@
 import type { Preview } from '@storybook/react';
-import { themes } from '@storybook/theming';
 import { within as withinShadow } from 'shadow-dom-testing-library';
 
 // Import global styles (includes Panda CSS)
@@ -29,6 +28,7 @@ const preview: Preview = {
     // Inject shadow-aware query methods into canvas
     Object.assign(canvas, { ...withinShadow(canvasElement) });
   },
+
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
@@ -38,20 +38,20 @@ const preview: Preview = {
       },
     },
     backgrounds: {
-      default: 'dark',
-      values: [
-        {
+      options: {
+        dark: {
           name: 'dark',
           value: 'rgba(0, 0, 0, 1)',
         },
-        {
+
+        light: {
           name: 'light',
           value: 'rgba(255, 255, 255, 1)',
-        },
-      ],
+        }
+      }
     },
     docs: {
-      theme: themes.dark,
+      // Use default dark theme
     },
     chromatic: {
       // Wait for Lit components to register and render
@@ -77,6 +77,12 @@ const preview: Preview = {
       },
     },
   },
+
+  initialGlobals: {
+    backgrounds: {
+      value: 'dark'
+    }
+  }
 };
 
 export default preview;

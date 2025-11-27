@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import type { Meta, StoryObj } from 'storybook/internal/csf';
+import { expect, within } from 'storybook/test';
 import * as React from 'react';
 import { Badge } from '../components/ui/badge';
 import { LitBadge } from '../components-lit/wrappers/Badge';
@@ -45,21 +45,16 @@ export const Default: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
     // Wait for Lit components to render
-    await waitForLitElements(canvasElement);
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     // Find both badges (using data-slot attribute)
-    const reactBadge = canvasElement.querySelector('[data-slot="badge"]');
-    const litBadge = canvasElement.querySelectorAll('[data-slot="badge"]')[1];
-
-    expect(reactBadge).toBeTruthy();
-    expect(litBadge).toBeTruthy();
+    const badges = canvasElement.querySelectorAll('[data-slot="badge"]');
+    expect(badges.length).toBe(2);
 
     // Verify both render text correctly
-    expect(reactBadge?.textContent).toBe('Badge');
-    expect(litBadge?.textContent).toBe('Badge');
+    expect(badges[0]?.textContent).toBe('Badge');
+    expect(badges[1]?.textContent).toBe('Badge');
   },
 };
 
@@ -85,7 +80,7 @@ export const AllVariants: Story = {
   },
   play: async ({ canvasElement }) => {
     // Wait for Lit components to render
-    await waitForLitElements(canvasElement);
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     // Verify all badges render
     const badges = canvasElement.querySelectorAll('[data-slot="badge"]');

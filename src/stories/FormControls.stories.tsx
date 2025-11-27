@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import type { Meta, StoryObj } from 'storybook/internal/csf';
+import { expect, userEvent, within } from 'storybook/test';
 import * as React from 'react';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';

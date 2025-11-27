@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import type { Meta, StoryObj } from 'storybook/internal/csf';
+import { expect, within } from 'storybook/test';
 import * as React from 'react';
 import {
   Card,
@@ -77,8 +77,11 @@ export const Default: Story = {
       }
     />
   ),
-  play: async ({ canvasElement }) => {
-    await waitForLitElements(canvasElement);
+  play: async ({ canvas, canvasElement }) => {
+    // Wait for Lit components
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Query using data-slot attribute (works for both React and Lit)
     const cards = canvasElement.querySelectorAll('[data-slot="card"]');
     expect(cards.length).toBe(2);
   },

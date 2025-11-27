@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import type { Meta, StoryObj } from 'storybook/internal/csf';
+import { expect, within } from 'storybook/test';
 import * as React from 'react';
 import { Slider } from '../components/ui/slider';
 import { LitSlider } from '../components-lit/wrappers/Slider';

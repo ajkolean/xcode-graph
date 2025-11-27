@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import type { Meta, StoryObj } from 'storybook/internal/csf';
+import { expect, userEvent, within } from 'storybook/test';
 import * as React from 'react';
 import { Toggle } from '../components/ui/toggle';
 import { LitToggle } from '../components-lit/wrappers/Toggle';
@@ -125,12 +125,12 @@ export const Default: Story = {
       </>
     );
   },
-  play: async ({ canvasElement }) => {
-    await waitForLitElements(canvasElement);
-    const canvas = within(canvasElement);
+  play: async ({ canvas }) => {
+    // Wait for Lit components
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Find both toggles
-    const toggles = canvas.getAllByRole('button');
+    // Find both toggles using shadow DOM queries
+    const toggles = await canvas.findAllByShadowRole('button');
     expect(toggles).toHaveLength(2);
 
     // Click both toggles

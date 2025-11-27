@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tooltip Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 100px;
+      background: #000;
+      color: #e8eaed;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .test-container {
+      display: flex;
+      gap: 100px;
+      flex-wrap: wrap;
+      padding: 50px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      background-color: rgba(111, 44, 255, 1);
+      color: #fdfdfd;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .info {
+      margin-bottom: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <h1>Tooltip Component Test</h1>
+    <p>Hover over the buttons to test tooltips. Open browser console to see component status.</p>
+  </div>
+
+  <div class="test-container">
+    <!-- Test 1: Right side -->
+    <graph-tooltip delayDuration="0">
+      <graph-tooltip-trigger>
+        <button>Right Side</button>
+      </graph-tooltip-trigger>
+      <graph-tooltip-content side="right">
+        Tooltip on the right
+      </graph-tooltip-content>
+    </graph-tooltip>
+
+    <!-- Test 2: Top -->
+    <graph-tooltip delayDuration="0">
+      <graph-tooltip-trigger>
+        <button>Top</button>
+      </graph-tooltip-trigger>
+      <graph-tooltip-content side="top">
+        Tooltip on top
+      </graph-tooltip-content>
+    </graph-tooltip>
+
+    <!-- Test 3: Bottom -->
+    <graph-tooltip delayDuration="0">
+      <graph-tooltip-trigger>
+        <button>Bottom</button>
+      </graph-tooltip-trigger>
+      <graph-tooltip-content side="bottom">
+        Tooltip on bottom
+      </graph-tooltip-content>
+    </graph-tooltip>
+
+    <!-- Test 4: Left -->
+    <graph-tooltip delayDuration="0">
+      <graph-tooltip-trigger>
+        <button>Left</button>
+      </graph-tooltip-trigger>
+      <graph-tooltip-content side="left">
+        Tooltip on the left
+      </graph-tooltip-content>
+    </graph-tooltip>
+
+    <!-- Test 5: With delay -->
+    <graph-tooltip delayDuration="700">
+      <graph-tooltip-trigger>
+        <button>With 700ms Delay</button>
+      </graph-tooltip-trigger>
+      <graph-tooltip-content side="top">
+        This appeared after 700ms!
+      </graph-tooltip-content>
+    </graph-tooltip>
+
+    <!-- Test 6: Long text -->
+    <graph-tooltip delayDuration="0">
+      <graph-tooltip-trigger>
+        <button>Long Text</button>
+      </graph-tooltip-trigger>
+      <graph-tooltip-content side="bottom">
+        This is a much longer tooltip text that will wrap to multiple lines to test the max-width constraint and text wrapping behavior. It should stay readable and properly positioned.
+      </graph-tooltip-content>
+    </graph-tooltip>
+  </div>
+
+  <!-- Import tokens and component -->
+  <link rel="stylesheet" href="./src/styles/tokens.css">
+  <script type="module">
+    // Import the tooltip component
+    import './src/components-lit/ui/tooltip.ts';
+
+    // Log when components are ready
+    console.log('Tooltip components registered:', {
+      provider: customElements.get('graph-tooltip-provider'),
+      tooltip: customElements.get('graph-tooltip'),
+      trigger: customElements.get('graph-tooltip-trigger'),
+      content: customElements.get('graph-tooltip-content'),
+    });
+
+    // Test programmatic open/close
+    window.testTooltip = () => {
+      const tooltip = document.querySelector('graph-tooltip');
+      console.log('Current tooltip state:', tooltip.open);
+      tooltip.open = !tooltip.open;
+      console.log('New tooltip state:', tooltip.open);
+    };
+
+    console.log('Run testTooltip() in console to toggle first tooltip');
+  </script>
+</body>
+</html>

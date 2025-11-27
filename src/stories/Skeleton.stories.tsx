@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import type { Meta, StoryObj } from 'storybook/internal/csf';
+import { expect, within } from 'storybook/test';
 import * as React from 'react';
 import { Skeleton } from '../components/ui/skeleton';
 import { LitSkeleton } from '../components-lit/wrappers/Skeleton';
@@ -34,8 +34,10 @@ export const Default: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
-    await waitForLitElements(canvasElement);
-    // Find both skeletons
+    // Wait for Lit components
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Find both skeletons using data-slot attribute
     const skeletons = canvasElement.querySelectorAll('[data-slot="skeleton"]');
     expect(skeletons.length).toBe(2);
   },
