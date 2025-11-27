@@ -27,6 +27,9 @@ export class GraphDependenciesList extends LitElement {
   @property({ attribute: false })
   declare dependencies: GraphNode[];
 
+  @property({ type: Number })
+  declare zoom: number;
+
   // ========================================
   // Styles
   // ========================================
@@ -133,7 +136,7 @@ export class GraphDependenciesList extends LitElement {
                   <graph-list-item-row
                     .node=${dep}
                     subtitle=${subtitle}
-                    .zoom=${1.0}
+                    .zoom=${this.zoom}
                     @row-select=${this.handleNodeSelect}
                     @row-hover=${this.handleNodeHover}
                     @row-hover-end=${this.handleHoverEnd}

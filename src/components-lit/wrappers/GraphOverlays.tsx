@@ -31,7 +31,7 @@ export const LitGraphControlsElement = createComponent({
   events: {
     onZoomIn: 'zoom-in',
     onZoomOut: 'zoom-out',
-    onResetZoom: 'zoom-reset',
+    onZoomReset: 'zoom-reset',
     onToggleAnimation: 'toggle-animation',
   },
 });
@@ -43,7 +43,7 @@ export interface LitGraphControlsProps extends React.HTMLAttributes<HTMLElement>
   enableAnimation?: boolean;
   onZoomIn?: (event: CustomEvent) => void;
   onZoomOut?: (event: CustomEvent) => void;
-  onResetZoom?: (event: CustomEvent) => void;
+  onZoomReset?: (event: CustomEvent) => void;
   onToggleAnimation?: (event: CustomEvent) => void;
 }
 
@@ -54,7 +54,7 @@ export function GraphControls({
   enableAnimation = false,
   onZoomIn,
   onZoomOut,
-  onResetZoom,
+  onZoomReset,
   onToggleAnimation,
   ...props
 }: LitGraphControlsProps = {}) {
@@ -66,7 +66,7 @@ export function GraphControls({
       enable-animation={enableAnimation}
       onZoomIn={onZoomIn}
       onZoomOut={onZoomOut}
-      onResetZoom={onResetZoom}
+      onZoomReset={onZoomReset}
       onToggleAnimation={onToggleAnimation}
       {...props}
     />
