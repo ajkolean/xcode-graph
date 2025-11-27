@@ -21,12 +21,11 @@
  */
 
 import { LitElement, svg } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { Cluster } from '@/types/cluster';
 import { generateColor } from '@/utils/colorGenerator';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 
-@customElement('graph-cluster-card')
 export class GraphClusterCard extends LitElement {
   // No Shadow DOM for SVG
   protected createRenderRoot() {
@@ -200,4 +199,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-cluster-card': GraphClusterCard;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-cluster-card')) {
+  customElements.define('graph-cluster-card', GraphClusterCard);
 }

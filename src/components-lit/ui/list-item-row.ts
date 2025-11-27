@@ -21,7 +21,7 @@
  */
 
 import { LitElement, html, svg, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { GraphNode } from '@/data/mockGraphData';
 import { getNodeTypeColor } from '@/utils/graph/nodeColors';
@@ -29,7 +29,6 @@ import { getNodeIconPath } from '@/utils/nodeIcons';
 import { adjustColorForZoom } from '@/utils/zoomColorUtils';
 import { icons } from '@/controllers/icon.adapter';
 
-@customElement('graph-list-item-row')
 export class GraphListItemRow extends LitElement {
   // ========================================
   // Properties
@@ -69,7 +68,7 @@ export class GraphListItemRow extends LitElement {
       align-items: center;
       gap: 12px;
       padding: 8px 10px;
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius);
       text-align: left;
       background: none;
       border: none;
@@ -243,4 +242,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-list-item-row': GraphListItemRow;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-list-item-row')) {
+  customElements.define('graph-list-item-row', GraphListItemRow);
 }

@@ -16,11 +16,10 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
 
-@customElement('graph-search-bar')
 export class GraphSearchBar extends LitElement {
   // ========================================
   // Properties
@@ -64,8 +63,8 @@ export class GraphSearchBar extends LitElement {
 
     input {
       width: 100%;
-      padding: var(--spacing-sm) 48px var(--spacing-sm) 40px;
-      border-radius: var(--radius-lg);
+      padding: 8px 48px 8px 40px;
+      border-radius: var(--radius);
       transition: all 0.2s ease;
       background-color: var(--color-input-background);
       border: 1px solid var(--color-border);
@@ -200,4 +199,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-search-bar': GraphSearchBar;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-search-bar')) {
+  customElements.define('graph-search-bar', GraphSearchBar);
 }

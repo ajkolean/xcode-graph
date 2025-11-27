@@ -18,12 +18,11 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { GraphNode } from '@/data/mockGraphData';
 import { icons } from '@/controllers/icon.adapter';
 
-@customElement('graph-node-actions')
 export class GraphNodeActions extends LitElement {
   // ========================================
   // Properties
@@ -206,4 +205,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-node-actions': GraphNodeActions;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-node-actions')) {
+  customElements.define('graph-node-actions', GraphNodeActions);
 }

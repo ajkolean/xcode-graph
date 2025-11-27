@@ -16,10 +16,9 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import '../ui/sidebar-collapse-icon';
 
-@customElement('graph-right-sidebar-header')
 export class GraphRightSidebarHeader extends LitElement {
   // ========================================
   // Properties
@@ -58,7 +57,7 @@ export class GraphRightSidebarHeader extends LitElement {
 
     .toggle-button {
       padding: 6px;
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius);
       transition: background-color 0.2s;
       background: none;
       border: none;
@@ -110,4 +109,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-right-sidebar-header': GraphRightSidebarHeader;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-right-sidebar-header')) {
+  customElements.define('graph-right-sidebar-header', GraphRightSidebarHeader);
 }

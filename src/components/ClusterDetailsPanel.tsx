@@ -9,9 +9,9 @@ import { useClusterStats } from '../hooks/useClusterStats';
 import type { Cluster } from '../types/cluster';
 import { generateColor } from '../utils/colorGenerator';
 import { adjustColorForZoom } from '../utils/zoomColorUtils';
-import { ClusterHeader } from './clusterDetails/ClusterHeader';
-import { ClusterStats } from './clusterDetails/ClusterStats';
-import { ClusterTargetsList } from './clusterDetails/ClusterTargetsList';
+import { ClusterHeader } from '../components-lit/wrappers/ClusterHeader';
+import { ClusterStats } from '../components-lit/wrappers/ClusterStats';
+import { ClusterTargetsList } from '../components-lit/wrappers/ClusterTargetsList';
 import { LitClusterTypeBadge } from '../components-lit/wrappers/ClusterTypeBadge';
 
 interface ClusterDetailsPanelProps {
@@ -91,13 +91,14 @@ export function ClusterDetailsPanel({
 
         {/* Targets by Type */}
         <ClusterTargetsList
+          clusterNodes={clusterNodes}
           nodesByType={nodesByType}
           filteredTargetsCount={filteredTargetsCount}
           totalTargetsCount={clusterNodes.length}
           edges={edges}
-          onNodeSelect={onNodeSelect}
-          onNodeHover={onNodeHover}
           zoom={zoom}
+          onNodeSelect={(e) => onNodeSelect(e.detail.node)}
+          onNodeHover={(e) => onNodeHover(e.detail.nodeId)}
         />
       </div>
     </div>

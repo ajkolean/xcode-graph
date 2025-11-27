@@ -13,10 +13,9 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import './stats-card';
 
-@customElement('graph-metrics-section')
 export class GraphMetricsSection extends LitElement {
   // ========================================
   // Properties
@@ -35,10 +34,10 @@ export class GraphMetricsSection extends LitElement {
   declare totalDependentsCount: number;
 
   @property({ type: Boolean, attribute: 'is-high-fan-in' })
-  isHighFanIn: boolean = false;
+  declare isHighFanIn: boolean;
 
   @property({ type: Boolean, attribute: 'is-high-fan-out' })
-  isHighFanOut: boolean = false;
+  declare isHighFanOut: boolean;
 
   // ========================================
   // Styles
@@ -47,7 +46,7 @@ export class GraphMetricsSection extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: var(--spacing-md) var(--spacing-md) var(--spacing-md);
+      padding: 12px 16px 16px;
       flex-shrink: 0;
     }
 
@@ -93,4 +92,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-metrics-section': GraphMetricsSection;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-metrics-section')) {
+  customElements.define('graph-metrics-section', GraphMetricsSection);
 }

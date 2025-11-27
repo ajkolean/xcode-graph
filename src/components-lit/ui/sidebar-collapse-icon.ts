@@ -12,9 +12,8 @@
  */
 
 import { LitElement, html, svg, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-@customElement('graph-sidebar-collapse-icon')
 export class GraphSidebarCollapseIcon extends LitElement {
   // ========================================
   // Properties
@@ -79,4 +78,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-sidebar-collapse-icon': GraphSidebarCollapseIcon;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-sidebar-collapse-icon')) {
+  customElements.define('graph-sidebar-collapse-icon', GraphSidebarCollapseIcon);
 }

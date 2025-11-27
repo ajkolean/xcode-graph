@@ -16,7 +16,7 @@
  */
 
 import { LitElement, html, svg, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { GraphNode } from '@/data/mockGraphData';
 import { generateColor } from '@/utils/colorGenerator';
@@ -25,7 +25,6 @@ import { getNodeIconPath, getNodeTypeLabel } from '@/utils/nodeIcons';
 import { adjustColorForZoom } from '@/utils/zoomColorUtils';
 import { icons } from '@/controllers/icon.adapter';
 
-@customElement('graph-node-header')
 export class GraphNodeHeader extends LitElement {
   // ========================================
   // Properties
@@ -38,7 +37,7 @@ export class GraphNodeHeader extends LitElement {
   declare zoom: number;
 
   @property({ type: Boolean, attribute: 'show-cluster-link' })
-  showClusterLink: boolean = true;
+  declare showClusterLink: boolean;
 
   // ========================================
   // Styles
@@ -284,4 +283,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-node-header': GraphNodeHeader;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-node-header')) {
+  customElements.define('graph-node-header', GraphNodeHeader);
 }

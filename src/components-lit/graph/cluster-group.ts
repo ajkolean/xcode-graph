@@ -23,7 +23,7 @@
  */
 
 import { LitElement, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
 import type { Cluster } from '@/types/cluster';
@@ -33,7 +33,6 @@ import './cluster-card';
 import './graph-edges';
 import './graph-node';
 
-@customElement('graph-cluster-group')
 export class GraphClusterGroup extends LitElement {
   // No Shadow DOM for SVG
   protected createRenderRoot() {
@@ -262,4 +261,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-cluster-group': GraphClusterGroup;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-cluster-group')) {
+  customElements.define('graph-cluster-group', GraphClusterGroup);
 }

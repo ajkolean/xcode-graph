@@ -16,7 +16,7 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import type { Cluster } from '@/types/cluster';
 import { createMachineController } from '@/controllers/zag.controller';
@@ -33,7 +33,6 @@ import './collapsed-sidebar';
 import './node-details-panel';
 import './cluster-details-panel';
 
-@customElement('graph-right-sidebar')
 export class GraphRightSidebar extends LitElement {
   // ========================================
   // Properties
@@ -252,4 +251,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-right-sidebar': GraphRightSidebar;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-right-sidebar')) {
+  customElements.define('graph-right-sidebar', GraphRightSidebar);
 }

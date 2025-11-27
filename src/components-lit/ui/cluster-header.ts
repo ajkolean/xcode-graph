@@ -17,11 +17,10 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
 
-@customElement('graph-cluster-header')
 export class GraphClusterHeader extends LitElement {
   // ========================================
   // Properties
@@ -52,7 +51,7 @@ export class GraphClusterHeader extends LitElement {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px var(--spacing-md);
+      padding: 12px 16px;
       border-bottom: 1px solid var(--color-border);
     }
 
@@ -186,4 +185,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-cluster-header': GraphClusterHeader;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-cluster-header')) {
+  customElements.define('graph-cluster-header', GraphClusterHeader);
 }

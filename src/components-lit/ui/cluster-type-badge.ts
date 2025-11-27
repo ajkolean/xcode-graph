@@ -14,9 +14,8 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-@customElement('graph-cluster-type-badge')
 export class GraphClusterTypeBadge extends LitElement {
   // ========================================
   // Properties
@@ -41,14 +40,14 @@ export class GraphClusterTypeBadge extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
+      padding: 16px 16px 12px;
       border-bottom: 1px solid var(--color-border);
     }
 
     .container {
       display: flex;
       align-items: center;
-      gap: var(--spacing-xs);
+      gap: 8px;
       flex-wrap: wrap;
     }
 
@@ -117,4 +116,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-cluster-type-badge': GraphClusterTypeBadge;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-cluster-type-badge')) {
+  customElements.define('graph-cluster-type-badge', GraphClusterTypeBadge);
 }

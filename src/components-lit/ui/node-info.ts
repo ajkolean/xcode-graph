@@ -10,11 +10,10 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { GraphNode } from '@/data/mockGraphData';
 import { getNodeTypeLabel } from '@/utils/nodeIcons';
 
-@customElement('graph-node-info')
 export class GraphNodeInfo extends LitElement {
   // ========================================
   // Properties
@@ -112,4 +111,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-node-info': GraphNodeInfo;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-node-info')) {
+  customElements.define('graph-node-info', GraphNodeInfo);
 }

@@ -14,7 +14,7 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import type { Cluster } from '@/types/cluster';
 import { computeClusterStats } from '@/utils/nodeUtils';
@@ -25,7 +25,6 @@ import './cluster-type-badge';
 import './cluster-stats';
 import './cluster-targets-list';
 
-@customElement('graph-cluster-details-panel')
 export class GraphClusterDetailsPanel extends LitElement {
   // ========================================
   // Properties
@@ -139,4 +138,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-cluster-details-panel': GraphClusterDetailsPanel;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-cluster-details-panel')) {
+  customElements.define('graph-cluster-details-panel', GraphClusterDetailsPanel);
 }

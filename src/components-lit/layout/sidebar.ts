@@ -15,7 +15,7 @@
  */
 
 import { LitElement, html, svg, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
 
@@ -37,7 +37,6 @@ interface NavItem {
   hasDropdown?: boolean;
 }
 
-@customElement('graph-sidebar')
 export class GraphSidebar extends LitElement {
   // ========================================
   // Properties
@@ -85,8 +84,8 @@ export class GraphSidebar extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--spacing-sm) 12px;
-      border-radius: var(--radius-lg);
+      padding: 8px 12px;
+      border-radius: var(--radius);
       transition: all 0.2s;
       background: none;
       border: none;
@@ -265,3 +264,8 @@ declare global {
 
 // Export type for use in other files
 export type { ActiveTab };
+
+// Register custom element with HMR support
+if (!customElements.get('graph-sidebar')) {
+  customElements.define('graph-sidebar', GraphSidebar);
+}

@@ -17,14 +17,13 @@
  */
 
 import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import { getNodeTypeColor } from '@/components/graph/graphUtils';
 import './graph-edge';
 
-@customElement('graph-edges')
 export class GraphEdges extends LitElement {
   // No Shadow DOM for SVG
   protected createRenderRoot() {
@@ -192,4 +191,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-edges': GraphEdges;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-edges')) {
+  customElements.define('graph-edges', GraphEdges);
 }

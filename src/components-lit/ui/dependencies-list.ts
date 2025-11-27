@@ -15,11 +15,10 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { GraphNode } from '@/data/mockGraphData';
 import './list-item-row';
 
-@customElement('graph-dependencies-list')
 export class GraphDependenciesList extends LitElement {
   // ========================================
   // Properties
@@ -151,4 +150,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-dependencies-list': GraphDependenciesList;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-dependencies-list')) {
+  customElements.define('graph-dependencies-list', GraphDependenciesList);
 }

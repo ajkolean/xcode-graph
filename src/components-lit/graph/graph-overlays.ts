@@ -16,7 +16,7 @@
  */
 
 import { LitElement, html, svg, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
 
@@ -24,7 +24,6 @@ import { icons } from '@/controllers/icon.adapter';
 // GraphBackground
 // ========================================
 
-@customElement('graph-background')
 export class GraphBackground extends LitElement {
   static styles = css`
     :host {
@@ -54,7 +53,6 @@ export class GraphBackground extends LitElement {
 // GraphControls
 // ========================================
 
-@customElement('graph-controls')
 export class GraphControls extends LitElement {
   @property({ type: Number })
   declare zoom: number;
@@ -232,7 +230,6 @@ export class GraphControls extends LitElement {
 // GraphEmptyState
 // ========================================
 
-@customElement('graph-empty-state')
 export class GraphEmptyStateOverlay extends LitElement {
   static styles = css`
     :host {
@@ -285,7 +282,6 @@ export class GraphEmptyStateOverlay extends LitElement {
 // GraphInstructions
 // ========================================
 
-@customElement('graph-instructions')
 export class GraphInstructions extends LitElement {
   static styles = css`
     :host {
@@ -323,4 +319,9 @@ declare global {
     'graph-empty-state': GraphEmptyStateOverlay;
     'graph-instructions': GraphInstructions;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-background')) {
+  customElements.define('graph-background', GraphBackground);
 }

@@ -16,7 +16,6 @@
 import { LitElement, html, svg } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-@customElement('graph-svg-defs')
 export class GraphSVGDefs extends LitElement {
   // No Shadow DOM for SVG defs - they need to be in the same SVG context
   protected createRenderRoot() {
@@ -75,4 +74,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-svg-defs': GraphSVGDefs;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-svg-defs')) {
+  customElements.define('graph-svg-defs', GraphSVGDefs);
 }

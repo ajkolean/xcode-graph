@@ -17,10 +17,9 @@
  */
 
 import { LitElement, html, svg, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 
-@customElement('graph-collapsed-sidebar')
 export class GraphCollapsedSidebar extends LitElement {
   // ========================================
   // Properties
@@ -67,7 +66,7 @@ export class GraphCollapsedSidebar extends LitElement {
     .icon-button {
       position: relative;
       padding: 8px;
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius);
       transition: background-color 0.2s;
       background: none;
       border: none;
@@ -270,4 +269,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-collapsed-sidebar': GraphCollapsedSidebar;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-collapsed-sidebar')) {
+  customElements.define('graph-collapsed-sidebar', GraphCollapsedSidebar);
 }

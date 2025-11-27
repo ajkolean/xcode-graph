@@ -21,7 +21,7 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state, query } from 'lit/decorators.js';
+import { property, state, query } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
 import { AnimatedLayoutController } from '@/controllers/animated-layout.controller';
@@ -34,7 +34,6 @@ import './cluster-group';
 import './graph-edges';
 import '../graph/graph-overlays';
 
-@customElement('graph-visualization')
 export class GraphVisualization extends LitElement {
   // ========================================
   // Properties
@@ -316,4 +315,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-visualization': GraphVisualization;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-visualization')) {
+  customElements.define('graph-visualization', GraphVisualization);
 }

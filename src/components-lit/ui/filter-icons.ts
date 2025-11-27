@@ -22,7 +22,6 @@ const iconColor = 'rgba(168, 157, 255, 0.7)';
 // Product Types Icon
 // ========================================
 
-@customElement('graph-product-types-icon')
 export class GraphProductTypesIcon extends LitElement {
   static styles = css`
     :host {
@@ -56,7 +55,6 @@ export class GraphProductTypesIcon extends LitElement {
 // Platforms Icon
 // ========================================
 
-@customElement('graph-platforms-icon')
 export class GraphPlatformsIcon extends LitElement {
   static styles = css`
     :host {
@@ -95,7 +93,6 @@ export class GraphPlatformsIcon extends LitElement {
 // Projects Icon
 // ========================================
 
-@customElement('graph-projects-icon')
 export class GraphProjectsIcon extends LitElement {
   static styles = css`
     :host {
@@ -126,7 +123,6 @@ export class GraphProjectsIcon extends LitElement {
 // Packages Icon
 // ========================================
 
-@customElement('graph-packages-icon')
 export class GraphPackagesIcon extends LitElement {
   static styles = css`
     :host {
@@ -164,4 +160,9 @@ declare global {
     'graph-projects-icon': GraphProjectsIcon;
     'graph-packages-icon': GraphPackagesIcon;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-product-types-icon')) {
+  customElements.define('graph-product-types-icon', GraphProductTypesIcon);
 }

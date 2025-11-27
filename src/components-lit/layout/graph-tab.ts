@@ -15,7 +15,7 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import { createStoreController } from '@/controllers/zustand.controller';
 import { useGraphStore } from '@/stores/graphStore';
@@ -24,7 +24,6 @@ import { useUIStore } from '@/stores/uiStore';
 import '../graph/graph-visualization';
 import '../ui/right-sidebar';
 
-@customElement('graph-tab')
 export class GraphTab extends LitElement {
   // ========================================
   // Properties
@@ -194,4 +193,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-tab': GraphTab;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-tab')) {
+  customElements.define('graph-tab', GraphTab);
 }

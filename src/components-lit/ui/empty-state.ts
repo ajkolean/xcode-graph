@@ -13,9 +13,8 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-@customElement('graph-empty-state')
 export class GraphEmptyState extends LitElement {
   // ========================================
   // Properties
@@ -54,8 +53,8 @@ export class GraphEmptyState extends LitElement {
     }
 
     .clear-button {
-      padding: var(--spacing-sm) var(--spacing-md);
-      border-radius: var(--radius-lg);
+      padding: 8px 16px;
+      border-radius: var(--radius);
       transition: background-color 0.2s ease;
       background-color: rgba(168, 157, 255, 0.1);
       border: 1px solid rgba(168, 157, 255, 0.3);
@@ -108,4 +107,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-empty-state': GraphEmptyState;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-empty-state')) {
+  customElements.define('graph-empty-state', GraphEmptyState);
 }

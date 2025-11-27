@@ -25,12 +25,11 @@
  */
 
 import { LitElement, svg } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import type { GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import { getNodeIconPath } from '@/utils/nodeIcons';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 
-@customElement('graph-node')
 export class GraphNode extends LitElement {
   // No Shadow DOM for SVG elements
   protected createRenderRoot() {
@@ -354,4 +353,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-node': GraphNode;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-node')) {
+  customElements.define('graph-node', GraphNode);
 }

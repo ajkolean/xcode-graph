@@ -15,7 +15,6 @@ import { customElement } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
 
-@customElement('graph-header')
 export class GraphHeader extends LitElement {
   // ========================================
   // Styles
@@ -275,4 +274,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-header': GraphHeader;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-header')) {
+  customElements.define('graph-header', GraphHeader);
 }

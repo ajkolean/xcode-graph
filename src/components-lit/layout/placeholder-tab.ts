@@ -11,9 +11,8 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-@customElement('graph-placeholder-tab')
 export class GraphPlaceholderTab extends LitElement {
   // ========================================
   // Properties
@@ -77,4 +76,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-placeholder-tab': GraphPlaceholderTab;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-placeholder-tab')) {
+  customElements.define('graph-placeholder-tab', GraphPlaceholderTab);
 }

@@ -15,11 +15,10 @@
  */
 
 import { LitElement, html, svg, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { getPlatformIconPath, PLATFORM_COLOR } from '@/utils/platformIcons';
 import './stats-card';
 
-@customElement('graph-cluster-stats')
 export class GraphClusterStats extends LitElement {
   // ========================================
   // Properties
@@ -157,4 +156,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-cluster-stats': GraphClusterStats;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-cluster-stats')) {
+  customElements.define('graph-cluster-stats', GraphClusterStats);
 }

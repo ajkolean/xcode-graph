@@ -13,9 +13,8 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-@customElement('graph-clear-filters-button')
 export class GraphClearFiltersButton extends LitElement {
   // ========================================
   // Properties
@@ -39,8 +38,8 @@ export class GraphClearFiltersButton extends LitElement {
 
     button {
       width: 100%;
-      padding: var(--spacing-xs) var(--spacing-sm);
-      border-radius: var(--radius-lg);
+      padding: 6px 12px;
+      border-radius: var(--radius);
       transition: all 0.2s ease;
       font-family: 'Inter', sans-serif;
       font-size: var(--text-label);
@@ -107,4 +106,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-clear-filters-button': GraphClearFiltersButton;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-clear-filters-button')) {
+  customElements.define('graph-clear-filters-button', GraphClearFiltersButton);
 }

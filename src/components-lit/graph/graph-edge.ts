@@ -21,10 +21,9 @@
  */
 
 import { LitElement, svg } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 
-@customElement('graph-edge')
 export class GraphEdge extends LitElement {
   // No Shadow DOM for SVG elements - must be in same SVG context
   protected createRenderRoot() {
@@ -152,4 +151,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-edge': GraphEdge;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-edge')) {
+  customElements.define('graph-edge', GraphEdge);
 }

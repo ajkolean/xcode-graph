@@ -12,9 +12,8 @@
  */
 
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
-@customElement('graph-stats-card')
 export class GraphStatsCard extends LitElement {
   // ========================================
   // Properties
@@ -49,8 +48,8 @@ export class GraphStatsCard extends LitElement {
     }
 
     .container {
-      padding: var(--spacing-md);
-      border-radius: var(--radius-lg);
+      padding: 12px;
+      border-radius: var(--radius);
       background-color: var(--color-card);
       border: 1px solid var(--color-border);
       cursor: default;
@@ -102,4 +101,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'graph-stats-card': GraphStatsCard;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-stats-card')) {
+  customElements.define('graph-stats-card', GraphStatsCard);
 }

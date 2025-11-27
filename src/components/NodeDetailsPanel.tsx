@@ -1,12 +1,12 @@
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import { useNodeDependencies } from '../hooks/useNodeDependencies';
 import type { Cluster } from '../types/cluster';
-import { DependenciesList } from './nodeDetails/DependenciesList';
-import { DependentsList } from './nodeDetails/DependentsList';
-import { MetricsSection } from './nodeDetails/MetricsSection';
-import { NodeActions } from './nodeDetails/NodeActions';
-import { NodeHeader } from './nodeDetails/NodeHeader';
-import { NodeInfo } from './nodeDetails/NodeInfo';
+import { NodeHeader } from '../components-lit/wrappers/NodeHeader';
+import { NodeInfo } from '../components-lit/wrappers/NodeInfo';
+import { NodeActions } from '../components-lit/wrappers/NodeActions';
+import { DependenciesList } from '../components-lit/wrappers/DependenciesList';
+import { DependentsList } from '../components-lit/wrappers/DependentsList';
+import { MetricsSection } from '../components-lit/wrappers/MetricsSection';
 
 interface NodeDetailsPanelProps {
   node: GraphNode;
@@ -53,10 +53,9 @@ export function NodeDetailsPanel({
       {/* Node Card Header */}
       <NodeHeader
         node={node}
-        onClose={onClose}
-        onClusterClick={onClusterSelect}
-        clusters={clusters}
         zoom={zoom}
+        onClose={onClose}
+        onClusterClick={(e) => onClusterSelect?.(e.detail.clusterId)}
       />
 
       <MetricsSection
@@ -71,21 +70,21 @@ export function NodeDetailsPanel({
       <NodeActions
         node={node}
         viewMode={viewMode}
-        onFocusNode={onFocusNode}
-        onShowDependents={onShowDependents}
-        onShowImpact={onShowImpact}
+        onFocusNode={(e) => onFocusNode(e.detail.node)}
+        onShowDependents={(e) => onShowDependents(e.detail.node)}
+        onShowImpact={(e) => onShowImpact(e.detail.node)}
       />
 
       <DependenciesList
         dependencies={dependencies}
-        onNodeSelect={onNodeSelect}
-        onNodeHover={onNodeHover}
+        onNodeSelect={(e) => onNodeSelect(e.detail.node)}
+        onNodeHover={(e) => onNodeHover(e.detail.nodeId)}
       />
 
       <DependentsList
         dependents={dependents}
-        onNodeSelect={onNodeSelect}
-        onNodeHover={onNodeHover}
+        onNodeSelect={(e) => onNodeSelect(e.detail.node)}
+        onNodeHover={(e) => onNodeHover(e.detail.nodeId)}
       />
 
       {/* Node Info at bottom */}
