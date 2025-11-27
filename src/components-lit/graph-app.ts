@@ -67,6 +67,7 @@ export class GraphApp extends LitElement {
       overflow: hidden;
       position: relative;
       z-index: 20;
+      min-height: 0;
     }
 
     .content-area {
@@ -74,6 +75,7 @@ export class GraphApp extends LitElement {
       flex: 1;
       flex-direction: column;
       overflow: hidden;
+      min-height: 0;
     }
   `;
 

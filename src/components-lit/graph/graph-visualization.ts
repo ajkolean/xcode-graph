@@ -104,6 +104,9 @@ export class GraphVisualization extends LitElement {
       flex: 1;
       overflow: hidden;
       background-color: var(--color-background);
+      min-height: 0;
+      width: 100%;
+      height: 100%;
     }
 
     svg {
