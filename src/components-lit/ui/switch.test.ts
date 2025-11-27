@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GraphSwitch } from './switch';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphSwitch', () => {
   let container: HTMLElement;
@@ -23,7 +24,7 @@ describe('GraphSwitch', () => {
     await switchEl.updateComplete;
 
     expect(switchEl.checked).toBe(false);
-    const button = switchEl.querySelector('[data-slot="switch"]');
+    const button = shadowQuery(switchEl, '[data-slot="switch"]');
     expect(button?.getAttribute('aria-checked')).toBe('false');
     expect(button?.getAttribute('data-state')).toBe('unchecked');
   });
@@ -35,7 +36,7 @@ describe('GraphSwitch', () => {
     await switchEl.updateComplete;
 
     expect(switchEl.checked).toBe(true);
-    const button = switchEl.querySelector('[data-slot="switch"]');
+    const button = shadowQuery(switchEl, '[data-slot="switch"]');
     expect(button?.getAttribute('aria-checked')).toBe('true');
     expect(button?.getAttribute('data-state')).toBe('checked');
   });
@@ -47,7 +48,8 @@ describe('GraphSwitch', () => {
 
     expect(switchEl.checked).toBe(false);
 
-    const button = switchEl.querySelector('[data-slot="switch"]') as HTMLButtonElement;
+    const button = shadowQuery(switchEl, '[data-slot="switch"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
     await switchEl.updateComplete;
 
@@ -62,7 +64,8 @@ describe('GraphSwitch', () => {
     const handler = vi.fn();
     switchEl.addEventListener('switch-change', handler);
 
-    const button = switchEl.querySelector('[data-slot="switch"]') as HTMLButtonElement;
+    const button = shadowQuery(switchEl, '[data-slot="switch"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
 
     expect(handler).toHaveBeenCalledTimes(1);
@@ -75,7 +78,8 @@ describe('GraphSwitch', () => {
     container.appendChild(switchEl);
     await switchEl.updateComplete;
 
-    const button = switchEl.querySelector('[data-slot="switch"]') as HTMLButtonElement;
+    const button = shadowQuery(switchEl, '[data-slot="switch"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     expect(button.getAttribute('aria-disabled')).toBe('true');
   });
 
@@ -85,7 +89,8 @@ describe('GraphSwitch', () => {
     container.appendChild(switchEl);
     await switchEl.updateComplete;
 
-    const button = switchEl.querySelector('[data-slot="switch"]') as HTMLButtonElement;
+    const button = shadowQuery(switchEl, '[data-slot="switch"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
 
     expect(switchEl.checked).toBe(false);
@@ -96,7 +101,8 @@ describe('GraphSwitch', () => {
     container.appendChild(switchEl);
     await switchEl.updateComplete;
 
-    const button = switchEl.querySelector('[data-slot="switch"]') as HTMLButtonElement;
+    const button = shadowQuery(switchEl, '[data-slot="switch"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.dispatchEvent(new KeyboardEvent('keydown', { key: ' ' }));
     await switchEl.updateComplete;
 
@@ -108,12 +114,15 @@ describe('GraphSwitch', () => {
     container.appendChild(switchEl);
     await switchEl.updateComplete;
 
-    const thumb = switchEl.querySelector('[data-slot="switch-thumb"]');
+    const thumb = shadowQuery(switchEl, '[data-slot="switch-thumb"]');
     expect(thumb).toBeTruthy();
   });
 
-  it('should use Light DOM', () => {
+  it('should use Shadow DOM', async () => {
     const switchEl = new GraphSwitch();
-    expect(switchEl.shadowRoot).toBeNull();
+    container.appendChild(switchEl);
+    await switchEl.updateComplete;
+
+    expect(switchEl.shadowRoot).toBeTruthy();
   });
 });

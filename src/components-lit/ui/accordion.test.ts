@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { shadowQuery } from '../../test/shadow-helpers';
 import {
   GraphAccordion,
   GraphAccordionItem,
@@ -28,7 +29,8 @@ describe('GraphAccordion Components', () => {
       container.appendChild(accordion);
       await accordion.updateComplete;
 
-      expect(accordion.querySelector('[data-slot="accordion"]')).toBeTruthy();
+      // Accordion renders <slot> in Shadow DOM
+      expect(accordion.shadowRoot).toBeTruthy();
     });
 
     it('should default to single type', async () => {
@@ -39,9 +41,12 @@ describe('GraphAccordion Components', () => {
       expect(accordion.type).toBe('single');
     });
 
-    it('should use Light DOM', () => {
+    it('should use Shadow DOM', async () => {
       const accordion = new GraphAccordion();
-      expect(accordion.shadowRoot).toBeNull();
+      container.appendChild(accordion);
+      await accordion.updateComplete;
+
+      expect(accordion.shadowRoot).toBeTruthy();
     });
   });
 
@@ -78,7 +83,7 @@ describe('GraphAccordion Components', () => {
       container.appendChild(trigger);
       await trigger.updateComplete;
 
-      const button = trigger.querySelector('button[data-slot="accordion-trigger"]');
+      const button = shadowQuery(trigger, 'button');
       expect(button).toBeTruthy();
     });
 
@@ -88,7 +93,7 @@ describe('GraphAccordion Components', () => {
       container.appendChild(trigger);
       await trigger.updateComplete;
 
-      const button = trigger.querySelector('button');
+      const button = shadowQuery(trigger, 'button');
       expect(button?.getAttribute('data-state')).toBe('open');
     });
 
@@ -100,7 +105,7 @@ describe('GraphAccordion Components', () => {
       const handler = vi.fn();
       trigger.addEventListener('accordion-trigger-click', handler);
 
-      const button = trigger.querySelector('button') as HTMLButtonElement;
+      const button = shadowQuery(trigger, 'button') as HTMLButtonElement;
       button.click();
 
       expect(handler).toHaveBeenCalledTimes(1);
@@ -111,7 +116,7 @@ describe('GraphAccordion Components', () => {
       container.appendChild(trigger);
       await trigger.updateComplete;
 
-      const svg = trigger.querySelector('svg');
+      const svg = shadowQuery(trigger, 'svg');
       expect(svg).toBeTruthy();
     });
   });
@@ -127,8 +132,10 @@ describe('GraphAccordion Components', () => {
       container.appendChild(content);
       await content.updateComplete;
 
-      const div = content.querySelector('[data-slot="accordion-content"]');
-      expect(div).toBeNull();
+      // Content div exists but host is hidden via :host(:not([open])) { display: none }
+      const div = shadowQuery(content, '[data-slot="accordion-content"]');
+      expect(div).toBeTruthy();
+      expect(div?.getAttribute('data-state')).toBe('closed');
     });
 
     it('should render when open', async () => {
@@ -137,7 +144,7 @@ describe('GraphAccordion Components', () => {
       container.appendChild(content);
       await content.updateComplete;
 
-      const div = content.querySelector('[data-slot="accordion-content"]');
+      const div = shadowQuery(content, '[data-slot="accordion-content"]');
       expect(div).toBeTruthy();
       expect(div?.getAttribute('data-state')).toBe('open');
     });

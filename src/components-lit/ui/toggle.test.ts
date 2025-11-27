@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GraphToggle } from './toggle';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphToggle', () => {
   let container: HTMLElement;
@@ -23,7 +24,7 @@ describe('GraphToggle', () => {
     await toggle.updateComplete;
 
     expect(toggle.pressed).toBe(false);
-    const button = toggle.querySelector('[data-slot="toggle"]');
+    const button = shadowQuery(toggle, '[data-slot="toggle"]');
     expect(button?.getAttribute('aria-pressed')).toBe('false');
     expect(button?.getAttribute('data-state')).toBe('off');
   });
@@ -34,7 +35,7 @@ describe('GraphToggle', () => {
     container.appendChild(toggle);
     await toggle.updateComplete;
 
-    const button = toggle.querySelector('[data-slot="toggle"]');
+    const button = shadowQuery(toggle, '[data-slot="toggle"]');
     expect(button?.getAttribute('aria-pressed')).toBe('true');
     expect(button?.getAttribute('data-state')).toBe('on');
   });
@@ -44,7 +45,8 @@ describe('GraphToggle', () => {
     container.appendChild(toggle);
     await toggle.updateComplete;
 
-    const button = toggle.querySelector('[data-slot="toggle"]') as HTMLButtonElement;
+    const button = shadowQuery(toggle, '[data-slot="toggle"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
     await toggle.updateComplete;
 
@@ -59,7 +61,8 @@ describe('GraphToggle', () => {
     const handler = vi.fn();
     toggle.addEventListener('toggle-change', handler);
 
-    const button = toggle.querySelector('[data-slot="toggle"]') as HTMLButtonElement;
+    const button = shadowQuery(toggle, '[data-slot="toggle"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
 
     expect(handler).toHaveBeenCalledTimes(1);
@@ -100,14 +103,18 @@ describe('GraphToggle', () => {
     container.appendChild(toggle);
     await toggle.updateComplete;
 
-    const button = toggle.querySelector('[data-slot="toggle"]') as HTMLButtonElement;
+    const button = shadowQuery(toggle, '[data-slot="toggle"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
 
     expect(toggle.pressed).toBe(false);
   });
 
-  it('should use Light DOM', () => {
+  it('should use Shadow DOM', async () => {
     const toggle = new GraphToggle();
-    expect(toggle.shadowRoot).toBeNull();
+    container.appendChild(toggle);
+    await toggle.updateComplete;
+
+    expect(toggle.shadowRoot).toBeTruthy();
   });
 });

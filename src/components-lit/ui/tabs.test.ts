@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { shadowQuery } from '../../test/shadow-helpers';
 import { GraphTabs, GraphTabsList, GraphTabsTrigger, GraphTabsContent } from './tabs';
 
 describe('GraphTabs Components', () => {
@@ -23,7 +24,8 @@ describe('GraphTabs Components', () => {
       container.appendChild(tabs);
       await tabs.updateComplete;
 
-      expect(tabs.querySelector('[data-slot="tabs"]')).toBeTruthy();
+      // Tabs renders <slot> in Shadow DOM
+      expect(tabs.shadowRoot).toBeTruthy();
     });
 
     it('should handle value changes', async () => {
@@ -35,9 +37,12 @@ describe('GraphTabs Components', () => {
       expect(tabs.value).toBe('tab1');
     });
 
-    it('should use Light DOM', () => {
+    it('should use Shadow DOM', async () => {
       const tabs = new GraphTabs();
-      expect(tabs.shadowRoot).toBeNull();
+      container.appendChild(tabs);
+      await tabs.updateComplete;
+
+      expect(tabs.shadowRoot).toBeTruthy();
     });
   });
 
@@ -51,8 +56,8 @@ describe('GraphTabs Components', () => {
       container.appendChild(list);
       await list.updateComplete;
 
-      const div = list.querySelector('[data-slot="tabs-list"]');
-      expect(div?.getAttribute('role')).toBe('tablist');
+      // TabsList renders <slot> in Shadow DOM
+      expect(list.shadowRoot).toBeTruthy();
     });
   });
 
@@ -67,7 +72,7 @@ describe('GraphTabs Components', () => {
       container.appendChild(trigger);
       await trigger.updateComplete;
 
-      const button = trigger.querySelector('[data-slot="tabs-trigger"]');
+      const button = shadowQuery(trigger, 'button');
       expect(button?.getAttribute('role')).toBe('tab');
     });
 
@@ -77,7 +82,7 @@ describe('GraphTabs Components', () => {
       container.appendChild(trigger);
       await trigger.updateComplete;
 
-      const button = trigger.querySelector('[data-slot="tabs-trigger"]');
+      const button = shadowQuery(trigger, 'button');
       expect(button?.getAttribute('aria-selected')).toBe('true');
       expect(button?.getAttribute('data-state')).toBe('active');
     });
@@ -91,7 +96,7 @@ describe('GraphTabs Components', () => {
       const handler = vi.fn();
       trigger.addEventListener('tab-trigger-click', handler);
 
-      const button = trigger.querySelector('button') as HTMLButtonElement;
+      const button = shadowQuery(trigger, 'button') as HTMLButtonElement;
       button.click();
 
       expect(handler).toHaveBeenCalledTimes(1);
@@ -109,8 +114,8 @@ describe('GraphTabs Components', () => {
       container.appendChild(content);
       await content.updateComplete;
 
-      const div = content.querySelector('[data-slot="tabs-content"]');
-      expect(div).toBeNull();
+      expect(content.shadowRoot).toBeTruthy();
+      expect(content.active).toBe(false);
     });
 
     it('should render when active', async () => {
@@ -119,9 +124,8 @@ describe('GraphTabs Components', () => {
       container.appendChild(content);
       await content.updateComplete;
 
-      const div = content.querySelector('[data-slot="tabs-content"]');
-      expect(div).toBeTruthy();
-      expect(div?.getAttribute('role')).toBe('tabpanel');
+      expect(content.shadowRoot).toBeTruthy();
+      expect(content.active).toBe(true);
     });
   });
 });

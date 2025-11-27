@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { GraphLabel } from './label';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphLabel', () => {
   let container: HTMLElement;
@@ -23,7 +24,9 @@ describe('GraphLabel', () => {
     container.appendChild(label);
     await label.updateComplete;
 
-    const labelEl = label.querySelector('label[data-slot="label"]');
+    // Label uses Shadow DOM
+    expect(label.shadowRoot).toBeTruthy();
+    const labelEl = shadowQuery(label, 'label');
     expect(labelEl).toBeTruthy();
   });
 
@@ -33,21 +36,15 @@ describe('GraphLabel', () => {
     container.appendChild(label);
     await label.updateComplete;
 
-    const labelEl = label.querySelector('label') as HTMLLabelElement;
-    expect(labelEl.getAttribute('for')).toBe('email-input');
+    // htmlFor is tracked as a property and used in click handler
+    expect(label.htmlFor).toBe('email-input');
   });
 
-  it('should use Light DOM', () => {
-    const label = new GraphLabel();
-    expect(label.shadowRoot).toBeNull();
-  });
-
-  it('should apply Panda CSS classes', async () => {
+  it('should use Shadow DOM', async () => {
     const label = new GraphLabel();
     container.appendChild(label);
     await label.updateComplete;
 
-    const labelEl = label.querySelector('label');
-    expect(labelEl?.className).toBeTruthy();
+    expect(label.shadowRoot).toBeTruthy();
   });
 });

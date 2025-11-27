@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Skeleton } from '../components/ui/skeleton';
 import { LitSkeleton } from '../components-lit/wrappers/Skeleton';
 import { ParityComparison } from './components/ParityComparison';
+import { waitForLitElements } from "./utils/storybook-helpers";
 
 const meta = {
   title: 'Parity/Skeleton',
@@ -33,6 +34,7 @@ export const Default: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
+    await waitForLitElements(canvasElement);
     // Find both skeletons
     const skeletons = canvasElement.querySelectorAll('[data-slot="skeleton"]');
     expect(skeletons.length).toBe(2);

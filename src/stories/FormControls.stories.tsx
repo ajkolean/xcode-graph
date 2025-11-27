@@ -13,7 +13,7 @@ import { LitCheckbox } from '../components-lit/wrappers/Checkbox';
 import { LitSwitch } from '../components-lit/wrappers/Switch';
 import { ParityComparison } from './components/ParityComparison';
 import { EventLogger } from './components/EventLogger';
-import { createEventLogger } from './utils/storybook-helpers';
+import { createEventLogger, waitForLitElements } from './utils/storybook-helpers';
 
 const meta = {
   title: 'Parity/Form Controls',
@@ -87,6 +87,9 @@ export const InputComparison: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    // Wait for Lit components to render
+    await waitForLitElements(canvasElement);
+
     // Find both inputs
     const inputs = canvas.getAllByPlaceholderText('Enter username...');
     expect(inputs).toHaveLength(2);
@@ -156,6 +159,9 @@ export const CheckboxComparison: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    // Wait for Lit components to render
+    await waitForLitElements(canvasElement);
+
     // Find both checkboxes
     const checkboxes = canvas.getAllByRole('checkbox');
     expect(checkboxes).toHaveLength(2);
@@ -224,6 +230,9 @@ export const SwitchComparison: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    // Wait for Lit components to render
+    await waitForLitElements(canvasElement);
 
     // Find both switches (using role button since switches are button elements)
     const switches = canvas.getAllByRole('button');

@@ -23,8 +23,7 @@ describe('GraphSeparator', () => {
     await separator.updateComplete;
 
     expect(separator.orientation).toBe('horizontal');
-    const div = separator.querySelector('[data-slot="separator-root"]');
-    expect(div?.getAttribute('data-orientation')).toBe('horizontal');
+    expect(separator.getAttribute('orientation')).toBe('horizontal');
   });
 
   it('should render with vertical orientation', async () => {
@@ -34,8 +33,7 @@ describe('GraphSeparator', () => {
     await separator.updateComplete;
 
     expect(separator.orientation).toBe('vertical');
-    const div = separator.querySelector('[data-slot="separator-root"]');
-    expect(div?.getAttribute('data-orientation')).toBe('vertical');
+    expect(separator.getAttribute('orientation')).toBe('vertical');
   });
 
   it('should be decorative by default', async () => {
@@ -44,8 +42,8 @@ describe('GraphSeparator', () => {
     await separator.updateComplete;
 
     expect(separator.decorative).toBe(true);
-    const div = separator.querySelector('[data-slot="separator-root"]');
-    expect(div?.getAttribute('role')).toBe('none');
+    // Decorative separators have role="none" set on the host
+    expect(separator.getAttribute('role')).toBe('none');
   });
 
   it('should have separator role when not decorative', async () => {
@@ -54,22 +52,16 @@ describe('GraphSeparator', () => {
     container.appendChild(separator);
     await separator.updateComplete;
 
-    const div = separator.querySelector('[data-slot="separator-root"]');
-    expect(div?.getAttribute('role')).toBe('separator');
-    expect(div?.getAttribute('aria-orientation')).toBe('horizontal');
+    // ARIA attributes are set on the host element
+    expect(separator.getAttribute('role')).toBe('separator');
+    expect(separator.getAttribute('aria-orientation')).toBe('horizontal');
   });
 
-  it('should use Light DOM', () => {
-    const separator = new GraphSeparator();
-    expect(separator.shadowRoot).toBeNull();
-  });
-
-  it('should apply Panda CSS classes', async () => {
+  it('should use Shadow DOM', async () => {
     const separator = new GraphSeparator();
     container.appendChild(separator);
     await separator.updateComplete;
 
-    const div = separator.querySelector('[data-slot="separator-root"]');
-    expect(div?.className).toBeTruthy();
+    expect(separator.shadowRoot).toBeTruthy();
   });
 });

@@ -20,6 +20,7 @@ import {
 } from '../components-lit/wrappers/Card';
 import { LitButton } from '../components-lit/wrappers/Button';
 import { ParityComparison } from './components/ParityComparison';
+import { waitForLitElements } from './utils/storybook-helpers';
 
 const meta = {
   title: 'Parity/Card',
@@ -77,6 +78,7 @@ export const Default: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
+    await waitForLitElements(canvasElement);
     const cards = canvasElement.querySelectorAll('[data-slot="card"]');
     expect(cards.length).toBe(2);
   },

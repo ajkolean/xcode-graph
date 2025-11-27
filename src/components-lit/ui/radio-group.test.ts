@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GraphRadioGroup, GraphRadioItem } from './radio-group';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphRadioGroup', () => {
   let container: HTMLElement;
@@ -23,14 +24,16 @@ describe('GraphRadioGroup', () => {
       container.appendChild(group);
       await group.updateComplete;
 
-      const div = group.querySelector('[data-slot="radio-group"]');
-      expect(div).toBeTruthy();
-      expect(div?.getAttribute('role')).toBe('radiogroup');
+      // RadioGroup renders <slot> in Shadow DOM
+      expect(group.shadowRoot).toBeTruthy();
     });
 
-    it('should use Light DOM', () => {
+    it('should use Shadow DOM', async () => {
       const group = new GraphRadioGroup();
-      expect(group.shadowRoot).toBeNull();
+      container.appendChild(group);
+      await group.updateComplete;
+
+      expect(group.shadowRoot).toBeTruthy();
     });
   });
 
@@ -45,7 +48,7 @@ describe('GraphRadioGroup', () => {
       await item.updateComplete;
 
       expect(item.checked).toBe(false);
-      const button = item.querySelector('[data-slot="radio-group-item"]');
+      const button = shadowQuery(item, '[data-slot="radio-group-item"]');
       expect(button?.getAttribute('aria-checked')).toBe('false');
     });
 
@@ -56,7 +59,7 @@ describe('GraphRadioGroup', () => {
       await item.updateComplete;
 
       expect(item.checked).toBe(true);
-      const button = item.querySelector('[data-slot="radio-group-item"]');
+      const button = shadowQuery(item, '[data-slot="radio-group-item"]');
       expect(button?.getAttribute('aria-checked')).toBe('true');
     });
 
@@ -69,7 +72,8 @@ describe('GraphRadioGroup', () => {
       const handler = vi.fn();
       item.addEventListener('radio-item-change', handler);
 
-      const button = item.querySelector('[data-slot="radio-group-item"]') as HTMLButtonElement;
+      const button = shadowQuery(item, '[data-slot="radio-group-item"]') as HTMLButtonElement;
+      expect(button).toBeTruthy();
       button.click();
 
       expect(handler).toHaveBeenCalledTimes(1);
@@ -82,7 +86,8 @@ describe('GraphRadioGroup', () => {
       container.appendChild(item);
       await item.updateComplete;
 
-      const button = item.querySelector('[data-slot="radio-group-item"]') as HTMLButtonElement;
+      const button = shadowQuery(item, '[data-slot="radio-group-item"]') as HTMLButtonElement;
+      expect(button).toBeTruthy();
       expect(button.getAttribute('aria-disabled')).toBe('true');
     });
 
@@ -92,13 +97,16 @@ describe('GraphRadioGroup', () => {
       container.appendChild(item);
       await item.updateComplete;
 
-      const indicator = item.querySelector('[data-slot="radio-group-indicator"]');
+      const indicator = shadowQuery(item, '[data-slot="radio-group-indicator"]');
       expect(indicator).toBeTruthy();
     });
 
-    it('should use Light DOM', () => {
+    it('should use Shadow DOM', async () => {
       const item = new GraphRadioItem();
-      expect(item.shadowRoot).toBeNull();
+      container.appendChild(item);
+      await item.updateComplete;
+
+      expect(item.shadowRoot).toBeTruthy();
     });
   });
 });

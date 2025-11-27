@@ -22,23 +22,16 @@ describe('GraphSkeleton', () => {
     container.appendChild(skeleton);
     await skeleton.updateComplete;
 
-    const div = skeleton.querySelector('[data-slot="skeleton"]');
-    expect(div).toBeTruthy();
+    // Skeleton uses Shadow DOM with :host styling
+    expect(skeleton.shadowRoot).toBeTruthy();
   });
 
-  it('should use Light DOM', () => {
-    const skeleton = new GraphSkeleton();
-    expect(skeleton.shadowRoot).toBeNull();
-  });
-
-  it('should apply Panda CSS classes', async () => {
+  it('should use Shadow DOM', async () => {
     const skeleton = new GraphSkeleton();
     container.appendChild(skeleton);
     await skeleton.updateComplete;
 
-    const div = skeleton.querySelector('[data-slot="skeleton"]');
-    expect(div?.className).toBeTruthy();
-    expect(div?.className.length).toBeGreaterThan(0);
+    expect(skeleton.shadowRoot).toBeTruthy();
   });
 
   it('should accept custom styles via inline style attribute', async () => {

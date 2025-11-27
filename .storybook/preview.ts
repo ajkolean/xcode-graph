@@ -1,30 +1,27 @@
 import type { Preview } from '@storybook/react';
 import { themes } from '@storybook/theming';
 
-// Import Panda CSS styles
-import '../styled-system/styles.css';
-
-// Import global styles
+// Import global styles (includes Panda CSS)
 import '../src/index.css';
 
 // Import all Lit components to register custom elements
 // This ensures customElements.define() is called before stories render
-import '@lit-components/ui/badge';
-import '@lit-components/ui/skeleton';
-import '@lit-components/ui/separator';
-import '@lit-components/ui/card';
-import '@lit-components/ui/button';
-import '@lit-components/ui/input';
-import '@lit-components/ui/label';
-import '@lit-components/ui/textarea';
-import '@lit-components/ui/checkbox';
-import '@lit-components/ui/switch';
-import '@lit-components/ui/slider';
-import '@lit-components/ui/radio-group';
-import '@lit-components/ui/progress';
-import '@lit-components/ui/toggle';
-import '@lit-components/ui/tabs';
-import '@lit-components/ui/accordion';
+import '../src/components-lit/ui/badge';
+import '../src/components-lit/ui/skeleton';
+import '../src/components-lit/ui/separator';
+import '../src/components-lit/ui/card';
+import '../src/components-lit/ui/button';
+import '../src/components-lit/ui/input';
+import '../src/components-lit/ui/label';
+import '../src/components-lit/ui/textarea';
+import '../src/components-lit/ui/checkbox';
+import '../src/components-lit/ui/switch';
+import '../src/components-lit/ui/slider';
+import '../src/components-lit/ui/radio-group';
+import '../src/components-lit/ui/progress';
+import '../src/components-lit/ui/toggle';
+import '../src/components-lit/ui/tabs';
+import '../src/components-lit/ui/accordion';
 
 const preview: Preview = {
   parameters: {
@@ -50,6 +47,12 @@ const preview: Preview = {
     },
     docs: {
       theme: themes.dark,
+    },
+    chromatic: {
+      // Wait for Lit components to register and render
+      delay: 1000,
+      // Pause animations for consistent snapshots
+      pauseAnimationAtEnd: true,
     },
   },
 };

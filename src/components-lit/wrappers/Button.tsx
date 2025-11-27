@@ -2,6 +2,9 @@ import { createComponent } from '@lit/react';
 import * as React from 'react';
 import { GraphButton, type ButtonVariant, type ButtonSize } from '../ui/button';
 
+// Ensure the Lit component is registered
+import '../ui/button';
+
 /**
  * React wrapper for the graph-button Lit component
  */

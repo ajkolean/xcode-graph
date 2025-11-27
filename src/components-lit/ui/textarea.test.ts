@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GraphTextarea } from './textarea';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphTextarea', () => {
   let container: HTMLElement;
@@ -22,7 +23,7 @@ describe('GraphTextarea', () => {
     container.appendChild(textarea);
     await textarea.updateComplete;
 
-    const textareaEl = textarea.querySelector('textarea[data-slot="textarea"]');
+    const textareaEl = shadowQuery(textarea, 'textarea');
     expect(textareaEl).toBeTruthy();
   });
 
@@ -32,7 +33,7 @@ describe('GraphTextarea', () => {
     container.appendChild(textarea);
     await textarea.updateComplete;
 
-    const textareaEl = textarea.querySelector('textarea') as HTMLTextAreaElement;
+    const textareaEl = shadowQuery(textarea, 'textarea') as HTMLTextAreaElement;
     expect(textareaEl.value).toBe('test content');
   });
 
@@ -44,7 +45,7 @@ describe('GraphTextarea', () => {
     const handler = vi.fn();
     textarea.addEventListener('textarea-change', handler);
 
-    const textareaEl = textarea.querySelector('textarea') as HTMLTextAreaElement;
+    const textareaEl = shadowQuery(textarea, 'textarea') as HTMLTextAreaElement;
     textareaEl.value = 'new content';
     textareaEl.dispatchEvent(new Event('input'));
 
@@ -60,7 +61,7 @@ describe('GraphTextarea', () => {
     container.appendChild(textarea);
     await textarea.updateComplete;
 
-    const textareaEl = textarea.querySelector('textarea') as HTMLTextAreaElement;
+    const textareaEl = shadowQuery(textarea, 'textarea') as HTMLTextAreaElement;
     expect(textareaEl.placeholder).toBe('Enter description...');
   });
 
@@ -70,7 +71,7 @@ describe('GraphTextarea', () => {
     container.appendChild(textarea);
     await textarea.updateComplete;
 
-    const textareaEl = textarea.querySelector('textarea') as HTMLTextAreaElement;
+    const textareaEl = shadowQuery(textarea, 'textarea') as HTMLTextAreaElement;
     expect(textareaEl.disabled).toBe(true);
   });
 
@@ -80,12 +81,15 @@ describe('GraphTextarea', () => {
     container.appendChild(textarea);
     await textarea.updateComplete;
 
-    const textareaEl = textarea.querySelector('textarea') as HTMLTextAreaElement;
+    const textareaEl = shadowQuery(textarea, 'textarea') as HTMLTextAreaElement;
     expect(textareaEl.rows).toBe(5);
   });
 
-  it('should use Light DOM', () => {
+  it('should use Shadow DOM', async () => {
     const textarea = new GraphTextarea();
-    expect(textarea.shadowRoot).toBeNull();
+    container.appendChild(textarea);
+    await textarea.updateComplete;
+
+    expect(textarea.shadowRoot).toBeTruthy();
   });
 });

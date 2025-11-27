@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GraphCheckbox } from './checkbox';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphCheckbox', () => {
   let container: HTMLElement;
@@ -23,7 +24,7 @@ describe('GraphCheckbox', () => {
     await checkbox.updateComplete;
 
     expect(checkbox.checked).toBe(false);
-    const button = checkbox.querySelector('[data-slot="checkbox"]');
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]');
     expect(button?.getAttribute('aria-checked')).toBe('false');
     expect(button?.getAttribute('data-state')).toBe('unchecked');
   });
@@ -35,7 +36,7 @@ describe('GraphCheckbox', () => {
     await checkbox.updateComplete;
 
     expect(checkbox.checked).toBe(true);
-    const button = checkbox.querySelector('[data-slot="checkbox"]');
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]');
     expect(button?.getAttribute('aria-checked')).toBe('true');
     expect(button?.getAttribute('data-state')).toBe('checked');
   });
@@ -46,7 +47,7 @@ describe('GraphCheckbox', () => {
     container.appendChild(checkbox);
     await checkbox.updateComplete;
 
-    const button = checkbox.querySelector('[data-slot="checkbox"]');
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]');
     expect(button?.getAttribute('aria-checked')).toBe('mixed');
   });
 
@@ -57,7 +58,8 @@ describe('GraphCheckbox', () => {
 
     expect(checkbox.checked).toBe(false);
 
-    const button = checkbox.querySelector('[data-slot="checkbox"]') as HTMLButtonElement;
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
     await checkbox.updateComplete;
 
@@ -77,7 +79,8 @@ describe('GraphCheckbox', () => {
     const handler = vi.fn();
     checkbox.addEventListener('checkbox-change', handler);
 
-    const button = checkbox.querySelector('[data-slot="checkbox"]') as HTMLButtonElement;
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
 
     expect(handler).toHaveBeenCalledTimes(1);
@@ -90,7 +93,8 @@ describe('GraphCheckbox', () => {
     container.appendChild(checkbox);
     await checkbox.updateComplete;
 
-    const button = checkbox.querySelector('[data-slot="checkbox"]') as HTMLButtonElement;
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     expect(button.getAttribute('aria-disabled')).toBe('true');
     expect(button.tabIndex).toBe(-1);
   });
@@ -104,7 +108,8 @@ describe('GraphCheckbox', () => {
     const handler = vi.fn();
     checkbox.addEventListener('checkbox-change', handler);
 
-    const button = checkbox.querySelector('[data-slot="checkbox"]') as HTMLButtonElement;
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.click();
 
     expect(handler).not.toHaveBeenCalled();
@@ -116,7 +121,8 @@ describe('GraphCheckbox', () => {
     container.appendChild(checkbox);
     await checkbox.updateComplete;
 
-    const button = checkbox.querySelector('[data-slot="checkbox"]') as HTMLButtonElement;
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.dispatchEvent(new KeyboardEvent('keydown', { key: ' ' }));
     await checkbox.updateComplete;
 
@@ -128,7 +134,8 @@ describe('GraphCheckbox', () => {
     container.appendChild(checkbox);
     await checkbox.updateComplete;
 
-    const button = checkbox.querySelector('[data-slot="checkbox"]') as HTMLButtonElement;
+    const button = shadowQuery(checkbox, '[data-slot="checkbox"]') as HTMLButtonElement;
+    expect(button).toBeTruthy();
     button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
     await checkbox.updateComplete;
 
@@ -141,12 +148,15 @@ describe('GraphCheckbox', () => {
     container.appendChild(checkbox);
     await checkbox.updateComplete;
 
-    const indicator = checkbox.querySelector('[data-slot="checkbox-indicator"]');
+    const indicator = shadowQuery(checkbox, '[data-slot="checkbox-indicator"]');
     expect(indicator).toBeTruthy();
   });
 
-  it('should use Light DOM', () => {
+  it('should use Shadow DOM', async () => {
     const checkbox = new GraphCheckbox();
-    expect(checkbox.shadowRoot).toBeNull();
+    container.appendChild(checkbox);
+    await checkbox.updateComplete;
+
+    expect(checkbox.shadowRoot).toBeTruthy();
   });
 });

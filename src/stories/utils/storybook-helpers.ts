@@ -5,6 +5,28 @@ export interface EventLog {
   data?: unknown;
 }
 
+/**
+ * Wait for Lit elements to complete rendering
+ * Useful in Storybook play functions and Chromatic tests
+ */
+export async function waitForLitElements(container: HTMLElement): Promise<void> {
+  // Wait a bit for custom elements to upgrade and hydrate
+  await new Promise(resolve => setTimeout(resolve, 200));
+
+  // Find all custom elements (graph-*) and wait for them to complete rendering
+  const customElements = container.querySelectorAll('[data-slot]');
+  const promises = Array.from(customElements).map(async (el: any) => {
+    if (el.updateComplete) {
+      await el.updateComplete;
+    }
+  });
+
+  await Promise.all(promises);
+
+  // Extra wait to ensure DOM is fully settled
+  await new Promise(resolve => setTimeout(resolve, 100));
+}
+
 export interface EventLogger {
   logs: EventLog[];
   logReactEvent: (eventType: string, data?: unknown) => void;

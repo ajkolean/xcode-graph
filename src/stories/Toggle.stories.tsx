@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Toggle } from '../components/ui/toggle';
 import { LitToggle } from '../components-lit/wrappers/Toggle';
 import { ParityComparison } from './components/ParityComparison';
+import { waitForLitElements } from "./utils/storybook-helpers";
 import { EventLogger } from './components/EventLogger';
 import { createEventLogger } from './utils/storybook-helpers';
 
@@ -125,6 +126,7 @@ export const Default: Story = {
     );
   },
   play: async ({ canvasElement }) => {
+    await waitForLitElements(canvasElement);
     const canvas = within(canvasElement);
 
     // Find both toggles

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GraphSlider } from './slider';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphSlider', () => {
   let container: HTMLElement;
@@ -36,7 +37,7 @@ describe('GraphSlider', () => {
     const handler = vi.fn();
     slider.addEventListener('slider-change', handler);
 
-    const input = slider.querySelector('input') as HTMLInputElement;
+    const input = shadowQuery(slider, 'input') as HTMLInputElement;
     input.value = '75';
     input.dispatchEvent(new Event('input'));
 
@@ -53,7 +54,7 @@ describe('GraphSlider', () => {
     container.appendChild(slider);
     await slider.updateComplete;
 
-    const input = slider.querySelector('input') as HTMLInputElement;
+    const input = shadowQuery(slider, 'input') as HTMLInputElement;
     expect(input.min).toBe('0');
     expect(input.max).toBe('1');
     expect(input.step).toBe('0.1');
@@ -65,7 +66,7 @@ describe('GraphSlider', () => {
     container.appendChild(slider);
     await slider.updateComplete;
 
-    const input = slider.querySelector('input') as HTMLInputElement;
+    const input = shadowQuery(slider, 'input') as HTMLInputElement;
     expect(input.disabled).toBe(true);
   });
 
@@ -74,13 +75,16 @@ describe('GraphSlider', () => {
     container.appendChild(slider);
     await slider.updateComplete;
 
-    expect(slider.querySelector('[data-slot="slider-track"]')).toBeTruthy();
-    expect(slider.querySelector('[data-slot="slider-thumb"]')).toBeTruthy();
-    expect(slider.querySelector('[data-slot="slider-range"]')).toBeTruthy();
+    expect(shadowQuery(slider, '[data-slot="slider-track"]')).toBeTruthy();
+    expect(shadowQuery(slider, '[data-slot="slider-thumb"]')).toBeTruthy();
+    expect(shadowQuery(slider, '[data-slot="slider-range"]')).toBeTruthy();
   });
 
-  it('should use Light DOM', () => {
+  it('should use Shadow DOM', async () => {
     const slider = new GraphSlider();
-    expect(slider.shadowRoot).toBeNull();
+    container.appendChild(slider);
+    await slider.updateComplete;
+
+    expect(slider.shadowRoot).toBeTruthy();
   });
 });

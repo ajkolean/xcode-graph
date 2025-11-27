@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GraphButton } from './button';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphButton', () => {
   let container: HTMLElement;
@@ -119,7 +120,8 @@ describe('GraphButton', () => {
     const clickHandler = vi.fn();
     button.addEventListener('button-click', clickHandler);
 
-    const btn = button.querySelector('button') as HTMLButtonElement;
+    const btn = shadowQuery(button, 'button') as HTMLButtonElement;
+    expect(btn).toBeTruthy();
     btn.click();
 
     expect(clickHandler).toHaveBeenCalledTimes(1);
@@ -134,28 +136,29 @@ describe('GraphButton', () => {
     const clickHandler = vi.fn();
     button.addEventListener('button-click', clickHandler);
 
-    const btn = button.querySelector('button') as HTMLButtonElement;
+    const btn = shadowQuery(button, 'button') as HTMLButtonElement;
+    expect(btn).toBeTruthy();
     btn.click();
 
     expect(clickHandler).not.toHaveBeenCalled();
   });
 
-  it('should use Light DOM (no shadow root)', async () => {
+  it('should use Shadow DOM', async () => {
     const button = new GraphButton();
     container.appendChild(button);
     await button.updateComplete;
 
-    expect(button.shadowRoot).toBeNull();
+    expect(button.shadowRoot).toBeTruthy();
   });
 
-  it('should apply Panda CSS classes', async () => {
+  it('should render button element in Shadow DOM', async () => {
     const button = new GraphButton();
     container.appendChild(button);
     await button.updateComplete;
 
-    const btn = button.querySelector('button');
-    expect(btn?.className).toBeTruthy();
-    expect(btn?.className.length).toBeGreaterThan(0);
+    const btn = shadowQuery(button, 'button');
+    expect(btn).toBeTruthy();
+    expect(btn?.tagName).toBe('BUTTON');
   });
 
   it('should set button type attribute', async () => {
@@ -164,7 +167,8 @@ describe('GraphButton', () => {
     container.appendChild(button);
     await button.updateComplete;
 
-    const btn = button.querySelector('button') as HTMLButtonElement;
+    const btn = shadowQuery(button, 'button') as HTMLButtonElement;
+    expect(btn).toBeTruthy();
     expect(btn.type).toBe('submit');
   });
 });

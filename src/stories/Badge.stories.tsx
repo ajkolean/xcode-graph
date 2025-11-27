@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Badge } from '../components/ui/badge';
 import { LitBadge } from '../components-lit/wrappers/Badge';
 import { ParityComparison } from './components/ParityComparison';
+import { waitForLitElements } from './utils/storybook-helpers';
 
 const meta = {
   title: 'Parity/Badge',
@@ -46,6 +47,9 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    // Wait for Lit components to render
+    await waitForLitElements(canvasElement);
+
     // Find both badges (using data-slot attribute)
     const reactBadge = canvasElement.querySelector('[data-slot="badge"]');
     const litBadge = canvasElement.querySelectorAll('[data-slot="badge"]')[1];
@@ -80,6 +84,9 @@ export const AllVariants: Story = {
     );
   },
   play: async ({ canvasElement }) => {
+    // Wait for Lit components to render
+    await waitForLitElements(canvasElement);
+
     // Verify all badges render
     const badges = canvasElement.querySelectorAll('[data-slot="badge"]');
     expect(badges.length).toBe(8); // 4 variants × 2 implementations

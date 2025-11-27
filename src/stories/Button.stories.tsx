@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button';
 import { LitButton } from '../components-lit/wrappers/Button';
 import { ParityComparison } from './components/ParityComparison';
 import { EventLogger } from './components/EventLogger';
-import { createEventLogger } from './utils/storybook-helpers';
+import { createEventLogger, waitForLitElements } from './utils/storybook-helpers';
 
 const meta = {
   title: 'Parity/Button',
@@ -94,6 +94,9 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    // Wait for Lit components to render (important for Chromatic)
+    await waitForLitElements(canvasElement);
 
     // Find both buttons
     const buttons = canvas.getAllByRole('button', { name: 'Click me' });

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Separator } from '../components/ui/separator';
 import { LitSeparator } from '../components-lit/wrappers/Separator';
 import { ParityComparison } from './components/ParityComparison';
+import { waitForLitElements } from "./utils/storybook-helpers";
 
 const meta = {
   title: 'Parity/Separator',
@@ -55,6 +56,7 @@ export const Horizontal: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
+    await waitForLitElements(canvasElement);
     const canvas = within(canvasElement);
 
     // Find both separators
@@ -94,6 +96,7 @@ export const Vertical: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
+    await waitForLitElements(canvasElement);
     const separators = canvasElement.querySelectorAll('[data-slot="separator-root"]');
     expect(separators.length).toBe(2);
 

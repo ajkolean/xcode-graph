@@ -14,6 +14,7 @@ import {
   LitAccordionContent,
 } from '../components-lit/wrappers/Accordion';
 import { ParityComparison } from './components/ParityComparison';
+import { waitForLitElements } from "./utils/storybook-helpers";
 
 const meta = {
   title: 'Parity/Accordion',
@@ -81,6 +82,7 @@ export const Default: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
+    await waitForLitElements(canvasElement);
     const canvas = within(canvasElement);
 
     // Find all accordion triggers

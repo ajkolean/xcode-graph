@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { shadowQuery } from '../../test/shadow-helpers';
 import {
   GraphCard,
   GraphCardHeader,
@@ -31,13 +32,16 @@ describe('GraphCard Components', () => {
       container.appendChild(card);
       await card.updateComplete;
 
-      const div = card.querySelector('[data-slot="card"]');
-      expect(div).toBeTruthy();
+      // Card renders <slot> in Shadow DOM
+      expect(card.shadowRoot).toBeTruthy();
     });
 
-    it('should use Light DOM', () => {
+    it('should use Shadow DOM', async () => {
       const card = new GraphCard();
-      expect(card.shadowRoot).toBeNull();
+      container.appendChild(card);
+      await card.updateComplete;
+
+      expect(card.shadowRoot).toBeTruthy();
     });
   });
 
@@ -51,7 +55,8 @@ describe('GraphCard Components', () => {
       container.appendChild(header);
       await header.updateComplete;
 
-      expect(header.querySelector('[data-slot="card-header"]')).toBeTruthy();
+      // CardHeader renders <slot> in Shadow DOM
+      expect(header.shadowRoot).toBeTruthy();
     });
   });
 
@@ -66,8 +71,9 @@ describe('GraphCard Components', () => {
       container.appendChild(title);
       await title.updateComplete;
 
-      const h4 = title.querySelector('h4[data-slot="card-title"]');
-      expect(h4).toBeTruthy();
+      // CardTitle renders <slot> in Shadow DOM
+      expect(title.shadowRoot).toBeTruthy();
+      expect(title.textContent).toBe('Card Title');
     });
   });
 
@@ -78,11 +84,13 @@ describe('GraphCard Components', () => {
 
     it('should render as p element', async () => {
       const desc = new GraphCardDescription();
+      desc.textContent = 'Description';
       container.appendChild(desc);
       await desc.updateComplete;
 
-      const p = desc.querySelector('p[data-slot="card-description"]');
-      expect(p).toBeTruthy();
+      // CardDescription renders <slot> in Shadow DOM
+      expect(desc.shadowRoot).toBeTruthy();
+      expect(desc.textContent).toBe('Description');
     });
   });
 
@@ -96,7 +104,7 @@ describe('GraphCard Components', () => {
       container.appendChild(content);
       await content.updateComplete;
 
-      expect(content.querySelector('[data-slot="card-content"]')).toBeTruthy();
+      expect(content.shadowRoot).toBeTruthy();
     });
   });
 
@@ -110,7 +118,7 @@ describe('GraphCard Components', () => {
       container.appendChild(footer);
       await footer.updateComplete;
 
-      expect(footer.querySelector('[data-slot="card-footer"]')).toBeTruthy();
+      expect(footer.shadowRoot).toBeTruthy();
     });
   });
 
@@ -124,7 +132,7 @@ describe('GraphCard Components', () => {
       container.appendChild(action);
       await action.updateComplete;
 
-      expect(action.querySelector('[data-slot="card-action"]')).toBeTruthy();
+      expect(action.shadowRoot).toBeTruthy();
     });
   });
 
@@ -148,10 +156,16 @@ describe('GraphCard Components', () => {
       await title.updateComplete;
       await content.updateComplete;
 
-      expect(card.querySelector('[data-slot="card"]')).toBeTruthy();
-      expect(card.querySelector('[data-slot="card-header"]')).toBeTruthy();
-      expect(card.querySelector('[data-slot="card-title"]')).toBeTruthy();
-      expect(card.querySelector('[data-slot="card-content"]')).toBeTruthy();
+      // Each component has its own Shadow DOM
+      expect(card.shadowRoot).toBeTruthy();
+      expect(header.shadowRoot).toBeTruthy();
+      expect(title.shadowRoot).toBeTruthy();
+      expect(content.shadowRoot).toBeTruthy();
+
+      // Components are composed in Light DOM
+      expect(card.querySelector('graph-card-header')).toBeTruthy();
+      expect(card.querySelector('graph-card-title')).toBeTruthy();
+      expect(card.querySelector('graph-card-content')).toBeTruthy();
     });
   });
 });

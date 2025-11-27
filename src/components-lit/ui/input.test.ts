@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { GraphInput } from './input';
+import { shadowQuery } from '../../test/shadow-helpers';
 
 describe('GraphInput', () => {
   let container: HTMLElement;
@@ -22,7 +23,7 @@ describe('GraphInput', () => {
     container.appendChild(input);
     await input.updateComplete;
 
-    const inputEl = input.querySelector('input[data-slot="input"]') as HTMLInputElement;
+    const inputEl = shadowQuery(input, 'input') as HTMLInputElement;
     expect(inputEl).toBeTruthy();
     expect(inputEl.type).toBe('text');
   });
@@ -36,7 +37,7 @@ describe('GraphInput', () => {
       container.appendChild(input);
       await input.updateComplete;
 
-      const inputEl = input.querySelector('input') as HTMLInputElement;
+      const inputEl = shadowQuery(input, 'input') as HTMLInputElement;
       expect(inputEl.type).toBe(type);
 
       input.remove();
@@ -49,7 +50,7 @@ describe('GraphInput', () => {
     container.appendChild(input);
     await input.updateComplete;
 
-    const inputEl = input.querySelector('input') as HTMLInputElement;
+    const inputEl = shadowQuery(input, 'input') as HTMLInputElement;
     expect(inputEl.value).toBe('test value');
   });
 
@@ -61,7 +62,7 @@ describe('GraphInput', () => {
     const handler = vi.fn();
     input.addEventListener('input-change', handler);
 
-    const inputEl = input.querySelector('input') as HTMLInputElement;
+    const inputEl = shadowQuery(input, 'input') as HTMLInputElement;
     inputEl.value = 'new value';
     inputEl.dispatchEvent(new Event('input'));
 
@@ -77,7 +78,7 @@ describe('GraphInput', () => {
     container.appendChild(input);
     await input.updateComplete;
 
-    const inputEl = input.querySelector('input') as HTMLInputElement;
+    const inputEl = shadowQuery(input, 'input') as HTMLInputElement;
     expect(inputEl.placeholder).toBe('Enter text...');
   });
 
@@ -87,7 +88,7 @@ describe('GraphInput', () => {
     container.appendChild(input);
     await input.updateComplete;
 
-    const inputEl = input.querySelector('input') as HTMLInputElement;
+    const inputEl = shadowQuery(input, 'input') as HTMLInputElement;
     expect(inputEl.disabled).toBe(true);
   });
 
@@ -97,7 +98,7 @@ describe('GraphInput', () => {
     container.appendChild(input);
     await input.updateComplete;
 
-    const inputEl = input.querySelector('input') as HTMLInputElement;
+    const inputEl = shadowQuery(input, 'input') as HTMLInputElement;
     expect(inputEl.required).toBe(true);
   });
 
@@ -107,21 +108,15 @@ describe('GraphInput', () => {
     container.appendChild(input);
     await input.updateComplete;
 
-    const inputEl = input.querySelector('input') as HTMLInputElement;
+    const inputEl = shadowQuery(input, 'input') as HTMLInputElement;
     expect(inputEl.name).toBe('email');
   });
 
-  it('should use Light DOM', () => {
-    const input = new GraphInput();
-    expect(input.shadowRoot).toBeNull();
-  });
-
-  it('should apply Panda CSS classes', async () => {
+  it('should use Shadow DOM', async () => {
     const input = new GraphInput();
     container.appendChild(input);
     await input.updateComplete;
 
-    const inputEl = input.querySelector('input');
-    expect(inputEl?.className).toBeTruthy();
+    expect(input.shadowRoot).toBeTruthy();
   });
 });

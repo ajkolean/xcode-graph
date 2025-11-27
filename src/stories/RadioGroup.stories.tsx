@@ -6,6 +6,7 @@ import { Label } from '../components/ui/label';
 import { LitRadioGroup, LitRadioItem } from '../components-lit/wrappers/RadioGroup';
 import { LitLabel } from '../components-lit/wrappers/Label';
 import { ParityComparison } from './components/ParityComparison';
+import { waitForLitElements } from "./utils/storybook-helpers";
 import { EventLogger } from './components/EventLogger';
 import { createEventLogger } from './utils/storybook-helpers';
 
@@ -85,6 +86,7 @@ export const Default: Story = {
     );
   },
   play: async ({ canvasElement }) => {
+    await waitForLitElements(canvasElement);
     const canvas = within(canvasElement);
 
     // Find radio groups

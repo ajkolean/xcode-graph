@@ -9,6 +9,7 @@ import {
   LitTabsContent,
 } from '../components-lit/wrappers/Tabs';
 import { ParityComparison } from './components/ParityComparison';
+import { waitForLitElements } from "./utils/storybook-helpers";
 
 const meta = {
   title: 'Parity/Tabs',
@@ -68,6 +69,7 @@ export const Default: Story = {
     />
   ),
   play: async ({ canvasElement }) => {
+    await waitForLitElements(canvasElement);
     const canvas = within(canvasElement);
 
     // Find all tab triggers
