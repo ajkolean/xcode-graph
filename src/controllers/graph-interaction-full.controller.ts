@@ -119,6 +119,11 @@ export class GraphInteractionFullController implements ReactiveController {
   handleMouseUp = () => {
     this.isDragging = false;
     this.draggedNode = null;
+    // Reset hasMoved after a short delay to allow click handler to check it first
+    setTimeout(() => {
+      this.hasMoved = false;
+      this.host.requestUpdate();
+    }, 0);
     this.host.requestUpdate();
   };
 
