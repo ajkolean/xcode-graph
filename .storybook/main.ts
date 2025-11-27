@@ -2,6 +2,7 @@
 import { fileURLToPath } from "node:url";
 import type { StorybookConfig } from '@storybook/react-vite';
 import path, { dirname } from 'node:path';
+import isChromatic from 'chromatic/isChromatic';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,7 +16,9 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
     '@storybook/addon-mcp',
     '@storybook/addon-interactions',
-    '@storybook/addon-vitest'
+    // Conditionally disable vitest addon in Chromatic environment
+    // The addon starts a test runner which times out during Chromatic builds
+    ...(!isChromatic() ? ['@storybook/addon-vitest'] : [])
   ],
   framework: {
     name: '@storybook/react-vite',

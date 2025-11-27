@@ -81,12 +81,17 @@ export default defineConfig({
         browser: {
           enabled: true,
           name: 'chromium',
+          provider: 'playwright',
+          headless: true,
         },
         setupFiles: ['.storybook/vitest.setup.ts'],
         include: ['src/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
         deps: {
           inline: ['lit', '@lit/reactive-element', '@lit/task'],
         },
+        // Increase timeouts for browser mode
+        testTimeout: 10000,
+        hookTimeout: 10000,
       },
     },
   ],
