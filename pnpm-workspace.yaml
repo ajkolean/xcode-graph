@@ -1,6 +1,8 @@
 packages:
-  - '.'
+  - .
 
 onlyBuiltDependencies:
   - '@swc/core'
+  - '@vaadin/vaadin-usage-statistics'
   - esbuild
+  - unrs-resolver

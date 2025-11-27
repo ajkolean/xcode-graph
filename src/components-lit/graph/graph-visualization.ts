@@ -20,7 +20,7 @@
  * ```
  */
 
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, svg } from 'lit';
 import { state, query } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
@@ -29,6 +29,7 @@ import { GraphInteractionFullController } from '@/controllers/graph-interaction-
 import { computeHierarchicalLayout } from '@/utils/hierarchicalLayout';
 import { groupIntoClusters } from '@/utils/clusterGrouping';
 import { analyzeCluster } from '@/utils/clusterAnalysis';
+import { renderClusterGroup } from './svg-renderers';
 import './graph-svg-defs';
 import './cluster-group';
 import './graph-edges';
@@ -123,10 +124,8 @@ export class GraphVisualization extends LitElement {
   updated(changedProps: Map<string, any>) {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
-      console.log('[GraphVisualization] updated - nodes:', this.nodes?.length, 'edges:', this.edges?.length);
       this.layout.enableAnimation = this.enableAnimation;
       this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
-      console.log('[GraphVisualization] after computeLayout - clusters:', this.layout.clusters.length, 'nodePositions:', this.layout.nodePositions.size);
     }
 
     // Update animation when enableAnimation changes
@@ -223,7 +222,6 @@ export class GraphVisualization extends LitElement {
   // ========================================
 
   render() {
-    console.log('[GraphVisualization] render - nodes:', this.nodes?.length, 'clusters:', this.layout.clusters.length, 'nodePositions:', this.layout.nodePositions.size);
     return html`
       <graph-background></graph-background>
 
@@ -252,7 +250,7 @@ export class GraphVisualization extends LitElement {
       >
         <graph-svg-defs></graph-svg-defs>
 
-        <g transform="translate(${this.interaction.pan.x}, ${this.interaction.pan.y}) scale(${this.zoom})">
+        <g transform="translate(${this.interaction.pan.x}, ${this.interaction.pan.y}) scale(${this.zoom ?? 1})">
           ${this.nodes?.length
             ? html`
                 <!-- Cross-cluster edges -->
@@ -279,54 +277,59 @@ export class GraphVisualization extends LitElement {
 
                   const isSelected = this.selectedCluster === cluster.id;
 
-                  return html`
-                    <graph-cluster-group
-                      .cluster=${cluster}
-                      .clusterPosition=${position}
-                      .nodes=${this.nodes}
-                      .edges=${this.edges}
-                      .finalNodePositions=${this.finalNodePositions}
-                      .selectedNode=${this.selectedNode}
-                      .hoveredNode=${this.hoveredNode}
-                      .hoveredClusterId=${this.hoveredCluster}
-                      search-query=${this.searchQuery}
-                      .zoom=${this.zoom}
-                      view-mode=${this.viewMode}
-                      .transitiveDeps=${this.transitiveDeps}
-                      .transitiveDependents=${this.transitiveDependents}
-                      ?is-selected=${isSelected}
-                      .previewFilter=${this.previewFilter}
-                      @node-mouseenter=${(e: CustomEvent) =>
+                  return renderClusterGroup({
+                    cluster,
+                    clusterPosition: position,
+                    nodes: this.nodes ?? [],
+                    edges: this.edges ?? [],
+                    finalNodePositions: this.finalNodePositions,
+                    selectedNode: this.selectedNode ?? null,
+                    hoveredNode: this.hoveredNode ?? null,
+                    isClusterHovered: this.hoveredCluster === cluster.id,
+                    isClusterSelected: isSelected,
+                    searchQuery: this.searchQuery,
+                    zoom: this.zoom,
+                    previewFilter: this.previewFilter,
+                    onClusterClick: () =>
+                      this.dispatchEvent(
+                        new CustomEvent('cluster-select', {
+                          detail: { clusterId: cluster.id },
+                          bubbles: true,
+                          composed: true,
+                        })
+                      ),
+                    onClusterMouseEnter: () => (this.hoveredCluster = cluster.id),
+                    onClusterMouseLeave: () => (this.hoveredCluster = null),
+                    onNodeMouseEnter: (nodeId) =>
+                      this.dispatchEvent(
+                        new CustomEvent('node-hover', {
+                          detail: { nodeId },
+                          bubbles: true,
+                          composed: true,
+                        })
+                      ),
+                    onNodeMouseLeave: () =>
+                      this.dispatchEvent(
+                        new CustomEvent('node-hover', {
+                          detail: { nodeId: null },
+                          bubbles: true,
+                          composed: true,
+                        })
+                      ),
+                    onNodeMouseDown: (nodeId, e) =>
+                      this.interaction.handleNodeMouseDown(nodeId, e),
+                    onNodeClick: (node, e) => {
+                      if (!this.interaction.hasMoved) {
                         this.dispatchEvent(
-                          new CustomEvent('node-hover', {
-                            detail: e.detail,
+                          new CustomEvent('node-select', {
+                            detail: { node },
                             bubbles: true,
                             composed: true,
                           })
-                        )}
-                      @node-mouseleave=${() =>
-                        this.dispatchEvent(
-                          new CustomEvent('node-hover', {
-                            detail: { nodeId: null },
-                            bubbles: true,
-                            composed: true,
-                          })
-                        )}
-                      @node-mousedown=${(e: CustomEvent) =>
-                        this.interaction.handleNodeMouseDown(e.detail.nodeId, e.detail.originalEvent)}
-                      @node-click=${this.handleNodeClick}
-                      @cluster-mouseenter=${() => (this.hoveredCluster = cluster.id)}
-                      @cluster-mouseleave=${() => (this.hoveredCluster = null)}
-                      @cluster-click=${() =>
-                        this.dispatchEvent(
-                          new CustomEvent('cluster-select', {
-                            detail: { clusterId: cluster.id },
-                            bubbles: true,
-                            composed: true,
-                          })
-                        )}
-                    ></graph-cluster-group>
-                  `;
+                        );
+                      }
+                    },
+                  });
                 })}
               `
             : ''}
@@ -336,11 +339,6 @@ export class GraphVisualization extends LitElement {
       ${this.nodes?.length === 0
         ? html`<graph-visualization-empty-state></graph-visualization-empty-state>`
         : ''}
-
-      <!-- Debug info -->
-      <div style="position: absolute; top: 60px; left: 20px; color: #ff0; font-size: 12px; background: rgba(0,0,0,0.8); padding: 8px; z-index: 9999;">
-        DEBUG: nodes=${this.nodes?.length ?? 0}, clusters=${this.layout.clusters.length}, positions=${this.layout.nodePositions.size}
-      </div>
     `;
   }
 }

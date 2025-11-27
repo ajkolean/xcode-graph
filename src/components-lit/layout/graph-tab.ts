@@ -98,11 +98,14 @@ export class GraphTab extends LitElement {
       flex: 1;
       overflow: hidden;
       position: relative;
+      min-height: 0;
     }
 
     .graph-container {
       flex: 1;
       position: relative;
+      overflow: hidden;
+      min-height: 0;
     }
   `;
 
@@ -150,7 +153,6 @@ export class GraphTab extends LitElement {
   // ========================================
 
   render() {
-    console.log('[GraphTab] render - displayNodes:', this.displayNodes?.length, 'displayEdges:', this.displayEdges?.length);
     return html`
       <div class="container">
         <!-- Graph + Sidebar -->
