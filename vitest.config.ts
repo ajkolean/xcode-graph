@@ -1,16 +1,12 @@
 /// <reference types="vitest" />
 
 import path from 'node:path';
-import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 
 export default defineConfig({
-  plugins: [
-    react({
-      include: /\.(jsx|tsx)$/,
-    }),
-  ],
+  plugins: [],
   esbuild: {
     target: 'esnext',
     tsconfigRaw: {
@@ -21,38 +17,29 @@ export default defineConfig({
     },
   },
   test: {
-    name: 'unit',
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['node_modules', 'build', 'dist', 'src/test/visual-parity.test.ts'],
-    deps: {
-      inline: ['lit', '@lit/reactive-element', '@lit/task'],
-    },
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/types/*',
-        'styled-system/',
-      ],
-    },
-    browser: {
-      enabled: true,
-      provider: playwright(),
-      instances: [
-        {
-          browser: 'chromium',
+    projects: [
+      // Storybook tests project
+      {
+        extends: true,
+        plugins: [
+          storybookTest({
+            configDir: path.join(__dirname, '.storybook'),
+            storybookScript: 'pnpm storybook --no-open',
+          }),
+        ],
+        test: {
+          name: 'storybook',
+          browser: {
+            enabled: true,
+            provider: playwright(),
+            headless: true,
+            instances: [{ browser: 'chromium' }],
+          },
+          setupFiles: ['./.storybook/vitest.setup.ts'],
+          testTimeout: 30000, // Match your old test-runner timeout
         },
-      ],
-    },
-    testTimeout: 10000,
-    hookTimeout: 10000,
+      },
+    ],
   },
   resolve: {
     alias: {

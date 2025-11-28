@@ -7,17 +7,16 @@ Welcome to the TuistGraph Storybook! This is your interactive guide to all UI co
 
 ## 🏗️ Architecture Overview
 
-TuistGraph uses a **hybrid React + Lit Web Components architecture**:
+TuistGraph is built with **Lit Web Components**:
 
-- **React Components**: High-level orchestrators and containers that manage state and composition
 - **Lit Web Components**: Performant, framework-agnostic UI components with Shadow DOM encapsulation
-- **React Wrappers**: Bridge components that allow React to control Lit elements seamlessly
+- **Pure Web Standards**: Built on standard Custom Elements and Shadow DOM APIs
 
 This architecture provides:
-- ⚡ **Performance**: Lit's lightweight runtime for UI components
+- ⚡ **Performance**: Lit's lightweight runtime and reactive system
 - 🔄 **Reusability**: Web components work across any framework
 - 🎨 **Encapsulation**: Shadow DOM prevents style conflicts
-- 🧪 **Testability**: Parity testing ensures React and Lit behave identically
+- 🧪 **Testability**: Component tests with accessibility and interaction validation
 
 ## 📚 Component Categories
 
@@ -54,15 +53,15 @@ Helper components and tools
 Each component includes:
 - **Playground**: Interactive controls for experimentation
 - **State Variants**: Different props and states
-- **Parity Comparison**: Side-by-side React vs Lit verification
 - **Interactive Tests**: Automated play functions testing events and interactions
+- **Accessibility Tests**: Automated a11y validation with WCAG compliance
 
 ## 🎯 Using This Storybook
 
 1. **Browse by category** in the sidebar to explore components
 2. **Use Playground stories** to experiment with props
-3. **Check Parity Comparisons** to verify React/Lit consistency
-4. **Review Interactive Tests** to understand event handling
+3. **Review Interactive Tests** to understand event handling
+4. **Check Accessibility panel** to verify WCAG compliance
 5. **Use as documentation** when implementing features
 
 ## 🔗 Key Resources

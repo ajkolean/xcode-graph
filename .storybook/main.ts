@@ -1,5 +1,4 @@
 // This file has been automatically migrated to valid ESM format by Storybook.
-import type { AddonOptionsVite } from '@storybook/addon-coverage';
 import type { StorybookConfig } from '@storybook/web-components-vite';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from "node:url";
@@ -7,18 +6,6 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Coverage addon configuration for Vite
-const coverageConfig: AddonOptionsVite = {
-  istanbul: {
-    include: ['src/**/*.{ts,tsx}'],
-    exclude: [
-      'src/**/*.stories.{ts,tsx}',
-      'src/**/*.test.{ts,tsx}',
-      'src/test/**',
-      'src/**/*.d.ts',
-    ],
-  },
-};
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -28,19 +15,16 @@ const config: StorybookConfig = {
     '@chromatic-com/storybook',
     '@storybook/addon-docs',
     '@storybook/addon-mcp',
-    {
-      name: '@storybook/addon-coverage',
-      options: coverageConfig,
-    },
+    '@storybook/addon-vitest'
   ],
   framework: {
     name: '@storybook/web-components-vite',
     options: {},
   },
   tags: {
-    // Tag filtering configuration for React/Lit parity testing
+    // Tag filtering configuration for tests
     test: {
-      defaultFilterSelection: 'exclude', // Hide tests from sidebar by default
+      defaultFilterSelection: 'exclude', // Hide test stories from sidebar by default
     },
   },
   viteFinal: async (config) => {

@@ -1533,3 +1533,13 @@ html {
   syntax: "*";
   inherits: false;
 }
+
+/* Chromatic-specific CSS: Disable animations for consistent snapshots */
+body.isChromatic *,
+body.isChromatic *::before,
+body.isChromatic *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}

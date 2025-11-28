@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/web-components';
 import { within as withinShadow } from 'shadow-dom-testing-library';
+import isChromatic from 'chromatic/isChromatic';
 
 // Import global styles
 import '../src/index.css';
@@ -68,6 +69,8 @@ const preview: Preview = {
     chromatic: {
       delay: 1000,
       pauseAnimationAtEnd: true,
+      // Disable animations in Chromatic for consistent snapshots
+      disableSnapshot: false,
       modes: {
         light_desktop: {
           backgrounds: { value: 'rgba(255, 255, 255, 1)' },
@@ -91,6 +94,11 @@ const preview: Preview = {
   beforeEach({ canvasElement, canvas }) {
     // Augment the canvas with shadow DOM queries so Lit stories can be tested
     Object.assign(canvas, { ...withinShadow(canvasElement) });
+
+    // Add isChromatic class to body for CSS targeting
+    if (isChromatic()) {
+      document.body.classList.add('isChromatic');
+    }
   },
 };
 

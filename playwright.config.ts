@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@chromatic-com/playwright';
 
 export default defineConfig({
   testDir: './src/test',

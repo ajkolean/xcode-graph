@@ -163,12 +163,13 @@ export const TestingComponentStates: Story = {
       <graph-stats-card label="Highlighted" value="50" ?highlighted=${true}></graph-stats-card>
     </div>
   `,
-  play: async ({ canvas, step }) => {
+  play: async ({ canvasElement, canvas, step }) => {
     await step('Wait for components to render', async () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
-    await step('Verify both cards are present', async () => {
+    await step('Verify both cards are present using Shadow DOM queries', async () => {
+      // Use shadow DOM queries to find content INSIDE shadow roots
       const normalLabel = await canvas.findByShadowText('Normal');
       const highlightedLabel = await canvas.findByShadowText('Highlighted');
 
@@ -176,14 +177,14 @@ export const TestingComponentStates: Story = {
       await expect(highlightedLabel).toBeTruthy();
     });
 
-    await step('Check highlighted attribute on custom element', async () => {
-      const highlightedLabel = await canvas.findByShadowText('Highlighted');
-      const statsCardElement = highlightedLabel.closest('graph-stats-card');
+    await step('Check highlighted attribute on custom element host', async () => {
+      // Use standard DOM queries on canvasElement to find the host elements
+      // (custom elements are in the light DOM, their content is in shadow DOM)
+      const highlightedCard = canvasElement.querySelector('graph-stats-card[highlighted]');
+      await expect(highlightedCard).toBeTruthy();
 
-      await expect(statsCardElement).toBeTruthy();
-
-      if (statsCardElement) {
-        const hasHighlighted = statsCardElement.hasAttribute('highlighted');
+      if (highlightedCard) {
+        const hasHighlighted = highlightedCard.hasAttribute('highlighted');
         await expect(hasHighlighted).toBe(true);
       }
     });
