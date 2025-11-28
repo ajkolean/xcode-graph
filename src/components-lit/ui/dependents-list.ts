@@ -15,7 +15,7 @@
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphNode } from '@/data/mockGraphData';
 import './list-item-row';
@@ -86,7 +86,7 @@ export class GraphDependentsList extends LitElement {
         detail: { node: e.detail.node },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -96,7 +96,7 @@ export class GraphDependentsList extends LitElement {
         detail: { nodeId: e.detail.nodeId },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -106,7 +106,7 @@ export class GraphDependentsList extends LitElement {
         detail: { nodeId: null },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -123,9 +123,10 @@ export class GraphDependentsList extends LitElement {
         <div class="count">${count} direct</div>
       </div>
 
-      ${count === 0
-        ? html`<div class="empty">No dependents</div>`
-        : html`
+      ${
+        count === 0
+          ? html`<div class="empty">No dependents</div>`
+          : html`
             <div class="list">
               ${this.dependents.map((dep) => {
                 const subtitle =
@@ -145,7 +146,8 @@ export class GraphDependentsList extends LitElement {
                 `;
               })}
             </div>
-          `}
+          `
+      }
     `;
   }
 }

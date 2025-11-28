@@ -16,7 +16,7 @@
  * @fires back - Dispatched when back button is clicked
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
@@ -137,7 +137,7 @@ export class GraphClusterHeader extends LitElement {
       new CustomEvent('back', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

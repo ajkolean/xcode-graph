@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ColorService, colorService } from './colorService';
 
 describe('ColorService', () => {
@@ -54,7 +54,15 @@ describe('ColorService', () => {
 
     it('should include all expected types', () => {
       const map = service.getNodeTypeColorMap();
-      const expectedTypes = ['app', 'framework', 'library', 'test-unit', 'test-ui', 'cli', 'package'];
+      const expectedTypes = [
+        'app',
+        'framework',
+        'library',
+        'test-unit',
+        'test-ui',
+        'cli',
+        'package',
+      ];
 
       expectedTypes.forEach((type) => {
         expect(map.has(type)).toBe(true);

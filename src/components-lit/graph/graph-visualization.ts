@@ -20,15 +20,15 @@
  * ```
  */
 
-import { LitElement, html, css, svg } from 'lit';
-import { state, query } from 'lit/decorators.js';
-import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
-import type { ViewMode } from '@/types/app';
+import { css, html, LitElement, svg } from 'lit';
+import { query, state } from 'lit/decorators.js';
 import { AnimatedLayoutController } from '@/controllers/animated-layout.controller';
 import { GraphInteractionFullController } from '@/controllers/graph-interaction-full.controller';
-import { computeHierarchicalLayout } from '@/utils/hierarchicalLayout';
-import { groupIntoClusters } from '@/utils/clusterGrouping';
+import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
+import type { ViewMode } from '@/types/app';
 import { analyzeCluster } from '@/utils/clusterAnalysis';
+import { groupIntoClusters } from '@/utils/clusterGrouping';
+import { computeHierarchicalLayout } from '@/utils/hierarchicalLayout';
 import { renderClusterGroup, renderGraphEdges } from './svg-renderers';
 import './graph-svg-defs';
 import './cluster-group';
@@ -158,7 +158,7 @@ export class GraphVisualization extends LitElement {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       // Optimization: Compute nodeMap for O(1) lookups
-      this.nodeMap = new Map((this.nodes ?? []).map(n => [n.id, n]));
+      this.nodeMap = new Map((this.nodes ?? []).map((n) => [n.id, n]));
 
       this.layout.enableAnimation = this.enableAnimation;
       this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
@@ -214,14 +214,14 @@ export class GraphVisualization extends LitElement {
           detail: { node: null },
           bubbles: true,
           composed: true,
-        })
+        }),
       );
       this.dispatchEvent(
         new CustomEvent('cluster-select', {
           detail: { clusterId: null },
           bubbles: true,
           composed: true,
-        })
+        }),
       );
     }
   }
@@ -233,7 +233,7 @@ export class GraphVisualization extends LitElement {
           detail: e.detail,
           bubbles: true,
           composed: true,
-        })
+        }),
       );
     }
   }
@@ -251,7 +251,7 @@ export class GraphVisualization extends LitElement {
       new CustomEvent(eventName, {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -274,7 +274,9 @@ export class GraphVisualization extends LitElement {
         @zoom-reset=${() =>
           this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }))}
         @toggle-animation=${() =>
-          this.dispatchEvent(new CustomEvent('toggle-animation', { bubbles: true, composed: true }))}
+          this.dispatchEvent(
+            new CustomEvent('toggle-animation', { bubbles: true, composed: true }),
+          )}
       ></graph-controls>
 
       <svg
@@ -289,8 +291,9 @@ export class GraphVisualization extends LitElement {
         <graph-svg-defs></graph-svg-defs>
 
         <g transform="translate(${this.interaction.pan.x}, ${this.interaction.pan.y}) scale(${this.zoom ?? 1})">
-          ${this.nodes?.length
-            ? svg`
+          ${
+            this.nodes?.length
+              ? svg`
                 <!-- Cross-cluster edges -->
                 <g class="cluster-edges">
                   ${renderGraphEdges({
@@ -335,7 +338,7 @@ export class GraphVisualization extends LitElement {
                           detail: { clusterId: cluster.id },
                           bubbles: true,
                           composed: true,
-                        })
+                        }),
                       ),
                     onClusterMouseEnter: () => (this.hoveredCluster = cluster.id),
                     onClusterMouseLeave: () => (this.hoveredCluster = null),
@@ -345,7 +348,7 @@ export class GraphVisualization extends LitElement {
                           detail: { nodeId },
                           bubbles: true,
                           composed: true,
-                        })
+                        }),
                       ),
                     onNodeMouseLeave: () =>
                       this.dispatchEvent(
@@ -353,10 +356,9 @@ export class GraphVisualization extends LitElement {
                           detail: { nodeId: null },
                           bubbles: true,
                           composed: true,
-                        })
+                        }),
                       ),
-                    onNodeMouseDown: (nodeId, e) =>
-                      this.interaction.handleNodeMouseDown(nodeId, e),
+                    onNodeMouseDown: (nodeId, e) => this.interaction.handleNodeMouseDown(nodeId, e),
                     onNodeClick: (node, e) => {
                       if (!this.interaction.hasMoved) {
                         this.dispatchEvent(
@@ -364,20 +366,23 @@ export class GraphVisualization extends LitElement {
                             detail: { node },
                             bubbles: true,
                             composed: true,
-                          })
+                          }),
                         );
                       }
                     },
                   });
                 })}
               `
-            : ''}
+              : ''
+          }
         </g>
       </svg>
 
-      ${this.nodes?.length === 0
-        ? html`<graph-visualization-empty-state></graph-visualization-empty-state>`
-        : ''}
+      ${
+        this.nodes?.length === 0
+          ? html`<graph-visualization-empty-state></graph-visualization-empty-state>`
+          : ''
+      }
     `;
   }
 }

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   FilterStateInputSchema,
   FilterStateSchema,
-  ViewModeSchema,
   serializeFilterState,
+  ViewModeSchema,
 } from './app.schema';
 
 describe('ViewModeSchema', () => {

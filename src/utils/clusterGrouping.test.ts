@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import { createNode } from '../test/fixtures';
 import type { Cluster } from '../types/cluster';
 import { DEFAULT_CLUSTER_CONFIG } from '../types/cluster';
-import { createNode } from '../test/fixtures';
 import { arrangeClusterGrid, groupIntoClusters } from './clusterGrouping';
 
 describe('clusterGrouping', () => {
@@ -25,9 +25,7 @@ describe('clusterGrouping', () => {
     });
 
     it('should use node name as cluster ID when no project', () => {
-      const nodes: GraphNode[] = [
-        createNode({ id: 'standalone', name: 'Standalone' }),
-      ];
+      const nodes: GraphNode[] = [createNode({ id: 'standalone', name: 'Standalone' })];
       const edges: GraphEdge[] = [];
 
       const clusters = groupIntoClusters(nodes, edges);
@@ -37,9 +35,7 @@ describe('clusterGrouping', () => {
     });
 
     it('should mark external clusters as package type', () => {
-      const nodes: GraphNode[] = [
-        createNode({ id: 'ext1', name: 'External', origin: 'external' }),
-      ];
+      const nodes: GraphNode[] = [createNode({ id: 'ext1', name: 'External', origin: 'external' })];
       const edges: GraphEdge[] = [];
 
       const clusters = groupIntoClusters(nodes, edges);
@@ -48,9 +44,7 @@ describe('clusterGrouping', () => {
     });
 
     it('should mark local clusters as project type', () => {
-      const nodes: GraphNode[] = [
-        createNode({ id: 'local1', name: 'Local', origin: 'local' }),
-      ];
+      const nodes: GraphNode[] = [createNode({ id: 'local1', name: 'Local', origin: 'local' })];
       const edges: GraphEdge[] = [];
 
       const clusters = groupIntoClusters(nodes, edges);
@@ -59,9 +53,7 @@ describe('clusterGrouping', () => {
     });
 
     it('should preserve node origin in cluster', () => {
-      const nodes: GraphNode[] = [
-        createNode({ id: 'ext', name: 'External', origin: 'external' }),
-      ];
+      const nodes: GraphNode[] = [createNode({ id: 'ext', name: 'External', origin: 'external' })];
       const edges: GraphEdge[] = [];
 
       const clusters = groupIntoClusters(nodes, edges);
@@ -90,7 +82,7 @@ describe('clusterGrouping', () => {
 
     it('should handle many clusters', () => {
       const nodes: GraphNode[] = Array.from({ length: 10 }, (_, i) =>
-        createNode({ id: `n${i}`, name: `Node${i}`, project: `Project${i}` })
+        createNode({ id: `n${i}`, name: `Node${i}`, project: `Project${i}` }),
       );
       const edges: GraphEdge[] = [];
 
@@ -101,13 +93,17 @@ describe('clusterGrouping', () => {
   });
 
   describe('arrangeClusterGrid', () => {
-    const createCluster = (id: string, nodeCount: number, origin: 'local' | 'external' = 'local'): Cluster => ({
+    const createCluster = (
+      id: string,
+      nodeCount: number,
+      origin: 'local' | 'external' = 'local',
+    ): Cluster => ({
       id,
       name: id,
       type: origin === 'local' ? 'project' : 'package',
       origin,
       nodes: Array.from({ length: nodeCount }, (_, i) =>
-        createNode({ id: `${id}-${i}`, name: `${id}-${i}` })
+        createNode({ id: `${id}-${i}`, name: `${id}-${i}` }),
       ),
       metadata: new Map(),
       anchors: [],
@@ -192,10 +188,7 @@ describe('clusterGrouping', () => {
     });
 
     it('should respect cluster spacing from config', () => {
-      const clusters = [
-        createCluster('A', 1),
-        createCluster('B', 1),
-      ];
+      const clusters = [createCluster('A', 1), createCluster('B', 1)];
       const config = { ...DEFAULT_CLUSTER_CONFIG, clusterSpacing: 200 };
 
       const positions = arrangeClusterGrid(clusters, config);
@@ -247,9 +240,7 @@ describe('clusterGrouping', () => {
 
     it('should wrap to next row when exceeding column count', () => {
       // Create enough clusters to require multiple rows
-      const clusters = Array.from({ length: 6 }, (_, i) =>
-        createCluster(`Cluster${i}`, 1)
-      );
+      const clusters = Array.from({ length: 6 }, (_, i) => createCluster(`Cluster${i}`, 1));
 
       const positions = arrangeClusterGrid(clusters);
 

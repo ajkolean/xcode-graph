@@ -20,7 +20,7 @@ import { expect } from 'vitest';
  */
 export function shadowQuery<T extends Element = Element>(
   host: Element,
-  selector: string
+  selector: string,
 ): T | null {
   return (host.shadowRoot?.querySelector(selector) as T) || null;
 }
@@ -38,7 +38,7 @@ export function shadowQuery<T extends Element = Element>(
  */
 export function shadowQueryAll<T extends Element = Element>(
   host: Element,
-  selector: string
+  selector: string,
 ): NodeListOf<T> {
   return (host.shadowRoot?.querySelectorAll(selector) as NodeListOf<T>) || ([] as any);
 }
@@ -61,12 +61,12 @@ export function shadowQueryAll<T extends Element = Element>(
 export function expectShadowElement<T extends Element = Element>(
   host: Element,
   selector: string,
-  message?: string
+  message?: string,
 ): T {
   const element = shadowQuery<T>(host, selector);
   expect(
     element,
-    message || `Expected to find "${selector}" in shadow DOM of ${host.tagName}`
+    message || `Expected to find "${selector}" in shadow DOM of ${host.tagName}`,
   ).toBeTruthy();
   return element!;
 }
@@ -82,10 +82,7 @@ export function expectShadowElement<T extends Element = Element>(
  * expect(shadowRoot.querySelector('button')).toBeTruthy();
  */
 export function expectShadowRoot(element: Element): ShadowRoot {
-  expect(
-    element.shadowRoot,
-    `Expected ${element.tagName} to have shadow root`
-  ).toBeTruthy();
+  expect(element.shadowRoot, `Expected ${element.tagName} to have shadow root`).toBeTruthy();
   return element.shadowRoot!;
 }
 
@@ -120,7 +117,7 @@ export function shadowClick(host: Element, selector: string): void {
 export function shadowGetAttribute(
   host: Element,
   selector: string,
-  attribute: string
+  attribute: string,
 ): string | null {
   const element = shadowQuery(host, selector);
   return element?.getAttribute(attribute) ?? null;

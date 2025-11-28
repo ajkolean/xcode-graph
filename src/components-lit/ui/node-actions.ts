@@ -17,11 +17,11 @@
  * @fires show-impact - Dispatched when impact button clicked
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import type { GraphNode } from '@/data/mockGraphData';
 import { icons } from '@/controllers/icon.adapter';
+import type { GraphNode } from '@/data/mockGraphData';
 
 export class GraphNodeActions extends LitElement {
   // ========================================
@@ -171,7 +171,7 @@ export class GraphNodeActions extends LitElement {
         detail: { node: this.node },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -181,7 +181,7 @@ export class GraphNodeActions extends LitElement {
         detail: { node: this.node },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -191,7 +191,7 @@ export class GraphNodeActions extends LitElement {
         detail: { node: this.node },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

@@ -15,7 +15,7 @@
  * @fires toggle-collapse - Dispatched when collapse button is clicked
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import '../ui/sidebar-collapse-icon';
 
@@ -80,7 +80,7 @@ export class GraphRightSidebarHeader extends LitElement {
       new CustomEvent('toggle-collapse', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

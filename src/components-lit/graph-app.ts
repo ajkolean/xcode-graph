@@ -10,16 +10,16 @@
  * ```
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { createStoreController } from '@/controllers/zustand.controller';
-import { useGraphStore } from '@/stores/graphStore';
-import { useFilterStore } from '@/stores/filterStore';
-import { useUIStore, type ActiveTab } from '@/stores/uiStore';
-import { applyGraphFilters } from '@/utils/graphFilters';
-import { computeTransitiveDependencies } from '@/utils/graphTraversal';
 import { mockGraphData } from '@/data/mockGraphData';
 import { GraphDataService } from '@/services/graphDataService';
+import { useFilterStore } from '@/stores/filterStore';
+import { useGraphStore } from '@/stores/graphStore';
+import { type ActiveTab, useUIStore } from '@/stores/uiStore';
+import { applyGraphFilters } from '@/utils/graphFilters';
+import { computeTransitiveDependencies } from '@/utils/graphTraversal';
 import './layout/header';
 import './layout/sidebar';
 import './layout/placeholder-tab';
@@ -95,7 +95,9 @@ export class GraphApp extends LitElement {
     // Initialize filters from data
     const initializeFromData = this.filters.getAction('initializeFromData');
     const allProjects = new Set(
-      mockGraphData.nodes.map((n) => n.project).filter((p): p is string => p !== undefined && p !== ''),
+      mockGraphData.nodes
+        .map((n) => n.project)
+        .filter((p): p is string => p !== undefined && p !== ''),
     );
     const allPackages = new Set(
       mockGraphData.nodes.filter((n) => n.type === 'package').map((n) => n.name),
@@ -131,32 +133,55 @@ export class GraphApp extends LitElement {
       const relevantNodes = filteredNodes.filter(
         (n) => n.id === this.selectedNode.value?.id || transitiveDeps.nodes.has(n.id),
       );
-      const relevantEdges = filteredEdges.filter((e) => transitiveDeps.edges.has(`${e.source}->${e.target}`));
-      return { displayNodes: relevantNodes, displayEdges: relevantEdges, transitiveDeps, transitiveDependents };
+      const relevantEdges = filteredEdges.filter((e) =>
+        transitiveDeps.edges.has(`${e.source}->${e.target}`),
+      );
+      return {
+        displayNodes: relevantNodes,
+        displayEdges: relevantEdges,
+        transitiveDeps,
+        transitiveDependents,
+      };
     }
 
     if (this.viewMode.value === 'dependents' && transitiveDependents.nodes.size > 0) {
       const relevantNodes = filteredNodes.filter(
         (n) => n.id === this.selectedNode.value?.id || transitiveDependents.nodes.has(n.id),
       );
-      const relevantEdges = filteredEdges.filter((e) => transitiveDependents.edges.has(`${e.source}->${e.target}`));
-      return { displayNodes: relevantNodes, displayEdges: relevantEdges, transitiveDeps, transitiveDependents };
+      const relevantEdges = filteredEdges.filter((e) =>
+        transitiveDependents.edges.has(`${e.source}->${e.target}`),
+      );
+      return {
+        displayNodes: relevantNodes,
+        displayEdges: relevantEdges,
+        transitiveDeps,
+        transitiveDependents,
+      };
     }
 
     if (this.viewMode.value === 'both') {
-      const allRelevantNodes = new Set([
-        this.selectedNode.value?.id,
-        ...transitiveDeps.nodes,
-        ...transitiveDependents.nodes,
-      ].filter(Boolean));
+      const allRelevantNodes = new Set(
+        [
+          this.selectedNode.value?.id,
+          ...transitiveDeps.nodes,
+          ...transitiveDependents.nodes,
+        ].filter(Boolean),
+      );
 
       const relevantNodes = filteredNodes.filter((n) => allRelevantNodes.has(n.id));
       const allRelevantEdges = new Set([
         ...Array.from(transitiveDeps.edges),
         ...Array.from(transitiveDependents.edges),
       ]);
-      const relevantEdges = filteredEdges.filter((e) => allRelevantEdges.has(`${e.source}->${e.target}`));
-      return { displayNodes: relevantNodes, displayEdges: relevantEdges, transitiveDeps, transitiveDependents };
+      const relevantEdges = filteredEdges.filter((e) =>
+        allRelevantEdges.has(`${e.source}->${e.target}`),
+      );
+      return {
+        displayNodes: relevantNodes,
+        displayEdges: relevantEdges,
+        transitiveDeps,
+        transitiveDependents,
+      };
     }
 
     return {
@@ -198,8 +223,9 @@ export class GraphApp extends LitElement {
         ></graph-sidebar>
 
         <div class="content-area">
-          ${this.activeTab.value === 'graph'
-            ? html`
+          ${
+            this.activeTab.value === 'graph'
+              ? html`
                 <graph-tab
                   .displayNodes=${displayNodes}
                   .displayEdges=${displayEdges}
@@ -211,9 +237,10 @@ export class GraphApp extends LitElement {
                   .transitiveDependents=${transitiveDependents}
                 ></graph-tab>
               `
-            : html`
+              : html`
                 <graph-placeholder-tab title=${TAB_LABELS[this.activeTab.value]}></graph-placeholder-tab>
-              `}
+              `
+          }
         </div>
       </div>
     `;

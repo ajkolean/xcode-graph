@@ -5,8 +5,8 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import '../components-lit/graph/graph-visualization';
-import { mockGraphNodes } from './fixtures/mockNodes';
 import { mockGraphEdges } from './fixtures/mockEdges';
+import { mockGraphNodes } from './fixtures/mockNodes';
 
 const meta = {
   title: 'Panels & Views/GraphVisualization',

@@ -316,7 +316,7 @@ export class GraphDataService {
       visited.add(currentId);
 
       const deps = this.getDirectDependencies(currentId);
-      
+
       for (const dep of deps) {
         if (!visited.has(dep.id)) {
           queue.push(dep.id);

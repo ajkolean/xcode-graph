@@ -41,7 +41,7 @@ export class ZustandController<TState, TSelected> implements ReactiveController 
   constructor(
     host: ReactiveControllerHost,
     store: UseBoundStore<StoreApi<TState>>,
-    selector: (state: TState) => TSelected
+    selector: (state: TState) => TSelected,
   ) {
     this.host = host;
     this.store = store;
@@ -115,7 +115,7 @@ export class ZustandController<TState, TSelected> implements ReactiveController 
 export function createStoreController<TState, TSelected>(
   host: ReactiveControllerHost,
   store: UseBoundStore<StoreApi<TState>>,
-  selector: (state: TState) => TSelected
+  selector: (state: TState) => TSelected,
 ): ZustandController<TState, TSelected> {
   return new ZustandController(host, store, selector);
 }

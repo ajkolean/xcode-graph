@@ -16,7 +16,7 @@
  * ```
  */
 
-import { LitElement, html } from 'lit';
+import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
@@ -153,7 +153,8 @@ export class GraphEdges extends LitElement {
         const y2 = targetCluster.y + targetPos.y;
 
         const isHighlighted =
-          this.selectedNode && (edge.source === this.selectedNode.id || edge.target === this.selectedNode.id);
+          this.selectedNode &&
+          (edge.source === this.selectedNode.id || edge.target === this.selectedNode.id);
         const isFocused = this.hoveredNode === edge.source || this.hoveredNode === edge.target;
 
         const isConnectedToHoveredCluster =

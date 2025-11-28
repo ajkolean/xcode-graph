@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
-import type { Cluster } from '../types/cluster';
 import { createNode } from '../test/fixtures';
+import type { Cluster } from '../types/cluster';
 import { analyzeCluster, assignLayers, determineRole, identifyAnchors } from './clusterAnalysis';
 
 describe('clusterAnalysis', () => {
@@ -360,9 +360,7 @@ describe('clusterAnalysis', () => {
     });
 
     it('should only consider internal edges for dependencies', () => {
-      const nodes: GraphNode[] = [
-        createNode({ id: 'lib', name: 'Lib', type: 'library' }),
-      ];
+      const nodes: GraphNode[] = [createNode({ id: 'lib', name: 'Lib', type: 'library' })];
       const edges: GraphEdge[] = [
         { source: 'lib', target: 'external' },
         { source: 'other-external', target: 'lib' },

@@ -12,7 +12,7 @@
  * @fires clear-filters - Dispatched when clear button is clicked
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphEmptyState extends LitElement {
@@ -79,7 +79,7 @@ export class GraphEmptyState extends LitElement {
       new CustomEvent('clear-filters', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -91,13 +91,15 @@ export class GraphEmptyState extends LitElement {
     return html`
       <div class="title">No nodes match filters</div>
       <div class="description">Try adjusting your filter settings</div>
-      ${this.hasActiveFilters
-        ? html`
+      ${
+        this.hasActiveFilters
+          ? html`
             <button class="clear-button" @click=${this.handleClearFilters}>
               Clear all filters
             </button>
           `
-        : ''}
+          : ''
+      }
     `;
   }
 }

@@ -35,8 +35,8 @@
  * ```
  */
 
+import { type Machine, type MachineSchema, MachineStatus, type Service } from '@zag-js/core';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import { MachineStatus, type Machine, type MachineSchema, type Service } from '@zag-js/core';
 import { VanillaMachine } from '@/lib/vanilla-machine';
 
 /**
@@ -78,11 +78,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
     return this._service.context;
   }
 
-  constructor(
-    host: ReactiveControllerHost,
-    machine: Machine<TSchema>,
-    props: TSchema['props']
-  ) {
+  constructor(host: ReactiveControllerHost, machine: Machine<TSchema>, props: TSchema['props']) {
     this.host = host;
     this.instance = new VanillaMachine(machine, props);
     this._service = this.instance.service as Service<TSchema>;
@@ -176,7 +172,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
 export function createMachineController<TSchema extends MachineSchema>(
   host: ReactiveControllerHost,
   machine: Machine<TSchema>,
-  props: TSchema['props']
+  props: TSchema['props'],
 ): ZagController<TSchema> {
   return new ZagController(host, machine, props);
 }

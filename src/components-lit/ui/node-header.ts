@@ -15,15 +15,15 @@
  * @fires cluster-click - Dispatched when cluster badge clicked (detail: { clusterId })
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { icons } from '@/controllers/icon.adapter';
 import type { GraphNode } from '@/data/mockGraphData';
 import { generateColor } from '@/utils/colorGenerator';
 import { getNodeTypeColor } from '@/utils/filterHelpers';
 import { getNodeIconPath, getNodeTypeLabel } from '@/utils/nodeIcons';
 import { adjustColorForZoom } from '@/utils/zoomColorUtils';
-import { icons } from '@/controllers/icon.adapter';
 
 export class GraphNodeHeader extends LitElement {
   // ========================================
@@ -171,7 +171,7 @@ export class GraphNodeHeader extends LitElement {
             detail: { clusterId },
             bubbles: true,
             composed: true,
-          })
+          }),
         );
         return;
       }
@@ -181,7 +181,7 @@ export class GraphNodeHeader extends LitElement {
       new CustomEvent('close', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -192,7 +192,10 @@ export class GraphNodeHeader extends LitElement {
   render() {
     if (!this.node) return html``;
 
-    const iconPath = getNodeIconPath(this.node.type, this.node.type === 'app' ? this.node.platform : undefined);
+    const iconPath = getNodeIconPath(
+      this.node.type,
+      this.node.type === 'app' ? this.node.platform : undefined,
+    );
     const nodeTypeColor = getNodeTypeColor(this.node.type);
     const nodeDisplayColor = adjustColorForZoom(nodeTypeColor, this.zoom);
 
@@ -240,21 +243,24 @@ export class GraphNodeHeader extends LitElement {
           <!-- Info -->
           <div class="info">
             <h2 class="name">${this.node.name}</h2>
-            ${showClusterBadge
-              ? html`
+            ${
+              showClusterBadge
+                ? html`
                   <div class="subtitle">
                     ${this.node.type === 'package' ? this.node.name : this.node.project}
                   </div>
                 `
-              : ''}
+                : ''
+            }
           </div>
         </div>
       </div>
 
       <!-- Badges -->
       <div class="badges">
-        ${showClusterBadge
-          ? html`
+        ${
+          showClusterBadge
+            ? html`
               <div
                 class="badge"
                 style="
@@ -266,7 +272,8 @@ export class GraphNodeHeader extends LitElement {
                 ${this.node.type === 'package' ? 'Package' : 'Project'}
               </div>
             `
-          : ''}
+            : ''
+        }
 
         <div
           class="badge"

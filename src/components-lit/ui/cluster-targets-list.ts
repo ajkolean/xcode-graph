@@ -18,7 +18,7 @@
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import { getNodeTypeLabel } from '@/utils/nodeIcons';
@@ -103,7 +103,7 @@ export class GraphClusterTargetsList extends LitElement {
         detail: { node: e.detail.node },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -113,7 +113,7 @@ export class GraphClusterTargetsList extends LitElement {
         detail: { nodeId: e.detail.nodeId },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -123,7 +123,7 @@ export class GraphClusterTargetsList extends LitElement {
         detail: { nodeId: null },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -139,7 +139,10 @@ export class GraphClusterTargetsList extends LitElement {
     return { dependencies, dependents };
   }
 
-  private formatNodeStatsSubtitle(stats: { dependencies: number; dependents: number }): string | undefined {
+  private formatNodeStatsSubtitle(stats: {
+    dependencies: number;
+    dependents: number;
+  }): string | undefined {
     const parts: string[] = [];
 
     if (stats.dependencies > 0) {
@@ -165,7 +168,8 @@ export class GraphClusterTargetsList extends LitElement {
       </h3>
 
       <div class="sections">
-        ${Object.entries(this.nodesByType).map(([type, nodes]) => html`
+        ${Object.entries(this.nodesByType).map(
+          ([type, nodes]) => html`
           <div class="type-section">
             <div class="type-header">
               ${getNodeTypeLabel(type)} (${nodes.length})
@@ -189,7 +193,8 @@ export class GraphClusterTargetsList extends LitElement {
               })}
             </div>
           </div>
-        `)}
+        `,
+        )}
       </div>
     `;
   }

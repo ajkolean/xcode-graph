@@ -9,7 +9,7 @@
  * ```
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphNode } from '@/data/mockGraphData';
 import { getNodeTypeLabel } from '@/utils/nodeIcons';

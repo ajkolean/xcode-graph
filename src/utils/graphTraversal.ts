@@ -38,7 +38,12 @@ export function computeTransitiveDependencies(
   // Dependencies (outgoing)
   const transitiveDeps = (() => {
     if ((viewMode !== 'focused' && viewMode !== 'both') || !selectedNode) {
-      return { nodes: new Set<string>(), edges: new Set<string>(), edgeDepths: new Map(), maxDepth: 0 };
+      return {
+        nodes: new Set<string>(),
+        edges: new Set<string>(),
+        edgeDepths: new Map(),
+        maxDepth: 0,
+      };
     }
 
     const visitedNodes = new Set<string>();
@@ -71,7 +76,12 @@ export function computeTransitiveDependencies(
   // Dependents (incoming)
   const transitiveDependents = (() => {
     if ((viewMode !== 'dependents' && viewMode !== 'both') || !selectedNode) {
-      return { nodes: new Set<string>(), edges: new Set<string>(), edgeDepths: new Map(), maxDepth: 0 };
+      return {
+        nodes: new Set<string>(),
+        edges: new Set<string>(),
+        edgeDepths: new Map(),
+        maxDepth: 0,
+      };
     }
 
     const visitedNodes = new Set<string>();

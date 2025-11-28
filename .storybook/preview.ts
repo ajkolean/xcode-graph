@@ -1,8 +1,8 @@
 import type { Preview } from '@storybook/web-components';
-import { within as withinShadow } from 'shadow-dom-testing-library';
-import isChromatic from 'chromatic/isChromatic';
-import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import { setCustomElementsManifest } from '@storybook/web-components';
+import isChromatic from 'chromatic/isChromatic';
+import { within as withinShadow } from 'shadow-dom-testing-library';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 
 import customElements from '../custom-elements.json' with { type: 'json' };
 

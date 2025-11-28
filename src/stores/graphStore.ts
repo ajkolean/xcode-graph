@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { GraphNode } from '../schemas/graph.schema';
 import type { ViewMode } from '../schemas/app.schema';
+import type { GraphNode } from '../schemas/graph.schema';
 
 interface GraphStore {
   // Selection state

@@ -4,18 +4,18 @@
  */
 
 export type {
-  NodeRole,
-  ClusterType,
-  ClusterNodeMetadata,
-  ClusterBounds,
   Cluster,
-  PositionedNode,
-  ForceStrength,
+  ClusterBounds,
   ClusterLayoutConfig,
+  ClusterNodeMetadata,
+  ClusterType,
+  ForceStrength,
+  NodeRole,
+  PositionedNode,
 } from '../schemas/cluster.schema';
 
 export {
+  CLUSTER_TYPE_VALUES,
   DEFAULT_CLUSTER_CONFIG,
   NODE_ROLE_VALUES,
-  CLUSTER_TYPE_VALUES,
 } from '../schemas/cluster.schema';

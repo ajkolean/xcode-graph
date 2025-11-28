@@ -98,9 +98,10 @@ function computeBarycenter(
 }
 
 // Helper: Build parent-child adjacency from edges
-function buildParentChildAdjacency(
-  superEdges: SuperEdge[],
-): { parents: Map<string, string[]>; children: Map<string, string[]> } {
+function buildParentChildAdjacency(superEdges: SuperEdge[]): {
+  parents: Map<string, string[]>;
+  children: Map<string, string[]>;
+} {
   const parents = new Map<string, string[]>();
   const children = new Map<string, string[]>();
 

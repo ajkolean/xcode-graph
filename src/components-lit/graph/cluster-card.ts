@@ -70,7 +70,7 @@ export class GraphClusterCard extends LitElement {
           detail: { cluster: this.cluster },
           bubbles: true,
           composed: true,
-        })
+        }),
       );
     }
   }

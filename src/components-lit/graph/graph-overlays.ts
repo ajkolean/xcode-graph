@@ -15,7 +15,7 @@
  * ```
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
@@ -177,7 +177,7 @@ export class GraphControls extends LitElement {
         detail: { enabled: !this.enableAnimation },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

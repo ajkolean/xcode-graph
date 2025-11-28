@@ -70,7 +70,7 @@ export class GraphCluster extends LitElement {
       new CustomEvent('cluster-mouseenter', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -79,7 +79,7 @@ export class GraphCluster extends LitElement {
       new CustomEvent('cluster-mouseleave', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -88,7 +88,7 @@ export class GraphCluster extends LitElement {
       new CustomEvent('cluster-click', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -130,8 +130,9 @@ export class GraphCluster extends LitElement {
         style="transition: all 0.3s ease; cursor: pointer"
       >
         <!-- Hover glow with smooth transition -->
-        ${isHovered
-          ? svg`
+        ${
+          isHovered
+            ? svg`
               <rect
                 x="${x - width / 2 - 3}"
                 y="${y - height / 2 - 3}"
@@ -146,7 +147,8 @@ export class GraphCluster extends LitElement {
                 style="transition: opacity 0.3s ease, stroke-width 0.3s ease"
               />
             `
-          : ''}
+            : ''
+        }
 
         <!-- Gradient definitions -->
         <defs>

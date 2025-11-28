@@ -6,16 +6,16 @@
  * in the SVG namespace don't work as web components.
  */
 
-import { svg, nothing } from 'lit';
+import { nothing, svg } from 'lit';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import type { Cluster } from '@/types/cluster';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import { generateColor } from '@/utils/colorGenerator';
-import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
-import { getNodeIconPath } from '@/utils/nodeIcons';
-import { getNodeSize } from '@/utils/graph/nodeSizing';
 import { getNodeTypeColor } from '@/utils/graph/nodeColors';
 import { getConnectedNodes } from '@/utils/graph/nodeConnections';
+import { getNodeSize } from '@/utils/graph/nodeSizing';
+import { getNodeIconPath } from '@/utils/nodeIcons';
+import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 
 // ========================================
 // Cluster Card Renderer
@@ -184,9 +184,8 @@ export function renderGraphNode(options: GraphNodeOptions) {
   const scale = isHovered || isSelected ? 1.05 : 1;
 
   const maxLabelLength = 20;
-  const displayName = node.name.length > maxLabelLength
-    ? `${node.name.substring(0, maxLabelLength)}...`
-    : node.name;
+  const displayName =
+    node.name.length > maxLabelLength ? `${node.name.substring(0, maxLabelLength)}...` : node.name;
   const showTooltip = isHovered && node.name.length > 20;
 
   return svg`
@@ -200,7 +199,9 @@ export function renderGraphNode(options: GraphNodeOptions) {
       transform="scale(${scale})"
       transform-origin="${x}px ${y}px"
     >
-      ${isSelected ? svg`
+      ${
+        isSelected
+          ? svg`
         <!-- Sonar pulse rings -->
         <circle cx="${x}" cy="${y}" r="${size}" fill="none" stroke="${zoomAdjustedColor}" stroke-width="2" opacity="0">
           <animate attributeName="r" from="${size}" to="${size * 4}" dur="3.5s" repeatCount="indefinite" />
@@ -218,10 +219,14 @@ export function renderGraphNode(options: GraphNodeOptions) {
           <animate attributeName="r" from="${size}" to="${size * 4}" dur="3.5s" begin="2.625s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.5;0.3;0" dur="3.5s" begin="2.625s" repeatCount="indefinite" />
         </circle>
-      ` : nothing}
+      `
+          : nothing
+      }
 
       <!-- Outer glow ring -->
-      ${isSelected || isHovered ? svg`
+      ${
+        isSelected || isHovered
+          ? svg`
         <circle
           cx="${x}"
           cy="${y}"
@@ -232,7 +237,9 @@ export function renderGraphNode(options: GraphNodeOptions) {
           opacity="${glowOpacity}"
           filter="url(#glow-strong)"
         />
-      ` : nothing}
+      `
+          : nothing
+      }
 
       <!-- Icon shape -->
       <g
@@ -251,7 +258,9 @@ export function renderGraphNode(options: GraphNodeOptions) {
       </g>
 
       <!-- Label -->
-      ${zoom >= 0.5 ? svg`
+      ${
+        zoom >= 0.5
+          ? svg`
         <g>
           <text
             x="${x}"
@@ -269,7 +278,9 @@ export function renderGraphNode(options: GraphNodeOptions) {
             ${displayName}
           </text>
 
-          ${showTooltip ? svg`
+          ${
+            showTooltip
+              ? svg`
             <rect
               x="${x - node.name.length * 3.5}"
               y="${y - size - 35}"
@@ -295,9 +306,13 @@ export function renderGraphNode(options: GraphNodeOptions) {
             >
               ${node.name}
             </text>
-          ` : nothing}
+          `
+              : nothing
+          }
         </g>
-      ` : nothing}
+      `
+          : nothing
+      }
     </g>
   `;
 }
@@ -371,7 +386,9 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
 
   return svg`
     <g class="graph-edge" style="transition: opacity 0.3s ease">
-      ${isHighlighted ? svg`
+      ${
+        isHighlighted
+          ? svg`
         <path
           d="${path}"
           stroke="${zoomAdjustedColor}"
@@ -383,7 +400,9 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
           class="${animated ? 'flow-animation' : ''}"
           shape-rendering="geometricPrecision"
         />
-      ` : nothing}
+      `
+          : nothing
+      }
       <path
         d="${path}"
         stroke="${zoomAdjustedColor}"
@@ -433,7 +452,7 @@ function getEdgeOpacity(
   edge: GraphEdge,
   viewMode: string,
   transitiveDeps?: GraphEdgesOptions['transitiveDeps'],
-  transitiveDependents?: GraphEdgesOptions['transitiveDependents']
+  transitiveDependents?: GraphEdgesOptions['transitiveDependents'],
 ): number {
   const edgeKey = `${edge.source}->${edge.target}`;
   const inDepsChain = transitiveDeps?.edges.has(edgeKey);
@@ -496,7 +515,7 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
         sourceNode = nodes.find((n) => n.id === edge.source);
         targetNode = nodes.find((n) => n.id === edge.target);
       }
-      
+
       if (!sourceNode || !targetNode) return nothing;
 
       const sourceClusterId = sourceNode.project || 'External';
@@ -603,7 +622,9 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
     onNodeClick,
   } = options;
 
-  const connectedNodes = selectedNode ? getConnectedNodes(selectedNode.id, edges) : new Set<string>();
+  const connectedNodes = selectedNode
+    ? getConnectedNodes(selectedNode.id, edges)
+    : new Set<string>();
   const clusterNodes = cluster.nodes;
 
   return svg`
@@ -633,7 +654,8 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
           const isSelectedNode = selectedNode?.id === node.id;
           const isHovered = hoveredNode === node.id;
           const isConnected = selectedNode && connectedNodes.has(node.id);
-          const isSearchMatch = searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
+          const isSearchMatch =
+            searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
 
           const matchesPreview =
             !previewFilter ||
@@ -641,7 +663,9 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
             (previewFilter.type === 'platform' && node.platform === previewFilter.value) ||
             (previewFilter.type === 'origin' && node.origin === previewFilter.value) ||
             (previewFilter.type === 'project' && node.project === previewFilter.value) ||
-            (previewFilter.type === 'package' && node.type === 'package' && node.name === previewFilter.value);
+            (previewFilter.type === 'package' &&
+              node.type === 'package' &&
+              node.name === previewFilter.value);
 
           const isDimmed =
             (searchQuery && !isSearchMatch) ||

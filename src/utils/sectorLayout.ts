@@ -313,7 +313,14 @@ function placeTestSatellites(
         .indexOf(testNode);
 
       testPolar.push(
-        createOrbitingTestSatellite(testNode, subject, siblingIndex, siblingsCount, testOrbitRadius, subjectId),
+        createOrbitingTestSatellite(
+          testNode,
+          subject,
+          siblingIndex,
+          siblingsCount,
+          testOrbitRadius,
+          subjectId,
+        ),
       );
     } else {
       testPolar.push(createOrphanTestSatellite(testNode, baseRadius, maxDepth, ringSpacing));
@@ -349,7 +356,10 @@ export function sectorLayout(
 
   if (nodes.length === 0) return [];
 
-  const adj = buildAdjacency(nodes.map((n) => n.id), edges);
+  const adj = buildAdjacency(
+    nodes.map((n) => n.id),
+    edges,
+  );
   const anchorIds = findAnchorIds(nodes);
   const depth = computeDepths(Array.from(anchorIds), adj, maxDepth);
 
@@ -358,7 +368,16 @@ export function sectorLayout(
 
   const groups = groupNodesByRingRole(mainNodes, depth, adj, anchorIds, maxDepth);
   const { polar, polarById } = placeNodesInSectors(groups, baseRadius, ringSpacing);
-  const testPolar = placeTestSatellites(testNodes, nodes, adj, polarById, baseRadius, maxDepth, ringSpacing, testOrbitRadius);
+  const testPolar = placeTestSatellites(
+    testNodes,
+    nodes,
+    adj,
+    polarById,
+    baseRadius,
+    maxDepth,
+    ringSpacing,
+    testOrbitRadius,
+  );
 
   return polarToCartesian([...polar, ...testPolar], centerX, centerY);
 }

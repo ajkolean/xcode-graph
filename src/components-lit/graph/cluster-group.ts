@@ -22,14 +22,14 @@
  * @fires cluster-mouseenter, cluster-mouseleave, cluster-click
  */
 
-import { LitElement, html } from 'lit';
+import { html, LitElement } from 'lit';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
 import type { Cluster } from '@/types/cluster';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
-import { getNodeSize } from '@/utils/graph/nodeSizing';
 import { getNodeTypeColor } from '@/utils/graph/nodeColors';
 import { getConnectedNodes } from '@/utils/graph/nodeConnections';
+import { getNodeSize } from '@/utils/graph/nodeSizing';
 import './cluster-card';
 import './graph-edges';
 import './graph-node';
@@ -188,9 +188,11 @@ export class GraphClusterGroup extends LitElement {
             const matchesPreview =
               !this.previewFilter ||
               (this.previewFilter.type === 'nodeType' && node.type === this.previewFilter.value) ||
-              (this.previewFilter.type === 'platform' && node.platform === this.previewFilter.value) ||
+              (this.previewFilter.type === 'platform' &&
+                node.platform === this.previewFilter.value) ||
               (this.previewFilter.type === 'origin' && node.origin === this.previewFilter.value) ||
-              (this.previewFilter.type === 'project' && node.project === this.previewFilter.value) ||
+              (this.previewFilter.type === 'project' &&
+                node.project === this.previewFilter.value) ||
               (this.previewFilter.type === 'package' &&
                 node.type === 'package' &&
                 node.name === this.previewFilter.value);
@@ -222,17 +224,19 @@ export class GraphClusterGroup extends LitElement {
                       detail: { nodeId: node.id },
                       bubbles: true,
                       composed: true,
-                    })
+                    }),
                   )}
                 @node-mouseleave=${() =>
-                  this.dispatchEvent(new CustomEvent('node-mouseleave', { bubbles: true, composed: true }))}
+                  this.dispatchEvent(
+                    new CustomEvent('node-mouseleave', { bubbles: true, composed: true }),
+                  )}
                 @node-mousedown=${(e: CustomEvent) =>
                   this.dispatchEvent(
                     new CustomEvent('node-mousedown', {
                       detail: { nodeId: node.id, originalEvent: e.detail.originalEvent },
                       bubbles: true,
                       composed: true,
-                    })
+                    }),
                   )}
                 @node-click=${(e: CustomEvent) =>
                   this.dispatchEvent(
@@ -240,7 +244,7 @@ export class GraphClusterGroup extends LitElement {
                       detail: { node, originalEvent: e.detail.originalEvent },
                       bubbles: true,
                       composed: true,
-                    })
+                    }),
                   )}
               ></graph-node>
             `;

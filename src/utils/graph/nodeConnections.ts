@@ -9,7 +9,7 @@ import type { GraphEdge } from '../../data/mockGraphData';
  */
 export function getConnectedNodes(nodeId: string, edges: GraphEdge[]): Set<string> {
   const connected = new Set<string>();
-  
+
   for (const edge of edges) {
     if (edge.source === nodeId) {
       connected.add(edge.target);
@@ -17,7 +17,7 @@ export function getConnectedNodes(nodeId: string, edges: GraphEdge[]): Set<strin
       connected.add(edge.source);
     }
   }
-  
+
   return connected;
 }
 

@@ -13,7 +13,7 @@
  * ```
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 const iconColor = 'rgba(168, 157, 255, 0.7)';

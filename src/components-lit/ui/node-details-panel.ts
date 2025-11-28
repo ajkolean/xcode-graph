@@ -17,7 +17,7 @@
  * @fires close, node-select, cluster-select, node-hover, focus-node, show-dependents, show-impact
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import { computeNodeDependencies } from '@/utils/nodeUtils';
 import './node-header';
@@ -87,7 +87,7 @@ export class GraphNodeDetailsPanel extends LitElement {
         detail,
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

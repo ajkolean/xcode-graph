@@ -31,9 +31,7 @@ describe('graph-sidebar', () => {
     `);
 
     const buttons = el.shadowRoot?.querySelectorAll('.nav-button');
-    const graphButton = Array.from(buttons || []).find(
-      (btn) => btn.textContent?.includes('Graph')
-    );
+    const graphButton = Array.from(buttons || []).find((btn) => btn.textContent?.includes('Graph'));
 
     expect(graphButton?.classList.contains('active')).to.be.true;
   });
@@ -49,8 +47,8 @@ describe('graph-sidebar', () => {
     }) as EventListener);
 
     const buttons = el.shadowRoot?.querySelectorAll('.nav-button');
-    const graphButton = Array.from(buttons || []).find(
-      (btn) => btn.textContent?.includes('Graph')
+    const graphButton = Array.from(buttons || []).find((btn) =>
+      btn.textContent?.includes('Graph'),
     ) as HTMLButtonElement;
 
     graphButton?.click();

@@ -3,4 +3,4 @@
  * Re-exports from schemas for backwards compatibility
  */
 
-export type { NodePosition, ClusterPosition } from '../schemas/simulation.schema';
+export type { ClusterPosition, NodePosition } from '../schemas/simulation.schema';

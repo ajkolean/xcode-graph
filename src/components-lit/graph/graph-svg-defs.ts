@@ -13,7 +13,7 @@
  * ```
  */
 
-import { LitElement, html, svg } from 'lit';
+import { html, LitElement, svg } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 export class GraphSVGDefs extends LitElement {

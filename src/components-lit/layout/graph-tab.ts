@@ -14,14 +14,14 @@
  * ```
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
-import type { Cluster } from '@/types/cluster';
 import { createStoreController } from '@/controllers/zustand.controller';
-import { useGraphStore } from '@/stores/graphStore';
+import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import { useFilterStore } from '@/stores/filterStore';
+import { useGraphStore } from '@/stores/graphStore';
 import { useUIStore } from '@/stores/uiStore';
+import type { Cluster } from '@/types/cluster';
 import '../graph/graph-visualization';
 import '../ui/right-sidebar';
 

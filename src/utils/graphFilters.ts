@@ -17,7 +17,8 @@ export function applyGraphFilters(
     if (!filters.nodeTypes.has(node.type)) return false;
     if (!filters.platforms.has(node.platform)) return false;
     if (!filters.origins.has(node.origin)) return false;
-    if (node.project && node.type !== 'package' && !filters.projects.has(node.project)) return false;
+    if (node.project && node.type !== 'package' && !filters.projects.has(node.project))
+      return false;
     if (node.type === 'package' && !filters.packages.has(node.name)) return false;
 
     // Search filter

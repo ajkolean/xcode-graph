@@ -123,7 +123,14 @@ export function arrangeClustersBullseye(
     }
 
     const ringRadius = calculateRingRadius(ring, baseSpacing);
-    clusterIndex = positionClustersInRing(sortedClusters, ring, clustersInThisRing, clusterIndex, ringRadius, positions);
+    clusterIndex = positionClustersInRing(
+      sortedClusters,
+      ring,
+      clustersInThisRing,
+      clusterIndex,
+      ringRadius,
+      positions,
+    );
   }
 
   return positions;

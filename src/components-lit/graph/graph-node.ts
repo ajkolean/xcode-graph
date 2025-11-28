@@ -70,7 +70,7 @@ export class GraphNode extends LitElement {
       new CustomEvent('node-mouseenter', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -79,7 +79,7 @@ export class GraphNode extends LitElement {
       new CustomEvent('node-mouseleave', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -89,7 +89,7 @@ export class GraphNode extends LitElement {
         detail: { originalEvent: e },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -99,7 +99,7 @@ export class GraphNode extends LitElement {
         detail: { originalEvent: e },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -109,7 +109,9 @@ export class GraphNode extends LitElement {
 
   private getDisplayName(nodeName: string): string {
     const maxLabelLength = 20;
-    return nodeName.length > maxLabelLength ? `${nodeName.substring(0, maxLabelLength)}...` : nodeName;
+    return nodeName.length > maxLabelLength
+      ? `${nodeName.substring(0, maxLabelLength)}...`
+      : nodeName;
   }
 
   private getShowTooltip(nodeName: string, isHovered: boolean): boolean {

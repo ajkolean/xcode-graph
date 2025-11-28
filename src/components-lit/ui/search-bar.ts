@@ -15,7 +15,7 @@
  * @fires search-clear - Dispatched when clear button is clicked or Escape is pressed
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
@@ -137,7 +137,7 @@ export class GraphSearchBar extends LitElement {
         detail: { query: input.value },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -146,7 +146,7 @@ export class GraphSearchBar extends LitElement {
       new CustomEvent('search-clear', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -175,8 +175,9 @@ export class GraphSearchBar extends LitElement {
         />
 
         <div class="right-slot">
-          ${this.searchQuery
-            ? html`
+          ${
+            this.searchQuery
+              ? html`
                 <button
                   class="clear-button"
                   @click=${this.handleClear}
@@ -185,9 +186,10 @@ export class GraphSearchBar extends LitElement {
                   ${unsafeHTML(icons.X)}
                 </button>
               `
-            : html`
+              : html`
                 <div class="keyboard-hint">⌘F</div>
-              `}
+              `
+          }
         </div>
       </div>
     `;

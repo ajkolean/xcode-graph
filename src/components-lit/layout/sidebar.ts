@@ -14,7 +14,7 @@
  * @fires tab-change - Dispatched when tab is clicked (detail: { tab: string })
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
@@ -217,7 +217,7 @@ export class GraphSidebar extends LitElement {
         detail: { tab },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -242,9 +242,11 @@ export class GraphSidebar extends LitElement {
                     <div class="icon-container">${unsafeHTML(item.iconSvg)}</div>
                     <span class="label">${item.label}</span>
                   </div>
-                  ${item.hasDropdown
-                    ? html`<span class="dropdown-icon">${unsafeHTML(icons.ChevronDown)}</span>`
-                    : ''}
+                  ${
+                    item.hasDropdown
+                      ? html`<span class="dropdown-icon">${unsafeHTML(icons.ChevronDown)}</span>`
+                      : ''
+                  }
                 </button>
               `;
             })}

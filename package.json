@@ -52,5 +52,10 @@
     "test-storybook": "vitest --project=storybook",
     "chromatic": "IS_CHROMATIC=true dotenv -e .env.local chromatic --only-changed"
   },
-  "customElements": "custom-elements.json"
+  "customElements": "custom-elements.json",
+  "pnpm": {
+    "overrides": {
+      "valibot": ">=1.2.0"
+    }
+  }
 }

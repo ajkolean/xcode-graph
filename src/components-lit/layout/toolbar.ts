@@ -18,7 +18,7 @@
  * @fires zoom-reset - Dispatched when zoom reset button clicked
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
@@ -155,7 +155,7 @@ export class GraphToolbar extends LitElement {
       new CustomEvent('zoom-in', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -164,7 +164,7 @@ export class GraphToolbar extends LitElement {
       new CustomEvent('zoom-out', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -173,7 +173,7 @@ export class GraphToolbar extends LitElement {
       new CustomEvent('zoom-reset', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

@@ -11,7 +11,7 @@
  * ```
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphSidebarCollapseIcon extends LitElement {

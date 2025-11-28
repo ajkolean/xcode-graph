@@ -24,8 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-import { proxy } from "@zag-js/store";
-import { isFunction } from "@zag-js/utils";
+import { proxy } from '@zag-js/store';
+import { isFunction } from '@zag-js/utils';
 
 export function bindable(props) {
   const initial = props().value ?? props().defaultValue;

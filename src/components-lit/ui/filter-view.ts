@@ -24,7 +24,7 @@
  * @fires clear-filters - Dispatched when clear filters button is clicked
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import type { FilterState } from '@/types/app';
 import './stats-card';
@@ -167,7 +167,7 @@ export class GraphFilterView extends LitElement {
         detail: { query: e.detail.query },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -177,7 +177,7 @@ export class GraphFilterView extends LitElement {
         detail: { query: '' },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -186,7 +186,7 @@ export class GraphFilterView extends LitElement {
       new CustomEvent('clear-filters', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
     this.handleSearchClear();
   }
@@ -201,7 +201,7 @@ export class GraphFilterView extends LitElement {
         detail: { section },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -222,7 +222,7 @@ export class GraphFilterView extends LitElement {
         detail: { filters: newFilters },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -232,7 +232,7 @@ export class GraphFilterView extends LitElement {
         detail: e.detail,
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -342,8 +342,9 @@ export class GraphFilterView extends LitElement {
             <graph-projects-icon slot="icon"></graph-projects-icon>
           </graph-filter-section>
 
-          ${this.packageItems.length > 0
-            ? html`
+          ${
+            this.packageItems.length > 0
+              ? html`
                 <div class="section-divider"></div>
 
                 <!-- Packages -->
@@ -363,19 +364,22 @@ export class GraphFilterView extends LitElement {
                   <graph-packages-icon slot="icon"></graph-packages-icon>
                 </graph-filter-section>
               `
-            : ''}
+              : ''
+          }
         </div>
       </div>
 
       <!-- Empty State -->
-      ${this.filteredNodesCount === 0
-        ? html`
+      ${
+        this.filteredNodesCount === 0
+          ? html`
             <graph-empty-state
               ?has-active-filters=${this.isFiltersActive}
               @clear-filters=${this.handleClearFilters}
             ></graph-empty-state>
           `
-        : ''}
+          : ''
+      }
     `;
   }
 }

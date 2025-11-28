@@ -157,7 +157,17 @@ export function calculateRadialPositions(
       if (nodesForRole.length === 0) continue;
 
       const { startAngle, angleSpan } = calculateSectorAngles(role, roleSectors, useSectors);
-      positionNodesInSector(nodesForRole, startAngle, angleSpan, useSectors, adjustedRadius, centerX, centerY, cluster, positioned);
+      positionNodesInSector(
+        nodesForRole,
+        startAngle,
+        angleSpan,
+        useSectors,
+        adjustedRadius,
+        centerX,
+        centerY,
+        cluster,
+        positioned,
+      );
     }
   });
 

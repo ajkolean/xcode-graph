@@ -12,7 +12,7 @@
  * @fires clear-filters - Dispatched when button is clicked (only when active)
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphClearFiltersButton extends LitElement {
@@ -81,7 +81,7 @@ export class GraphClearFiltersButton extends LitElement {
       new CustomEvent('clear-filters', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

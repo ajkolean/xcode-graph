@@ -20,14 +20,14 @@
  * @fires row-hover-end - Dispatched on mouse leave
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { icons } from '@/controllers/icon.adapter';
 import type { GraphNode } from '@/data/mockGraphData';
 import { getNodeTypeColor } from '@/utils/graph/nodeColors';
 import { getNodeIconPath } from '@/utils/nodeIcons';
 import { adjustColorForZoom } from '@/utils/zoomColorUtils';
-import { icons } from '@/controllers/icon.adapter';
 
 export class GraphListItemRow extends LitElement {
   // ========================================
@@ -162,7 +162,7 @@ export class GraphListItemRow extends LitElement {
         detail: { node: this.node },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -173,7 +173,7 @@ export class GraphListItemRow extends LitElement {
         detail: { nodeId: this.node.id },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -183,7 +183,7 @@ export class GraphListItemRow extends LitElement {
       new CustomEvent('row-hover-end', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 

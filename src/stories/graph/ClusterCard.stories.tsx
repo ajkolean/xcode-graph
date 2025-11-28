@@ -19,7 +19,9 @@ const mockCluster = {
   id: 'feature-kit',
   name: 'FeatureKit',
   type: 'project' as const,
-  nodes: Array(12).fill(null).map((_, i) => ({ id: `node-${i}` })),
+  nodes: Array(12)
+    .fill(null)
+    .map((_, i) => ({ id: `node-${i}` })),
 };
 
 export const Default: Story = {

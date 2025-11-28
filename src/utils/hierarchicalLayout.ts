@@ -51,11 +51,7 @@ function extractClusterEdges(
 }
 
 // Helper: Compute dimension for a single cluster
-function computeClusterDimension(
-  cluster: Cluster,
-  nodes: GraphNode[],
-  edges: GraphEdge[],
-): number {
+function computeClusterDimension(cluster: Cluster, nodes: GraphNode[], edges: GraphEdge[]): number {
   const clusterNodes = nodes.filter((n) => cluster.nodes.some((cn) => cn.id === n.id));
 
   if (clusterNodes.length === 0) {
@@ -70,7 +66,8 @@ function computeClusterDimension(
   const positions = simpleClusterLayout(
     clusterNodes.map((n) => ({ id: n.id, type: n.type, name: n.name })),
     internalEdges.map((e) => ({ from: e.source, to: e.target })),
-    0, 0,
+    0,
+    0,
     { baseRadius: 25, ringSpacing: 40, maxDepth: 3, testOffset: 20 },
   );
 
@@ -123,7 +120,8 @@ function positionNodesInLayout(
   const positions = simpleClusterLayout(
     clusterNodes.map((n) => ({ id: n.id, type: n.type, name: n.name })),
     internalEdges.map((e) => ({ from: e.source, to: e.target })),
-    0, 0,
+    0,
+    0,
     { baseRadius: 25, ringSpacing: 40, maxDepth: 3, testOffset: 20 },
   );
 
@@ -136,7 +134,9 @@ function positionNodesInLayout(
   const clusterDimension = Math.max(140, mecRadius * 2 + 30);
 
   for (const originalClusterId of layout.projectIds) {
-    const nodeCount = clusterNodes.filter((n) => nodeToCluster.get(n.id) === originalClusterId).length;
+    const nodeCount = clusterNodes.filter(
+      (n) => nodeToCluster.get(n.id) === originalClusterId,
+    ).length;
     clusterPositions.set(originalClusterId, {
       id: originalClusterId,
       x: layout.x,

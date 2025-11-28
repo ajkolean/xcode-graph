@@ -5,10 +5,10 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type {
-  GraphProductTypesIcon,
-  GraphPlatformsIcon,
-  GraphProjectsIcon,
   GraphPackagesIcon,
+  GraphPlatformsIcon,
+  GraphProductTypesIcon,
+  GraphProjectsIcon,
 } from './filter-icons';
 import './filter-icons';
 

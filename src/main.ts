@@ -4,4 +4,5 @@ import './styles/tokens.css';
 
 // Render full Lit app
 const root = document.getElementById('root')!;
-root.innerHTML = '<graph-app></graph-app>';
+const app = document.createElement('graph-app');
+root.appendChild(app);

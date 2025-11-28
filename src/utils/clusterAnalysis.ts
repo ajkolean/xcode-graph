@@ -177,10 +177,7 @@ function calculateInternalEdgeCounts(
 }
 
 // Helper: Distribute nodes into layers
-function distributeIntoLayers(
-  sortedNodes: GraphNode[],
-  layers: Map<string, number>,
-): void {
+function distributeIntoLayers(sortedNodes: GraphNode[], layers: Map<string, number>): void {
   if (sortedNodes.length === 0) return;
 
   const targetNodesPerLayer = 4;

@@ -13,12 +13,12 @@
  * ```
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import type { Cluster } from '@/types/cluster';
-import { computeClusterStats } from '@/utils/nodeUtils';
 import { generateColor } from '@/utils/colorGenerator';
+import { computeClusterStats } from '@/utils/nodeUtils';
 import { adjustColorForZoom } from '@/utils/zoomColorUtils';
 import './cluster-header';
 import './cluster-type-badge';
@@ -87,7 +87,7 @@ export class GraphClusterDetailsPanel extends LitElement {
         detail,
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -125,12 +125,15 @@ export class GraphClusterDetailsPanel extends LitElement {
 
         <graph-cluster-targets-list
           .clusterNodes=${this.clusterNodes}
-          .nodesByType=${this.clusterNodes.reduce((acc, node) => {
-            const type = node.type;
-            if (!acc[type]) acc[type] = [];
-            acc[type].push(node);
-            return acc;
-          }, {} as Record<string, GraphNode[]>)}
+          .nodesByType=${this.clusterNodes.reduce(
+            (acc, node) => {
+              const type = node.type;
+              if (!acc[type]) acc[type] = [];
+              acc[type].push(node);
+              return acc;
+            },
+            {} as Record<string, GraphNode[]>,
+          )}
           filtered-targets-count=${this.stats.filteredTargetsCount}
           total-targets-count=${this.clusterNodes.length}
           .edges=${this.edges}

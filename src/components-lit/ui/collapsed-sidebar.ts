@@ -16,7 +16,7 @@
  * @fires expand-to-section - Dispatched when section icon clicked (detail: { section })
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 
@@ -148,7 +148,7 @@ export class GraphCollapsedSidebar extends LitElement {
         detail: { section },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -220,9 +220,7 @@ export class GraphCollapsedSidebar extends LitElement {
         title="Product Types"
       >
         ${this.renderProductTypesIcon()}
-        ${showProductTypesBadge
-          ? html`<div class="badge">${this.nodeTypesFilterSize}</div>`
-          : ''}
+        ${showProductTypesBadge ? html`<div class="badge">${this.nodeTypesFilterSize}</div>` : ''}
       </button>
 
       <!-- Platforms -->
@@ -232,9 +230,7 @@ export class GraphCollapsedSidebar extends LitElement {
         title="Platforms"
       >
         ${this.renderPlatformsIcon()}
-        ${showPlatformsBadge
-          ? html`<div class="badge">${this.platformsFilterSize}</div>`
-          : ''}
+        ${showPlatformsBadge ? html`<div class="badge">${this.platformsFilterSize}</div>` : ''}
       </button>
 
       <!-- Projects -->

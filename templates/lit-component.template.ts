@@ -6,7 +6,7 @@
  * Replace ELEMENT_TAG with the custom element tag (e.g., graph-stats-card, graph-search-bar)
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 // import { unsafeHTML } from 'lit/directives/unsafe-html.js'; // Uncomment if using icons
 // import { createStoreController } from '@/controllers/zustand.controller'; // Uncomment if using Zustand
@@ -138,10 +138,12 @@ export class COMPONENT_NAME extends LitElement {
     // Dispatch custom event
     this.dispatchEvent(
       new CustomEvent('component-event', {
-        detail: { /* event data */ },
+        detail: {
+          /* event data */
+        },
         bubbles: true,
         composed: true, // Allows event to cross shadow DOM boundary
-      })
+      }),
     );
   }
 
@@ -162,6 +164,6 @@ export class COMPONENT_NAME extends LitElement {
 // Export for use in other TypeScript files
 declare global {
   interface HTMLElementTagNameMap {
-    'ELEMENT_TAG': COMPONENT_NAME;
+    ELEMENT_TAG: COMPONENT_NAME;
   }
 }

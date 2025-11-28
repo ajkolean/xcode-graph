@@ -1,11 +1,11 @@
 // This file has been automatically migrated to valid ESM format by Storybook.
-import type { StorybookConfig } from '@storybook/web-components-vite';
+
 import path, { dirname } from 'node:path';
-import { fileURLToPath } from "node:url";
+import { fileURLToPath } from 'node:url';
+import type { StorybookConfig } from '@storybook/web-components-vite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -15,7 +15,7 @@ const config: StorybookConfig = {
     '@chromatic-com/storybook',
     '@storybook/addon-docs',
     '@storybook/addon-mcp',
-    '@storybook/addon-vitest'
+    '@storybook/addon-vitest',
   ],
   framework: {
     name: '@storybook/web-components-vite',

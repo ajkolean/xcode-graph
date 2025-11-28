@@ -21,7 +21,7 @@
  * @fires preview-change - Dispatched on hover (detail: { type, value } or null)
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
@@ -225,7 +225,7 @@ export class GraphFilterSection extends LitElement {
       new CustomEvent('section-toggle', {
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -235,7 +235,7 @@ export class GraphFilterSection extends LitElement {
         detail: { key, checked },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -245,7 +245,7 @@ export class GraphFilterSection extends LitElement {
         detail: item ? { type: this.filterType, value: item.key } : null,
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -258,7 +258,7 @@ export class GraphFilterSection extends LitElement {
     const dropShadow = `drop-shadow(0 0 6px ${zoomColor}${isSelected ? '80' : '60'})`;
 
     switch (this.filterType) {
-      case 'nodeType':
+      case 'nodeType': {
         const iconPath = getNodeIconPath(item.key, item.key === 'app' ? 'iOS' : undefined);
         return svg`
           <svg width="16" height="16" viewBox="-18 -18 36 36" style="filter: ${dropShadow}; opacity: ${opacity}">
@@ -272,8 +272,9 @@ export class GraphFilterSection extends LitElement {
             />
           </svg>
         `;
+      }
 
-      case 'platform':
+      case 'platform': {
         const platformPath = getPlatformIconPath(item.key);
         return svg`
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="filter: ${dropShadow}; opacity: ${opacity}">
@@ -287,6 +288,7 @@ export class GraphFilterSection extends LitElement {
             />
           </svg>
         `;
+      }
 
       case 'project':
         return html`
@@ -330,8 +332,9 @@ export class GraphFilterSection extends LitElement {
       </button>
 
       <!-- Section Items -->
-      ${this.isExpanded
-        ? html`
+      ${
+        this.isExpanded
+          ? html`
             <div class="items">
               ${this.items?.map((item) => {
                 const isSelected = this.selectedItems?.has(item.key) || false;
@@ -344,8 +347,9 @@ export class GraphFilterSection extends LitElement {
                     @mouseenter=${() => this.handleItemHover(item)}
                     @mouseleave=${() => this.handleItemHover(null)}
                   >
-                    ${isSelected
-                      ? html`
+                    ${
+                      isSelected
+                        ? html`
                           <div
                             class="item-accent"
                             style="
@@ -354,7 +358,8 @@ export class GraphFilterSection extends LitElement {
                             "
                           ></div>
                         `
-                      : ''}
+                        : ''
+                    }
 
                     <div class="item-content">
                       ${this.renderItemIcon(item, isSelected, zoomColor)}
@@ -374,7 +379,8 @@ export class GraphFilterSection extends LitElement {
               })}
             </div>
           `
-        : ''}
+          : ''
+      }
     `;
   }
 }

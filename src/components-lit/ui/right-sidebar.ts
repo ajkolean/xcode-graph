@@ -15,18 +15,18 @@
  * ```
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
-import type { Cluster } from '@/types/cluster';
 import { createMachineController } from '@/controllers/zag.controller';
 import { createStoreController } from '@/controllers/zustand.controller';
-import { sidebarMachine, type SidebarSection } from '@/machines/sidebar.machine';
-import { useGraphStore } from '@/stores/graphStore';
+import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import { type SidebarSection, sidebarMachine } from '@/machines/sidebar.machine';
 import { useFilterStore } from '@/stores/filterStore';
+import { useGraphStore } from '@/stores/graphStore';
 import { useUIStore } from '@/stores/uiStore';
-import { computeFilters } from '@/utils/nodeUtils';
+import type { Cluster } from '@/types/cluster';
 import { generateColorMap, getNodeTypeColor } from '@/utils/filterHelpers';
+import { computeFilters } from '@/utils/nodeUtils';
 import { PLATFORM_COLOR } from '@/utils/platformIcons';
 import './right-sidebar-header';
 import './collapsed-sidebar';
@@ -151,7 +151,7 @@ export class GraphRightSidebar extends LitElement {
     if (existing) return existing;
 
     const clusterNodes = this.allNodes.filter(
-      (n) => (n.type === 'package' ? n.name : n.project) === clusterId
+      (n) => (n.type === 'package' ? n.name : n.project) === clusterId,
     );
     if (clusterNodes.length === 0) return undefined;
 
@@ -313,8 +313,9 @@ export class GraphRightSidebar extends LitElement {
           @toggle-collapse=${this.handleToggleCollapse}
         ></graph-right-sidebar-header>
 
-        ${isCollapsed
-          ? html`
+        ${
+          isCollapsed
+            ? html`
               <graph-collapsed-sidebar
                 .filteredNodes=${this.filteredNodes}
                 .filteredEdges=${this.filteredEdges}
@@ -330,10 +331,11 @@ export class GraphRightSidebar extends LitElement {
                   this.handleExpandToSection(e.detail.section as SidebarSection)}
               ></graph-collapsed-sidebar>
             `
-          : html`
+            : html`
               <!-- Node Details -->
-              ${this.selectedNode.value
-                ? html`
+              ${
+                this.selectedNode.value
+                  ? html`
                     <graph-node-details-panel
                       .node=${this.selectedNode.value}
                       .allNodes=${this.allNodes}
@@ -359,13 +361,14 @@ export class GraphRightSidebar extends LitElement {
                         this.selectedNode.getAction('showImpact')(e.detail.node)}
                     ></graph-node-details-panel>
                   `
-                : this.selectedCluster.value
-                  ? html`
+                  : this.selectedCluster.value
+                    ? html`
                       <graph-cluster-details-panel
                         .cluster=${this.findClusterById(this.selectedCluster.value)}
                         .clusterNodes=${this.allNodes.filter(
                           (n) =>
-                            (n.type === 'package' ? n.name : n.project) === this.selectedCluster.value,
+                            (n.type === 'package' ? n.name : n.project) ===
+                            this.selectedCluster.value,
                         )}
                         .allNodes=${this.allNodes}
                         .edges=${this.allEdges}
@@ -380,7 +383,7 @@ export class GraphRightSidebar extends LitElement {
                         }}
                       ></graph-cluster-details-panel>
                     `
-                  : html`
+                    : html`
                       <!-- FilterView - Using React wrapper that contains all Lit children -->
                       <div class="filter-content">
                         <div class="stats-row">
@@ -454,8 +457,9 @@ export class GraphRightSidebar extends LitElement {
                               @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
                             ></graph-filter-section>
 
-                            ${packageItems.length
-                              ? html`
+                            ${
+                              packageItems.length
+                                ? html`
                                   <graph-filter-section
                                     id="packages"
                                     title="Packages"
@@ -467,26 +471,35 @@ export class GraphRightSidebar extends LitElement {
                                     .zoom=${this.zoom.value}
                                     @section-toggle=${() => this.handleToggleSection('packages')}
                                     @item-toggle=${(e: CustomEvent) =>
-                                      this.handleItemToggle('package', e.detail.key, e.detail.checked)}
+                                      this.handleItemToggle(
+                                        'package',
+                                        e.detail.key,
+                                        e.detail.checked,
+                                      )}
                                     @preview-change=${(e: CustomEvent) =>
                                       this.handlePreviewChange(e.detail)}
                                   ></graph-filter-section>
                                 `
-                              : ''}
+                                : ''
+                            }
                           </div>
 
-                          ${this.filteredNodes?.length === 0
-                            ? html`
+                          ${
+                            this.filteredNodes?.length === 0
+                              ? html`
                                 <graph-empty-state
                                   ?has-active-filters=${isFiltersActive || !!this.searchQuery.value}
                                   @clear-filters=${() => this.handleClearFilters()}
                                 ></graph-empty-state>
                               `
-                            : ''}
+                              : ''
+                          }
                         </div>
                       </div>
-                    `}
-            `}
+                    `
+              }
+            `
+        }
       </aside>
     `;
   }

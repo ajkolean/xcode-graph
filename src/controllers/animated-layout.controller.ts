@@ -65,8 +65,11 @@ export class AnimatedLayoutController implements ReactiveController {
       analyzeCluster(cluster, edges);
     });
 
-    const { clusterPositions: initialClusterPos, nodePositions: initialNodePos, clusters: layoutClusters } =
-      computeHierarchicalLayout(nodes, edges, analyzedClusters);
+    const {
+      clusterPositions: initialClusterPos,
+      nodePositions: initialNodePos,
+      clusters: layoutClusters,
+    } = computeHierarchicalLayout(nodes, edges, analyzedClusters);
 
     // Add velocities for animation
     const animatedNodePos = new Map<string, NodePosition>();

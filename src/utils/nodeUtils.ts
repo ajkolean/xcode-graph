@@ -96,8 +96,12 @@ export function computeClusterStats(
   const edgesToUse = filteredEdges || edges;
 
   // Filtered stats
-  const filteredDependencies = edgesToUse.filter((e) => clusterNodes.some((n) => n.id === e.source)).length;
-  const filteredDependents = edgesToUse.filter((e) => clusterNodes.some((n) => n.id === e.target)).length;
+  const filteredDependencies = edgesToUse.filter((e) =>
+    clusterNodes.some((n) => n.id === e.source),
+  ).length;
+  const filteredDependents = edgesToUse.filter((e) =>
+    clusterNodes.some((n) => n.id === e.target),
+  ).length;
 
   // Total stats
   const totalDependencies = edges.filter((e) => clusterNodes.some((n) => n.id === e.source)).length;

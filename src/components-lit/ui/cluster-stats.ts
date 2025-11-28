@@ -14,7 +14,7 @@
  * ```
  */
 
-import { LitElement, html, svg, css } from 'lit';
+import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import { getPlatformIconPath, PLATFORM_COLOR } from '@/utils/platformIcons';
 import './stats-card';
@@ -113,13 +113,15 @@ export class GraphClusterStats extends LitElement {
         ></graph-stats-card>
       </div>
 
-      ${platformCount > 0
-        ? html`
+      ${
+        platformCount > 0
+          ? html`
             <div class="platforms-section">
               <div class="platforms-title">Platforms (${platformCount})</div>
               <div class="platforms-grid">
                 ${Array.from(this.platforms).map((platform) => {
-                  const color = PLATFORM_COLOR[platform as keyof typeof PLATFORM_COLOR] || '#6F2CFF';
+                  const color =
+                    PLATFORM_COLOR[platform as keyof typeof PLATFORM_COLOR] || '#6F2CFF';
                   const iconPath = getPlatformIconPath(platform);
 
                   return html`
@@ -130,13 +132,15 @@ export class GraphClusterStats extends LitElement {
                         border-color: ${color}30;
                       "
                     >
-                      ${iconPath
-                        ? svg`
+                      ${
+                        iconPath
+                          ? svg`
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}">
                               <path d="${iconPath}" />
                             </svg>
                           `
-                        : ''}
+                          : ''
+                      }
                       <span class="platform-name" style="color: ${color}">
                         ${platform}
                       </span>
@@ -146,7 +150,8 @@ export class GraphClusterStats extends LitElement {
               </div>
             </div>
           `
-        : ''}
+          : ''
+      }
     `;
   }
 }

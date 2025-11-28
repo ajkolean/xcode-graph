@@ -13,7 +13,7 @@
  * ```
  */
 
-import { LitElement, html, css } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphClusterTypeBadge extends LitElement {

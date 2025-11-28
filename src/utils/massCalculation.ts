@@ -90,10 +90,7 @@ function bfsDepths(roots: string[], adj: AdjacencyList): Map<string, number> {
 }
 
 // Helper: Assign max depth to unreachable nodes
-function assignUnreachableDepths(
-  nodeIds: string[],
-  depth: Map<string, number>,
-): void {
+function assignUnreachableDepths(nodeIds: string[], depth: Map<string, number>): void {
   const maxDepth = Math.max(...Array.from(depth.values()), 0);
   for (const id of nodeIds) {
     if (!depth.has(id)) {
