@@ -11,11 +11,15 @@ interface GraphStore {
   // View state
   viewMode: ViewMode;
 
+  // Cycle detection
+  circularDependencies: string[][];
+
   // Actions
   selectNode: (node: GraphNode | null) => void;
   selectCluster: (clusterId: string | null) => void;
   setHoveredNode: (nodeId: string | null) => void;
   setViewMode: (mode: ViewMode) => void;
+  setCircularDependencies: (cycles: string[][]) => void;
 
   // Complex actions (encapsulate business logic)
   focusNode: (node: GraphNode) => void;
@@ -29,6 +33,7 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
   selectedCluster: null,
   hoveredNode: null,
   viewMode: 'full',
+  circularDependencies: [],
 
   selectNode: (node) =>
     set({
@@ -46,6 +51,7 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
 
   setHoveredNode: (nodeId) => set({ hoveredNode: nodeId }),
   setViewMode: (mode) => set({ viewMode: mode }),
+  setCircularDependencies: (cycles) => set({ circularDependencies: cycles }),
 
   focusNode: (node) => {
     const { viewMode, selectedNode } = get();
@@ -95,3 +101,4 @@ export const useHoveredNode = () => useGraphStore((s) => s.hoveredNode);
 export const useViewMode = () => useGraphStore((s) => s.viewMode);
 export const useIsNodeSelected = (nodeId: string) =>
   useGraphStore((s) => s.selectedNode?.id === nodeId);
+export const useCircularDependencies = () => useGraphStore((s) => s.circularDependencies);

@@ -8,8 +8,9 @@ import '../../components-lit/layout/sidebar';
 
 const meta = {
   title: 'Layout/Sidebar',
+  component: 'graph-sidebar',
   parameters: { layout: 'fullscreen' },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'showcase'],
 } satisfies Meta;
 
 export default meta;

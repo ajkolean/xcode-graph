@@ -8,25 +8,38 @@ import '../../components-lit/ui/right-sidebar-header';
 
 const meta = {
   title: 'Layout/RightSidebarHeader',
+  component: 'graph-right-sidebar-header',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
+  argTypes: {
+    title: {
+      control: 'text',
+      description: 'Header title text',
+    },
+  },
 } satisfies Meta;
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: () => html`
+  args: {
+    title: 'Filters',
+  },
+  render: (args) => html`
     <div style="width: 320px; background: #0f0f14; border-radius: 8px; overflow: hidden">
-      <graph-right-sidebar-header title="Filters"></graph-right-sidebar-header>
+      <graph-right-sidebar-header title=${args.title}></graph-right-sidebar-header>
     </div>
   `,
 };
 
 export const NodeDetails: Story = {
-  render: () => html`
+  args: {
+    title: 'Node Details',
+  },
+  render: (args) => html`
     <div style="width: 320px; background: #0f0f14; border-radius: 8px; overflow: hidden">
-      <graph-right-sidebar-header title="Node Details"></graph-right-sidebar-header>
+      <graph-right-sidebar-header title=${args.title}></graph-right-sidebar-header>
     </div>
   `,
 };

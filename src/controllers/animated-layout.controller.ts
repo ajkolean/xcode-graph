@@ -17,6 +17,7 @@ import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import { analyzeCluster } from '@/utils/clusterAnalysis';
 import { groupIntoClusters } from '@/utils/clusterGrouping';
 import { computeHierarchicalLayout } from '@/utils/hierarchicalLayout';
+import { SpatialHash } from '@/utils/spatial-hash';
 
 export interface AnimatedLayoutConfig {
   enableAnimation?: boolean;
@@ -178,61 +179,78 @@ export class AnimatedLayoutController implements ReactiveController {
   }
 
   private applyNodeCollision(nodes: NodePosition[], alpha: number) {
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i];
-        const b = nodes[j];
+    if (nodes.length === 0) return;
 
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+    // Use spatial hash for O(n log n) collision detection instead of O(n²)
+    const cellSize = Math.max(...nodes.map((n) => (n.radius || 10) * 2 + 8)) || 50;
+    const spatialHash = new SpatialHash<NodePosition>({ cellSize });
+    spatialHash.insertMany(nodes);
 
-        if (distance === 0 || distance > 100) continue;
+    const pairs = spatialHash.getPotentialCollisions();
 
-        const minSeparation = (a.radius || 10) + (b.radius || 10) + 8;
+    for (const [a, b] of pairs) {
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < minSeparation) {
-          const overlap = minSeparation - distance;
-          const force = overlap * 0.3 * alpha;
-          const fx = (dx / distance) * force;
-          const fy = (dy / distance) * force;
+      if (distance === 0 || distance > 100) continue;
 
-          a.vx = (a.vx || 0) - fx;
-          a.vy = (a.vy || 0) - fy;
-          b.vx = (b.vx || 0) + fx;
-          b.vy = (b.vy || 0) + fy;
-        }
+      const minSeparation = (a.radius || 10) + (b.radius || 10) + 8;
+
+      if (distance < minSeparation) {
+        const overlap = minSeparation - distance;
+        const force = overlap * 0.3 * alpha;
+        const fx = (dx / distance) * force;
+        const fy = (dy / distance) * force;
+
+        a.vx = (a.vx || 0) - fx;
+        a.vy = (a.vy || 0) - fy;
+        b.vx = (b.vx || 0) + fx;
+        b.vy = (b.vy || 0) + fy;
       }
     }
   }
 
   private applyClusterSpacing(clusters: ClusterPosition[], alpha: number) {
-    for (let i = 0; i < clusters.length; i++) {
-      for (let j = i + 1; j < clusters.length; j++) {
-        const a = clusters[i];
-        const b = clusters[j];
+    if (clusters.length === 0) return;
 
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+    // Map clusters to spatial entities for spatial hash
+    interface ClusterEntity extends ClusterPosition {
+      id: string;
+      radius: number;
+    }
 
-        if (distance === 0) continue;
+    const clusterEntities: ClusterEntity[] = clusters.map((c) => ({
+      ...c,
+      radius: Math.sqrt(c.width * c.width + c.height * c.height) / 2,
+    }));
 
-        const aRadius = Math.sqrt(a.width * a.width + a.height * a.height) / 2;
-        const bRadius = Math.sqrt(b.width * b.width + b.height * b.height) / 2;
-        const minSeparation = aRadius + bRadius + 80;
+    // Use spatial hash for O(n log n) collision detection
+    const cellSize = Math.max(...clusterEntities.map((c) => c.radius * 2 + 80)) || 200;
+    const spatialHash = new SpatialHash<ClusterEntity>({ cellSize });
+    spatialHash.insertMany(clusterEntities);
 
-        if (distance < minSeparation) {
-          const overlap = minSeparation - distance;
-          const force = overlap * 0.4 * alpha;
-          const fx = (dx / distance) * force;
-          const fy = (dy / distance) * force;
+    const pairs = spatialHash.getPotentialCollisions();
 
-          a.vx = (a.vx || 0) - fx;
-          a.vy = (a.vy || 0) - fy;
-          b.vx = (b.vx || 0) + fx;
-          b.vy = (b.vy || 0) + fy;
-        }
+    for (const [a, b] of pairs) {
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance === 0) continue;
+
+      const minSeparation = a.radius + b.radius + 80;
+
+      if (distance < minSeparation) {
+        const overlap = minSeparation - distance;
+        const force = overlap * 0.4 * alpha;
+        const fx = (dx / distance) * force;
+        const fy = (dy / distance) * force;
+
+        a.vx = (a.vx || 0) - fx;
+        a.vy = (a.vy || 0) - fy;
+        b.vx = (b.vx || 0) + fx;
+        b.vy = (b.vy || 0) + fy;
       }
     }
   }
@@ -300,6 +318,15 @@ export class AnimatedLayoutController implements ReactiveController {
   hostConnected(): void {}
 
   hostDisconnected(): void {
-    this.stopAnimation();
+    try {
+      this.stopAnimation();
+    } catch (error) {
+      console.error('[AnimatedLayoutController] Error during cleanup:', error);
+      // Force cleanup animation even if stopAnimation throws
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+    }
   }
 }

@@ -18,6 +18,15 @@ export default defineConfig({
   },
   test: {
     projects: [
+      // Unit tests project (default)
+      {
+        test: {
+          name: 'unit',
+          include: ['src/**/*.test.ts'],
+          environment: 'jsdom',
+          globals: true,
+        },
+      },
       // Storybook tests project
       {
         extends: true,

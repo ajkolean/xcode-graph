@@ -10,12 +10,52 @@ import '../../components-lit/graph/graph-cluster';
 
 const meta = {
   title: 'Graph Visualization/GraphCluster',
+  component: 'graph-cluster',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
+  argTypes: {
+    clusterId: {
+      control: 'text',
+      description: 'Unique cluster identifier',
+    },
+    x: {
+      control: { type: 'number', min: 0, max: 600 },
+      description: 'X coordinate of cluster center',
+    },
+    y: {
+      control: { type: 'number', min: 0, max: 400 },
+      description: 'Y coordinate of cluster center',
+    },
+    width: {
+      control: { type: 'range', min: 80, max: 400, step: 20 },
+      description: 'Width of cluster bounds',
+    },
+    height: {
+      control: { type: 'range', min: 60, max: 300, step: 20 },
+      description: 'Height of cluster bounds',
+    },
+    color: {
+      control: 'color',
+      description: 'Cluster border and label color',
+    },
+    nodeCount: {
+      control: { type: 'number', min: 0, max: 50 },
+      description: 'Number of targets in cluster',
+    },
+    origin: {
+      control: 'select',
+      options: ['local', 'external'],
+      description: 'Cluster origin type',
+    },
+    isHovered: {
+      control: 'boolean',
+      description: 'Whether cluster is in hover state',
+    },
+  },
 } satisfies Meta;
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof meta>;
 
 // SVG wrapper with required defs
 const svgDefs = svg`
@@ -38,7 +78,18 @@ const svgDefs = svg`
 `;
 
 export const Default: Story = {
-  render: () => html`
+  args: {
+    clusterId: 'MainApp',
+    x: 200,
+    y: 150,
+    width: 180,
+    height: 120,
+    color: '#8B5CF6',
+    nodeCount: 5,
+    origin: 'local',
+    isHovered: false,
+  },
+  render: (args) => html`
     <svg
       width="400"
       height="300"
@@ -47,21 +98,33 @@ export const Default: Story = {
     >
       ${svgDefs}
       <graph-cluster
-        cluster-id="MainApp"
-        x="200"
-        y="150"
-        width="180"
-        height="120"
-        color="#8B5CF6"
-        node-count="5"
-        origin="local"
+        cluster-id=${args.clusterId}
+        x=${args.x}
+        y=${args.y}
+        width=${args.width}
+        height=${args.height}
+        color=${args.color}
+        node-count=${args.nodeCount}
+        origin=${args.origin}
+        ?is-hovered=${args.isHovered}
       ></graph-cluster>
     </svg>
   `,
 };
 
 export const Hovered: Story = {
-  render: () => html`
+  args: {
+    clusterId: 'CoreLib',
+    x: 200,
+    y: 150,
+    width: 180,
+    height: 120,
+    color: '#06B6D4',
+    nodeCount: 8,
+    origin: 'local',
+    isHovered: true,
+  },
+  render: (args) => html`
     <svg
       width="400"
       height="300"
@@ -70,22 +133,33 @@ export const Hovered: Story = {
     >
       ${svgDefs}
       <graph-cluster
-        cluster-id="CoreLib"
-        x="200"
-        y="150"
-        width="180"
-        height="120"
-        color="#06B6D4"
-        node-count="8"
-        origin="local"
-        ?is-hovered=${true}
+        cluster-id=${args.clusterId}
+        x=${args.x}
+        y=${args.y}
+        width=${args.width}
+        height=${args.height}
+        color=${args.color}
+        node-count=${args.nodeCount}
+        origin=${args.origin}
+        ?is-hovered=${args.isHovered}
       ></graph-cluster>
     </svg>
   `,
 };
 
 export const ExternalOrigin: Story = {
-  render: () => html`
+  args: {
+    clusterId: 'Alamofire',
+    x: 200,
+    y: 150,
+    width: 180,
+    height: 120,
+    color: '#F59E0B',
+    nodeCount: 3,
+    origin: 'external',
+    isHovered: false,
+  },
+  render: (args) => html`
     <svg
       width="400"
       height="300"
@@ -94,21 +168,33 @@ export const ExternalOrigin: Story = {
     >
       ${svgDefs}
       <graph-cluster
-        cluster-id="Alamofire"
-        x="200"
-        y="150"
-        width="180"
-        height="120"
-        color="#F59E0B"
-        node-count="3"
-        origin="external"
+        cluster-id=${args.clusterId}
+        x=${args.x}
+        y=${args.y}
+        width=${args.width}
+        height=${args.height}
+        color=${args.color}
+        node-count=${args.nodeCount}
+        origin=${args.origin}
+        ?is-hovered=${args.isHovered}
       ></graph-cluster>
     </svg>
   `,
 };
 
 export const LargeCluster: Story = {
-  render: () => html`
+  args: {
+    clusterId: 'NetworkingModule',
+    x: 200,
+    y: 150,
+    width: 280,
+    height: 180,
+    color: '#10B981',
+    nodeCount: 15,
+    origin: 'local',
+    isHovered: false,
+  },
+  render: (args) => html`
     <svg
       width="400"
       height="300"
@@ -117,21 +203,33 @@ export const LargeCluster: Story = {
     >
       ${svgDefs}
       <graph-cluster
-        cluster-id="NetworkingModule"
-        x="200"
-        y="150"
-        width="280"
-        height="180"
-        color="#10B981"
-        node-count="15"
-        origin="local"
+        cluster-id=${args.clusterId}
+        x=${args.x}
+        y=${args.y}
+        width=${args.width}
+        height=${args.height}
+        color=${args.color}
+        node-count=${args.nodeCount}
+        origin=${args.origin}
+        ?is-hovered=${args.isHovered}
       ></graph-cluster>
     </svg>
   `,
 };
 
 export const SmallCluster: Story = {
-  render: () => html`
+  args: {
+    clusterId: 'Utils',
+    x: 200,
+    y: 150,
+    width: 100,
+    height: 80,
+    color: '#EC4899',
+    nodeCount: 2,
+    origin: 'local',
+    isHovered: false,
+  },
+  render: (args) => html`
     <svg
       width="400"
       height="300"
@@ -140,14 +238,15 @@ export const SmallCluster: Story = {
     >
       ${svgDefs}
       <graph-cluster
-        cluster-id="Utils"
-        x="200"
-        y="150"
-        width="100"
-        height="80"
-        color="#EC4899"
-        node-count="2"
-        origin="local"
+        cluster-id=${args.clusterId}
+        x=${args.x}
+        y=${args.y}
+        width=${args.width}
+        height=${args.height}
+        color=${args.color}
+        node-count=${args.nodeCount}
+        origin=${args.origin}
+        ?is-hovered=${args.isHovered}
       ></graph-cluster>
     </svg>
   `,

@@ -15,15 +15,15 @@ import { property } from 'lit/decorators.js';
 import { createStoreController } from '@/controllers/zustand.controller';
 import { mockGraphData } from '@/data/mockGraphData';
 import { GraphDataService } from '@/services/graphDataService';
+import { useDataStore } from '@/stores/dataStore';
 import { useFilterStore } from '@/stores/filterStore';
 import { useGraphStore } from '@/stores/graphStore';
 import { type ActiveTab, useUIStore } from '@/stores/uiStore';
-import { applyGraphFilters } from '@/utils/graphFilters';
-import { computeTransitiveDependencies } from '@/utils/graphTraversal';
 import './layout/header';
 import './layout/sidebar';
 import './layout/placeholder-tab';
 import './layout/graph-tab';
+import './ui/cycle-warning';
 
 const TAB_LABELS: Record<ActiveTab, string> = {
   overview: 'Overview',
@@ -49,6 +49,11 @@ export class GraphApp extends LitElement {
 
   private selectedNode = createStoreController(this, useGraphStore, (s) => s.selectedNode);
   private viewMode = createStoreController(this, useGraphStore, (s) => s.viewMode);
+  private circularDependencies = createStoreController(
+    this,
+    useGraphStore,
+    (s) => s.circularDependencies,
+  );
   private filters = createStoreController(this, useFilterStore, (s) => s.filters);
   private searchQuery = createStoreController(this, useFilterStore, (s) => s.searchQuery);
   private activeTab = createStoreController(this, useUIStore, (s) => s.activeTab);
@@ -92,6 +97,9 @@ export class GraphApp extends LitElement {
   connectedCallback() {
     super.connectedCallback();
 
+    // Initialize data store with graph data
+    useDataStore.getState().setGraphData(mockGraphData.nodes, mockGraphData.edges);
+
     // Initialize filters from data
     const initializeFromData = this.filters.getAction('initializeFromData');
     const allProjects = new Set(
@@ -103,92 +111,47 @@ export class GraphApp extends LitElement {
       mockGraphData.nodes.filter((n) => n.type === 'package').map((n) => n.name),
     );
     initializeFromData(allProjects, allPackages);
+
+    // Detect circular dependencies
+    const cycles = this.graphDataService.findCircularDependencies();
+    const setCircularDependencies = this.circularDependencies.getAction('setCircularDependencies');
+    setCircularDependencies(cycles);
+
+    if (cycles.length > 0) {
+      console.warn(
+        `[GraphApp] Detected ${cycles.length} circular ${cycles.length === 1 ? 'dependency' : 'dependencies'}:`,
+        cycles,
+      );
+    }
   }
 
   // ========================================
-  // Computed Values
+  // Computed Values (Memoized via DataStore)
   // ========================================
 
   private get filteredData() {
-    return applyGraphFilters(
-      mockGraphData.nodes,
-      mockGraphData.edges,
-      this.filters.value,
-      this.searchQuery.value || '',
-    );
+    // Use memoized version from data store
+    return useDataStore
+      .getState()
+      .getFilteredData(this.filters.value, this.searchQuery.value || '');
   }
 
   private get displayData() {
-    const { filteredNodes, filteredEdges } = this.filteredData;
-
-    // Compute transitive dependencies if in focused/dependents/both mode
-    const { transitiveDeps, transitiveDependents } = computeTransitiveDependencies(
-      this.viewMode.value,
-      this.selectedNode.value,
-      mockGraphData.edges,
-    );
-
-    // In focused/dependents modes, filter to show only relevant nodes
-    if (this.viewMode.value === 'focused' && transitiveDeps.nodes.size > 0) {
-      const relevantNodes = filteredNodes.filter(
-        (n) => n.id === this.selectedNode.value?.id || transitiveDeps.nodes.has(n.id),
+    // Use memoized version from data store - only recomputes when dependencies change
+    const data = useDataStore
+      .getState()
+      .getDisplayData(
+        this.filters.value,
+        this.searchQuery.value || '',
+        this.viewMode.value,
+        this.selectedNode.value,
       );
-      const relevantEdges = filteredEdges.filter((e) =>
-        transitiveDeps.edges.has(`${e.source}->${e.target}`),
-      );
-      return {
-        displayNodes: relevantNodes,
-        displayEdges: relevantEdges,
-        transitiveDeps,
-        transitiveDependents,
-      };
-    }
-
-    if (this.viewMode.value === 'dependents' && transitiveDependents.nodes.size > 0) {
-      const relevantNodes = filteredNodes.filter(
-        (n) => n.id === this.selectedNode.value?.id || transitiveDependents.nodes.has(n.id),
-      );
-      const relevantEdges = filteredEdges.filter((e) =>
-        transitiveDependents.edges.has(`${e.source}->${e.target}`),
-      );
-      return {
-        displayNodes: relevantNodes,
-        displayEdges: relevantEdges,
-        transitiveDeps,
-        transitiveDependents,
-      };
-    }
-
-    if (this.viewMode.value === 'both') {
-      const allRelevantNodes = new Set(
-        [
-          this.selectedNode.value?.id,
-          ...transitiveDeps.nodes,
-          ...transitiveDependents.nodes,
-        ].filter(Boolean),
-      );
-
-      const relevantNodes = filteredNodes.filter((n) => allRelevantNodes.has(n.id));
-      const allRelevantEdges = new Set([
-        ...Array.from(transitiveDeps.edges),
-        ...Array.from(transitiveDependents.edges),
-      ]);
-      const relevantEdges = filteredEdges.filter((e) =>
-        allRelevantEdges.has(`${e.source}->${e.target}`),
-      );
-      return {
-        displayNodes: relevantNodes,
-        displayEdges: relevantEdges,
-        transitiveDeps,
-        transitiveDependents,
-      };
-    }
 
     return {
-      displayNodes: filteredNodes,
-      displayEdges: filteredEdges,
-      transitiveDeps,
-      transitiveDependents,
+      displayNodes: data.filteredNodes,
+      displayEdges: data.filteredEdges,
+      transitiveDeps: data.transitiveDeps,
+      transitiveDependents: data.transitiveDependents,
     };
   }
 
@@ -215,6 +178,12 @@ export class GraphApp extends LitElement {
 
     return html`
       <graph-header></graph-header>
+
+      ${
+        this.circularDependencies.value.length > 0
+          ? html`<graph-cycle-warning .cycles=${this.circularDependencies.value}></graph-cycle-warning>`
+          : null
+      }
 
       <div class="main-layout">
         <graph-sidebar

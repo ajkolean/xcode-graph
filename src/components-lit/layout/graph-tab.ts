@@ -21,6 +21,7 @@ import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
 import { useFilterStore } from '@/stores/filterStore';
 import { useGraphStore } from '@/stores/graphStore';
 import { useUIStore } from '@/stores/uiStore';
+import type { TransitiveResult } from '@/types/app';
 import type { Cluster } from '@/types/cluster';
 import '../graph/graph-visualization';
 import '../ui/right-sidebar';
@@ -52,10 +53,10 @@ export class GraphTab extends LitElement {
   declare clusters: Cluster[] | undefined;
 
   @property({ attribute: false })
-  declare transitiveDeps: any;
+  declare transitiveDeps: TransitiveResult;
 
   @property({ attribute: false })
-  declare transitiveDependents: any;
+  declare transitiveDependents: TransitiveResult;
 
   // ========================================
   // Zustand Store Subscriptions

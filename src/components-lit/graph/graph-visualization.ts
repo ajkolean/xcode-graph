@@ -25,7 +25,8 @@ import { query, state } from 'lit/decorators.js';
 import { AnimatedLayoutController } from '@/controllers/animated-layout.controller';
 import { GraphInteractionFullController } from '@/controllers/graph-interaction-full.controller';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
-import type { ViewMode } from '@/types/app';
+import type { TransitiveResult, ViewMode } from '@/types/app';
+import type { PreviewFilter } from '@/types/filters';
 import { analyzeCluster } from '@/utils/clusterAnalysis';
 import { groupIntoClusters } from '@/utils/clusterGrouping';
 import { computeHierarchicalLayout } from '@/utils/hierarchicalLayout';
@@ -34,18 +35,6 @@ import './graph-svg-defs';
 import './cluster-group';
 import './graph-edges';
 import '../graph/graph-overlays';
-
-interface TransitiveResult {
-  nodes: Set<string>;
-  edges: Set<string>;
-  edgeDepths: Map<string, number>;
-  maxDepth: number;
-}
-
-interface PreviewFilter {
-  type: string;
-  value: string;
-}
 
 export class GraphVisualization extends LitElement {
   // ========================================

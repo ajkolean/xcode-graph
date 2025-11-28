@@ -8,8 +8,9 @@ import '../../components-lit/layout/header';
 
 const meta = {
   title: 'Layout/Header',
+  component: 'graph-header',
   parameters: { layout: 'fullscreen' },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'showcase'],
 } satisfies Meta;
 
 export default meta;

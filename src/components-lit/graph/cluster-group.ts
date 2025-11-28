@@ -24,8 +24,9 @@
 
 import { html, LitElement } from 'lit';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
-import type { ViewMode } from '@/types/app';
+import type { TransitiveResult, ViewMode } from '@/types/app';
 import type { Cluster } from '@/types/cluster';
+import type { PreviewFilter } from '@/types/filters';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import { getNodeTypeColor } from '@/utils/graph/nodeColors';
 import { getConnectedNodes } from '@/utils/graph/nodeConnections';
@@ -74,10 +75,10 @@ export class GraphClusterGroup extends LitElement {
   declare searchQuery: string | undefined;
   declare zoom: number | undefined;
   declare viewMode: ViewMode | undefined;
-  declare transitiveDeps: any;
-  declare transitiveDependents: any;
+  declare transitiveDeps: TransitiveResult | undefined;
+  declare transitiveDependents: TransitiveResult | undefined;
   declare isSelected: boolean | undefined;
-  declare previewFilter: any;
+  declare previewFilter: PreviewFilter | undefined;
   private declare isClusterHovered: boolean | undefined;
 
   // ========================================

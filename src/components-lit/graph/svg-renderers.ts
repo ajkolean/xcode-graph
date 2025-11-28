@@ -15,6 +15,7 @@ import { getNodeTypeColor } from '@/utils/graph/nodeColors';
 import { getConnectedNodes } from '@/utils/graph/nodeConnections';
 import { getNodeSize } from '@/utils/graph/nodeSizing';
 import { getNodeIconPath } from '@/utils/nodeIcons';
+import { isLineInViewport, type ViewportBounds } from '@/utils/viewport-culling';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 
 // ========================================
@@ -446,6 +447,7 @@ export interface GraphEdgesOptions {
     maxDepth: number;
   };
   zoom?: number;
+  viewportBounds?: ViewportBounds; // Optional viewport culling
 }
 
 function getEdgeOpacity(
@@ -501,6 +503,7 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
     transitiveDeps,
     transitiveDependents,
     zoom = 1.0,
+    viewportBounds,
   } = options;
 
   return svg`
@@ -534,6 +537,24 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
       const targetCluster = clusterPositions.get(targetClusterId);
 
       if (!sourcePos || !targetPos || !sourceCluster || !targetCluster) return nothing;
+
+      // Viewport culling: skip edges outside visible area
+      if (viewportBounds) {
+        const absoluteSourceX = sourceCluster.x + sourcePos.x;
+        const absoluteSourceY = sourceCluster.y + sourcePos.y;
+        const absoluteTargetX = targetCluster.x + targetPos.x;
+        const absoluteTargetY = targetCluster.y + targetPos.y;
+
+        if (
+          !isLineInViewport(
+            { x: absoluteSourceX, y: absoluteSourceY },
+            { x: absoluteTargetX, y: absoluteTargetY },
+            viewportBounds,
+          )
+        ) {
+          return nothing; // Edge not visible, skip rendering
+        }
+      }
 
       const x1 = sourceCluster.x + sourcePos.x;
       const y1 = sourceCluster.y + sourcePos.y;

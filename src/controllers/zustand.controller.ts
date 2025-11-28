@@ -73,7 +73,14 @@ export class ZustandController<TState, TSelected> implements ReactiveController 
    * Unsubscribes from the Zustand store.
    */
   hostDisconnected(): void {
-    this.unsubscribe?.();
+    try {
+      this.unsubscribe?.();
+      this.unsubscribe = undefined;
+    } catch (error) {
+      console.error('[ZustandController] Error during cleanup:', error);
+      // Ensure cleanup happens even if unsubscribe throws
+      this.unsubscribe = undefined;
+    }
   }
 
   /**

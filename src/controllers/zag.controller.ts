@@ -106,8 +106,20 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * Stops the machine and cleans up subscriptions.
    */
   hostDisconnected(): void {
-    this.unsubscribe?.();
-    this.instance.stop();
+    try {
+      this.unsubscribe?.();
+      this.unsubscribe = undefined;
+      this.instance.stop();
+    } catch (error) {
+      console.error('[ZagController] Error during cleanup:', error);
+      // Ensure cleanup happens even if stop throws
+      this.unsubscribe = undefined;
+      try {
+        this.instance.stop();
+      } catch {
+        // Silently fail on second attempt
+      }
+    }
   }
 
   /**

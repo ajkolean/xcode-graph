@@ -147,7 +147,14 @@ export class GraphInteractionFullController implements ReactiveController {
   }
 
   hostDisconnected(): void {
-    this.isDragging = false;
-    this.draggedNode = null;
+    try {
+      this.isDragging = false;
+      this.draggedNode = null;
+    } catch (error) {
+      console.error('[GraphInteractionFullController] Error during cleanup:', error);
+      // Ensure state is reset even if error occurs
+      this.isDragging = false;
+      this.draggedNode = null;
+    }
   }
 }
