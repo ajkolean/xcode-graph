@@ -13,7 +13,9 @@ import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import { generateColor } from '@/utils/colorGenerator';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/zoomColorUtils';
 import { getNodeIconPath } from '@/utils/nodeIcons';
-import { getConnectedNodes, getNodeSize, getNodeTypeColor } from '@/components/graph/graphUtils';
+import { getNodeSize } from '@/utils/graph/nodeSizing';
+import { getNodeTypeColor } from '@/utils/graph/nodeColors';
+import { getConnectedNodes } from '@/utils/graph/nodeConnections';
 
 // ========================================
 // Cluster Card Renderer

@@ -21,7 +21,7 @@ import { property } from 'lit/decorators.js';
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@/data/mockGraphData';
 import type { ViewMode } from '@/types/app';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
-import { getNodeTypeColor } from '@/components/graph/graphUtils';
+import { getNodeTypeColor } from '@/utils/graph/nodeColors';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {

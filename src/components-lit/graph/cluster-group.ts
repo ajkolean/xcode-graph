@@ -27,7 +27,9 @@ import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData
 import type { ViewMode } from '@/types/app';
 import type { Cluster } from '@/types/cluster';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
-import { getConnectedNodes, getNodeSize, getNodeTypeColor } from '@/components/graph/graphUtils';
+import { getNodeSize } from '@/utils/graph/nodeSizing';
+import { getNodeTypeColor } from '@/utils/graph/nodeColors';
+import { getConnectedNodes } from '@/utils/graph/nodeConnections';
 import './cluster-card';
 import './graph-edges';
 import './graph-node';
