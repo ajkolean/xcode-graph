@@ -6,7 +6,7 @@
     "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    /* Types - removed to allow automatic type resolution from node_modules/@types */
 
     /* Bundler mode */
     "moduleResolution": "bundler",
