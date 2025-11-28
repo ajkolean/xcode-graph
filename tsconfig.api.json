@@ -23,6 +23,8 @@
     "src/services/**/*.ts",
     "src/machines/**/*.ts",
     "src/types/**/*.ts",
+    "src/utils/**/*.ts",
+    "src/lib/**/*.ts",
     "src/api.ts"
   ],
   "exclude": [

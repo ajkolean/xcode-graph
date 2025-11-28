@@ -91,7 +91,9 @@ export class GraphLoader {
       const chunk = prioritizedNodes.slice(i, i + this.config.chunkSize);
 
       loadedNodes.push(...chunk);
-      chunk.forEach((node) => loadedNodeIds.add(node.id));
+      chunk.forEach((node) => {
+        loadedNodeIds.add(node.id);
+      });
 
       // Find edges for this chunk
       const chunkEdges = edges.filter(
@@ -155,7 +157,9 @@ export class GraphLoader {
       const clusterNodes = cluster.nodes;
 
       loadedNodes.push(...clusterNodes);
-      clusterNodes.forEach((node) => loadedNodeIds.add(node.id));
+      clusterNodes.forEach((node) => {
+        loadedNodeIds.add(node.id);
+      });
 
       // Find edges for loaded nodes so far
       const currentEdges = edges.filter(

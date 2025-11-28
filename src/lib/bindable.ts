@@ -24,10 +24,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+import type { Bindable, BindableParams, ValueOrFn } from '@zag-js/core';
 import { proxy } from '@zag-js/store';
 import { isFunction } from '@zag-js/utils';
 
-export function bindable(props) {
+/**
+ * Creates a bindable value that can be controlled or uncontrolled
+ *
+ * @param props - Function returning bindable parameters
+ * @returns A bindable object with get/set/invoke methods
+ */
+export function bindable<T>(props: () => BindableParams<T>): Bindable<T> {
   const initial = props().value ?? props().defaultValue;
 
   if (props().debug) {
@@ -43,12 +50,12 @@ export function bindable(props) {
   return {
     initial,
     ref: store,
-    get() {
-      return controlled() ? props().value : store.value;
+    get(): T {
+      return (controlled() ? props().value : store.value) as T;
     },
-    set(nextValue) {
+    set(nextValue: ValueOrFn<T>) {
       const prev = store.value;
-      const next = isFunction(nextValue) ? nextValue(prev) : nextValue;
+      const next = isFunction(nextValue) ? nextValue(prev as T) : nextValue;
 
       if (props().debug) {
         console.log(`[bindable > ${props().debug}] setValue`, { next, prev });
@@ -59,10 +66,10 @@ export function bindable(props) {
         props().onChange?.(next, prev);
       }
     },
-    invoke(nextValue, prevValue) {
+    invoke(nextValue: T, prevValue: T) {
       props().onChange?.(nextValue, prevValue);
     },
-    hash(value) {
+    hash(value: T): string {
       return props().hash?.(value) ?? String(value);
     },
   };

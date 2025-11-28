@@ -5,6 +5,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphClusterTypeBadge } from './cluster-type-badge';
+import type { GraphBadge } from './badge';
 import './cluster-type-badge';
 
 describe('graph-cluster-type-badge', () => {
@@ -29,9 +30,9 @@ describe('graph-cluster-type-badge', () => {
       ></graph-cluster-type-badge>
     `);
 
-    const badge = el.shadowRoot?.querySelector('.badge');
+    const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
     expect(badge).to.exist;
-    expect(badge?.textContent?.trim()).to.equal('Package');
+    expect(badge.label).to.equal('Package');
   });
 
   it('should render project badge', async () => {
@@ -42,9 +43,9 @@ describe('graph-cluster-type-badge', () => {
       ></graph-cluster-type-badge>
     `);
 
-    const badge = el.shadowRoot?.querySelector('.badge');
+    const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
     expect(badge).to.exist;
-    expect(badge?.textContent?.trim()).to.equal('Project');
+    expect(badge.label).to.equal('Project');
   });
 
   // ========================================
@@ -72,20 +73,20 @@ describe('graph-cluster-type-badge', () => {
       <graph-cluster-type-badge cluster-type="package"></graph-cluster-type-badge>
     `);
 
-    const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.textContent?.trim()).to.equal('Package');
+    const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
+    expect(badge.label).to.equal('Package');
 
     el.clusterType = 'project';
     await el.updateComplete;
 
-    expect(badge?.textContent?.trim()).to.equal('Project');
+    expect(badge.label).to.equal('Project');
   });
 
   // ========================================
   // Dynamic Styling Tests
   // ========================================
 
-  it('should apply color via CSS custom properties', async () => {
+  it('should apply color to graph-badge', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
       <graph-cluster-type-badge
         cluster-type="package"
@@ -93,17 +94,12 @@ describe('graph-cluster-type-badge', () => {
       ></graph-cluster-type-badge>
     `);
 
-    const badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
+    const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
     expect(badge).to.exist;
-
-    // Check that style attribute contains CSS custom properties
-    const style = badge.getAttribute('style');
-    expect(style).to.include('--badge-bg');
-    expect(style).to.include('--badge-color');
-    expect(style).to.include('#8B5CF6');
+    expect(badge.color).to.equal('#8B5CF6');
   });
 
-  it('should update styles when clusterColor changes', async () => {
+  it('should update color when clusterColor changes', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
       <graph-cluster-type-badge
         cluster-type="package"
@@ -111,16 +107,13 @@ describe('graph-cluster-type-badge', () => {
       ></graph-cluster-type-badge>
     `);
 
-    const badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
-    let style = badge.getAttribute('style');
-    expect(style).to.include('#FF0000');
+    const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
+    expect(badge.color).to.equal('#FF0000');
 
     el.clusterColor = '#00FF00';
     await el.updateComplete;
 
-    style = badge.getAttribute('style');
-    expect(style).to.include('#00FF00');
-    expect(style).to.not.include('#FF0000');
+    expect(badge.color).to.equal('#00FF00');
   });
 
   it('should use default color when clusterColor is not provided', async () => {
@@ -128,11 +121,9 @@ describe('graph-cluster-type-badge', () => {
       <graph-cluster-type-badge cluster-type="package"></graph-cluster-type-badge>
     `);
 
-    const badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
-    const style = badge.getAttribute('style');
-
+    const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
     // Should use default amber color
-    expect(style).to.include('#FFA03C');
+    expect(badge.color).to.equal('#FFA03C');
   });
 
   // ========================================
@@ -148,18 +139,30 @@ describe('graph-cluster-type-badge', () => {
     expect(container).to.exist;
   });
 
-  it('should render badge in shadow DOM', async () => {
+  it('should render graph-badge in shadow DOM', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
       <graph-cluster-type-badge cluster-type="project"></graph-cluster-type-badge>
     `);
 
-    const badge = el.shadowRoot?.querySelector('.badge');
+    const badge = el.shadowRoot?.querySelector('graph-badge');
     expect(badge).to.exist;
   });
 
   // ========================================
-  // Edge Cases
+  // Badge Configuration Tests
   // ========================================
+
+  it('should configure graph-badge with accent variant', async () => {
+    const el = await fixture<GraphClusterTypeBadge>(html`
+      <graph-cluster-type-badge cluster-type="package"></graph-cluster-type-badge>
+    `);
+
+    const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
+    expect(badge.variant).to.equal('accent');
+    expect(badge.size).to.equal('sm');
+    expect(badge.interactive).to.be.true;
+    expect(badge.glow).to.be.true;
+  });
 
   it('should handle different color formats', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
@@ -169,8 +172,7 @@ describe('graph-cluster-type-badge', () => {
       ></graph-cluster-type-badge>
     `);
 
-    const badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
-    const style = badge.getAttribute('style');
-    expect(style).to.include('rgb(255, 0, 0)');
+    const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
+    expect(badge.color).to.equal('rgb(255, 0, 0)');
   });
 });

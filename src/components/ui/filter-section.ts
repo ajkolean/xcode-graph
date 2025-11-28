@@ -446,8 +446,6 @@ declare global {
   }
 }
 
-export type { FilterType, FilterItem };
-
 // Register custom element with HMR support
 if (!customElements.get('graph-filter-section')) {
   customElements.define('graph-filter-section', GraphFilterSection);

@@ -1,8 +1,8 @@
 /**
- * TuistGraph - Clean Public API
+ * TuistGraph - Public API
  *
- * Minimal entry point for API Extractor containing only modules
- * that pass strict type checking.
+ * Entry point for API Extractor containing all public modules
+ * and utilities for graph visualization.
  *
  * @packageDocumentation
  */
@@ -29,3 +29,15 @@ export type { FilterState, FilterStateInput, ViewMode } from './types/app';
 export { serializeFilterState, VIEW_MODE_VALUES } from './types/app';
 export type * from './types/cluster';
 export type * from './types/simulation';
+
+// ==================== Utility Modules ====================
+
+export * from './utils/physics';
+export * from './utils/layout';
+export * from './utils/graph';
+export * from './utils/rendering';
+
+// ==================== Library ====================
+
+export { VanillaMachine, type MachineUserProps, type MachineEvent, type ExtendedEvent, type ExtendedState } from './lib/vanilla-machine';
+export { bindable } from './lib/bindable';

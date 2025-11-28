@@ -338,9 +338,6 @@ declare global {
   }
 }
 
-// Export type for use in other files
-export type { ActiveTab };
-
 // Register custom element with HMR support
 if (!customElements.get('graph-sidebar')) {
   customElements.define('graph-sidebar', GraphSidebar);

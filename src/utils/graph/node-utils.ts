@@ -151,7 +151,9 @@ export function computeClusterStats(
     // Defensive: support future shape that may expose multiple platforms
     const multiPlatform = (node as { platforms?: string[] }).platforms;
     if (Array.isArray(multiPlatform)) {
-      multiPlatform.filter(Boolean).forEach((platform) => platforms.add(platform));
+      multiPlatform.filter(Boolean).forEach((platform) => {
+        platforms.add(platform);
+      });
     }
   });
 
