@@ -1,4 +1,4 @@
-import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../../schemas/graph.schema';
 import { type Cluster, type ClusterLayoutConfig, DEFAULT_CLUSTER_CONFIG } from '../../types/cluster';
 import { analyzeCluster } from './cluster-analysis';
 

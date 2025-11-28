@@ -2,7 +2,7 @@
  * Utilities for calculating node sizes
  */
 
-import type { GraphEdge, GraphNode } from '../../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../../schemas/graph.schema';
 
 /**
  * Base sizes for different node types

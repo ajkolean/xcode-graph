@@ -24,6 +24,7 @@ import { generateColor } from '@/utils/rendering/color-generator';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import { getNodeIconPath, getNodeTypeLabel } from '@/utils/rendering/node-icons';
 import { adjustColorForZoom } from '@/utils/rendering/zoom-colors';
+import './badge.js';
 
 export class GraphNodeHeader extends LitElement {
   // ========================================
@@ -136,26 +137,6 @@ export class GraphNodeHeader extends LitElement {
       gap: var(--spacing-2);
       flex-wrap: wrap;
     }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: var(--spacing-1) var(--spacing-2);
-      border-radius: var(--radii-full);
-      cursor: default;
-      transition: all var(--durations-normal);
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-sm);
-      line-height: var(--line-heights-tight);
-      font-weight: var(--font-weights-medium);
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      border: var(--border-widths-thin) solid transparent;
-    }
-
-    .badge:hover {
-      filter: brightness(1.1);
-    }
   `;
 
   // ========================================
@@ -261,30 +242,18 @@ export class GraphNodeHeader extends LitElement {
         ${
           showClusterBadge
             ? html`
-              <div
-                class="badge"
-                style="
-                  background-color: ${clusterDisplayColor}20;
-                  border-color: ${clusterDisplayColor}40;
-                  color: ${clusterDisplayColor};
-                "
-              >
-                ${this.node.type === 'package' ? 'Package' : 'Project'}
-              </div>
+              <graph-badge
+                label=${this.node.type === 'package' ? 'Package' : 'Project'}
+                color=${clusterDisplayColor}
+              ></graph-badge>
             `
             : ''
         }
 
-        <div
-          class="badge"
-          style="
-            background-color: ${nodeDisplayColor}20;
-            border-color: ${nodeDisplayColor}40;
-            color: ${nodeDisplayColor};
-          "
-        >
-          ${getNodeTypeLabel(this.node.type)}
-        </div>
+        <graph-badge
+          label=${getNodeTypeLabel(this.node.type)}
+          color=${nodeDisplayColor}
+        ></graph-badge>
       </div>
     `;
   }

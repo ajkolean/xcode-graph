@@ -3,7 +3,7 @@
  * Converted from useGraphFilters hook
  */
 
-import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
 import type { FilterState } from '../types/app';
 
 export function applyGraphFilters(

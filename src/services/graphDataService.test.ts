@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
 import {
   createDiamondGraph,
   createEmptyGraph,

@@ -2,7 +2,7 @@
  * ClusterTypeBadge Lit Component - Mission Control Theme
  *
  * Displays package/project badge with sharp styling and monospace typography.
- * Uses dynamic CSS custom properties for theming.
+ * Wrapper around graph-badge with container styling.
  *
  * @example
  * ```html
@@ -15,6 +15,7 @@
 
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
+import './badge.js';
 
 export class GraphClusterTypeBadge extends LitElement {
   // ========================================
@@ -50,38 +51,6 @@ export class GraphClusterTypeBadge extends LitElement {
       gap: var(--spacing-2);
       flex-wrap: wrap;
     }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: var(--spacing-1) var(--spacing-2);
-      border-radius: var(--radii-sm);
-      cursor: default;
-      transition:
-        background-color var(--durations-fast) var(--easings-out),
-        border-color var(--durations-fast) var(--easings-out),
-        box-shadow var(--durations-fast) var(--easings-out);
-
-      font-family: var(--fonts-mono);
-      font-size: var(--font-sizes-xs);
-      line-height: 1;
-      font-weight: var(--font-weights-semibold);
-      text-transform: uppercase;
-      letter-spacing: var(--letter-spacing-wider);
-
-      /* Use CSS custom properties for dynamic theming */
-      background-color: var(--badge-bg);
-      border: var(--border-widths-thin) solid var(--badge-border);
-      border-left: var(--border-widths-medium) solid var(--badge-color);
-      color: var(--badge-color);
-    }
-
-    .badge:hover {
-      background-color: var(--badge-bg-hover);
-      border-color: var(--badge-border-hover);
-      border-left-color: var(--badge-color);
-      box-shadow: 0 0 12px var(--badge-glow);
-    }
   `;
 
   // ========================================
@@ -101,19 +70,14 @@ export class GraphClusterTypeBadge extends LitElement {
 
     return html`
       <div class="container">
-        <div
-          class="badge"
-          style="
-            --badge-bg: ${color}15;
-            --badge-border: ${color}30;
-            --badge-color: ${color};
-            --badge-bg-hover: ${color}25;
-            --badge-border-hover: ${color}50;
-            --badge-glow: ${color}30;
-          "
-        >
-          ${this.badgeLabel}
-        </div>
+        <graph-badge
+          label=${this.badgeLabel}
+          color=${color}
+          variant="accent"
+          size="sm"
+          interactive
+          glow
+        ></graph-badge>
       </div>
     `;
   }

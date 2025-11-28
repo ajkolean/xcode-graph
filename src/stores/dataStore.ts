@@ -8,7 +8,7 @@
  */
 
 import { create } from 'zustand';
-import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
 import type { FilterState, ViewMode } from '../schemas/app.schema';
 import { applyGraphFilters } from '../utils/graph/graph-filters';
 import { computeTransitiveDependencies, type TransitiveResult } from '../utils/graph/traversal';

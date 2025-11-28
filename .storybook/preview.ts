@@ -58,20 +58,19 @@ const preview: Preview = {
     },
     docs: {},
     a11y: {
-      // Run accessibility checks using axe-core
-      config: {
-        rules: [
-          { id: 'color-contrast', enabled: true },
-          { id: 'label', enabled: true },
-          { id: 'button-name', enabled: true },
-          { id: 'link-name', enabled: true },
-        ],
-      },
+      // Strict mode - violations fail tests in CI
+      test: 'error',
+      // Full WCAG compliance including 2.2 (European Accessibility Act 2025)
       options: {
-        runOnly: {
-          type: 'tag',
-          values: ['wcag2a', 'wcag2aa', 'wcag21aa'],
-        },
+        runOnly: [
+          'wcag2a',
+          'wcag2aa',
+          'wcag21a',
+          'wcag21aa',
+          'wcag22a',
+          'wcag22aa',
+          'best-practice',
+        ],
       },
     },
     chromatic: {

@@ -3,7 +3,7 @@
  * Converted from useTransitiveDependencies hook
  */
 
-import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
 import type { ViewMode } from '../types/app';
 
 export interface TransitiveResult {

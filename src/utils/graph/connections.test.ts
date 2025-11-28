@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { GraphEdge } from '../../data/mockGraphData';
+import type { GraphEdge } from '../../schemas/graph.schema';
 import {
   getConnectedNodes,
   getConnectionCount,

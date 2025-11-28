@@ -7,7 +7,7 @@
  * @module utils/graph/visibility
  */
 
-import type { GraphEdge, GraphNode as GraphNodeType } from '../../data/mockGraphData';
+import type { GraphEdge, GraphNode as GraphNodeType } from '../../schemas/graph.schema';
 
 // ==================== Search Matching ====================
 

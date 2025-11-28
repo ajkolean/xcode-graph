@@ -7,7 +7,7 @@
  * @module utils/graph/connections
  */
 
-import type { GraphEdge } from '../../data/mockGraphData';
+import type { GraphEdge } from '../../schemas/graph.schema';
 
 // ==================== Connection Analysis ====================
 

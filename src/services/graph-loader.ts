@@ -11,7 +11,7 @@
  * - Priority-based loading (visible clusters first)
  */
 
-import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
 import type { Cluster } from '../types/cluster';
 
 /**

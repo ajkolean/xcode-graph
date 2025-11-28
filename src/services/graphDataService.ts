@@ -3,7 +3,7 @@
  * Provides single source of truth for all graph data operations
  */
 
-import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
 import type { Cluster } from '../types/cluster';
 
 export class GraphDataService {
