@@ -262,22 +262,3 @@ export function selectMassBasedAnchor(
   return anchor;
 }
 
-/**
- * Select multiple anchors if the cluster is large or has multiple roots
- * Returns up to maxAnchors nodes with highest mass
- */
-export function selectMultipleMassBasedAnchors(
-  nodes: Array<{ id: string; type: string }>,
-  edges: Array<{ from: string; to: string }>,
-  maxAnchors: number = 3,
-): string[] {
-  const masses = computeNodeMasses(nodes, edges);
-
-  if (masses.size === 0) return [];
-
-  // Sort by mass descending
-  const sorted = Array.from(masses.values()).sort((a, b) => b.mass - a.mass);
-
-  // Take top N
-  return sorted.slice(0, maxAnchors).map((m) => m.nodeId);
-}

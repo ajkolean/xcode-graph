@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  computeNodeMasses,
-  selectMassBasedAnchor,
-  selectMultipleMassBasedAnchors,
-} from './mass';
+import { computeNodeMasses, selectMassBasedAnchor } from './mass';
 
 // Test fixtures
 const createTestNodes = () => [
@@ -143,54 +139,4 @@ describe('massCalculation', () => {
     });
   });
 
-  describe('selectMultipleMassBasedAnchors', () => {
-    it('should return top N nodes by mass', () => {
-      const nodes = createTestNodes();
-      const edges = createTestEdges();
-
-      const anchors = selectMultipleMassBasedAnchors(nodes, edges, 2);
-
-      expect(anchors.length).toBe(2);
-      // Core should be first (highest mass)
-      expect(anchors[0]).toBe('core');
-    });
-
-    it('should return all nodes if fewer than maxAnchors exist', () => {
-      const nodes = [
-        { id: 'A', type: 'framework' },
-        { id: 'B', type: 'framework' },
-      ];
-      const edges = [{ from: 'A', to: 'B' }];
-
-      const anchors = selectMultipleMassBasedAnchors(nodes, edges, 5);
-
-      expect(anchors.length).toBe(2);
-    });
-
-    it('should return empty array for empty input', () => {
-      const anchors = selectMultipleMassBasedAnchors([], [], 3);
-
-      expect(anchors).toEqual([]);
-    });
-
-    it('should default to 3 anchors', () => {
-      const nodes = [
-        { id: 'A', type: 'framework' },
-        { id: 'B', type: 'framework' },
-        { id: 'C', type: 'framework' },
-        { id: 'D', type: 'framework' },
-        { id: 'E', type: 'framework' },
-      ];
-      const edges = [
-        { from: 'B', to: 'A' },
-        { from: 'C', to: 'A' },
-        { from: 'D', to: 'A' },
-        { from: 'E', to: 'A' },
-      ];
-
-      const anchors = selectMultipleMassBasedAnchors(nodes, edges);
-
-      expect(anchors.length).toBe(3);
-    });
-  });
 });

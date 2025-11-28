@@ -41,8 +41,8 @@ describe('graph-sidebar', () => {
       <graph-sidebar active-tab="overview"></graph-sidebar>
     `);
 
-    let eventDetail: any;
-    el.addEventListener('tab-change', ((e: CustomEvent) => {
+    let eventDetail: { tab: string } | undefined;
+    el.addEventListener('tab-change', ((e: CustomEvent<{ tab: string }>) => {
       eventDetail = e.detail;
     }) as EventListener);
 

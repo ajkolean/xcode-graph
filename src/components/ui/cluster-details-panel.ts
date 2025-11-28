@@ -81,7 +81,7 @@ export class GraphClusterDetailsPanel extends LitElement {
   // Event Handlers
   // ========================================
 
-  private bubbleEvent(eventName: string, detail?: any) {
+  private bubbleEvent(eventName: string, detail?: unknown) {
     this.dispatchEvent(
       new CustomEvent(eventName, {
         detail,

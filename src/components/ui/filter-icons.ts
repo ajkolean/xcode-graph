@@ -162,7 +162,16 @@ declare global {
   }
 }
 
-// Register custom element with HMR support
+// Register custom elements with HMR support
 if (!customElements.get('graph-product-types-icon')) {
   customElements.define('graph-product-types-icon', GraphProductTypesIcon);
+}
+if (!customElements.get('graph-platforms-icon')) {
+  customElements.define('graph-platforms-icon', GraphPlatformsIcon);
+}
+if (!customElements.get('graph-projects-icon')) {
+  customElements.define('graph-projects-icon', GraphProjectsIcon);
+}
+if (!customElements.get('graph-packages-icon')) {
+  customElements.define('graph-packages-icon', GraphPackagesIcon);
 }

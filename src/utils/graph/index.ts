@@ -19,11 +19,7 @@ export { isNodeVisible, type VisibilityOptions } from './visibility';
 
 // ==================== Filtering ====================
 
-export {
-  getNodeTypeColor,
-  generateColorMap,
-  NODE_TYPE_COLORS,
-} from './filters';
+export { generateColorMap } from './filters';
 
 // ==================== Node Computations ====================
 

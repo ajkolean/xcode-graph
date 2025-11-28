@@ -108,8 +108,8 @@ export function renderClusterCard(options: ClusterCardOptions) {
         y="${y + 20}"
         fill="${zoomAdjustedColor}"
         style="
-          font-family: DM Sans, sans-serif;
-          font-size: 12px;
+          font-family: var(--fonts-body);
+          font-size: var(--font-sizes-label);
           font-weight: ${fontWeight};
           pointer-events: none;
           opacity: ${textOpacity};
@@ -127,8 +127,8 @@ export function renderClusterCard(options: ClusterCardOptions) {
         text-anchor="end"
         fill="${zoomAdjustedColor}"
         style="
-          font-family: Inter, sans-serif;
-          font-size: 11px;
+          font-family: var(--fonts-body);
+          font-size: var(--font-sizes-sm);
           font-weight: ${fontWeight};
           pointer-events: none;
           opacity: ${textOpacity};
@@ -249,7 +249,7 @@ export function renderGraphNode(options: GraphNodeOptions) {
       >
         <path
           d="${iconPath}"
-          fill="rgba(15, 15, 20, 0.95)"
+          fill="rgba(var(--colors-card-rgb), var(--opacity-95))"
           stroke="${zoomAdjustedColor}"
           stroke-width="${isSelected ? 2.5 : 2}"
           stroke-linecap="round"
@@ -269,11 +269,11 @@ export function renderGraphNode(options: GraphNodeOptions) {
             fill="${zoomAdjustedColor}"
             text-anchor="middle"
             style="
-              font-family: Inter, sans-serif;
-              font-size: 11px;
+              font-family: var(--fonts-body);
+              font-size: var(--font-sizes-sm);
               font-weight: ${isSelected ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)'};
               pointer-events: none;
-              filter: drop-shadow(0 0 8px rgba(15, 15, 20, 0.9)) drop-shadow(0 0 4px rgba(15, 15, 20, 1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+              filter: drop-shadow(0 0 8px rgba(var(--colors-card-rgb), var(--opacity-90))) drop-shadow(0 0 4px rgba(var(--colors-card-rgb), 1)) drop-shadow(0 1px 2px rgba(0, 0, 0, var(--opacity-80)));
             "
           >
             ${displayName}
@@ -288,7 +288,7 @@ export function renderGraphNode(options: GraphNodeOptions) {
               width="${node.name.length * 7}"
               height="22"
               rx="4"
-              fill="rgba(15, 15, 20, 0.95)"
+              fill="rgba(var(--colors-card-rgb), var(--opacity-95))"
               stroke="${zoomAdjustedColor}"
               stroke-width="1"
               filter="url(#glow)"
@@ -299,8 +299,8 @@ export function renderGraphNode(options: GraphNodeOptions) {
               fill="${zoomAdjustedColor}"
               text-anchor="middle"
               style="
-                font-family: Inter, sans-serif;
-                font-size: 11px;
+                font-family: var(--fonts-body);
+                font-size: var(--font-sizes-sm);
                 font-weight: var(--font-weight-normal);
                 pointer-events: none;
               "

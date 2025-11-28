@@ -71,8 +71,8 @@ describe('graph-list-item-row', () => {
       <graph-list-item-row .node=${mockNode}></graph-list-item-row>
     `);
 
-    let eventDetail: any;
-    el.addEventListener('row-select', ((e: CustomEvent) => {
+    let eventDetail: { node: typeof mockNode } | undefined;
+    el.addEventListener('row-select', ((e: CustomEvent<{ node: typeof mockNode }>) => {
       eventDetail = e.detail;
     }) as EventListener);
 
@@ -81,7 +81,7 @@ describe('graph-list-item-row', () => {
     await el.updateComplete;
 
     expect(eventDetail).to.exist;
-    expect(eventDetail.node).to.deep.equal(mockNode);
+    expect(eventDetail?.node).to.deep.equal(mockNode);
   });
 
   it('should dispatch row-hover event on mouse enter', async () => {
@@ -89,8 +89,8 @@ describe('graph-list-item-row', () => {
       <graph-list-item-row .node=${mockNode}></graph-list-item-row>
     `);
 
-    let eventDetail: any;
-    el.addEventListener('row-hover', ((e: CustomEvent) => {
+    let eventDetail: { nodeId: string } | undefined;
+    el.addEventListener('row-hover', ((e: CustomEvent<{ nodeId: string }>) => {
       eventDetail = e.detail;
     }) as EventListener);
 
@@ -100,7 +100,7 @@ describe('graph-list-item-row', () => {
     await el.updateComplete;
 
     expect(eventDetail).to.exist;
-    expect(eventDetail.nodeId).to.equal('test-node');
+    expect(eventDetail?.nodeId).to.equal('test-node');
   });
 
   it('should dispatch row-hover-end event on mouse leave', async () => {

@@ -31,7 +31,7 @@ export class GraphBackground extends LitElement {
       position: absolute;
       inset: 0;
       pointer-events: none;
-      opacity: 0.04;
+      opacity: var(--opacity-4);
     }
   `;
 

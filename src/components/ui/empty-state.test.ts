@@ -25,7 +25,7 @@ describe('graph-empty-state', () => {
     const description = el.shadowRoot?.querySelector('.description');
 
     expect(title?.textContent).to.equal('No nodes match filters');
-    expect(description?.textContent).to.equal('Try adjusting your filter settings');
+    expect(description?.textContent).to.equal('Try adjusting your filter settings or search query');
   });
 
   it('should not show clear button when hasActiveFilters is false', async () => {

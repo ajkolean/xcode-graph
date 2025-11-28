@@ -26,7 +26,7 @@ import { GraphLayoutController } from '@/controllers/graph-layout.controller';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { TransitiveResult, ViewMode } from '@/types/app';
 import type { PreviewFilter } from '@/types/filters';
-import { css, html, LitElement, svg } from 'lit';
+import { css, html, LitElement, svg, type PropertyValues } from 'lit';
 import { query, state } from 'lit/decorators.js';
 import './cluster-group';
 import './graph-edges';
@@ -141,7 +141,7 @@ export class GraphVisualization extends LitElement {
   // Lifecycle
   // ========================================
 
-  willUpdate(changedProps: Map<string, any>) {
+  willUpdate(changedProps: PropertyValues<this>): void {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       // Optimization: Compute nodeMap for O(1) lookups
@@ -166,7 +166,7 @@ export class GraphVisualization extends LitElement {
     }
   }
 
-  updated(changedProps: Map<string, any>) {
+  updated(changedProps: PropertyValues<this>): void {
     // Set SVG element reference
     if (this.svgElement && !this.interaction.hasSvgElement()) {
       this.interaction.setSvgElement(this.svgElement);

@@ -66,6 +66,37 @@ export class GraphNodeDetailsPanel extends LitElement {
       flex-direction: column;
       height: 100%;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(64, 224, 208, 0.2) transparent;
+      animation: panelSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes panelSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    :host::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    :host::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    :host::-webkit-scrollbar-thumb {
+      background: rgba(64, 224, 208, 0.2);
+      border-radius: 3px;
+    }
+
+    :host::-webkit-scrollbar-thumb:hover {
+      background: rgba(64, 224, 208, 0.35);
     }
   `;
 
@@ -81,7 +112,7 @@ export class GraphNodeDetailsPanel extends LitElement {
   // Event Handlers (bubble up)
   // ========================================
 
-  private bubbleEvent(eventName: string, detail?: any) {
+  private bubbleEvent(eventName: string, detail?: unknown) {
     this.dispatchEvent(
       new CustomEvent(eventName, {
         detail,

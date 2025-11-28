@@ -131,8 +131,8 @@ describe('graph-cluster-type-badge', () => {
     const badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
     const style = badge.getAttribute('style');
 
-    // Should use default purple color
-    expect(style).to.include('#8B5CF6');
+    // Should use default amber color
+    expect(style).to.include('#FFA03C');
   });
 
   // ========================================

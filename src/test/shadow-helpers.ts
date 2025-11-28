@@ -39,8 +39,8 @@ export function shadowQuery<T extends Element = Element>(
 export function shadowQueryAll<T extends Element = Element>(
   host: Element,
   selector: string,
-): NodeListOf<T> {
-  return (host.shadowRoot?.querySelectorAll(selector) as NodeListOf<T>) || ([] as any);
+): NodeListOf<T> | T[] {
+  return (host.shadowRoot?.querySelectorAll(selector) as NodeListOf<T>) || [];
 }
 
 /**

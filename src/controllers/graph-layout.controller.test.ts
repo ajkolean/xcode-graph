@@ -3,16 +3,17 @@
  * Ensures the composition of Layout + Physics + Animation works correctly
  */
 
+import type { ReactiveController } from 'lit';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createLinearChain, createNode } from '../test/fixtures';
 import { GraphLayoutController } from './graph-layout.controller';
 
 // Mock host
 class MockHost {
-  private controllers: any[] = [];
+  private controllers: ReactiveController[] = [];
   updateCount = 0;
 
-  addController(controller: any) {
+  addController(controller: ReactiveController) {
     this.controllers.push(controller);
   }
 

@@ -22,7 +22,7 @@ import { icons } from '@/controllers/icon.adapter';
 import type { GraphNode } from '@/data/mockGraphData';
 import { generateColor } from '@/utils/rendering/color-generator';
 import { getNodeTypeColor } from '@/utils/graph/filters';
-import { getNodeIconPath } from '@/utils/rendering/node-icons';
+import { getNodeIconPath, getNodeTypeLabel } from '@/utils/rendering/node-icons';
 import { adjustColorForZoom } from '@/utils/rendering/zoom-colors';
 
 export class GraphNodeHeader extends LitElement {

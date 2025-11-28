@@ -18,14 +18,18 @@
 export const colorTokens = {
   // Core colors
   background: 'var(--colors-background)',
+  'background-rgb': 'var(--colors-background-rgb)',
   foreground: 'var(--colors-foreground)',
+  'foreground-rgb': 'var(--colors-foreground-rgb)',
 
   // Card colors
   card: 'var(--colors-card)',
+  'card-rgb': 'var(--colors-card-rgb)',
   'card-foreground': 'var(--colors-card-foreground)',
 
   // Popover colors
   popover: 'var(--colors-popover)',
+  'popover-rgb': 'var(--colors-popover-rgb)',
   'popover-foreground': 'var(--colors-popover-foreground)',
 
   // Primary colors
@@ -39,6 +43,7 @@ export const colorTokens = {
   // Muted colors
   muted: 'var(--colors-muted)',
   'muted-foreground': 'var(--colors-muted-foreground)',
+  'muted-foreground-rgb': 'var(--colors-muted-foreground-rgb)',
 
   // Accent colors
   accent: 'var(--colors-accent)',
@@ -65,6 +70,7 @@ export const colorTokens = {
 
   // Sidebar colors
   sidebar: 'var(--colors-sidebar)',
+  'sidebar-rgb': 'var(--colors-sidebar-rgb)',
   'sidebar-foreground': 'var(--colors-sidebar-foreground)',
   'sidebar-primary': 'var(--colors-sidebar-primary)',
   'sidebar-primary-foreground': 'var(--colors-sidebar-primary-foreground)',
@@ -191,6 +197,8 @@ export const sizeTokens = {
 
 export const opacityTokens = {
   0: 'var(--opacity-0)',
+  2: 'var(--opacity-2)',
+  4: 'var(--opacity-4)',
   5: 'var(--opacity-5)',
   10: 'var(--opacity-10)',
   20: 'var(--opacity-20)',
@@ -201,6 +209,7 @@ export const opacityTokens = {
   70: 'var(--opacity-70)',
   80: 'var(--opacity-80)',
   90: 'var(--opacity-90)',
+  95: 'var(--opacity-95)',
   100: 'var(--opacity-100)',
 } as const;
 

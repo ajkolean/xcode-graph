@@ -34,7 +34,7 @@ describe('graph-search-bar', () => {
 
     const hint = el.shadowRoot?.querySelector('.keyboard-hint');
     expect(hint).to.exist;
-    expect(hint?.textContent).to.equal('⌘F');
+    expect(hint?.textContent).to.equal('/');
   });
 
   it('should show clear button when has query', async () => {
@@ -51,8 +51,8 @@ describe('graph-search-bar', () => {
       <graph-search-bar></graph-search-bar>
     `);
 
-    let eventDetail: any;
-    el.addEventListener('search-change', ((e: CustomEvent) => {
+    let eventDetail: { query: string } | undefined;
+    el.addEventListener('search-change', ((e: CustomEvent<{ query: string }>) => {
       eventDetail = e.detail;
     }) as EventListener);
 
@@ -62,7 +62,7 @@ describe('graph-search-bar', () => {
     await el.updateComplete;
 
     expect(eventDetail).to.exist;
-    expect(eventDetail.query).to.equal('new query');
+    expect(eventDetail?.query).to.equal('new query');
   });
 
   it('should dispatch search-clear on clear button click', async () => {

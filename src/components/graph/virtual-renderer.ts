@@ -11,7 +11,7 @@
  * - Update positions using transforms (fast)
  */
 
-import { css, html, LitElement, svg } from 'lit';
+import { css, html, LitElement, svg, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import type { GraphNode } from '@/data/mockGraphData';
 import type { NodePosition } from '@/types/simulation';
@@ -98,7 +98,7 @@ export class GraphVirtualRenderer extends LitElement {
     this.renderCount = 0;
   }
 
-  willUpdate(changedProps: Map<string, any>) {
+  willUpdate(changedProps: PropertyValues<this>): void {
     // Recalculate visible nodes when viewport or positions change
     if (
       changedProps.has('nodes') ||

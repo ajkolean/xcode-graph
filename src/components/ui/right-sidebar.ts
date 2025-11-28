@@ -89,7 +89,7 @@ export class GraphRightSidebar extends LitElement {
     :host {
       display: block;
       flex-shrink: 0;
-      transition: width 0.2s ease;
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     :host([collapsed]) {
@@ -105,9 +105,38 @@ export class GraphRightSidebar extends LitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      background-color: var(--color-sidebar);
-      border-left: 1px solid var(--color-sidebar-border);
-      box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(180deg, var(--sidebar) 0%, rgba(8, 10, 15, 1) 100%);
+      border-left: 1px solid var(--sidebar-border);
+      box-shadow: -8px 0 24px rgba(0, 0, 0, 0.3),
+                  inset 1px 0 0 rgba(255, 255, 255, 0.03);
+      position: relative;
+    }
+
+    /* Noise texture overlay */
+    aside::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.015;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle scan line effect */
+    aside::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
     }
 
     .filter-content {
@@ -115,17 +144,40 @@ export class GraphRightSidebar extends LitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      position: relative;
+      z-index: 1;
     }
 
     .filter-scroll {
       flex: 1;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 160, 60, 0.2) transparent;
+    }
+
+    .filter-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .filter-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .filter-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 160, 60, 0.2);
+      border-radius: 3px;
+    }
+
+    .filter-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 160, 60, 0.35);
     }
 
     .stats-row {
       display: flex;
       gap: var(--spacing-sm);
       padding: var(--spacing-md) var(--spacing-md) 0;
+      position: relative;
+      z-index: 1;
     }
 
     .filter-sections {
@@ -133,6 +185,8 @@ export class GraphRightSidebar extends LitElement {
       flex-direction: column;
       gap: var(--spacing-md);
       padding: var(--spacing-lg) var(--spacing-md);
+      position: relative;
+      z-index: 1;
     }
   `;
 

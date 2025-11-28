@@ -2,7 +2,7 @@
  * Tests for ZustandController
  */
 
-import { LitElement } from 'lit';
+import type { ReactiveController } from 'lit';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { create, type StoreApi, type UseBoundStore } from 'zustand';
 import { createStoreController, ZustandController } from './zustand.controller';
@@ -19,11 +19,11 @@ let useTestStore: UseBoundStore<StoreApi<TestStore>>;
 
 // Mock host for testing
 class MockHost {
-  private controllers: any[] = [];
+  private controllers: ReactiveController[] = [];
   private updateRequested = false;
   updateCount = 0;
 
-  addController(controller: any) {
+  addController(controller: ReactiveController) {
     this.controllers.push(controller);
   }
 

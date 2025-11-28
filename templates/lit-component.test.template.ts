@@ -85,7 +85,7 @@ describe('ELEMENT_TAG', () => {
 
     // Set up event listener
     let eventFired = false;
-    let eventDetail: any;
+    let eventDetail: unknown;
 
     el.addEventListener('component-event', ((e: CustomEvent) => {
       eventFired = true;

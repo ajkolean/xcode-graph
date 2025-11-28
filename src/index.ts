@@ -29,14 +29,7 @@ export {
   type GraphLayoutConfig,
 } from './controllers/graph-layout.controller';
 
-export {
-  GraphInteractionController,
-  type GraphInteractionConfig,
-} from './controllers/graph-interaction.controller';
-
-export {
-  GraphInteractionFullController,
-} from './controllers/graph-interaction-full.controller';
+export { GraphInteractionFullController } from './controllers/graph-interaction-full.controller';
 
 export {
   ZagController,

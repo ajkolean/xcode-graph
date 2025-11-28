@@ -1,40 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
   --font-size: 16px;
+  /* Mission Control Theme - Amber/Teal color palette */
+
   /* The default background color for the application. */
-  --background: rgba(0, 0, 0, 1);
+  --background: rgba(8, 10, 15, 1);
   /* The default color for elements or text that appears on top of the background. */
-  --foreground: rgba(232, 234, 237, 1);
+  --foreground: rgba(225, 228, 232, 1);
   /* The background color for cards, modals, and other containers. */
-  --card: rgba(10, 10, 11, 1);
+  --card: rgba(12, 15, 22, 1);
   /* The default color for text or elements that appear on top of cards, modals and other background containers. */
-  --card-foreground: rgba(232, 234, 237, 1);
+  --card-foreground: rgba(225, 228, 232, 1);
   /* The background color for dropdowns and tooltips. */
-  --popover: rgba(26, 26, 29, 1);
+  --popover: rgba(18, 22, 30, 1);
   /* The default color for text or elements that appear on top of dropdowns and tooltips. */
-  --popover-foreground: rgba(232, 234, 237, 1);
-  /* The primary color used for buttons, links, and other interactive elements. */
-  --primary: rgba(111, 44, 255, 1);
+  --popover-foreground: rgba(225, 228, 232, 1);
+  /* The primary color used for buttons, links, and other interactive elements - AMBER */
+  --primary: rgba(255, 160, 60, 1);
+  --primary-rgb: 255, 160, 60;
   /* The default color for text or elements that appear on top of primary colored elements. */
-  --primary-foreground: rgba(253, 253, 253, 1);
+  --primary-foreground: rgba(8, 10, 15, 1);
   /* The secondary color used for secondary(but NOT-DESTRUCTIVE) buttons and interactive elements. */
   --secondary: rgba(255, 255, 255, 0.05);
   /* The default color for text or elements that appear on top of secondary colored elements. */
-  --secondary-foreground: rgba(232, 234, 237, 1);
+  --secondary-foreground: rgba(225, 228, 232, 1);
   /* The muted color used for less prominent elements, such as disabled buttons or disabled text. */
   --muted: rgba(255, 255, 255, 0.05);
   /* The default color for text or elements that appear on top of muted colored elements. */
-  --muted-foreground: rgba(232, 234, 237, 0.5);
-  /* The accent color used for highlights, links, and other interactive elements. */
-  --accent: rgba(111, 44, 255, 0.15);
+  --muted-foreground: rgba(225, 228, 232, 0.5);
+  /* The accent color used for highlights, links, and other interactive elements - TEAL */
+  --accent: rgba(64, 224, 208, 0.15);
+  --accent-rgb: 64, 224, 208;
+  --accent-solid: rgba(64, 224, 208, 1);
   /* The default color for text or elements that appear on top of accent colored elements. */
-  --accent-foreground: rgba(232, 234, 237, 1);
+  --accent-foreground: rgba(225, 228, 232, 1);
   /* The color used for background in destructive actions, such as delete buttons or error messages. */
-  --destructive: rgba(229, 28, 1, 1);
+  --destructive: rgba(239, 68, 68, 1);
   /* The default color for text or elements that appear on top of destructive colored elements. */
   --destructive-foreground: rgba(253, 253, 253, 1);
   /* The default border color for elements such as inputs, buttons, and other containers. */
@@ -47,42 +51,38 @@
   --font-weight-medium: 500;
   /* The default font weight for normal text. */
   --font-weight-normal: 400;
-  /* The color for focus rings, outlines, and other focus indicators. */
-  --ring: rgba(111, 44, 255, 1);
+  /* The color for focus rings, outlines, and other focus indicators - AMBER */
+  --ring: rgba(255, 160, 60, 1);
   /* Shadow for small elevations, such as cards or modals. */
   --elevation-sm: 0px 1px 1px 0px rgba(0,0,0,0.3), 0px 0px 0px 1px rgba(255,255,255,0.06), 0px 1px 1px 0px rgba(0,0,0,0.4);
-  /* The color for chart elements, such as a bar or line in a chart. */
-  --chart-1: rgba(111, 44, 255, 1);
-  /* The color for another chart element, such as a bar or line in a chart. */
-  --chart-2: rgba(2, 128, 185, 1);
-  /* The color for another chart element, such as a bar or line in a chart. */
-  --chart-3: rgba(40, 167, 69, 1);
-  /* The color for another chart element, such as a bar or line in a chart. */
-  --chart-4: rgba(253, 121, 28, 1);
-  /* The color for another chart element, such as a bar or line in a chart. */
-  --chart-5: rgba(229, 28, 1, 1);
-  /* The default border radius for elements such as buttons, tooltip, and other containers. */
-  --radius: 6px;
+  /* The color for chart elements - Mission Control palette */
+  --chart-1: rgba(255, 160, 60, 1);
+  --chart-2: rgba(64, 224, 208, 1);
+  --chart-3: rgba(80, 220, 140, 1);
+  --chart-4: rgba(255, 120, 180, 1);
+  --chart-5: rgba(160, 140, 255, 1);
+  /* The default border radius for elements - SHARP */
+  --radius: 2px;
   /* Border radius for cards and larger containers. */
-  --radius-card: 16px;
+  --radius-card: 4px;
   /* Border radius specifically for button elements. */
-  --radius-button: 6px;
+  --radius-button: 2px;
   /* The background color for sidebars, navigation menus, and other persistent elements. */
-  --sidebar: rgba(10, 10, 11, 1);
+  --sidebar: rgba(10, 12, 18, 1);
   /* The default color for text or elements that appear on top of sidebars, navigation menus, and other persistent elements. */
-  --sidebar-foreground: rgba(232, 234, 237, 1);
-  /* The primary color used for buttons, links, and other interactive elements in sidebars and navigation menus. */
-  --sidebar-primary: rgba(111, 44, 255, 1);
+  --sidebar-foreground: rgba(225, 228, 232, 1);
+  /* The primary color used for buttons, links, and other interactive elements in sidebars and navigation menus - AMBER */
+  --sidebar-primary: rgba(255, 160, 60, 1);
   /* The default color for text or elements that appear on top of primary colored elements in sidebars and navigation menus. */
-  --sidebar-primary-foreground: rgba(253, 253, 253, 1);
+  --sidebar-primary-foreground: rgba(8, 10, 15, 1);
   /* The accent color used for highlights, links, and other interactive elements in sidebars and navigation menus. */
-  --sidebar-accent: rgba(111, 44, 255, 0.15);
+  --sidebar-accent: rgba(255, 160, 60, 0.12);
   /* The default color for text or elements that appear on top of accent colored elements in sidebars and navigation menus. */
-  --sidebar-accent-foreground: rgba(232, 234, 237, 1);
+  --sidebar-accent-foreground: rgba(225, 228, 232, 1);
   /* The default border color for elements in sidebars and navigation menus. */
   --sidebar-border: rgba(255, 255, 255, 0.06);
-  /* The default color for focus rings, outlines, and other focus indicators in sidebars and navigation menus. */
-  --sidebar-ring: rgba(111, 44, 255, 1);
+  /* The default color for focus rings, outlines, and other focus indicators in sidebars and navigation menus - AMBER */
+  --sidebar-ring: rgba(255, 160, 60, 1);
   /* Typography variables */
   --text-h1: 40px;
   --text-h2: 18px;
@@ -92,28 +92,34 @@
   --text-label: 12px;
   --text-xs: 10px;
   --text-small: 11px;
-  
-  /* Font families */
-  --font-family-heading: 'DM Sans', sans-serif;
-  --font-family-body: 'Inter', sans-serif;
-  --font-family-mono: 'SF Mono', 'Monaco', 'Consolas', monospace;
-  
+  --text-body: 13px;
+
+  /* Font families - Mission Control */
+  --font-family-heading: 'JetBrains Mono', 'SF Mono', monospace;
+  --font-family-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
+
   /* Font weights */
+  --font-weight-regular: 400;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  
+
   /* Spacing scale */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
-  
-  /* Starry background effect variables */
+
+  /* Mission Control effects */
   --stars-count: 200;
   --stars-opacity: 0.4;
-  --stars-color: rgba(232, 234, 237, 1);
-  --stars-glow-color: rgba(111, 44, 255, 1);
+  --stars-color: rgba(225, 228, 232, 1);
+  --stars-glow-color: rgba(255, 160, 60, 1);
+
+  /* Success color */
+  --success: rgba(80, 220, 140, 1);
+  --success-rgb: 80, 220, 140;
 }
 
 @theme inline {
@@ -172,56 +178,60 @@
 @layer base {
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
     h1 {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-family-heading);
       font-size: var(--text-h1);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.5;
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.3;
+      letter-spacing: -0.02em;
     }
 
     h2 {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-family-heading);
       font-size: var(--text-h2);
       font-weight: var(--font-weight-medium);
-      line-height: 1.5;
+      line-height: 1.4;
+      letter-spacing: -0.01em;
     }
 
     h3 {
-      font-family: 'Inter Variable', 'Inter', sans-serif;
+      font-family: var(--font-family-body);
       font-size: var(--text-h3);
       font-weight: var(--font-weight-medium);
       line-height: 1.5;
     }
 
     h4 {
-      font-family: 'Inter Variable', 'Inter', sans-serif;
+      font-family: var(--font-family-body);
       font-size: var(--text-h4);
       font-weight: var(--font-weight-medium);
       line-height: 1.5;
     }
 
     p {
-      font-family: 'Inter Variable', 'Inter', sans-serif;
+      font-family: var(--font-family-body);
       font-size: var(--text-base);
       font-weight: var(--font-weight-normal);
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     label {
-      font-family: 'Inter Variable', 'Inter', sans-serif;
+      font-family: var(--font-family-mono);
       font-size: var(--text-label);
       font-weight: var(--font-weight-medium);
       line-height: 1.5;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
     button {
-      font-family: 'Inter Variable', 'Inter', sans-serif;
+      font-family: var(--font-family-body);
       font-size: var(--text-h4);
       font-weight: var(--font-weight-medium);
       line-height: 1.5;
     }
 
     input {
-      font-family: 'Inter Variable', 'Inter', sans-serif;
+      font-family: var(--font-family-body);
       font-size: var(--text-base);
       font-weight: var(--font-weight-normal);
       line-height: 1.5;

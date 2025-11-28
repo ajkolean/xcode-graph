@@ -16,7 +16,7 @@
 
 import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
-import { getPlatformIconPath } from '@/utils/rendering/platform-icons';
+import { getPlatformIconPath, PLATFORM_COLOR } from '@/utils/rendering/platform-icons';
 import './stats-card';
 
 export class GraphClusterStats extends LitElement {

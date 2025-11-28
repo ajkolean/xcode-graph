@@ -19,4 +19,10 @@ export * from './physics';
 
 // ==================== General Utilities ====================
 
-export { deepEqual, memoize, createWeakMemoize } from './memoization';
+export {
+  deepEqual,
+  shallowEqual,
+  createMemoizedSelector,
+  WeakMapCache,
+  LRUCache,
+} from './memoization';

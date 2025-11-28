@@ -25,7 +25,7 @@ import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
-import { getNodeIconPath } from '@/utils/rendering/node-icons';
+import { getNodeIconPath, getNodeTypeLabel } from '@/utils/rendering/node-icons';
 import { getPlatformIconPath } from '@/utils/rendering/platform-icons';
 import { adjustColorForZoom } from '@/utils/rendering/zoom-colors';
 
@@ -85,41 +85,55 @@ export class GraphFilterSection extends LitElement {
       background: none;
       border: none;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s;
       padding: 0;
     }
 
     .header-button:hover {
-      opacity: 0.8;
+      opacity: 1;
+    }
+
+    .header-button:hover .header-title {
+      color: var(--primary);
     }
 
     .header-icon {
       flex-shrink: 0;
       opacity: 0.6;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, color 0.2s;
+      color: var(--muted-foreground);
     }
 
     .header-button:hover .header-icon {
-      opacity: 0.8;
+      opacity: 1;
+      color: var(--primary);
     }
 
     .header-title {
-      font-family: 'DM Sans', sans-serif;
-      font-size: var(--text-small);
-      color: var(--color-muted-foreground);
-      font-weight: var(--font-weight-medium);
-      letter-spacing: 0.02em;
+      font-family: var(--font-family-mono);
+      font-size: var(--text-xs);
+      color: var(--muted-foreground);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: 0.08em;
       text-transform: uppercase;
+      transition: color 0.2s;
     }
 
     .chevron {
       margin-left: auto;
       opacity: 0.4;
-      transition: transform 0.2s;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+      color: var(--muted-foreground);
     }
 
     .chevron.expanded {
       transform: rotate(90deg);
+      opacity: 0.8;
+    }
+
+    .header-button:hover .chevron {
+      opacity: 0.8;
+      color: var(--primary);
     }
 
     .chevron svg {
@@ -130,7 +144,7 @@ export class GraphFilterSection extends LitElement {
     .items {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 1px;
     }
 
     .item-button {
@@ -138,16 +152,41 @@ export class GraphFilterSection extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px var(--spacing-md);
+      padding: 8px var(--spacing-md);
       background: transparent;
       border: none;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
+      border-radius: var(--radius);
+      /* Staggered animation */
+      animation: filterItemFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    .item-button:nth-child(1) { animation-delay: 0.02s; }
+    .item-button:nth-child(2) { animation-delay: 0.04s; }
+    .item-button:nth-child(3) { animation-delay: 0.06s; }
+    .item-button:nth-child(4) { animation-delay: 0.08s; }
+    .item-button:nth-child(5) { animation-delay: 0.10s; }
+    .item-button:nth-child(6) { animation-delay: 0.12s; }
+    .item-button:nth-child(7) { animation-delay: 0.14s; }
+    .item-button:nth-child(8) { animation-delay: 0.16s; }
+
+    @keyframes filterItemFadeIn {
+      from {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .item-button:hover {
-      background-color: rgba(255, 255, 255, 0.03);
+      background-color: rgba(255, 160, 60, 0.05);
+      box-shadow: inset 0 0 0 1px rgba(255, 160, 60, 0.1);
     }
 
     .item-accent {
@@ -155,7 +194,8 @@ export class GraphFilterSection extends LitElement {
       left: 0;
       top: 0;
       bottom: 0;
-      width: 2px;
+      width: 3px;
+      border-radius: 0 2px 2px 0;
     }
 
     .item-content {
@@ -173,46 +213,60 @@ export class GraphFilterSection extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .item-button:hover .item-icon {
+      transform: scale(1.1);
     }
 
     .item-label {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-family-body);
       font-size: var(--text-body);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      transition: color 0.15s;
     }
 
     .item-label.selected {
-      color: var(--color-foreground);
+      color: var(--foreground);
       font-weight: var(--font-weight-medium);
     }
 
     .item-label:not(.selected) {
-      color: var(--color-secondary);
+      color: var(--muted-foreground);
       font-weight: var(--font-weight-regular);
     }
 
+    .item-button:hover .item-label {
+      color: var(--foreground);
+    }
+
     .item-count {
-      padding: 2px 6px;
+      padding: 3px 8px;
       border-radius: var(--radius);
       flex-shrink: 0;
-      transition: opacity 0.2s;
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-label);
-      color: var(--color-foreground);
-      min-width: 24px;
+      transition: opacity 0.2s, background-color 0.2s;
+      font-family: var(--font-family-mono);
+      font-size: var(--text-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--foreground);
+      min-width: 26px;
       text-align: center;
       margin-left: 8px;
     }
 
     .item-count.selected {
-      opacity: 0.3;
+      opacity: 0.5;
     }
 
     .item-count:not(.selected) {
-      opacity: 0.22;
+      opacity: 0.3;
+    }
+
+    .item-button:hover .item-count {
+      opacity: 0.7;
     }
   `;
 

@@ -41,9 +41,8 @@ describe('graph-header', () => {
       <graph-header></graph-header>
     `);
 
-    const docsButton = el.shadowRoot?.querySelector('.docs-button');
+    const docsButton = el.shadowRoot?.querySelector('.action-button[title="Documentation"]');
     expect(docsButton).to.exist;
-    expect(docsButton?.getAttribute('title')).to.equal('Documentation');
   });
 
   it('should render user avatar', async () => {

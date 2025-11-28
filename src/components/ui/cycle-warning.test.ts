@@ -221,7 +221,10 @@ describe('graph-cycle-warning', () => {
 
       const cycleList = el.shadowRoot?.querySelector('.cycle-list');
       expect(cycleList).to.exist;
-      expect(cycleList?.scrollHeight).to.be.greaterThan(0);
+      // Verify the long cycle path is rendered (JSDOM doesn't compute scrollHeight)
+      const cyclePath = el.shadowRoot?.querySelector('.cycle-path');
+      expect(cyclePath?.textContent).to.include('Node0');
+      expect(cyclePath?.textContent).to.include('Node19');
     });
 
     it('should handle many cycles', async () => {
