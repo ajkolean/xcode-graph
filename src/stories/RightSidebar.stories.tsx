@@ -2,8 +2,9 @@
  * RightSidebar Component Stories - Main sidebar orchestrator
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { RightSidebar } from '../components-lit/wrappers/RightSidebar';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../components-lit/ui/right-sidebar';
 import { mockGraphNodes } from './fixtures/mockNodes';
 import { mockGraphEdges } from './fixtures/mockEdges';
 
@@ -17,14 +18,14 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  render: () => (
-    <div style={{ width: '320px', height: '600px', background: '#0f0f14', borderRadius: '8px' }}>
-      <RightSidebar
-        allNodes={mockGraphNodes}
-        allEdges={mockGraphEdges}
-        filteredNodes={mockGraphNodes}
-        filteredEdges={mockGraphEdges}
-      />
+  render: () => html`
+    <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px">
+      <graph-right-sidebar
+        .allNodes=${mockGraphNodes}
+        .allEdges=${mockGraphEdges}
+        .filteredNodes=${mockGraphNodes}
+        .filteredEdges=${mockGraphEdges}
+      ></graph-right-sidebar>
     </div>
-  ),
+  `,
 };

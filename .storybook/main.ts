@@ -1,6 +1,6 @@
 // This file has been automatically migrated to valid ESM format by Storybook.
 import type { AddonOptionsVite } from '@storybook/addon-coverage';
-import type { StorybookConfig } from '@storybook/react-vite';
+import type { StorybookConfig } from '@storybook/web-components-vite';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from "node:url";
 
@@ -34,7 +34,7 @@ const config: StorybookConfig = {
     },
   ],
   framework: {
-    name: '@storybook/react-vite',
+    name: '@storybook/web-components-vite',
     options: {},
   },
   tags: {
@@ -44,23 +44,6 @@ const config: StorybookConfig = {
     },
   },
   viteFinal: async (config) => {
-    // Exclude Lit components from React SWC transformation and React Docgen
-    if (config.plugins) {
-      config.plugins = config.plugins
-        .filter((plugin) => !(plugin && typeof plugin === 'object' && 'name' in plugin && plugin.name === 'storybook:react-docgen-plugin'))
-        .map((plugin) => {
-          if (plugin && typeof plugin === 'object' && 'name' in plugin) {
-            if (plugin.name === 'vite:react-swc' || plugin.name === 'storybook:react-docgen-plugin') {
-              return {
-                ...plugin,
-                exclude: [/components-lit/],
-              };
-            }
-          }
-          return plugin;
-        });
-    }
-
     // Add path aliases matching tsconfig.json
     config.resolve = config.resolve || {};
     config.resolve.alias = {

@@ -2,8 +2,9 @@
  * Header Component Stories
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { Header } from '../../components-lit/wrappers/Header';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../../components-lit/layout/header';
 
 const meta = {
   title: 'Layout/Header',
@@ -15,9 +16,9 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  render: () => (
-    <div style={{ width: '100%', background: '#0a0a0f' }}>
-      <Header />
+  render: () => html`
+    <div style="width: 100%; background: #0a0a0f">
+      <graph-header></graph-header>
     </div>
-  ),
+  `,
 };

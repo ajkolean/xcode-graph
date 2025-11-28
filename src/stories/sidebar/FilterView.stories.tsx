@@ -2,20 +2,19 @@
  * FilterView Component Stories - Complete filter interface
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { LitFilterView } from '../../components-lit/wrappers/FilterView';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../../components-lit/ui/filter-view';
 import type { FilterState } from '../../types/app';
 
 const meta = {
   title: 'Features/Filters/FilterView',
-  component: LitFilterView,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
-} satisfies Meta<typeof LitFilterView>;
+} satisfies Meta;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj;
 
 // Sample data
 const nodeTypeItems = [
@@ -45,166 +44,96 @@ const packageItems = [
   { key: 'SnapKit', count: 4, color: '#10B981' },
 ];
 
-export const Default: Story = {
-  render: () => {
-    const [filters, setFilters] = useState<FilterState>({
-      nodeTypes: new Set(),
-      platforms: new Set(),
-      projects: new Set(),
-      packages: new Set(),
-    });
-    const [searchQuery, setSearchQuery] = useState('');
+const emptyFilters: FilterState = {
+  nodeTypes: new Set(),
+  platforms: new Set(),
+  projects: new Set(),
+  packages: new Set(),
+};
 
-    return (
-      <div style={{ width: '320px', height: '600px', background: '#0f0f14', borderRadius: '8px', overflow: 'hidden' }}>
-        <LitFilterView
-          filteredNodesCount={28}
-          totalNodesCount={28}
-          filteredEdgesCount={42}
-          totalEdgesCount={42}
-          filters={filters}
-          searchQuery={searchQuery}
-          nodeTypeItems={nodeTypeItems}
-          platformItems={platformItems}
-          projectItems={projectItems}
-          packageItems={packageItems}
-          zoom={1.0}
-          onFiltersChange={(e) => setFilters(e.detail.filters)}
-          onSearchChange={(e) => setSearchQuery(e.detail.query)}
-          onClearFilters={() => {
-            setFilters({
-              nodeTypes: new Set(),
-              platforms: new Set(),
-              projects: new Set(),
-              packages: new Set(),
-            });
-            setSearchQuery('');
-          }}
-        />
-      </div>
-    );
-  },
+export const Default: Story = {
+  render: () => html`
+    <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">
+      <graph-filter-view
+        filtered-nodes-count="28"
+        total-nodes-count="28"
+        filtered-edges-count="42"
+        total-edges-count="42"
+        .filters=${emptyFilters}
+        search-query=""
+        .nodeTypeItems=${nodeTypeItems}
+        .platformItems=${platformItems}
+        .projectItems=${projectItems}
+        .packageItems=${packageItems}
+        zoom="1.0"
+      ></graph-filter-view>
+    </div>
+  `,
+};
+
+const activeFilters: FilterState = {
+  nodeTypes: new Set(['app', 'framework']),
+  platforms: new Set(['iOS']),
+  projects: new Set(),
+  packages: new Set(),
 };
 
 export const WithActiveFilters: Story = {
-  render: () => {
-    const [filters, setFilters] = useState<FilterState>({
-      nodeTypes: new Set(['app', 'framework']),
-      platforms: new Set(['iOS']),
-      projects: new Set(),
-      packages: new Set(),
-    });
-    const [searchQuery, setSearchQuery] = useState('');
-
-    return (
-      <div style={{ width: '320px', height: '600px', background: '#0f0f14', borderRadius: '8px', overflow: 'hidden' }}>
-        <LitFilterView
-          filteredNodesCount={10}
-          totalNodesCount={28}
-          filteredEdgesCount={15}
-          totalEdgesCount={42}
-          filters={filters}
-          searchQuery={searchQuery}
-          nodeTypeItems={nodeTypeItems}
-          platformItems={platformItems}
-          projectItems={projectItems}
-          packageItems={packageItems}
-          zoom={1.0}
-          onFiltersChange={(e) => setFilters(e.detail.filters)}
-          onSearchChange={(e) => setSearchQuery(e.detail.query)}
-          onClearFilters={() => {
-            setFilters({
-              nodeTypes: new Set(),
-              platforms: new Set(),
-              projects: new Set(),
-              packages: new Set(),
-            });
-            setSearchQuery('');
-          }}
-        />
-      </div>
-    );
-  },
+  render: () => html`
+    <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">
+      <graph-filter-view
+        filtered-nodes-count="10"
+        total-nodes-count="28"
+        filtered-edges-count="15"
+        total-edges-count="42"
+        .filters=${activeFilters}
+        search-query=""
+        .nodeTypeItems=${nodeTypeItems}
+        .platformItems=${platformItems}
+        .projectItems=${projectItems}
+        .packageItems=${packageItems}
+        zoom="1.0"
+      ></graph-filter-view>
+    </div>
+  `,
 };
 
 export const WithSearch: Story = {
-  render: () => {
-    const [filters, setFilters] = useState<FilterState>({
-      nodeTypes: new Set(),
-      platforms: new Set(),
-      projects: new Set(),
-      packages: new Set(),
-    });
-    const [searchQuery, setSearchQuery] = useState('Core');
-
-    return (
-      <div style={{ width: '320px', height: '600px', background: '#0f0f14', borderRadius: '8px', overflow: 'hidden' }}>
-        <LitFilterView
-          filteredNodesCount={5}
-          totalNodesCount={28}
-          filteredEdgesCount={8}
-          totalEdgesCount={42}
-          filters={filters}
-          searchQuery={searchQuery}
-          nodeTypeItems={nodeTypeItems}
-          platformItems={platformItems}
-          projectItems={projectItems}
-          packageItems={packageItems}
-          zoom={1.0}
-          onFiltersChange={(e) => setFilters(e.detail.filters)}
-          onSearchChange={(e) => setSearchQuery(e.detail.query)}
-          onClearFilters={() => {
-            setFilters({
-              nodeTypes: new Set(),
-              platforms: new Set(),
-              projects: new Set(),
-              packages: new Set(),
-            });
-            setSearchQuery('');
-          }}
-        />
-      </div>
-    );
-  },
+  render: () => html`
+    <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">
+      <graph-filter-view
+        filtered-nodes-count="5"
+        total-nodes-count="28"
+        filtered-edges-count="8"
+        total-edges-count="42"
+        .filters=${emptyFilters}
+        search-query="Core"
+        .nodeTypeItems=${nodeTypeItems}
+        .platformItems=${platformItems}
+        .projectItems=${projectItems}
+        .packageItems=${packageItems}
+        zoom="1.0"
+      ></graph-filter-view>
+    </div>
+  `,
 };
 
 export const NoPackages: Story = {
-  render: () => {
-    const [filters, setFilters] = useState<FilterState>({
-      nodeTypes: new Set(),
-      platforms: new Set(),
-      projects: new Set(),
-      packages: new Set(),
-    });
-    const [searchQuery, setSearchQuery] = useState('');
-
-    return (
-      <div style={{ width: '320px', height: '600px', background: '#0f0f14', borderRadius: '8px', overflow: 'hidden' }}>
-        <LitFilterView
-          filteredNodesCount={20}
-          totalNodesCount={20}
-          filteredEdgesCount={35}
-          totalEdgesCount={35}
-          filters={filters}
-          searchQuery={searchQuery}
-          nodeTypeItems={nodeTypeItems}
-          platformItems={platformItems}
-          projectItems={projectItems}
-          packageItems={[]}
-          zoom={1.0}
-          onFiltersChange={(e) => setFilters(e.detail.filters)}
-          onSearchChange={(e) => setSearchQuery(e.detail.query)}
-          onClearFilters={() => {
-            setFilters({
-              nodeTypes: new Set(),
-              platforms: new Set(),
-              projects: new Set(),
-              packages: new Set(),
-            });
-            setSearchQuery('');
-          }}
-        />
-      </div>
-    );
-  },
+  render: () => html`
+    <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">
+      <graph-filter-view
+        filtered-nodes-count="20"
+        total-nodes-count="20"
+        filtered-edges-count="35"
+        total-edges-count="35"
+        .filters=${emptyFilters}
+        search-query=""
+        .nodeTypeItems=${nodeTypeItems}
+        .platformItems=${platformItems}
+        .projectItems=${projectItems}
+        .packageItems=${[]}
+        zoom="1.0"
+      ></graph-filter-view>
+    </div>
+  `,
 };

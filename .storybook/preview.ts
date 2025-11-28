@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/web-components';
 import { within as withinShadow } from 'shadow-dom-testing-library';
 
 // Import global styles

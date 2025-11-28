@@ -2,8 +2,9 @@
  * ClusterCard Component Stories - Cluster background card (SVG)
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { ClusterCard } from '../../components-lit/wrappers/ClusterCard';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import { renderClusterCard } from '../../components-lit/graph/svg-renderers';
 
 const meta = {
   title: 'Graph Visualization/ClusterCard',
@@ -22,28 +23,35 @@ const mockCluster = {
 };
 
 export const Default: Story = {
-  render: () => (
-    <div style={{ width: '600px', height: '400px', background: '#0a0a0f', borderRadius: '8px' }}>
+  render: () => html`
+    <div style="width: 600px; height: 400px; background: #0a0a0f; border-radius: 8px;">
       <svg width="600" height="400">
-        <ClusterCard cluster={mockCluster} x={50} y={50} width={500} height={300} zoom={1.0} />
+        ${renderClusterCard({
+          cluster: mockCluster,
+          x: 50,
+          y: 50,
+          width: 500,
+          height: 300,
+          zoom: 1.0,
+        })}
       </svg>
     </div>
-  ),
+  `,
 };
 
 export const Package: Story = {
-  render: () => (
-    <div style={{ width: '600px', height: '400px', background: '#0a0a0f', borderRadius: '8px' }}>
+  render: () => html`
+    <div style="width: 600px; height: 400px; background: #0a0a0f; border-radius: 8px;">
       <svg width="600" height="400">
-        <ClusterCard
-          cluster={{ ...mockCluster, name: 'Alamofire', type: 'package' }}
-          x={50}
-          y={50}
-          width={500}
-          height={300}
-          zoom={1.0}
-        />
+        ${renderClusterCard({
+          cluster: { ...mockCluster, name: 'Alamofire', type: 'package' },
+          x: 50,
+          y: 50,
+          width: 500,
+          height: 300,
+          zoom: 1.0,
+        })}
       </svg>
     </div>
-  ),
+  `,
 };

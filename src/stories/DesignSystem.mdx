@@ -1,3 +1,4 @@
+import { Meta } from '@storybook/blocks';
 
 <Meta title="Design System/Overview" />
 
@@ -59,14 +60,12 @@ Every component includes:
 3. **Parity Comparison**: Verify React and Lit match
 4. **Interactive Tests**: Automated event validation
 
-## 🔄 React + Lit Parity
+## 🔄 Pure Lit Implementation
 
-All UI components exist in both implementations:
-- **React version**: Standard React component in `src/components/`
-- **Lit version**: Web component in `src/components-lit/ui/`
-- **Wrapper**: React wrapper in `src/components-lit/wrappers/`
-
-Parity testing ensures both behave identically for seamless migration and testing.
+All UI components are built as Lit web components:
+- **Lit components**: Web components in `src/components-lit/`
+- **SVG renderers**: Pure functions in `src/components-lit/graph/svg-renderers.ts` for SVG content
+- **No React dependencies**: 100% Lit with native web components
 
 ---
 

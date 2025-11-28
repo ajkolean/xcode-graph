@@ -2,8 +2,9 @@
  * RightSidebarHeader Component Stories
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { RightSidebarHeader } from '../../components-lit/wrappers/RightSidebarHeader';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../../components-lit/ui/right-sidebar-header';
 
 const meta = {
   title: 'Layout/RightSidebarHeader',
@@ -15,17 +16,17 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  render: () => (
-    <div style={{ width: '320px', background: '#0f0f14', borderRadius: '8px', overflow: 'hidden' }}>
-      <RightSidebarHeader title="Filters" />
+  render: () => html`
+    <div style="width: 320px; background: #0f0f14; border-radius: 8px; overflow: hidden">
+      <graph-right-sidebar-header title="Filters"></graph-right-sidebar-header>
     </div>
-  ),
+  `,
 };
 
 export const NodeDetails: Story = {
-  render: () => (
-    <div style={{ width: '320px', background: '#0f0f14', borderRadius: '8px', overflow: 'hidden' }}>
-      <RightSidebarHeader title="Node Details" />
+  render: () => html`
+    <div style="width: 320px; background: #0f0f14; border-radius: 8px; overflow: hidden">
+      <graph-right-sidebar-header title="Node Details"></graph-right-sidebar-header>
     </div>
-  ),
+  `,
 };

@@ -4,71 +4,55 @@
  * Graph toolbar with zoom controls and stats display.
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { LitToolbar } from '../../components-lit/wrappers/Toolbar';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../../components-lit/layout/toolbar';
 
 const meta = {
   title: 'Layout/Toolbar',
-  component: LitToolbar,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
-} satisfies Meta<typeof LitToolbar>;
+} satisfies Meta;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj;
 
 export const Default: Story = {
-  render: () => {
-    const [zoom, setZoom] = useState(1.0);
-
-    const handleZoomIn = () => setZoom((z) => Math.min(2.0, z + 0.1));
-    const handleZoomOut = () => setZoom((z) => Math.max(0.25, z - 0.1));
-    const handleZoomReset = () => setZoom(1.0);
-
-    return (
-      <div style={{ background: '#0a0a0f', padding: '16px', borderRadius: '8px', width: '500px' }}>
-        <LitToolbar
-          zoom={zoom}
-          nodeCount={42}
-          edgeCount={128}
-          onZoomIn={handleZoomIn}
-          onZoomOut={handleZoomOut}
-          onZoomReset={handleZoomReset}
-        />
-      </div>
-    );
-  },
+  render: () => html`
+    <div style="background: #0a0a0f; padding: 16px; border-radius: 8px; width: 500px">
+      <graph-toolbar zoom="1.0" node-count="42" edge-count="128"></graph-toolbar>
+    </div>
+  `,
 };
 
 export const ZoomedIn: Story = {
-  render: () => (
-    <div style={{ background: '#0a0a0f', padding: '16px', borderRadius: '8px', width: '500px' }}>
-      <LitToolbar zoom={1.5} nodeCount={100} edgeCount={250} />
+  render: () => html`
+    <div style="background: #0a0a0f; padding: 16px; border-radius: 8px; width: 500px">
+      <graph-toolbar zoom="1.5" node-count="100" edge-count="250"></graph-toolbar>
     </div>
-  ),
+  `,
 };
 
 export const ZoomedOut: Story = {
-  render: () => (
-    <div style={{ background: '#0a0a0f', padding: '16px', borderRadius: '8px', width: '500px' }}>
-      <LitToolbar zoom={0.5} nodeCount={15} edgeCount={30} />
+  render: () => html`
+    <div style="background: #0a0a0f; padding: 16px; border-radius: 8px; width: 500px">
+      <graph-toolbar zoom="0.5" node-count="15" edge-count="30"></graph-toolbar>
     </div>
-  ),
+  `,
 };
 
 export const MaxZoom: Story = {
-  render: () => (
-    <div style={{ background: '#0a0a0f', padding: '16px', borderRadius: '8px', width: '500px' }}>
-      <LitToolbar zoom={2.0} nodeCount={200} edgeCount={500} />
+  render: () => html`
+    <div style="background: #0a0a0f; padding: 16px; border-radius: 8px; width: 500px">
+      <graph-toolbar zoom="2.0" node-count="200" edge-count="500"></graph-toolbar>
     </div>
-  ),
+  `,
 };
 
 export const MinZoom: Story = {
-  render: () => (
-    <div style={{ background: '#0a0a0f', padding: '16px', borderRadius: '8px', width: '500px' }}>
-      <LitToolbar zoom={0.25} nodeCount={5} edgeCount={10} />
+  render: () => html`
+    <div style="background: #0a0a0f; padding: 16px; border-radius: 8px; width: 500px">
+      <graph-toolbar zoom="0.25" node-count="5" edge-count="10"></graph-toolbar>
     </div>
-  ),
+  `,
 };

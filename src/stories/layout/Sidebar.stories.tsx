@@ -2,8 +2,9 @@
  * Sidebar Component Stories
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { Sidebar } from '../../components-lit/wrappers/Sidebar';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../../components-lit/layout/sidebar';
 
 const meta = {
   title: 'Layout/Sidebar',
@@ -15,9 +16,9 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-  render: () => (
-    <div style={{ width: '240px', height: '600px', background: '#0a0a0f' }}>
-      <Sidebar />
+  render: () => html`
+    <div style="width: 240px; height: 600px; background: #0a0a0f">
+      <graph-sidebar></graph-sidebar>
     </div>
-  ),
+  `,
 };

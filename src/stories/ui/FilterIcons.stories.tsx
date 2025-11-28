@@ -4,13 +4,9 @@
  * Icons used in filter sections (ProductTypes, Platforms, Projects, Packages).
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import {
-  ProductTypesIcon,
-  PlatformsIcon,
-  ProjectsIcon,
-  PackagesIcon,
-} from '../../components-lit/wrappers/FilterIcons';
+import type { Meta, StoryObj } from '@storybook/web-components';
+import { html } from 'lit';
+import '../../components-lit/ui/filter-icons';
 
 const meta = {
   title: 'Design System/Icons/FilterIcons',
@@ -29,38 +25,38 @@ type Story = StoryObj<typeof meta>;
 
 export const ProductTypes: Story = {
   name: 'Product Types Icon',
-  render: () => (
-    <div style={{ padding: '32px', background: '#0a0a0f' }}>
-      <ProductTypesIcon />
+  render: () => html`
+    <div style="padding: 32px; background: #0a0a0f">
+      <graph-product-types-icon></graph-product-types-icon>
     </div>
-  ),
+  `,
 };
 
 export const Platforms: Story = {
   name: 'Platforms Icon',
-  render: () => (
-    <div style={{ padding: '32px', background: '#0a0a0f' }}>
-      <PlatformsIcon />
+  render: () => html`
+    <div style="padding: 32px; background: #0a0a0f">
+      <graph-platforms-icon></graph-platforms-icon>
     </div>
-  ),
+  `,
 };
 
 export const Projects: Story = {
   name: 'Projects Icon',
-  render: () => (
-    <div style={{ padding: '32px', background: '#0a0a0f' }}>
-      <ProjectsIcon />
+  render: () => html`
+    <div style="padding: 32px; background: #0a0a0f">
+      <graph-projects-icon></graph-projects-icon>
     </div>
-  ),
+  `,
 };
 
 export const Packages: Story = {
   name: 'Packages Icon',
-  render: () => (
-    <div style={{ padding: '32px', background: '#0a0a0f' }}>
-      <PackagesIcon />
+  render: () => html`
+    <div style="padding: 32px; background: #0a0a0f">
+      <graph-packages-icon></graph-packages-icon>
     </div>
-  ),
+  `,
 };
 
 // ========================================
@@ -70,75 +66,63 @@ export const Packages: Story = {
 export const AllIcons: Story = {
   tags: ['showcase'],
   name: '📚 All Icons',
-  render: () => (
+  render: () => html`
     <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '48px',
-        padding: '48px',
-        background: '#0a0a0f',
-      }}
+      style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 48px; padding: 48px; background: #0a0a0f"
     >
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ marginBottom: '12px', color: 'rgba(168, 157, 255, 0.8)' }}>
-          <ProductTypesIcon />
+      <div style="text-align: center">
+        <div style="margin-bottom: 12px; color: rgba(168, 157, 255, 0.8)">
+          <graph-product-types-icon></graph-product-types-icon>
         </div>
-        <div style={{ fontSize: '12px', color: '#94A3B8' }}>Product Types</div>
+        <div style="font-size: 12px; color: #94A3B8">Product Types</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ marginBottom: '12px', color: 'rgba(168, 157, 255, 0.8)' }}>
-          <PlatformsIcon />
+      <div style="text-align: center">
+        <div style="margin-bottom: 12px; color: rgba(168, 157, 255, 0.8)">
+          <graph-platforms-icon></graph-platforms-icon>
         </div>
-        <div style={{ fontSize: '12px', color: '#94A3B8' }}>Platforms</div>
+        <div style="font-size: 12px; color: #94A3B8">Platforms</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ marginBottom: '12px', color: 'rgba(168, 157, 255, 0.8)' }}>
-          <ProjectsIcon />
+      <div style="text-align: center">
+        <div style="margin-bottom: 12px; color: rgba(168, 157, 255, 0.8)">
+          <graph-projects-icon></graph-projects-icon>
         </div>
-        <div style={{ fontSize: '12px', color: '#94A3B8' }}>Projects</div>
+        <div style="font-size: 12px; color: #94A3B8">Projects</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ marginBottom: '12px', color: 'rgba(168, 157, 255, 0.8)' }}>
-          <PackagesIcon />
+      <div style="text-align: center">
+        <div style="margin-bottom: 12px; color: rgba(168, 157, 255, 0.8)">
+          <graph-packages-icon></graph-packages-icon>
         </div>
-        <div style={{ fontSize: '12px', color: '#94A3B8' }}>Packages</div>
+        <div style="font-size: 12px; color: #94A3B8">Packages</div>
       </div>
     </div>
-  ),
+  `,
 };
 
 export const AllSizes: Story = {
   tags: ['showcase'],
   name: '📐 All Sizes',
-  render: () => (
+  render: () => html`
     <div
-      style={{
-        display: 'flex',
-        gap: '48px',
-        padding: '48px',
-        background: '#0a0a0f',
-        alignItems: 'center',
-      }}
+      style="display: flex; gap: 48px; padding: 48px; background: #0a0a0f; align-items: center"
     >
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '16px', color: 'rgba(168, 157, 255, 0.8)' }}>
-          <ProductTypesIcon />
+      <div style="text-align: center">
+        <div style="font-size: 16px; color: rgba(168, 157, 255, 0.8)">
+          <graph-product-types-icon></graph-product-types-icon>
         </div>
-        <div style={{ marginTop: '8px', fontSize: '10px', color: '#94A3B8' }}>16px</div>
+        <div style="margin-top: 8px; font-size: 10px; color: #94A3B8">16px</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '20px', color: 'rgba(168, 157, 255, 0.8)' }}>
-          <ProductTypesIcon />
+      <div style="text-align: center">
+        <div style="font-size: 20px; color: rgba(168, 157, 255, 0.8)">
+          <graph-product-types-icon></graph-product-types-icon>
         </div>
-        <div style={{ marginTop: '8px', fontSize: '10px', color: '#94A3B8' }}>20px</div>
+        <div style="margin-top: 8px; font-size: 10px; color: #94A3B8">20px</div>
       </div>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '24px', color: 'rgba(168, 157, 255, 0.8)' }}>
-          <ProductTypesIcon />
+      <div style="text-align: center">
+        <div style="font-size: 24px; color: rgba(168, 157, 255, 0.8)">
+          <graph-product-types-icon></graph-product-types-icon>
         </div>
-        <div style={{ marginTop: '8px', fontSize: '10px', color: '#94A3B8' }}>24px</div>
+        <div style="margin-top: 8px; font-size: 10px; color: #94A3B8">24px</div>
       </div>
     </div>
-  ),
+  `,
 };
