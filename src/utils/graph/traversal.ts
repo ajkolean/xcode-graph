@@ -75,7 +75,7 @@ export function computeTransitiveDependencies(
 
   // Dependents (incoming)
   const transitiveDependents = (() => {
-    if ((viewMode !== 'dependents' && viewMode !== 'both') || !selectedNode) {
+    if (!['dependents', 'both', 'impact'].includes(viewMode) || !selectedNode) {
       return {
         nodes: new Set<string>(),
         edges: new Set<string>(),

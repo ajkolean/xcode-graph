@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { GraphNode } from '../data/mockGraphData';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import {
   createDiamondGraph,
   createEmptyGraph,
@@ -511,6 +511,24 @@ describe('GraphDataService', () => {
         const stats = service.getClusterStats('NonExistent');
 
         expect(stats.nodeCount).toBe(0);
+      });
+    });
+
+    describe('getGraphStats', () => {
+      it('counts isolated nodes with no incoming or outgoing edges', () => {
+        const nodes: GraphNode[] = [
+          createNode({ id: 'A', name: 'A' }),
+          createNode({ id: 'B', name: 'B' }),
+          createNode({ id: 'C', name: 'C' }),
+        ];
+        const edges: GraphEdge[] = [{ source: 'A', target: 'B' }];
+        const service = new GraphDataService(nodes, edges);
+
+        const stats = service.getGraphStats();
+
+        expect(stats.totalNodes).toBe(3);
+        expect(stats.totalEdges).toBe(1);
+        expect(stats.isolatedNodes).toBe(1); // Only C has no edges in either direction
       });
     });
   });

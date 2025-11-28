@@ -116,7 +116,7 @@ export class GraphEdge extends LitElement {
       : `M ${x1},${y1} L ${x2},${y2}`;
 
     return svg`
-      <g class="graph-edge" style="transition: opacity 0.3s ease">
+      <g class="graph-edge" style="transition: opacity var(--durations-slow) ease">
         ${
           isHighlighted
             ? svg`
@@ -143,7 +143,7 @@ export class GraphEdge extends LitElement {
           stroke-dasharray="${dashPattern}"
           class="${animated ? 'flow-animation' : ''}"
           shape-rendering="geometricPrecision"
-          style="transition: opacity 0.3s ease, stroke-width 0.2s ease"
+          style="transition: opacity var(--durations-slow) ease, stroke-width var(--durations-normal) ease"
         />
       </g>
     `;

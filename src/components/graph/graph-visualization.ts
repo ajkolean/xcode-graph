@@ -26,7 +26,16 @@ import { GraphLayoutController } from '@/controllers/graph-layout.controller';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { TransitiveResult, ViewMode } from '@/types/app';
 import type { PreviewFilter } from '@/types/filters';
-import { css, html, LitElement, svg, type PropertyValues } from 'lit';
+import {
+  css,
+  html,
+  LitElement,
+  svg,
+  type CSSResultGroup,
+  type PropertyDeclarations,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import { query, state } from 'lit/decorators.js';
 import './cluster-group';
 import './graph-edges';
@@ -39,7 +48,7 @@ export class GraphVisualization extends LitElement {
   // Properties
   // ========================================
 
-  static properties = {
+  static override properties: PropertyDeclarations = {
     nodes: { attribute: false },
     edges: { attribute: false },
     selectedNode: { attribute: false },
@@ -84,12 +93,12 @@ export class GraphVisualization extends LitElement {
   // ========================================
 
   private layout = new GraphLayoutController(this, {
-    enableAnimation: this.enableAnimation,
+    enableAnimation: false,
     animationTicks: 30,
   });
 
   private interaction = new GraphInteractionFullController(this, {
-    zoom: this.zoom,
+    zoom: 1,
     finalNodePositions: new Map(),
     clusterPositions: new Map(),
   });
@@ -98,7 +107,7 @@ export class GraphVisualization extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles: CSSResultGroup = css`
     :host {
       display: block;
       position: relative;
@@ -141,32 +150,38 @@ export class GraphVisualization extends LitElement {
   // Lifecycle
   // ========================================
 
-  willUpdate(changedProps: PropertyValues<this>): void {
+  override willUpdate(changedProps: PropertyValues<this>): void {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       // Optimization: Compute nodeMap for O(1) lookups
       this.nodeMap = new Map((this.nodes ?? []).map((n) => [n.id, n]));
 
-      this.layout.enableAnimation = this.enableAnimation;
+      this.layout.enableAnimation = this.enableAnimation ?? false;
       this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
+
+      // Keep interaction controller in sync with fresh layout positions
+      this.interaction.updateConfig({
+        finalNodePositions: this.layout.nodePositions,
+        clusterPositions: this.layout.clusterPositions,
+      });
     }
 
     // Update animation when enableAnimation changes
     if (changedProps.has('enableAnimation')) {
-      this.layout.enableAnimation = this.enableAnimation;
+      this.layout.enableAnimation = this.enableAnimation ?? false;
     }
 
     // Update interaction config when zoom changes
     if (changedProps.has('zoom')) {
       this.interaction.updateConfig({
-        zoom: this.zoom,
+        zoom: this.zoom ?? 1,
         finalNodePositions: this.layout.nodePositions,
         clusterPositions: this.layout.clusterPositions,
       });
     }
   }
 
-  updated(changedProps: PropertyValues<this>): void {
+  override updated(_changedProps: PropertyValues<this>): void {
     // Set SVG element reference
     if (this.svgElement && !this.interaction.hasSvgElement()) {
       this.interaction.setSvgElement(this.svgElement);
@@ -197,18 +212,6 @@ export class GraphVisualization extends LitElement {
     }
   }
 
-  private handleNodeClick(e: CustomEvent) {
-    if (!this.interaction.hasMoved) {
-      this.dispatchEvent(
-        new CustomEvent('node-select', {
-          detail: e.detail,
-          bubbles: true,
-          composed: true,
-        }),
-      );
-    }
-  }
-
   private handleWheel(e: WheelEvent) {
     // Only zoom if Ctrl/Cmd key is pressed (also captures trackpad pinch)
     if (!e.ctrlKey && !e.metaKey) {
@@ -230,7 +233,7 @@ export class GraphVisualization extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render(): TemplateResult {
     return html`
       <graph-background></graph-background>
 
@@ -277,10 +280,10 @@ export class GraphVisualization extends LitElement {
                     selectedNode: this.selectedNode ?? null,
                     hoveredNode: this.hoveredNode ?? null,
                     hoveredClusterId: this.hoveredCluster,
-                    viewMode: this.viewMode,
-                    transitiveDeps: this.transitiveDeps,
-                    transitiveDependents: this.transitiveDependents,
-                    zoom: this.zoom,
+                    viewMode: this.viewMode ?? 'full',
+                    ...(this.transitiveDeps ? { transitiveDeps: this.transitiveDeps } : {}),
+                    ...(this.transitiveDependents ? { transitiveDependents: this.transitiveDependents } : {}),
+                    zoom: this.zoom ?? 1,
                   })}
                 </g>
 
@@ -302,9 +305,9 @@ export class GraphVisualization extends LitElement {
                     hoveredNode: this.hoveredNode ?? null,
                     isClusterHovered: this.hoveredCluster === cluster.id,
                     isClusterSelected: isSelected,
-                    searchQuery: this.searchQuery,
-                    zoom: this.zoom,
-                    previewFilter: this.previewFilter,
+                    searchQuery: this.searchQuery ?? '',
+                    zoom: this.zoom ?? 1,
+                    previewFilter: this.previewFilter ?? null,
                     onClusterClick: () =>
                       this.dispatchEvent(
                         new CustomEvent('cluster-select', {
@@ -313,8 +316,12 @@ export class GraphVisualization extends LitElement {
                           composed: true,
                         }),
                       ),
-                    onClusterMouseEnter: () => (this.hoveredCluster = cluster.id),
-                    onClusterMouseLeave: () => (this.hoveredCluster = null),
+                    onClusterMouseEnter: () => {
+                      this.hoveredCluster = cluster.id;
+                    },
+                    onClusterMouseLeave: () => {
+                      this.hoveredCluster = null;
+                    },
                     onNodeMouseEnter: (nodeId) =>
                       this.dispatchEvent(
                         new CustomEvent('node-hover', {
@@ -332,7 +339,7 @@ export class GraphVisualization extends LitElement {
                         }),
                       ),
                     onNodeMouseDown: (nodeId, e) => this.interaction.handleNodeMouseDown(nodeId, e),
-                    onNodeClick: (node, e) => {
+                    onNodeClick: (node) => {
                       if (!this.interaction.hasMoved) {
                         this.dispatchEvent(
                           new CustomEvent('node-select', {

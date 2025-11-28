@@ -132,7 +132,7 @@ export class GraphClusterCard extends LitElement {
           ry="8"
           fill="${zoomAdjustedColor}${fillAlpha}"
           stroke="none"
-          style="transition: fill 0.2s ease-in-out; cursor: ${cursorStyle}"
+          style="transition: fill var(--durations-normal) ease-in-out; cursor: ${cursorStyle}"
         />
 
         <!-- Border -->
@@ -150,9 +150,9 @@ export class GraphClusterCard extends LitElement {
           stroke-dasharray="${strokeDasharray}"
           stroke-linecap="round"
           style="
-            transition: stroke-opacity 0.2s ease-in-out;
+            transition: stroke-opacity var(--durations-normal) ease-in-out;
             cursor: ${cursorStyle};
-            ${isSelected ? 'animation: marchingAnts 0.8s linear infinite' : ''}
+            ${isSelected ? 'animation: marchingAnts var(--durations-slower) linear infinite' : ''}
           "
         />
 
@@ -162,13 +162,13 @@ export class GraphClusterCard extends LitElement {
           y="${y + 20}"
           fill="${zoomAdjustedColor}"
           style="
-            font-family: DM Sans, sans-serif;
-            font-size: 12px;
+            font-family: var(--fonts-body);
+            font-size: var(--font-sizes-label);
             font-weight: ${fontWeight};
             pointer-events: none;
             opacity: ${textOpacity};
             text-shadow: ${textShadow};
-            transition: opacity 0.2s, font-weight 0.2s, text-shadow 0.2s;
+            transition: opacity var(--durations-normal), font-weight var(--durations-normal), text-shadow var(--durations-normal);
           "
         >
           ${this.cluster.name}
@@ -181,13 +181,13 @@ export class GraphClusterCard extends LitElement {
           text-anchor="end"
           fill="${zoomAdjustedColor}"
           style="
-            font-family: Inter, sans-serif;
-            font-size: 11px;
+            font-family: var(--fonts-body);
+            font-size: var(--font-sizes-sm);
             font-weight: ${fontWeight};
             pointer-events: none;
             opacity: ${textOpacity};
             text-shadow: ${textShadow};
-            transition: opacity 0.2s, font-weight 0.2s, text-shadow 0.2s;
+            transition: opacity var(--durations-normal), font-weight var(--durations-normal), text-shadow var(--durations-normal);
           "
         >
           ${this.cluster.nodes.length} targets

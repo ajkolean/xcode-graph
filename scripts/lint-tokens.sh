@@ -76,9 +76,10 @@ check_pattern \
   "Use var(--colors-*) tokens instead" \
   "error"
 
-# Check for rgba/rgb colors (excluding token files)
+# Check for rgba/rgb colors with hardcoded values (not using var())
+# Matches rgba(N, N, N, N) or rgb(N, N, N) but not rgba(var(...), var(...))
 check_pattern \
-  "rgba?\s*\([^)]+\)" \
+  "rgba?\s*\(\s*[0-9]" \
   "Hardcoded rgba/rgb colors found" \
   "Use var(--colors-*) tokens or var(--colors-*-rgb) with rgba()" \
   "error"
@@ -98,16 +99,16 @@ check_pattern \
   "Use var(--fonts-body), var(--fonts-heading), or var(--fonts-mono)" \
   "error"
 
-# Check for hardcoded opacity values (but not in animations/keyframes context)
+# Check for hardcoded opacity values (but not if already using var())
 check_pattern \
-  "opacity:\s*0\.[0-9]+" \
+  "opacity:\s*0\.[0-9]+[^)]*$" \
   "Hardcoded opacity values found" \
-  "Use var(--opacity-*) tokens (0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)" \
+  "Use var(--opacity-*) tokens (0, 2, 4, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100)" \
   "warning"
 
-# Check for hardcoded transition/duration values
+# Check for hardcoded transition/duration values (not using var(--durations-*))
 check_pattern \
-  "(transition|animation).*[0-9]+m?s(?![a-z])" \
+  "(transition|animation)[^;]*[0-9]+m?s[^a-z(]" \
   "Hardcoded duration values found" \
   "Use var(--durations-fast), var(--durations-normal), var(--durations-slow), or var(--durations-slower)" \
   "warning"

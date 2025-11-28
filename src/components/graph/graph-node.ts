@@ -155,7 +155,7 @@ export class GraphNode extends LitElement {
         @mouseleave=${this.handleMouseLeave}
         @mousedown=${this.handleMouseDown}
         @click=${this.handleClick}
-        style="cursor: pointer; transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)"
+        style="cursor: pointer; transition: opacity var(--durations-slow) ease, transform var(--durations-normal) var(--easings-bounce)"
         opacity="${isDimmed ? 0.25 : 1}"
         transform="scale(${scale}) rotate(${rotation}, ${x}, ${y})"
         transform-origin="${x}px ${y}px"
@@ -346,15 +346,15 @@ export class GraphNode extends LitElement {
                   <text
                     x="${x}"
                     y="${y + size + 24}"
-                    fill="${isSelected || isHovered ? zoomAdjustedColor : 'rgba(225, 228, 232, 0.9)'}"
+                    fill="${isSelected || isHovered ? zoomAdjustedColor : 'rgba(var(--colors-foreground-rgb), var(--opacity-90))'}"
                     text-anchor="middle"
                     style="
-                      font-family: 'JetBrains Mono', 'SF Mono', monospace;
-                      font-size: 11px;
+                      font-family: var(--fonts-mono);
+                      font-size: var(--font-sizes-sm);
                       font-weight: ${isSelected ? '600' : isHovered ? '500' : '400'};
                       letter-spacing: 0.02em;
                       pointer-events: none;
-                      filter: drop-shadow(0 0 8px rgba(8, 10, 15, 0.95)) drop-shadow(0 0 4px rgba(8, 10, 15, 1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+                      filter: drop-shadow(0 0 8px rgba(var(--colors-background-rgb), var(--opacity-95))) drop-shadow(0 0 4px rgba(var(--colors-background-rgb), var(--opacity-100))) drop-shadow(0 1px 2px rgba(0, 0, 0, var(--opacity-80)));
                     "
                   >
                     ${displayName}
@@ -380,8 +380,8 @@ export class GraphNode extends LitElement {
                             fill="${zoomAdjustedColor}"
                             text-anchor="middle"
                             style="
-                              font-family: 'JetBrains Mono', 'SF Mono', monospace;
-                              font-size: 11px;
+                              font-family: var(--fonts-mono);
+                              font-size: var(--font-sizes-sm);
                               font-weight: 500;
                               letter-spacing: 0.02em;
                               pointer-events: none;

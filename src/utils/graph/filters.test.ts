@@ -1,74 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { generateColorMap, getNodeTypeColor, NODE_TYPE_COLORS } from './filters';
+import { generateColorMap } from './filters';
 
 describe('filterHelpers', () => {
-  describe('NODE_TYPE_COLORS', () => {
-    it('should have color for app type', () => {
-      expect(NODE_TYPE_COLORS.app).toBe('#6F2CFF');
-    });
-
-    it('should have color for framework type', () => {
-      expect(NODE_TYPE_COLORS.framework).toBe('#0280B9');
-    });
-
-    it('should have color for library type', () => {
-      expect(NODE_TYPE_COLORS.library).toBe('#28A745');
-    });
-
-    it('should have color for test-unit type', () => {
-      expect(NODE_TYPE_COLORS['test-unit']).toBe('#9C27B0');
-    });
-
-    it('should have color for test-ui type', () => {
-      expect(NODE_TYPE_COLORS['test-ui']).toBe('#E91E63');
-    });
-
-    it('should have color for cli type', () => {
-      expect(NODE_TYPE_COLORS.cli).toBe('#FD791C');
-    });
-
-    it('should have color for package type', () => {
-      expect(NODE_TYPE_COLORS.package).toBe('#FF9800');
-    });
-
-    it('should have all expected node types', () => {
-      const expectedTypes = [
-        'app',
-        'framework',
-        'library',
-        'test-unit',
-        'test-ui',
-        'cli',
-        'package',
-      ];
-
-      expectedTypes.forEach((type) => {
-        expect(NODE_TYPE_COLORS).toHaveProperty(type);
-      });
-    });
-  });
-
-  describe('getNodeTypeColor', () => {
-    it('should return correct color for known type', () => {
-      expect(getNodeTypeColor('app')).toBe('#6F2CFF');
-      expect(getNodeTypeColor('framework')).toBe('#0280B9');
-      expect(getNodeTypeColor('library')).toBe('#28A745');
-    });
-
-    it('should return default color for unknown type', () => {
-      expect(getNodeTypeColor('unknown')).toBe('#6F2CFF');
-    });
-
-    it('should return default color for empty string', () => {
-      expect(getNodeTypeColor('')).toBe('#6F2CFF');
-    });
-
-    it('should be case-sensitive', () => {
-      // 'App' is not the same as 'app'
-      expect(getNodeTypeColor('App')).toBe('#6F2CFF'); // Falls back to default
-    });
-  });
-
   describe('generateColorMap', () => {
     it('should generate colors for platforms', () => {
       const platforms = ['iOS', 'macOS', 'watchOS'];

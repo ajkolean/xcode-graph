@@ -161,7 +161,10 @@ export const useDataStore = create<DataStore>((set, get) => ({
       displayEdges = filteredEdges.filter((e) =>
         transitiveDeps.edges.has(`${e.source}->${e.target}`),
       );
-    } else if (viewMode === 'dependents' && transitiveDependents.nodes.size > 0) {
+    } else if (
+      (viewMode === 'dependents' || viewMode === 'impact') &&
+      transitiveDependents.nodes.size > 0
+    ) {
       displayNodes = filteredNodes.filter(
         (n) => n.id === selectedNodeId || transitiveDependents.nodes.has(n.id),
       );

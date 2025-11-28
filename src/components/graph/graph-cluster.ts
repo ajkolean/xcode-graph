@@ -127,7 +127,7 @@ export class GraphCluster extends LitElement {
         @mouseleave=${this.handleMouseLeave}
         @click=${this.handleClick}
         @keydown=${this.handleKeyDown}
-        style="transition: all 0.3s ease; cursor: pointer"
+        style="transition: all var(--durations-slow) ease; cursor: pointer"
       >
         <!-- Hover glow with smooth transition -->
         ${
@@ -144,7 +144,7 @@ export class GraphCluster extends LitElement {
                 rx="14"
                 opacity="0.6"
                 filter="url(#glow-strong)"
-                style="transition: opacity 0.3s ease, stroke-width 0.3s ease"
+                style="transition: opacity var(--durations-slow) ease, stroke-width var(--durations-slow) ease"
               />
             `
             : ''
@@ -173,7 +173,7 @@ export class GraphCluster extends LitElement {
           stroke="none"
           rx="12"
           opacity="${isHovered ? 0.9 : 0.7}"
-          style="transition: opacity 0.3s ease"
+          style="transition: opacity var(--durations-slow) ease"
         />
 
         <!-- Inner shadow for depth -->
@@ -201,7 +201,7 @@ export class GraphCluster extends LitElement {
           stroke-dasharray="6,6"
           rx="12"
           opacity="${isHovered ? 0.85 : 0.5}"
-          style="transition: all 0.3s ease"
+          style="transition: all var(--durations-slow) ease"
         />
 
         <!-- Cluster label -->
@@ -211,11 +211,11 @@ export class GraphCluster extends LitElement {
           fill="${color}"
           text-anchor="middle"
           style="
-            font-family: DM Sans, sans-serif;
-            font-size: 14px;
-            font-weight: var(--font-weight-medium);
+            font-family: var(--fonts-body);
+            font-size: var(--font-sizes-base);
+            font-weight: var(--font-weights-medium);
             filter: ${isHovered ? 'url(#glow)' : 'none'};
-            transition: filter 0.3s ease;
+            transition: filter var(--durations-slow) ease;
           "
         >
           ${clusterId}
@@ -227,9 +227,9 @@ export class GraphCluster extends LitElement {
           text-anchor="middle"
           opacity="${isHovered ? 0.8 : 0.5}"
           style="
-            font-family: Inter, sans-serif;
-            font-size: 10px;
-            transition: opacity 0.3s ease;
+            font-family: var(--fonts-body);
+            font-size: var(--font-sizes-xs);
+            transition: opacity var(--durations-slow) ease;
           "
         >
           ${origin === 'external' ? 'EXTERNAL' : 'LOCAL'} · ${nodeCount} targets

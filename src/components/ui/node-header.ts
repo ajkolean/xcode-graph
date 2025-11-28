@@ -21,7 +21,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
 import type { GraphNode } from '@/data/mockGraphData';
 import { generateColor } from '@/utils/rendering/color-generator';
-import { getNodeTypeColor } from '@/utils/graph/filters';
+import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import { getNodeIconPath, getNodeTypeLabel } from '@/utils/rendering/node-icons';
 import { adjustColorForZoom } from '@/utils/rendering/zoom-colors';
 

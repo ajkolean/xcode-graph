@@ -18,6 +18,10 @@ interface FilterStore {
   filters: FilterState;
   /** Current search query */
   searchQuery: string;
+  /** All available projects (for active filter detection) */
+  allProjects: Set<string>;
+  /** All available packages (for active filter detection) */
+  allPackages: Set<string>;
 
   // ==================== Actions ====================
   /** Replace all filters */
@@ -52,6 +56,8 @@ const defaultFilters: FilterState = {
 export const useFilterStore = create<FilterStore>((set, get) => ({
   filters: { ...defaultFilters },
   searchQuery: '',
+  allProjects: new Set<string>(),
+  allPackages: new Set<string>(),
 
   setFilters: (filters) => set({ filters }),
   setSearchQuery: (query) => set({ searchQuery: query }),
@@ -105,6 +111,8 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
         projects,
         packages,
       },
+      allProjects: new Set(projects),
+      allPackages: new Set(packages),
     });
   },
 }));
@@ -117,16 +125,27 @@ export const useFilters = () => useFilterStore((s) => s.filters);
 export const useSearchQuery = () => useFilterStore((s) => s.searchQuery);
 
 /** Check if any filters are active (not showing everything) */
+export function hasActiveFilters(
+  filters: FilterState,
+  searchQuery: string,
+  allProjects: Set<string>,
+  allPackages: Set<string>,
+): boolean {
+  const allTypes = 7; // Total node types
+  const allPlatforms = 5;
+  const allOrigins = 2;
+  const projectCount = allProjects.size || filters.projects.size;
+  const packageCount = allPackages.size || filters.packages.size;
+
+  return (
+    filters.nodeTypes.size < allTypes ||
+    filters.platforms.size < allPlatforms ||
+    filters.origins.size < allOrigins ||
+    (projectCount > 0 && filters.projects.size < projectCount) ||
+    (packageCount > 0 && filters.packages.size < packageCount) ||
+    searchQuery !== ''
+  );
+}
+
 export const useHasActiveFilters = () =>
-  useFilterStore((s) => {
-    const { filters, searchQuery } = s;
-    const allTypes = 7; // Total node types
-    const allPlatforms = 5;
-    const allOrigins = 2;
-    return (
-      filters.nodeTypes.size < allTypes ||
-      filters.platforms.size < allPlatforms ||
-      filters.origins.size < allOrigins ||
-      searchQuery !== ''
-    );
-  });
+  useFilterStore((s) => hasActiveFilters(s.filters, s.searchQuery, s.allProjects, s.allPackages));

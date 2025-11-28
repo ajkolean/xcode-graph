@@ -77,79 +77,79 @@ export class GraphControls extends LitElement {
     .container {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 8px 12px;
-      background-color: rgba(15, 15, 20, 0.95);
-      border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
-      border-radius: var(--radius);
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-label);
-      color: var(--color-muted-foreground);
+      gap: var(--spacing-3);
+      padding: var(--spacing-2) var(--spacing-3);
+      background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
+      border: 1px solid color-mix(in srgb, var(--colors-primary) 30%, transparent);
+      border-radius: var(--radii-md);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      color: var(--colors-muted-foreground);
     }
 
     .divider {
       width: 1px;
-      height: 16px;
-      background-color: color-mix(in srgb, var(--primary) 30%, transparent);
+      height: var(--spacing-4);
+      background-color: color-mix(in srgb, var(--colors-primary) 30%, transparent);
     }
 
     .zoom-buttons {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: var(--spacing-1);
     }
 
     .zoom-button {
-      padding: 6px;
-      border-radius: var(--radius);
-      transition: background-color 0.2s;
-      border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+      padding: var(--spacing-1);
+      border-radius: var(--radii-md);
+      transition: background-color var(--durations-normal);
+      border: 1px solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
       background: none;
-      color: var(--color-muted-foreground);
+      color: var(--colors-muted-foreground);
       cursor: pointer;
       display: flex;
       align-items: center;
     }
 
     .zoom-button:hover {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
     }
 
     .zoom-button svg {
-      width: 14px;
-      height: 14px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
 
     .animation-button {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 8px;
-      border-radius: var(--radius);
-      transition: all 0.2s;
+      gap: var(--spacing-1);
+      padding: var(--spacing-1) var(--spacing-2);
+      border-radius: var(--radii-md);
+      transition: all var(--durations-normal);
       border: 1px solid transparent;
       background: none;
       cursor: pointer;
     }
 
     .animation-button.active {
-      border-color: color-mix(in srgb, var(--primary) 50%, transparent);
-      background-color: color-mix(in srgb, var(--primary) 10%, transparent);
-      color: var(--primary);
+      border-color: color-mix(in srgb, var(--colors-primary) 50%, transparent);
+      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      color: var(--colors-primary);
     }
 
     .animation-button:not(.active) {
-      border-color: color-mix(in srgb, var(--primary) 20%, transparent);
-      color: var(--color-muted-foreground);
+      border-color: color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      color: var(--colors-muted-foreground);
     }
 
     .animation-button:hover {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
     }
 
     .orbit-icon {
-      width: 14px;
-      height: 14px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
 
     .orbit-icon svg {
@@ -252,17 +252,17 @@ export class GraphEmptyStateOverlay extends LitElement {
     }
 
     .message {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-base);
-      color: var(--color-muted-foreground);
-      margin-bottom: 8px;
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-base);
+      color: var(--colors-muted-foreground);
+      margin-bottom: var(--spacing-2);
     }
 
     .hint {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-label);
-      color: var(--color-foreground);
-      opacity: 0.4;
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      color: var(--colors-foreground);
+      opacity: var(--opacity-40);
     }
   `;
 
@@ -292,13 +292,13 @@ export class GraphInstructions extends LitElement {
     }
 
     .container {
-      padding: 8px 12px;
-      background-color: rgba(15, 15, 20, 0.95);
-      border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
-      border-radius: var(--radius);
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-label);
-      color: var(--color-muted-foreground);
+      padding: var(--spacing-2) var(--spacing-3);
+      background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
+      border: 1px solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border-radius: var(--radii-md);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      color: var(--colors-muted-foreground);
     }
   `;
 

@@ -5,7 +5,7 @@
 
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { FilterState } from '../schemas/app.schema';
-import { useFilterStore } from './filterStore';
+import { hasActiveFilters, useFilterStore } from './filterStore';
 
 describe('useFilterStore', () => {
   beforeEach(() => {
@@ -27,6 +27,8 @@ describe('useFilterStore', () => {
         packages: new Set(),
       },
       searchQuery: '',
+      allProjects: new Set(),
+      allPackages: new Set(),
     });
   });
 
@@ -232,6 +234,43 @@ describe('useFilterStore', () => {
       useFilterStore.getState().setSearchQuery('test');
       const searchQuery = useFilterStore.getState().searchQuery;
       expect(searchQuery).toBe('test');
+    });
+  });
+
+  describe('useHasActiveFilters', () => {
+    it('detects project filters when a subset is selected', () => {
+      useFilterStore.setState({
+        filters: {
+          nodeTypes: new Set([
+            'app',
+            'framework',
+            'library',
+            'test-unit',
+            'test-ui',
+            'cli',
+            'package',
+          ]),
+          platforms: new Set(['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS']),
+          origins: new Set(['local', 'external']),
+          projects: new Set(['ProjectA', 'ProjectB']),
+          packages: new Set(['PackageX']),
+        },
+        searchQuery: '',
+        allProjects: new Set(['ProjectA', 'ProjectB']),
+        allPackages: new Set(['PackageX']),
+      });
+
+      let state = useFilterStore.getState();
+      expect(
+        hasActiveFilters(state.filters, state.searchQuery, state.allProjects, state.allPackages),
+      ).toBe(false);
+
+      useFilterStore.getState().toggleProject('ProjectB');
+
+      state = useFilterStore.getState();
+      expect(
+        hasActiveFilters(state.filters, state.searchQuery, state.allProjects, state.allPackages),
+      ).toBe(true);
     });
   });
 

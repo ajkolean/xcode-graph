@@ -79,7 +79,7 @@ export function renderClusterCard(options: ClusterCardOptions) {
         ry="8"
         fill="${zoomAdjustedColor}${fillAlpha}"
         stroke="none"
-        style="transition: fill 0.2s ease-in-out"
+        style="transition: fill var(--durations-normal) ease-in-out"
       />
 
       <!-- Border -->
@@ -97,8 +97,8 @@ export function renderClusterCard(options: ClusterCardOptions) {
         stroke-dasharray="${strokeDasharray}"
         stroke-linecap="round"
         style="
-          transition: stroke-opacity 0.2s ease-in-out;
-          ${isSelected ? 'animation: marchingAnts 0.8s linear infinite' : ''}
+          transition: stroke-opacity var(--durations-normal) ease-in-out;
+          ${isSelected ? 'animation: marchingAnts var(--durations-slower) linear infinite' : ''}
         "
       />
 
@@ -114,7 +114,7 @@ export function renderClusterCard(options: ClusterCardOptions) {
           pointer-events: none;
           opacity: ${textOpacity};
           text-shadow: ${textShadow};
-          transition: opacity 0.2s, font-weight 0.2s, text-shadow 0.2s;
+          transition: opacity var(--durations-normal), font-weight var(--durations-normal), text-shadow var(--durations-normal);
         "
       >
         ${cluster.name}
@@ -133,7 +133,7 @@ export function renderClusterCard(options: ClusterCardOptions) {
           pointer-events: none;
           opacity: ${textOpacity};
           text-shadow: ${textShadow};
-          transition: opacity 0.2s, font-weight 0.2s, text-shadow 0.2s;
+          transition: opacity var(--durations-normal), font-weight var(--durations-normal), text-shadow var(--durations-normal);
         "
       >
         ${cluster.nodes.length} targets
@@ -195,7 +195,7 @@ export function renderGraphNode(options: GraphNodeOptions) {
       @mouseleave=${onMouseLeave}
       @mousedown=${onMouseDown}
       @click=${onClick}
-      style="cursor: pointer; transition: opacity 0.3s ease, transform 0.2s ease"
+      style="cursor: pointer; transition: opacity var(--durations-slow) ease, transform var(--durations-normal) ease"
       opacity="${isDimmed ? 0.3 : 1}"
       transform="scale(${scale})"
       transform-origin="${x}px ${y}px"
@@ -386,7 +386,7 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
   const path = useBezier ? generateBezierPath(x1, y1, x2, y2) : `M ${x1},${y1} L ${x2},${y2}`;
 
   return svg`
-    <g class="graph-edge" style="transition: opacity 0.3s ease">
+    <g class="graph-edge" style="transition: opacity var(--durations-slow) ease">
       ${
         isHighlighted
           ? svg`
@@ -413,7 +413,7 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
         stroke-dasharray="${dashPattern}"
         class="${animated ? 'flow-animation' : ''}"
         shape-rendering="geometricPrecision"
-        style="transition: opacity 0.3s ease, stroke-width 0.2s ease"
+        style="transition: opacity var(--durations-slow) ease, stroke-width var(--durations-normal) ease"
       />
     </g>
   `;
@@ -467,7 +467,11 @@ function getEdgeOpacity(
     return 1.0 - (depth / maxDepth) * 0.7;
   }
 
-  if (viewMode === 'dependents' && inDependentsChain && transitiveDependents) {
+  if (
+    (viewMode === 'dependents' || viewMode === 'impact') &&
+    inDependentsChain &&
+    transitiveDependents
+  ) {
     const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
     const maxDepth = transitiveDependents.maxDepth || 1;
     return 1.0 - (depth / maxDepth) * 0.7;

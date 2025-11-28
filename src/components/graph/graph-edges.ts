@@ -91,7 +91,11 @@ export class GraphEdges extends LitElement {
       return 1.0 - (depth / maxDepth) * 0.7;
     }
 
-    if (viewMode === 'dependents' && inDependentsChain && this.transitiveDependents) {
+    if (
+      (viewMode === 'dependents' || viewMode === 'impact') &&
+      inDependentsChain &&
+      this.transitiveDependents
+    ) {
       const depth = this.transitiveDependents.edgeDepths.get(edgeKey) || 0;
       const maxDepth = this.transitiveDependents.maxDepth || 1;
       return 1.0 - (depth / maxDepth) * 0.7;

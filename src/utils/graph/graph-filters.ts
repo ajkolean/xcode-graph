@@ -12,6 +12,8 @@ export function applyGraphFilters(
   filters: FilterState,
   searchQuery: string,
 ) {
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
   // Filter nodes
   const filteredNodes = nodes.filter((node) => {
     if (!filters.nodeTypes.has(node.type)) return false;
@@ -22,8 +24,14 @@ export function applyGraphFilters(
     if (node.type === 'package' && !filters.packages.has(node.name)) return false;
 
     // Search filter
-    if (searchQuery && !node.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
+    if (normalizedQuery) {
+      const matchesName = node.name.toLowerCase().includes(normalizedQuery);
+      const matchesProject = node.project?.toLowerCase().includes(normalizedQuery);
+      const matchesPackage = node.type === 'package' && node.name.toLowerCase().includes(normalizedQuery);
+
+      if (!matchesName && !matchesProject && !matchesPackage) {
+        return false;
+      }
     }
 
     return true;
@@ -35,7 +43,7 @@ export function applyGraphFilters(
     (edge) => filteredNodeIds.has(edge.source) && filteredNodeIds.has(edge.target),
   );
 
-  const searchResults = searchQuery ? filteredNodes.length : null;
+  const searchResults = normalizedQuery ? filteredNodes.length : null;
 
   return {
     filteredNodes,

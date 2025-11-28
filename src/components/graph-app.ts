@@ -76,7 +76,7 @@ export class GraphApp extends LitElement {
       height: 100vh;
       background-color: var(--color-background);
       color: var(--color-foreground);
-      font-family: 'Inter', sans-serif;
+      font-family: var(--fonts-body);
     }
 
     .main-layout {

@@ -473,13 +473,12 @@ export class GraphDataService {
     const totalDeps = counts.reduce((sum, c) => sum + c, 0);
     const avgDeps = this.nodes.length > 0 ? totalDeps / this.nodes.length : 0;
     const maxDeps = Math.max(0, ...counts);
-    // Isolated: count is 0. Note: nodes with NO outgoing edges are "leaves" in dependency graph, but might have incoming.
-    // "Isolated" usually means NO edges at all (incoming or outgoing).
-    // BUT, original code: isolated = counts.filter(c => c === 0).length.
-    // This only checks if it has 0 OUTGOING edges (dependencies).
-    // So I will stick to that definition to match existing behavior.
-    
-    const isolated = counts.filter((c) => c === 0).length;
+    // Isolated means no incoming or outgoing edges
+    const isolated = this.nodes.filter((node) => {
+      const outgoing = this.outgoingEdges.get(node.id)?.length ?? 0;
+      const incoming = this.incomingEdges.get(node.id)?.length ?? 0;
+      return outgoing === 0 && incoming === 0;
+    }).length;
 
     return {
       totalNodes: this.nodes.length,
