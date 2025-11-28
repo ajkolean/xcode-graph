@@ -1,6 +1,7 @@
 import type { Preview } from '@storybook/web-components';
 import { within as withinShadow } from 'shadow-dom-testing-library';
 import isChromatic from 'chromatic/isChromatic';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 
 // Import global styles
 import '../src/index.css';
@@ -17,23 +18,24 @@ import '../src/components-lit/ui/sidebar-collapse-icon';
 import '../src/components-lit/ui/stats-card';
 
 const preview: Preview = {
+  initialGlobals: {
+    viewport: { value: 'desktop', isRotated: false },
+  },
   parameters: {
     viewport: {
-      viewports: {
+      options: {
+        ...INITIAL_VIEWPORTS,
         desktop: {
           name: 'Desktop',
           styles: { width: '1280px', height: '720px' },
+          type: 'desktop',
         },
         largeDesktop: {
           name: 'Large Desktop',
           styles: { width: '1920px', height: '1080px' },
-        },
-        mobile: {
-          name: 'Mobile',
-          styles: { width: '375px', height: '667px' },
+          type: 'desktop',
         },
       },
-      defaultViewport: 'desktop',
     },
     controls: {
       matchers: {
