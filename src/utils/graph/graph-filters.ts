@@ -3,8 +3,8 @@
  * Converted from useGraphFilters hook
  */
 
-import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { FilterState } from '../types/app';
+import type { GraphEdge, GraphNode } from '../../schemas/graph.schema';
+import type { FilterState } from '../../types/app';
 
 export function applyGraphFilters(
   nodes: GraphNode[],

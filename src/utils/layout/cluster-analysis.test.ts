@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { GraphEdge, GraphNode } from '../../schemas/graph.schema';
-import { createNode } from '../../test/fixtures';
+import { createNode } from '../../fixtures';
 import type { Cluster } from '../../types/cluster';
 import { analyzeCluster, assignLayers, determineRole, identifyAnchors } from './cluster-analysis';
 

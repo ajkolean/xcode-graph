@@ -4,6 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect } from 'storybook/test';
 import '../components/ui/right-sidebar';
 import { mockGraphEdges } from './fixtures/mockEdges';
 import { mockGraphNodes } from './fixtures/mockNodes';
@@ -51,4 +52,24 @@ export const Default: Story = {
       ></graph-right-sidebar>
     </div>
   `,
+  play: async ({ canvas, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
+
+    await step('Verify sidebar header is present', async () => {
+      const header = await canvas.findByShadowText('Filters');
+      await expect(header).toBeTruthy();
+    });
+
+    await step('Verify stats cards display', async () => {
+      const nodesLabel = await canvas.findByShadowText('Nodes');
+      await expect(nodesLabel).toBeTruthy();
+    });
+
+    await step('Verify filter sections are present', async () => {
+      const productTypes = await canvas.findByShadowText('Product Types');
+      await expect(productTypes).toBeTruthy();
+    });
+  },
 };

@@ -4,6 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect, userEvent } from 'storybook/test';
 import { renderClusterCard } from '../../components/graph/svg-renderers';
 
 const meta = {
@@ -103,6 +104,33 @@ export const Default: Story = {
         </svg>
       </div>
     `;
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('Wait for SVG to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    await step('Verify SVG exists', async () => {
+      const svg = canvasElement.querySelector('svg');
+      await expect(svg).toBeTruthy();
+    });
+
+    await step('Verify cluster label is rendered', async () => {
+      const svg = canvasElement.querySelector('svg');
+      const labels = svg?.querySelectorAll('text');
+      const labelTexts = Array.from(labels || []).map((t) => t.textContent);
+      await expect(labelTexts.join(' ')).toContain('FeatureKit');
+    });
+
+    await step('Hover over cluster card', async () => {
+      const svg = canvasElement.querySelector('svg');
+      const rect = svg?.querySelector('rect');
+      if (rect) {
+        await userEvent.hover(rect);
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        await userEvent.unhover(rect);
+      }
+    });
   },
 };
 

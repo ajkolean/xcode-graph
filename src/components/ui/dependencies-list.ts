@@ -18,6 +18,7 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphNode } from '@/schemas/graph.schema';
 import './list-item-row';
+import './section-header.js';
 
 export class GraphDependenciesList extends LitElement {
   // ========================================
@@ -44,26 +45,6 @@ export class GraphDependenciesList extends LitElement {
       display: block;
       padding: var(--spacing-md);
       border-bottom: var(--border-widths-thin) solid var(--colors-border);
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: var(--spacing-3);
-    }
-
-    .title {
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-sm);
-      color: var(--colors-muted-foreground);
-    }
-
-    .count {
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-xs);
-      color: var(--colors-foreground);
-      opacity: var(--opacity-30);
     }
 
     .empty {
@@ -122,10 +103,11 @@ export class GraphDependenciesList extends LitElement {
     const count = this.dependencies?.length || 0;
 
     return html`
-      <div class="header">
-        <div class="title">Dependencies</div>
-        <div class="count">${count} direct</div>
-      </div>
+      <graph-section-header
+        title="Dependencies"
+        count=${count}
+        suffix="direct"
+      ></graph-section-header>
 
       ${
         count === 0

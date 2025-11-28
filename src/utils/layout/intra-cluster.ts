@@ -429,7 +429,7 @@ export function computeMEC(
   positions: NodeCartesian[],
   centerX: number,
   centerY: number,
-  masses?: Map<string, import('./massCalculation').NodeMass>,
+  masses?: Map<string, import('./mass').NodeMass>,
 ): number {
   if (positions.length === 0) return 100;
 

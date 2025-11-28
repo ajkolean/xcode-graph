@@ -6,6 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect, userEvent } from 'storybook/test';
 import '../../components/ui/empty-state';
 
 const meta = {
@@ -44,6 +45,28 @@ export const NoFilters: Story = {
       ></graph-empty-state>
     </div>
   `,
+  play: async ({ canvas, canvasElement, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    await step('Verify empty state title is displayed', async () => {
+      const title = await canvas.findByShadowText('No nodes match filters');
+      await expect(title).toBeTruthy();
+    });
+
+    await step('Verify description is displayed', async () => {
+      const description = await canvas.findByShadowText(
+        'Try adjusting your filter settings or search query',
+      );
+      await expect(description).toBeTruthy();
+    });
+
+    await step('Verify clear button is NOT visible when no active filters', async () => {
+      const clearButton = canvasElement.querySelector('graph-empty-state')?.shadowRoot?.querySelector('.clear-button');
+      await expect(clearButton).toBeNull();
+    });
+  },
 };
 
 export const WithFilters: Story = {
@@ -60,6 +83,33 @@ export const WithFilters: Story = {
       ></graph-empty-state>
     </div>
   `,
+  play: async ({ canvas, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    await step('Verify empty state title is displayed', async () => {
+      const title = await canvas.findByShadowText('No nodes match filters');
+      await expect(title).toBeTruthy();
+    });
+
+    await step('Verify clear button IS visible when filters are active', async () => {
+      const clearButton = await canvas.findByShadowRole('button', { name: /clear all filters/i });
+      await expect(clearButton).toBeTruthy();
+    });
+
+    await step('Click clear all filters button', async () => {
+      const clearButton = await canvas.findByShadowRole('button', { name: /clear all filters/i });
+      await userEvent.click(clearButton);
+    });
+
+    await step('Hover over clear button', async () => {
+      const clearButton = await canvas.findByShadowRole('button', { name: /clear all filters/i });
+      await userEvent.hover(clearButton);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      await userEvent.unhover(clearButton);
+    });
+  },
 };
 
 // ========================================

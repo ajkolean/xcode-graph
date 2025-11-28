@@ -4,6 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect, userEvent } from 'storybook/test';
 import '../components/ui/cluster-details-panel';
 import {
     mockClusterLarge,
@@ -59,4 +60,43 @@ export const Default: Story = {
       ></graph-cluster-details-panel>
     </div>
   `,
+  play: async ({ canvas, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
+
+    await step('Verify cluster header is present', async () => {
+      // The cluster should have a header with its name
+      const clusterHeader = await canvas.findByShadowText('Project');
+      await expect(clusterHeader).toBeTruthy();
+    });
+
+    await step('Verify cluster type badge exists', async () => {
+      const typeBadge = await canvas.findByShadowText('project');
+      await expect(typeBadge).toBeTruthy();
+    });
+
+    await step('Verify targets section exists', async () => {
+      const targetsSection = await canvas.findByShadowText('Targets');
+      await expect(targetsSection).toBeTruthy();
+    });
+
+    await step('Verify metrics section exists', async () => {
+      const metricsSection = await canvas.findByShadowText('Metrics');
+      await expect(metricsSection).toBeTruthy();
+    });
+
+    await step('Hover over a target item if present', async () => {
+      try {
+        const listItems = await canvas.findAllByShadowRole('listitem');
+        if (listItems.length > 0) {
+          await userEvent.hover(listItems[0]);
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          await userEvent.unhover(listItems[0]);
+        }
+      } catch {
+        // No list items, skip this step
+      }
+    });
+  },
 };

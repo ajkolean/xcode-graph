@@ -4,6 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect } from 'storybook/test';
 import '../../components/layout/header';
 
 const meta = {
@@ -22,4 +23,20 @@ export const Default: Story = {
       <graph-header></graph-header>
     </div>
   `,
+  play: async ({ canvasElement, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    await step('Verify header element exists', async () => {
+      const header = canvasElement.querySelector('graph-header');
+      await expect(header).toBeTruthy();
+    });
+
+    await step('Verify header has content', async () => {
+      const header = canvasElement.querySelector('graph-header');
+      const shadowRoot = header?.shadowRoot;
+      await expect(shadowRoot).toBeTruthy();
+    });
+  },
 };

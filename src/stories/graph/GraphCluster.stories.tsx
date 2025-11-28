@@ -6,6 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, svg } from 'lit';
+import { expect, userEvent } from 'storybook/test';
 import '../../components/graph/graph-cluster';
 
 const meta = {
@@ -110,6 +111,31 @@ export const Default: Story = {
       ></graph-cluster>
     </svg>
   `,
+  play: async ({ canvasElement, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    await step('Verify cluster element exists', async () => {
+      const cluster = canvasElement.querySelector('graph-cluster');
+      await expect(cluster).toBeTruthy();
+    });
+
+    await step('Verify cluster label is rendered', async () => {
+      const cluster = canvasElement.querySelector('graph-cluster');
+      const textEl = cluster?.querySelector('text');
+      await expect(textEl?.textContent).toContain('MainApp');
+    });
+
+    await step('Hover over cluster', async () => {
+      const cluster = canvasElement.querySelector('graph-cluster');
+      if (cluster) {
+        await userEvent.hover(cluster);
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        await userEvent.unhover(cluster);
+      }
+    });
+  },
 };
 
 export const Hovered: Story = {
@@ -145,6 +171,23 @@ export const Hovered: Story = {
       ></graph-cluster>
     </svg>
   `,
+  play: async ({ canvasElement, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    await step('Verify cluster is in hovered state', async () => {
+      const cluster = canvasElement.querySelector('graph-cluster');
+      await expect(cluster).toBeTruthy();
+      await expect(cluster?.getAttribute('is-hovered')).not.toBeNull();
+    });
+
+    await step('Verify cluster label shows CoreLib', async () => {
+      const cluster = canvasElement.querySelector('graph-cluster');
+      const textEl = cluster?.querySelector('text');
+      await expect(textEl?.textContent).toContain('CoreLib');
+    });
+  },
 };
 
 export const ExternalOrigin: Story = {

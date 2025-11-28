@@ -4,7 +4,7 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createNode } from '../test/fixtures';
+import { createNode } from '../fixtures';
 import { useGraphStore } from './graphStore';
 
 describe('useGraphStore', () => {

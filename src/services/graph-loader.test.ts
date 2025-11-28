@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { createLinearChain, createProjectGraph } from '../test/fixtures';
+import { createLinearChain, createProjectGraph } from '../fixtures';
 import { GraphLoader, type LoadProgress } from './graph-loader';
 
 describe('GraphLoader', () => {

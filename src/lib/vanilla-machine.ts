@@ -30,6 +30,7 @@ import {
   MachineStatus,
   type Bindable,
   type BindableContext,
+  type BindableFn,
   type BindableRefs,
   type ComputedFn,
   type Machine,
@@ -160,11 +161,12 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
     this.scope = createScope({ id, ids, getRootNode });
 
     const props = machine.props?.({ props: compact(userProps), scope: this.scope }) ?? userProps;
-    this.prop = (key) => props[key];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.prop = ((key: keyof T['props']) => (props as any)[key]) as PropFn<T>;
 
     const context = machine.context?.({
       prop: this.prop,
-      bindable,
+      bindable: bindable as BindableFn,
       scope: this.scope,
       flush(fn) {
         queueMicrotask(fn);
@@ -172,6 +174,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
       getContext: () => this.ctx,
       getComputed: () => this.computed,
       getRefs: () => this.refs,
+      getEvent: () => this.getEvent(),
     });
 
     if (context) {
@@ -191,9 +194,9 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
       },
     };
 
-    this.computed = (key) => {
+    this.computed = ((key: keyof T['computed']) => {
       return (
-        machine.computed?.[key]({
+        machine.computed?.[key]?.({
           context: this.ctx,
           event: this.getEvent(),
           prop: this.prop,
@@ -202,7 +205,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
           computed: this.computed,
         }) ?? {}
       );
-    };
+    }) as ComputedFn<T>;
 
     this.refs = createRefs(machine.refs?.({ prop: this.prop, context: this.ctx }) ?? {});
 
@@ -399,7 +402,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
     keys: T['effect'][] | ((params: Params<T>) => T['effect'][] | undefined) | undefined,
   ): VoidFunction | undefined => {
     const strs = isFunction(keys) ? keys(this.getParams() as Params<T>) : keys;
-    if (!strs) return;
+    if (!strs) return undefined;
     const fns = strs.map((s: T['effect']) => {
       const fn = this.machine.implementations?.effects?.[s as keyof typeof this.machine.implementations.effects];
       if (!fn) warn(`[zag-js] No implementation found for effect "${JSON.stringify(s)}"`);

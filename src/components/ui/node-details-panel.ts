@@ -23,8 +23,7 @@ import { computeNodeDependencies } from '@/utils/graph/node-utils';
 import './node-header';
 import './node-info';
 import './node-actions';
-import './dependencies-list';
-import './dependents-list';
+import './node-list.js';
 import type { Cluster } from '@/types/cluster';
 
 export class GraphNodeDetailsPanel extends LitElement {
@@ -156,19 +155,25 @@ export class GraphNodeDetailsPanel extends LitElement {
         @show-impact=${(e: CustomEvent) => this.bubbleEvent('show-impact', e.detail)}
       ></graph-node-actions>
 
-      <graph-dependencies-list
-        .dependencies=${dependencies}
+      <graph-node-list
+        title="Dependencies"
+        .nodes=${dependencies}
+        suffix="direct"
+        empty-message="No dependencies"
         .zoom=${this.zoom}
         @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
-      ></graph-dependencies-list>
+      ></graph-node-list>
 
-      <graph-dependents-list
-        .dependents=${dependents}
+      <graph-node-list
+        title="Dependents"
+        .nodes=${dependents}
+        suffix="direct"
+        empty-message="No dependents"
         .zoom=${this.zoom}
         @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
-      ></graph-dependents-list>
+      ></graph-node-list>
 
       <graph-node-info .node=${this.node}></graph-node-info>
     `;

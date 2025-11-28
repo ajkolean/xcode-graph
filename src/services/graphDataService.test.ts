@@ -6,7 +6,7 @@ import {
   createLinearChain,
   createNode,
   createProjectGraph,
-} from '../test/fixtures';
+} from '../fixtures';
 import { GraphDataService } from './graphDataService';
 
 describe('GraphDataService', () => {

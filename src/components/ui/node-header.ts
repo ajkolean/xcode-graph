@@ -2,6 +2,7 @@
  * NodeHeader Lit Component
  *
  * Header for node details panel with icon, name, and type badges.
+ * Uses graph-panel-header for consistent layout.
  *
  * @example
  * ```html
@@ -17,14 +18,13 @@
 
 import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { icons } from '@/controllers/icon.adapter';
 import type { GraphNode } from '@/schemas/graph.schema';
 import { generateColor } from '@/utils/rendering/color-generator';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import { getNodeIconPath, getNodeTypeLabel } from '@/utils/rendering/node-icons';
 import { adjustColorForZoom } from '@/utils/rendering/zoom-colors';
 import './badge.js';
+import './panel-header.js';
 
 export class GraphNodeHeader extends LitElement {
   // ========================================
@@ -52,90 +52,10 @@ export class GraphNodeHeader extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: var(--spacing-md);
-      flex-shrink: 0;
-      border-bottom: var(--border-widths-thin) solid var(--colors-border);
     }
 
-    .header-row {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--spacing-3);
-      margin-bottom: var(--spacing-3);
-    }
-
-    .back-button {
-      width: var(--sizes-icon-xl);
-      height: var(--sizes-icon-xl);
-      border-radius: var(--radii-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      background: none;
-      border: none;
-      color: var(--colors-muted-foreground);
-      cursor: pointer;
-      transition: background-color var(--durations-normal);
-      margin-top: var(--spacing-3);
-    }
-
-    .back-button:hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
-    }
-
-    .back-button svg {
-      width: var(--sizes-icon-lg);
-      height: var(--sizes-icon-lg);
-    }
-
-    .content {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-3);
-      flex: 1;
-      min-width: 0;
-    }
-
-    .icon-box {
-      width: var(--spacing-12);
-      height: var(--spacing-12);
-      border-radius: var(--radii-xl);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .name {
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-h2);
-      font-weight: var(--font-weights-semibold);
-      color: var(--colors-foreground);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .subtitle {
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-sm);
-      color: var(--colors-muted-foreground);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .badges {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-      flex-wrap: wrap;
+    graph-panel-header {
+      --panel-header-padding: var(--spacing-md);
     }
   `;
 
@@ -191,70 +111,52 @@ export class GraphNodeHeader extends LitElement {
     const clusterDisplayColor = adjustColorForZoom(clusterColor, this.zoom);
 
     const showClusterBadge = this.node.project || this.node.type === 'package';
+    const subtitle = showClusterBadge
+      ? this.node.type === 'package'
+        ? this.node.name
+        : this.node.project
+      : undefined;
 
     return html`
-      <div class="header-row">
-        <button class="back-button" @click=${this.handleBack}>
-          ${unsafeHTML(icons.ChevronLeft)}
-        </button>
+      <graph-panel-header
+        title=${this.node.name}
+        subtitle=${subtitle || ''}
+        color=${nodeDisplayColor}
+        title-size="lg"
+        @back=${this.handleBack}
+      >
+        <!-- Node Icon -->
+        <svg slot="icon" width="24" height="24" viewBox="-18 -18 36 36">
+          ${svg`
+            <path
+              d="${iconPath}"
+              fill="rgba(15, 15, 20, 0.95)"
+              stroke="${nodeDisplayColor}"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          `}
+        </svg>
 
-        <div class="content">
-          <!-- Icon -->
-          <div
-            class="icon-box"
-            style="
-              background-color: ${nodeDisplayColor}15;
-              box-shadow: 0 0 20px ${nodeDisplayColor}30, 0 0 40px ${nodeDisplayColor}15;
-            "
-          >
-            ${svg`
-              <svg width="24" height="24" viewBox="-18 -18 36 36">
-                <path
-                  d="${iconPath}"
-                  fill="rgba(15, 15, 20, 0.95)"
-                  stroke="${nodeDisplayColor}"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            `}
-          </div>
-
-          <!-- Info -->
-          <div class="info">
-            <h2 class="name">${this.node.name}</h2>
-            ${
-              showClusterBadge
-                ? html`
-                  <div class="subtitle">
-                    ${this.node.type === 'package' ? this.node.name : this.node.project}
-                  </div>
-                `
-                : ''
-            }
-          </div>
-        </div>
-      </div>
-
-      <!-- Badges -->
-      <div class="badges">
+        <!-- Badges -->
         ${
           showClusterBadge
             ? html`
               <graph-badge
+                slot="badges"
                 label=${this.node.type === 'package' ? 'Package' : 'Project'}
                 color=${clusterDisplayColor}
               ></graph-badge>
             `
             : ''
         }
-
         <graph-badge
+          slot="badges"
           label=${getNodeTypeLabel(this.node.type)}
           color=${nodeDisplayColor}
         ></graph-badge>
-      </div>
+      </graph-panel-header>
     `;
   }
 }

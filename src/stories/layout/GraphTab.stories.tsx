@@ -4,6 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect } from 'storybook/test';
 import '../../components/layout/graph-tab';
 import { mockGraphEdges } from '../fixtures/mockEdges';
 import { mockGraphNodes } from '../fixtures/mockNodes';
@@ -53,4 +54,26 @@ export const Default: Story = {
       ></graph-tab>
     </div>
   `,
+  play: async ({ canvasElement, step }) => {
+    await step('Wait for graph tab to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    });
+
+    await step('Verify graph tab element exists', async () => {
+      const graphTab = canvasElement.querySelector('graph-tab');
+      await expect(graphTab).toBeTruthy();
+    });
+
+    await step('Verify graph visualization is rendered', async () => {
+      const graphTab = canvasElement.querySelector('graph-tab');
+      const graphViz = graphTab?.shadowRoot?.querySelector('graph-visualization');
+      await expect(graphViz).toBeTruthy();
+    });
+
+    await step('Verify right sidebar is rendered', async () => {
+      const graphTab = canvasElement.querySelector('graph-tab');
+      const sidebar = graphTab?.shadowRoot?.querySelector('graph-right-sidebar');
+      await expect(sidebar).toBeTruthy();
+    });
+  },
 };

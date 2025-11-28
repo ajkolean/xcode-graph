@@ -4,6 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect, userEvent } from 'storybook/test';
 import '../../components/ui/collapsed-sidebar';
 import { mockGraphEdges } from '../fixtures/mockEdges';
 import { mockGraphNodes } from '../fixtures/mockNodes';
@@ -55,4 +56,30 @@ export const Default: Story = {
       ></graph-collapsed-sidebar>
     </div>
   `,
+  play: async ({ canvasElement, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    await step('Verify collapsed sidebar exists', async () => {
+      const sidebar = canvasElement.querySelector('graph-collapsed-sidebar');
+      await expect(sidebar).toBeTruthy();
+    });
+
+    await step('Verify filter icons are present', async () => {
+      const sidebar = canvasElement.querySelector('graph-collapsed-sidebar');
+      const buttons = sidebar?.shadowRoot?.querySelectorAll('button');
+      await expect(buttons?.length).toBeGreaterThan(0);
+    });
+
+    await step('Hover over first filter icon', async () => {
+      const sidebar = canvasElement.querySelector('graph-collapsed-sidebar');
+      const firstButton = sidebar?.shadowRoot?.querySelector('button');
+      if (firstButton) {
+        await userEvent.hover(firstButton);
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        await userEvent.unhover(firstButton);
+      }
+    });
+  },
 };

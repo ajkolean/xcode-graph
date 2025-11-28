@@ -4,6 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect, userEvent, waitFor } from 'storybook/test';
 import '../../components/ui/filter-view';
 import type { FilterState } from '../../types/app';
 
@@ -129,6 +130,40 @@ export const Default: Story = {
       ></graph-filter-view>
     </div>
   `,
+  play: async ({ canvas, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
+
+    await step('Verify stats cards display', async () => {
+      const nodesLabel = await canvas.findByShadowText('Nodes');
+      await expect(nodesLabel).toBeTruthy();
+      const depsLabel = await canvas.findByShadowText('Dependencies');
+      await expect(depsLabel).toBeTruthy();
+    });
+
+    await step('Verify filter sections are present', async () => {
+      const productTypes = await canvas.findByShadowText('Product Types');
+      await expect(productTypes).toBeTruthy();
+      const platforms = await canvas.findByShadowText('Platforms');
+      await expect(platforms).toBeTruthy();
+      const projects = await canvas.findByShadowText('Projects');
+      await expect(projects).toBeTruthy();
+      const packages = await canvas.findByShadowText('Packages');
+      await expect(packages).toBeTruthy();
+    });
+
+    await step('Verify search bar placeholder', async () => {
+      const searchInput = await canvas.findByShadowRole('textbox');
+      await expect(searchInput).toHaveAttribute('placeholder', 'Filter nodes...');
+    });
+
+    await step('Type in search bar', async () => {
+      const searchInput = await canvas.findByShadowRole('textbox');
+      await userEvent.type(searchInput, 'Core');
+      await waitFor(() => expect(searchInput).toHaveValue('Core'));
+    });
+  },
 };
 
 export const WithActiveFilters: Story = {
@@ -154,6 +189,33 @@ export const WithActiveFilters: Story = {
       ></graph-filter-view>
     </div>
   `,
+  play: async ({ canvas, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
+
+    await step('Verify filtered stats display (15/28 nodes)', async () => {
+      const stats = await canvas.findByShadowText('15/28');
+      await expect(stats).toBeTruthy();
+    });
+
+    await step('Verify clear filters button is visible', async () => {
+      const clearButton = await canvas.findByShadowRole('button', { name: /clear filters/i });
+      await expect(clearButton).toBeTruthy();
+    });
+
+    await step('Click clear filters button', async () => {
+      const clearButton = await canvas.findByShadowRole('button', { name: /clear filters/i });
+      await userEvent.click(clearButton);
+    });
+
+    await step('Verify filter items are present', async () => {
+      const appItem = await canvas.findByShadowText('app');
+      await expect(appItem).toBeTruthy();
+      const frameworkItem = await canvas.findByShadowText('framework');
+      await expect(frameworkItem).toBeTruthy();
+    });
+  },
 };
 
 export const WithSearch: Story = {
@@ -179,6 +241,26 @@ export const WithSearch: Story = {
       ></graph-filter-view>
     </div>
   `,
+  play: async ({ canvas, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
+
+    await step('Verify search query is populated', async () => {
+      const searchInput = await canvas.findByShadowRole('textbox');
+      await expect(searchInput).toHaveValue('Core');
+    });
+
+    await step('Verify filtered stats (5/28 nodes)', async () => {
+      const stats = await canvas.findByShadowText('5/28');
+      await expect(stats).toBeTruthy();
+    });
+
+    await step('Verify clear button is visible with search active', async () => {
+      const clearButton = await canvas.findByShadowRole('button', { name: /clear/i });
+      await expect(clearButton).toBeTruthy();
+    });
+  },
 };
 
 export const NoPackages: Story = {

@@ -4,6 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect } from 'storybook/test';
 import '../components/graph/graph-visualization';
 import { mockGraphEdges } from './fixtures/mockEdges';
 import { mockGraphNodes } from './fixtures/mockNodes';
@@ -71,6 +72,24 @@ export const SimpleGraph: Story = {
       ></graph-visualization>
     </div>
   `,
+  play: async ({ canvasElement, step }) => {
+    await step('Wait for graph to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    });
+
+    await step('Verify SVG canvas exists', async () => {
+      const graphViz = canvasElement.querySelector('graph-visualization');
+      const svg = graphViz?.shadowRoot?.querySelector('svg');
+      await expect(svg).toBeTruthy();
+    });
+
+    await step('Verify nodes are rendered', async () => {
+      const graphViz = canvasElement.querySelector('graph-visualization');
+      // Check for cluster groups or node elements
+      const clusters = graphViz?.shadowRoot?.querySelectorAll('graph-cluster-group');
+      await expect(clusters?.length).toBeGreaterThan(0);
+    });
+  },
 };
 
 export const FullGraph: Story = {

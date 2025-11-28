@@ -1,36 +1,72 @@
 /**
- * DependentsList Lit Component
+ * NodeList Lit Component
  *
- * List of node dependents using ListItemRow components.
- * Nearly identical to DependenciesList.
+ * A unified list component for displaying nodes with section header.
+ * Replaces separate dependencies-list and dependents-list components.
  *
  * @example
  * ```html
- * <graph-dependents-list
- *   .dependents=${deps}
- * ></graph-dependents-list>
+ * <graph-node-list
+ *   title="Dependencies"
+ *   .nodes=${dependencies}
+ *   suffix="direct"
+ *   empty-message="No dependencies"
+ *   zoom="1.0"
+ * ></graph-node-list>
  * ```
  *
- * @fires node-select - Dispatched when dependent is clicked (detail: { node })
+ * @fires node-select - Dispatched when node is clicked (detail: { node })
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphNode } from '@/schemas/graph.schema';
-import './list-item-row';
+import './list-item-row.js';
 import './section-header.js';
 
-export class GraphDependentsList extends LitElement {
+export class GraphNodeList extends LitElement {
   // ========================================
   // Properties
   // ========================================
 
-  @property({ attribute: false })
-  declare dependents: GraphNode[];
+  /**
+   * Section title (e.g., "Dependencies", "Dependents")
+   */
+  @property({ type: String })
+  declare title: string;
 
+  /**
+   * Array of nodes to display
+   */
+  @property({ attribute: false })
+  declare nodes: GraphNode[];
+
+  /**
+   * Suffix for count display (e.g., "direct")
+   */
+  @property({ type: String })
+  declare suffix: string;
+
+  /**
+   * Message to show when list is empty
+   */
+  @property({ type: String, attribute: 'empty-message' })
+  declare emptyMessage: string;
+
+  /**
+   * Zoom level for color adjustments
+   */
   @property({ type: Number })
   declare zoom: number;
+
+  constructor() {
+    super();
+    this.title = '';
+    this.suffix = '';
+    this.emptyMessage = 'No items';
+    this.zoom = 1;
+  }
 
   // ========================================
   // Styles
@@ -92,41 +128,45 @@ export class GraphDependentsList extends LitElement {
   }
 
   // ========================================
+  // Helpers
+  // ========================================
+
+  private getNodeSubtitle(node: GraphNode): string {
+    const typeLabel = node.type.charAt(0).toUpperCase() + node.type.slice(1);
+    return node.origin === 'external' ? `External ${typeLabel}` : typeLabel;
+  }
+
+  // ========================================
   // Render
   // ========================================
 
   render() {
-    const count = this.dependents?.length || 0;
+    const count = this.nodes?.length || 0;
 
     return html`
       <graph-section-header
-        title="Dependents"
+        title=${this.title}
         count=${count}
-        suffix="direct"
+        suffix=${this.suffix}
       ></graph-section-header>
 
       ${
         count === 0
-          ? html`<div class="empty">No dependents</div>`
+          ? html`<div class="empty">${this.emptyMessage}</div>`
           : html`
             <div class="list">
-              ${this.dependents.map((dep) => {
-                const subtitle =
-                  dep.origin === 'external'
-                    ? `External ${dep.type.charAt(0).toUpperCase() + dep.type.slice(1)}`
-                    : dep.type.charAt(0).toUpperCase() + dep.type.slice(1);
-
-                return html`
+              ${this.nodes.map(
+                (node) => html`
                   <graph-list-item-row
-                    .node=${dep}
-                    subtitle=${subtitle}
+                    .node=${node}
+                    subtitle=${this.getNodeSubtitle(node)}
                     .zoom=${this.zoom}
                     @row-select=${this.handleNodeSelect}
                     @row-hover=${this.handleNodeHover}
                     @row-hover-end=${this.handleHoverEnd}
                   ></graph-list-item-row>
-                `;
-              })}
+                `,
+              )}
             </div>
           `
       }
@@ -137,11 +177,11 @@ export class GraphDependentsList extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-dependents-list': GraphDependentsList;
+    'graph-node-list': GraphNodeList;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-dependents-list')) {
-  customElements.define('graph-dependents-list', GraphDependentsList);
+if (!customElements.get('graph-node-list')) {
+  customElements.define('graph-node-list', GraphNodeList);
 }

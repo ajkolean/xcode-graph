@@ -5,7 +5,7 @@
 
 import type { ReactiveController } from 'lit';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createLinearChain, createNode } from '../test/fixtures';
+import { createLinearChain, createNode } from '../fixtures';
 import { GraphLayoutController } from './graph-layout.controller';
 
 // Mock host

@@ -6,6 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
+import { expect } from 'storybook/test';
 import '../../components/ui/sidebar-collapse-icon';
 
 const meta = {
@@ -41,6 +42,21 @@ export const Expanded: Story = {
       ></graph-sidebar-collapse-icon>
     </div>
   `,
+  play: async ({ canvasElement, step }) => {
+    await step('Wait for component to render', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    await step('Verify icon element exists', async () => {
+      const icon = canvasElement.querySelector('graph-sidebar-collapse-icon');
+      await expect(icon).toBeTruthy();
+    });
+
+    await step('Verify expanded state (no is-collapsed attribute)', async () => {
+      const icon = canvasElement.querySelector('graph-sidebar-collapse-icon');
+      await expect(icon?.hasAttribute('is-collapsed')).toBe(false);
+    });
+  },
 };
 
 export const Collapsed: Story = {
