@@ -102,9 +102,6 @@ importers:
       '@types/pngjs':
         specifier: ^6.0.5
         version: 6.0.5
-      '@vitest/browser':
-        specifier: ^4.0.14
-        version: 4.0.14(vite@7.2.4(@types/node@24.10.1)(lightningcss@1.25.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.14)
       '@vitest/browser-playwright':
         specifier: ^4.0.14
         version: 4.0.14(playwright@1.57.0)(vite@7.2.4(@types/node@24.10.1)(lightningcss@1.25.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.14)
@@ -123,9 +120,6 @@ importers:
       pixelmatch:
         specifier: ^7.1.0
         version: 7.1.0
-      playwright:
-        specifier: ^1.57.0
-        version: 1.57.0
       pngjs:
         specifier: ^7.0.0
         version: 7.0.0
