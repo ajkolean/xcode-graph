@@ -35,6 +35,18 @@ import './cluster-group';
 import './graph-edges';
 import '../graph/graph-overlays';
 
+interface TransitiveResult {
+  nodes: Set<string>;
+  edges: Set<string>;
+  edgeDepths: Map<string, number>;
+  maxDepth: number;
+}
+
+interface PreviewFilter {
+  type: string;
+  value: string;
+}
+
 export class GraphVisualization extends LitElement {
   // ========================================
   // Properties
@@ -64,9 +76,9 @@ export class GraphVisualization extends LitElement {
   declare viewMode: ViewMode | undefined;
   declare zoom: number | undefined;
   declare enableAnimation: boolean | undefined;
-  declare transitiveDeps: any;
-  declare transitiveDependents: any;
-  declare previewFilter: any;
+  declare transitiveDeps: TransitiveResult | undefined;
+  declare transitiveDependents: TransitiveResult | undefined;
+  declare previewFilter: PreviewFilter | undefined;
 
   // ========================================
   // Internal State
@@ -77,6 +89,8 @@ export class GraphVisualization extends LitElement {
 
   @query('svg')
   private svgElement!: SVGSVGElement;
+
+  private nodeMap: Map<string, GraphNodeType> = new Map();
 
   // ========================================
   // Controllers
@@ -143,6 +157,9 @@ export class GraphVisualization extends LitElement {
   willUpdate(changedProps: Map<string, any>) {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
+      // Optimization: Compute nodeMap for O(1) lookups
+      this.nodeMap = new Map((this.nodes ?? []).map(n => [n.id, n]));
+
       this.layout.enableAnimation = this.enableAnimation;
       this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
     }
@@ -279,6 +296,7 @@ export class GraphVisualization extends LitElement {
                   ${renderGraphEdges({
                     edges: this.edges ?? [],
                     nodes: this.nodes ?? [],
+                    nodeMap: this.nodeMap,
                     finalNodePositions: this.finalNodePositions,
                     clusterPositions: this.layout.clusterPositions,
                     selectedNode: this.selectedNode ?? null,

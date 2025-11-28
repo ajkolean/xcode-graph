@@ -298,4 +298,104 @@ export class GraphDataService {
       platforms,
     };
   }
+
+  // ==================== Graph Analysis ====================
+
+  /**
+   * Check if there's a path between two nodes
+   */
+  hasPath(fromId: string, toId: string): boolean {
+    const visited = new Set<string>();
+    const queue = [fromId];
+
+    while (queue.length > 0) {
+      const currentId = queue.shift()!;
+
+      if (currentId === toId) return true;
+      if (visited.has(currentId)) continue;
+      visited.add(currentId);
+
+      const deps = this.getDirectDependencies(currentId);
+      
+      for (const dep of deps) {
+        if (!visited.has(dep.id)) {
+          queue.push(dep.id);
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Detect circular dependencies
+   */
+  findCircularDependencies(): string[][] {
+    const cycles: string[][] = [];
+    const visited = new Set<string>();
+    const recStack = new Set<string>();
+
+    const dfs = (nodeId: string, path: string[]): void => {
+      visited.add(nodeId);
+      recStack.add(nodeId);
+      path.push(nodeId);
+
+      const deps = this.getDirectDependencies(nodeId);
+
+      for (const dep of deps) {
+        if (!visited.has(dep.id)) {
+          dfs(dep.id, [...path]);
+        } else if (recStack.has(dep.id)) {
+          // Found a cycle
+          const cycleStart = path.indexOf(dep.id);
+          const cycle = path.slice(cycleStart);
+          cycles.push([...cycle, dep.id]);
+        }
+      }
+
+      recStack.delete(nodeId);
+    };
+
+    this.nodes.forEach((node) => {
+      if (!visited.has(node.id)) {
+        dfs(node.id, []);
+      }
+    });
+
+    return cycles;
+  }
+
+  /**
+   * Get overall graph statistics
+   */
+  getGraphStats(): {
+    totalNodes: number;
+    totalEdges: number;
+    avgDependencies: number;
+    maxDependencies: number;
+    isolatedNodes: number;
+  } {
+    const depCounts = new Map<string, number>();
+
+    for (const node of this.nodes) {
+      depCounts.set(node.id, 0);
+    }
+    for (const edge of this.edges) {
+      depCounts.set(edge.source, (depCounts.get(edge.source) || 0) + 1);
+    }
+
+    const counts = Array.from(depCounts.values());
+    const totalDeps = counts.reduce((sum, c) => sum + c, 0);
+    const avgDeps = this.nodes.length > 0 ? totalDeps / this.nodes.length : 0;
+    const maxDeps = Math.max(0, ...counts);
+    const isolated = counts.filter((c) => c === 0).length;
+
+    return {
+      totalNodes: this.nodes.length,
+      totalEdges: this.edges.length,
+      avgDependencies: avgDeps,
+      maxDependencies: maxDeps,
+      isolatedNodes: isolated,
+    };
+  }
 }

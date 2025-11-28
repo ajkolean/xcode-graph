@@ -19,6 +19,7 @@ import { useUIStore, type ActiveTab } from '@/stores/uiStore';
 import { applyGraphFilters } from '@/utils/graphFilters';
 import { computeTransitiveDependencies } from '@/utils/graphTraversal';
 import { mockGraphData } from '@/data/mockGraphData';
+import { GraphDataService } from '@/services/graphDataService';
 import './layout/header';
 import './layout/sidebar';
 import './layout/placeholder-tab';
@@ -37,6 +38,11 @@ const TAB_LABELS: Record<ActiveTab, string> = {
 };
 
 export class GraphApp extends LitElement {
+  // ========================================
+  // Data Service
+  // ========================================
+  private graphDataService = new GraphDataService(mockGraphData.nodes, mockGraphData.edges);
+
   // ========================================
   // Zustand Store Subscriptions
   // ========================================

@@ -114,7 +114,16 @@ export function computeClusterStats(
   const filteredTargetsCount = filteredClusterNodeIds.size;
 
   // Platforms
-  const platforms = new Set(clusterNodes.map((n) => n.platform).filter(Boolean));
+  const platforms = new Set<string>();
+  clusterNodes.forEach((node) => {
+    if (node.platform) platforms.add(node.platform);
+
+    // Defensive: support future shape that may expose multiple platforms
+    const multiPlatform = (node as { platforms?: string[] }).platforms;
+    if (Array.isArray(multiPlatform)) {
+      multiPlatform.filter(Boolean).forEach((platform) => platforms.add(platform));
+    }
+  });
 
   return {
     filteredDependencies,

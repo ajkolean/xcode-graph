@@ -3,15 +3,22 @@
  */
 
 import type { GraphEdge } from '../../data/mockGraphData';
-import { getConnectedNodes as getConnectedNodesService } from '../../services/graphService';
 
 /**
  * Get all nodes connected to a given node (both dependencies and dependents)
- * @deprecated Use graphService.getConnectedNodes instead for more detailed info
  */
 export function getConnectedNodes(nodeId: string, edges: GraphEdge[]): Set<string> {
-  const { dependencies, dependents } = getConnectedNodesService(nodeId, edges);
-  return new Set([...dependencies, ...dependents]);
+  const connected = new Set<string>();
+  
+  for (const edge of edges) {
+    if (edge.source === nodeId) {
+      connected.add(edge.target);
+    } else if (edge.target === nodeId) {
+      connected.add(edge.source);
+    }
+  }
+  
+  return connected;
 }
 
 /**

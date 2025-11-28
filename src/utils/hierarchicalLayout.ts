@@ -136,13 +136,16 @@ function positionNodesInLayout(
   const clusterDimension = Math.max(140, mecRadius * 2 + 30);
 
   for (const originalClusterId of layout.projectIds) {
+    const nodeCount = clusterNodes.filter((n) => nodeToCluster.get(n.id) === originalClusterId).length;
     clusterPositions.set(originalClusterId, {
+      id: originalClusterId,
       x: layout.x,
       y: layout.y,
       width: clusterDimension,
       height: clusterDimension,
       vx: 0,
       vy: 0,
+      nodeCount,
     });
   }
 

@@ -13,6 +13,12 @@
           "members": [
             {
               "kind": "field",
+              "name": "graphDataService",
+              "privacy": "private",
+              "default": "new GraphDataService(mockGraphData.nodes, mockGraphData.edges)"
+            },
+            {
+              "kind": "field",
               "name": "selectedNode",
               "privacy": "private"
             },
@@ -1899,7 +1905,7 @@
               "name": "transitiveDeps",
               "privacy": "public",
               "type": {
-                "text": "any"
+                "text": "TransitiveResult | undefined"
               }
             },
             {
@@ -1907,7 +1913,7 @@
               "name": "transitiveDependents",
               "privacy": "public",
               "type": {
-                "text": "any"
+                "text": "TransitiveResult | undefined"
               }
             },
             {
@@ -1915,7 +1921,7 @@
               "name": "previewFilter",
               "privacy": "public",
               "type": {
-                "text": "any"
+                "text": "PreviewFilter | undefined"
               }
             },
             {
@@ -1933,6 +1939,15 @@
                 "text": "SVGSVGElement"
               },
               "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "nodeMap",
+              "type": {
+                "text": "Map<string, GraphNodeType>"
+              },
+              "privacy": "private",
+              "default": "new Map()"
             },
             {
               "kind": "field",

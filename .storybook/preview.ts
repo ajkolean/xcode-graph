@@ -2,6 +2,12 @@ import type { Preview } from '@storybook/web-components';
 import { within as withinShadow } from 'shadow-dom-testing-library';
 import isChromatic from 'chromatic/isChromatic';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
+import { setCustomElementsManifest } from '@storybook/web-components';
+
+import customElements from '../custom-elements.json' with { type: 'json' };
+
+// Set custom elements manifest for automatic controls generation
+setCustomElementsManifest(customElements);
 
 // Import global styles
 import '../src/index.css';

@@ -152,18 +152,18 @@ function findInitialNodes(nodes: string[], incoming: Record<string, number>): st
 export function topoSort(nodes: string[], edges: Array<{ from: string; to: string }>): string[] {
   const { incoming, outgoing } = initTopoSortStructures(nodes, edges);
   const queue = findInitialNodes(nodes, incoming);
-
-  const result: string[] = [];
-  while (queue.length > 0) {
-    const n = queue.shift()!;
-    result.push(n);
-    for (const v of outgoing[n]) {
+  
+  let head = 0;
+  while (head < queue.length) {
+    const n = queue[head++];
+    const neighbors = outgoing[n] || [];
+    for (const v of neighbors) {
       incoming[v]--;
       if (incoming[v] === 0) queue.push(v);
     }
   }
 
-  return result;
+  return queue;
 }
 
 /**

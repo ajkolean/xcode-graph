@@ -406,6 +406,7 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
 export interface GraphEdgesOptions {
   edges: GraphEdge[];
   nodes: GraphNode[];
+  nodeMap?: Map<string, GraphNode>;
   finalNodePositions: Map<string, NodePosition>;
   clusterPositions: Map<string, ClusterPosition>;
   selectedNode: GraphNode | null;
@@ -470,6 +471,7 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
   const {
     edges,
     nodes,
+    nodeMap,
     finalNodePositions,
     clusterPositions,
     selectedNode,
@@ -484,8 +486,17 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
 
   return svg`
     ${edges.map((edge) => {
-      const sourceNode = nodes.find((n) => n.id === edge.source);
-      const targetNode = nodes.find((n) => n.id === edge.target);
+      let sourceNode: GraphNode | undefined;
+      let targetNode: GraphNode | undefined;
+
+      if (nodeMap) {
+        sourceNode = nodeMap.get(edge.source);
+        targetNode = nodeMap.get(edge.target);
+      } else {
+        sourceNode = nodes.find((n) => n.id === edge.source);
+        targetNode = nodes.find((n) => n.id === edge.target);
+      }
+      
       if (!sourceNode || !targetNode) return nothing;
 
       const sourceClusterId = sourceNode.project || 'External';

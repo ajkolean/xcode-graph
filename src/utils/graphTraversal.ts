@@ -13,11 +13,28 @@ export interface TransitiveResult {
   maxDepth: number;
 }
 
+function buildAdjacency(edges: GraphEdge[]) {
+  const outgoing = new Map<string, string[]>();
+  const incoming = new Map<string, string[]>();
+
+  for (const edge of edges) {
+    if (!outgoing.has(edge.source)) outgoing.set(edge.source, []);
+    if (!incoming.has(edge.target)) incoming.set(edge.target, []);
+
+    outgoing.get(edge.source)!.push(edge.target);
+    incoming.get(edge.target)!.push(edge.source);
+  }
+
+  return { outgoing, incoming };
+}
+
 export function computeTransitiveDependencies(
   viewMode: ViewMode,
   selectedNode: GraphNode | null,
   edges: GraphEdge[],
 ): { transitiveDeps: TransitiveResult; transitiveDependents: TransitiveResult } {
+  const { outgoing, incoming } = buildAdjacency(edges);
+
   // Dependencies (outgoing)
   const transitiveDeps = (() => {
     if ((viewMode !== 'focused' && viewMode !== 'both') || !selectedNode) {
@@ -29,22 +46,25 @@ export function computeTransitiveDependencies(
     const edgeDepths = new Map<string, number>();
     let maxDepth = 0;
 
-    const traverse = (nodeId: string, depth: number) => {
-      if (visitedNodes.has(nodeId)) return;
-      visitedNodes.add(nodeId);
+    const stack: Array<{ id: string; depth: number }> = [{ id: selectedNode.id, depth: 0 }];
+
+    while (stack.length > 0) {
+      const { id, depth } = stack.pop()!;
+      if (visitedNodes.has(id)) continue;
+      visitedNodes.add(id);
       maxDepth = Math.max(maxDepth, depth);
 
-      edges.forEach((edge) => {
-        if (edge.source === nodeId) {
-          const edgeKey = `${edge.source}->${edge.target}`;
+      const neighbors = outgoing.get(id) ?? [];
+      for (const target of neighbors) {
+        const edgeKey = `${id}->${target}`;
+        if (!visitedEdges.has(edgeKey)) {
           visitedEdges.add(edgeKey);
           edgeDepths.set(edgeKey, depth);
-          traverse(edge.target, depth + 1);
         }
-      });
-    };
+        stack.push({ id: target, depth: depth + 1 });
+      }
+    }
 
-    traverse(selectedNode.id, 0);
     return { nodes: visitedNodes, edges: visitedEdges, edgeDepths, maxDepth };
   })();
 
@@ -59,22 +79,25 @@ export function computeTransitiveDependencies(
     const edgeDepths = new Map<string, number>();
     let maxDepth = 0;
 
-    const traverse = (nodeId: string, depth: number) => {
-      if (visitedNodes.has(nodeId)) return;
-      visitedNodes.add(nodeId);
+    const stack: Array<{ id: string; depth: number }> = [{ id: selectedNode.id, depth: 0 }];
+
+    while (stack.length > 0) {
+      const { id, depth } = stack.pop()!;
+      if (visitedNodes.has(id)) continue;
+      visitedNodes.add(id);
       maxDepth = Math.max(maxDepth, depth);
 
-      edges.forEach((edge) => {
-        if (edge.target === nodeId) {
-          const edgeKey = `${edge.source}->${edge.target}`;
+      const neighbors = incoming.get(id) ?? [];
+      for (const source of neighbors) {
+        const edgeKey = `${source}->${id}`;
+        if (!visitedEdges.has(edgeKey)) {
           visitedEdges.add(edgeKey);
           edgeDepths.set(edgeKey, depth);
-          traverse(edge.source, depth + 1);
         }
-      });
-    };
+        stack.push({ id: source, depth: depth + 1 });
+      }
+    }
 
-    traverse(selectedNode.id, 0);
     return { nodes: visitedNodes, edges: visitedEdges, edgeDepths, maxDepth };
   })();
 
