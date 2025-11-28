@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/ui/filter-view';
+import '../../components/ui/filter-view';
 import type { FilterState } from '../../types/app';
 
 // Sample data

@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/ui/sidebar-collapse-icon';
+import '../../components/ui/sidebar-collapse-icon';
 
 const meta = {
   title: 'Design System/Icons/SidebarCollapseIcon',

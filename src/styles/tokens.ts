@@ -77,6 +77,18 @@ export const colorTokens = {
   'stars-color': 'var(--colors-stars-color)',
   'stars-glow': 'var(--colors-stars-glow)',
 
+  // Warning colors
+  warning: 'var(--colors-warning)',
+  'warning-foreground': 'var(--colors-warning-foreground)',
+  'warning-muted': 'var(--colors-warning-muted)',
+
+  // Info colors
+  info: 'var(--colors-info)',
+  'info-foreground': 'var(--colors-info-foreground)',
+
+  // Success colors
+  success: 'var(--colors-success)',
+
   // Semantic colors
   white: 'var(--colors-white)',
   transparent: 'var(--colors-transparent)',
@@ -164,6 +176,32 @@ export const sizeTokens = {
   8: 'var(--sizes-8)',
   9: 'var(--sizes-9)',
   10: 'var(--sizes-10)',
+  // Icon sizes
+  'icon-xs': 'var(--sizes-icon-xs)',
+  'icon-sm': 'var(--sizes-icon-sm)',
+  'icon-md': 'var(--sizes-icon-md)',
+  'icon-lg': 'var(--sizes-icon-lg)',
+  'icon-xl': 'var(--sizes-icon-xl)',
+  // Component sizes
+  'sidebar-collapsed': 'var(--sizes-sidebar-collapsed)',
+  'sidebar-expanded': 'var(--sizes-sidebar-expanded)',
+  'header-height': 'var(--sizes-header-height)',
+  'input-height': 'var(--sizes-input-height)',
+} as const;
+
+export const opacityTokens = {
+  0: 'var(--opacity-0)',
+  5: 'var(--opacity-5)',
+  10: 'var(--opacity-10)',
+  20: 'var(--opacity-20)',
+  30: 'var(--opacity-30)',
+  40: 'var(--opacity-40)',
+  50: 'var(--opacity-50)',
+  60: 'var(--opacity-60)',
+  70: 'var(--opacity-70)',
+  80: 'var(--opacity-80)',
+  90: 'var(--opacity-90)',
+  100: 'var(--opacity-100)',
 } as const;
 
 /**
@@ -181,6 +219,7 @@ export const tokens = {
   durations: durationTokens,
   easings: easingTokens,
   sizes: sizeTokens,
+  opacity: opacityTokens,
 } as const;
 
 /**
@@ -197,6 +236,7 @@ export type ShadowToken = keyof typeof shadowTokens;
 export type DurationToken = keyof typeof durationTokens;
 export type EasingToken = keyof typeof easingTokens;
 export type SizeToken = keyof typeof sizeTokens;
+export type OpacityToken = keyof typeof opacityTokens;
 
 /**
  * Animation names from keyframes

@@ -1,50 +1,78 @@
 /**
- * Data Store - holds graph data and memoized derived state
- * Separates data management from UI state for better performance
+ * Data Store - Graph data and memoized derived state
+ *
+ * Separates data management from UI state for better performance.
+ * Caches filtered and display data to avoid expensive recomputation.
+ *
+ * @module stores/dataStore
  */
 
 import { create } from 'zustand';
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import type { FilterState, ViewMode } from '../schemas/app.schema';
-import { applyGraphFilters } from '../utils/graphFilters';
-import { computeTransitiveDependencies, type TransitiveResult } from '../utils/graphTraversal';
+import { applyGraphFilters } from '../utils/graph/graph-filters';
+import { computeTransitiveDependencies, type TransitiveResult } from '../utils/graph/traversal';
 import { deepEqual } from '../utils/memoization';
 
+/**
+ * Result of filtering graph data
+ */
 interface FilteredData {
+  /** Nodes that pass current filters */
   filteredNodes: GraphNode[];
+  /** Edges between filtered nodes */
   filteredEdges: GraphEdge[];
+  /** Number of search matches (null if no search) */
   searchResults: number | null;
 }
 
+/**
+ * Extended filtered data with transitive dependency info
+ */
 interface DisplayData extends FilteredData {
+  /** Transitive dependencies of selected node */
   transitiveDeps: TransitiveResult;
+  /** Transitive dependents of selected node */
   transitiveDependents: TransitiveResult;
 }
 
+/**
+ * Data store state and actions
+ */
 interface DataStore {
-  // Source data
+  // ==================== Source Data ====================
+  /** All graph nodes */
   nodes: GraphNode[];
+  /** All graph edges */
   edges: GraphEdge[];
 
-  // Cached derived data
+  // ==================== Cache State ====================
+  /** Cached filtered data result */
   _cachedFilteredData: FilteredData | null;
+  /** Cached display data result */
   _cachedDisplayData: DisplayData | null;
+  /** Last filters used for caching */
   _lastFilters: FilterState | null;
+  /** Last search query used for caching */
   _lastSearchQuery: string;
+  /** Last view mode used for caching */
   _lastViewMode: ViewMode;
+  /** Last selected node ID used for caching */
   _lastSelectedNodeId: string | null;
 
-  // Actions
+  // ==================== Actions ====================
+  /** Set graph data (clears cache) */
   setGraphData: (nodes: GraphNode[], edges: GraphEdge[]) => void;
+  /** Get filtered data (uses cache when possible) */
   getFilteredData: (filters: FilterState, searchQuery: string) => FilteredData;
+  /** Get display data including transitive deps (uses cache when possible) */
   getDisplayData: (
     filters: FilterState,
     searchQuery: string,
     viewMode: ViewMode,
     selectedNode: GraphNode | null,
   ) => DisplayData;
-
-  // Clear cache when needed
+  /** Clear all cached data */
   clearCache: () => void;
 }
 
@@ -188,6 +216,9 @@ export const useDataStore = create<DataStore>((set, get) => ({
   },
 }));
 
-// Optimized selectors
+// ==================== Optimized Selectors ====================
+
+/** Get all graph nodes */
 export const useGraphNodes = () => useDataStore((s) => s.nodes);
+/** Get all graph edges */
 export const useGraphEdges = () => useDataStore((s) => s.edges);

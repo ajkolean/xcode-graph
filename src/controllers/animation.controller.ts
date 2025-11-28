@@ -1,35 +1,59 @@
 /**
- * AnimationController
+ * Animation Controller - Physics-based animation loop orchestration
  *
- * Orchestrates physics-based animation loop.
- * Separated from layout and physics for single responsibility.
+ * Orchestrates physics-based animation loop using requestAnimationFrame.
+ * Separated from layout and physics for single responsibility compliance.
  *
- * Responsibilities:
+ * **Responsibilities:**
  * - Animation timing and tick management
- * - RequestAnimationFrame loop
- * - Alpha decay calculation
+ * - RequestAnimationFrame loop coordination
+ * - Alpha decay calculation (force strength over time)
  * - Position updates and velocity damping
- * - Animation lifecycle (start/stop)
+ * - Animation lifecycle management (start/stop)
+ *
+ * **Usage:**
+ * Used by GraphLayoutController to animate layout settling after
+ * initial position computation.
+ *
+ * @module controllers/animation
  */
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { GraphEdge } from '@/data/mockGraphData';
 import type { Cluster } from '@/types/cluster';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
-import { updatePositions } from '@/utils/physics/collision-forces';
+import { updatePositions } from '../utils/physics/collision';
 import type { PhysicsController } from './physics.controller';
 
+// ==================== Type Definitions ====================
+
+/**
+ * Animation configuration options
+ */
 export interface AnimationConfig {
   totalTicks?: number;
   damping?: number;
   autoStart?: boolean;
 }
 
+/**
+ * Callbacks for animation progress tracking
+ */
 export interface AnimationCallbacks {
+  /** Called on each animation frame with tick count and alpha */
   onTick?: (tickCount: number, alpha: number) => void;
+  /** Called when animation completes */
   onComplete?: () => void;
 }
 
+// ==================== Controller Class ====================
+
+/**
+ * Reactive controller for physics-based animation
+ *
+ * Manages requestAnimationFrame loop with configurable tick count and damping.
+ * Uses alpha decay for gradual force reduction over animation duration.
+ */
 export class AnimationController implements ReactiveController {
   private host: ReactiveControllerHost;
 

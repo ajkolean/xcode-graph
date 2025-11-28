@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/ui/filter-icons';
+import '../../components/ui/filter-icons';
 
 const meta = {
   title: 'Design System/Icons/FilterIcons',

@@ -1,6 +1,6 @@
 export default {
-  globs: ['src/components-lit/**/*.ts'],
-  exclude: ['src/components-lit/**/*.test.ts', 'src/components-lit/**/*.stories.ts'],
+  globs: ['src/components/**/*.ts'],
+  exclude: ['src/components/**/*.test.ts', 'src/components/**/*.stories.ts'],
   outdir: '.',
   litelement: true,
   dev: false,

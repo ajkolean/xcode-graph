@@ -1,5 +1,16 @@
+/**
+ * Zustand Controller - Reactive Zustand integration for Lit
+ *
+ * Enables Lit components to reactively subscribe to Zustand store state
+ * changes, automatically triggering re-renders when selected state changes.
+ *
+ * @module controllers/zustand
+ */
+
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { StoreApi, UseBoundStore } from 'zustand';
+
+// ==================== Controller Class ====================
 
 /**
  * A Lit Reactive Controller for subscribing to Zustand stores.
@@ -99,6 +110,8 @@ export class ZustandController<TState, TSelected> implements ReactiveController 
   }
 }
 
+// ==================== Factory Functions ====================
+
 /**
  * Factory function to create a ZustandController with proper typing.
  *
@@ -126,6 +139,8 @@ export function createStoreController<TState, TSelected>(
 ): ZustandController<TState, TSelected> {
   return new ZustandController(host, store, selector);
 }
+
+// ==================== Type Utilities ====================
 
 /**
  * Helper type to extract the state type from a Zustand store

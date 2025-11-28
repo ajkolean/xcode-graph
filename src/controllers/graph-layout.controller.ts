@@ -1,24 +1,36 @@
 /**
- * GraphLayoutController
+ * Graph Layout Controller - Unified layout orchestration
  *
- * Unified controller that composes Layout, Physics, and Animation controllers.
- * Provides the same API as AnimatedLayoutController but with better separation of concerns.
+ * Unified controller that composes Layout, Physics, and Animation controllers
+ * for graph layout computation with optional physics-based settling animation.
  *
- * This is the replacement for AnimatedLayoutController with:
+ * **Architecture:**
  * - Single Responsibility Principle (each sub-controller has one job)
  * - DRY (no duplicate collision code)
  * - Better testability (each controller tested independently)
  * - Lower cognitive complexity
+ *
+ * **Sub-Controllers:**
+ * - `LayoutController`: Computes initial deterministic positions
+ * - `PhysicsController`: Calculates physics forces
+ * - `AnimationController`: Manages animation loop
+ *
+ * @module controllers/graph-layout
  */
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
-import type { Cluster } from '@/types/cluster';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { Cluster } from '../types/cluster';
+import type { ClusterPosition, NodePosition } from '../types/simulation';
 import { AnimationController } from './animation.controller';
 import { LayoutController } from './layout.controller';
 import { PhysicsController } from './physics.controller';
 
+// ==================== Type Definitions ====================
+
+/**
+ * Configuration for graph layout with optional animation
+ */
 export interface GraphLayoutConfig {
   enableAnimation?: boolean;
   animationTicks?: number;
@@ -79,7 +91,7 @@ export class GraphLayoutController implements ReactiveController {
   }
 
   // ========================================
-  // Public API (same as AnimatedLayoutController)
+  // Public API
   // ========================================
 
   /**

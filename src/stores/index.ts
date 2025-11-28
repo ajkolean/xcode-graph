@@ -1,13 +1,19 @@
-// Graph store - selection and view state
+/**
+ * Stores Module - Zustand state management
+ *
+ * Centralized exports for all application state stores:
+ * - graphStore: Selection and view mode state
+ * - filterStore: Filter and search state
+ * - uiStore: UI settings (zoom, animation, tabs)
+ * - dataStore: Graph data and memoized derived state
+ *
+ * @module stores
+ */
 
-// Filter store - filters and search
+// ==================== Graph Store ====================
+
 export {
-  useFilterStore,
-  useFilters,
-  useHasActiveFilters,
-  useSearchQuery,
-} from './filterStore';
-export {
+  useCircularDependencies,
   useGraphStore,
   useHoveredNode,
   useIsNodeSelected,
@@ -16,7 +22,17 @@ export {
   useViewMode,
 } from './graphStore';
 
-// UI store - zoom, tabs, animation, preview
+// ==================== Filter Store ====================
+
+export {
+  useFilterStore,
+  useFilters,
+  useHasActiveFilters,
+  useSearchQuery,
+} from './filterStore';
+
+// ==================== UI Store ====================
+
 export {
   type ActiveTab,
   type PreviewFilter,
@@ -26,3 +42,7 @@ export {
   useUIStore,
   useZoom,
 } from './uiStore';
+
+// ==================== Data Store ====================
+
+export { useDataStore, useGraphEdges, useGraphNodes } from './dataStore';

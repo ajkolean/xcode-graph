@@ -152,8 +152,8 @@ describe('GraphLayoutController', () => {
     });
   });
 
-  describe('API Compatibility', () => {
-    it('should provide same API as AnimatedLayoutController', () => {
+  describe('Public API', () => {
+    it('should expose required methods and properties', () => {
       // Check all public methods exist
       expect(typeof controller.computeLayout).toBe('function');
       expect(typeof controller.stopAnimation).toBe('function');

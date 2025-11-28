@@ -1,13 +1,19 @@
 /**
- * LayoutWorkerController
+ * Layout Worker Controller - Web Worker-based layout computation
  *
  * Uses Web Worker for non-blocking layout computation.
  * Offloads heavy calculations to separate thread for smooth UI.
  *
- * Benefits:
+ * **Benefits:**
  * - Main thread never blocks during layout
  * - Animations run smoothly even with large graphs
  * - Better user experience with complex graphs
+ *
+ * **Architecture:**
+ * Uses Comlink for type-safe worker communication.
+ * Falls back to error state if worker initialization fails.
+ *
+ * @module controllers/layout-worker
  */
 
 import { type Remote, wrap } from 'comlink';
@@ -17,12 +23,25 @@ import type { Cluster } from '@/types/cluster';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import type { LayoutProgress, LayoutWorkerAPI } from '@/workers/layout-api';
 
+// ==================== Type Definitions ====================
+
+/**
+ * Configuration for worker-based layout computation
+ */
 export interface LayoutWorkerConfig {
   enableAnimation?: boolean;
   animationTicks?: number;
   useWorker?: boolean; // Allow fallback to main thread
 }
 
+// ==================== Controller Class ====================
+
+/**
+ * Reactive controller for Web Worker-based layout
+ *
+ * Computes graph layout in a separate thread to avoid blocking the UI.
+ * Supports progress callbacks during animated layout computation.
+ */
 export class LayoutWorkerController implements ReactiveController {
   private host: ReactiveControllerHost;
 
@@ -62,8 +81,8 @@ export class LayoutWorkerController implements ReactiveController {
     }
 
     if (!this.useWorker) {
-      // Fallback to main thread (use existing AnimatedLayoutController logic)
-      throw new Error('Main thread fallback not implemented in this controller');
+      // Fallback to main thread (use GraphLayoutController instead)
+      throw new Error('Main thread fallback not implemented - use GraphLayoutController');
     }
 
     try {

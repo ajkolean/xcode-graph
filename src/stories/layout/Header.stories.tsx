@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/layout/header';
+import '../../components/layout/header';
 
 const meta = {
   title: 'Layout/Header',

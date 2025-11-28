@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/layout/placeholder-tab';
+import '../../components/layout/placeholder-tab';
 
 const meta = {
   title: 'Layout/PlaceholderTab',

@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/graph/graph-svg-defs';
+import '../../components/graph/graph-svg-defs';
 
 const meta = {
   title: 'Graph Visualization/GraphSVGDefs',

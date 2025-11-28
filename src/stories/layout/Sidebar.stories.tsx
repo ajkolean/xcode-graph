@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/layout/sidebar';
+import '../../components/layout/sidebar';
 
 const meta = {
   title: 'Layout/Sidebar',

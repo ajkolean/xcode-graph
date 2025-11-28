@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/ui/collapsed-sidebar';
+import '../../components/ui/collapsed-sidebar';
 import { mockGraphEdges } from '../fixtures/mockEdges';
 import { mockGraphNodes } from '../fixtures/mockNodes';
 

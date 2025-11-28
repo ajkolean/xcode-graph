@@ -40,14 +40,16 @@ export function deepEqual<T>(a: T, b: T): boolean {
   const keysB = Object.keys(b);
   if (keysA.length !== keysB.length) return false;
 
-  return keysA.every((key) => deepEqual((a as any)[key], (b as any)[key]));
+  return keysA.every((key) =>
+    deepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]),
+  );
 }
 
 /**
  * Shallow equality check for objects
  * Faster than deep equality, use when you know nested objects are the same reference
  */
-export function shallowEqual<T extends Record<string, any>>(a: T, b: T): boolean {
+export function shallowEqual<T extends Record<string, unknown>>(a: T, b: T): boolean {
   if (a === b) return true;
   if (a == null || b == null) return false;
 
@@ -63,7 +65,7 @@ export function shallowEqual<T extends Record<string, any>>(a: T, b: T): boolean
  * Creates a memoized selector function
  * Only recomputes when inputs change (using shallow equality)
  */
-export function createMemoizedSelector<TInput extends any[], TOutput>(
+export function createMemoizedSelector<TInput extends unknown[], TOutput>(
   fn: (...args: TInput) => TOutput,
   equalityFn: (a: TInput, b: TInput) => boolean = shallowArrayEqual,
 ): (...args: TInput) => TOutput {
@@ -84,7 +86,7 @@ export function createMemoizedSelector<TInput extends any[], TOutput>(
 /**
  * Shallow equality check for arrays
  */
-function shallowArrayEqual<T extends any[]>(a: T, b: T): boolean {
+function shallowArrayEqual<T extends unknown[]>(a: T, b: T): boolean {
   if (a.length !== b.length) return false;
   return a.every((item, index) => item === b[index]);
 }
@@ -150,8 +152,10 @@ export class LRUCache<K, V> {
 
     // Evict oldest if over size
     if (this.cache.size > this.maxSize) {
-      const firstKey = this.cache.keys().next().value;
-      this.cache.delete(firstKey);
+      const firstKey = this.cache.keys().next().value as K | undefined;
+      if (firstKey !== undefined) {
+        this.cache.delete(firstKey);
+      }
     }
   }
 

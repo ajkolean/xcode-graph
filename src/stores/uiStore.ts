@@ -1,6 +1,17 @@
+/**
+ * UI Store - User interface state management
+ *
+ * Manages UI-specific state including active tab, zoom level,
+ * animation toggle, and preview filter highlights.
+ *
+ * @module stores/uiStore
+ */
+
 import { create } from 'zustand';
 
-// Re-define ActiveTab to avoid circular dependency
+/**
+ * Available application tabs
+ */
 export type ActiveTab =
   | 'overview'
   | 'builds'
@@ -12,25 +23,47 @@ export type ActiveTab =
   | 'bundles'
   | 'graph';
 
+/**
+ * Preview filter for hover highlights
+ *
+ * When hovering over filter options, shows which nodes would be affected
+ */
 export type PreviewFilter = {
+  /** Type of filter being previewed */
   type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
+  /** Value being previewed */
   value: string;
 } | null;
 
+/**
+ * UI store state and actions
+ */
 interface UIStore {
+  /** Currently active application tab */
   activeTab: ActiveTab;
+  /** Current zoom level (0.2 - 2.0) */
   zoom: number;
+  /** Whether layout animation is enabled */
   enableAnimation: boolean;
+  /** Current preview filter for hover effects */
   previewFilter: PreviewFilter;
 
-  // Actions
+  // ==================== Actions ====================
+  /** Change active tab */
   setActiveTab: (tab: ActiveTab) => void;
+  /** Set zoom level (clamped to 0.2-2.0) */
   setZoom: (zoom: number) => void;
+  /** Increase zoom by 0.1 */
   zoomIn: () => void;
+  /** Decrease zoom by 0.1 */
   zoomOut: () => void;
+  /** Reset zoom to 1.0 */
   resetZoom: () => void;
+  /** Toggle animation on/off */
   toggleAnimation: () => void;
+  /** Set animation enabled state */
   setEnableAnimation: (enabled: boolean) => void;
+  /** Set preview filter for hover effects */
   setPreviewFilter: (preview: PreviewFilter) => void;
 }
 
@@ -50,8 +83,13 @@ export const useUIStore = create<UIStore>((set) => ({
   setPreviewFilter: (preview) => set({ previewFilter: preview }),
 }));
 
-// Selectors for optimized subscriptions
+// ==================== Optimized Selectors ====================
+
+/** Get current active tab */
 export const useActiveTab = () => useUIStore((s) => s.activeTab);
+/** Get current zoom level */
 export const useZoom = () => useUIStore((s) => s.zoom);
+/** Get animation enabled state */
 export const useEnableAnimation = () => useUIStore((s) => s.enableAnimation);
+/** Get current preview filter */
 export const usePreviewFilter = () => useUIStore((s) => s.previewFilter);

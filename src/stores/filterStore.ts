@@ -1,22 +1,46 @@
+/**
+ * Filter Store - Graph filtering and search state
+ *
+ * Manages active filters for node types, platforms, origins,
+ * projects, and packages. Also handles search query state.
+ *
+ * @module stores/filterStore
+ */
+
 import { create } from 'zustand';
 import type { FilterState } from '../schemas/app.schema';
 
+/**
+ * Filter store state and actions
+ */
 interface FilterStore {
+  /** Current active filters */
   filters: FilterState;
+  /** Current search query */
   searchQuery: string;
 
-  // Actions
+  // ==================== Actions ====================
+  /** Replace all filters */
   setFilters: (filters: FilterState) => void;
+  /** Update search query */
   setSearchQuery: (query: string) => void;
+  /** Toggle a node type filter on/off */
   toggleNodeType: (type: string) => void;
+  /** Toggle a platform filter on/off */
   togglePlatform: (platform: string) => void;
+  /** Toggle an origin filter on/off */
   toggleOrigin: (origin: string) => void;
+  /** Toggle a project filter on/off */
   toggleProject: (project: string) => void;
+  /** Toggle a package filter on/off */
   togglePackage: (pkg: string) => void;
+  /** Reset filters to defaults */
   clearFilters: (defaults: FilterState) => void;
+  /** Initialize filters from available data */
   initializeFromData: (projects: Set<string>, packages: Set<string>) => void;
 }
 
+/** Default filter configuration - show everything */
 const defaultFilters: FilterState = {
   nodeTypes: new Set(['app', 'framework', 'library', 'test-unit', 'test-ui', 'cli', 'package']),
   platforms: new Set(['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS']),
@@ -85,10 +109,14 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
   },
 }));
 
-// Selectors for optimized subscriptions
+// ==================== Optimized Selectors ====================
+
+/** Get current filters */
 export const useFilters = () => useFilterStore((s) => s.filters);
+/** Get current search query */
 export const useSearchQuery = () => useFilterStore((s) => s.searchQuery);
 
+/** Check if any filters are active (not showing everything) */
 export const useHasActiveFilters = () =>
   useFilterStore((s) => {
     const { filters, searchQuery } = s;

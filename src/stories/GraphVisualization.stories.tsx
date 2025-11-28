@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../components-lit/graph/graph-visualization';
+import '../components/graph/graph-visualization';
 import { mockGraphEdges } from './fixtures/mockEdges';
 import { mockGraphNodes } from './fixtures/mockNodes';
 

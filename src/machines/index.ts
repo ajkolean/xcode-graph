@@ -1,16 +1,29 @@
-// View mode machine
+/**
+ * State Machines Module - Zag-js UI state management
+ *
+ * Centralized exports for all Zag-js state machines that manage
+ * complex UI interactions requiring stateful behavior.
+ *
+ * **Available Machines:**
+ * - `sidebarMachine`: Manages sidebar expand/collapse, tabs, and selections
+ *
+ * @module machines
+ *
+ * @example
+ * ```ts
+ * import { sidebarMachine, type SidebarTab } from '@/machines';
+ *
+ * // Use with Zag-js interpret
+ * const service = interpret(sidebarMachine, { context: {} });
+ * service.start();
+ * ```
+ */
 
-export type { AnimationMachineSchema } from './animation.machine';
-// Animation machine
-export { animationMachine } from './animation.machine';
-export type { ExportFormat, ExportModalMachineSchema } from './exportModal.machine';
-// Export modal machine
-export { exportModalMachine } from './exportModal.machine';
-export type { KeyboardShortcutsMachineSchema } from './keyboardShortcuts.machine';
-// Keyboard shortcuts machine
-export { keyboardShortcutsMachine } from './keyboardShortcuts.machine';
-export type { SidebarMachineSchema, SidebarSection, SidebarTab } from './sidebar.machine';
-// Sidebar machine
-export { sidebarMachine } from './sidebar.machine';
-export type { ViewModeMachineSchema } from './viewMode.machine';
-export { viewModeMachine } from './viewMode.machine';
+// ==================== Sidebar Machine ====================
+
+export {
+  sidebarMachine,
+  type SidebarMachineSchema,
+  type SidebarSection,
+  type SidebarTab,
+} from './sidebar.machine';

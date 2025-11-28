@@ -1,0 +1,20 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src/index.ts"],
+  "entryPointStrategy": "expand",
+  "out": "docs/api",
+  "name": "TuistGraph",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeInternal": true,
+  "includeVersion": true,
+  "categorizeByGroup": true,
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.stories.tsx",
+    "**/node_modules/**"
+  ],
+  "skipErrorChecking": true,
+  "tsconfig": "./tsconfig.json"
+}

@@ -1,4 +1,4 @@
-import './components-lit/graph-app';
+import './components/graph-app';
 import './index.css';
 import './styles/tokens.css';
 

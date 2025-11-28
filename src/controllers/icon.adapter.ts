@@ -1,9 +1,12 @@
 /**
- * Icon Adapter for Lit Components
+ * Icon Adapter - Lucide icons for Lit components
  *
  * Provides framework-agnostic icon support using lucide icons.
  * This adapter allows Lit components to use the same icons as React components.
  *
+ * @module controllers/icon-adapter
+ *
+ * @example
  * Usage in Lit components:
  * ```ts
  * import { html } from 'lit';
@@ -18,10 +21,14 @@
  * ```
  */
 
-// Icon SVG paths from lucide
-// These are the exact SVG definitions from lucide v0.555.0
-// https://github.com/lucide-icons/lucide/tree/main/icons
+// ==================== Icon Definitions ====================
 
+/**
+ * Icon SVG paths from lucide v0.555.0
+ *
+ * These are the exact SVG definitions from the lucide icon library.
+ * @see https://github.com/lucide-icons/lucide/tree/main/icons
+ */
 export const icons = {
   ArrowRight: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
 
@@ -62,7 +69,12 @@ export const icons = {
   ZoomOut: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/></svg>`,
 } as const;
 
+// ==================== Type Definitions ====================
+
+/** Available icon names */
 export type IconName = keyof typeof icons;
+
+// ==================== Helper Functions ====================
 
 /**
  * Get an icon by name

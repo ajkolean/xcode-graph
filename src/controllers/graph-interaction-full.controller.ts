@@ -1,25 +1,44 @@
 /**
- * GraphInteractionController (Full Version)
+ * Graph Interaction Full Controller - Complete pan, zoom, and drag
  *
  * Complete graph interaction controller with pan, zoom, and node dragging.
  * Converted from useGraphInteraction React hook.
  *
- * Features:
- * - Canvas panning
+ * **Features:**
+ * - Canvas panning via background drag
  * - Node dragging with manual positioning
- * - Zoom via wheel
- * - Tracks whether user actually moved (vs just clicked)
+ * - Zoom via wheel (external callback)
+ * - Movement tracking (distinguish click from drag)
+ *
+ * **Difference from GraphInteractionController:**
+ * This controller adds node dragging support with manual position tracking,
+ * making it heavier but more feature-complete.
+ *
+ * @module controllers/graph-interaction-full
  */
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
 
+// ==================== Type Definitions ====================
+
+/**
+ * Configuration for full interaction controller
+ */
 export interface GraphInteractionConfig {
   zoom: number;
   finalNodePositions: Map<string, NodePosition>;
   clusterPositions: Map<string, ClusterPosition>;
 }
 
+// ==================== Controller Class ====================
+
+/**
+ * Reactive controller for complete graph interactions
+ *
+ * Supports canvas pan, zoom, and individual node dragging.
+ * Tracks manual node positions for user-overridden layouts.
+ */
 export class GraphInteractionFullController implements ReactiveController {
   private host: ReactiveControllerHost;
 

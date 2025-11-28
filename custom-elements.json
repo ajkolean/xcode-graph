@@ -4,7 +4,7 @@
   "modules": [
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph-app.ts",
+      "path": "src/components/graph-app.ts",
       "declarations": [
         {
           "kind": "class",
@@ -82,7 +82,7 @@
           "name": "GraphApp",
           "declaration": {
             "name": "GraphApp",
-            "module": "src/components-lit/graph-app.ts"
+            "module": "src/components/graph-app.ts"
           }
         },
         {
@@ -90,14 +90,14 @@
           "name": "graph-app",
           "declaration": {
             "name": "GraphApp",
-            "module": "src/components-lit/graph-app.ts"
+            "module": "src/components/graph-app.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/cluster-card.ts",
+      "path": "src/components/graph/cluster-card.ts",
       "declarations": [
         {
           "kind": "class",
@@ -299,7 +299,7 @@
           "name": "GraphClusterCard",
           "declaration": {
             "name": "GraphClusterCard",
-            "module": "src/components-lit/graph/cluster-card.ts"
+            "module": "src/components/graph/cluster-card.ts"
           }
         },
         {
@@ -307,14 +307,14 @@
           "name": "graph-cluster-card",
           "declaration": {
             "name": "GraphClusterCard",
-            "module": "src/components-lit/graph/cluster-card.ts"
+            "module": "src/components/graph/cluster-card.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/cluster-group.ts",
+      "path": "src/components/graph/cluster-group.ts",
       "declarations": [
         {
           "kind": "class",
@@ -596,7 +596,7 @@
           "name": "GraphClusterGroup",
           "declaration": {
             "name": "GraphClusterGroup",
-            "module": "src/components-lit/graph/cluster-group.ts"
+            "module": "src/components/graph/cluster-group.ts"
           }
         },
         {
@@ -604,14 +604,14 @@
           "name": "graph-cluster-group",
           "declaration": {
             "name": "GraphClusterGroup",
-            "module": "src/components-lit/graph/cluster-group.ts"
+            "module": "src/components/graph/cluster-group.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/graph-cluster.ts",
+      "path": "src/components/graph/graph-cluster.ts",
       "declarations": [
         {
           "kind": "class",
@@ -827,7 +827,7 @@
           "name": "GraphCluster",
           "declaration": {
             "name": "GraphCluster",
-            "module": "src/components-lit/graph/graph-cluster.ts"
+            "module": "src/components/graph/graph-cluster.ts"
           }
         },
         {
@@ -835,14 +835,14 @@
           "name": "graph-cluster",
           "declaration": {
             "name": "GraphCluster",
-            "module": "src/components-lit/graph/graph-cluster.ts"
+            "module": "src/components/graph/graph-cluster.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/graph-edge.ts",
+      "path": "src/components/graph/graph-edge.ts",
       "declarations": [
         {
           "kind": "class",
@@ -1062,7 +1062,7 @@
           "name": "GraphEdge",
           "declaration": {
             "name": "GraphEdge",
-            "module": "src/components-lit/graph/graph-edge.ts"
+            "module": "src/components/graph/graph-edge.ts"
           }
         },
         {
@@ -1070,14 +1070,14 @@
           "name": "graph-edge",
           "declaration": {
             "name": "GraphEdge",
-            "module": "src/components-lit/graph/graph-edge.ts"
+            "module": "src/components/graph/graph-edge.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/graph-edges.ts",
+      "path": "src/components/graph/graph-edges.ts",
       "declarations": [
         {
           "kind": "class",
@@ -1253,7 +1253,7 @@
           "name": "GraphEdges",
           "declaration": {
             "name": "GraphEdges",
-            "module": "src/components-lit/graph/graph-edges.ts"
+            "module": "src/components/graph/graph-edges.ts"
           }
         },
         {
@@ -1261,14 +1261,14 @@
           "name": "graph-edges",
           "declaration": {
             "name": "GraphEdges",
-            "module": "src/components-lit/graph/graph-edges.ts"
+            "module": "src/components/graph/graph-edges.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/graph-node.ts",
+      "path": "src/components/graph/graph-node.ts",
       "declarations": [
         {
           "kind": "class",
@@ -1532,7 +1532,7 @@
           "name": "GraphNode",
           "declaration": {
             "name": "GraphNode",
-            "module": "src/components-lit/graph/graph-node.ts"
+            "module": "src/components/graph/graph-node.ts"
           }
         },
         {
@@ -1540,14 +1540,14 @@
           "name": "graph-node",
           "declaration": {
             "name": "GraphNode",
-            "module": "src/components-lit/graph/graph-node.ts"
+            "module": "src/components/graph/graph-node.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/graph-overlays.ts",
+      "path": "src/components/graph/graph-overlays.ts",
       "declarations": [
         {
           "kind": "class",
@@ -1718,7 +1718,7 @@
           "name": "GraphBackground",
           "declaration": {
             "name": "GraphBackground",
-            "module": "src/components-lit/graph/graph-overlays.ts"
+            "module": "src/components/graph/graph-overlays.ts"
           }
         },
         {
@@ -1726,7 +1726,7 @@
           "name": "GraphControls",
           "declaration": {
             "name": "GraphControls",
-            "module": "src/components-lit/graph/graph-overlays.ts"
+            "module": "src/components/graph/graph-overlays.ts"
           }
         },
         {
@@ -1734,7 +1734,7 @@
           "name": "GraphEmptyStateOverlay",
           "declaration": {
             "name": "GraphEmptyStateOverlay",
-            "module": "src/components-lit/graph/graph-overlays.ts"
+            "module": "src/components/graph/graph-overlays.ts"
           }
         },
         {
@@ -1742,7 +1742,7 @@
           "name": "GraphInstructions",
           "declaration": {
             "name": "GraphInstructions",
-            "module": "src/components-lit/graph/graph-overlays.ts"
+            "module": "src/components/graph/graph-overlays.ts"
           }
         },
         {
@@ -1750,7 +1750,7 @@
           "name": "graph-background",
           "declaration": {
             "name": "GraphBackground",
-            "module": "src/components-lit/graph/graph-overlays.ts"
+            "module": "src/components/graph/graph-overlays.ts"
           }
         },
         {
@@ -1758,7 +1758,7 @@
           "name": "graph-controls",
           "declaration": {
             "name": "GraphControls",
-            "module": "src/components-lit/graph/graph-overlays.ts"
+            "module": "src/components/graph/graph-overlays.ts"
           }
         },
         {
@@ -1766,7 +1766,7 @@
           "name": "graph-visualization-empty-state",
           "declaration": {
             "name": "GraphEmptyStateOverlay",
-            "module": "src/components-lit/graph/graph-overlays.ts"
+            "module": "src/components/graph/graph-overlays.ts"
           }
         },
         {
@@ -1774,14 +1774,14 @@
           "name": "graph-instructions",
           "declaration": {
             "name": "GraphInstructions",
-            "module": "src/components-lit/graph/graph-overlays.ts"
+            "module": "src/components/graph/graph-overlays.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/graph-svg-defs.ts",
+      "path": "src/components/graph/graph-svg-defs.ts",
       "declarations": [
         {
           "kind": "class",
@@ -1802,7 +1802,7 @@
           "name": "GraphSVGDefs",
           "declaration": {
             "name": "GraphSVGDefs",
-            "module": "src/components-lit/graph/graph-svg-defs.ts"
+            "module": "src/components/graph/graph-svg-defs.ts"
           }
         },
         {
@@ -1810,14 +1810,14 @@
           "name": "graph-svg-defs",
           "declaration": {
             "name": "GraphSVGDefs",
-            "module": "src/components-lit/graph/graph-svg-defs.ts"
+            "module": "src/components/graph/graph-svg-defs.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/graph-visualization.ts",
+      "path": "src/components/graph/graph-visualization.ts",
       "declarations": [
         {
           "kind": "class",
@@ -2101,7 +2101,7 @@
           "name": "GraphVisualization",
           "declaration": {
             "name": "GraphVisualization",
-            "module": "src/components-lit/graph/graph-visualization.ts"
+            "module": "src/components/graph/graph-visualization.ts"
           }
         },
         {
@@ -2109,14 +2109,14 @@
           "name": "graph-visualization",
           "declaration": {
             "name": "GraphVisualization",
-            "module": "src/components-lit/graph/graph-visualization.ts"
+            "module": "src/components/graph/graph-visualization.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/graph/svg-renderers.ts",
+      "path": "src/components/graph/svg-renderers.ts",
       "declarations": [
         {
           "kind": "function",
@@ -2185,7 +2185,7 @@
           "name": "renderClusterCard",
           "declaration": {
             "name": "renderClusterCard",
-            "module": "src/components-lit/graph/svg-renderers.ts"
+            "module": "src/components/graph/svg-renderers.ts"
           }
         },
         {
@@ -2193,7 +2193,7 @@
           "name": "renderGraphNode",
           "declaration": {
             "name": "renderGraphNode",
-            "module": "src/components-lit/graph/svg-renderers.ts"
+            "module": "src/components/graph/svg-renderers.ts"
           }
         },
         {
@@ -2201,7 +2201,7 @@
           "name": "renderGraphEdge",
           "declaration": {
             "name": "renderGraphEdge",
-            "module": "src/components-lit/graph/svg-renderers.ts"
+            "module": "src/components/graph/svg-renderers.ts"
           }
         },
         {
@@ -2209,7 +2209,7 @@
           "name": "renderGraphEdges",
           "declaration": {
             "name": "renderGraphEdges",
-            "module": "src/components-lit/graph/svg-renderers.ts"
+            "module": "src/components/graph/svg-renderers.ts"
           }
         },
         {
@@ -2217,14 +2217,14 @@
           "name": "renderClusterGroup",
           "declaration": {
             "name": "renderClusterGroup",
-            "module": "src/components-lit/graph/svg-renderers.ts"
+            "module": "src/components/graph/svg-renderers.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/layout/graph-tab.ts",
+      "path": "src/components/layout/graph-tab.ts",
       "declarations": [
         {
           "kind": "class",
@@ -2408,7 +2408,7 @@
           "name": "GraphTab",
           "declaration": {
             "name": "GraphTab",
-            "module": "src/components-lit/layout/graph-tab.ts"
+            "module": "src/components/layout/graph-tab.ts"
           }
         },
         {
@@ -2416,14 +2416,14 @@
           "name": "graph-tab",
           "declaration": {
             "name": "GraphTab",
-            "module": "src/components-lit/layout/graph-tab.ts"
+            "module": "src/components/layout/graph-tab.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/layout/header.ts",
+      "path": "src/components/layout/header.ts",
       "declarations": [
         {
           "kind": "class",
@@ -2455,7 +2455,7 @@
           "name": "GraphHeader",
           "declaration": {
             "name": "GraphHeader",
-            "module": "src/components-lit/layout/header.ts"
+            "module": "src/components/layout/header.ts"
           }
         },
         {
@@ -2463,14 +2463,14 @@
           "name": "graph-header",
           "declaration": {
             "name": "GraphHeader",
-            "module": "src/components-lit/layout/header.ts"
+            "module": "src/components/layout/header.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/layout/placeholder-tab.ts",
+      "path": "src/components/layout/placeholder-tab.ts",
       "declarations": [
         {
           "kind": "class",
@@ -2511,7 +2511,7 @@
           "name": "GraphPlaceholderTab",
           "declaration": {
             "name": "GraphPlaceholderTab",
-            "module": "src/components-lit/layout/placeholder-tab.ts"
+            "module": "src/components/layout/placeholder-tab.ts"
           }
         },
         {
@@ -2519,14 +2519,14 @@
           "name": "graph-placeholder-tab",
           "declaration": {
             "name": "GraphPlaceholderTab",
-            "module": "src/components-lit/layout/placeholder-tab.ts"
+            "module": "src/components/layout/placeholder-tab.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/layout/sidebar.ts",
+      "path": "src/components/layout/sidebar.ts",
       "declarations": [
         {
           "kind": "class",
@@ -2597,7 +2597,7 @@
           "name": "GraphSidebar",
           "declaration": {
             "name": "GraphSidebar",
-            "module": "src/components-lit/layout/sidebar.ts"
+            "module": "src/components/layout/sidebar.ts"
           }
         },
         {
@@ -2605,7 +2605,7 @@
           "name": "ActiveTab",
           "declaration": {
             "name": "ActiveTab",
-            "module": "src/components-lit/layout/sidebar.ts"
+            "module": "src/components/layout/sidebar.ts"
           }
         },
         {
@@ -2613,14 +2613,14 @@
           "name": "graph-sidebar",
           "declaration": {
             "name": "GraphSidebar",
-            "module": "src/components-lit/layout/sidebar.ts"
+            "module": "src/components/layout/sidebar.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/layout/toolbar.ts",
+      "path": "src/components/layout/toolbar.ts",
       "declarations": [
         {
           "kind": "class",
@@ -2730,7 +2730,7 @@
           "name": "GraphToolbar",
           "declaration": {
             "name": "GraphToolbar",
-            "module": "src/components-lit/layout/toolbar.ts"
+            "module": "src/components/layout/toolbar.ts"
           }
         },
         {
@@ -2738,14 +2738,14 @@
           "name": "graph-toolbar",
           "declaration": {
             "name": "GraphToolbar",
-            "module": "src/components-lit/layout/toolbar.ts"
+            "module": "src/components/layout/toolbar.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/clear-filters-button.ts",
+      "path": "src/components/ui/clear-filters-button.ts",
       "declarations": [
         {
           "kind": "class",
@@ -2799,7 +2799,7 @@
           "name": "GraphClearFiltersButton",
           "declaration": {
             "name": "GraphClearFiltersButton",
-            "module": "src/components-lit/ui/clear-filters-button.ts"
+            "module": "src/components/ui/clear-filters-button.ts"
           }
         },
         {
@@ -2807,14 +2807,14 @@
           "name": "graph-clear-filters-button",
           "declaration": {
             "name": "GraphClearFiltersButton",
-            "module": "src/components-lit/ui/clear-filters-button.ts"
+            "module": "src/components/ui/clear-filters-button.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/cluster-details-panel.ts",
+      "path": "src/components/ui/cluster-details-panel.ts",
       "declarations": [
         {
           "kind": "class",
@@ -2928,7 +2928,7 @@
           "name": "GraphClusterDetailsPanel",
           "declaration": {
             "name": "GraphClusterDetailsPanel",
-            "module": "src/components-lit/ui/cluster-details-panel.ts"
+            "module": "src/components/ui/cluster-details-panel.ts"
           }
         },
         {
@@ -2936,14 +2936,14 @@
           "name": "graph-cluster-details-panel",
           "declaration": {
             "name": "GraphClusterDetailsPanel",
-            "module": "src/components-lit/ui/cluster-details-panel.ts"
+            "module": "src/components/ui/cluster-details-panel.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/cluster-header.ts",
+      "path": "src/components/ui/cluster-header.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3040,7 +3040,7 @@
           "name": "GraphClusterHeader",
           "declaration": {
             "name": "GraphClusterHeader",
-            "module": "src/components-lit/ui/cluster-header.ts"
+            "module": "src/components/ui/cluster-header.ts"
           }
         },
         {
@@ -3048,14 +3048,14 @@
           "name": "graph-cluster-header",
           "declaration": {
             "name": "GraphClusterHeader",
-            "module": "src/components-lit/ui/cluster-header.ts"
+            "module": "src/components/ui/cluster-header.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/cluster-stats.ts",
+      "path": "src/components/ui/cluster-stats.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3146,7 +3146,7 @@
           "name": "GraphClusterStats",
           "declaration": {
             "name": "GraphClusterStats",
-            "module": "src/components-lit/ui/cluster-stats.ts"
+            "module": "src/components/ui/cluster-stats.ts"
           }
         },
         {
@@ -3154,14 +3154,14 @@
           "name": "graph-cluster-stats",
           "declaration": {
             "name": "GraphClusterStats",
-            "module": "src/components-lit/ui/cluster-stats.ts"
+            "module": "src/components/ui/cluster-stats.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/cluster-targets-list.ts",
+      "path": "src/components/ui/cluster-targets-list.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3332,7 +3332,7 @@
           "name": "GraphClusterTargetsList",
           "declaration": {
             "name": "GraphClusterTargetsList",
-            "module": "src/components-lit/ui/cluster-targets-list.ts"
+            "module": "src/components/ui/cluster-targets-list.ts"
           }
         },
         {
@@ -3340,14 +3340,14 @@
           "name": "graph-cluster-targets-list",
           "declaration": {
             "name": "GraphClusterTargetsList",
-            "module": "src/components-lit/ui/cluster-targets-list.ts"
+            "module": "src/components/ui/cluster-targets-list.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/cluster-type-badge.ts",
+      "path": "src/components/ui/cluster-type-badge.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3414,7 +3414,7 @@
           "name": "GraphClusterTypeBadge",
           "declaration": {
             "name": "GraphClusterTypeBadge",
-            "module": "src/components-lit/ui/cluster-type-badge.ts"
+            "module": "src/components/ui/cluster-type-badge.ts"
           }
         },
         {
@@ -3422,14 +3422,14 @@
           "name": "graph-cluster-type-badge",
           "declaration": {
             "name": "GraphClusterTypeBadge",
-            "module": "src/components-lit/ui/cluster-type-badge.ts"
+            "module": "src/components/ui/cluster-type-badge.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/collapsed-sidebar.ts",
+      "path": "src/components/ui/collapsed-sidebar.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3596,7 +3596,7 @@
           "name": "GraphCollapsedSidebar",
           "declaration": {
             "name": "GraphCollapsedSidebar",
-            "module": "src/components-lit/ui/collapsed-sidebar.ts"
+            "module": "src/components/ui/collapsed-sidebar.ts"
           }
         },
         {
@@ -3604,14 +3604,14 @@
           "name": "graph-collapsed-sidebar",
           "declaration": {
             "name": "GraphCollapsedSidebar",
-            "module": "src/components-lit/ui/collapsed-sidebar.ts"
+            "module": "src/components/ui/collapsed-sidebar.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/dependencies-list.ts",
+      "path": "src/components/ui/dependencies-list.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3704,7 +3704,7 @@
           "name": "GraphDependenciesList",
           "declaration": {
             "name": "GraphDependenciesList",
-            "module": "src/components-lit/ui/dependencies-list.ts"
+            "module": "src/components/ui/dependencies-list.ts"
           }
         },
         {
@@ -3712,14 +3712,14 @@
           "name": "graph-dependencies-list",
           "declaration": {
             "name": "GraphDependenciesList",
-            "module": "src/components-lit/ui/dependencies-list.ts"
+            "module": "src/components/ui/dependencies-list.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/dependents-list.ts",
+      "path": "src/components/ui/dependents-list.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3810,7 +3810,7 @@
           "name": "GraphDependentsList",
           "declaration": {
             "name": "GraphDependentsList",
-            "module": "src/components-lit/ui/dependents-list.ts"
+            "module": "src/components/ui/dependents-list.ts"
           }
         },
         {
@@ -3818,14 +3818,14 @@
           "name": "graph-dependents-list",
           "declaration": {
             "name": "GraphDependentsList",
-            "module": "src/components-lit/ui/dependents-list.ts"
+            "module": "src/components/ui/dependents-list.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/empty-state.ts",
+      "path": "src/components/ui/empty-state.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3879,7 +3879,7 @@
           "name": "GraphEmptyState",
           "declaration": {
             "name": "GraphEmptyState",
-            "module": "src/components-lit/ui/empty-state.ts"
+            "module": "src/components/ui/empty-state.ts"
           }
         },
         {
@@ -3887,14 +3887,14 @@
           "name": "graph-empty-state",
           "declaration": {
             "name": "GraphEmptyState",
-            "module": "src/components-lit/ui/empty-state.ts"
+            "module": "src/components/ui/empty-state.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/filter-icons.ts",
+      "path": "src/components/ui/filter-icons.ts",
       "declarations": [
         {
           "kind": "class",
@@ -3948,7 +3948,7 @@
           "name": "GraphProductTypesIcon",
           "declaration": {
             "name": "GraphProductTypesIcon",
-            "module": "src/components-lit/ui/filter-icons.ts"
+            "module": "src/components/ui/filter-icons.ts"
           }
         },
         {
@@ -3956,7 +3956,7 @@
           "name": "GraphPlatformsIcon",
           "declaration": {
             "name": "GraphPlatformsIcon",
-            "module": "src/components-lit/ui/filter-icons.ts"
+            "module": "src/components/ui/filter-icons.ts"
           }
         },
         {
@@ -3964,7 +3964,7 @@
           "name": "GraphProjectsIcon",
           "declaration": {
             "name": "GraphProjectsIcon",
-            "module": "src/components-lit/ui/filter-icons.ts"
+            "module": "src/components/ui/filter-icons.ts"
           }
         },
         {
@@ -3972,7 +3972,7 @@
           "name": "GraphPackagesIcon",
           "declaration": {
             "name": "GraphPackagesIcon",
-            "module": "src/components-lit/ui/filter-icons.ts"
+            "module": "src/components/ui/filter-icons.ts"
           }
         },
         {
@@ -3980,14 +3980,14 @@
           "name": "graph-product-types-icon",
           "declaration": {
             "name": "GraphProductTypesIcon",
-            "module": "src/components-lit/ui/filter-icons.ts"
+            "module": "src/components/ui/filter-icons.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/filter-section.ts",
+      "path": "src/components/ui/filter-section.ts",
       "declarations": [
         {
           "kind": "class",
@@ -4197,7 +4197,7 @@
           "name": "GraphFilterSection",
           "declaration": {
             "name": "GraphFilterSection",
-            "module": "src/components-lit/ui/filter-section.ts"
+            "module": "src/components/ui/filter-section.ts"
           }
         },
         {
@@ -4205,7 +4205,7 @@
           "name": "FilterType",
           "declaration": {
             "name": "FilterType",
-            "module": "src/components-lit/ui/filter-section.ts"
+            "module": "src/components/ui/filter-section.ts"
           }
         },
         {
@@ -4213,7 +4213,7 @@
           "name": "FilterItem",
           "declaration": {
             "name": "FilterItem",
-            "module": "src/components-lit/ui/filter-section.ts"
+            "module": "src/components/ui/filter-section.ts"
           }
         },
         {
@@ -4221,14 +4221,14 @@
           "name": "graph-filter-section",
           "declaration": {
             "name": "GraphFilterSection",
-            "module": "src/components-lit/ui/filter-section.ts"
+            "module": "src/components/ui/filter-section.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/filter-view.ts",
+      "path": "src/components/ui/filter-view.ts",
       "declarations": [
         {
           "kind": "class",
@@ -4536,7 +4536,7 @@
           "name": "GraphFilterView",
           "declaration": {
             "name": "GraphFilterView",
-            "module": "src/components-lit/ui/filter-view.ts"
+            "module": "src/components/ui/filter-view.ts"
           }
         },
         {
@@ -4544,14 +4544,14 @@
           "name": "graph-filter-view",
           "declaration": {
             "name": "GraphFilterView",
-            "module": "src/components-lit/ui/filter-view.ts"
+            "module": "src/components/ui/filter-view.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/list-item-row.ts",
+      "path": "src/components/ui/list-item-row.ts",
       "declarations": [
         {
           "kind": "class",
@@ -4672,7 +4672,7 @@
           "name": "GraphListItemRow",
           "declaration": {
             "name": "GraphListItemRow",
-            "module": "src/components-lit/ui/list-item-row.ts"
+            "module": "src/components/ui/list-item-row.ts"
           }
         },
         {
@@ -4680,14 +4680,14 @@
           "name": "graph-list-item-row",
           "declaration": {
             "name": "GraphListItemRow",
-            "module": "src/components-lit/ui/list-item-row.ts"
+            "module": "src/components/ui/list-item-row.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/metrics-section.ts",
+      "path": "src/components/ui/metrics-section.ts",
       "declarations": [
         {
           "kind": "class",
@@ -4801,7 +4801,7 @@
           "name": "GraphMetricsSection",
           "declaration": {
             "name": "GraphMetricsSection",
-            "module": "src/components-lit/ui/metrics-section.ts"
+            "module": "src/components/ui/metrics-section.ts"
           }
         },
         {
@@ -4809,14 +4809,14 @@
           "name": "graph-metrics-section",
           "declaration": {
             "name": "GraphMetricsSection",
-            "module": "src/components-lit/ui/metrics-section.ts"
+            "module": "src/components/ui/metrics-section.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/node-actions.ts",
+      "path": "src/components/ui/node-actions.ts",
       "declarations": [
         {
           "kind": "class",
@@ -4924,7 +4924,7 @@
           "name": "GraphNodeActions",
           "declaration": {
             "name": "GraphNodeActions",
-            "module": "src/components-lit/ui/node-actions.ts"
+            "module": "src/components/ui/node-actions.ts"
           }
         },
         {
@@ -4932,14 +4932,14 @@
           "name": "graph-node-actions",
           "declaration": {
             "name": "GraphNodeActions",
-            "module": "src/components-lit/ui/node-actions.ts"
+            "module": "src/components/ui/node-actions.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/node-details-panel.ts",
+      "path": "src/components/ui/node-details-panel.ts",
       "declarations": [
         {
           "kind": "class",
@@ -5069,7 +5069,7 @@
           "name": "GraphNodeDetailsPanel",
           "declaration": {
             "name": "GraphNodeDetailsPanel",
-            "module": "src/components-lit/ui/node-details-panel.ts"
+            "module": "src/components/ui/node-details-panel.ts"
           }
         },
         {
@@ -5077,14 +5077,14 @@
           "name": "graph-node-details-panel",
           "declaration": {
             "name": "GraphNodeDetailsPanel",
-            "module": "src/components-lit/ui/node-details-panel.ts"
+            "module": "src/components/ui/node-details-panel.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/node-header.ts",
+      "path": "src/components/ui/node-header.ts",
       "declarations": [
         {
           "kind": "class",
@@ -5166,7 +5166,7 @@
           "name": "GraphNodeHeader",
           "declaration": {
             "name": "GraphNodeHeader",
-            "module": "src/components-lit/ui/node-header.ts"
+            "module": "src/components/ui/node-header.ts"
           }
         },
         {
@@ -5174,14 +5174,14 @@
           "name": "graph-node-header",
           "declaration": {
             "name": "GraphNodeHeader",
-            "module": "src/components-lit/ui/node-header.ts"
+            "module": "src/components/ui/node-header.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/node-info.ts",
+      "path": "src/components/ui/node-info.ts",
       "declarations": [
         {
           "kind": "class",
@@ -5219,7 +5219,7 @@
           "name": "GraphNodeInfo",
           "declaration": {
             "name": "GraphNodeInfo",
-            "module": "src/components-lit/ui/node-info.ts"
+            "module": "src/components/ui/node-info.ts"
           }
         },
         {
@@ -5227,14 +5227,14 @@
           "name": "graph-node-info",
           "declaration": {
             "name": "GraphNodeInfo",
-            "module": "src/components-lit/ui/node-info.ts"
+            "module": "src/components/ui/node-info.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/right-sidebar-header.ts",
+      "path": "src/components/ui/right-sidebar-header.ts",
       "declarations": [
         {
           "kind": "class",
@@ -5301,7 +5301,7 @@
           "name": "GraphRightSidebarHeader",
           "declaration": {
             "name": "GraphRightSidebarHeader",
-            "module": "src/components-lit/ui/right-sidebar-header.ts"
+            "module": "src/components/ui/right-sidebar-header.ts"
           }
         },
         {
@@ -5309,14 +5309,14 @@
           "name": "graph-right-sidebar-header",
           "declaration": {
             "name": "GraphRightSidebarHeader",
-            "module": "src/components-lit/ui/right-sidebar-header.ts"
+            "module": "src/components/ui/right-sidebar-header.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/right-sidebar.ts",
+      "path": "src/components/ui/right-sidebar.ts",
       "declarations": [
         {
           "kind": "class",
@@ -5542,7 +5542,7 @@
           "name": "GraphRightSidebar",
           "declaration": {
             "name": "GraphRightSidebar",
-            "module": "src/components-lit/ui/right-sidebar.ts"
+            "module": "src/components/ui/right-sidebar.ts"
           }
         },
         {
@@ -5550,14 +5550,14 @@
           "name": "graph-right-sidebar",
           "declaration": {
             "name": "GraphRightSidebar",
-            "module": "src/components-lit/ui/right-sidebar.ts"
+            "module": "src/components/ui/right-sidebar.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/search-bar.ts",
+      "path": "src/components/ui/search-bar.ts",
       "declarations": [
         {
           "kind": "class",
@@ -5643,7 +5643,7 @@
           "name": "GraphSearchBar",
           "declaration": {
             "name": "GraphSearchBar",
-            "module": "src/components-lit/ui/search-bar.ts"
+            "module": "src/components/ui/search-bar.ts"
           }
         },
         {
@@ -5651,14 +5651,14 @@
           "name": "graph-search-bar",
           "declaration": {
             "name": "GraphSearchBar",
-            "module": "src/components-lit/ui/search-bar.ts"
+            "module": "src/components/ui/search-bar.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/sidebar-collapse-icon.ts",
+      "path": "src/components/ui/sidebar-collapse-icon.ts",
       "declarations": [
         {
           "kind": "class",
@@ -5699,7 +5699,7 @@
           "name": "GraphSidebarCollapseIcon",
           "declaration": {
             "name": "GraphSidebarCollapseIcon",
-            "module": "src/components-lit/ui/sidebar-collapse-icon.ts"
+            "module": "src/components/ui/sidebar-collapse-icon.ts"
           }
         },
         {
@@ -5707,14 +5707,14 @@
           "name": "graph-sidebar-collapse-icon",
           "declaration": {
             "name": "GraphSidebarCollapseIcon",
-            "module": "src/components-lit/ui/sidebar-collapse-icon.ts"
+            "module": "src/components/ui/sidebar-collapse-icon.ts"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components-lit/ui/stats-card.ts",
+      "path": "src/components/ui/stats-card.ts",
       "declarations": [
         {
           "kind": "class",
@@ -5789,7 +5789,7 @@
           "name": "GraphStatsCard",
           "declaration": {
             "name": "GraphStatsCard",
-            "module": "src/components-lit/ui/stats-card.ts"
+            "module": "src/components/ui/stats-card.ts"
           }
         },
         {
@@ -5797,7 +5797,7 @@
           "name": "graph-stats-card",
           "declaration": {
             "name": "GraphStatsCard",
-            "module": "src/components-lit/ui/stats-card.ts"
+            "module": "src/components/ui/stats-card.ts"
           }
         }
       ]

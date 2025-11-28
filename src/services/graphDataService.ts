@@ -50,11 +50,9 @@ export class GraphDataService {
       }
 
       // Platform index
-      if (node.platforms) {
-        for (const platform of node.platforms) {
-          if (!this.nodesByPlatform.has(platform)) this.nodesByPlatform.set(platform, []);
-          this.nodesByPlatform.get(platform)!.push(node);
-        }
+      if (node.platform) {
+        if (!this.nodesByPlatform.has(node.platform)) this.nodesByPlatform.set(node.platform, []);
+        this.nodesByPlatform.get(node.platform)!.push(node);
       }
 
       // Origin index
@@ -365,7 +363,7 @@ export class GraphDataService {
       dependents += this.getIncomingEdges(node.id).length;
     }
 
-    const platforms = new Set(clusterNodes.flatMap((n) => n.platforms || []).filter(Boolean));
+    const platforms = new Set(clusterNodes.map((n) => n.platform).filter(Boolean));
 
     return {
       nodeCount: clusterNodes.length,

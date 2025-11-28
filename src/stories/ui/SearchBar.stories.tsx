@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/ui/search-bar';
+import '../../components/ui/search-bar';
 
 const meta = {
   title: 'Design System/UI/SearchBar',

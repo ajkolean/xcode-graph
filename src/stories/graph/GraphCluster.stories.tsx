@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, svg } from 'lit';
-import '../../components-lit/graph/graph-cluster';
+import '../../components/graph/graph-cluster';
 
 const meta = {
   title: 'Graph Visualization/GraphCluster',

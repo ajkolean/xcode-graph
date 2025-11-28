@@ -1,27 +1,39 @@
 /**
- * PhysicsController
+ * Physics Controller - Force calculations for graph layout
  *
- * Handles all physics force calculations for graph layout.
- * Separated from layout and animation for single responsibility.
+ * Handles all physics force calculations for graph layout settling.
+ * Separated from layout and animation for single responsibility compliance.
  *
- * Responsibilities:
- * - Node collision detection and resolution
- * - Cluster spacing forces
- * - Link/edge attraction forces
+ * **Responsibilities:**
+ * - Node collision detection and resolution within clusters
+ * - Cluster spacing forces between groups
+ * - Link/edge attraction forces (spring-like)
  * - Force configuration and tuning
+ *
+ * **Force Types:**
+ * - Collision: Prevents node overlap using radius-based detection
+ * - Spacing: Keeps clusters separated with minimum distance
+ * - Attraction: Pulls linked nodes toward target distance (Hooke's law)
+ *
+ * @module controllers/physics
  */
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import type { GraphEdge } from '@/data/mockGraphData';
-import type { Cluster } from '@/types/cluster';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import type { GraphEdge } from '../data/mockGraphData';
+import type { Cluster } from '../types/cluster';
+import type { ClusterPosition, NodePosition } from '../types/simulation';
 import {
   applyCollisionForces,
   type CollisionEntity,
   CollisionPresets,
   calculateBoundingRadius,
-} from '@/utils/physics/collision-forces';
+} from '../utils/physics/collision';
 
+// ==================== Type Definitions ====================
+
+/**
+ * Physics simulation configuration
+ */
 export interface PhysicsConfig {
   nodeCollisionStrength?: number;
   clusterCollisionStrength?: number;
@@ -29,6 +41,14 @@ export interface PhysicsConfig {
   linkTargetDistance?: number;
 }
 
+// ==================== Controller Class ====================
+
+/**
+ * Reactive controller for physics force calculations
+ *
+ * Applies collision, spacing, and attraction forces during animation.
+ * Forces are scaled by alpha for gradual settling behavior.
+ */
 export class PhysicsController implements ReactiveController {
   private host: ReactiveControllerHost;
 

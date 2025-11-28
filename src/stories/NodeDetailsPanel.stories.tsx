@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../components-lit/ui/node-details-panel';
+import '../components/ui/node-details-panel';
 import { mockGraphEdges } from './fixtures/mockEdges';
 import { allNodeTypes, mockGraphNodes } from './fixtures/mockNodes';
 

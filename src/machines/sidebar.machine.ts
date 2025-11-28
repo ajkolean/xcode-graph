@@ -1,17 +1,38 @@
+/**
+ * Sidebar State Machine
+ *
+ * Manages the right sidebar UI state using Zag-js state machine patterns.
+ * Handles expand/collapse, tab switching, section accordion, and selection tracking.
+ *
+ * @module machines/sidebar
+ */
+
 import { createMachine, type MachineSchema } from '@zag-js/core';
 
+// ==================== Type Definitions ====================
+
 /**
- * Sidebar tab types
+ * Available sidebar tabs
+ *
+ * - `nodeDetails`: Shows details for the selected node
+ * - `clusterDetails`: Shows details for the selected cluster
+ * - `filters`: Shows filter controls for the graph
  */
 export type SidebarTab = 'nodeDetails' | 'clusterDetails' | 'filters';
 
 /**
- * Section keys for accordion expansion
+ * Collapsible section identifiers for the filters accordion
+ *
+ * Each section can be independently expanded or collapsed.
  */
 export type SidebarSection = 'productTypes' | 'platforms' | 'projects' | 'packages';
 
+// ==================== Machine Schema ====================
+
 /**
- * Sidebar machine schema
+ * Type-safe schema for the sidebar state machine
+ *
+ * Defines props, context, states, events, and actions for full type safety.
  */
 interface SidebarMachineSchema extends MachineSchema {
   props: {
@@ -51,16 +72,42 @@ interface SidebarMachineSchema extends MachineSchema {
     | 'notifyCollapseChange';
 }
 
+// ==================== Machine Definition ====================
+
 /**
- * Sidebar state machine
+ * Sidebar state machine instance
  *
- * Manages the right sidebar state:
- * - Collapsed/expanded state
- * - Active tab (nodeDetails, clusterDetails, filters)
- * - Section expansion (accordion behavior)
- * - Node/cluster selection
+ * A Zag-js state machine managing the sidebar UI with two states:
+ *
+ * **States:**
+ * - `collapsed`: Sidebar is hidden, can expand on toggle or selection
+ * - `expanded`: Sidebar is visible, shows active tab content
+ *
+ * **Context:**
+ * - `activeTab`: Current visible tab (nodeDetails, clusterDetails, filters)
+ * - `expandedSections`: Which accordion sections are open
+ * - `selectedNodeId`: Currently selected node (if any)
+ * - `selectedClusterId`: Currently selected cluster (if any)
+ *
+ * **Events:**
+ * - `TOGGLE/EXPAND/COLLAPSE`: Control sidebar visibility
+ * - `SELECT_NODE/SELECT_CLUSTER`: Selection triggers tab switch
+ * - `SWITCH_TAB`: Manual tab change
+ * - `TOGGLE_SECTION/EXPAND_TO_SECTION`: Accordion control
+ *
+ * @example
+ * ```ts
+ * const service = interpret(sidebarMachine, {
+ *   context: { defaultCollapsed: false },
+ * });
+ * service.start();
+ * service.send({ type: 'SELECT_NODE', nodeId: 'node-1' });
+ * ```
  */
 export const sidebarMachine = createMachine<SidebarMachineSchema>({
+  /**
+   * Initialize machine props with defaults
+   */
   props({ props }) {
     return {
       id: props.id ?? 'sidebar',
@@ -69,6 +116,9 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
     };
   },
 
+  /**
+   * Initialize bindable context values with defaults
+   */
   context({ bindable }) {
     return {
       activeTab: bindable(() => ({
@@ -91,11 +141,24 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
     };
   },
 
+  /**
+   * Determine initial state based on defaultCollapsed prop
+   */
   initialState({ prop }) {
     return prop('defaultCollapsed') ? 'collapsed' : 'expanded';
   },
 
+  // ==================== State Definitions ====================
+
   states: {
+    /**
+     * Collapsed state - sidebar is hidden
+     *
+     * Transitions to expanded on:
+     * - TOGGLE/EXPAND events
+     * - SELECT_NODE/SELECT_CLUSTER (auto-expands to show details)
+     * - EXPAND_TO_SECTION (auto-expands and shows filter section)
+     */
     collapsed: {
       entry: ['notifyCollapseChange'],
       on: {
@@ -116,6 +179,15 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
       },
     },
 
+    /**
+     * Expanded state - sidebar is visible
+     *
+     * Handles:
+     * - TOGGLE/COLLAPSE to hide
+     * - Selection events (node/cluster)
+     * - Tab switching
+     * - Section accordion control
+     */
     expanded: {
       entry: ['notifyCollapseChange'],
       on: {
@@ -143,42 +215,54 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
     },
   },
 
+  // ==================== Action Implementations ====================
+
   implementations: {
     actions: {
+      /** Store the selected node ID in context */
       setSelectedNode: ({ context, event }) => {
         if (event.type === 'SELECT_NODE') {
           context.set('selectedNodeId', event.nodeId);
         }
       },
+      /** Store the selected cluster ID in context */
       setSelectedCluster: ({ context, event }) => {
         if (event.type === 'SELECT_CLUSTER') {
           context.set('selectedClusterId', event.clusterId);
         }
       },
+      /** Clear selected node ID */
       clearSelectedNode: ({ context }) => {
         context.set('selectedNodeId', null);
       },
+      /** Clear selected cluster ID */
       clearSelectedCluster: ({ context }) => {
         context.set('selectedClusterId', null);
       },
+      /** Clear both node and cluster selections */
       clearSelections: ({ context }) => {
         context.set('selectedNodeId', null);
         context.set('selectedClusterId', null);
       },
+      /** Switch to node details tab */
       switchToNodeDetails: ({ context }) => {
         context.set('activeTab', 'nodeDetails');
       },
+      /** Switch to cluster details tab */
       switchToClusterDetails: ({ context }) => {
         context.set('activeTab', 'clusterDetails');
       },
+      /** Switch to filters tab */
       switchToFilters: ({ context }) => {
         context.set('activeTab', 'filters');
       },
+      /** Switch to the tab specified in the event */
       switchTab: ({ context, event }) => {
         if (event.type === 'SWITCH_TAB') {
           context.set('activeTab', event.tab);
         }
       },
+      /** Toggle an accordion section open/closed */
       toggleSection: ({ context, event }) => {
         if (event.type === 'TOGGLE_SECTION') {
           const sections = context.get('expandedSections');
@@ -188,6 +272,7 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
           });
         }
       },
+      /** Force expand a specific accordion section */
       expandSection: ({ context, event }) => {
         if (event.type === 'EXPAND_TO_SECTION') {
           const sections = context.get('expandedSections');
@@ -197,6 +282,7 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
           });
         }
       },
+      /** Notify external callback when collapse state changes */
       notifyCollapseChange: ({ prop, state }) => {
         const onCollapseChange = prop('onCollapseChange');
         if (onCollapseChange) {

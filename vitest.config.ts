@@ -1,8 +1,8 @@
 /// <reference types="vitest" />
 
-import path from 'node:path';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
+import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -20,6 +20,7 @@ export default defineConfig({
     projects: [
       // Unit tests project (default)
       {
+        extends: true,
         test: {
           name: 'unit',
           include: ['src/**/*.test.ts'],
@@ -56,7 +57,7 @@ export default defineConfig({
       '@radix-ui/react-slot@1.1.2': '@radix-ui/react-slot',
       '@radix-ui/react-separator@1.1.2': '@radix-ui/react-separator',
       '@': path.resolve(__dirname, './src'),
-      '@lit-components': path.resolve(__dirname, './src/components-lit'),
+      '@lit-components': path.resolve(__dirname, './src/components'),
     },
   },
 });

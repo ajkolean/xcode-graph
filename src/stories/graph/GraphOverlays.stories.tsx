@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/graph/graph-overlays';
+import '../../components/graph/graph-overlays';
 
 const meta = {
   title: 'Graph Visualization/GraphOverlays',

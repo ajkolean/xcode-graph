@@ -2,7 +2,7 @@
  * Mock FilterItem data for Storybook stories
  */
 
-import type { FilterItem } from '@/components-lit/ui/filter-section';
+import type { FilterItem } from '@/components/ui/filter-section';
 
 // ========================================
 // Node Type Filters

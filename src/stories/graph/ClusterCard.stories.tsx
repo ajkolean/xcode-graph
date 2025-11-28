@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { renderClusterCard } from '../../components-lit/graph/svg-renderers';
+import { renderClusterCard } from '../../components/graph/svg-renderers';
 
 const meta = {
   title: 'Graph Visualization/ClusterCard',

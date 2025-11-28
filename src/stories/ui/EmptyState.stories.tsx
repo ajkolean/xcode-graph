@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/ui/empty-state';
+import '../../components/ui/empty-state';
 
 const meta = {
   title: 'Design System/UI/EmptyState',

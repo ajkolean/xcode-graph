@@ -1,30 +1,56 @@
+/**
+ * Graph Store - Selection and view state management
+ *
+ * Manages the currently selected node/cluster, view mode, and
+ * circular dependency detection. Uses Zustand for reactive state.
+ *
+ * @module stores/graphStore
+ */
+
 import { create } from 'zustand';
 import type { ViewMode } from '../schemas/app.schema';
 import type { GraphNode } from '../schemas/graph.schema';
 
+/**
+ * Graph store state and actions
+ */
 interface GraphStore {
-  // Selection state
+  // ==================== Selection State ====================
+  /** Currently selected node (null if none) */
   selectedNode: GraphNode | null;
+  /** Currently selected cluster ID (null if none) */
   selectedCluster: string | null;
+  /** Currently hovered node ID (null if none) */
   hoveredNode: string | null;
 
-  // View state
+  // ==================== View State ====================
+  /** Current graph visualization mode */
   viewMode: ViewMode;
 
-  // Cycle detection
+  // ==================== Cycle Detection ====================
+  /** Detected circular dependency paths */
   circularDependencies: string[][];
 
-  // Actions
+  // ==================== Basic Actions ====================
+  /** Select a node (clears cluster selection) */
   selectNode: (node: GraphNode | null) => void;
+  /** Select a cluster (clears node selection) */
   selectCluster: (clusterId: string | null) => void;
+  /** Set hovered node for highlighting */
   setHoveredNode: (nodeId: string | null) => void;
+  /** Change view mode */
   setViewMode: (mode: ViewMode) => void;
+  /** Update detected circular dependencies */
   setCircularDependencies: (cycles: string[][]) => void;
 
-  // Complex actions (encapsulate business logic)
+  // ==================== Complex Actions ====================
+  /** Focus on a node (toggle focused/both/dependents) */
   focusNode: (node: GraphNode) => void;
+  /** Show dependents of a node (toggle dependents/both/focused) */
   showDependents: (node: GraphNode) => void;
+  /** Show impact analysis for a node */
   showImpact: (node: GraphNode) => void;
+  /** Reset to full view with no selection */
   resetView: () => void;
 }
 
@@ -94,11 +120,18 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
     }),
 }));
 
-// Selectors for optimized subscriptions
+// ==================== Optimized Selectors ====================
+
+/** Get currently selected node */
 export const useSelectedNode = () => useGraphStore((s) => s.selectedNode);
+/** Get currently selected cluster ID */
 export const useSelectedCluster = () => useGraphStore((s) => s.selectedCluster);
+/** Get currently hovered node ID */
 export const useHoveredNode = () => useGraphStore((s) => s.hoveredNode);
+/** Get current view mode */
 export const useViewMode = () => useGraphStore((s) => s.viewMode);
+/** Check if a specific node is selected */
 export const useIsNodeSelected = (nodeId: string) =>
   useGraphStore((s) => s.selectedNode?.id === nodeId);
+/** Get detected circular dependencies */
 export const useCircularDependencies = () => useGraphStore((s) => s.circularDependencies);

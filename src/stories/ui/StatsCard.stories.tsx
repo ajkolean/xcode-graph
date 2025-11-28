@@ -7,7 +7,7 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import '../../components-lit/ui/stats-card';
+import '../../components/ui/stats-card';
 
 const meta = {
   title: 'Design System/UI/StatsCard',

@@ -3,8 +3,8 @@
  * Consolidates all color-related utilities into single service
  */
 
-import { generateColor } from '../utils/colorGenerator';
-import { PLATFORM_COLOR } from '../utils/platformIcons';
+import { generateColor } from '../utils/rendering/color-generator';
+import { PLATFORM_COLOR } from '../utils/rendering/platform-icons';
 
 export class ColorService {
   private colorCache: Map<string, string>;

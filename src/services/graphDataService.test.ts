@@ -104,9 +104,9 @@ describe('GraphDataService', () => {
     describe('getNodesByPlatform', () => {
       it('should return nodes with specified platform', () => {
         const nodes: GraphNode[] = [
-          createNode({ id: '1', name: 'A', platforms: ['iOS', 'macOS'] }),
-          createNode({ id: '2', name: 'B', platforms: ['iOS'] }),
-          createNode({ id: '3', name: 'C', platforms: ['macOS'] }),
+          createNode({ id: '1', name: 'A', platform: 'iOS' }),
+          createNode({ id: '2', name: 'B', platform: 'iOS' }),
+          createNode({ id: '3', name: 'C', platform: 'macOS' }),
         ];
         const service = new GraphDataService(nodes, []);
 
@@ -117,7 +117,7 @@ describe('GraphDataService', () => {
       });
 
       it('should return empty for non-existent platform', () => {
-        const nodes: GraphNode[] = [createNode({ id: '1', name: 'A', platforms: ['iOS'] })];
+        const nodes: GraphNode[] = [createNode({ id: '1', name: 'A', platform: 'iOS' })];
         const service = new GraphDataService(nodes, []);
 
         expect(service.getNodesByPlatform('watchOS')).toHaveLength(0);

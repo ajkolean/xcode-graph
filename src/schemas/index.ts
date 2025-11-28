@@ -1,7 +1,15 @@
-// Graph schemas
+/**
+ * Schema Module - Zod validation schemas
+ *
+ * Centralized exports for all validation schemas used throughout the app.
+ * Provides type-safe validation for graph data, app state, clusters, and simulation.
+ *
+ * @module schemas
+ */
+
+// ==================== App Schemas ====================
 
 export type { FilterState, FilterStateInput, ViewMode } from './app.schema';
-// App schemas
 export {
   FilterStateInputSchema,
   FilterStateSchema,
@@ -9,6 +17,9 @@ export {
   VIEW_MODE_VALUES,
   ViewModeSchema,
 } from './app.schema';
+
+// ==================== Cluster Schemas ====================
+
 export type {
   Cluster,
   ClusterBounds,
@@ -19,7 +30,6 @@ export type {
   NodeRole,
   PositionedNode,
 } from './cluster.schema';
-// Cluster schemas
 export {
   CLUSTER_TYPE_VALUES,
   ClusterBoundsSchema,
@@ -33,6 +43,9 @@ export {
   NodeRoleSchema,
   PositionedNodeSchema,
 } from './cluster.schema';
+
+// ==================== Graph Schemas ====================
+
 export type {
   GraphData,
   GraphEdge,
@@ -52,6 +65,8 @@ export {
   PLATFORM_VALUES,
   PlatformSchema,
 } from './graph.schema';
+
+// ==================== Simulation Schemas ====================
+
 export type { ClusterPosition, NodePosition } from './simulation.schema';
-// Simulation schemas
 export { ClusterPositionSchema, NodePositionSchema } from './simulation.schema';

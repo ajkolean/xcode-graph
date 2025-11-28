@@ -1,29 +1,48 @@
 /**
- * LayoutController
+ * Layout Controller - Deterministic graph layout computation
  *
- * Handles deterministic layout computation only.
- * Separated from physics and animation for single responsibility.
+ * Handles deterministic layout computation only, separated from physics
+ * and animation for single responsibility principle compliance.
  *
- * Responsibilities:
+ * **Responsibilities:**
  * - Cluster grouping and analysis
  * - Deterministic position calculation
  * - Initial layout state preparation
+ *
+ * **Architecture:**
+ * This controller only computes static positions. Physics and animation
+ * are handled by separate controllers (PhysicsController, AnimationController).
+ *
+ * @module controllers/layout
  */
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
-import type { Cluster } from '@/types/cluster';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
-import { analyzeCluster } from '@/utils/clusterAnalysis';
-import { groupIntoClusters } from '@/utils/clusterGrouping';
-import { computeHierarchicalLayout } from '@/utils/hierarchicalLayout';
+import type { GraphEdge, GraphNode } from '../data/mockGraphData';
+import type { Cluster } from '../types/cluster';
+import type { ClusterPosition, NodePosition } from '../types/simulation';
+import { analyzeCluster } from '../utils/layout/cluster-analysis';
+import { groupIntoClusters } from '../utils/layout/cluster-grouping';
+import { computeHierarchicalLayout } from '../utils/layout/hierarchical';
 
+// ==================== Type Definitions ====================
+
+/**
+ * Result of layout computation
+ */
 export interface LayoutResult {
   nodePositions: Map<string, NodePosition>;
   clusterPositions: Map<string, ClusterPosition>;
   clusters: Cluster[];
 }
 
+// ==================== Controller Class ====================
+
+/**
+ * Reactive controller for deterministic graph layout
+ *
+ * Computes cluster-based hierarchical layouts with caching for performance.
+ * Positions are initialized with zero velocity for physics simulation.
+ */
 export class LayoutController implements ReactiveController {
   private host: ReactiveControllerHost;
 

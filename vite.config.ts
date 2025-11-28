@@ -17,7 +17,7 @@ export default defineConfig({
     extensions: ['.js', '.ts', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@lit-components': path.resolve(__dirname, './src/components-lit'),
+      '@lit-components': path.resolve(__dirname, './src/components'),
     },
   },
   build: {

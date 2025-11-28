@@ -14,23 +14,39 @@
 import type { GraphEdge, GraphNode } from '../data/mockGraphData';
 import type { Cluster } from '../types/cluster';
 
+/**
+ * Progress update during graph loading
+ */
 export interface LoadProgress {
+  /** Whether this is a chunk update or completion */
   type: 'chunk' | 'complete';
+  /** Number of nodes loaded so far */
   loadedNodes: number;
+  /** Total nodes to load */
   totalNodes: number;
+  /** Number of edges loaded so far */
   loadedEdges: number;
+  /** Total edges to load */
   totalEdges: number;
+  /** Loading percentage (0-100) */
   percentage: number;
+  /** The current chunk being loaded */
   chunk?: {
     nodes: GraphNode[];
     edges: GraphEdge[];
   };
 }
 
+/**
+ * Configuration for progressive graph loading
+ */
 export interface ProgressiveLoadConfig {
-  chunkSize?: number; // Nodes per chunk
-  delayBetweenChunks?: number; // ms delay for UI breathing room
-  priorityClusterIds?: string[]; // Load these clusters first
+  /** Number of nodes to load per chunk (default: 100) */
+  chunkSize?: number;
+  /** Milliseconds to wait between chunks for UI responsiveness (default: 10) */
+  delayBetweenChunks?: number;
+  /** Cluster IDs to load first (default: []) */
+  priorityClusterIds?: string[];
 }
 
 export class GraphLoader {

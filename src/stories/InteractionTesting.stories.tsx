@@ -7,9 +7,9 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { expect, fn, userEvent } from 'storybook/test';
-import '../components-lit/ui/clear-filters-button';
-import '../components-lit/ui/stats-card';
+import { expect, userEvent } from 'storybook/test';
+import '../components/ui/clear-filters-button';
+import '../components/ui/stats-card';
 
 const meta: Meta = {
   title: 'Testing/Shadow DOM Interaction Examples',
