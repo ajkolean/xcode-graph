@@ -9,7 +9,11 @@ import { html } from 'lit';
 import { expect, userEvent } from 'storybook/test';
 import './empty-state';
 
-const meta = {
+interface Args {
+  hasActiveFilters: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/UI/EmptyState',
   component: 'graph-empty-state',
   parameters: {
@@ -22,10 +26,10 @@ const meta = {
       description: 'Whether there are active filters that can be cleared',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls

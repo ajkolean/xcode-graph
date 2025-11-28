@@ -8,7 +8,14 @@ import { expect, userEvent } from 'storybook/test';
 import '../components/collapsed-sidebar';
 import { mockGraphEdges, mockGraphNodes } from '@/fixtures';
 
-const meta = {
+interface Args {
+  nodeTypesFilterSize: number;
+  platformsFilterSize: number;
+  projectsFilterSize: number;
+  packagesFilterSize: number;
+}
+
+const meta: Meta<Args> = {
   title: 'Layout/CollapsedSidebar',
   component: 'graph-collapsed-sidebar',
   parameters: { layout: 'centered' },
@@ -31,10 +38,10 @@ const meta = {
       description: 'Number of package filters active',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 export const Default: Story = {
   args: {

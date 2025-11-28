@@ -8,7 +8,12 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import './cluster-type-badge';
 
-const meta = {
+interface Args {
+  clusterType: 'package' | 'project';
+  clusterColor: string;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/UI/ClusterTypeBadge',
   component: 'graph-cluster-type-badge',
   parameters: {
@@ -26,10 +31,10 @@ const meta = {
       description: 'The color to use for the badge (hex or CSS color)',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls

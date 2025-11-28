@@ -4,8 +4,9 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { expect, userEvent } from 'storybook/test';
+import { expect } from 'storybook/test';
 import './node-details-panel';
+import type { GraphNode } from '@shared/schemas';
 import { allNodeTypes, mockGraphEdges, mockGraphNodes } from '@/fixtures';
 
 const nodeTypeMap = {
@@ -18,7 +19,12 @@ const nodeTypeMap = {
   Package: allNodeTypes[6],
 };
 
-const meta = {
+interface Args {
+  nodeType: GraphNode | undefined;
+  zoom: number;
+}
+
+const meta: Meta<Args> = {
   title: 'Panels & Views/NodeDetailsPanel',
   component: 'graph-node-details-panel',
   parameters: { layout: 'centered' },
@@ -35,14 +41,14 @@ const meta = {
       description: 'Zoom level',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 export const Default: Story = {
   args: {
-    nodeType: 'App',
+    nodeType: nodeTypeMap.App,
     zoom: 1.0,
   },
   render: (args) => html`

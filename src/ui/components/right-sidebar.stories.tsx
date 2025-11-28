@@ -6,6 +6,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { expect } from 'storybook/test';
 import './right-sidebar';
+import type { GraphEdge, GraphNode } from '@shared/schemas';
 import { mockGraphEdges, mockGraphNodes } from '@/fixtures';
 
 const graphSizePresets = {
@@ -19,7 +20,11 @@ const graphSizePresets = {
   },
 };
 
-const meta = {
+interface Args {
+  graphSize: { nodes: GraphNode[]; edges: GraphEdge[] };
+}
+
+const meta: Meta<Args> = {
   title: 'Panels & Views/RightSidebar',
   component: 'graph-right-sidebar',
   parameters: { layout: 'centered' },
@@ -32,14 +37,14 @@ const meta = {
       description: 'Graph data size',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 export const Default: Story = {
   args: {
-    graphSize: 'Full Graph',
+    graphSize: graphSizePresets['Full Graph'],
   },
   render: (args) => html`
     <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px">

@@ -9,7 +9,14 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import './alert-banner';
 
-const meta = {
+interface Args {
+  variant: 'warning' | 'error' | 'info' | 'success';
+  title: string;
+  message: string;
+  dismissible: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/UI/AlertBanner',
   component: 'graph-alert-banner',
   parameters: {
@@ -35,10 +42,10 @@ const meta = {
       description: 'Whether the alert can be dismissed',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls

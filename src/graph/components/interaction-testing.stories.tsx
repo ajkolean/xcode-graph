@@ -11,7 +11,7 @@ import { expect, userEvent } from 'storybook/test';
 import '@ui/components/clear-filters-button';
 import '@ui/components/stats-card';
 
-interface Args {}
+type Args = {};
 
 const meta: Meta<Args> = {
   title: 'Testing/Shadow DOM Interaction Examples',

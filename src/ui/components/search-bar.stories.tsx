@@ -9,7 +9,11 @@ import { html } from 'lit';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import './search-bar';
 
-const meta = {
+interface Args {
+  searchQuery: string;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/UI/SearchBar',
   component: 'graph-search-bar',
   parameters: {
@@ -22,10 +26,10 @@ const meta = {
       description: 'The current search query',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls

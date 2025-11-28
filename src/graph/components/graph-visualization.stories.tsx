@@ -6,8 +6,8 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { expect } from 'storybook/test';
 import './graph-visualization';
+import type { GraphEdge, GraphNode } from '@shared/schemas';
 import { mockGraphEdges, mockGraphNodes } from '@/fixtures';
-import type { GraphNode, GraphEdge } from '@/schemas';
 
 const graphSizePresets = {
   'Small (8 nodes)': {

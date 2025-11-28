@@ -9,7 +9,12 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import './info-row';
 
-const meta = {
+interface Args {
+  label: string;
+  value: string;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/UI/InfoRow',
   component: 'graph-info-row',
   parameters: {
@@ -26,10 +31,10 @@ const meta = {
       description: 'The value text (right side)',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls

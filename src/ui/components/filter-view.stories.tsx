@@ -37,10 +37,11 @@ const packageItems = [
 ];
 
 const emptyFilters: FilterState = {
-  nodeTypes: new Set(),
-  platforms: new Set(),
-  projects: new Set(),
-  packages: new Set(),
+  nodeTypes: new Set<string>(),
+  platforms: new Set<string>(),
+  origins: new Set<string>(),
+  projects: new Set<string>(),
+  packages: new Set<string>(),
 };
 
 const filterPresets = {
@@ -51,37 +52,50 @@ const filterPresets = {
   },
   'iOS Only': {
     filters: {
-      nodeTypes: new Set(),
-      platforms: new Set(['iOS']),
-      projects: new Set(),
-      packages: new Set(),
+      nodeTypes: new Set<string>(),
+      platforms: new Set<string>(['iOS']),
+      origins: new Set<string>(),
+      projects: new Set<string>(),
+      packages: new Set<string>(),
     },
     filteredNodesCount: 15,
     filteredEdgesCount: 22,
   },
   'Apps & Frameworks': {
     filters: {
-      nodeTypes: new Set(['app', 'framework']),
-      platforms: new Set(),
-      projects: new Set(),
-      packages: new Set(),
+      nodeTypes: new Set<string>(['app', 'framework']),
+      platforms: new Set<string>(),
+      origins: new Set<string>(),
+      projects: new Set<string>(),
+      packages: new Set<string>(),
     },
     filteredNodesCount: 15,
     filteredEdgesCount: 25,
   },
   'MainApp Project': {
     filters: {
-      nodeTypes: new Set(),
-      platforms: new Set(),
-      projects: new Set(['MainApp']),
-      packages: new Set(),
+      nodeTypes: new Set<string>(),
+      platforms: new Set<string>(),
+      origins: new Set<string>(),
+      projects: new Set<string>(['MainApp']),
+      packages: new Set<string>(),
     },
     filteredNodesCount: 5,
     filteredEdgesCount: 8,
   },
 };
 
-const meta = {
+interface Args {
+  filterPreset: {
+    filters: FilterState;
+    filteredNodesCount: number;
+    filteredEdgesCount: number;
+  };
+  searchQuery: string;
+  zoom: number;
+}
+
+const meta: Meta<Args> = {
   title: 'Features/Filters/FilterView',
   component: 'graph-filter-view',
   parameters: { layout: 'centered' },
@@ -102,14 +116,14 @@ const meta = {
       description: 'Zoom level',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 export const Default: Story = {
   args: {
-    filterPreset: 'No Filters',
+    filterPreset: filterPresets['No Filters'],
     searchQuery: '',
     zoom: 1.0,
   },
@@ -168,7 +182,7 @@ export const Default: Story = {
 
 export const WithActiveFilters: Story = {
   args: {
-    filterPreset: 'Apps & Frameworks',
+    filterPreset: filterPresets['Apps & Frameworks'],
     searchQuery: '',
     zoom: 1.0,
   },
@@ -214,7 +228,7 @@ export const WithActiveFilters: Story = {
 
 export const WithSearch: Story = {
   args: {
-    filterPreset: 'No Filters',
+    filterPreset: filterPresets['No Filters'],
     searchQuery: 'Core',
     zoom: 1.0,
   },

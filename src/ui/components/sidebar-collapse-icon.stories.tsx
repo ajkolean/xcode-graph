@@ -9,7 +9,11 @@ import { html } from 'lit';
 import { expect } from 'storybook/test';
 import './sidebar-collapse-icon';
 
-const meta = {
+interface Args {
+  isCollapsed: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/Icons/SidebarCollapseIcon',
   component: 'graph-sidebar-collapse-icon',
   parameters: {
@@ -22,10 +26,10 @@ const meta = {
       description: 'Whether the sidebar is collapsed',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls

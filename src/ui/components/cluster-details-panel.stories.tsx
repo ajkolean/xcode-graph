@@ -4,8 +4,9 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { expect, userEvent } from 'storybook/test';
+import { expect } from 'storybook/test';
 import './cluster-details-panel';
+import type { Cluster } from '@shared/schemas';
 import {
   mockClusterLarge,
   mockClusterMedium,
@@ -22,7 +23,12 @@ const clusterPresets = {
   Package: mockClusterPackage,
 };
 
-const meta = {
+interface Args {
+  clusterPreset: Cluster;
+  zoom: number;
+}
+
+const meta: Meta<Args> = {
   title: 'Panels & Views/ClusterDetailsPanel',
   component: 'graph-cluster-details-panel',
   parameters: { layout: 'centered' },
@@ -39,14 +45,14 @@ const meta = {
       description: 'Zoom level',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 export const Default: Story = {
   args: {
-    clusterPreset: 'Medium Project',
+    clusterPreset: clusterPresets['Medium Project'],
     zoom: 1.0,
   },
   render: (args) => html`

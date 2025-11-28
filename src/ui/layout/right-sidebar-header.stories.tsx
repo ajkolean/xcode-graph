@@ -7,7 +7,12 @@ import { html } from 'lit';
 import { expect, userEvent } from 'storybook/test';
 import '../components/right-sidebar-header';
 
-const meta = {
+interface Args {
+  title: string;
+  isCollapsed: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Layout/RightSidebarHeader',
   component: 'graph-right-sidebar-header',
   parameters: { layout: 'centered' },
@@ -22,10 +27,10 @@ const meta = {
       description: 'Whether the sidebar is in collapsed state',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 export const Default: Story = {
   args: {

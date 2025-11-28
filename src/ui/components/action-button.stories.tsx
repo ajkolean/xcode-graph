@@ -13,7 +13,14 @@ import './action-button';
 const eyeIcon = html`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
 const focusIcon = html`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
 
-const meta = {
+interface Args {
+  variant: 'primary' | 'success' | 'warning' | 'neutral';
+  active: boolean;
+  fullWidth: boolean;
+  disabled: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/UI/ActionButton',
   component: 'graph-action-button',
   parameters: {
@@ -39,10 +46,10 @@ const meta = {
       description: 'Whether the button is disabled',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls

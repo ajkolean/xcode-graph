@@ -9,7 +9,12 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import './filter-icon';
 
-const meta = {
+interface Args {
+  name: 'product-types' | 'platforms' | 'projects' | 'packages';
+  size: number;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/UI/FilterIcon',
   component: 'graph-filter-icon',
   parameters: {
@@ -27,10 +32,10 @@ const meta = {
       description: 'Icon size in pixels',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls

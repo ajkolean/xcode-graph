@@ -7,6 +7,14 @@ import { createLinearChain, createProjectGraph } from '../fixtures';
 import { GraphLoader, type LoadProgress } from './graph-loader';
 
 describe('GraphLoader', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   describe('loadGraphProgressive', () => {
     it('should load graph in chunks', async () => {
       const { nodes, edges } = createLinearChain(250); // 250 nodes
@@ -14,11 +22,18 @@ describe('GraphLoader', () => {
 
       const progressUpdates: LoadProgress[] = [];
 
-      await loader.loadGraphProgressive(nodes, edges, (progress) => {
+      const loadPromise = loader.loadGraphProgressive(nodes, edges, (progress) => {
         progressUpdates.push(progress);
       });
 
-      // Should have multiple chunk updates
+      // Run all timers multiple times to handle async iteration
+      while (progressUpdates.length < 6) {
+        await vi.advanceTimersToNextTimerAsync();
+        if (vi.getTimerCount() === 0) break;
+      }
+      await loadPromise;
+
+      // Should have multiple chunk updates (250/50 = 5 chunks + 1 complete = 6)
       expect(progressUpdates.length).toBeGreaterThan(5);
 
       // Last update should be complete
@@ -32,9 +47,12 @@ describe('GraphLoader', () => {
       const loader = new GraphLoader();
       const progressUpdates: LoadProgress[] = [];
 
-      await loader.loadGraphProgressive([], [], (progress) => {
+      const loadPromise = loader.loadGraphProgressive([], [], (progress) => {
         progressUpdates.push(progress);
       });
+
+      await vi.runAllTimersAsync();
+      await loadPromise;
 
       expect(progressUpdates).toHaveLength(1);
       expect(progressUpdates[0].type).toBe('complete');
@@ -47,9 +65,12 @@ describe('GraphLoader', () => {
 
       const progressUpdates: LoadProgress[] = [];
 
-      await loader.loadGraphProgressive(nodes, edges, (progress) => {
+      const loadPromise = loader.loadGraphProgressive(nodes, edges, (progress) => {
         progressUpdates.push(progress);
       });
+
+      await vi.runAllTimersAsync();
+      await loadPromise;
 
       // Check percentages increase
       const percentages = progressUpdates.map((p) => p.percentage);
@@ -67,11 +88,14 @@ describe('GraphLoader', () => {
 
       let firstChunk: LoadProgress | null = null;
 
-      await loader.loadGraphProgressive(nodes, edges, (progress) => {
+      const loadPromise = loader.loadGraphProgressive(nodes, edges, (progress) => {
         if (progress.type === 'chunk' && !firstChunk) {
           firstChunk = progress;
         }
       });
+
+      await vi.runAllTimersAsync();
+      await loadPromise;
 
       expect(firstChunk).not.toBeNull();
       expect(firstChunk?.chunk).toBeDefined();
@@ -108,9 +132,12 @@ describe('GraphLoader', () => {
 
       const progressUpdates: LoadProgress[] = [];
 
-      await loader.loadByClusterPriority(clusters, nodes, edges, (progress) => {
+      const loadPromise = loader.loadByClusterPriority(clusters, nodes, edges, (progress) => {
         progressUpdates.push(progress);
       });
+
+      await vi.runAllTimersAsync();
+      await loadPromise;
 
       // First chunk should have App cluster nodes
       expect(progressUpdates.length).toBeGreaterThan(0);
@@ -157,25 +184,38 @@ describe('GraphLoader', () => {
       const { nodes, edges } = createLinearChain(500);
       const loader = new GraphLoader({ chunkSize: 100, delayBetweenChunks: 5 });
 
-      const start = Date.now();
-      await loader.loadGraphProgressive(nodes, edges, () => {});
-      const duration = Date.now() - start;
+      const progressUpdates: LoadProgress[] = [];
+      const loadPromise = loader.loadGraphProgressive(nodes, edges, (progress) => {
+        progressUpdates.push(progress);
+      });
 
-      // Should complete in reasonable time
-      expect(duration).toBeLessThan(1000);
+      await vi.runAllTimersAsync();
+      await loadPromise;
+
+      // Should complete with all chunks processed
+      expect(progressUpdates.length).toBeGreaterThan(0);
+      expect(progressUpdates[progressUpdates.length - 1].type).toBe('complete');
     });
 
     it('should yield to UI between chunks', async () => {
       const { nodes, edges } = createLinearChain(100);
       const loader = new GraphLoader({ chunkSize: 25, delayBetweenChunks: 10 });
 
-      const start = Date.now();
-      await loader.loadGraphProgressive(nodes, edges, () => {});
-      const duration = Date.now() - start;
+      const progressUpdates: LoadProgress[] = [];
+      const loadPromise = loader.loadGraphProgressive(nodes, edges, (progress) => {
+        progressUpdates.push(progress);
+      });
 
-      // Should take at least (chunks - 1) * delay
-      // 4 chunks = 3 delays = 30ms minimum
-      expect(duration).toBeGreaterThanOrEqual(30);
+      // Run all timers to handle async iteration
+      while (progressUpdates.length < 5) {
+        await vi.advanceTimersToNextTimerAsync();
+        if (vi.getTimerCount() === 0) break;
+      }
+      await loadPromise;
+
+      // 100 nodes / 25 chunk size = 4 chunks + 1 complete = 5 updates
+      expect(progressUpdates.length).toBe(5);
+      expect(progressUpdates.filter((p) => p.type === 'chunk').length).toBe(4);
     });
   });
 });

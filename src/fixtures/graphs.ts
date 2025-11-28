@@ -9,21 +9,23 @@ import { createNode } from './nodes';
 
 /**
  * Create a simple linear dependency chain: A -> B -> C -> D
+ * Supports arbitrary lengths with numeric IDs for chains > 26 nodes
  */
 export function createLinearChain(length: number = 4): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodes: GraphNode[] = [];
   const edges: GraphEdge[] = [];
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  const count = Math.min(length, letters.length);
 
-  nodes.push(
-    ...range(count).map((i) => {
-      const letter = letters[i]!;
-      return createNode({ id: letter, name: `Node${letter}` });
-    }),
-  );
+  // Generate node IDs - use letters for short chains, numbers for long ones
+  const ids = range(length).map((i) => {
+    if (length <= 26) {
+      return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[i]!;
+    }
+    return `node-${i}`;
+  });
 
-  for (const [source, target] of adjacentPairs(letters.slice(0, count))) {
+  nodes.push(...ids.map((id) => createNode({ id, name: `Node${id}` })));
+
+  for (const [source, target] of adjacentPairs(ids)) {
     edges.push({ source, target });
   }
 

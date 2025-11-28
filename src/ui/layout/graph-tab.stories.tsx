@@ -6,6 +6,7 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { expect } from 'storybook/test';
 import './graph-tab';
+import type { GraphEdge, GraphNode } from '@shared/schemas';
 import { mockGraphEdges, mockGraphNodes } from '@/fixtures';
 
 const graphSizePresets = {
@@ -19,7 +20,11 @@ const graphSizePresets = {
   },
 };
 
-const meta = {
+interface Args {
+  graphSize: { nodes: GraphNode[]; edges: GraphEdge[] };
+}
+
+const meta: Meta<Args> = {
   title: 'Panels & Views/GraphTab',
   component: 'graph-tab',
   parameters: { layout: 'fullscreen' },
@@ -32,14 +37,14 @@ const meta = {
       description: 'Graph data size',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 export const Default: Story = {
   args: {
-    graphSize: 'Full Graph',
+    graphSize: graphSizePresets['Full Graph'],
   },
   render: (args) => html`
     <div style="width: 100%; height: 600px; background: #0a0a0f">

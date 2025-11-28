@@ -9,7 +9,13 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import './stats-card';
 
-const meta = {
+interface Args {
+  label: string;
+  value: string;
+  highlighted: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Design System/UI/StatsCard',
   component: 'graph-stats-card',
   parameters: {
@@ -30,10 +36,10 @@ const meta = {
       description: 'Whether to highlight the value with accent color',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Interactive Stories with Controls
