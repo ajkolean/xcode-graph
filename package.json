@@ -28,6 +28,7 @@
     "@types/node": "^24.10.1",
     "@vitest/browser-playwright": "^4.0.14",
     "@vitest/coverage-v8": "^4.0.14",
+    "biome": "^0.3.3",
     "chromatic": "^13.3.4",
     "comlink": "^4.4.2",
     "depcheck": "^1.4.7",
@@ -61,8 +62,8 @@
     "onlyBuiltDependencies": [
       "@swc/core",
       "@vaadin/vaadin-usage-statistics",
+      "core-js",
       "esbuild",
-      "rs-module-lexer",
       "unrs-resolver"
     ]
   }

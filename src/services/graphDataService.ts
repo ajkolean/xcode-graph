@@ -12,6 +12,19 @@ export class GraphDataService {
   private nodeMap: Map<string, GraphNode>;
   private edgeMap: Map<string, GraphEdge>;
 
+  // Indices for O(1) lookups
+  private nodesByType: Map<string, GraphNode[]> = new Map();
+  private nodesByProject: Map<string, GraphNode[]> = new Map();
+  private nodesByPlatform: Map<string, GraphNode[]> = new Map();
+  private nodesByOrigin: Map<string, GraphNode[]> = new Map();
+
+  private outgoingEdges: Map<string, GraphEdge[]> = new Map();
+  private incomingEdges: Map<string, GraphEdge[]> = new Map();
+
+  // Cached Sets
+  private projects: Set<string> = new Set();
+  private packages: Set<string> = new Set();
+
   constructor(nodes: GraphNode[], edges: GraphEdge[]) {
     this.nodes = nodes;
     this.edges = edges;
@@ -19,6 +32,52 @@ export class GraphDataService {
     // Create lookup maps for O(1) access
     this.nodeMap = new Map(nodes.map((n) => [n.id, n]));
     this.edgeMap = new Map(edges.map((e) => [`${e.source}->${e.target}`, e]));
+
+    this.buildIndices();
+  }
+
+  private buildIndices() {
+    for (const node of this.nodes) {
+      // Type index
+      if (!this.nodesByType.has(node.type)) this.nodesByType.set(node.type, []);
+      this.nodesByType.get(node.type)!.push(node);
+
+      // Project index & Set
+      if (node.project) {
+        this.projects.add(node.project);
+        if (!this.nodesByProject.has(node.project)) this.nodesByProject.set(node.project, []);
+        this.nodesByProject.get(node.project)!.push(node);
+      }
+
+      // Platform index
+      if (node.platforms) {
+        for (const platform of node.platforms) {
+          if (!this.nodesByPlatform.has(platform)) this.nodesByPlatform.set(platform, []);
+          this.nodesByPlatform.get(platform)!.push(node);
+        }
+      }
+
+      // Origin index
+      if (node.origin) {
+        if (!this.nodesByOrigin.has(node.origin)) this.nodesByOrigin.set(node.origin, []);
+        this.nodesByOrigin.get(node.origin)!.push(node);
+      }
+
+      // Packages Set
+      if (node.type === 'package') {
+        this.packages.add(node.name);
+      }
+    }
+
+    for (const edge of this.edges) {
+      // Outgoing
+      if (!this.outgoingEdges.has(edge.source)) this.outgoingEdges.set(edge.source, []);
+      this.outgoingEdges.get(edge.source)!.push(edge);
+
+      // Incoming
+      if (!this.incomingEdges.has(edge.target)) this.incomingEdges.set(edge.target, []);
+      this.incomingEdges.get(edge.target)!.push(edge);
+    }
   }
 
   // ==================== Node Operations ====================
@@ -41,28 +100,28 @@ export class GraphDataService {
    * Get nodes by type
    */
   getNodesByType(type: string): GraphNode[] {
-    return this.nodes.filter((n) => n.type === type);
+    return this.nodesByType.get(type) || [];
   }
 
   /**
    * Get nodes by project
    */
   getNodesByProject(project: string): GraphNode[] {
-    return this.nodes.filter((n) => n.project === project);
+    return this.nodesByProject.get(project) || [];
   }
 
   /**
    * Get nodes by platform
    */
   getNodesByPlatform(platform: string): GraphNode[] {
-    return this.nodes.filter((n) => n.platforms?.includes(platform));
+    return this.nodesByPlatform.get(platform) || [];
   }
 
   /**
    * Get nodes by origin
    */
   getNodesByOrigin(origin: 'local' | 'external'): GraphNode[] {
-    return this.nodes.filter((n) => n.origin === origin);
+    return this.nodesByOrigin.get(origin) || [];
   }
 
   /**
@@ -96,21 +155,23 @@ export class GraphDataService {
    * Get outgoing edges from a node (dependencies)
    */
   getOutgoingEdges(nodeId: string): GraphEdge[] {
-    return this.edges.filter((e) => e.source === nodeId);
+    return this.outgoingEdges.get(nodeId) || [];
   }
 
   /**
    * Get incoming edges to a node (dependents)
    */
   getIncomingEdges(nodeId: string): GraphEdge[] {
-    return this.edges.filter((e) => e.target === nodeId);
+    return this.incomingEdges.get(nodeId) || [];
   }
 
   /**
    * Get all edges for a node (both directions)
    */
   getNodeEdges(nodeId: string): GraphEdge[] {
-    return this.edges.filter((e) => e.source === nodeId || e.target === nodeId);
+    const outgoing = this.getOutgoingEdges(nodeId);
+    const incoming = this.getIncomingEdges(nodeId);
+    return [...outgoing, ...incoming];
   }
 
   // ==================== Dependency Operations ====================
@@ -119,8 +180,8 @@ export class GraphDataService {
    * Get direct dependencies of a node
    */
   getDirectDependencies(nodeId: string): GraphNode[] {
-    const depIds = this.edges.filter((e) => e.source === nodeId).map((e) => e.target);
-
+    const outgoing = this.getOutgoingEdges(nodeId);
+    const depIds = outgoing.map((e) => e.target);
     return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
   }
 
@@ -128,8 +189,8 @@ export class GraphDataService {
    * Get direct dependents of a node
    */
   getDirectDependents(nodeId: string): GraphNode[] {
-    const depIds = this.edges.filter((e) => e.target === nodeId).map((e) => e.source);
-
+    const incoming = this.getIncomingEdges(nodeId);
+    const depIds = incoming.map((e) => e.source);
     return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
   }
 
@@ -203,11 +264,13 @@ export class GraphDataService {
    * Get all nodes in a cluster
    */
   getClusterNodes(clusterId: string): GraphNode[] {
-    return this.nodes.filter(
-      (n) =>
-        (n.project === clusterId && n.type !== 'package') ||
-        (n.type === 'package' && n.name === clusterId),
+    // Optimization: use indices
+    const projectNodes = (this.nodesByProject.get(clusterId) || []).filter(
+      (n) => n.type !== 'package',
     );
+    const packageNodes = (this.nodesByType.get('package') || []).filter((n) => n.name === clusterId);
+
+    return [...projectNodes, ...packageNodes];
   }
 
   /**
@@ -237,16 +300,14 @@ export class GraphDataService {
    * Get all unique projects
    */
   getAllProjects(): Set<string> {
-    return new Set(
-      this.nodes.map((n) => n.project).filter((p): p is string => p !== undefined && p !== ''),
-    );
+    return this.projects;
   }
 
   /**
    * Get all unique packages
    */
   getAllPackages(): Set<string> {
-    return new Set(this.nodes.filter((n) => n.type === 'package').map((n) => n.name));
+    return this.packages;
   }
 
   // ==================== Statistics ====================
@@ -285,9 +346,24 @@ export class GraphDataService {
     const clusterNodes = this.getClusterNodes(clusterId);
     const clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
 
-    const dependencies = this.edges.filter((e) => clusterNodeIds.has(e.source)).length;
+    // Optimization: Use index for edge lookup?
+    // We need dependencies where source is in clusterNodeIds and target is NOT (usually)
+    // But the original implementation just counted "edges where source is in cluster".
+    // Let's stick to the original logic but use indices?
+    // Original: this.edges.filter((e) => clusterNodeIds.has(e.source)).length;
+    // Optimized: sum of getOutgoingEdges(nodeId).length for all nodes in cluster
 
-    const dependents = this.edges.filter((e) => clusterNodeIds.has(e.target)).length;
+    let dependencies = 0;
+    for (const node of clusterNodes) {
+      dependencies += this.getOutgoingEdges(node.id).length;
+    }
+
+    // Original: this.edges.filter((e) => clusterNodeIds.has(e.target)).length;
+    // Optimized: sum of getIncomingEdges(nodeId).length for all nodes in cluster
+    let dependents = 0;
+    for (const node of clusterNodes) {
+      dependents += this.getIncomingEdges(node.id).length;
+    }
 
     const platforms = new Set(clusterNodes.flatMap((n) => n.platforms || []).filter(Boolean));
 
@@ -315,6 +391,7 @@ export class GraphDataService {
       if (visited.has(currentId)) continue;
       visited.add(currentId);
 
+      // Optimized: use getDirectDependencies which uses indices
       const deps = this.getDirectDependencies(currentId);
 
       for (const dep of deps) {
@@ -375,19 +452,35 @@ export class GraphDataService {
     maxDependencies: number;
     isolatedNodes: number;
   } {
+    // Optimized: calculate from indices
     const depCounts = new Map<string, number>();
 
     for (const node of this.nodes) {
+      // Default to 0
       depCounts.set(node.id, 0);
     }
-    for (const edge of this.edges) {
-      depCounts.set(edge.source, (depCounts.get(edge.source) || 0) + 1);
+    
+    // Iterate incoming edges map to count dependencies (wait, dependency count usually refers to OUTGOING edges, i.e. "I depend on X")
+    // Original code:
+    // for (const edge of this.edges) {
+    //   depCounts.set(edge.source, (depCounts.get(edge.source) || 0) + 1);
+    // }
+    // This counts OUTGOING edges from source. Correct.
+
+    for (const [sourceId, edges] of this.outgoingEdges) {
+        depCounts.set(sourceId, edges.length);
     }
 
     const counts = Array.from(depCounts.values());
     const totalDeps = counts.reduce((sum, c) => sum + c, 0);
     const avgDeps = this.nodes.length > 0 ? totalDeps / this.nodes.length : 0;
     const maxDeps = Math.max(0, ...counts);
+    // Isolated: count is 0. Note: nodes with NO outgoing edges are "leaves" in dependency graph, but might have incoming.
+    // "Isolated" usually means NO edges at all (incoming or outgoing).
+    // BUT, original code: isolated = counts.filter(c => c === 0).length.
+    // This only checks if it has 0 OUTGOING edges (dependencies).
+    // So I will stick to that definition to match existing behavior.
+    
     const isolated = counts.filter((c) => c === 0).length;
 
     return {
