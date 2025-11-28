@@ -19,7 +19,7 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { createMachineController } from '@/controllers/zag.controller';
 import { createStoreController } from '@/controllers/zustand.controller';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import { type SidebarSection, sidebarMachine } from '@/machines/sidebar.machine';
 import { useFilterStore } from '@/stores/filterStore';
 import { useGraphStore } from '@/stores/graphStore';
@@ -107,7 +107,7 @@ export class GraphRightSidebar extends LitElement {
       flex-direction: column;
       overflow: hidden;
       background: linear-gradient(180deg, var(--colors-sidebar) 0%, var(--colors-background) 100%);
-      border-left: 1px solid var(--colors-sidebar-border);
+      border-left: var(--border-widths-thin) solid var(--colors-sidebar-border);
       box-shadow: -8px 0 24px rgba(var(--colors-background-rgb), var(--opacity-30)),
                   inset 1px 0 0 rgba(var(--colors-foreground-rgb), var(--opacity-4));
       position: relative;

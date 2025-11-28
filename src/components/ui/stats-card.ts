@@ -52,8 +52,8 @@ export class GraphStatsCard extends LitElement {
       padding: var(--spacing-3) var(--spacing-md);
       border-radius: var(--radii-sm);
       background: var(--gradient-card);
-      border: 1px solid var(--colors-border);
-      border-left: 3px solid var(--colors-primary);
+      border: var(--border-widths-thin) solid var(--colors-border);
+      border-left: var(--border-widths-thick) solid var(--colors-primary);
       cursor: default;
       transition:
         transform var(--durations-normal) var(--easings-out),

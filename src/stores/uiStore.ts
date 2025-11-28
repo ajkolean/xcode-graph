@@ -38,7 +38,7 @@ export type PreviewFilter = {
 /**
  * UI store state and actions
  */
-interface UIStore {
+export interface UIStore {
   /** Currently active application tab */
   activeTab: ActiveTab;
   /** Current zoom level (0.2 - 2.0) */

@@ -20,7 +20,7 @@
 
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import { getNodeTypeLabel } from '@/utils/rendering/node-icons';
 import './list-item-row';
 

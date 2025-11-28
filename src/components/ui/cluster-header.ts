@@ -52,7 +52,7 @@ export class GraphClusterHeader extends LitElement {
       align-items: center;
       gap: var(--spacing-3);
       padding: var(--spacing-3) var(--spacing-4);
-      border-bottom: 1px solid var(--colors-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
     }
 
     .back-button {

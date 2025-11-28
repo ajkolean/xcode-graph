@@ -80,7 +80,7 @@ export class GraphControls extends LitElement {
       gap: var(--spacing-3);
       padding: var(--spacing-2) var(--spacing-3);
       background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
-      border: 1px solid color-mix(in srgb, var(--colors-primary) 30%, transparent);
+      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 30%, transparent);
       border-radius: var(--radii-md);
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);
@@ -88,7 +88,7 @@ export class GraphControls extends LitElement {
     }
 
     .divider {
-      width: 1px;
+      width: var(--border-widths-thin);
       height: var(--spacing-4);
       background-color: color-mix(in srgb, var(--colors-primary) 30%, transparent);
     }
@@ -103,7 +103,7 @@ export class GraphControls extends LitElement {
       padding: var(--spacing-1);
       border-radius: var(--radii-md);
       transition: background-color var(--durations-normal);
-      border: 1px solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
       background: none;
       color: var(--colors-muted-foreground);
       cursor: pointer;
@@ -127,7 +127,7 @@ export class GraphControls extends LitElement {
       padding: var(--spacing-1) var(--spacing-2);
       border-radius: var(--radii-md);
       transition: all var(--durations-normal);
-      border: 1px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
       background: none;
       cursor: pointer;
     }
@@ -294,7 +294,7 @@ export class GraphInstructions extends LitElement {
     .container {
       padding: var(--spacing-2) var(--spacing-3);
       background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
-      border: 1px solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
       border-radius: var(--radii-md);
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);

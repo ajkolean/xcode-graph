@@ -18,7 +18,7 @@
 
 import { type Remote, wrap } from 'comlink';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import type { Cluster } from '@/types/cluster';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import type { LayoutProgress, LayoutWorkerAPI } from '@/workers/layout-api';

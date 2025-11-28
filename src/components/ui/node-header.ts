@@ -19,7 +19,7 @@ import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
-import type { GraphNode } from '@/data/mockGraphData';
+import type { GraphNode } from '@/schemas/graph.schema';
 import { generateColor } from '@/utils/rendering/color-generator';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import { getNodeIconPath, getNodeTypeLabel } from '@/utils/rendering/node-icons';
@@ -53,7 +53,7 @@ export class GraphNodeHeader extends LitElement {
       display: block;
       padding: var(--spacing-md);
       flex-shrink: 0;
-      border-bottom: 1px solid var(--colors-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
     }
 
     .header-row {
@@ -150,7 +150,7 @@ export class GraphNodeHeader extends LitElement {
       font-weight: var(--font-weights-medium);
       text-transform: uppercase;
       letter-spacing: 0.02em;
-      border: 1px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
     }
 
     .badge:hover {

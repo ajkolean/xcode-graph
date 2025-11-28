@@ -83,7 +83,7 @@ export class GraphSearchBar extends LitElement {
         rgba(var(--colors-foreground-rgb), var(--opacity-2)) 0%,
         rgba(var(--colors-foreground-rgb), var(--opacity-4)) 100%
       );
-      border: 1px solid var(--colors-border);
+      border: var(--border-widths-thin) solid var(--colors-border);
       color: var(--colors-foreground);
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);
@@ -134,7 +134,7 @@ export class GraphSearchBar extends LitElement {
         color var(--durations-fast) var(--easings-out),
         transform var(--durations-fast) var(--easings-out);
       background: rgba(var(--colors-foreground-rgb), var(--opacity-5));
-      border: 1px solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      border: var(--border-widths-thin) solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
       color: var(--colors-muted-foreground);
       cursor: pointer;
       display: flex;
@@ -163,7 +163,7 @@ export class GraphSearchBar extends LitElement {
       padding: var(--spacing-1) var(--spacing-2);
       border-radius: var(--radii-sm);
       background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
-      border: 1px solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      border: var(--border-widths-thin) solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-medium);

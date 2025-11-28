@@ -17,7 +17,7 @@
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { createStoreController } from '@/controllers/zustand.controller';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import { useFilterStore } from '@/stores/filterStore';
 import { useGraphStore } from '@/stores/graphStore';
 import { useUIStore } from '@/stores/uiStore';

@@ -92,6 +92,14 @@ check_pattern \
   "Use var(--spacing-*), var(--sizes-*), var(--radii-*), or var(--font-sizes-*) tokens" \
   "error"
 
+# Check for hardcoded border widths
+# Matches border: Npx, border-*: Npx patterns (but not border-radius which is covered above)
+check_pattern \
+  "border(-top|-right|-bottom|-left)?:\s*[0-9]+px" \
+  "Hardcoded border widths found" \
+  "Use var(--border-widths-thin), var(--border-widths-medium), or var(--border-widths-thick)" \
+  "error"
+
 # Check for hardcoded font families
 check_pattern \
   "font-family:\s*['\"][^'\"]+['\"]" \

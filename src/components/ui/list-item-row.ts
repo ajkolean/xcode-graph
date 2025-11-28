@@ -23,7 +23,7 @@ import { css, html, LitElement, svg } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
-import type { GraphNode } from '@/data/mockGraphData';
+import type { GraphNode } from '@/schemas/graph.schema';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import { getNodeIconPath } from '@/utils/rendering/node-icons';
 import { adjustColorForZoom } from '@/utils/rendering/zoom-colors';
@@ -75,8 +75,8 @@ export class GraphListItemRow extends LitElement {
       border-radius: var(--radii-sm);
       text-align: left;
       background: transparent;
-      border: 1px solid transparent;
-      border-left: 2px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
+      border-left: var(--border-widths-medium) solid transparent;
       cursor: pointer;
       transition:
         background-color var(--durations-fast) var(--easings-out),
@@ -241,7 +241,6 @@ export class GraphListItemRow extends LitElement {
                 stroke-width="1.8"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                style="opacity: 0.95"
               />
             </svg>
           `}

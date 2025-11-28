@@ -11,7 +11,7 @@
 
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphNode } from '@/data/mockGraphData';
+import type { GraphNode } from '@/schemas/graph.schema';
 import { getNodeTypeLabel } from '@/utils/rendering/node-icons';
 
 export class GraphNodeInfo extends LitElement {

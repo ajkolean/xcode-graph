@@ -64,7 +64,7 @@ export class GraphSidebar extends LitElement {
       display: flex;
       flex-direction: column;
       background: var(--colors-sidebar);
-      border-right: 1px solid var(--colors-sidebar-border);
+      border-right: var(--border-widths-thin) solid var(--colors-sidebar-border);
       position: relative;
       overflow: hidden;
     }
@@ -105,8 +105,8 @@ export class GraphSidebar extends LitElement {
         border-color var(--durations-fast) var(--easings-out),
         transform var(--durations-fast) var(--easings-out);
       background: transparent;
-      border: 1px solid transparent;
-      border-left: 2px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
+      border-left: var(--border-widths-medium) solid transparent;
       cursor: pointer;
       color: var(--colors-muted-foreground);
       /* Staggered animation */
@@ -207,7 +207,7 @@ export class GraphSidebar extends LitElement {
 
     /* Section divider */
     .section-divider {
-      height: 1px;
+      height: var(--border-widths-thin);
       background: var(--colors-border);
       margin: var(--spacing-3) 0;
     }

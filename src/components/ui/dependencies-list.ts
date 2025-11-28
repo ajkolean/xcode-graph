@@ -16,7 +16,7 @@
 
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphNode } from '@/data/mockGraphData';
+import type { GraphNode } from '@/schemas/graph.schema';
 import './list-item-row';
 
 export class GraphDependenciesList extends LitElement {
@@ -43,40 +43,40 @@ export class GraphDependenciesList extends LitElement {
     :host {
       display: block;
       padding: var(--spacing-md);
-      border-bottom: 1px solid var(--color-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
     }
 
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: var(--spacing-3);
     }
 
     .title {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-small);
-      color: var(--color-muted-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
+      color: var(--colors-muted-foreground);
     }
 
     .count {
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      color: var(--color-foreground);
-      opacity: 0.3;
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-xs);
+      color: var(--colors-foreground);
+      opacity: var(--opacity-30);
     }
 
     .empty {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-small);
-      color: var(--color-muted-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
+      color: var(--colors-muted-foreground);
       font-style: italic;
     }
 
     .list {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: var(--spacing-1);
     }
   `;
 

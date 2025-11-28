@@ -33,7 +33,7 @@ export class GraphHeader extends LitElement {
       flex-shrink: 0;
       position: relative;
       background: var(--gradient-header);
-      border-bottom: 1px solid var(--colors-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
       z-index: 50;
       overflow: hidden;
     }
@@ -112,7 +112,7 @@ export class GraphHeader extends LitElement {
         background-color var(--durations-fast) var(--easings-out),
         border-color var(--durations-fast) var(--easings-out);
       background: transparent;
-      border: 1px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-label);
       font-weight: var(--font-weights-medium);
@@ -186,7 +186,7 @@ export class GraphHeader extends LitElement {
         border-color var(--durations-fast) var(--easings-out),
         color var(--durations-fast) var(--easings-out);
       color: var(--colors-muted-foreground);
-      border: 1px solid var(--colors-border);
+      border: var(--border-widths-thin) solid var(--colors-border);
       background: rgba(var(--colors-foreground-rgb), var(--opacity-2));
       cursor: pointer;
     }

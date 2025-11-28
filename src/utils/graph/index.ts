@@ -11,11 +11,22 @@
  */
 
 // ==================== Node Connections ====================
-export { getConnectedNodes, type ConnectionResult } from './connections';
+
+export {
+  getConnectedNodes,
+  getConnectionCount,
+  getDependencyCount,
+  getDependentCount,
+} from './connections';
 
 // ==================== Node Visibility ====================
 
-export { isNodeVisible, type VisibilityOptions } from './visibility';
+export {
+  matchesSearch,
+  getConnectedNodeIds,
+  shouldDimNode,
+  shouldShowEdge,
+} from './visibility';
 
 // ==================== Filtering ====================
 

@@ -13,11 +13,19 @@
 
 export {
   applyCollisionForces,
-  applyBoundaryForces,
-  calculateRepulsionForce,
-  type ForceConfig,
+  updatePositions,
+  updatePositionMap,
+  calculateBoundingRadius,
+  CollisionPresets,
+  type CollisionConfig,
+  type CollisionEntity,
 } from './collision';
 
 // ==================== Spatial Indexing ====================
 
-export { SpatialHash, type SpatialHashConfig } from './spatial-hash';
+export {
+  SpatialHash,
+  createSpatialHash,
+  type SpatialHashConfig,
+  type SpatialEntity,
+} from './spatial-hash';

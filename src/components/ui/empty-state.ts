@@ -58,7 +58,7 @@ export class GraphEmptyState extends LitElement {
       justify-content: center;
       border-radius: var(--radii-lg);
       background: rgba(var(--colors-primary-rgb), var(--opacity-10));
-      border: 1px solid rgba(var(--colors-primary-rgb), var(--opacity-15));
+      border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-15));
       animation: iconPulse 3s ease-in-out infinite;
     }
 
@@ -103,7 +103,7 @@ export class GraphEmptyState extends LitElement {
       border-radius: var(--radii-md);
       transition: all var(--durations-normal) var(--easings-default);
       background: rgba(var(--colors-primary-rgb), var(--opacity-10));
-      border: 1px solid rgba(var(--colors-primary-rgb), var(--opacity-25));
+      border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-25));
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-semibold);

@@ -26,7 +26,7 @@
  * @fires node-click - Dispatched on click
  */
 
-import type { GraphNode as GraphNodeType } from '@/data/mockGraphData';
+import type { GraphNode as GraphNodeType } from '@/schemas/graph.schema';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/rendering/zoom-colors';
 import { getNodeIconPath } from '@/utils/rendering/node-icons';
 import { LitElement, svg } from 'lit';

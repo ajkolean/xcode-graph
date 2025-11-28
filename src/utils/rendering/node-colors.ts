@@ -9,7 +9,7 @@ import { generateColor } from './color-generator';
  * Color mapping for different node types
  * Uses the Mission Control palette with high contrast colors
  */
-const NODE_TYPE_COLORS: Record<string, string> = {
+export const NODE_TYPE_COLORS: Record<string, string> = {
   // Primary - Amber (apps, main entry points)
   app: '#FFA03C',
 

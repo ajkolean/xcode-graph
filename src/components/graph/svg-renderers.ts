@@ -7,7 +7,7 @@
  */
 
 import { nothing, svg } from 'lit';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import type { Cluster } from '@/types/cluster';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import { generateColor } from '@/utils/rendering/color-generator';

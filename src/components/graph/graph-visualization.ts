@@ -23,7 +23,7 @@
 
 import { GraphInteractionFullController } from '@/controllers/graph-interaction-full.controller';
 import { GraphLayoutController } from '@/controllers/graph-layout.controller';
-import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode as GraphNodeType } from '@/schemas/graph.schema';
 import type { TransitiveResult, ViewMode } from '@/types/app';
 import type { PreviewFilter } from '@/types/filters';
 import {
@@ -36,7 +36,7 @@ import {
   type PropertyValues,
   type TemplateResult,
 } from 'lit';
-import { query, state } from 'lit/decorators.js';
+import { eventOptions, query, state } from 'lit/decorators.js';
 import './cluster-group';
 import './graph-edges';
 import './graph-overlays';
@@ -117,6 +117,8 @@ export class GraphVisualization extends LitElement {
       min-height: 0;
       width: 100%;
       height: 100%;
+      overscroll-behavior: contain;
+      touch-action: none;
     }
 
     svg {
@@ -168,7 +170,15 @@ export class GraphVisualization extends LitElement {
 
     // Update animation when enableAnimation changes
     if (changedProps.has('enableAnimation')) {
-      this.layout.enableAnimation = this.enableAnimation ?? false;
+      const enableAnimation = this.enableAnimation ?? false;
+      this.layout.enableAnimation = enableAnimation;
+
+      // If toggled on/off after initial render, re-run layout or stop animation
+      if (!enableAnimation) {
+        this.layout.stopAnimation();
+      } else if (this.nodes && this.edges) {
+        this.layout.computeLayout(this.nodes, this.edges);
+      }
     }
 
     // Update interaction config when zoom changes
@@ -212,13 +222,12 @@ export class GraphVisualization extends LitElement {
     }
   }
 
+  @eventOptions({ passive: true })
   private handleWheel(e: WheelEvent) {
     // Only zoom if Ctrl/Cmd key is pressed (also captures trackpad pinch)
     if (!e.ctrlKey && !e.metaKey) {
       return;
     }
-
-    e.preventDefault();
 
     const eventName = e.deltaY < 0 ? 'zoom-in' : 'zoom-out';
     this.dispatchEvent(

@@ -47,7 +47,7 @@ export class GraphClusterStats extends LitElement {
     :host {
       display: block;
       padding: var(--spacing-md);
-      border-bottom: 1px solid var(--colors-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
     }
 
     .stats-grid {
@@ -79,7 +79,7 @@ export class GraphClusterStats extends LitElement {
       gap: var(--spacing-1);
       padding: var(--spacing-1) var(--spacing-2);
       border-radius: var(--radii-md);
-      border: 1px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
     }
 
     .platform-badge svg {

@@ -23,7 +23,7 @@
  */
 
 import { html, LitElement } from 'lit';
-import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode as GraphNodeType } from '@/schemas/graph.schema';
 import type { TransitiveResult, ViewMode } from '@/types/app';
 import type { Cluster } from '@/types/cluster';
 import type { PreviewFilter } from '@/types/filters';

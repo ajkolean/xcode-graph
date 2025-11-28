@@ -32,7 +32,8 @@ export {
 export {
   simpleClusterLayout,
   computeMEC,
-  type ClusterLayoutOptions,
+  type NodeCartesian,
+  type SimpleLayoutOptions,
 } from './intra-cluster';
 
 // ==================== Graph Algorithms ====================
@@ -46,16 +47,28 @@ export {
 
 // ==================== Cluster Analysis ====================
 
-export { analyzeCluster, type ClusterStats } from './cluster-analysis';
+export {
+  analyzeCluster,
+  identifyAnchors,
+  determineRole,
+} from './cluster-analysis';
 
 // ==================== Cluster Grouping ====================
 
-export { groupIntoClusters, type GroupingOptions } from './cluster-grouping';
+export { groupIntoClusters, arrangeClusterGrid } from './cluster-grouping';
 
 // ==================== Mass Calculation ====================
 
-export { computeNodeMasses, calculateClusterMass } from './mass';
+export {
+  computeNodeMasses,
+  selectMassBasedAnchor,
+  type NodeMass,
+} from './mass';
 
 // ==================== Elastic Shell ====================
 
-export { computeElasticShell, type ShellConfig } from './elastic-shell';
+export {
+  computeElasticShellRadius,
+  type ElasticShellConfig,
+  type NodeWithPosition,
+} from './elastic-shell';

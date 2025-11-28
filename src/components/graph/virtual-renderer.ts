@@ -13,7 +13,7 @@
 
 import { css, html, LitElement, svg, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import type { GraphNode } from '@/data/mockGraphData';
+import type { GraphNode } from '@/schemas/graph.schema';
 import type { NodePosition } from '@/types/simulation';
 import { calculateViewportBounds, isCircleInViewport } from '@/utils/rendering/viewport';
 

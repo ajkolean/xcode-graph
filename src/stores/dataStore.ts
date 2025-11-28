@@ -17,7 +17,7 @@ import { deepEqual } from '../utils/memoization';
 /**
  * Result of filtering graph data
  */
-interface FilteredData {
+export interface FilteredData {
   /** Nodes that pass current filters */
   filteredNodes: GraphNode[];
   /** Edges between filtered nodes */
@@ -29,7 +29,7 @@ interface FilteredData {
 /**
  * Extended filtered data with transitive dependency info
  */
-interface DisplayData extends FilteredData {
+export interface DisplayData extends FilteredData {
   /** Transitive dependencies of selected node */
   transitiveDeps: TransitiveResult;
   /** Transitive dependents of selected node */
@@ -39,7 +39,7 @@ interface DisplayData extends FilteredData {
 /**
  * Data store state and actions
  */
-interface DataStore {
+export interface DataStore {
   // ==================== Source Data ====================
   /** All graph nodes */
   nodes: GraphNode[];

@@ -15,7 +15,7 @@
 
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import type { Cluster } from '@/types/cluster';
 import { generateColor } from '@/utils/rendering/color-generator';
 import { computeClusterStats } from '@/utils/graph/node-utils';

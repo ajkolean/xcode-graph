@@ -37,9 +37,9 @@ export class GraphRightSidebarHeader extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 12px var(--spacing-md);
+      padding: var(--spacing-3) var(--spacing-md);
       flex-shrink: 0;
-      border-bottom: 1px solid var(--color-sidebar-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-sidebar-border);
     }
 
     .container {
@@ -49,25 +49,25 @@ export class GraphRightSidebarHeader extends LitElement {
     }
 
     .title {
-      font-family: 'DM Sans', sans-serif;
-      font-size: var(--text-h2);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-foreground);
+      font-family: var(--fonts-heading);
+      font-size: var(--font-sizes-h2);
+      font-weight: var(--font-weights-medium);
+      color: var(--colors-foreground);
     }
 
     .toggle-button {
-      padding: 6px;
-      border-radius: var(--radius);
-      transition: background-color 0.2s;
+      padding: var(--spacing-1);
+      border-radius: var(--radii-md);
+      transition: background-color var(--durations-normal);
       background: none;
       border: none;
-      color: var(--color-muted-foreground);
+      color: var(--colors-muted-foreground);
       cursor: pointer;
       margin-left: auto;
     }
 
     .toggle-button:hover {
-      background-color: var(--color-muted);
+      background-color: var(--colors-muted);
     }
   `;
 

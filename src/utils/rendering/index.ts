@@ -13,7 +13,11 @@
 
 // ==================== Color Generation ====================
 
-export { generateColor, generateColors } from './color-generator';
+export {
+  generateColor,
+  generateColorPalette,
+  generateColorWithAlpha,
+} from './color-generator';
 
 // ==================== Zoom Adjustments ====================
 
@@ -30,7 +34,7 @@ export { getPlatformIconPath, PLATFORM_COLOR } from './platform-icons';
 
 // ==================== Sizing ====================
 
-export { getNodeSize, getClusterSize } from './sizing';
+export { getNodeSize, getBaseNodeSize } from './sizing';
 
 // ==================== Viewport Culling ====================
 

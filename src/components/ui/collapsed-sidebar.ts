@@ -18,7 +18,7 @@
 
 import { css, html, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 
 export class GraphCollapsedSidebar extends LitElement {
   // ========================================
@@ -102,7 +102,7 @@ export class GraphCollapsedSidebar extends LitElement {
       align-items: center;
       justify-content: center;
       background-color: rgba(var(--colors-primary-rgb), var(--opacity-30));
-      border: 1px solid rgba(var(--colors-primary-rgb), var(--opacity-50));
+      border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-50));
       font-size: var(--font-sizes-xs);
       font-family: var(--fonts-body);
       font-weight: var(--font-weights-semibold);
@@ -111,7 +111,7 @@ export class GraphCollapsedSidebar extends LitElement {
 
     .divider {
       width: var(--spacing-8);
-      height: 1px;
+      height: var(--border-widths-thin);
       background-color: var(--colors-border);
     }
 

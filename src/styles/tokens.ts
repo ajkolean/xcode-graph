@@ -109,6 +109,13 @@ export const radiiTokens = {
   full: 'var(--radii-full)',
 } as const;
 
+export const borderWidthTokens = {
+  none: 'var(--border-widths-none)',
+  thin: 'var(--border-widths-thin)',
+  medium: 'var(--border-widths-medium)',
+  thick: 'var(--border-widths-thick)',
+} as const;
+
 export const fontSizeTokens = {
   xs: 'var(--font-sizes-xs)',
   sm: 'var(--font-sizes-sm)',
@@ -219,6 +226,7 @@ export const opacityTokens = {
 export const tokens = {
   colors: colorTokens,
   radii: radiiTokens,
+  borderWidths: borderWidthTokens,
   fontSizes: fontSizeTokens,
   fontWeights: fontWeightTokens,
   fonts: fontTokens,
@@ -236,6 +244,7 @@ export const tokens = {
  */
 export type ColorToken = keyof typeof colorTokens;
 export type RadiusToken = keyof typeof radiiTokens;
+export type BorderWidthToken = keyof typeof borderWidthTokens;
 export type FontSizeToken = keyof typeof fontSizeTokens;
 export type FontWeightToken = keyof typeof fontWeightTokens;
 export type FontToken = keyof typeof fontTokens;

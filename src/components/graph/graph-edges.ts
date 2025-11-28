@@ -18,7 +18,7 @@
 
 import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphEdge as GraphEdgeType, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge as GraphEdgeType, GraphNode } from '@/schemas/graph.schema';
 import type { ViewMode } from '@/types/app';
 import type { ClusterPosition, NodePosition } from '@/types/simulation';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';

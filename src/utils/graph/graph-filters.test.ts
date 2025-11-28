@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FilterState } from '@/schemas/app.schema';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import { applyGraphFilters } from './graph-filters';
 
 const defaultFilters: FilterState = {

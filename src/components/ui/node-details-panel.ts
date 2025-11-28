@@ -18,7 +18,7 @@
  */
 
 import { css, html, LitElement } from 'lit';
-import type { GraphEdge, GraphNode } from '@/data/mockGraphData';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import { computeNodeDependencies } from '@/utils/graph/node-utils';
 import './node-header';
 import './node-info';
@@ -91,12 +91,12 @@ export class GraphNodeDetailsPanel extends LitElement {
     }
 
     :host::-webkit-scrollbar-thumb {
-      background: rgba(64, 224, 208, 0.2);
-      border-radius: 3px;
+      background: rgba(var(--colors-accent-rgb), var(--opacity-20));
+      border-radius: var(--radii-md);
     }
 
     :host::-webkit-scrollbar-thumb:hover {
-      background: rgba(64, 224, 208, 0.35);
+      background: rgba(var(--colors-accent-rgb), 0.35);
     }
   `;
 

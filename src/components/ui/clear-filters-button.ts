@@ -44,7 +44,7 @@ export class GraphClearFiltersButton extends LitElement {
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);
       font-weight: var(--font-weights-medium);
-      border: 1px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
     }
 
     button:not(:disabled) {

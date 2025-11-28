@@ -21,7 +21,7 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
-import type { GraphNode } from '@/data/mockGraphData';
+import type { GraphNode } from '@/schemas/graph.schema';
 
 export class GraphNodeActions extends LitElement {
   // ========================================
@@ -43,7 +43,7 @@ export class GraphNodeActions extends LitElement {
       display: block;
       padding: var(--spacing-md);
       flex-shrink: 0;
-      border-bottom: 1px solid var(--colors-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
     }
 
     .actions {
@@ -65,7 +65,7 @@ export class GraphNodeActions extends LitElement {
       font-size: var(--font-sizes-label);
       font-weight: var(--font-weights-medium);
       line-height: var(--line-heights-normal);
-      border: 1px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
       cursor: pointer;
     }
 

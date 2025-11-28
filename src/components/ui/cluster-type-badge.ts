@@ -41,7 +41,7 @@ export class GraphClusterTypeBadge extends LitElement {
     :host {
       display: block;
       padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
-      border-bottom: 1px solid var(--colors-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
     }
 
     .container {
@@ -71,8 +71,8 @@ export class GraphClusterTypeBadge extends LitElement {
 
       /* Use CSS custom properties for dynamic theming */
       background-color: var(--badge-bg);
-      border: 1px solid var(--badge-border);
-      border-left: 2px solid var(--badge-color);
+      border: var(--border-widths-thin) solid var(--badge-border);
+      border-left: var(--border-widths-medium) solid var(--badge-color);
       color: var(--badge-color);
     }
 

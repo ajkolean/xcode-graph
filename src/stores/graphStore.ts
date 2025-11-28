@@ -14,7 +14,7 @@ import type { GraphNode } from '../schemas/graph.schema';
 /**
  * Graph store state and actions
  */
-interface GraphStore {
+export interface GraphStore {
   // ==================== Selection State ====================
   /** Currently selected node (null if none) */
   selectedNode: GraphNode | null;

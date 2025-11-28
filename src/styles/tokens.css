@@ -129,6 +129,15 @@
   --radii-full: 9999px;
 
   /* ========================================
+     BORDER WIDTHS
+     ======================================== */
+
+  --border-widths-none: 0;
+  --border-widths-thin: 1px;
+  --border-widths-medium: 2px;
+  --border-widths-thick: 3px;
+
+  /* ========================================
      TYPOGRAPHY - Technical, Precise
      ======================================== */
 

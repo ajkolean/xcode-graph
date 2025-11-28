@@ -122,7 +122,7 @@ export class GraphFilterView extends LitElement {
     .stats-container {
       padding: var(--spacing-md);
       display: flex;
-      gap: 12px;
+      gap: var(--spacing-3);
     }
 
     .filter-content {
@@ -133,14 +133,14 @@ export class GraphFilterView extends LitElement {
     .sections {
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      padding: 24px var(--spacing-md);
+      gap: var(--spacing-6);
+      padding: var(--spacing-6) var(--spacing-md);
     }
 
     .section-divider {
-      height: 1px;
-      background-color: rgba(255, 255, 255, 0.06);
-      margin: 0 -4px;
+      height: var(--border-widths-thin);
+      background-color: var(--colors-border);
+      margin: 0 calc(-1 * var(--spacing-1));
     }
   `;
 

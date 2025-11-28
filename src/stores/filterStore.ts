@@ -13,7 +13,7 @@ import type { FilterState } from '../schemas/app.schema';
 /**
  * Filter store state and actions
  */
-interface FilterStore {
+export interface FilterStore {
   /** Current active filters */
   filters: FilterState;
   /** Current search query */

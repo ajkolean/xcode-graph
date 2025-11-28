@@ -17,7 +17,7 @@
 
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { GraphNode } from '@/data/mockGraphData';
+import type { GraphNode } from '@/schemas/graph.schema';
 import './list-item-row';
 
 export class GraphDependentsList extends LitElement {
@@ -39,7 +39,7 @@ export class GraphDependentsList extends LitElement {
     :host {
       display: block;
       padding: var(--spacing-md);
-      border-bottom: 1px solid var(--colors-border);
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
     }
 
     .header {

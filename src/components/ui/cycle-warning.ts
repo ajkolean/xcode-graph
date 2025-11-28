@@ -41,7 +41,7 @@ export class GraphCycleWarning extends LitElement {
 
     .warning-banner {
       background: var(--colors-warning-bg, #fef3cd);
-      border: 1px solid var(--colors-warning-border, #f0ad4e);
+      border: var(--border-widths-thin) solid var(--colors-warning-border, #f0ad4e);
       border-radius: var(--radii-sm);
       padding: var(--spacing-3) var(--spacing-md);
       margin: var(--spacing-2) 0;
@@ -104,7 +104,7 @@ export class GraphCycleWarning extends LitElement {
       font-size: var(--font-sizes-label);
       font-weight: var(--font-weights-medium);
       cursor: pointer;
-      border: 1px solid transparent;
+      border: var(--border-widths-thin) solid transparent;
       background: transparent;
       transition: all var(--durations-normal);
     }

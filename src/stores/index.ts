@@ -13,6 +13,7 @@
 // ==================== Graph Store ====================
 
 export {
+  type GraphStore,
   useCircularDependencies,
   useGraphStore,
   useHoveredNode,
@@ -25,6 +26,7 @@ export {
 // ==================== Filter Store ====================
 
 export {
+  type FilterStore,
   useFilterStore,
   useFilters,
   useHasActiveFilters,
@@ -36,6 +38,7 @@ export {
 export {
   type ActiveTab,
   type PreviewFilter,
+  type UIStore,
   useActiveTab,
   useEnableAnimation,
   usePreviewFilter,
@@ -45,4 +48,11 @@ export {
 
 // ==================== Data Store ====================
 
-export { useDataStore, useGraphEdges, useGraphNodes } from './dataStore';
+export {
+  type DataStore,
+  type DisplayData,
+  type FilteredData,
+  useDataStore,
+  useGraphEdges,
+  useGraphNodes,
+} from './dataStore';

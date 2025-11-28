@@ -46,21 +46,21 @@ export class GraphMetricsSection extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 12px 16px 16px;
+      padding: var(--spacing-3) var(--spacing-md) var(--spacing-md);
       flex-shrink: 0;
     }
 
     .title {
-      margin-bottom: 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-small);
-      color: var(--color-muted-foreground);
+      margin-bottom: var(--spacing-3);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
+      color: var(--colors-muted-foreground);
     }
 
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: var(--spacing-3);
     }
   `;
 
