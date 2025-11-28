@@ -43,13 +43,13 @@ export class GraphNodeActions extends LitElement {
       display: block;
       padding: var(--spacing-md);
       flex-shrink: 0;
-      border-bottom: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--colors-border);
     }
 
     .actions {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: var(--spacing-2);
     }
 
     .action-button {
@@ -57,78 +57,65 @@ export class GraphNodeActions extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: var(--radius);
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
-      font-weight: var(--font-weight-medium);
-      line-height: 18px;
+      gap: var(--spacing-2);
+      padding: var(--spacing-1) var(--spacing-3);
+      border-radius: var(--radii-md);
+      transition: all var(--durations-normal);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      font-weight: var(--font-weights-medium);
+      line-height: var(--line-heights-normal);
       border: 1px solid transparent;
       cursor: pointer;
     }
 
     /* Dependency Chain Button (Purple) */
     .dependency-button {
-      background-color: color-mix(in srgb, var(--primary) 10%, transparent);
-      border-color: color-mix(in srgb, var(--primary) 30%, transparent);
-      color: color-mix(in srgb, var(--primary) 120%, white);
+      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-primary) 30%, transparent);
+      color: color-mix(in srgb, var(--colors-primary) 120%, white);
     }
 
     .dependency-button.active {
-      background-color: var(--primary);
-      border-color: var(--primary);
-      color: var(--primary-foreground);
+      background-color: var(--colors-primary);
+      border-color: var(--colors-primary);
+      color: var(--colors-primary-foreground);
     }
 
     .dependency-button.both {
-      background-color: color-mix(in srgb, var(--primary) 80%, transparent);
+      background-color: color-mix(in srgb, var(--colors-primary) 80%, transparent);
     }
 
     /* Dependents Chain Button (Green) */
     .dependents-button {
-      background-color: color-mix(in srgb, var(--chart-3) 10%, transparent);
-      border-color: color-mix(in srgb, var(--chart-3) 30%, transparent);
-      color: var(--chart-3);
+      background-color: color-mix(in srgb, var(--colors-chart-3) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-chart-3) 30%, transparent);
+      color: var(--colors-chart-3);
     }
 
     .dependents-button.active {
-      background-color: color-mix(in srgb, var(--chart-3) 20%, transparent);
-      border-color: color-mix(in srgb, var(--chart-3) 50%, transparent);
-      color: var(--chart-3);
+      background-color: color-mix(in srgb, var(--colors-chart-3) 20%, transparent);
+      border-color: color-mix(in srgb, var(--colors-chart-3) 50%, transparent);
+      color: var(--colors-chart-3);
     }
 
     .dependents-button.both {
-      background-color: color-mix(in srgb, var(--chart-3) 80%, transparent);
-      border-color: color-mix(in srgb, var(--chart-3) 60%, transparent);
-      color: var(--primary-foreground);
+      background-color: color-mix(in srgb, var(--colors-chart-3) 80%, transparent);
+      border-color: color-mix(in srgb, var(--colors-chart-3) 60%, transparent);
+      color: var(--colors-primary-foreground);
     }
 
     /* Impact Button (neutral/foreground) */
     .impact-button {
-      background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
-      border-color: color-mix(in srgb, var(--color-foreground) 25%, transparent);
-      color: var(--color-foreground);
+      background-color: color-mix(in srgb, var(--colors-foreground) 8%, transparent);
+      border-color: color-mix(in srgb, var(--colors-foreground) 25%, transparent);
+      color: var(--colors-foreground);
     }
 
     .impact-button.active {
-      background-color: var(--color-foreground);
-      border-color: var(--color-foreground);
-      color: var(--color-background);
-    }
-
-    /* Impact Button (neutral/foreground) */
-    .impact-button {
-      background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
-      border-color: color-mix(in srgb, var(--color-foreground) 25%, transparent);
-      color: var(--color-foreground);
-    }
-
-    .impact-button.active {
-      background-color: var(--color-foreground);
-      border-color: var(--color-foreground);
-      color: var(--color-background);
+      background-color: var(--colors-foreground);
+      border-color: var(--colors-foreground);
+      color: var(--colors-background);
     }
 
     .icon {
@@ -136,8 +123,8 @@ export class GraphNodeActions extends LitElement {
     }
 
     .icon svg {
-      width: 16px;
-      height: 16px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
 
     .icon.rotated svg {

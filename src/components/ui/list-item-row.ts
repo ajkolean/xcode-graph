@@ -70,8 +70,8 @@ export class GraphListItemRow extends LitElement {
       width: 100%;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
+      gap: var(--spacing-3);
+      padding: var(--spacing-2) var(--spacing-3);
       border-radius: var(--radii-sm);
       text-align: left;
       background: transparent;
@@ -79,24 +79,24 @@ export class GraphListItemRow extends LitElement {
       border-left: 2px solid transparent;
       cursor: pointer;
       transition:
-        background-color 0.15s var(--easings-out),
-        border-color 0.15s var(--easings-out),
-        transform 0.15s var(--easings-out);
+        background-color var(--durations-fast) var(--easings-out),
+        border-color var(--durations-fast) var(--easings-out),
+        transform var(--durations-fast) var(--easings-out);
     }
 
     button.selected {
-      background-color: rgba(255, 255, 255, 0.06);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
       border-left-color: var(--node-color, var(--colors-primary));
       border-color: var(--colors-border);
     }
 
     button.hovered:not(.selected) {
-      background-color: rgba(255, 255, 255, 0.04);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
       border-color: var(--colors-border);
     }
 
     button:not(.selected):not(.hovered) {
-      background-color: rgba(255, 255, 255, 0.02);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-2));
     }
 
     button:active {
@@ -111,12 +111,12 @@ export class GraphListItemRow extends LitElement {
     }
 
     .icon-container svg {
-      width: 20px;
-      height: 20px;
+      width: var(--sizes-icon-md);
+      height: var(--sizes-icon-md);
     }
 
     .icon-container svg path {
-      opacity: 0.95;
+      opacity: var(--opacity-95);
     }
 
     .content {
@@ -126,7 +126,7 @@ export class GraphListItemRow extends LitElement {
 
     .name {
       font-family: var(--fonts-body);
-      font-size: 12px;
+      font-size: var(--font-sizes-label);
       color: var(--colors-foreground);
       font-weight: var(--font-weights-medium);
       overflow: hidden;
@@ -141,7 +141,7 @@ export class GraphListItemRow extends LitElement {
 
     .subtitle {
       font-family: var(--fonts-mono);
-      font-size: 10px;
+      font-size: var(--font-sizes-xs);
       color: var(--colors-muted-foreground);
       margin-top: 2px;
       text-transform: uppercase;
@@ -153,22 +153,22 @@ export class GraphListItemRow extends LitElement {
       margin-left: -4px;
       color: var(--colors-muted-foreground);
       transition:
-        opacity 0.15s var(--easings-out),
-        transform 0.15s var(--easings-out);
+        opacity var(--durations-fast) var(--easings-out),
+        transform var(--durations-fast) var(--easings-out);
     }
 
     .chevron.hovered {
-      opacity: 0.8;
+      opacity: var(--opacity-80);
       transform: translateX(2px);
     }
 
     .chevron:not(.hovered) {
-      opacity: 0.3;
+      opacity: var(--opacity-30);
     }
 
     .chevron svg {
-      width: 16px;
-      height: 16px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
   `;
 

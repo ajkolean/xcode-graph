@@ -90,15 +90,15 @@ export class GraphRightSidebar extends LitElement {
     :host {
       display: block;
       flex-shrink: 0;
-      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width var(--durations-normal) var(--easings-default);
     }
 
     :host([collapsed]) {
-      width: 56px;
+      width: var(--sizes-sidebar-collapsed);
     }
 
     :host(:not([collapsed])) {
-      width: 320px;
+      width: var(--sizes-sidebar-width);
     }
 
     aside {
@@ -106,10 +106,10 @@ export class GraphRightSidebar extends LitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      background: linear-gradient(180deg, var(--sidebar) 0%, rgba(8, 10, 15, 1) 100%);
-      border-left: 1px solid var(--sidebar-border);
-      box-shadow: -8px 0 24px rgba(0, 0, 0, 0.3),
-                  inset 1px 0 0 rgba(255, 255, 255, 0.03);
+      background: linear-gradient(180deg, var(--colors-sidebar) 0%, var(--colors-background) 100%);
+      border-left: 1px solid var(--colors-sidebar-border);
+      box-shadow: -8px 0 24px rgba(var(--colors-background-rgb), var(--opacity-30)),
+                  inset 1px 0 0 rgba(var(--colors-foreground-rgb), var(--opacity-4));
       position: relative;
     }
 
@@ -118,8 +118,8 @@ export class GraphRightSidebar extends LitElement {
       content: '';
       position: absolute;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      opacity: 0.015;
+      background-image: var(--effect-noise);
+      opacity: var(--opacity-2);
       pointer-events: none;
       z-index: 0;
     }
@@ -129,13 +129,7 @@ export class GraphRightSidebar extends LitElement {
       content: '';
       position: absolute;
       inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.02) 2px,
-        rgba(0, 0, 0, 0.02) 4px
-      );
+      background: var(--effect-scanlines);
       pointer-events: none;
       z-index: 0;
     }
@@ -153,7 +147,7 @@ export class GraphRightSidebar extends LitElement {
       flex: 1;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 160, 60, 0.2) transparent;
+      scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
     }
 
     .filter-scroll::-webkit-scrollbar {
@@ -165,12 +159,12 @@ export class GraphRightSidebar extends LitElement {
     }
 
     .filter-scroll::-webkit-scrollbar-thumb {
-      background: rgba(255, 160, 60, 0.2);
-      border-radius: 3px;
+      background: rgba(var(--colors-primary-rgb), var(--opacity-20));
+      border-radius: var(--radii-sm);
     }
 
     .filter-scroll::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 160, 60, 0.35);
+      background: rgba(var(--colors-primary-rgb), var(--opacity-40));
     }
 
     .stats-row {

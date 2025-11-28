@@ -40,30 +40,30 @@ export class GraphClusterTypeBadge extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 16px 16px 12px;
+      padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
       border-bottom: 1px solid var(--colors-border);
     }
 
     .container {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--spacing-2);
       flex-wrap: wrap;
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 5px 10px;
+      padding: var(--spacing-1) var(--spacing-2);
       border-radius: var(--radii-sm);
       cursor: default;
       transition:
-        background-color 0.15s var(--easings-out),
-        border-color 0.15s var(--easings-out),
-        box-shadow 0.15s var(--easings-out);
+        background-color var(--durations-fast) var(--easings-out),
+        border-color var(--durations-fast) var(--easings-out),
+        box-shadow var(--durations-fast) var(--easings-out);
 
       font-family: var(--fonts-mono);
-      font-size: 10px;
+      font-size: var(--font-sizes-xs);
       line-height: 1;
       font-weight: var(--font-weights-semibold);
       text-transform: uppercase;

@@ -54,21 +54,21 @@ export class GraphClusterTargetsList extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 16px;
+      padding: var(--spacing-md);
     }
 
     .main-title {
-      font-family: 'DM Sans', sans-serif;
-      font-size: var(--text-base);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-foreground);
+      font-family: var(--fonts-heading);
+      font-size: var(--font-sizes-base);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-foreground);
       margin-bottom: var(--spacing-md);
     }
 
     .sections {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: var(--spacing-3);
     }
 
     .type-section {
@@ -77,10 +77,10 @@ export class GraphClusterTargetsList extends LitElement {
     }
 
     .type-header {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-small);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-muted-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
+      font-weight: var(--font-weights-medium);
+      color: var(--colors-muted-foreground);
       margin-bottom: var(--spacing-sm);
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -89,7 +89,7 @@ export class GraphClusterTargetsList extends LitElement {
     .node-list {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: var(--spacing-1);
     }
   `;
 

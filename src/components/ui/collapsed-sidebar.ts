@@ -71,22 +71,23 @@ export class GraphCollapsedSidebar extends LitElement {
 
     .icon-button {
       position: relative;
-      padding: 8px;
-      border-radius: var(--radius);
-      transition: background-color 0.2s;
+      padding: var(--spacing-2);
+      border-radius: var(--radii-md);
+      transition: background-color var(--durations-normal);
       background: none;
       border: none;
-      color: rgba(168, 157, 255, 0.8);
+      color: var(--colors-primary);
+      opacity: var(--opacity-80);
       cursor: pointer;
     }
 
     .icon-button:hover {
-      background-color: var(--color-muted);
+      background-color: var(--colors-muted);
     }
 
     .icon-button svg {
-      width: 20px;
-      height: 20px;
+      width: var(--sizes-icon-md);
+      height: var(--sizes-icon-md);
       stroke: currentColor;
     }
 
@@ -94,47 +95,47 @@ export class GraphCollapsedSidebar extends LitElement {
       position: absolute;
       top: -4px;
       right: -4px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
+      border-radius: var(--radii-full);
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: rgba(168, 157, 255, 0.3);
-      border: 1px solid rgba(168, 157, 255, 0.5);
-      font-size: 9px;
-      font-family: 'Inter', sans-serif;
-      font-weight: var(--font-weight-semibold);
-      color: rgba(168, 157, 255, 1);
+      background-color: rgba(var(--colors-primary-rgb), var(--opacity-30));
+      border: 1px solid rgba(var(--colors-primary-rgb), var(--opacity-50));
+      font-size: var(--font-sizes-xs);
+      font-family: var(--fonts-body);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-primary);
     }
 
     .divider {
-      width: 32px;
+      width: var(--spacing-8);
       height: 1px;
-      background-color: var(--color-sidebar-border);
+      background-color: var(--colors-border);
     }
 
     .stat {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: var(--spacing-2);
     }
 
     .stat-value {
       text-align: center;
-      font-size: 10px;
-      font-family: 'Inter', sans-serif;
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-muted-foreground);
+      font-size: var(--font-sizes-xs);
+      font-family: var(--fonts-body);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-muted-foreground);
     }
 
     .stat-label {
       text-align: center;
-      font-size: 8px;
-      font-family: 'Inter', sans-serif;
-      color: var(--color-foreground);
-      opacity: 0.3;
+      font-size: var(--font-sizes-xs);
+      font-family: var(--fonts-body);
+      color: var(--colors-foreground);
+      opacity: var(--opacity-30);
     }
   `;
 

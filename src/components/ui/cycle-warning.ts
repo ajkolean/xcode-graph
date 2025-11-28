@@ -40,21 +40,21 @@ export class GraphCycleWarning extends LitElement {
     }
 
     .warning-banner {
-      background: var(--color-warning-bg, #fef3cd);
-      border: 1px solid var(--color-warning-border, #f0ad4e);
-      border-radius: 4px;
-      padding: 12px 16px;
-      margin: 8px 0;
+      background: var(--colors-warning-bg, #fef3cd);
+      border: 1px solid var(--colors-warning-border, #f0ad4e);
+      border-radius: var(--radii-sm);
+      padding: var(--spacing-3) var(--spacing-md);
+      margin: var(--spacing-2) 0;
       display: flex;
       align-items: flex-start;
-      gap: 12px;
-      font-family: 'Inter', sans-serif;
+      gap: var(--spacing-3);
+      font-family: var(--fonts-body);
     }
 
     .warning-icon {
       flex-shrink: 0;
-      color: var(--color-warning, #f0ad4e);
-      font-size: 20px;
+      color: var(--colors-warning, #f0ad4e);
+      font-size: var(--font-sizes-xl);
       line-height: 1;
     }
 
@@ -62,92 +62,92 @@ export class GraphCycleWarning extends LitElement {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: var(--spacing-2);
     }
 
     .warning-header {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--spacing-2);
     }
 
     .warning-title {
-      font-weight: 600;
-      color: var(--color-warning-text, #856404);
-      font-size: 14px;
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-warning-text, #856404);
+      font-size: var(--font-sizes-sm);
     }
 
     .cycle-count {
-      background: var(--color-warning, #f0ad4e);
+      background: var(--colors-warning, #f0ad4e);
       color: white;
-      border-radius: 12px;
-      padding: 2px 8px;
-      font-size: 12px;
-      font-weight: 600;
+      border-radius: var(--radii-full);
+      padding: var(--spacing-1) var(--spacing-2);
+      font-size: var(--font-sizes-label);
+      font-weight: var(--font-weights-semibold);
     }
 
     .warning-message {
-      color: var(--color-warning-text, #856404);
-      font-size: 13px;
-      line-height: 1.5;
+      color: var(--colors-warning-text, #856404);
+      font-size: var(--font-sizes-sm);
+      line-height: var(--line-heights-normal);
     }
 
     .warning-actions {
       display: flex;
-      gap: 8px;
-      margin-top: 4px;
+      gap: var(--spacing-2);
+      margin-top: var(--spacing-1);
     }
 
     .btn {
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
+      padding: var(--spacing-1) var(--spacing-3);
+      border-radius: var(--radii-sm);
+      font-size: var(--font-sizes-label);
+      font-weight: var(--font-weights-medium);
       cursor: pointer;
       border: 1px solid transparent;
       background: transparent;
-      transition: all 0.2s;
+      transition: all var(--durations-normal);
     }
 
     .btn-expand {
-      color: var(--color-warning-text, #856404);
-      border-color: var(--color-warning-border, #f0ad4e);
+      color: var(--colors-warning-text, #856404);
+      border-color: var(--colors-warning-border, #f0ad4e);
     }
 
     .btn-expand:hover {
-      background: var(--color-warning-hover, #fef9e7);
+      background: var(--colors-warning-hover, #fef9e7);
     }
 
     .btn-dismiss {
-      color: var(--color-text-secondary, #666);
+      color: var(--colors-muted-foreground);
     }
 
     .btn-dismiss:hover {
-      background: rgba(0, 0, 0, 0.05);
+      background: rgba(var(--colors-foreground-rgb), var(--opacity-5));
     }
 
     .cycle-list {
-      margin-top: 8px;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 4px;
+      margin-top: var(--spacing-2);
+      padding: var(--spacing-3);
+      background: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      border-radius: var(--radii-sm);
       max-height: 200px;
       overflow-y: auto;
     }
 
     .cycle-item {
-      font-size: 12px;
-      font-family: 'Monaco', 'Courier New', monospace;
-      color: var(--color-warning-text, #856404);
-      padding: 4px 0;
+      font-size: var(--font-sizes-label);
+      font-family: var(--fonts-mono);
+      color: var(--colors-warning-text, #856404);
+      padding: var(--spacing-1) 0;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: var(--spacing-1);
     }
 
     .cycle-index {
-      color: var(--color-text-secondary, #666);
-      min-width: 20px;
+      color: var(--colors-muted-foreground);
+      min-width: var(--sizes-icon-md);
     }
 
     .cycle-path {
@@ -155,29 +155,29 @@ export class GraphCycleWarning extends LitElement {
     }
 
     .cycle-arrow {
-      color: var(--color-warning, #f0ad4e);
-      margin: 0 4px;
+      color: var(--colors-warning, #f0ad4e);
+      margin: 0 var(--spacing-1);
     }
 
     .close-btn {
       flex-shrink: 0;
       background: transparent;
       border: none;
-      color: var(--color-warning-text, #856404);
+      color: var(--colors-warning-text, #856404);
       cursor: pointer;
-      font-size: 18px;
+      font-size: var(--font-sizes-lg);
       padding: 0;
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
+      width: var(--sizes-icon-xl);
+      height: var(--sizes-icon-xl);
+      border-radius: var(--radii-sm);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s;
+      transition: background var(--durations-normal);
     }
 
     .close-btn:hover {
-      background: rgba(0, 0, 0, 0.1);
+      background: rgba(var(--colors-foreground-rgb), var(--opacity-10));
     }
   `;
 

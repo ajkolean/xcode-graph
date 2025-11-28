@@ -47,13 +47,13 @@ export class GraphClusterStats extends LitElement {
     :host {
       display: block;
       padding: var(--spacing-md);
-      border-bottom: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--colors-border);
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: var(--spacing-3);
     }
 
     .platforms-section {
@@ -61,35 +61,35 @@ export class GraphClusterStats extends LitElement {
     }
 
     .platforms-title {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-small);
-      color: var(--color-muted-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
+      color: var(--colors-muted-foreground);
       margin-bottom: var(--spacing-sm);
     }
 
     .platforms-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: var(--spacing-2);
     }
 
     .platform-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      border-radius: var(--radius);
+      gap: var(--spacing-1);
+      padding: var(--spacing-1) var(--spacing-2);
+      border-radius: var(--radii-md);
       border: 1px solid transparent;
     }
 
     .platform-badge svg {
-      width: 12px;
-      height: 12px;
+      width: var(--sizes-icon-xs);
+      height: var(--sizes-icon-xs);
     }
 
     .platform-name {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-small);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
     }
   `;
 

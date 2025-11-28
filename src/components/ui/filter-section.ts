@@ -79,66 +79,66 @@ export class GraphFilterSection extends LitElement {
       width: 100%;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--spacing-2);
       margin-bottom: var(--spacing-md);
       text-align: left;
       background: none;
       border: none;
       cursor: pointer;
-      transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s;
+      transition: opacity var(--durations-normal) var(--easings-default), color var(--durations-normal);
       padding: 0;
     }
 
     .header-button:hover {
-      opacity: 1;
+      opacity: var(--opacity-100);
     }
 
     .header-button:hover .header-title {
-      color: var(--primary);
+      color: var(--colors-primary);
     }
 
     .header-icon {
       flex-shrink: 0;
-      opacity: 0.6;
-      transition: opacity 0.2s, color 0.2s;
-      color: var(--muted-foreground);
+      opacity: var(--opacity-60);
+      transition: opacity var(--durations-normal), color var(--durations-normal);
+      color: var(--colors-muted-foreground);
     }
 
     .header-button:hover .header-icon {
-      opacity: 1;
-      color: var(--primary);
+      opacity: var(--opacity-100);
+      color: var(--colors-primary);
     }
 
     .header-title {
-      font-family: var(--font-family-mono);
-      font-size: var(--text-xs);
-      color: var(--muted-foreground);
-      font-weight: var(--font-weight-semibold);
+      font-family: var(--fonts-mono);
+      font-size: var(--font-sizes-xs);
+      color: var(--colors-muted-foreground);
+      font-weight: var(--font-weights-semibold);
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      transition: color 0.2s;
+      transition: color var(--durations-normal);
     }
 
     .chevron {
       margin-left: auto;
-      opacity: 0.4;
-      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
-      color: var(--muted-foreground);
+      opacity: var(--opacity-40);
+      transition: transform var(--durations-normal) var(--easings-default), opacity var(--durations-normal);
+      color: var(--colors-muted-foreground);
     }
 
     .chevron.expanded {
       transform: rotate(90deg);
-      opacity: 0.8;
+      opacity: var(--opacity-80);
     }
 
     .header-button:hover .chevron {
-      opacity: 0.8;
-      color: var(--primary);
+      opacity: var(--opacity-80);
+      color: var(--colors-primary);
     }
 
     .chevron svg {
-      width: 14px;
-      height: 14px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
 
     .items {
@@ -152,16 +152,16 @@ export class GraphFilterSection extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px var(--spacing-md);
+      padding: var(--spacing-2) var(--spacing-md);
       background: transparent;
       border: none;
       cursor: pointer;
-      transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-                  box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: background-color var(--durations-fast) var(--easings-default),
+                  box-shadow var(--durations-fast) var(--easings-default);
       position: relative;
-      border-radius: var(--radius);
+      border-radius: var(--radii-md);
       /* Staggered animation */
-      animation: filterItemFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+      animation: filterItemFadeIn var(--durations-slow) var(--easings-default) both;
     }
 
     .item-button:nth-child(1) { animation-delay: 0.02s; }
@@ -185,8 +185,8 @@ export class GraphFilterSection extends LitElement {
     }
 
     .item-button:hover {
-      background-color: rgba(255, 160, 60, 0.05);
-      box-shadow: inset 0 0 0 1px rgba(255, 160, 60, 0.1);
+      background-color: rgba(var(--colors-primary-rgb), var(--opacity-5));
+      box-shadow: inset 0 0 0 1px rgba(var(--colors-primary-rgb), var(--opacity-10));
     }
 
     .item-accent {
@@ -201,19 +201,19 @@ export class GraphFilterSection extends LitElement {
     .item-content {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: var(--spacing-2);
       min-width: 0;
       flex: 1;
     }
 
     .item-icon {
       flex-shrink: 0;
-      width: 16px;
-      height: 16px;
+      width: var(--sizes-icon-md);
+      height: var(--sizes-icon-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: opacity var(--durations-normal), transform var(--durations-normal);
     }
 
     .item-button:hover .item-icon {
@@ -221,52 +221,52 @@ export class GraphFilterSection extends LitElement {
     }
 
     .item-label {
-      font-family: var(--font-family-body);
-      font-size: var(--text-body);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-base);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      transition: color 0.15s;
+      transition: color var(--durations-fast);
     }
 
     .item-label.selected {
-      color: var(--foreground);
-      font-weight: var(--font-weight-medium);
+      color: var(--colors-foreground);
+      font-weight: var(--font-weights-medium);
     }
 
     .item-label:not(.selected) {
-      color: var(--muted-foreground);
-      font-weight: var(--font-weight-regular);
+      color: var(--colors-muted-foreground);
+      font-weight: var(--font-weights-normal);
     }
 
     .item-button:hover .item-label {
-      color: var(--foreground);
+      color: var(--colors-foreground);
     }
 
     .item-count {
-      padding: 3px 8px;
-      border-radius: var(--radius);
+      padding: var(--spacing-1) var(--spacing-2);
+      border-radius: var(--radii-md);
       flex-shrink: 0;
-      transition: opacity 0.2s, background-color 0.2s;
-      font-family: var(--font-family-mono);
-      font-size: var(--text-xs);
-      font-weight: var(--font-weight-medium);
-      color: var(--foreground);
+      transition: opacity var(--durations-normal), background-color var(--durations-normal);
+      font-family: var(--fonts-mono);
+      font-size: var(--font-sizes-xs);
+      font-weight: var(--font-weights-medium);
+      color: var(--colors-foreground);
       min-width: 26px;
       text-align: center;
-      margin-left: 8px;
+      margin-left: var(--spacing-2);
     }
 
     .item-count.selected {
-      opacity: 0.5;
+      opacity: var(--opacity-50);
     }
 
     .item-count:not(.selected) {
-      opacity: 0.3;
+      opacity: var(--opacity-30);
     }
 
     .item-button:hover .item-count {
-      opacity: 0.7;
+      opacity: var(--opacity-70);
     }
   `;
 

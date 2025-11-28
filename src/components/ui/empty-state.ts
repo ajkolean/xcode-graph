@@ -35,7 +35,7 @@ export class GraphEmptyState extends LitElement {
       display: block;
       padding: var(--spacing-xl) var(--spacing-md);
       text-align: center;
-      animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeIn var(--durations-slow) var(--easings-default);
     }
 
     @keyframes fadeIn {
@@ -50,73 +50,73 @@ export class GraphEmptyState extends LitElement {
     }
 
     .icon-container {
-      width: 48px;
-      height: 48px;
+      width: var(--spacing-12);
+      height: var(--spacing-12);
       margin: 0 auto var(--spacing-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: var(--radius-card);
-      background: rgba(255, 160, 60, 0.08);
-      border: 1px solid rgba(255, 160, 60, 0.15);
+      border-radius: var(--radii-lg);
+      background: rgba(var(--colors-primary-rgb), var(--opacity-10));
+      border: 1px solid rgba(var(--colors-primary-rgb), var(--opacity-15));
       animation: iconPulse 3s ease-in-out infinite;
     }
 
     @keyframes iconPulse {
       0%, 100% {
-        box-shadow: 0 0 0 0 rgba(255, 160, 60, 0.1);
+        box-shadow: 0 0 0 0 rgba(var(--colors-primary-rgb), var(--opacity-10));
       }
       50% {
-        box-shadow: 0 0 20px 4px rgba(255, 160, 60, 0.15);
+        box-shadow: 0 0 20px 4px rgba(var(--colors-primary-rgb), var(--opacity-15));
       }
     }
 
     .icon-container svg {
-      width: 24px;
-      height: 24px;
-      color: var(--primary);
-      opacity: 0.8;
+      width: var(--sizes-icon-xl);
+      height: var(--sizes-icon-xl);
+      color: var(--colors-primary);
+      opacity: var(--opacity-80);
     }
 
     .title {
       margin-bottom: var(--spacing-xs);
-      font-family: var(--font-family-heading);
-      font-size: var(--text-base);
-      font-weight: var(--font-weight-medium);
-      color: var(--foreground);
+      font-family: var(--fonts-heading);
+      font-size: var(--font-sizes-base);
+      font-weight: var(--font-weights-medium);
+      color: var(--colors-foreground);
       letter-spacing: -0.01em;
     }
 
     .description {
-      font-family: var(--font-family-body);
-      font-size: var(--text-small);
-      color: var(--muted-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
+      color: var(--colors-muted-foreground);
       margin-bottom: var(--spacing-lg);
-      line-height: 1.5;
+      line-height: var(--line-heights-normal);
     }
 
     .clear-button {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border-radius: var(--radius);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      background: rgba(255, 160, 60, 0.1);
-      border: 1px solid rgba(255, 160, 60, 0.25);
-      font-family: var(--font-family-mono);
-      font-size: var(--text-xs);
-      font-weight: var(--font-weight-semibold);
-      color: var(--primary);
+      gap: var(--spacing-2);
+      padding: var(--spacing-2) var(--spacing-4);
+      border-radius: var(--radii-md);
+      transition: all var(--durations-normal) var(--easings-default);
+      background: rgba(var(--colors-primary-rgb), var(--opacity-10));
+      border: 1px solid rgba(var(--colors-primary-rgb), var(--opacity-25));
+      font-family: var(--fonts-mono);
+      font-size: var(--font-sizes-xs);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-primary);
       letter-spacing: 0.04em;
       text-transform: uppercase;
       cursor: pointer;
     }
 
     .clear-button:hover {
-      background: rgba(255, 160, 60, 0.18);
-      border-color: rgba(255, 160, 60, 0.4);
-      box-shadow: 0 0 20px rgba(255, 160, 60, 0.2);
+      background: rgba(var(--colors-primary-rgb), var(--opacity-20));
+      border-color: rgba(var(--colors-primary-rgb), var(--opacity-40));
+      box-shadow: 0 0 20px rgba(var(--colors-primary-rgb), var(--opacity-20));
       transform: translateY(-1px);
     }
 
@@ -125,8 +125,8 @@ export class GraphEmptyState extends LitElement {
     }
 
     .clear-button svg {
-      width: 14px;
-      height: 14px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
   `;
 

@@ -53,53 +53,53 @@ export class GraphNodeHeader extends LitElement {
       display: block;
       padding: var(--spacing-md);
       flex-shrink: 0;
-      border-bottom: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--colors-border);
     }
 
     .header-row {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: var(--spacing-3);
+      margin-bottom: var(--spacing-3);
     }
 
     .back-button {
-      width: 24px;
-      height: 24px;
-      border-radius: var(--radius);
+      width: var(--sizes-icon-xl);
+      height: var(--sizes-icon-xl);
+      border-radius: var(--radii-md);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       background: none;
       border: none;
-      color: var(--color-muted-foreground);
+      color: var(--colors-muted-foreground);
       cursor: pointer;
-      transition: background-color 0.2s;
-      margin-top: 12px;
+      transition: background-color var(--durations-normal);
+      margin-top: var(--spacing-3);
     }
 
     .back-button:hover {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
     }
 
     .back-button svg {
-      width: 20px;
-      height: 20px;
+      width: var(--sizes-icon-lg);
+      height: var(--sizes-icon-lg);
     }
 
     .content {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: var(--spacing-3);
       flex: 1;
       min-width: 0;
     }
 
     .icon-box {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-xl);
+      width: var(--spacing-12);
+      height: var(--spacing-12);
+      border-radius: var(--radii-xl);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -112,19 +112,19 @@ export class GraphNodeHeader extends LitElement {
     }
 
     .name {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-h2);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-h2);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-foreground);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .subtitle {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-small);
-      color: var(--color-muted-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
+      color: var(--colors-muted-foreground);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -133,21 +133,21 @@ export class GraphNodeHeader extends LitElement {
     .badges {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--spacing-2);
       flex-wrap: wrap;
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 4px 10px;
-      border-radius: 9999px;
+      padding: var(--spacing-1) var(--spacing-2);
+      border-radius: var(--radii-full);
       cursor: default;
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      line-height: 14px;
-      font-weight: var(--font-weight-medium);
+      transition: all var(--durations-normal);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-sm);
+      line-height: var(--line-heights-tight);
+      font-weight: var(--font-weights-medium);
       text-transform: uppercase;
       letter-spacing: 0.02em;
       border: 1px solid transparent;

@@ -25,7 +25,7 @@ export class GraphHeader extends LitElement {
     }
 
     header {
-      height: 52px;
+      height: var(--sizes-header-height);
       padding: 0 var(--spacing-md);
       display: flex;
       align-items: center;
@@ -53,81 +53,81 @@ export class GraphHeader extends LitElement {
       position: absolute;
       inset: 0;
       background-image: var(--effect-noise);
-      opacity: 0.02;
+      opacity: var(--opacity-2);
       pointer-events: none;
     }
 
     .left-section {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: var(--spacing-3);
       position: relative;
       z-index: 1;
     }
 
     .logo {
-      width: 32px;
-      height: 32px;
+      width: var(--spacing-8);
+      height: var(--spacing-8);
       border-radius: var(--radii-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       transition:
-        transform 0.2s var(--easings-out),
-        box-shadow 0.2s var(--easings-out);
+        transform var(--durations-normal) var(--easings-out),
+        box-shadow var(--durations-normal) var(--easings-out);
       background: var(--colors-primary);
       box-shadow:
-        0 0 20px rgba(var(--colors-primary-rgb), 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        0 0 20px rgba(var(--colors-primary-rgb), var(--opacity-30)),
+        inset 0 1px 0 rgba(var(--colors-foreground-rgb), var(--opacity-20));
       cursor: pointer;
     }
 
     .logo:hover {
       transform: scale(1.05);
       box-shadow:
-        0 0 30px rgba(var(--colors-primary-rgb), 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        0 0 30px rgba(var(--colors-primary-rgb), var(--opacity-50)),
+        inset 0 1px 0 rgba(var(--colors-foreground-rgb), var(--opacity-30));
     }
 
     .logo svg {
-      width: 18px;
-      height: 18px;
+      width: var(--sizes-icon-md);
+      height: var(--sizes-icon-md);
       fill: var(--colors-primary-foreground);
     }
 
     .breadcrumbs {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: var(--spacing-1);
     }
 
     .breadcrumb-button {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
+      gap: var(--spacing-1);
+      padding: var(--spacing-1) var(--spacing-2);
       border-radius: var(--radii-sm);
       transition:
-        background-color 0.15s var(--easings-out),
-        border-color 0.15s var(--easings-out);
+        background-color var(--durations-fast) var(--easings-out),
+        border-color var(--durations-fast) var(--easings-out);
       background: transparent;
       border: 1px solid transparent;
       font-family: var(--fonts-mono);
-      font-size: 12px;
+      font-size: var(--font-sizes-label);
       font-weight: var(--font-weights-medium);
       color: var(--colors-foreground);
       cursor: pointer;
     }
 
     .breadcrumb-button:hover {
-      background-color: rgba(255, 255, 255, 0.04);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
       border-color: var(--colors-border);
     }
 
     .avatar {
-      width: 20px;
-      height: 20px;
+      width: var(--sizes-icon-lg);
+      height: var(--sizes-icon-lg);
       border-radius: var(--radii-sm);
       display: flex;
       align-items: center;
@@ -135,88 +135,88 @@ export class GraphHeader extends LitElement {
       flex-shrink: 0;
       background: var(--colors-accent);
       font-family: var(--fonts-mono);
-      font-size: 10px;
+      font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-bold);
       color: var(--colors-accent-foreground);
     }
 
     .separator {
-      color: rgba(255, 255, 255, 0.2);
+      color: rgba(var(--colors-foreground-rgb), var(--opacity-20));
       display: flex;
       align-items: center;
     }
 
     .separator svg {
-      width: 16px;
-      height: 16px;
+      width: var(--sizes-icon-md);
+      height: var(--sizes-icon-md);
     }
 
     .selector-icon {
       color: var(--colors-muted-foreground);
-      opacity: 0.6;
-      transition: opacity 0.15s var(--easings-out);
+      opacity: var(--opacity-60);
+      transition: opacity var(--durations-fast) var(--easings-out);
     }
 
     .breadcrumb-button:hover .selector-icon {
-      opacity: 1;
+      opacity: var(--opacity-100);
     }
 
     .selector-icon svg {
-      width: 14px;
-      height: 14px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
 
     .right-section {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--spacing-2);
       position: relative;
       z-index: 1;
     }
 
     .action-button {
-      width: 34px;
-      height: 34px;
+      width: var(--sizes-9);
+      height: var(--sizes-9);
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: var(--radii-sm);
       transition:
-        background-color 0.15s var(--easings-out),
-        border-color 0.15s var(--easings-out),
-        color 0.15s var(--easings-out);
+        background-color var(--durations-fast) var(--easings-out),
+        border-color var(--durations-fast) var(--easings-out),
+        color var(--durations-fast) var(--easings-out);
       color: var(--colors-muted-foreground);
       border: 1px solid var(--colors-border);
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(var(--colors-foreground-rgb), var(--opacity-2));
       cursor: pointer;
     }
 
     .action-button:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      border-color: rgba(var(--colors-foreground-rgb), var(--opacity-10));
       color: var(--colors-foreground);
     }
 
     .action-button svg {
-      width: 16px;
-      height: 16px;
+      width: var(--sizes-icon-md);
+      height: var(--sizes-icon-md);
     }
 
     .user-avatar {
-      width: 34px;
-      height: 34px;
+      width: var(--sizes-9);
+      height: var(--sizes-9);
       border-radius: var(--radii-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       transition:
-        transform 0.15s var(--easings-out),
-        box-shadow 0.15s var(--easings-out);
-      background: linear-gradient(135deg, var(--colors-accent) 0%, rgba(64, 224, 208, 0.7) 100%);
+        transform var(--durations-fast) var(--easings-out),
+        box-shadow var(--durations-fast) var(--easings-out);
+      background: linear-gradient(135deg, var(--colors-accent) 0%, rgba(var(--colors-accent-rgb), var(--opacity-70)) 100%);
       border: none;
       font-family: var(--fonts-mono);
-      font-size: 13px;
+      font-size: var(--font-sizes-label);
       font-weight: var(--font-weights-bold);
       color: var(--colors-accent-foreground);
       cursor: pointer;
@@ -224,7 +224,7 @@ export class GraphHeader extends LitElement {
 
     .user-avatar:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(var(--colors-accent-rgb), 0.4);
+      box-shadow: 0 0 20px rgba(var(--colors-accent-rgb), var(--opacity-40));
     }
 
     .icon {
@@ -232,28 +232,28 @@ export class GraphHeader extends LitElement {
     }
 
     .icon svg {
-      width: 16px;
-      height: 16px;
+      width: var(--sizes-icon-md);
+      height: var(--sizes-icon-md);
     }
 
     /* Status indicator dot */
     .status-dot {
-      width: 6px;
-      height: 6px;
+      width: var(--spacing-1);
+      height: var(--spacing-1);
       border-radius: var(--radii-full);
       background: var(--colors-success);
-      box-shadow: 0 0 8px rgba(var(--colors-success-rgb), 0.6);
+      box-shadow: 0 0 8px rgba(var(--colors-success-rgb), var(--opacity-60));
       animation: statusPulse 2s ease-in-out infinite;
     }
 
     @keyframes statusPulse {
       0%, 100% {
-        opacity: 1;
-        box-shadow: 0 0 8px rgba(var(--colors-success-rgb), 0.6);
+        opacity: var(--opacity-100);
+        box-shadow: 0 0 8px rgba(var(--colors-success-rgb), var(--opacity-60));
       }
       50% {
-        opacity: 0.7;
-        box-shadow: 0 0 12px rgba(var(--colors-success-rgb), 0.8);
+        opacity: var(--opacity-70);
+        box-shadow: 0 0 12px rgba(var(--colors-success-rgb), var(--opacity-80));
       }
     }
   `;

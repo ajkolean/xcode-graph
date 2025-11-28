@@ -47,20 +47,20 @@ export class GraphSearchBar extends LitElement {
 
     .search-icon {
       position: absolute;
-      left: 12px;
+      left: var(--spacing-3);
       top: 50%;
       transform: translateY(-50%);
       transition:
-        color 0.2s var(--easings-out),
-        transform 0.2s var(--easings-out);
+        color var(--durations-normal) var(--easings-out),
+        transform var(--durations-normal) var(--easings-out);
       color: var(--colors-muted-foreground);
       pointer-events: none;
       z-index: 1;
     }
 
     .search-icon svg {
-      width: 16px;
-      height: 16px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
       stroke: currentColor;
     }
 
@@ -72,16 +72,16 @@ export class GraphSearchBar extends LitElement {
 
     input {
       width: 100%;
-      padding: 10px 48px 10px 40px;
+      padding: var(--spacing-2) var(--spacing-12) var(--spacing-2) var(--spacing-10);
       border-radius: var(--radii-sm);
       transition:
-        border-color 0.2s var(--easings-out),
-        box-shadow 0.2s var(--easings-out),
-        background-color 0.2s var(--easings-out);
+        border-color var(--durations-normal) var(--easings-out),
+        box-shadow var(--durations-normal) var(--easings-out),
+        background-color var(--durations-normal) var(--easings-out);
       background: linear-gradient(
         90deg,
-        rgba(255, 255, 255, 0.02) 0%,
-        rgba(255, 255, 255, 0.04) 100%
+        rgba(var(--colors-foreground-rgb), var(--opacity-2)) 0%,
+        rgba(var(--colors-foreground-rgb), var(--opacity-4)) 100%
       );
       border: 1px solid var(--colors-border);
       color: var(--colors-foreground);
@@ -91,11 +91,11 @@ export class GraphSearchBar extends LitElement {
     }
 
     input:hover {
-      border-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(var(--colors-foreground-rgb), var(--opacity-10));
       background: linear-gradient(
         90deg,
-        rgba(255, 255, 255, 0.03) 0%,
-        rgba(255, 255, 255, 0.05) 100%
+        rgba(var(--colors-foreground-rgb), var(--opacity-4)) 0%,
+        rgba(var(--colors-foreground-rgb), var(--opacity-5)) 100%
       );
     }
 
@@ -103,38 +103,38 @@ export class GraphSearchBar extends LitElement {
       border-color: var(--colors-primary);
       box-shadow:
         0 0 0 1px var(--colors-primary),
-        0 0 20px rgba(var(--colors-primary-rgb), 0.2),
-        0 0 40px rgba(var(--colors-primary-rgb), 0.1);
+        0 0 20px rgba(var(--colors-primary-rgb), var(--opacity-20)),
+        0 0 40px rgba(var(--colors-primary-rgb), var(--opacity-10));
       background: linear-gradient(
         90deg,
-        rgba(255, 160, 60, 0.03) 0%,
-        rgba(255, 160, 60, 0.05) 100%
+        rgba(var(--colors-primary-rgb), var(--opacity-4)) 0%,
+        rgba(var(--colors-primary-rgb), var(--opacity-5)) 100%
       );
     }
 
     input::placeholder {
       color: var(--colors-muted-foreground);
-      opacity: 0.5;
+      opacity: var(--opacity-50);
       font-family: var(--fonts-body);
     }
 
     .right-slot {
       position: absolute;
-      right: 12px;
+      right: var(--spacing-3);
       top: 50%;
       transform: translateY(-50%);
       z-index: 1;
     }
 
     .clear-button {
-      padding: 6px;
+      padding: var(--spacing-1);
       border-radius: var(--radii-sm);
       transition:
-        background-color 0.15s var(--easings-out),
-        color 0.15s var(--easings-out),
-        transform 0.15s var(--easings-out);
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+        background-color var(--durations-fast) var(--easings-out),
+        color var(--durations-fast) var(--easings-out),
+        transform var(--durations-fast) var(--easings-out);
+      background: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      border: 1px solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
       color: var(--colors-muted-foreground);
       cursor: pointer;
       display: flex;
@@ -143,8 +143,8 @@ export class GraphSearchBar extends LitElement {
     }
 
     .clear-button:hover {
-      background-color: rgba(var(--colors-destructive-rgb), 0.15);
-      border-color: rgba(var(--colors-destructive-rgb), 0.3);
+      background-color: rgba(var(--colors-destructive-rgb), var(--opacity-15));
+      border-color: rgba(var(--colors-destructive-rgb), var(--opacity-30));
       color: var(--colors-destructive);
       transform: scale(1.05);
     }
@@ -154,21 +154,21 @@ export class GraphSearchBar extends LitElement {
     }
 
     .clear-button svg {
-      width: 12px;
-      height: 12px;
+      width: var(--sizes-icon-xs);
+      height: var(--sizes-icon-xs);
       stroke: currentColor;
     }
 
     .keyboard-hint {
-      padding: 3px 8px;
+      padding: var(--spacing-1) var(--spacing-2);
       border-radius: var(--radii-sm);
-      background-color: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
+      border: 1px solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
       font-family: var(--fonts-mono);
-      font-size: 10px;
+      font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-medium);
       color: var(--colors-foreground);
-      opacity: 0.4;
+      opacity: var(--opacity-40);
       pointer-events: none;
       letter-spacing: 0.02em;
     }

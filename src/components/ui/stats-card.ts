@@ -49,16 +49,16 @@ export class GraphStatsCard extends LitElement {
 
     .container {
       position: relative;
-      padding: 14px 16px;
+      padding: var(--spacing-3) var(--spacing-md);
       border-radius: var(--radii-sm);
       background: var(--gradient-card);
       border: 1px solid var(--colors-border);
       border-left: 3px solid var(--colors-primary);
       cursor: default;
       transition:
-        transform 0.2s var(--easings-out),
-        box-shadow 0.2s var(--easings-out),
-        border-color 0.2s var(--easings-out);
+        transform var(--durations-normal) var(--easings-out),
+        box-shadow var(--durations-normal) var(--easings-out),
+        border-color var(--durations-normal) var(--easings-out);
       overflow: hidden;
     }
 
@@ -68,7 +68,7 @@ export class GraphStatsCard extends LitElement {
       position: absolute;
       inset: 0;
       background-image: var(--effect-noise);
-      opacity: 0.03;
+      opacity: var(--opacity-4);
       pointer-events: none;
       border-radius: inherit;
     }
@@ -90,13 +90,13 @@ export class GraphStatsCard extends LitElement {
     .label {
       position: relative;
       font-family: var(--fonts-mono);
-      font-size: 10px;
+      font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-medium);
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
       color: var(--colors-primary);
-      opacity: 0.8;
-      margin-bottom: 6px;
+      opacity: var(--opacity-80);
+      margin-bottom: var(--spacing-1);
     }
 
     .container.highlighted .label {
@@ -106,7 +106,7 @@ export class GraphStatsCard extends LitElement {
     .value {
       position: relative;
       font-family: var(--fonts-heading);
-      font-size: 28px;
+      font-size: var(--font-sizes-h1);
       font-weight: var(--font-weights-medium);
       font-variant-numeric: tabular-nums;
       color: var(--colors-foreground);
@@ -115,7 +115,7 @@ export class GraphStatsCard extends LitElement {
 
     .value.highlighted {
       color: var(--colors-accent);
-      text-shadow: 0 0 20px rgba(var(--colors-accent-rgb), 0.4);
+      text-shadow: 0 0 20px rgba(var(--colors-accent-rgb), var(--opacity-40));
     }
 
     /* Subtle scan line effect */

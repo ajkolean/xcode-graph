@@ -34,16 +34,16 @@ export class GraphNodeInfo extends LitElement {
     }
 
     .title {
-      margin-bottom: 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-label);
-      color: var(--color-muted-foreground);
+      margin-bottom: var(--spacing-3);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      color: var(--colors-muted-foreground);
     }
 
     .info-rows {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: var(--spacing-2);
     }
 
     .info-row {
@@ -53,15 +53,15 @@ export class GraphNodeInfo extends LitElement {
     }
 
     .info-label {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-label);
-      color: var(--color-muted-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      color: var(--colors-muted-foreground);
     }
 
     .info-value {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-label);
-      color: var(--color-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      color: var(--colors-foreground);
     }
   `;
 

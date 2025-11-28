@@ -38,33 +38,33 @@ export class GraphClearFiltersButton extends LitElement {
 
     button {
       width: 100%;
-      padding: 6px 12px;
-      border-radius: var(--radius);
-      transition: all 0.2s ease;
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-label);
-      font-weight: var(--font-weight-medium);
+      padding: var(--spacing-1) var(--spacing-3);
+      border-radius: var(--radii-md);
+      transition: all var(--durations-normal) var(--easings-default);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      font-weight: var(--font-weights-medium);
       border: 1px solid transparent;
     }
 
     button:not(:disabled) {
-      background-color: color-mix(in srgb, var(--primary) 10%, transparent);
-      border-color: color-mix(in srgb, var(--primary) 30%, transparent);
-      color: var(--primary);
+      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-primary) 30%, transparent);
+      color: var(--colors-primary);
       cursor: pointer;
       opacity: 1;
     }
 
     button:not(:disabled):hover {
-      background-color: color-mix(in srgb, var(--primary) 15%, transparent);
+      background-color: color-mix(in srgb, var(--colors-primary) 15%, transparent);
     }
 
     button:disabled {
-      background-color: rgba(255, 255, 255, 0.03);
-      border-color: rgba(255, 255, 255, 0.06);
-      color: var(--color-muted-foreground);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
+      border-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      color: var(--colors-muted-foreground);
       cursor: not-allowed;
-      opacity: 0.5;
+      opacity: var(--opacity-50);
     }
   `;
 
