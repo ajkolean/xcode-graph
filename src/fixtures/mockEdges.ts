@@ -2,7 +2,7 @@
  * Mock GraphEdge data for Storybook stories
  */
 
-import type { GraphEdge } from '@/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.schema';
 
 // ========================================
 // Individual Edge Examples

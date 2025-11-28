@@ -2,7 +2,7 @@
  * Graph structure fixtures - common graph patterns for testing
  */
 
-import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { createNode } from './nodes';
 
 /**
@@ -11,12 +11,13 @@ import { createNode } from './nodes';
 export function createLinearChain(length: number = 4): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodes: GraphNode[] = [];
   const edges: GraphEdge[] = [];
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  for (let i = 0; i < length; i++) {
-    nodes.push(createNode({ id: letters[i], name: `Node${letters[i]}` }));
+  for (let i = 0; i < Math.min(length, letters.length); i++) {
+    const letter = letters[i]!;
+    nodes.push(createNode({ id: letter, name: `Node${letter}` }));
     if (i > 0) {
-      edges.push({ source: letters[i - 1], target: letters[i] });
+      edges.push({ source: letters[i - 1]!, target: letter });
     }
   }
 
@@ -74,29 +75,44 @@ export function createCyclicGraph(): { nodes: GraphNode[]; edges: GraphEdge[] } 
 export function createProjectGraph(): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodes: GraphNode[] = [
     // App target
-    createNode({ id: 'app', name: 'MainApp', type: 'app', project: 'App' }),
+    createNode({ id: 'app', name: 'MainApp', type: NodeType.App, project: 'App' }),
 
     // Feature modules
-    createNode({ id: 'feature-home', name: 'HomeFeature', type: 'framework', project: 'Features' }),
+    createNode({
+      id: 'feature-home',
+      name: 'HomeFeature',
+      type: NodeType.Framework,
+      project: 'Features',
+    }),
     createNode({
       id: 'feature-profile',
       name: 'ProfileFeature',
-      type: 'framework',
+      type: NodeType.Framework,
       project: 'Features',
     }),
 
     // Core modules
-    createNode({ id: 'core', name: 'Core', type: 'framework', project: 'Core' }),
-    createNode({ id: 'networking', name: 'Networking', type: 'framework', project: 'Core' }),
-    createNode({ id: 'utils', name: 'Utils', type: 'library', project: 'Core' }),
+    createNode({ id: 'core', name: 'Core', type: NodeType.Framework, project: 'Core' }),
+    createNode({ id: 'networking', name: 'Networking', type: NodeType.Framework, project: 'Core' }),
+    createNode({ id: 'utils', name: 'Utils', type: NodeType.Library, project: 'Core' }),
 
     // Tests
-    createNode({ id: 'core-tests', name: 'CoreTests', type: 'test-unit', project: 'Core' }),
-    createNode({ id: 'app-tests', name: 'MainAppTests', type: 'test-unit', project: 'App' }),
+    createNode({ id: 'core-tests', name: 'CoreTests', type: NodeType.TestUnit, project: 'Core' }),
+    createNode({ id: 'app-tests', name: 'MainAppTests', type: NodeType.TestUnit, project: 'App' }),
 
     // External packages
-    createNode({ id: 'alamofire', name: 'Alamofire', type: 'package', origin: 'external' }),
-    createNode({ id: 'kingfisher', name: 'Kingfisher', type: 'package', origin: 'external' }),
+    createNode({
+      id: 'alamofire',
+      name: 'Alamofire',
+      type: NodeType.Package,
+      origin: Origin.External,
+    }),
+    createNode({
+      id: 'kingfisher',
+      name: 'Kingfisher',
+      type: NodeType.Package,
+      origin: Origin.External,
+    }),
   ];
 
   const edges: GraphEdge[] = [

@@ -2,8 +2,8 @@
  * Cluster fixtures
  */
 
-import type { GraphNode } from '@/schemas/graph.schema';
-import type { Cluster, ClusterNodeMetadata, NodeRole } from '@/schemas';
+import { type Cluster, type ClusterNodeMetadata, ClusterType, NodeRole } from '@shared/schemas';
+import { type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { createNode } from './nodes';
 
 /**
@@ -15,7 +15,7 @@ export function createNodeMetadata(
 ): ClusterNodeMetadata {
   return {
     nodeId,
-    role: 'internal-lib' as NodeRole,
+    role: NodeRole.InternalLib,
     layer: 1,
     isAnchor: false,
     hasExternalDependents: false,
@@ -30,9 +30,9 @@ export function createNodeMetadata(
  */
 export function createCluster(overrides: Partial<Cluster> = {}): Cluster {
   const defaultNodes = [
-    createNode({ id: 'cluster-main', name: 'Main', type: 'framework' }),
-    createNode({ id: 'cluster-lib', name: 'Lib', type: 'library' }),
-    createNode({ id: 'cluster-test', name: 'MainTests', type: 'test-unit' }),
+    createNode({ id: 'cluster-main', name: 'Main', type: NodeType.Framework }),
+    createNode({ id: 'cluster-lib', name: 'Lib', type: NodeType.Library }),
+    createNode({ id: 'cluster-test', name: 'MainTests', type: NodeType.TestUnit }),
   ];
 
   const metadata = new Map<string, ClusterNodeMetadata>();
@@ -40,7 +40,7 @@ export function createCluster(overrides: Partial<Cluster> = {}): Cluster {
     metadata.set(
       node.id,
       createNodeMetadata(node.id, {
-        role: index === 0 ? 'entry' : index === 2 ? 'test' : 'internal-lib',
+        role: index === 0 ? NodeRole.Entry : index === 2 ? NodeRole.Test : NodeRole.InternalLib,
         layer: index === 0 ? 0 : 1,
         isAnchor: index === 0,
       }),
@@ -50,8 +50,8 @@ export function createCluster(overrides: Partial<Cluster> = {}): Cluster {
   return {
     id: 'test-cluster',
     name: 'TestCluster',
-    type: 'project',
-    origin: 'local',
+    type: ClusterType.Project,
+    origin: Origin.Local,
     nodes: defaultNodes,
     metadata,
     anchors: ['cluster-main'],
@@ -75,14 +75,14 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
       createNode({
         id,
         name: `Node${i}`,
-        type: isTest ? 'test-unit' : isAnchor ? 'framework' : 'library',
+        type: isTest ? NodeType.TestUnit : isAnchor ? NodeType.Framework : NodeType.Library,
       }),
     );
 
     metadata.set(
       id,
       createNodeMetadata(id, {
-        role: isAnchor ? 'entry' : isTest ? 'test' : 'internal-lib',
+        role: isAnchor ? NodeRole.Entry : isTest ? NodeRole.Test : NodeRole.InternalLib,
         layer: isAnchor ? 0 : 1,
         isAnchor,
       }),
@@ -92,8 +92,8 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
   return {
     id: `cluster-${nodeCount}`,
     name: `Cluster${nodeCount}`,
-    type: 'project',
-    origin: 'local',
+    type: ClusterType.Project,
+    origin: Origin.Local,
     nodes,
     metadata,
     anchors: nodeCount > 0 ? ['node-0'] : [],

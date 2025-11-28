@@ -8,11 +8,12 @@
 
 // ==================== Schemas ====================
 
-export * from './schemas';
+export * from './shared/schemas';
 
-// ==================== Stores ====================
+// ==================== Signals ====================
 
-export * from './stores';
+export * from './graph/signals';
+export * from './shared/signals';
 
 // ==================== Services ====================
 
@@ -20,35 +21,39 @@ export * from './services';
 
 // ==================== State Machines ====================
 
-export * from './machines';
+export * from './shared/machines';
 
 // ==================== Controllers ====================
 
+export { GraphInteractionFullController } from './graph/controllers/graph-interaction-full.controller';
 export {
-  GraphLayoutController,
   type GraphLayoutConfig,
-} from './controllers/graph-layout.controller';
-
-export { GraphInteractionFullController } from './controllers/graph-interaction-full.controller';
+  GraphLayoutController,
+} from './graph/controllers/graph-layout.controller';
 
 export {
-  ZagController,
   createMachineController,
-} from './controllers/zag.controller';
+  ZagController,
+} from './shared/controllers/zag.controller';
 
-export {
-  ZustandController,
-  createStoreController,
-} from './controllers/zustand.controller';
 
 // ==================== Utilities ====================
 
-export * from './utils';
+export * from './graph/utils';
+export * from './ui/utils';
 
 // ==================== Types ====================
-// Note: TransitiveResult is exported from ./utils, so we exclude it here to avoid duplicates
 
-export type { FilterState, FilterStateInput, ViewMode } from './types/app';
-export { serializeFilterState, VIEW_MODE_VALUES } from './types/app';
-export type * from './types/cluster';
-export type * from './types/simulation';
+export type { FilterState, FilterStateInput, ViewMode } from './shared/schemas/app.schema';
+export { serializeFilterState, VIEW_MODE_VALUES } from './shared/schemas/app.schema';
+export type {
+  Cluster,
+  ClusterBounds,
+  ClusterLayoutConfig,
+  ClusterNodeMetadata,
+  ClusterType,
+  ForceStrength,
+  NodeRole,
+  PositionedNode,
+} from './shared/schemas/cluster.schema';
+export type { ClusterPosition, NodePosition } from './shared/schemas/simulation.schema';

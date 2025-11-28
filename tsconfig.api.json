@@ -27,9 +27,5 @@
     "src/lib/**/*.ts",
     "src/api.ts"
   ],
-  "exclude": [
-    "src/**/*.test.ts",
-    "src/**/*.stories.tsx",
-    "node_modules"
-  ]
+  "exclude": ["src/**/*.test.ts", "src/**/*.stories.tsx", "node_modules"]
 }

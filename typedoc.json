@@ -10,11 +10,7 @@
   "excludeInternal": true,
   "includeVersion": true,
   "categorizeByGroup": true,
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.stories.tsx",
-    "**/node_modules/**"
-  ],
+  "exclude": ["**/*.test.ts", "**/*.stories.tsx", "**/node_modules/**"],
   "skipErrorChecking": true,
   "tsconfig": "./tsconfig.json"
 }

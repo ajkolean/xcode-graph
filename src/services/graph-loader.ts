@@ -11,8 +11,8 @@
  * - Priority-based loading (visible clusters first)
  */
 
-import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { Cluster } from '../schemas';
+import type { Cluster } from '@shared/schemas';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 
 /**
  * Progress update during graph loading

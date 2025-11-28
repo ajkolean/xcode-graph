@@ -2,7 +2,13 @@
  * Mock Cluster data for Storybook stories
  */
 
-import type { Cluster, ClusterNodeMetadata } from '@/schemas/cluster.schema';
+import {
+  type Cluster,
+  type ClusterNodeMetadata,
+  ClusterType,
+  NodeRole,
+} from '@shared/schemas/cluster.schema';
+import { Origin } from '@shared/schemas/graph.schema';
 import { mockGraphNodes } from './mockNodes';
 
 // ========================================
@@ -15,7 +21,12 @@ function createClusterMetadata(nodeIds: string[]): Map<string, ClusterNodeMetada
   nodeIds.forEach((nodeId, index) => {
     metadata.set(nodeId, {
       nodeId,
-      role: index === 0 ? 'entry' : index < 3 ? 'internal-framework' : 'internal-lib',
+      role:
+        index === 0
+          ? NodeRole.Entry
+          : index < 3
+            ? NodeRole.InternalFramework
+            : NodeRole.InternalLib,
       layer: Math.floor(index / 3),
       isAnchor: index === 0,
       hasExternalDependents: index < 2,
@@ -34,10 +45,10 @@ function createClusterMetadata(nodeIds: string[]): Map<string, ClusterNodeMetada
 export const mockClusterSmall: Cluster = {
   id: 'utils-kit',
   name: 'UtilsKit',
-  type: 'project',
-  origin: 'local',
+  type: ClusterType.Project,
+  origin: Origin.Local,
   nodes: mockGraphNodes.slice(0, 3),
-  anchors: [mockGraphNodes[0].id],
+  anchors: [mockGraphNodes[0]!.id],
   metadata: createClusterMetadata(mockGraphNodes.slice(0, 3).map((n) => n.id)),
   bounds: {
     x: 100,
@@ -50,10 +61,10 @@ export const mockClusterSmall: Cluster = {
 export const mockClusterMedium: Cluster = {
   id: 'feature-kit',
   name: 'FeatureKit',
-  type: 'project',
-  origin: 'local',
+  type: ClusterType.Project,
+  origin: Origin.Local,
   nodes: mockGraphNodes.slice(0, 8),
-  anchors: [mockGraphNodes[0].id, mockGraphNodes[1].id],
+  anchors: [mockGraphNodes[0]!.id, mockGraphNodes[1]!.id],
   metadata: createClusterMetadata(mockGraphNodes.slice(0, 8).map((n) => n.id)),
   bounds: {
     x: 150,
@@ -66,10 +77,10 @@ export const mockClusterMedium: Cluster = {
 export const mockClusterLarge: Cluster = {
   id: 'main-app',
   name: 'MainApp',
-  type: 'project',
-  origin: 'local',
+  type: ClusterType.Project,
+  origin: Origin.Local,
   nodes: mockGraphNodes.slice(0, 15),
-  anchors: [mockGraphNodes[0].id, mockGraphNodes[2].id],
+  anchors: [mockGraphNodes[0]!.id, mockGraphNodes[2]!.id],
   metadata: createClusterMetadata(mockGraphNodes.slice(0, 15).map((n) => n.id)),
   bounds: {
     x: 200,
@@ -82,10 +93,10 @@ export const mockClusterLarge: Cluster = {
 export const mockClusterPackage: Cluster = {
   id: 'alamofire',
   name: 'Alamofire',
-  type: 'package',
-  origin: 'external',
+  type: ClusterType.Package,
+  origin: Origin.External,
   nodes: mockGraphNodes.slice(2, 7),
-  anchors: [mockGraphNodes[2].id],
+  anchors: [mockGraphNodes[2]!.id],
   metadata: createClusterMetadata(mockGraphNodes.slice(2, 7).map((n) => n.id)),
   bounds: {
     x: 500,
@@ -98,10 +109,10 @@ export const mockClusterPackage: Cluster = {
 export const mockClusterExternal: Cluster = {
   id: 'swift-nio',
   name: 'SwiftNIO',
-  type: 'package',
-  origin: 'external',
+  type: ClusterType.Package,
+  origin: Origin.External,
   nodes: mockGraphNodes.slice(5, 9),
-  anchors: [mockGraphNodes[5].id],
+  anchors: [mockGraphNodes[5]!.id],
   metadata: createClusterMetadata(mockGraphNodes.slice(5, 9).map((n) => n.id)),
   bounds: {
     x: 600,

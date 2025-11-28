@@ -9,11 +9,12 @@
 
 // ==================== Schemas ====================
 
-export * from './schemas';
+export * from './shared/schemas';
 
-// ==================== Stores ====================
+// ==================== Signals ====================
 
-export * from './stores';
+export * from './graph/signals';
+export * from './shared/signals';
 
 // ==================== Services ====================
 
@@ -21,23 +22,38 @@ export * from './services';
 
 // ==================== State Machines ====================
 
-export * from './machines';
+export * from './shared/machines';
 
 // ==================== Types ====================
 
-export type { FilterState, FilterStateInput, ViewMode } from './types/app';
-export { serializeFilterState, VIEW_MODE_VALUES } from './types/app';
-export type * from './types/cluster';
-export type * from './types/simulation';
+export type { FilterState, FilterStateInput, ViewMode } from './shared/schemas/app.schema';
+export { serializeFilterState, VIEW_MODE_VALUES } from './shared/schemas/app.schema';
+export type {
+  Cluster,
+  ClusterBounds,
+  ClusterLayoutConfig,
+  ClusterNodeMetadata,
+  ClusterType,
+  ForceStrength,
+  NodeRole,
+  PositionedNode,
+} from './shared/schemas/cluster.schema';
+export type { ClusterPosition, NodePosition } from './shared/schemas/simulation.schema';
 
 // ==================== Utility Modules ====================
 
-export * from './utils/physics';
-export * from './utils/layout';
-export * from './utils/graph';
-export * from './utils/rendering';
+export * from './graph/layout';
+export * from './graph/utils';
+export * from './graph/utils/physics';
+export * from './ui/utils';
 
 // ==================== Library ====================
 
-export { VanillaMachine, type MachineUserProps, type MachineEvent, type ExtendedEvent, type ExtendedState } from './lib/vanilla-machine';
-export { bindable } from './lib/bindable';
+export { bindable } from './shared/machines/lib/bindable';
+export {
+  type ExtendedEvent,
+  type ExtendedState,
+  type MachineEvent,
+  type MachineUserProps,
+  VanillaMachine,
+} from './shared/machines/lib/vanilla-machine';

@@ -1,5 +1,5 @@
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { describe, expect, it } from 'vitest';
-import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
 import {
   createDiamondGraph,
   createEmptyGraph,

@@ -2,7 +2,8 @@
  * Edge fixtures
  */
 
-import type { GraphEdge } from '@/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.schema';
+import { pairwise } from '@shared/pairwise';
 
 /**
  * Convert edges from {from, to} format to {source, target} format
@@ -16,10 +17,8 @@ export function convertEdgeFormat(edges: Array<{ from: string; to: string }>): G
  */
 export function createFullyConnectedEdges(nodeIds: string[]): GraphEdge[] {
   const edges: GraphEdge[] = [];
-  for (let i = 0; i < nodeIds.length; i++) {
-    for (let j = i + 1; j < nodeIds.length; j++) {
-      edges.push({ source: nodeIds[i], target: nodeIds[j] });
-    }
+  for (const [source, target] of pairwise(nodeIds)) {
+    edges.push({ source, target });
   }
   return edges;
 }

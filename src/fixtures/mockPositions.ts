@@ -4,7 +4,7 @@
  * Provides deterministic node and cluster positions for consistent rendering
  */
 
-import type { ClusterPosition, NodePosition } from '@/schemas/simulation.schema';
+import type { ClusterPosition, NodePosition } from '@shared/schemas/simulation.schema';
 
 // ========================================
 // Node Positions

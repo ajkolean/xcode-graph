@@ -6,9 +6,5 @@ or {
   `'$_'` as $str
 } where {
   $str <: r"#[0-9A-Fa-f]{3,8}",
-  register_diagnostic(
-    span = $str,
-    message = "Avoid hardcoded hex colors. Use design tokens: var(--colors-*)",
-    severity = "error"
-  )
+  register_diagnostic(span=$str, message="Avoid hardcoded hex colors. Use design tokens: var(--colors-*)", severity="error")
 }

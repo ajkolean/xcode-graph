@@ -2,8 +2,8 @@
  * Filter state fixtures
  */
 
-import type { GraphNode } from '@/schemas/graph.schema';
-import type { FilterState } from '@/types/app';
+import type { FilterState } from '@shared/schemas';
+import type { GraphNode } from '@shared/schemas/graph.schema';
 
 /**
  * Create a FilterState that includes everything

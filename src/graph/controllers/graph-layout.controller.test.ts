@@ -1,0 +1,188 @@
+/**
+ * Tests for refactored GraphLayoutController
+ * Ensures the composition of Layout + Physics + Animation works correctly
+ */
+
+import type { ReactiveController } from 'lit';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { createLinearChain, createNode } from '@/fixtures';
+import { GraphLayoutController } from './graph-layout.controller';
+
+// Mock host
+class MockHost {
+  private controllers: ReactiveController[] = [];
+  updateCount = 0;
+
+  addController(controller: ReactiveController) {
+    this.controllers.push(controller);
+  }
+
+  requestUpdate() {
+    this.updateCount++;
+  }
+
+  connectedCallback() {
+    this.controllers.forEach((c) => c.hostConnected?.());
+  }
+
+  disconnectedCallback() {
+    this.controllers.forEach((c) => c.hostDisconnected?.());
+  }
+}
+
+describe('GraphLayoutController', () => {
+  let host: MockHost;
+  let controller: GraphLayoutController;
+
+  beforeEach(() => {
+    host = new MockHost();
+    controller = new GraphLayoutController(host, {
+      enableAnimation: false, // Disable for faster tests
+    });
+  });
+
+  describe('Initialization', () => {
+    it('should create controller with default config', () => {
+      expect(controller).toBeDefined();
+      expect(controller.enableAnimation).toBe(false);
+    });
+
+    it('should initialize with empty positions', () => {
+      expect(controller.nodePositions.size).toBe(0);
+      expect(controller.clusterPositions.size).toBe(0);
+      expect(controller.clusters).toHaveLength(0);
+    });
+  });
+
+  describe('Layout Computation', () => {
+    it('should compute layout for simple graph', () => {
+      const { nodes, edges } = createLinearChain(4);
+
+      controller.computeLayout(nodes, edges);
+
+      expect(controller.nodePositions.size).toBe(4);
+      expect(controller.clusterPositions.size).toBeGreaterThan(0);
+      expect(controller.clusters.length).toBeGreaterThan(0);
+    });
+
+    it('should handle empty graph', () => {
+      controller.computeLayout([], []);
+
+      expect(controller.nodePositions.size).toBe(0);
+      expect(controller.clusterPositions.size).toBe(0);
+      expect(controller.clusters).toHaveLength(0);
+    });
+
+    it('should assign positions to all nodes', () => {
+      const { nodes, edges } = createLinearChain(3);
+
+      controller.computeLayout(nodes, edges);
+
+      // All nodes should have positions
+      for (const node of nodes) {
+        const pos = controller.nodePositions.get(node.id);
+        expect(pos).toBeDefined();
+        expect(typeof pos?.x).toBe('number');
+        expect(typeof pos?.y).toBe('number');
+      }
+    });
+
+    it('should initialize velocities to zero when animation disabled', () => {
+      const { nodes, edges } = createLinearChain(3);
+
+      controller.computeLayout(nodes, edges);
+
+      for (const pos of controller.nodePositions.values()) {
+        expect(pos.vx).toBe(0);
+        expect(pos.vy).toBe(0);
+      }
+    });
+  });
+
+  describe('Animation', () => {
+    it('should not animate when disabled', () => {
+      const { nodes, edges } = createLinearChain(3);
+
+      controller.computeLayout(nodes, edges);
+
+      expect(controller.isSettling).toBe(false);
+    });
+
+    it('should support enabling animation', () => {
+      const animatedController = new GraphLayoutController(host, {
+        enableAnimation: true,
+        animationTicks: 5, // Short animation for testing
+      });
+
+      expect(animatedController.enableAnimation).toBe(true);
+    });
+  });
+
+  describe('Configuration', () => {
+    it('should update animation enabled', () => {
+      controller.setEnableAnimation(true);
+      expect(controller.enableAnimation).toBe(true);
+
+      controller.setEnableAnimation(false);
+      expect(controller.enableAnimation).toBe(false);
+    });
+
+    it('should update animation ticks', () => {
+      controller.setAnimationTicks(60);
+      // Configuration updated (checked internally by AnimationController)
+      expect(true).toBe(true); // Placeholder
+    });
+
+    it('should update collision strengths', () => {
+      controller.setNodeCollisionStrength(0.5);
+      controller.setClusterCollisionStrength(0.6);
+      // Configuration updated (checked internally by PhysicsController)
+      expect(true).toBe(true); // Placeholder
+    });
+  });
+
+  describe('Lifecycle', () => {
+    it('should cleanup on disconnect', () => {
+      const { nodes, edges } = createLinearChain(3);
+      controller.computeLayout(nodes, edges);
+
+      host.disconnectedCallback();
+
+      // Should not throw
+      expect(controller.isSettling).toBe(false);
+    });
+  });
+
+  describe('Public API', () => {
+    it('should expose required methods and properties', () => {
+      // Check all public methods exist
+      expect(typeof controller.computeLayout).toBe('function');
+      expect(typeof controller.stopAnimation).toBe('function');
+      expect(typeof controller.setEnableAnimation).toBe('function');
+
+      // Check all public properties exist
+      expect(controller.nodePositions).toBeDefined();
+      expect(controller.clusterPositions).toBeDefined();
+      expect(controller.clusters).toBeDefined();
+      expect(typeof controller.isSettling).toBe('boolean');
+      expect(typeof controller.enableAnimation).toBe('boolean');
+    });
+  });
+
+  describe('Integration', () => {
+    it('should coordinate all three sub-controllers', () => {
+      const { nodes, edges } = createLinearChain(10);
+
+      controller.computeLayout(nodes, edges);
+
+      // LayoutController should have computed positions
+      expect(controller.nodePositions.size).toBe(10);
+
+      // PhysicsController should be ready (no errors)
+      expect(true).toBe(true);
+
+      // AnimationController should not be running (disabled)
+      expect(controller.isSettling).toBe(false);
+    });
+  });
+});

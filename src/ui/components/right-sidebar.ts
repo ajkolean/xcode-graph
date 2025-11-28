@@ -1,0 +1,561 @@
+/**
+ * RightSidebar Lit Component
+ *
+ * Main right sidebar orchestrator with Zag state machine and Lit Signals.
+ * Manages collapse/expand, tabs, and displays node/cluster details or filters.
+ *
+ * @example
+ * ```html
+ * <graph-right-sidebar
+ *   .allNodes=${nodes}
+ *   .allEdges=${edges}
+ *   .filteredNodes=${filteredNodes}
+ *   .filteredEdges=${filteredEdges}
+ * ></graph-right-sidebar>
+ * ```
+ */
+
+import { generateColorMap } from '@graph/utils/filters';
+import { computeFilters } from '@graph/utils/node-utils';
+import { SignalWatcher } from '@lit-labs/signals';
+import { createMachineController } from '@shared/controllers/zag.controller';
+import { type SidebarSection, sidebarMachine } from '@shared/machines/sidebar.machine';
+import type { Cluster } from '@shared/schemas';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { getNodeTypeColor } from '@ui/utils/node-colors';
+import { PLATFORM_COLOR } from '@ui/utils/platform-icons';
+import { css, html, LitElement } from 'lit';
+import { property } from 'lit/decorators.js';
+import './right-sidebar-header';
+import './collapsed-sidebar';
+import './node-details-panel';
+import './cluster-details-panel';
+import './clear-filters-button';
+import './search-bar';
+import './filter-section';
+import './empty-state';
+import './stats-card';
+
+// Import signals
+// Import actions
+import {
+  focusNode,
+  selectCluster,
+  selectedCluster,
+  selectedNode,
+  selectNode,
+  setHoveredNode,
+  showDependents,
+  showImpact,
+  viewMode,
+} from '@graph/signals/index';
+import {
+  filters,
+  type PreviewFilter,
+  searchQuery,
+  setFilters,
+  setPreviewFilter,
+  setSearchQuery,
+  zoom,
+} from '@shared/signals/index';
+
+export class GraphRightSidebar extends SignalWatcher(LitElement) {
+  // ========================================
+  // Properties
+  // ========================================
+
+  @property({ attribute: false })
+  declare allNodes: GraphNode[];
+
+  @property({ attribute: false })
+  declare allEdges: GraphEdge[];
+
+  @property({ attribute: false })
+  declare filteredNodes: GraphNode[];
+
+  @property({ attribute: false })
+  declare filteredEdges: GraphEdge[];
+
+  @property({ attribute: false })
+  declare clusters: Cluster[] | undefined;
+
+  // ========================================
+  // State Management
+  // ========================================
+
+  // Zag sidebar machine (kept - only replacing Zustand)
+  private sidebar = createMachineController(this, sidebarMachine, {
+    id: 'right-sidebar',
+    defaultCollapsed: false,
+  });
+
+  // ========================================
+  // Styles
+  // ========================================
+
+  static override styles = css`
+    :host {
+      display: block;
+      flex-shrink: 0;
+      transition: width var(--durations-normal) var(--easings-default);
+    }
+
+    :host([collapsed]) {
+      width: var(--sizes-sidebar-collapsed);
+    }
+
+    :host(:not([collapsed])) {
+      width: var(--sizes-sidebar-width);
+    }
+
+    aside {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--colors-sidebar) 0%, var(--colors-background) 100%);
+      border-left: var(--border-widths-thin) solid var(--colors-sidebar-border);
+      box-shadow: -8px 0 24px rgba(var(--colors-background-rgb), var(--opacity-30)),
+                  inset 1px 0 0 rgba(var(--colors-foreground-rgb), var(--opacity-4));
+      position: relative;
+    }
+
+    /* Noise texture overlay */
+    aside::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: var(--effect-noise);
+      opacity: var(--opacity-2);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle scan line effect */
+    aside::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--effect-scanlines);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .filter-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .filter-scroll {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
+    }
+
+    .filter-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .filter-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .filter-scroll::-webkit-scrollbar-thumb {
+      background: rgba(var(--colors-primary-rgb), var(--opacity-20));
+      border-radius: var(--radii-sm);
+    }
+
+    .filter-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(var(--colors-primary-rgb), var(--opacity-40));
+    }
+
+    .stats-row {
+      display: flex;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md) var(--spacing-md) 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .filter-sections {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      padding: var(--spacing-lg) var(--spacing-md);
+      position: relative;
+      z-index: 1;
+    }
+  `;
+
+  // ========================================
+  // Computed Values
+  // ========================================
+
+  private get filterData() {
+    return computeFilters(this.allNodes);
+  }
+
+  private findClusterById(clusterId: string | null): Cluster | undefined {
+    if (!clusterId) return undefined;
+
+    const existing = this.clusters?.find((c) => c.id === clusterId);
+    if (existing) return existing;
+
+    const clusterNodes = this.allNodes.filter(
+      (n) => (n.type === 'package' ? n.name : n.project) === clusterId,
+    );
+    if (clusterNodes.length === 0) return undefined;
+
+    const firstNode = clusterNodes[0];
+    if (!firstNode) return undefined;
+    const type = firstNode.type === 'package' ? 'package' : 'project';
+    const origin = clusterNodes.some((n) => n.origin === 'external') ? 'external' : 'local';
+
+    return {
+      id: clusterId,
+      name: clusterId,
+      type,
+      origin,
+      nodes: clusterNodes,
+    } as Cluster;
+  }
+
+  private get isCollapsed(): boolean {
+    return this.sidebar.matches('collapsed');
+  }
+
+  private get headerTitle(): string {
+    if (selectedNode.get()) return 'Node Details';
+    if (selectedCluster.get()) return 'Cluster Details';
+    return 'Project Overview';
+  }
+
+  // ========================================
+  // Event Helpers
+  // ========================================
+
+  private handleSearchChange(query: string) {
+    setSearchQuery(query);
+  }
+
+  private handleClearFilters() {
+    const clearAll = this.filterData.createClearFilters(setFilters);
+    clearAll();
+    setSearchQuery('');
+  }
+
+  private handleItemToggle(
+    type: 'nodeType' | 'platform' | 'project' | 'package',
+    key: string,
+    checked: boolean,
+  ) {
+    const current = filters.get();
+    const next = { ...current };
+
+    if (type === 'nodeType') {
+      const set = new Set(current.nodeTypes);
+      checked ? set.add(key) : set.delete(key);
+      next.nodeTypes = set;
+    } else if (type === 'platform') {
+      const set = new Set(current.platforms);
+      checked ? set.add(key) : set.delete(key);
+      next.platforms = set;
+    } else if (type === 'project') {
+      const set = new Set(current.projects);
+      checked ? set.add(key) : set.delete(key);
+      next.projects = set;
+    } else if (type === 'package') {
+      const set = new Set(current.packages);
+      checked ? set.add(key) : set.delete(key);
+      next.packages = set;
+    }
+
+    setFilters(next);
+  }
+
+  private handlePreviewChange(preview: PreviewFilter) {
+    setPreviewFilter(preview);
+  }
+
+  // ========================================
+  // Event Handlers
+  // ========================================
+
+  private handleToggleCollapse() {
+    this.sidebar.send({ type: 'TOGGLE' });
+  }
+
+  private handleToggleSection(section: SidebarSection) {
+    this.sidebar.send({ type: 'TOGGLE_SECTION', section });
+  }
+
+  private handleExpandToSection(section: SidebarSection) {
+    // Clear selections
+    if (selectedNode.get()) selectNode(null);
+    if (selectedCluster.get()) selectCluster(null);
+
+    // Expand to section
+    this.sidebar.send({ type: 'EXPAND_TO_SECTION', section });
+
+    // Scroll to section
+    setTimeout(() => {
+      const element = this.shadowRoot?.getElementById(`filter-section-${section}`);
+      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  // ========================================
+  // Render
+  // ========================================
+
+  override render() {
+    const isCollapsed = this.isCollapsed;
+    const expandedSections = this.sidebar.get('expandedSections');
+    const filterData = this.filterData;
+    const currentFilters = filters.get();
+    const currentSearchQuery = searchQuery.get();
+    const currentSelectedNode = selectedNode.get();
+    const currentSelectedCluster = selectedCluster.get();
+    const currentViewMode = viewMode.get();
+    const currentZoom = zoom.get();
+    const isFiltersActive = filterData.hasActiveFilters(currentFilters);
+
+    const nodeTypeItems = Array.from(filterData.typeCounts.entries()).map(([type, count]) => ({
+      key: type,
+      count,
+      color: getNodeTypeColor(type),
+    }));
+
+    const platformItems = Array.from(filterData.platformCounts.entries()).map(
+      ([platform, count]) => ({
+        key: platform,
+        count,
+        color: PLATFORM_COLOR,
+      }),
+    );
+
+    const projectColors = generateColorMap(filterData.projectCounts.keys(), 'project');
+    const packageColors = generateColorMap(filterData.packageCounts.keys(), 'package');
+
+    const projectItems = Array.from(filterData.projectCounts.entries()).map(([project, count]) => ({
+      key: project,
+      count,
+      color: projectColors.get(project) || '#6F2CFF',
+    }));
+
+    const packageItems = Array.from(filterData.packageCounts.entries()).map(([pkg, count]) => ({
+      key: pkg,
+      count,
+      color: packageColors.get(pkg) || '#FF9800',
+    }));
+
+    // Update host attribute for CSS
+    if (isCollapsed) {
+      this.setAttribute('collapsed', '');
+    } else {
+      this.removeAttribute('collapsed');
+    }
+
+    return html`
+      <aside>
+        <graph-right-sidebar-header
+          title=${this.headerTitle}
+          ?is-collapsed=${isCollapsed}
+          @toggle-collapse=${this.handleToggleCollapse}
+        ></graph-right-sidebar-header>
+
+        ${
+          isCollapsed
+            ? html`
+              <graph-collapsed-sidebar
+                .filteredNodes=${this.filteredNodes}
+                .filteredEdges=${this.filteredEdges}
+                .typeCounts=${this.filterData.typeCounts}
+                .platformCounts=${this.filterData.platformCounts}
+                node-types-filter-size=${currentFilters.nodeTypes.size}
+                platforms-filter-size=${currentFilters.platforms.size}
+                .projectCounts=${this.filterData.projectCounts}
+                .packageCounts=${this.filterData.packageCounts}
+                projects-filter-size=${currentFilters.projects.size}
+                packages-filter-size=${currentFilters.packages.size}
+                @expand-to-section=${(e: CustomEvent) =>
+                  this.handleExpandToSection(e.detail.section as SidebarSection)}
+              ></graph-collapsed-sidebar>
+            `
+            : html`
+              <!-- Node Details -->
+              ${
+                currentSelectedNode
+                  ? html`
+                    <graph-node-details-panel
+                      .node=${currentSelectedNode}
+                      .allNodes=${this.allNodes}
+                      .edges=${this.allEdges}
+                      .filteredEdges=${this.filteredEdges}
+                      .clusters=${this.clusters}
+                      view-mode=${currentViewMode}
+                      .zoom=${currentZoom}
+                      @close=${() => selectNode(null)}
+                      @node-select=${(e: CustomEvent) => selectNode(e.detail.node)}
+                      @cluster-select=${(e: CustomEvent) => selectCluster(e.detail.clusterId)}
+                      @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
+                      @focus-node=${(e: CustomEvent) => focusNode(e.detail.node)}
+                      @show-dependents=${(e: CustomEvent) => showDependents(e.detail.node)}
+                      @show-impact=${(e: CustomEvent) => showImpact(e.detail.node)}
+                    ></graph-node-details-panel>
+                  `
+                  : currentSelectedCluster
+                    ? html`
+                      <graph-cluster-details-panel
+                        .cluster=${this.findClusterById(currentSelectedCluster)}
+                        .clusterNodes=${this.allNodes.filter(
+                          (n) =>
+                            (n.type === 'package' ? n.name : n.project) === currentSelectedCluster,
+                        )}
+                        .allNodes=${this.allNodes}
+                        .edges=${this.allEdges}
+                        .filteredEdges=${this.filteredEdges}
+                        .zoom=${currentZoom}
+                        @close=${() => selectCluster(null)}
+                        @node-select=${(e: CustomEvent) => selectNode(e.detail.node)}
+                        @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
+                      ></graph-cluster-details-panel>
+                    `
+                    : html`
+                      <!-- FilterView - Using React wrapper that contains all Lit children -->
+                      <div class="filter-content">
+                        <div class="stats-row">
+                          <graph-stats-card
+                            label="Nodes"
+                            value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
+                            ?highlighted=${isFiltersActive}
+                          ></graph-stats-card>
+                          <graph-stats-card
+                            label="Dependencies"
+                            value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
+                            ?highlighted=${isFiltersActive}
+                          ></graph-stats-card>
+                        </div>
+
+                        <graph-clear-filters-button
+                          ?is-active=${isFiltersActive || !!currentSearchQuery}
+                          @clear-filters=${() => this.handleClearFilters()}
+                        ></graph-clear-filters-button>
+
+                        <graph-search-bar
+                          search-query=${currentSearchQuery || ''}
+                          @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
+                          @search-clear=${() => this.handleSearchChange('')}
+                        ></graph-search-bar>
+
+                        <div class="filter-scroll">
+                          <div class="filter-sections">
+                            <graph-filter-section
+                              id="productTypes"
+                              title="Product Types"
+                              icon-name="product-types"
+                              .items=${nodeTypeItems}
+                              .selectedItems=${currentFilters.nodeTypes}
+                              ?is-expanded=${expandedSections.productTypes}
+                              filter-type="nodeType"
+                              .zoom=${currentZoom}
+                              @section-toggle=${() => this.handleToggleSection('productTypes')}
+                              @item-toggle=${(e: CustomEvent) =>
+                                this.handleItemToggle('nodeType', e.detail.key, e.detail.checked)}
+                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+                            ></graph-filter-section>
+
+                            <graph-filter-section
+                              id="platforms"
+                              title="Platforms"
+                              icon-name="platforms"
+                              .items=${platformItems}
+                              .selectedItems=${currentFilters.platforms}
+                              ?is-expanded=${expandedSections.platforms}
+                              filter-type="platform"
+                              .zoom=${currentZoom}
+                              @section-toggle=${() => this.handleToggleSection('platforms')}
+                              @item-toggle=${(e: CustomEvent) =>
+                                this.handleItemToggle('platform', e.detail.key, e.detail.checked)}
+                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+                            ></graph-filter-section>
+
+                            <graph-filter-section
+                              id="projects"
+                              title="Projects"
+                              icon-name="projects"
+                              .items=${projectItems}
+                              .selectedItems=${currentFilters.projects}
+                              ?is-expanded=${expandedSections.projects}
+                              filter-type="project"
+                              .zoom=${currentZoom}
+                              @section-toggle=${() => this.handleToggleSection('projects')}
+                              @item-toggle=${(e: CustomEvent) =>
+                                this.handleItemToggle('project', e.detail.key, e.detail.checked)}
+                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+                            ></graph-filter-section>
+
+                            ${
+                              packageItems.length
+                                ? html`
+                                  <graph-filter-section
+                                    id="packages"
+                                    title="Packages"
+                                    icon-name="packages"
+                                    .items=${packageItems}
+                                    .selectedItems=${currentFilters.packages}
+                                    ?is-expanded=${expandedSections.packages}
+                                    filter-type="package"
+                                    .zoom=${currentZoom}
+                                    @section-toggle=${() => this.handleToggleSection('packages')}
+                                    @item-toggle=${(e: CustomEvent) =>
+                                      this.handleItemToggle(
+                                        'package',
+                                        e.detail.key,
+                                        e.detail.checked,
+                                      )}
+                                    @preview-change=${(e: CustomEvent) =>
+                                      this.handlePreviewChange(e.detail)}
+                                  ></graph-filter-section>
+                                `
+                                : ''
+                            }
+                          </div>
+
+                          ${
+                            this.filteredNodes?.length === 0
+                              ? html`
+                                <graph-empty-state
+                                  ?has-active-filters=${isFiltersActive || !!currentSearchQuery}
+                                  @clear-filters=${() => this.handleClearFilters()}
+                                ></graph-empty-state>
+                              `
+                              : ''
+                          }
+                        </div>
+                      </div>
+                    `
+              }
+            `
+        }
+      </aside>
+    `;
+  }
+}
+
+// Export for TypeScript type checking
+declare global {
+  interface HTMLElementTagNameMap {
+    'graph-right-sidebar': GraphRightSidebar;
+  }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('graph-right-sidebar')) {
+  customElements.define('graph-right-sidebar', GraphRightSidebar);
+}

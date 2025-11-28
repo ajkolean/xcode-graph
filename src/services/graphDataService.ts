@@ -3,8 +3,8 @@
  * Provides single source of truth for all graph data operations
  */
 
-import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { Cluster } from '../schemas';
+import type { Cluster } from '@shared/schemas';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 
 export class GraphDataService {
   private nodes: GraphNode[];
@@ -266,7 +266,9 @@ export class GraphDataService {
     const projectNodes = (this.nodesByProject.get(clusterId) || []).filter(
       (n) => n.type !== 'package',
     );
-    const packageNodes = (this.nodesByType.get('package') || []).filter((n) => n.name === clusterId);
+    const packageNodes = (this.nodesByType.get('package') || []).filter(
+      (n) => n.name === clusterId,
+    );
 
     return [...projectNodes, ...packageNodes];
   }
@@ -457,7 +459,7 @@ export class GraphDataService {
       // Default to 0
       depCounts.set(node.id, 0);
     }
-    
+
     // Iterate incoming edges map to count dependencies (wait, dependency count usually refers to OUTGOING edges, i.e. "I depend on X")
     // Original code:
     // for (const edge of this.edges) {
@@ -466,7 +468,7 @@ export class GraphDataService {
     // This counts OUTGOING edges from source. Correct.
 
     for (const [sourceId, edges] of this.outgoingEdges) {
-        depCounts.set(sourceId, edges.length);
+      depCounts.set(sourceId, edges.length);
     }
 
     const counts = Array.from(depCounts.values());

@@ -1,8 +1,8 @@
 // This file has been automatically migrated to valid ESM format by Storybook.
 
-import type { StorybookConfig } from '@storybook/web-components-vite';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type { StorybookConfig } from '@storybook/web-components-vite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -33,7 +33,9 @@ const config: StorybookConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, '../src'),
-      '@components': path.resolve(__dirname, '../src/components'),
+      '@graph': path.resolve(__dirname, '../src/graph'),
+      '@ui': path.resolve(__dirname, '../src/ui'),
+      '@shared': path.resolve(__dirname, '../src/shared'),
       'styled-system': path.resolve(__dirname, '../styled-system'),
     };
 

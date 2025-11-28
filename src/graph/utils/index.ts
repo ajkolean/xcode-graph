@@ -1,0 +1,56 @@
+/**
+ * Graph Utilities Module
+ *
+ * Utilities for graph data manipulation and analysis:
+ * - Node connections and edge traversal
+ * - Visibility calculations for filtering/search
+ * - Color mapping for node types
+ * - Dependency and filter computations
+ *
+ * @module utils/graph
+ */
+
+// ==================== Node Connections ====================
+
+export {
+  getConnectedNodes,
+  getConnectionCount,
+  getDependencyCount,
+  getDependentCount,
+} from './connections';
+
+// ==================== Node Visibility ====================
+
+export {
+  getConnectedNodeIds,
+  matchesSearch,
+  shouldDimNode,
+  shouldShowEdge,
+} from './visibility';
+
+// ==================== Filtering ====================
+
+export { generateColorMap } from './filters';
+
+// ==================== Node Computations ====================
+
+export {
+  computeClusterStats,
+  computeFilters,
+  computeNodeDependencies,
+} from './node-utils';
+
+// ==================== Graph Filtering ====================
+
+export { applyGraphFilters } from './graph-filters';
+
+// ==================== Graph Traversal ====================
+
+export {
+  computeTransitiveDependencies,
+  type TransitiveResult,
+} from './traversal';
+
+// ==================== Physics ====================
+
+export * from './physics';

@@ -2,7 +2,7 @@
  * Mock GraphNode data for Storybook stories
  */
 
-import type { GraphNode } from '@/schemas/graph.schema';
+import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 
 // ========================================
 // Individual Node Type Examples
@@ -11,9 +11,9 @@ import type { GraphNode } from '@/schemas/graph.schema';
 export const mockAppNode: GraphNode = {
   id: 'app-1',
   name: 'MyApp',
-  type: 'app',
-  platform: 'iOS',
-  origin: 'local',
+  type: NodeType.App,
+  platform: Platform.iOS,
+  origin: Origin.Local,
   project: 'MainApp',
   targetCount: 25,
 };
@@ -21,9 +21,9 @@ export const mockAppNode: GraphNode = {
 export const mockFrameworkNode: GraphNode = {
   id: 'framework-1',
   name: 'NetworkingKit',
-  type: 'framework',
-  platform: 'iOS',
-  origin: 'local',
+  type: NodeType.Framework,
+  platform: Platform.iOS,
+  origin: Origin.Local,
   project: 'FeatureKit',
   targetCount: 12,
 };
@@ -31,9 +31,9 @@ export const mockFrameworkNode: GraphNode = {
 export const mockLibraryNode: GraphNode = {
   id: 'library-1',
   name: 'UtilitiesLib',
-  type: 'library',
-  platform: 'iOS',
-  origin: 'local',
+  type: NodeType.Library,
+  platform: Platform.iOS,
+  origin: Origin.Local,
   project: 'FeatureKit',
   targetCount: 8,
 };
@@ -41,9 +41,9 @@ export const mockLibraryNode: GraphNode = {
 export const mockTestUnitNode: GraphNode = {
   id: 'test-unit-1',
   name: 'NetworkingTests',
-  type: 'test-unit',
-  platform: 'iOS',
-  origin: 'local',
+  type: NodeType.TestUnit,
+  platform: Platform.iOS,
+  origin: Origin.Local,
   project: 'FeatureKit',
   targetCount: 3,
 };
@@ -51,9 +51,9 @@ export const mockTestUnitNode: GraphNode = {
 export const mockTestUINode: GraphNode = {
   id: 'test-ui-1',
   name: 'AppUITests',
-  type: 'test-ui',
-  platform: 'iOS',
-  origin: 'local',
+  type: NodeType.TestUi,
+  platform: Platform.iOS,
+  origin: Origin.Local,
   project: 'MainApp',
   targetCount: 5,
 };
@@ -61,9 +61,9 @@ export const mockTestUINode: GraphNode = {
 export const mockCliNode: GraphNode = {
   id: 'cli-1',
   name: 'CodeGenTool',
-  type: 'cli',
-  platform: 'macOS',
-  origin: 'local',
+  type: NodeType.Cli,
+  platform: Platform.macOS,
+  origin: Origin.Local,
   project: 'DevTools',
   targetCount: 2,
 };
@@ -71,9 +71,9 @@ export const mockCliNode: GraphNode = {
 export const mockPackageNode: GraphNode = {
   id: 'package-1',
   name: 'Alamofire',
-  type: 'package',
-  platform: 'iOS',
-  origin: 'external',
+  type: NodeType.Package,
+  platform: Platform.iOS,
+  origin: Origin.External,
   targetCount: 0,
 };
 
@@ -96,11 +96,11 @@ export const allNodeTypes: GraphNode[] = [
 // ========================================
 
 export const allPlatforms: GraphNode[] = [
-  { ...mockAppNode, id: 'ios-node', name: 'iOS App', platform: 'iOS' },
-  { ...mockAppNode, id: 'macos-node', name: 'macOS App', platform: 'macOS' },
-  { ...mockAppNode, id: 'tvos-node', name: 'tvOS App', platform: 'tvOS' },
-  { ...mockAppNode, id: 'watchos-node', name: 'watchOS App', platform: 'watchOS' },
-  { ...mockAppNode, id: 'visionos-node', name: 'visionOS App', platform: 'visionOS' },
+  { ...mockAppNode, id: 'ios-node', name: 'iOS App', platform: Platform.iOS },
+  { ...mockAppNode, id: 'macos-node', name: 'macOS App', platform: Platform.macOS },
+  { ...mockAppNode, id: 'tvos-node', name: 'tvOS App', platform: Platform.tvOS },
+  { ...mockAppNode, id: 'watchos-node', name: 'watchOS App', platform: Platform.watchOS },
+  { ...mockAppNode, id: 'visionos-node', name: 'visionOS App', platform: Platform.visionOS },
 ];
 
 // ========================================
@@ -112,18 +112,18 @@ export const mockGraphNodes: GraphNode[] = [
   {
     id: 'app-main',
     name: 'MainApp',
-    type: 'app',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.App,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'MainApp',
     targetCount: 15,
   },
   {
     id: 'app-watch',
     name: 'WatchApp',
-    type: 'app',
-    platform: 'watchOS',
-    origin: 'local',
+    type: NodeType.App,
+    platform: Platform.watchOS,
+    origin: Origin.Local,
     project: 'WatchApp',
     targetCount: 5,
   },
@@ -132,27 +132,27 @@ export const mockGraphNodes: GraphNode[] = [
   {
     id: 'fw-networking',
     name: 'NetworkingKit',
-    type: 'framework',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.Framework,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'FeatureKit',
     targetCount: 8,
   },
   {
     id: 'fw-ui',
     name: 'UIComponents',
-    type: 'framework',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.Framework,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'FeatureKit',
     targetCount: 12,
   },
   {
     id: 'fw-auth',
     name: 'Authentication',
-    type: 'framework',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.Framework,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'FeatureKit',
     targetCount: 6,
   },
@@ -161,18 +161,18 @@ export const mockGraphNodes: GraphNode[] = [
   {
     id: 'lib-utils',
     name: 'Utilities',
-    type: 'library',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.Library,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'FeatureKit',
     targetCount: 4,
   },
   {
     id: 'lib-models',
     name: 'DataModels',
-    type: 'library',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.Library,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'FeatureKit',
     targetCount: 10,
   },
@@ -181,18 +181,18 @@ export const mockGraphNodes: GraphNode[] = [
   {
     id: 'test-networking',
     name: 'NetworkingTests',
-    type: 'test-unit',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.TestUnit,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'FeatureKit',
     targetCount: 1,
   },
   {
     id: 'test-auth',
     name: 'AuthTests',
-    type: 'test-unit',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.TestUnit,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'FeatureKit',
     targetCount: 1,
   },
@@ -201,9 +201,9 @@ export const mockGraphNodes: GraphNode[] = [
   {
     id: 'test-ui-main',
     name: 'MainAppUITests',
-    type: 'test-ui',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.TestUi,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'MainApp',
     targetCount: 1,
   },
@@ -212,9 +212,9 @@ export const mockGraphNodes: GraphNode[] = [
   {
     id: 'cli-codegen',
     name: 'CodeGenerator',
-    type: 'cli',
-    platform: 'macOS',
-    origin: 'local',
+    type: NodeType.Cli,
+    platform: Platform.macOS,
+    origin: Origin.Local,
     project: 'DevTools',
     targetCount: 3,
   },
@@ -223,17 +223,17 @@ export const mockGraphNodes: GraphNode[] = [
   {
     id: 'pkg-alamofire',
     name: 'Alamofire',
-    type: 'package',
-    platform: 'iOS',
-    origin: 'external',
+    type: NodeType.Package,
+    platform: Platform.iOS,
+    origin: Origin.External,
     targetCount: 0,
   },
   {
     id: 'pkg-swiftui',
     name: 'SwiftUI',
-    type: 'package',
-    platform: 'iOS',
-    origin: 'external',
+    type: NodeType.Package,
+    platform: Platform.iOS,
+    origin: Origin.External,
     targetCount: 0,
   },
 ];

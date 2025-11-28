@@ -1,8 +1,8 @@
 /// <reference types="vitest" />
 
+import path from 'node:path';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
-import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -58,6 +58,9 @@ export default defineConfig({
       '@radix-ui/react-separator@1.1.2': '@radix-ui/react-separator',
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
+      '@graph': path.resolve(__dirname, './src/graph'),
+      '@ui': path.resolve(__dirname, './src/ui'),
+      '@shared': path.resolve(__dirname, './src/shared'),
     },
   },
 });

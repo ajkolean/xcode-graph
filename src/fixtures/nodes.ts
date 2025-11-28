@@ -2,7 +2,7 @@
  * Node fixture builders
  */
 
-import type { GraphNode } from '@/schemas/graph.schema';
+import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 
 /**
  * Create a single test node with sensible defaults
@@ -11,9 +11,9 @@ export function createNode(
   overrides: Partial<GraphNode> & { id: string; name: string },
 ): GraphNode {
   return {
-    type: 'framework',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.Framework,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     ...overrides,
   };
 }
@@ -26,58 +26,64 @@ export function createNodesForFilterTesting(): GraphNode[] {
     createNode({
       id: '1',
       name: 'App1',
-      type: 'app',
-      platform: 'iOS',
-      origin: 'local',
+      type: NodeType.App,
+      platform: Platform.iOS,
+      origin: Origin.Local,
       project: 'Main',
     }),
     createNode({
       id: '2',
       name: 'Framework1',
-      type: 'framework',
-      platform: 'iOS',
-      origin: 'local',
+      type: NodeType.Framework,
+      platform: Platform.iOS,
+      origin: Origin.Local,
       project: 'Core',
     }),
     createNode({
       id: '3',
       name: 'Library1',
-      type: 'library',
-      platform: 'macOS',
-      origin: 'local',
+      type: NodeType.Library,
+      platform: Platform.macOS,
+      origin: Origin.Local,
       project: 'Core',
     }),
     createNode({
       id: '4',
       name: 'Test1',
-      type: 'test-unit',
-      platform: 'iOS',
-      origin: 'local',
+      type: NodeType.TestUnit,
+      platform: Platform.iOS,
+      origin: Origin.Local,
       project: 'Core',
     }),
     createNode({
       id: '5',
       name: 'TestUI1',
-      type: 'test-ui',
-      platform: 'iOS',
-      origin: 'local',
+      type: NodeType.TestUi,
+      platform: Platform.iOS,
+      origin: Origin.Local,
       project: 'Main',
     }),
     createNode({
       id: '6',
       name: 'CLI1',
-      type: 'cli',
-      platform: 'macOS',
-      origin: 'local',
+      type: NodeType.Cli,
+      platform: Platform.macOS,
+      origin: Origin.Local,
       project: 'Tools',
     }),
-    createNode({ id: '7', name: 'Package1', type: 'package', platform: 'iOS', origin: 'external' }),
+    createNode({
+      id: '7',
+      name: 'Package1',
+      type: NodeType.Package,
+      platform: Platform.iOS,
+      origin: Origin.External,
+    }),
     createNode({
       id: '8',
       name: 'Package2',
-      type: 'package',
-      platform: 'visionOS',
-      origin: 'external',
+      type: NodeType.Package,
+      platform: Platform.visionOS,
+      origin: Origin.External,
     }),
   ];
 }

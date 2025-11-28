@@ -8,7 +8,7 @@
  * for maximum compatibility across React and Lit components.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 
 :where(:root, :host) {
   /* ========================================
@@ -203,28 +203,19 @@
      SHADOWS / ELEVATION - Deep, Atmospheric
      ======================================== */
 
-  --shadows-sm:
-    0 1px 2px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadows-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.03);
 
   --shadows-md:
-    0 4px 12px rgba(0, 0, 0, 0.5),
-    0 2px 4px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.04);
+    0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
 
   --shadows-lg:
-    0 12px 24px rgba(0, 0, 0, 0.6),
-    0 6px 12px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 12px 24px rgba(0, 0, 0, 0.6), 0 6px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px
+    rgba(255, 255, 255, 0.05);
 
   /* Glow shadows */
-  --shadows-glow-primary:
-    0 0 20px rgba(255, 160, 60, 0.3),
-    0 0 40px rgba(255, 160, 60, 0.15);
+  --shadows-glow-primary: 0 0 20px rgba(255, 160, 60, 0.3), 0 0 40px rgba(255, 160, 60, 0.15);
 
-  --shadows-glow-accent:
-    0 0 20px rgba(64, 224, 208, 0.3),
-    0 0 40px rgba(64, 224, 208, 0.15);
+  --shadows-glow-accent: 0 0 20px rgba(64, 224, 208, 0.3), 0 0 40px rgba(64, 224, 208, 0.15);
 
   /* ========================================
      ANIMATION (8 tokens)
@@ -302,18 +293,10 @@
   );
 
   /* Card gradient */
-  --gradient-card: linear-gradient(
-    135deg,
-    rgba(18, 22, 30, 0.95) 0%,
-    rgba(12, 15, 22, 0.98) 100%
-  );
+  --gradient-card: linear-gradient(135deg, rgba(18, 22, 30, 0.95) 0%, rgba(12, 15, 22, 0.98) 100%);
 
   /* Header gradient */
-  --gradient-header: linear-gradient(
-    180deg,
-    rgba(16, 20, 28, 1) 0%,
-    rgba(12, 15, 22, 0.98) 100%
-  );
+  --gradient-header: linear-gradient(180deg, rgba(16, 20, 28, 1) 0%, rgba(12, 15, 22, 0.98) 100%);
 
   /* Accent left border gradient */
   --gradient-accent-border: linear-gradient(

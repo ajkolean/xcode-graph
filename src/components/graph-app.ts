@@ -2,13 +2,13 @@
  * GraphApp Lit Component - Main Application Entry
  *
  * Root application component that orchestrates the entire graph visualization.
- * Uses Zustand stores for state management and coordinates all child components.
+ * Uses Lit Signals for state management and coordinates all child components.
  *
  * **Features:**
  * - Tab navigation (Graph, Builds, Test Runs, etc.)
  * - Circular dependency detection and warning
  * - Filter and search state management
- * - Memoized data computation via DataStore
+ * - Automatic memoized data computation via computed signals
  *
  * @module components/graph-app
  *
@@ -18,19 +18,31 @@
  * ```
  */
 
-import { createStoreController } from '@/controllers/zustand.controller';
-import { mockGraphData } from '@/fixtures';
-import { GraphDataService } from '@/services/graphDataService';
-import { useDataStore } from '@/stores/dataStore';
-import { useFilterStore } from '@/stores/filterStore';
-import { useGraphStore } from '@/stores/graphStore';
-import { type ActiveTab, useUIStore } from '@/stores/uiStore';
+import { SignalWatcher } from '@lit-labs/signals';
+import type { ActiveTab } from '@shared/schemas';
 import { css, html, LitElement } from 'lit';
-import './layout/graph-tab';
-import './layout/header';
-import './layout/placeholder-tab';
-import './layout/sidebar';
-import './ui/cycle-warning';
+import { mockGraphData } from '@/fixtures/largeGraph';
+import { GraphDataService } from '@/services/graphDataService';
+import '@ui/layout/graph-tab';
+import '@ui/layout/header';
+import '@ui/layout/placeholder-tab';
+import '@ui/layout/sidebar';
+import '@ui/components/cycle-warning';
+
+// Import signals and actions from graph module
+import {
+  edges as allEdges,
+  nodes as allNodes,
+  circularDependencies,
+  displayData,
+  filteredData,
+  resetView,
+  setCircularDependencies,
+  setGraphData,
+} from '@graph/signals/index';
+
+// Import signals and actions from shared module
+import { activeTab, initializeFromData, setActiveTab } from '@shared/signals/index';
 
 const TAB_LABELS: Record<ActiveTab, string> = {
   overview: 'Overview',
@@ -44,32 +56,17 @@ const TAB_LABELS: Record<ActiveTab, string> = {
   graph: 'Graph',
 };
 
-export class GraphApp extends LitElement {
+export class GraphApp extends SignalWatcher(LitElement) {
   // ========================================
   // Data Service
   // ========================================
   private graphDataService = new GraphDataService(mockGraphData.nodes, mockGraphData.edges);
 
   // ========================================
-  // Zustand Store Subscriptions
-  // ========================================
-
-  private selectedNode = createStoreController(this, useGraphStore, (s) => s.selectedNode);
-  private viewMode = createStoreController(this, useGraphStore, (s) => s.viewMode);
-  private circularDependencies = createStoreController(
-    this,
-    useGraphStore,
-    (s) => s.circularDependencies,
-  );
-  private filters = createStoreController(this, useFilterStore, (s) => s.filters);
-  private searchQuery = createStoreController(this, useFilterStore, (s) => s.searchQuery);
-  private activeTab = createStoreController(this, useUIStore, (s) => s.activeTab);
-
-  // ========================================
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: flex;
       flex-direction: column;
@@ -101,27 +98,25 @@ export class GraphApp extends LitElement {
   // Lifecycle
   // ========================================
 
-  connectedCallback() {
+  override connectedCallback() {
     super.connectedCallback();
 
-    // Initialize data store with graph data
-    useDataStore.getState().setGraphData(mockGraphData.nodes, mockGraphData.edges);
+    // Initialize data signals with graph data
+    setGraphData(mockGraphData.nodes, mockGraphData.edges);
 
     // Initialize filters from data
-    const initializeFromData = this.filters.getAction('initializeFromData');
-    const allProjects = new Set(
+    const projects = new Set(
       mockGraphData.nodes
         .map((n) => n.project)
         .filter((p): p is string => p !== undefined && p !== ''),
     );
-    const allPackages = new Set(
+    const packages = new Set(
       mockGraphData.nodes.filter((n) => n.type === 'package').map((n) => n.name),
     );
-    initializeFromData(allProjects, allPackages);
+    initializeFromData(projects, packages);
 
     // Detect circular dependencies
     const cycles = this.graphDataService.findCircularDependencies();
-    const setCircularDependencies = this.circularDependencies.getAction('setCircularDependencies');
     setCircularDependencies(cycles);
 
     if (cycles.length > 0) {
@@ -133,45 +128,12 @@ export class GraphApp extends LitElement {
   }
 
   // ========================================
-  // Computed Values (Memoized via DataStore)
-  // ========================================
-
-  private get filteredData() {
-    // Use memoized version from data store
-    return useDataStore
-      .getState()
-      .getFilteredData(this.filters.value, this.searchQuery.value || '');
-  }
-
-  private get displayData() {
-    // Use memoized version from data store - only recomputes when dependencies change
-    const data = useDataStore
-      .getState()
-      .getDisplayData(
-        this.filters.value,
-        this.searchQuery.value || '',
-        this.viewMode.value,
-        this.selectedNode.value,
-      );
-
-    return {
-      displayNodes: data.filteredNodes,
-      displayEdges: data.filteredEdges,
-      transitiveDeps: data.transitiveDeps,
-      transitiveDependents: data.transitiveDependents,
-    };
-  }
-
-  // ========================================
   // Event Handlers
   // ========================================
 
   private handleTabChange(e: CustomEvent<{ tab: ActiveTab }>) {
-    const setActiveTab = this.activeTab.getAction('setActiveTab');
     setActiveTab(e.detail.tab);
-
     // Reset view when changing tabs
-    const resetView = this.selectedNode.getAction('resetView');
     resetView();
   }
 
@@ -179,42 +141,45 @@ export class GraphApp extends LitElement {
   // Render
   // ========================================
 
-  render() {
-    const { displayNodes, displayEdges, transitiveDeps, transitiveDependents } = this.displayData;
-    const { filteredNodes, filteredEdges } = this.filteredData;
+  override render() {
+    // Access computed signals - automatically tracks dependencies
+    const display = displayData.get();
+    const filtered = filteredData.get();
+    const cycles = circularDependencies.get();
+    const currentTab = activeTab.get();
 
     return html`
       <graph-header></graph-header>
 
       ${
-        this.circularDependencies.value.length > 0
-          ? html`<graph-cycle-warning .cycles=${this.circularDependencies.value}></graph-cycle-warning>`
+        cycles.length > 0
+          ? html`<graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>`
           : null
       }
 
       <div class="main-layout">
         <graph-sidebar
-          active-tab=${this.activeTab.value}
+          active-tab=${currentTab}
           @tab-change=${this.handleTabChange}
         ></graph-sidebar>
 
         <div class="content-area">
           ${
-            this.activeTab.value === 'graph'
+            currentTab === 'graph'
               ? html`
                 <graph-tab
-                  .displayNodes=${displayNodes}
-                  .displayEdges=${displayEdges}
-                  .filteredNodes=${filteredNodes}
-                  .filteredEdges=${filteredEdges}
-                  .allNodes=${mockGraphData.nodes}
-                  .allEdges=${mockGraphData.edges}
-                  .transitiveDeps=${transitiveDeps}
-                  .transitiveDependents=${transitiveDependents}
+                  .displayNodes=${display.filteredNodes}
+                  .displayEdges=${display.filteredEdges}
+                  .filteredNodes=${filtered.filteredNodes}
+                  .filteredEdges=${filtered.filteredEdges}
+                  .allNodes=${allNodes.get()}
+                  .allEdges=${allEdges.get()}
+                  .transitiveDeps=${display.transitiveDeps}
+                  .transitiveDependents=${display.transitiveDependents}
                 ></graph-tab>
               `
               : html`
-                <graph-placeholder-tab title=${TAB_LABELS[this.activeTab.value]}></graph-placeholder-tab>
+                <graph-placeholder-tab title=${TAB_LABELS[currentTab]}></graph-placeholder-tab>
               `
           }
         </div>
