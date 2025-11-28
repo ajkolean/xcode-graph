@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - wc
   pull_request:
     branches:
       - main
