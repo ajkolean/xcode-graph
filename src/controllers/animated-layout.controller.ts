@@ -267,7 +267,7 @@ export class AnimatedLayoutController implements ReactiveController {
   ) {
     // Update nodes
     nodePos.forEach((pos) => {
-      if (!pos.vx || !pos.vy) return;
+      if (!pos.vx && !pos.vy) return;
 
       pos.x += pos.vx * alpha;
       pos.y += pos.vy * alpha;
@@ -279,7 +279,7 @@ export class AnimatedLayoutController implements ReactiveController {
 
     // Update clusters
     clusterPos.forEach((pos) => {
-      if (!pos.vx || !pos.vy) return;
+      if (!pos.vx && !pos.vy) return;
 
       pos.x += pos.vx * alpha;
       pos.y += pos.vy * alpha;

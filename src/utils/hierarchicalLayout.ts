@@ -147,7 +147,16 @@ function positionNodesInLayout(
   }
 
   for (const pos of positions) {
-    nodePositions.set(pos.id, { x: pos.x, y: pos.y, vx: 0, vy: 0 });
+    nodePositions.set(pos.id, {
+      id: pos.id,
+      x: pos.x,
+      y: pos.y,
+      vx: 0,
+      vy: 0,
+      clusterId: nodeToCluster.get(pos.id) ?? '',
+      // Provide a sane default radius so collision/spacing math has data
+      radius: 12,
+    });
   }
 }
 

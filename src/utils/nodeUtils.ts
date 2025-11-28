@@ -114,7 +114,7 @@ export function computeClusterStats(
   const filteredTargetsCount = filteredClusterNodeIds.size;
 
   // Platforms
-  const platforms = new Set(clusterNodes.flatMap((n) => n.platforms || []).filter(Boolean));
+  const platforms = new Set(clusterNodes.map((n) => n.platform).filter(Boolean));
 
   return {
     filteredDependencies,
