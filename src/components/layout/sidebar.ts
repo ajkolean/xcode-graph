@@ -55,7 +55,7 @@ export class GraphSidebar extends LitElement {
   static styles = css`
     :host {
       display: block;
-      width: 256px;
+      width: var(--sizes-sidebar-expanded);
       flex-shrink: 0;
     }
 
@@ -75,13 +75,13 @@ export class GraphSidebar extends LitElement {
       position: absolute;
       inset: 0;
       background-image: var(--effect-noise);
-      opacity: 0.02;
+      opacity: var(--opacity-2);
       pointer-events: none;
     }
 
     nav {
       flex: 1;
-      padding: var(--spacing-md) 12px;
+      padding: var(--spacing-md) var(--spacing-3);
       overflow-y: auto;
       position: relative;
       z-index: 1;
@@ -90,7 +90,7 @@ export class GraphSidebar extends LitElement {
     .nav-items {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: var(--spacing-1);
     }
 
     .nav-button {
@@ -98,19 +98,19 @@ export class GraphSidebar extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 12px;
+      padding: var(--spacing-2) var(--spacing-3);
       border-radius: var(--radii-sm);
       transition:
-        background-color 0.15s var(--easings-out),
-        border-color 0.15s var(--easings-out),
-        transform 0.15s var(--easings-out);
+        background-color var(--durations-fast) var(--easings-out),
+        border-color var(--durations-fast) var(--easings-out),
+        transform var(--durations-fast) var(--easings-out);
       background: transparent;
       border: 1px solid transparent;
       border-left: 2px solid transparent;
       cursor: pointer;
       color: var(--colors-muted-foreground);
       /* Staggered animation */
-      animation: fadeInUp 0.4s var(--easings-out) both;
+      animation: fadeInUp var(--durations-slow) var(--easings-out) both;
     }
 
     /* Animation delays for staggered effect */
@@ -142,7 +142,7 @@ export class GraphSidebar extends LitElement {
     }
 
     .nav-button:not(.active):hover {
-      background-color: rgba(255, 255, 255, 0.03);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-2));
       border-color: var(--colors-border);
       color: var(--colors-foreground);
     }
@@ -154,17 +154,17 @@ export class GraphSidebar extends LitElement {
     .nav-content {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: var(--spacing-3);
     }
 
     .icon-container {
-      width: 20px;
-      height: 20px;
+      width: var(--sizes-icon-lg);
+      height: var(--sizes-icon-lg);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: color 0.15s var(--easings-out);
+      transition: color var(--durations-fast) var(--easings-out);
     }
 
     .nav-button.active .icon-container {
@@ -172,14 +172,14 @@ export class GraphSidebar extends LitElement {
     }
 
     .icon-container svg {
-      width: 18px;
-      height: 18px;
+      width: var(--sizes-icon-md);
+      height: var(--sizes-icon-md);
       stroke: currentColor;
     }
 
     .label {
       font-family: var(--fonts-body);
-      font-size: 13px;
+      font-size: var(--font-sizes-label);
       letter-spacing: 0.01em;
     }
 
@@ -192,36 +192,36 @@ export class GraphSidebar extends LitElement {
     }
 
     .dropdown-icon {
-      opacity: 0.4;
-      transition: opacity 0.15s var(--easings-out);
+      opacity: var(--opacity-40);
+      transition: opacity var(--durations-fast) var(--easings-out);
     }
 
     .dropdown-icon svg {
-      width: 14px;
-      height: 14px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
 
     .nav-button:hover .dropdown-icon {
-      opacity: 0.8;
+      opacity: var(--opacity-80);
     }
 
     /* Section divider */
     .section-divider {
       height: 1px;
       background: var(--colors-border);
-      margin: 12px 0;
+      margin: var(--spacing-3) 0;
     }
 
     /* Section label */
     .section-label {
       font-family: var(--fonts-mono);
-      font-size: 10px;
+      font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-medium);
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
       color: var(--colors-primary);
-      opacity: 0.6;
-      padding: 8px 12px 4px;
+      opacity: var(--opacity-60);
+      padding: var(--spacing-2) var(--spacing-3) var(--spacing-1);
     }
   `;
 

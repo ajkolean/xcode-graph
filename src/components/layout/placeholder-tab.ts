@@ -34,7 +34,7 @@ export class GraphPlaceholderTab extends LitElement {
       flex: 1;
       align-items: center;
       justify-content: center;
-      background-color: var(--color-background);
+      background-color: var(--colors-background);
     }
 
     .container {
@@ -42,18 +42,18 @@ export class GraphPlaceholderTab extends LitElement {
     }
 
     .title {
-      font-family: 'DM Sans', sans-serif;
-      font-size: var(--text-h1);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-foreground);
-      margin-bottom: var(--space-2, 8px);
-      opacity: 0.8;
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-h1);
+      font-weight: var(--font-weights-medium);
+      color: var(--colors-foreground);
+      margin-bottom: var(--spacing-2);
+      opacity: var(--opacity-80);
     }
 
     .subtitle {
-      font-family: 'Inter', sans-serif;
-      font-size: var(--text-base);
-      color: var(--color-muted-foreground);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-base);
+      color: var(--colors-muted-foreground);
     }
   `;
 
