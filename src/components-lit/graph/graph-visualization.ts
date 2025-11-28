@@ -22,14 +22,11 @@
 
 import { css, html, LitElement, svg } from 'lit';
 import { query, state } from 'lit/decorators.js';
-import { AnimatedLayoutController } from '@/controllers/animated-layout.controller';
 import { GraphInteractionFullController } from '@/controllers/graph-interaction-full.controller';
+import { GraphLayoutController } from '@/controllers/graph-layout.controller';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/data/mockGraphData';
 import type { TransitiveResult, ViewMode } from '@/types/app';
 import type { PreviewFilter } from '@/types/filters';
-import { analyzeCluster } from '@/utils/clusterAnalysis';
-import { groupIntoClusters } from '@/utils/clusterGrouping';
-import { computeHierarchicalLayout } from '@/utils/hierarchicalLayout';
 import { renderClusterGroup, renderGraphEdges } from './svg-renderers';
 import './graph-svg-defs';
 import './cluster-group';
@@ -85,7 +82,7 @@ export class GraphVisualization extends LitElement {
   // Controllers
   // ========================================
 
-  private layout = new AnimatedLayoutController(this, {
+  private layout = new GraphLayoutController(this, {
     enableAnimation: this.enableAnimation,
     animationTicks: 30,
   });
@@ -162,7 +159,7 @@ export class GraphVisualization extends LitElement {
     if (changedProps.has('zoom')) {
       this.interaction.updateConfig({
         zoom: this.zoom,
-        finalNodePositions: this.finalNodePositions,
+        finalNodePositions: this.layout.nodePositions,
         clusterPositions: this.layout.clusterPositions,
       });
     }
@@ -173,22 +170,6 @@ export class GraphVisualization extends LitElement {
     if (this.svgElement && !this.interaction.hasSvgElement()) {
       this.interaction.setSvgElement(this.svgElement);
     }
-  }
-
-  // ========================================
-  // Computed Values
-  // ========================================
-
-  private get finalNodePositions() {
-    // Merge layout positions with manual positions
-    const merged = new Map(this.layout.nodePositions);
-    this.interaction.manualNodePositions.forEach((pos, id) => {
-      const existing = merged.get(id);
-      if (existing) {
-        merged.set(id, { ...existing, x: pos.x, y: pos.y });
-      }
-    });
-    return merged;
   }
 
   // ========================================
@@ -289,7 +270,8 @@ export class GraphVisualization extends LitElement {
                     edges: this.edges ?? [],
                     nodes: this.nodes ?? [],
                     nodeMap: this.nodeMap,
-                    finalNodePositions: this.finalNodePositions,
+                    layoutNodePositions: this.layout.nodePositions,
+                    manualNodePositions: this.interaction.manualNodePositions,
                     clusterPositions: this.layout.clusterPositions,
                     selectedNode: this.selectedNode ?? null,
                     hoveredNode: this.hoveredNode ?? null,
@@ -313,7 +295,8 @@ export class GraphVisualization extends LitElement {
                     clusterPosition: position,
                     nodes: this.nodes ?? [],
                     edges: this.edges ?? [],
-                    finalNodePositions: this.finalNodePositions,
+                    layoutNodePositions: this.layout.nodePositions,
+                    manualNodePositions: this.interaction.manualNodePositions,
                     selectedNode: this.selectedNode ?? null,
                     hoveredNode: this.hoveredNode ?? null,
                     isClusterHovered: this.hoveredCluster === cluster.id,

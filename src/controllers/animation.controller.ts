@@ -1,0 +1,233 @@
+/**
+ * AnimationController
+ *
+ * Orchestrates physics-based animation loop.
+ * Separated from layout and physics for single responsibility.
+ *
+ * Responsibilities:
+ * - Animation timing and tick management
+ * - RequestAnimationFrame loop
+ * - Alpha decay calculation
+ * - Position updates and velocity damping
+ * - Animation lifecycle (start/stop)
+ */
+
+import type { ReactiveController, ReactiveControllerHost } from 'lit';
+import type { GraphEdge } from '@/data/mockGraphData';
+import type { Cluster } from '@/types/cluster';
+import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import { updatePositions } from '@/utils/physics/collision-forces';
+import type { PhysicsController } from './physics.controller';
+
+export interface AnimationConfig {
+  totalTicks?: number;
+  damping?: number;
+  autoStart?: boolean;
+}
+
+export interface AnimationCallbacks {
+  onTick?: (tickCount: number, alpha: number) => void;
+  onComplete?: () => void;
+}
+
+export class AnimationController implements ReactiveController {
+  private host: ReactiveControllerHost;
+
+  // Configuration
+  private totalTicks: number;
+  private damping: number;
+
+  // Animation state
+  private animationId: number | null = null;
+  private tickCount = 0;
+  private isAnimating = false;
+
+  // Callbacks
+  private callbacks: AnimationCallbacks = {};
+
+  constructor(host: ReactiveControllerHost, config: AnimationConfig = {}) {
+    this.host = host;
+    this.totalTicks = config.totalTicks ?? 30;
+    this.damping = config.damping ?? 0.7;
+    host.addController(this);
+  }
+
+  // ========================================
+  // Public API
+  // ========================================
+
+  /**
+   * Start physics animation
+   *
+   * @param nodePositions - Node positions to animate (mutated in place)
+   * @param clusterPositions - Cluster positions to animate (mutated in place)
+   * @param edges - Graph edges for link forces
+   * @param clusters - Clusters for collision detection
+   * @param physicsController - Physics controller to apply forces
+   * @param callbacks - Optional callbacks for progress tracking
+   */
+  startAnimation(
+    nodePositions: Map<string, NodePosition>,
+    clusterPositions: Map<string, ClusterPosition>,
+    edges: GraphEdge[],
+    clusters: Cluster[],
+    physicsController: PhysicsController,
+    callbacks: AnimationCallbacks = {},
+  ): void {
+    this.stop();
+    this.callbacks = callbacks;
+    this.isAnimating = true;
+    this.tickCount = 0;
+
+    const animate = () => {
+      if (this.tickCount >= this.totalTicks || !this.isAnimating) {
+        this.completeAnimation(nodePositions, clusterPositions);
+        return;
+      }
+
+      // Calculate alpha (strength decay over time)
+      const alpha = this.calculateAlpha();
+
+      // Apply physics forces
+      physicsController.applyForces(nodePositions, clusterPositions, edges, clusters, alpha);
+
+      // Update positions based on velocities
+      this.updateAllPositions(nodePositions, clusterPositions, alpha);
+
+      this.tickCount++;
+
+      // Callback for progress tracking
+      if (this.callbacks.onTick) {
+        this.callbacks.onTick(this.tickCount, alpha);
+      }
+
+      // Request UI update
+      this.host.requestUpdate();
+
+      // Continue animation
+      this.animationId = requestAnimationFrame(animate);
+    };
+
+    this.animationId = requestAnimationFrame(animate);
+  }
+
+  /**
+   * Stop animation
+   */
+  stop(): void {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+    this.isAnimating = false;
+    this.tickCount = 0;
+  }
+
+  /**
+   * Check if currently animating
+   */
+  get isActive(): boolean {
+    return this.isAnimating;
+  }
+
+  /**
+   * Get current tick count
+   */
+  get currentTick(): number {
+    return this.tickCount;
+  }
+
+  /**
+   * Get total ticks
+   */
+  get maxTicks(): number {
+    return this.totalTicks;
+  }
+
+  /**
+   * Get animation progress (0-1)
+   */
+  get progress(): number {
+    return this.totalTicks > 0 ? this.tickCount / this.totalTicks : 0;
+  }
+
+  // ========================================
+  // Configuration
+  // ========================================
+
+  setTotalTicks(ticks: number): void {
+    this.totalTicks = Math.max(1, ticks);
+  }
+
+  setDamping(damping: number): void {
+    this.damping = Math.max(0, Math.min(1, damping));
+  }
+
+  // ========================================
+  // Private Helpers
+  // ========================================
+
+  private calculateAlpha(): number {
+    // Linear decay from 1 to 0
+    return 1 - this.tickCount / this.totalTicks;
+  }
+
+  private updateAllPositions(
+    nodePositions: Map<string, NodePosition>,
+    clusterPositions: Map<string, ClusterPosition>,
+    alpha: number,
+  ): void {
+    // Update node positions
+    const nodes = Array.from(nodePositions.values());
+    updatePositions(nodes, alpha, this.damping);
+
+    // Update cluster positions
+    const clusters = Array.from(clusterPositions.values());
+    updatePositions(clusters, alpha, this.damping);
+  }
+
+  private completeAnimation(
+    nodePositions: Map<string, NodePosition>,
+    clusterPositions: Map<string, ClusterPosition>,
+  ): void {
+    this.isAnimating = false;
+
+    // Zero out all velocities
+    nodePositions.forEach((pos) => {
+      pos.vx = 0;
+      pos.vy = 0;
+    });
+    clusterPositions.forEach((pos) => {
+      pos.vx = 0;
+      pos.vy = 0;
+    });
+
+    // Final update
+    this.host.requestUpdate();
+
+    // Callback
+    if (this.callbacks.onComplete) {
+      this.callbacks.onComplete();
+    }
+  }
+
+  // ========================================
+  // Lifecycle
+  // ========================================
+
+  hostConnected(): void {}
+
+  hostDisconnected(): void {
+    try {
+      this.stop();
+    } catch (error) {
+      console.error('[AnimationController] Error during cleanup:', error);
+      // Force cleanup
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+      this.isAnimating = false;
+    }
+  }
+}

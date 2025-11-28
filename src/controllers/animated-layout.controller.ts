@@ -1,6 +1,15 @@
 /**
  * AnimatedLayoutController
  *
+ * @deprecated Use GraphLayoutController instead for better separation of concerns.
+ * This controller has been refactored into three focused controllers:
+ * - LayoutController (deterministic positioning)
+ * - PhysicsController (force calculations)
+ * - AnimationController (animation orchestration)
+ * - GraphLayoutController (unified API composing all three)
+ *
+ * This file is kept for backward compatibility and will be removed in a future version.
+ *
  * Full layout animation controller with gentle physics settling.
  * Converted from useAnimatedLayout React hook.
  *

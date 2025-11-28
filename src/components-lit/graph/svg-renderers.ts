@@ -427,7 +427,8 @@ export interface GraphEdgesOptions {
   edges: GraphEdge[];
   nodes: GraphNode[];
   nodeMap?: Map<string, GraphNode>;
-  finalNodePositions: Map<string, NodePosition>;
+  layoutNodePositions: Map<string, NodePosition>;
+  manualNodePositions?: Map<string, { x: number; y: number }>;
   clusterPositions: Map<string, ClusterPosition>;
   selectedNode: GraphNode | null;
   hoveredNode: string | null;
@@ -493,7 +494,8 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
     edges,
     nodes,
     nodeMap,
-    finalNodePositions,
+    layoutNodePositions,
+    manualNodePositions,
     clusterPositions,
     selectedNode,
     hoveredNode,
@@ -531,19 +533,28 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
         if (sourceClusterId === targetClusterId) return nothing;
       }
 
-      const sourcePos = finalNodePositions.get(edge.source);
-      const targetPos = finalNodePositions.get(edge.target);
+      const layoutSourcePos = layoutNodePositions.get(edge.source);
+      const layoutTargetPos = layoutNodePositions.get(edge.target);
       const sourceCluster = clusterPositions.get(sourceClusterId);
       const targetCluster = clusterPositions.get(targetClusterId);
 
-      if (!sourcePos || !targetPos || !sourceCluster || !targetCluster) return nothing;
+      if (!layoutSourcePos || !layoutTargetPos || !sourceCluster || !targetCluster) return nothing;
+
+      // Resolve positions (manual overrides layout)
+      const sourceManual = manualNodePositions?.get(edge.source);
+      const targetManual = manualNodePositions?.get(edge.target);
+
+      const sourceX = sourceManual?.x ?? layoutSourcePos.x;
+      const sourceY = sourceManual?.y ?? layoutSourcePos.y;
+      const targetX = targetManual?.x ?? layoutTargetPos.x;
+      const targetY = targetManual?.y ?? layoutTargetPos.y;
 
       // Viewport culling: skip edges outside visible area
       if (viewportBounds) {
-        const absoluteSourceX = sourceCluster.x + sourcePos.x;
-        const absoluteSourceY = sourceCluster.y + sourcePos.y;
-        const absoluteTargetX = targetCluster.x + targetPos.x;
-        const absoluteTargetY = targetCluster.y + targetPos.y;
+        const absoluteSourceX = sourceCluster.x + sourceX;
+        const absoluteSourceY = sourceCluster.y + sourceY;
+        const absoluteTargetX = targetCluster.x + targetX;
+        const absoluteTargetY = targetCluster.y + targetY;
 
         if (
           !isLineInViewport(
@@ -556,10 +567,10 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
         }
       }
 
-      const x1 = sourceCluster.x + sourcePos.x;
-      const y1 = sourceCluster.y + sourcePos.y;
-      const x2 = targetCluster.x + targetPos.x;
-      const y2 = targetCluster.y + targetPos.y;
+      const x1 = sourceCluster.x + sourceX;
+      const y1 = sourceCluster.y + sourceY;
+      const x2 = targetCluster.x + targetX;
+      const y2 = targetCluster.y + targetY;
 
       const isHighlighted =
         selectedNode && (edge.source === selectedNode.id || edge.target === selectedNode.id);
@@ -603,7 +614,8 @@ export interface ClusterGroupOptions {
   clusterPosition: ClusterPosition;
   nodes: GraphNode[];
   edges: GraphEdge[];
-  finalNodePositions: Map<string, NodePosition>;
+  layoutNodePositions: Map<string, NodePosition>;
+  manualNodePositions?: Map<string, { x: number; y: number }>;
   selectedNode: GraphNode | null;
   hoveredNode: string | null;
   isClusterHovered?: boolean;
@@ -626,7 +638,8 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
     clusterPosition,
     nodes,
     edges,
-    finalNodePositions,
+    layoutNodePositions,
+    manualNodePositions,
     selectedNode,
     hoveredNode,
     isClusterHovered = false,
@@ -669,8 +682,13 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
       <!-- Nodes -->
       <g class="nodes">
         ${clusterNodes.map((node) => {
-          const pos = finalNodePositions.get(node.id);
-          if (!pos) return nothing;
+          const layoutPos = layoutNodePositions.get(node.id);
+          if (!layoutPos) return nothing;
+
+          // Resolve position (manual overrides layout)
+          const manualPos = manualNodePositions?.get(node.id);
+          const posX = manualPos?.x ?? layoutPos.x;
+          const posY = manualPos?.y ?? layoutPos.y;
 
           const isSelectedNode = selectedNode?.id === node.id;
           const isHovered = hoveredNode === node.id;
@@ -695,8 +713,8 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
 
           const size = getNodeSize(node, edges);
           const color = getNodeTypeColor(node.type);
-          const x = clusterPosition.x + pos.x;
-          const y = clusterPosition.y + pos.y;
+          const x = clusterPosition.x + posX;
+          const y = clusterPosition.y + posY;
 
           return renderGraphNode({
             node,

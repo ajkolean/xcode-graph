@@ -37,6 +37,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedSideEffectImports": true,
     "noErrorTruncation": true,
+    "forceConsistentCasingInFileNames": true,
 
     /* Path aliases */
     "paths": {
