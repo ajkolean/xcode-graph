@@ -6,8 +6,8 @@
  */
 
 import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { Cluster } from '../types/cluster';
-import type { ClusterPosition, NodePosition } from '../types/simulation';
+import type { Cluster } from '../schemas';
+import type { ClusterPosition, NodePosition } from '../schemas';
 
 /**
  * Input data for layout computation

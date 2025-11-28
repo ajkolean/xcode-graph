@@ -18,17 +18,9 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
+import type { ActiveTab } from '@/schemas';
 
-export type ActiveTab =
-  | 'overview'
-  | 'builds'
-  | 'test-runs'
-  | 'module-cache'
-  | 'xcode-cache'
-  | 'previews'
-  | 'qa'
-  | 'bundles'
-  | 'graph';
+export type { ActiveTab };
 
 interface NavItem {
   id: ActiveTab;

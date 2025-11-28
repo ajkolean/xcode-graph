@@ -16,7 +16,7 @@
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
-import type { Cluster } from '@/types/cluster';
+import type { Cluster } from '@/schemas';
 import { generateColor } from '@/utils/rendering/color-generator';
 import { computeClusterStats } from '@/utils/graph/node-utils';
 import { adjustColorForZoom } from '@/utils/rendering/zoom-colors';

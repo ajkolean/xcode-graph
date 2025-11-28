@@ -8,8 +8,8 @@
 
 import { nothing, svg } from 'lit';
 import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
-import type { Cluster } from '@/types/cluster';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import type { Cluster } from '@/schemas';
+import type { ClusterPosition, NodePosition } from '@/schemas';
 import { generateColor } from '@/utils/rendering/color-generator';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import { getConnectedNodes } from '@/utils/graph/connections';
@@ -17,6 +17,7 @@ import { getNodeSize } from '@/utils/rendering/sizing';
 import { getNodeIconPath } from '@/utils/rendering/node-icons';
 import { isLineInViewport, type ViewportBounds } from '@/utils/rendering/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/rendering/zoom-colors';
+import { generateBezierPath } from '@/utils/rendering/paths';
 
 // ========================================
 // Cluster Card Renderer
@@ -333,22 +334,6 @@ export interface GraphEdgeOptions {
   opacity?: number;
   zoom?: number;
   animated?: boolean;
-}
-
-function generateBezierPath(x1: number, y1: number, x2: number, y2: number): string {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-
-  // Control point offset (creates gentle curve)
-  const offset = Math.min(Math.abs(dx), Math.abs(dy)) * 0.3;
-
-  // Control points for smooth S-curve
-  const cx1 = x1 + offset;
-  const cy1 = y1;
-  const cx2 = x2 - offset;
-  const cy2 = y2;
-
-  return `M ${x1},${y1} C ${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
 }
 
 export function renderGraphEdge(options: GraphEdgeOptions) {

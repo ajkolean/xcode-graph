@@ -2,7 +2,7 @@
  * SectionHeader Lit Component
  *
  * A simple header component for sections with title and count.
- * Used in dependencies-list, dependents-list, cluster-targets-list.
+ * Used in node-list, cluster-targets-list, and other list sections.
  *
  * @example
  * ```html

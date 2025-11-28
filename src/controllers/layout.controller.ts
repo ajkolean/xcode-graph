@@ -18,11 +18,11 @@
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { Cluster } from '../types/cluster';
-import type { ClusterPosition, NodePosition } from '../types/simulation';
-import { analyzeCluster } from '../utils/layout/cluster-analysis';
-import { groupIntoClusters } from '../utils/layout/cluster-grouping';
-import { computeHierarchicalLayout } from '../utils/layout/hierarchical';
+import type { Cluster } from '../schemas';
+import type { ClusterPosition, NodePosition } from '../schemas';
+import { analyzeCluster } from '@/layout/cluster-analysis';
+import { groupIntoClusters } from '@/layout/cluster-grouping';
+import { computeHierarchicalLayout } from '@/layout/hierarchical';
 
 // ==================== Type Definitions ====================
 

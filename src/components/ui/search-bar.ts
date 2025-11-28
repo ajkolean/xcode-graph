@@ -19,6 +19,7 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
+import './icon-button.js';
 
 export class GraphSearchBar extends LitElement {
   // ========================================
@@ -126,39 +127,6 @@ export class GraphSearchBar extends LitElement {
       z-index: 1;
     }
 
-    .clear-button {
-      padding: var(--spacing-1);
-      border-radius: var(--radii-sm);
-      transition:
-        background-color var(--durations-fast) var(--easings-out),
-        color var(--durations-fast) var(--easings-out),
-        transform var(--durations-fast) var(--easings-out);
-      background: rgba(var(--colors-foreground-rgb), var(--opacity-5));
-      border: var(--border-widths-thin) solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
-      color: var(--colors-muted-foreground);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .clear-button:hover {
-      background-color: rgba(var(--colors-destructive-rgb), var(--opacity-15));
-      border-color: rgba(var(--colors-destructive-rgb), var(--opacity-30));
-      color: var(--colors-destructive);
-      transform: scale(1.05);
-    }
-
-    .clear-button:active {
-      transform: scale(0.95);
-    }
-
-    .clear-button svg {
-      width: var(--sizes-icon-xs);
-      height: var(--sizes-icon-xs);
-      stroke: currentColor;
-    }
-
     .keyboard-hint {
       padding: var(--spacing-1) var(--spacing-2);
       border-radius: var(--radii-sm);
@@ -226,13 +194,15 @@ export class GraphSearchBar extends LitElement {
           ${
             this.searchQuery
               ? html`
-                <button
-                  class="clear-button"
-                  @click=${this.handleClear}
+                <graph-icon-button
+                  variant="subtle"
+                  color="destructive"
+                  size="sm"
                   title="Clear search"
+                  @click=${this.handleClear}
                 >
                   ${unsafeHTML(icons.X)}
-                </button>
+                </graph-icon-button>
               `
               : html`
                 <div class="keyboard-hint">/</div>

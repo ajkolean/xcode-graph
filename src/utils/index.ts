@@ -4,7 +4,7 @@
  * Re-exports from all utility modules for convenient imports.
  *
  * **Submodules:**
- * - `@/utils/layout` - Layout algorithms (cluster grouping, hierarchical)
+ * - `@/layout` - Layout algorithms (cluster grouping, hierarchical) [top-level]
  * - `@/utils/rendering` - Colors, icons, viewport utilities
  * - `@/utils/graph` - Node utilities, connections, and filtering
  * - `@/utils/physics` - Force calculations and collision detection
@@ -12,7 +12,6 @@
  * @module utils
  */
 
-export * from './layout';
 export * from './rendering';
 export * from './graph';
 export * from './physics';

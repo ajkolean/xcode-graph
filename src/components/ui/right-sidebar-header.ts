@@ -18,6 +18,7 @@
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import './sidebar-collapse-icon';
+import './icon-button.js';
 
 export class GraphRightSidebarHeader extends LitElement {
   // ========================================
@@ -55,19 +56,8 @@ export class GraphRightSidebarHeader extends LitElement {
       color: var(--colors-foreground);
     }
 
-    .toggle-button {
-      padding: var(--spacing-1);
-      border-radius: var(--radii-md);
-      transition: background-color var(--durations-normal);
-      background: none;
-      border: none;
-      color: var(--colors-muted-foreground);
-      cursor: pointer;
+    graph-icon-button {
       margin-left: auto;
-    }
-
-    .toggle-button:hover {
-      background-color: var(--colors-muted);
     }
   `;
 
@@ -92,13 +82,14 @@ export class GraphRightSidebarHeader extends LitElement {
     return html`
       <div class="container">
         ${!this.isCollapsed ? html`<h2 class="title">${this.title}</h2>` : ''}
-        <button
-          class="toggle-button"
-          @click=${this.handleToggle}
+        <graph-icon-button
+          variant="ghost"
+          color="neutral"
           title="${this.isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}"
+          @click=${this.handleToggle}
         >
           <graph-sidebar-collapse-icon ?is-collapsed=${this.isCollapsed}></graph-sidebar-collapse-icon>
-        </button>
+        </graph-icon-button>
       </div>
     `;
   }

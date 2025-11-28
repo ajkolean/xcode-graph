@@ -9,8 +9,11 @@
 
 // ==================== App Schemas ====================
 
-export type { FilterState, FilterStateInput, ViewMode } from './app.schema';
+export type { ActiveTab, FilterState, FilterStateInput, ViewMode } from './app.schema';
 export {
+  ACTIVE_TAB_VALUES,
+  ActiveTabSchema,
+  DEFAULT_ACTIVE_TAB,
   FilterStateInputSchema,
   FilterStateSchema,
   serializeFilterState,

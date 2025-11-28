@@ -8,20 +8,9 @@
  */
 
 import { create } from 'zustand';
+import { type ActiveTab, DEFAULT_ACTIVE_TAB } from '@/schemas';
 
-/**
- * Available application tabs
- */
-export type ActiveTab =
-  | 'overview'
-  | 'builds'
-  | 'test-runs'
-  | 'module-cache'
-  | 'xcode-cache'
-  | 'previews'
-  | 'qa'
-  | 'bundles'
-  | 'graph';
+export type { ActiveTab };
 
 /**
  * Preview filter for hover highlights
@@ -68,7 +57,7 @@ export interface UIStore {
 }
 
 export const useUIStore = create<UIStore>((set) => ({
-  activeTab: 'graph',
+  activeTab: DEFAULT_ACTIVE_TAB,
   zoom: 1,
   enableAnimation: false,
   previewFilter: null,

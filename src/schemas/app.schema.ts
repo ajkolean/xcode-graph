@@ -9,6 +9,33 @@
 
 import { z } from 'zod';
 
+// ==================== Active Tab ====================
+
+/**
+ * Active tab schema - application navigation tabs
+ *
+ * - overview: Dashboard overview
+ * - builds: Build history
+ * - test-runs: Test run results
+ * - module-cache: Module cache stats
+ * - xcode-cache: Xcode cache stats
+ * - previews: SwiftUI previews
+ * - qa: QA automation
+ * - bundles: Bundle analysis
+ * - graph: Dependency graph visualization
+ */
+export const ActiveTabSchema = z.enum([
+  'overview',
+  'builds',
+  'test-runs',
+  'module-cache',
+  'xcode-cache',
+  'previews',
+  'qa',
+  'bundles',
+  'graph',
+]);
+
 // ==================== View Mode ====================
 
 /**
@@ -69,6 +96,8 @@ export function serializeFilterState(state: FilterState): FilterStateInput {
 
 // ==================== Type Exports ====================
 
+/** Active tab values */
+export type ActiveTab = z.infer<typeof ActiveTabSchema>;
 /** View mode values */
 export type ViewMode = z.infer<typeof ViewModeSchema>;
 /** Serializable filter state */
@@ -76,5 +105,9 @@ export type FilterStateInput = z.infer<typeof FilterStateInputSchema>;
 /** Runtime filter state with Sets */
 export type FilterState = z.output<typeof FilterStateSchema>;
 
+/** All active tab values for iteration */
+export const ACTIVE_TAB_VALUES = ActiveTabSchema.options;
 /** All view mode values for iteration */
 export const VIEW_MODE_VALUES = ViewModeSchema.options;
+/** Default active tab */
+export const DEFAULT_ACTIVE_TAB: ActiveTab = 'graph';

@@ -19,7 +19,7 @@
  */
 
 import { createStoreController } from '@/controllers/zustand.controller';
-import { mockGraphData } from '@/data/mockGraphData';
+import { mockGraphData } from '@/fixtures';
 import { GraphDataService } from '@/services/graphDataService';
 import { useDataStore } from '@/stores/dataStore';
 import { useFilterStore } from '@/stores/filterStore';

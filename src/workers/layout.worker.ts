@@ -8,13 +8,20 @@
  */
 
 import { expose } from 'comlink';
-import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { Cluster } from '../types/cluster';
-import type { ClusterPosition, NodePosition } from '../types/simulation';
-import { analyzeCluster } from '../utils/clusterAnalysis';
-import { groupIntoClusters } from '../utils/clusterGrouping';
-import { computeHierarchicalLayout } from '../utils/hierarchicalLayout';
-import { SpatialHash } from '../utils/spatial-hash';
+import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
+import type { Cluster } from '@/schemas';
+import type { ClusterPosition, NodePosition } from '@/schemas';
+import { analyzeCluster } from '@/layout/cluster-analysis';
+import { groupIntoClusters } from '@/layout/cluster-grouping';
+import { computeHierarchicalLayout } from '@/layout/hierarchical';
+import {
+  applyCollisionForces,
+  applyLinkForces,
+  calculateBoundingRadius,
+  CollisionPresets,
+  LinkForcePresets,
+  updatePositionMap,
+} from '@/utils/physics/collision';
 import type { LayoutInput, LayoutOutput, LayoutProgress, LayoutWorkerAPI } from './layout-api';
 
 class LayoutWorker implements LayoutWorkerAPI {
@@ -140,7 +147,7 @@ class LayoutWorker implements LayoutWorkerAPI {
         this.applyGentleForces(nodePositions, clusterPositions, edges, clusters, alpha);
 
         // Update positions
-        this.updatePositions(nodePositions, clusterPositions, alpha);
+        this.updatePositionsFromVelocities(nodePositions, clusterPositions, alpha);
 
         this.currentTick++;
 
@@ -203,138 +210,62 @@ class LayoutWorker implements LayoutWorkerAPI {
     this.applyClusterSpacing(Array.from(clusterPos.values()), alpha);
 
     // Link attraction
-    this.applyLinkForces(edges, nodePos, alpha);
+    this.applyWorkerLinkForces(edges, nodePos, alpha);
   }
 
   private applyNodeCollision(nodes: NodePosition[], alpha: number) {
     if (nodes.length === 0) return;
 
-    // Use spatial hash for O(n log n) collision detection
-    const cellSize = Math.max(...nodes.map((n) => (n.radius || 10) * 2 + 8)) || 50;
-    const spatialHash = new SpatialHash<NodePosition>({ cellSize });
-    spatialHash.insertMany(nodes);
+    // Ensure all nodes have a radius for collision detection
+    const nodesWithRadius = nodes.map((n) => ({
+      ...n,
+      radius: n.radius || 10,
+    }));
 
-    const pairs = spatialHash.getPotentialCollisions();
+    applyCollisionForces(nodesWithRadius, alpha, CollisionPresets.NODE_COLLISION);
 
-    for (const [a, b] of pairs) {
-      const dx = b.x - a.x;
-      const dy = b.y - a.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance === 0 || distance > 100) continue;
-
-      const minSeparation = (a.radius || 10) + (b.radius || 10) + 8;
-
-      if (distance < minSeparation) {
-        const overlap = minSeparation - distance;
-        const force = overlap * 0.3 * alpha;
-        const fx = (dx / distance) * force;
-        const fy = (dy / distance) * force;
-
-        a.vx = (a.vx || 0) - fx;
-        a.vy = (a.vy || 0) - fy;
-        b.vx = (b.vx || 0) + fx;
-        b.vy = (b.vy || 0) + fy;
-      }
+    // Copy velocities back to original nodes
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].vx = nodesWithRadius[i].vx;
+      nodes[i].vy = nodesWithRadius[i].vy;
     }
   }
 
   private applyClusterSpacing(clusters: ClusterPosition[], alpha: number) {
     if (clusters.length === 0) return;
 
-    interface ClusterEntity extends ClusterPosition {
-      id: string;
-      radius: number;
-    }
-
-    const clusterEntities: ClusterEntity[] = clusters.map((c) => ({
+    // Create collision entities with computed bounding radius
+    const clusterEntities = clusters.map((c) => ({
       ...c,
-      radius: Math.sqrt(c.width * c.width + c.height * c.height) / 2,
+      radius: calculateBoundingRadius(c.width, c.height),
     }));
 
-    const cellSize = Math.max(...clusterEntities.map((c) => c.radius * 2 + 80)) || 200;
-    const spatialHash = new SpatialHash<ClusterEntity>({ cellSize });
-    spatialHash.insertMany(clusterEntities);
+    applyCollisionForces(clusterEntities, alpha, CollisionPresets.CLUSTER_SPACING);
 
-    const pairs = spatialHash.getPotentialCollisions();
-
-    for (const [a, b] of pairs) {
-      const dx = b.x - a.x;
-      const dy = b.y - a.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance === 0) continue;
-
-      const minSeparation = a.radius + b.radius + 80;
-
-      if (distance < minSeparation) {
-        const overlap = minSeparation - distance;
-        const force = overlap * 0.4 * alpha;
-        const fx = (dx / distance) * force;
-        const fy = (dy / distance) * force;
-
-        a.vx = (a.vx || 0) - fx;
-        a.vy = (a.vy || 0) - fy;
-        b.vx = (b.vx || 0) + fx;
-        b.vy = (b.vy || 0) + fy;
-      }
+    // Copy velocities back to original clusters
+    for (let i = 0; i < clusters.length; i++) {
+      clusters[i].vx = clusterEntities[i].vx;
+      clusters[i].vy = clusterEntities[i].vy;
     }
   }
 
-  private applyLinkForces(edges: GraphEdge[], nodePos: Map<string, NodePosition>, alpha: number) {
-    for (const edge of edges) {
-      const source = nodePos.get(edge.source);
-      const target = nodePos.get(edge.target);
-
-      if (!source || !target) continue;
-      if (source.clusterId !== target.clusterId) continue;
-
-      const dx = target.x - source.x;
-      const dy = target.y - source.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance === 0) continue;
-
-      const targetDist = 70;
-      const force = (distance - targetDist) * 0.05 * alpha;
-      const fx = (dx / distance) * force;
-      const fy = (dy / distance) * force;
-
-      source.vx = (source.vx || 0) + fx * 0.5;
-      source.vy = (source.vy || 0) + fy * 0.5;
-      target.vx = (target.vx || 0) - fx * 0.5;
-      target.vy = (target.vy || 0) - fy * 0.5;
-    }
+  private applyWorkerLinkForces(
+    edges: GraphEdge[],
+    nodePos: Map<string, NodePosition>,
+    alpha: number,
+  ) {
+    applyLinkForces(edges, nodePos, alpha, LinkForcePresets.DEFAULT);
   }
 
-  private updatePositions(
+  private updatePositionsFromVelocities(
     nodePos: Map<string, NodePosition>,
     clusterPos: Map<string, ClusterPosition>,
     alpha: number,
   ) {
-    // Update nodes
-    nodePos.forEach((pos) => {
-      if (!pos.vx && !pos.vy) return;
-
-      pos.x += pos.vx * alpha;
-      pos.y += pos.vy * alpha;
-
-      // Strong damping
-      pos.vx *= 0.7;
-      pos.vy *= 0.7;
-    });
-
-    // Update clusters
-    clusterPos.forEach((pos) => {
-      if (!pos.vx && !pos.vy) return;
-
-      pos.x += pos.vx * alpha;
-      pos.y += pos.vy * alpha;
-
-      // Strong damping
-      pos.vx *= 0.7;
-      pos.vy *= 0.7;
-    });
+    // NodePosition and ClusterPosition need radius for updatePositionMap
+    // Use the shared utility with default damping (0.7)
+    updatePositionMap(nodePos as Map<string, NodePosition & { radius: number }>, alpha);
+    updatePositionMap(clusterPos as Map<string, ClusterPosition & { radius: number }>, alpha);
   }
 }
 

@@ -20,8 +20,8 @@
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { GraphEdge } from '@/schemas/graph.schema';
-import type { Cluster } from '@/types/cluster';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import type { Cluster } from '@/schemas';
+import type { ClusterPosition, NodePosition } from '@/schemas';
 import { updatePositions } from '../utils/physics/collision';
 import type { PhysicsController } from './physics.controller';
 

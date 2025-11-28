@@ -24,7 +24,7 @@ import './node-header';
 import './node-info';
 import './node-actions';
 import './node-list.js';
-import type { Cluster } from '@/types/cluster';
+import type { Cluster } from '@/schemas';
 
 export class GraphNodeDetailsPanel extends LitElement {
   static properties = {

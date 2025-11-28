@@ -24,7 +24,7 @@ import { type SidebarSection, sidebarMachine } from '@/machines/sidebar.machine'
 import { useFilterStore } from '@/stores/filterStore';
 import { useGraphStore } from '@/stores/graphStore';
 import { useUIStore } from '@/stores/uiStore';
-import type { Cluster } from '@/types/cluster';
+import type { Cluster } from '@/schemas';
 import { generateColorMap } from '@/utils/graph/filters';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import { computeFilters } from '@/utils/graph/node-utils';

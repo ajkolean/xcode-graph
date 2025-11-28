@@ -22,7 +22,7 @@ import { useFilterStore } from '@/stores/filterStore';
 import { useGraphStore } from '@/stores/graphStore';
 import { useUIStore } from '@/stores/uiStore';
 import type { TransitiveResult } from '@/types/app';
-import type { Cluster } from '@/types/cluster';
+import type { Cluster } from '@/schemas';
 import '../graph/graph-visualization';
 import '../ui/right-sidebar';
 

@@ -33,7 +33,7 @@ const config: StorybookConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, '../src'),
-      '@lit-components': path.resolve(__dirname, '../src/components'),
+      '@components': path.resolve(__dirname, '../src/components'),
       'styled-system': path.resolve(__dirname, '../styled-system'),
     };
 

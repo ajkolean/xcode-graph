@@ -42,7 +42,7 @@ describe('graph-search-bar', () => {
       <graph-search-bar search-query="test"></graph-search-bar>
     `);
 
-    const clearButton = el.shadowRoot?.querySelector('.clear-button');
+    const clearButton = el.shadowRoot?.querySelector('graph-icon-button');
     expect(clearButton).to.exist;
   });
 
@@ -75,7 +75,7 @@ describe('graph-search-bar', () => {
       eventFired = true;
     });
 
-    const clearButton = el.shadowRoot?.querySelector('.clear-button') as HTMLButtonElement;
+    const clearButton = el.shadowRoot?.querySelector('graph-icon-button') as HTMLElement;
     clearButton.click();
     await el.updateComplete;
 

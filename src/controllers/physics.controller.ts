@@ -20,10 +20,11 @@
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { GraphEdge } from '../schemas/graph.schema';
-import type { Cluster } from '../types/cluster';
-import type { ClusterPosition, NodePosition } from '../types/simulation';
+import type { Cluster } from '../schemas';
+import type { ClusterPosition, NodePosition } from '../schemas';
 import {
   applyCollisionForces,
+  applyLinkForces,
   type CollisionEntity,
   CollisionPresets,
   calculateBoundingRadius,
@@ -146,33 +147,11 @@ export class PhysicsController implements ReactiveController {
     edges: GraphEdge[],
     alpha: number,
   ): void {
-    for (const edge of edges) {
-      const source = nodePositions.get(edge.source);
-      const target = nodePositions.get(edge.target);
-
-      if (!source || !target) continue;
-
-      // Only apply within same cluster
-      if (source.clusterId !== target.clusterId) continue;
-
-      const dx = target.x - source.x;
-      const dy = target.y - source.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance === 0) continue;
-
-      // Spring force (Hooke's law)
-      const displacement = distance - this.linkTargetDistance;
-      const force = displacement * this.linkAttractionStrength * alpha;
-      const fx = (dx / distance) * force;
-      const fy = (dy / distance) * force;
-
-      // Apply force to both ends (equal and opposite)
-      source.vx = (source.vx || 0) + fx * 0.5;
-      source.vy = (source.vy || 0) + fy * 0.5;
-      target.vx = (target.vx || 0) - fx * 0.5;
-      target.vy = (target.vy || 0) - fy * 0.5;
-    }
+    applyLinkForces(edges, nodePositions, alpha, {
+      targetDistance: this.linkTargetDistance,
+      strength: this.linkAttractionStrength,
+      sameClusterOnly: true,
+    });
   }
 
   // ========================================

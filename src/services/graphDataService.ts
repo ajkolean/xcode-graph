@@ -4,7 +4,7 @@
  */
 
 import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { Cluster } from '../types/cluster';
+import type { Cluster } from '../schemas';
 
 export class GraphDataService {
   private nodes: GraphNode[];

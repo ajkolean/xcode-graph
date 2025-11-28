@@ -20,7 +20,7 @@ import { html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@/schemas/graph.schema';
 import type { ViewMode } from '@/types/app';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import type { ClusterPosition, NodePosition } from '@/schemas';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import './graph-edge';
 

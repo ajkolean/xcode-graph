@@ -1,27 +1,43 @@
 /**
  * Graph Layout Controller - Unified layout orchestration
  *
+ * **This is the default/recommended controller for graph layout.**
+ *
  * Unified controller that composes Layout, Physics, and Animation controllers
  * for graph layout computation with optional physics-based settling animation.
+ * Runs on the main thread, which is suitable for most graphs (<1000 nodes).
  *
- * **Architecture:**
+ * ## When to Use This Controller
+ *
+ * **Use GraphLayoutController when:**
+ * - Graph has <1000 nodes (most use cases)
+ * - You want a simpler, synchronous API
+ * - Main thread blocking is acceptable (~10-50ms for typical graphs)
+ *
+ * **Use {@link LayoutWorkerController} instead when:**
+ * - Graph has 1000+ nodes where layout computation takes >100ms
+ * - UI responsiveness is critical during layout (e.g., concurrent drag interactions)
+ * - You need progress callbacks during animated layout
+ *
+ * ## Architecture
  * - Single Responsibility Principle (each sub-controller has one job)
  * - DRY (no duplicate collision code)
  * - Better testability (each controller tested independently)
  * - Lower cognitive complexity
  *
- * **Sub-Controllers:**
+ * ## Sub-Controllers
  * - `LayoutController`: Computes initial deterministic positions
  * - `PhysicsController`: Calculates physics forces
  * - `AnimationController`: Manages animation loop
  *
  * @module controllers/graph-layout
+ * @see {@link LayoutWorkerController} - Alternative for large graphs (1000+ nodes)
  */
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { Cluster } from '../types/cluster';
-import type { ClusterPosition, NodePosition } from '../types/simulation';
+import type { Cluster } from '../schemas';
+import type { ClusterPosition, NodePosition } from '../schemas';
 import { AnimationController } from './animation.controller';
 import { LayoutController } from './layout.controller';
 import { PhysicsController } from './physics.controller';

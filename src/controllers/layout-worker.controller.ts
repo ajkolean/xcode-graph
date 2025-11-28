@@ -1,26 +1,40 @@
 /**
  * Layout Worker Controller - Web Worker-based layout computation
  *
- * Uses Web Worker for non-blocking layout computation.
- * Offloads heavy calculations to separate thread for smooth UI.
+ * Alternative to {@link GraphLayoutController} that offloads layout computation
+ * to a Web Worker thread. Use this for performance-critical scenarios with
+ * large graphs where main thread blocking would be noticeable.
  *
- * **Benefits:**
+ * ## When to Use This Controller
+ *
+ * **Use LayoutWorkerController when:**
+ * - Graph has 1000+ nodes where layout computation takes >100ms
+ * - UI responsiveness is critical during layout (e.g., drag interactions)
+ * - You need progress callbacks during animated layout
+ *
+ * **Use {@link GraphLayoutController} instead when:**
+ * - Graph has <1000 nodes (most use cases)
+ * - You don't need progress updates during computation
+ * - Simpler API is preferred
+ *
+ * ## Benefits
  * - Main thread never blocks during layout
  * - Animations run smoothly even with large graphs
- * - Better user experience with complex graphs
+ * - Progress callbacks for animated layout
  *
- * **Architecture:**
+ * ## Architecture
  * Uses Comlink for type-safe worker communication.
  * Falls back to error state if worker initialization fails.
  *
  * @module controllers/layout-worker
+ * @see {@link GraphLayoutController} - Default/recommended controller for most use cases
  */
 
 import { type Remote, wrap } from 'comlink';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
-import type { Cluster } from '@/types/cluster';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import type { Cluster } from '@/schemas';
+import type { ClusterPosition, NodePosition } from '@/schemas';
 import type { LayoutProgress, LayoutWorkerAPI } from '@/workers/layout-api';
 
 // ==================== Type Definitions ====================

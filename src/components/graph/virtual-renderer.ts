@@ -14,7 +14,7 @@
 import { css, html, LitElement, svg, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import type { GraphNode } from '@/schemas/graph.schema';
-import type { NodePosition } from '@/types/simulation';
+import type { NodePosition } from '@/schemas';
 import { calculateViewportBounds, isCircleInViewport } from '@/utils/rendering/viewport';
 
 export interface VirtualRenderConfig {

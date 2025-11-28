@@ -132,6 +132,83 @@ export function updatePositionMap<T extends CollisionEntity>(
   updatePositions(entities, alpha, damping);
 }
 
+// ==================== Link Forces ====================
+
+/**
+ * Entity with position, velocity, and cluster membership
+ */
+export interface LinkEntity {
+  id: string;
+  x: number;
+  y: number;
+  vx?: number;
+  vy?: number;
+  clusterId?: string;
+}
+
+/**
+ * Edge connecting two entities
+ */
+export interface LinkEdge {
+  source: string;
+  target: string;
+}
+
+/**
+ * Configuration for link force calculations
+ */
+export interface LinkForceConfig {
+  targetDistance: number; // Ideal distance between linked nodes
+  strength: number; // Force multiplier (0.0 - 1.0)
+  sameClusterOnly?: boolean; // Only apply forces within same cluster
+}
+
+/**
+ * Apply spring-like link forces between connected nodes
+ * Uses Hooke's law to pull/push nodes toward target distance
+ *
+ * @param edges - Array of edges connecting nodes
+ * @param positions - Map of node positions by ID
+ * @param alpha - Force strength multiplier (typically 0-1, decays over time)
+ * @param config - Link force configuration
+ */
+export function applyLinkForces<T extends LinkEntity>(
+  edges: LinkEdge[],
+  positions: Map<string, T>,
+  alpha: number,
+  config: LinkForceConfig,
+): void {
+  const { targetDistance, strength, sameClusterOnly = true } = config;
+
+  for (const edge of edges) {
+    const source = positions.get(edge.source);
+    const target = positions.get(edge.target);
+
+    if (!source || !target) continue;
+
+    // Skip cross-cluster edges if configured
+    if (sameClusterOnly && source.clusterId !== target.clusterId) continue;
+
+    const dx = target.x - source.x;
+    const dy = target.y - source.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance === 0) continue;
+
+    // Spring force (Hooke's law)
+    const displacement = distance - targetDistance;
+    const force = displacement * strength * alpha;
+    const fx = (dx / distance) * force;
+    const fy = (dy / distance) * force;
+
+    // Apply force to both ends (equal and opposite)
+    source.vx = (source.vx || 0) + fx * 0.5;
+    source.vy = (source.vy || 0) + fy * 0.5;
+    target.vx = (target.vx || 0) - fx * 0.5;
+    target.vy = (target.vy || 0) - fy * 0.5;
+  }
+}
+
 // ==================== Configuration Presets ====================
 
 /**
@@ -176,5 +253,37 @@ export const CollisionPresets = {
     separationPadding: 20,
     forceStrength: 0.6,
     damping: 0.5,
+  },
+} as const;
+
+/**
+ * Pre-configured link force settings for common use cases
+ */
+export const LinkForcePresets = {
+  /**
+   * Default link forces for graph edges
+   */
+  DEFAULT: {
+    targetDistance: 70,
+    strength: 0.05,
+    sameClusterOnly: true,
+  },
+
+  /**
+   * Stronger attraction for tighter layouts
+   */
+  TIGHT: {
+    targetDistance: 50,
+    strength: 0.1,
+    sameClusterOnly: true,
+  },
+
+  /**
+   * Looser attraction for spread layouts
+   */
+  LOOSE: {
+    targetDistance: 100,
+    strength: 0.03,
+    sameClusterOnly: true,
   },
 } as const;

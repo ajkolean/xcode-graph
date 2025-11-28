@@ -12,7 +12,7 @@
  */
 
 import type { GraphEdge, GraphNode } from '../schemas/graph.schema';
-import type { Cluster } from '../types/cluster';
+import type { Cluster } from '../schemas';
 
 /**
  * Progress update during graph loading

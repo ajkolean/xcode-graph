@@ -25,9 +25,9 @@
 import { html, LitElement } from 'lit';
 import type { GraphEdge, GraphNode as GraphNodeType } from '@/schemas/graph.schema';
 import type { TransitiveResult, ViewMode } from '@/types/app';
-import type { Cluster } from '@/types/cluster';
+import type { Cluster } from '@/schemas';
 import type { PreviewFilter } from '@/types/filters';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import type { ClusterPosition, NodePosition } from '@/schemas';
 import { getNodeTypeColor } from '@/utils/rendering/node-colors';
 import { getConnectedNodes } from '@/utils/graph/connections';
 import { getNodeSize } from '@/utils/rendering/sizing';

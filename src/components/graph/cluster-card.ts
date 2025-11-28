@@ -21,7 +21,7 @@
  */
 
 import { LitElement, svg, type PropertyDeclarations, type SVGTemplateResult } from 'lit';
-import type { Cluster } from '@/types/cluster';
+import type { Cluster } from '@/schemas';
 import { generateColor } from '@/utils/rendering/color-generator';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@/utils/rendering/zoom-colors';
 

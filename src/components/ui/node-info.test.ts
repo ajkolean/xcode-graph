@@ -38,8 +38,8 @@ describe('graph-node-info', () => {
       <graph-node-info .node=${mockNode}></graph-node-info>
     `);
 
-    const values = el.shadowRoot?.querySelectorAll('.info-value');
-    expect(values?.[0]?.textContent).to.equal('iOS');
+    const rows = el.shadowRoot?.querySelectorAll('graph-info-row');
+    expect(rows?.[0]?.getAttribute('value')).to.equal('iOS');
   });
 
   it('should render origin as "Local Project" for local nodes', async () => {
@@ -47,8 +47,8 @@ describe('graph-node-info', () => {
       <graph-node-info .node=${mockNode}></graph-node-info>
     `);
 
-    const values = el.shadowRoot?.querySelectorAll('.info-value');
-    expect(values?.[1]?.textContent).to.equal('Local Project');
+    const rows = el.shadowRoot?.querySelectorAll('graph-info-row');
+    expect(rows?.[1]?.getAttribute('value')).to.equal('Local Project');
   });
 
   it('should render origin as "External Package" for external nodes', async () => {
@@ -57,8 +57,8 @@ describe('graph-node-info', () => {
       <graph-node-info .node=${externalNode}></graph-node-info>
     `);
 
-    const values = el.shadowRoot?.querySelectorAll('.info-value');
-    expect(values?.[1]?.textContent).to.equal('External Package');
+    const rows = el.shadowRoot?.querySelectorAll('graph-info-row');
+    expect(rows?.[1]?.getAttribute('value')).to.equal('External Package');
   });
 
   it('should render node type', async () => {
@@ -66,8 +66,8 @@ describe('graph-node-info', () => {
       <graph-node-info .node=${mockNode}></graph-node-info>
     `);
 
-    const values = el.shadowRoot?.querySelectorAll('.info-value');
+    const rows = el.shadowRoot?.querySelectorAll('graph-info-row');
     // getNodeTypeLabel should return proper label
-    expect(values?.[2]?.textContent).to.exist;
+    expect(rows?.[2]?.getAttribute('value')).to.exist;
   });
 });

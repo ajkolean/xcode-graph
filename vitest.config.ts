@@ -57,7 +57,7 @@ export default defineConfig({
       '@radix-ui/react-slot@1.1.2': '@radix-ui/react-slot',
       '@radix-ui/react-separator@1.1.2': '@radix-ui/react-separator',
       '@': path.resolve(__dirname, './src'),
-      '@lit-components': path.resolve(__dirname, './src/components'),
+      '@components': path.resolve(__dirname, './src/components'),
     },
   },
 });

@@ -13,6 +13,7 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphNode } from '@/schemas/graph.schema';
 import { getNodeTypeLabel } from '@/utils/rendering/node-icons';
+import './info-row.js';
 
 export class GraphNodeInfo extends LitElement {
   // ========================================
@@ -45,24 +46,6 @@ export class GraphNodeInfo extends LitElement {
       flex-direction: column;
       gap: var(--spacing-2);
     }
-
-    .info-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .info-label {
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-label);
-      color: var(--colors-muted-foreground);
-    }
-
-    .info-value {
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-label);
-      color: var(--colors-foreground);
-    }
   `;
 
   // ========================================
@@ -84,23 +67,9 @@ export class GraphNodeInfo extends LitElement {
       <div class="title">Node Info</div>
 
       <div class="info-rows">
-        <!-- Platform -->
-        <div class="info-row">
-          <span class="info-label">Platform:</span>
-          <span class="info-value">${this.node.platform}</span>
-        </div>
-
-        <!-- Origin -->
-        <div class="info-row">
-          <span class="info-label">Origin:</span>
-          <span class="info-value">${this.originLabel}</span>
-        </div>
-
-        <!-- Type -->
-        <div class="info-row">
-          <span class="info-label">Type:</span>
-          <span class="info-value">${getNodeTypeLabel(this.node.type)}</span>
-        </div>
+        <graph-info-row label="Platform" value=${this.node.platform}></graph-info-row>
+        <graph-info-row label="Origin" value=${this.originLabel}></graph-info-row>
+        <graph-info-row label="Type" value=${getNodeTypeLabel(this.node.type)}></graph-info-row>
       </div>
     `;
   }

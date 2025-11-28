@@ -42,7 +42,7 @@
     /* Path aliases */
     "paths": {
       "@/*": ["./src/*"],
-      "@lit-components/*": ["./src/components/*"]
+      "@components/*": ["./src/components/*"]
     }
   },
   "include": ["src"],

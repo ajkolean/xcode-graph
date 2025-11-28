@@ -2,7 +2,7 @@
  * NodeList Lit Component
  *
  * A unified list component for displaying nodes with section header.
- * Replaces separate dependencies-list and dependents-list components.
+ * Used for dependencies, dependents, and other node list displays.
  *
  * @example
  * ```html
@@ -22,10 +22,11 @@
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphNode } from '@/schemas/graph.schema';
+import { NodeListEventsMixin } from './node-list-events';
 import './list-item-row.js';
 import './section-header.js';
 
-export class GraphNodeList extends LitElement {
+export class GraphNodeList extends NodeListEventsMixin(LitElement) {
   // ========================================
   // Properties
   // ========================================
@@ -92,40 +93,6 @@ export class GraphNodeList extends LitElement {
       gap: var(--spacing-1);
     }
   `;
-
-  // ========================================
-  // Event Handlers
-  // ========================================
-
-  private handleNodeSelect(e: CustomEvent<{ node: GraphNode }>) {
-    this.dispatchEvent(
-      new CustomEvent('node-select', {
-        detail: { node: e.detail.node },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
-
-  private handleNodeHover(e: CustomEvent<{ nodeId: string }>) {
-    this.dispatchEvent(
-      new CustomEvent('node-hover', {
-        detail: { nodeId: e.detail.nodeId },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
-
-  private handleHoverEnd() {
-    this.dispatchEvent(
-      new CustomEvent('node-hover', {
-        detail: { nodeId: null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
 
   // ========================================
   // Helpers

@@ -44,3 +44,7 @@ export {
   isLineInViewport,
   type ViewportBounds,
 } from './viewport';
+
+// ==================== Path Generation ====================
+
+export { generateBezierPath } from './paths';

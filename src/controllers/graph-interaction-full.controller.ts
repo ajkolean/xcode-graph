@@ -18,7 +18,7 @@
  */
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import type { ClusterPosition, NodePosition } from '@/types/simulation';
+import type { ClusterPosition, NodePosition } from '@/schemas';
 
 // ==================== Type Definitions ====================
 

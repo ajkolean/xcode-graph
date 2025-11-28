@@ -22,9 +22,10 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import type { GraphEdge, GraphNode } from '@/schemas/graph.schema';
 import { getNodeTypeLabel } from '@/utils/rendering/node-icons';
+import { NodeListEventsMixin } from './node-list-events';
 import './list-item-row';
 
-export class GraphClusterTargetsList extends LitElement {
+export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
   // ========================================
   // Properties
   // ========================================
@@ -92,40 +93,6 @@ export class GraphClusterTargetsList extends LitElement {
       gap: var(--spacing-1);
     }
   `;
-
-  // ========================================
-  // Event Handlers
-  // ========================================
-
-  private handleNodeSelect(e: CustomEvent<{ node: GraphNode }>) {
-    this.dispatchEvent(
-      new CustomEvent('node-select', {
-        detail: { node: e.detail.node },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
-
-  private handleNodeHover(e: CustomEvent<{ nodeId: string }>) {
-    this.dispatchEvent(
-      new CustomEvent('node-hover', {
-        detail: { nodeId: e.detail.nodeId },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
-
-  private handleHoverEnd() {
-    this.dispatchEvent(
-      new CustomEvent('node-hover', {
-        detail: { nodeId: null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
 
   // ========================================
   // Helpers
