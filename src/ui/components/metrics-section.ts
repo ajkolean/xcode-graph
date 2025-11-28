@@ -43,7 +43,7 @@ export class GraphMetricsSection extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: var(--spacing-3) var(--spacing-md) var(--spacing-md);
@@ -68,7 +68,7 @@ export class GraphMetricsSection extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <div class="title">Metrics</div>
 

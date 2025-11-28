@@ -1,5 +1,10 @@
-import { type Cluster, type ClusterLayoutConfig, DEFAULT_CLUSTER_CONFIG } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import {
+  type Cluster,
+  type ClusterLayoutConfig,
+  ClusterType,
+  DEFAULT_CLUSTER_CONFIG,
+} from '@shared/schemas';
+import { type GraphEdge, type GraphNode, Origin } from '@shared/schemas/graph.schema';
 import { analyzeCluster } from './cluster-analysis';
 
 /**
@@ -15,7 +20,7 @@ export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Clust
       clusterMap.set(clusterId, {
         id: clusterId,
         name: clusterId,
-        type: node.origin === 'external' ? 'package' : 'project',
+        type: node.origin === Origin.External ? ClusterType.Package : ClusterType.Project,
         origin: node.origin,
         nodes: [],
         metadata: new Map(),

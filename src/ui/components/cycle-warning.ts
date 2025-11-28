@@ -34,7 +34,7 @@ export class GraphCycleWarning extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
     }
@@ -222,7 +222,7 @@ export class GraphCycleWarning extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (this.isDismissed || !this.cycles || this.cycles.length === 0) {
       return null;
     }

@@ -53,7 +53,7 @@ export class GraphCollapsibleSection extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
     }
@@ -150,7 +150,7 @@ export class GraphCollapsibleSection extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <button class="header-button" @click=${this.handleToggle}>
         <div class="header-icon">

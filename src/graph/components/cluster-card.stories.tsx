@@ -2,18 +2,14 @@
  * ClusterCard Component Stories - Cluster background card (SVG)
  */
 
+import { type Cluster, ClusterType, NodeType, Origin, Platform } from '@shared/schemas';
 import type { Meta, StoryObj } from '@storybook/web-components';
-import { ClusterType, type Cluster, NodeType, Origin, Platform } from '@shared/schemas';
 import { html } from 'lit';
 import { expect, userEvent } from 'storybook/test';
 import { renderClusterCard } from './svg-renderers';
 
 /** Create a minimal cluster for stories */
-function createStoryCluster(
-  name: string,
-  type: ClusterType,
-  nodeCount: number,
-): Cluster {
+function createStoryCluster(name: string, type: ClusterType, nodeCount: number): Cluster {
   return {
     id: name.toLowerCase().replace(/\s+/g, '-'),
     name,

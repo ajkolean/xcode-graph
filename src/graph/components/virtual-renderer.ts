@@ -74,7 +74,7 @@ export class GraphVirtualRenderer extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: contents;
     }
@@ -98,7 +98,7 @@ export class GraphVirtualRenderer extends LitElement {
     this.renderCount = 0;
   }
 
-  willUpdate(changedProps: PropertyValues<this>): void {
+  override willUpdate(changedProps: PropertyValues<this>): void {
     // Recalculate visible nodes when viewport or positions change
     if (
       changedProps.has('nodes') ||
@@ -162,7 +162,7 @@ export class GraphVirtualRenderer extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     // Only render visible nodes
     const visibleNodes = this.nodes.filter((node) => this.visibleNodeIds.has(node.id));
 

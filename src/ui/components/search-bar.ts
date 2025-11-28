@@ -36,7 +36,7 @@ export class GraphSearchBar extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: 0 var(--spacing-md) var(--spacing-sm);
@@ -177,7 +177,7 @@ export class GraphSearchBar extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         <span class="search-icon">${unsafeHTML(icons.Search)}</span>

@@ -61,7 +61,7 @@ export class GraphListItemRow extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
     }
@@ -211,7 +211,7 @@ export class GraphListItemRow extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.node) return html``;
 
     const nodeColor = adjustColorForZoom(getNodeTypeColor(this.node.type), this.zoom);

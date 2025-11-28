@@ -27,7 +27,7 @@ import './node-list.js';
 import type { Cluster } from '@shared/schemas';
 
 export class GraphNodeDetailsPanel extends LitElement {
-  static properties = {
+  static override properties = {
     node: { attribute: false },
     allNodes: { attribute: false },
     edges: { attribute: false },
@@ -59,7 +59,7 @@ export class GraphNodeDetailsPanel extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: flex;
       flex-direction: column;
@@ -125,7 +125,7 @@ export class GraphNodeDetailsPanel extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.node) return html``;
 
     const { dependencies, dependents, metrics } = this.nodeData;

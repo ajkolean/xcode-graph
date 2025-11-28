@@ -52,7 +52,7 @@ export class GraphClusterDetailsPanel extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: flex;
       flex-direction: column;
@@ -95,7 +95,7 @@ export class GraphClusterDetailsPanel extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.cluster) return html``;
 
     const isExternal = this.cluster.origin === 'external';

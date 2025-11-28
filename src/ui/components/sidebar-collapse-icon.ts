@@ -29,7 +29,7 @@ export class GraphSidebarCollapseIcon extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: inline-block;
     }
@@ -43,7 +43,7 @@ export class GraphSidebarCollapseIcon extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return svg`
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -24,7 +24,7 @@ import { property } from 'lit/decorators.js';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {
-  static properties = {
+  static override properties = {
     edges: { attribute: false },
     nodes: { attribute: false },
     finalNodePositions: { attribute: false },
@@ -40,7 +40,7 @@ export class GraphEdges extends LitElement {
   };
 
   // No Shadow DOM for SVG
-  protected createRenderRoot() {
+  protected override createRenderRoot() {
     return this;
   }
 
@@ -120,7 +120,7 @@ export class GraphEdges extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.edges || !this.nodes) return html``;
 
     const viewMode = this.viewMode ?? ViewMode.Full;

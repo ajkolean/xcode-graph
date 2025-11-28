@@ -76,7 +76,7 @@ export class GraphAlertBanner extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
     }
@@ -232,7 +232,7 @@ export class GraphAlertBanner extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (this.isDismissed) {
       return null;
     }

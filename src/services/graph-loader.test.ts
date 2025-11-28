@@ -2,7 +2,7 @@
  * Tests for Progressive Graph Loader
  */
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createLinearChain, createProjectGraph } from '../fixtures';
 import { GraphLoader, type LoadProgress } from './graph-loader';
 

@@ -95,7 +95,7 @@ export class GraphBadge extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: inline-flex;
     }
@@ -180,7 +180,7 @@ export class GraphBadge extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const color = this.color || '#8B5CF6';
 
     // Compute class list

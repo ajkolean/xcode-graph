@@ -1,6 +1,5 @@
-import type { Cluster } from '@shared/schemas';
-import { DEFAULT_CLUSTER_CONFIG } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { type Cluster, ClusterType, DEFAULT_CLUSTER_CONFIG } from '@shared/schemas';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { describe, expect, it } from 'vitest';
 import { createNode } from '@/fixtures';
 import { arrangeClusterGrid, groupIntoClusters } from './cluster-grouping';
@@ -35,36 +34,42 @@ describe('clusterGrouping', () => {
     });
 
     it('should mark external clusters as package type', () => {
-      const nodes: GraphNode[] = [createNode({ id: 'ext1', name: 'External', origin: 'external' })];
+      const nodes: GraphNode[] = [
+        createNode({ id: 'ext1', name: 'External', origin: Origin.External }),
+      ];
       const edges: GraphEdge[] = [];
 
       const clusters = groupIntoClusters(nodes, edges);
 
-      expect(clusters[0].type).toBe('package');
+      expect(clusters[0].type).toBe(ClusterType.Package);
     });
 
     it('should mark local clusters as project type', () => {
-      const nodes: GraphNode[] = [createNode({ id: 'local1', name: 'Local', origin: 'local' })];
+      const nodes: GraphNode[] = [
+        createNode({ id: 'local1', name: 'Local', origin: Origin.Local }),
+      ];
       const edges: GraphEdge[] = [];
 
       const clusters = groupIntoClusters(nodes, edges);
 
-      expect(clusters[0].type).toBe('project');
+      expect(clusters[0].type).toBe(ClusterType.Project);
     });
 
     it('should preserve node origin in cluster', () => {
-      const nodes: GraphNode[] = [createNode({ id: 'ext', name: 'External', origin: 'external' })];
+      const nodes: GraphNode[] = [
+        createNode({ id: 'ext', name: 'External', origin: Origin.External }),
+      ];
       const edges: GraphEdge[] = [];
 
       const clusters = groupIntoClusters(nodes, edges);
 
-      expect(clusters[0].origin).toBe('external');
+      expect(clusters[0].origin).toBe(Origin.External);
     });
 
     it('should analyze clusters with edges', () => {
       const nodes: GraphNode[] = [
-        createNode({ id: 'app', name: 'App', type: 'app', project: 'MyProject' }),
-        createNode({ id: 'lib', name: 'Lib', type: 'library', project: 'MyProject' }),
+        createNode({ id: 'app', name: 'App', type: NodeType.App, project: 'MyProject' }),
+        createNode({ id: 'lib', name: 'Lib', type: NodeType.Library, project: 'MyProject' }),
       ];
       const edges: GraphEdge[] = [{ source: 'app', target: 'lib' }];
 
@@ -93,14 +98,14 @@ describe('clusterGrouping', () => {
   });
 
   describe('arrangeClusterGrid', () => {
-    const createCluster = (
+    const createClusterHelper = (
       id: string,
       nodeCount: number,
-      origin: 'local' | 'external' = 'local',
+      origin: Origin = Origin.Local,
     ): Cluster => ({
       id,
       name: id,
-      type: origin === 'local' ? 'project' : 'package',
+      type: origin === Origin.Local ? ClusterType.Project : ClusterType.Package,
       origin,
       nodes: Array.from({ length: nodeCount }, (_, i) =>
         createNode({ id: `${id}-${i}`, name: `${id}-${i}` }),
@@ -112,10 +117,10 @@ describe('clusterGrouping', () => {
 
     it('should position clusters in a grid', () => {
       const clusters = [
-        createCluster('A', 5),
-        createCluster('B', 3),
-        createCluster('C', 2),
-        createCluster('D', 1),
+        createClusterHelper('A', 5),
+        createClusterHelper('B', 3),
+        createClusterHelper('C', 2),
+        createClusterHelper('D', 1),
       ];
 
       const positions = arrangeClusterGrid(clusters);
@@ -132,8 +137,8 @@ describe('clusterGrouping', () => {
 
     it('should place local clusters before external', () => {
       const clusters = [
-        createCluster('External', 5, 'external'),
-        createCluster('Local', 5, 'local'),
+        createClusterHelper('External', 5, 'external'),
+        createClusterHelper('Local', 5, 'local'),
       ];
 
       const positions = arrangeClusterGrid(clusters);
@@ -149,9 +154,9 @@ describe('clusterGrouping', () => {
 
     it('should sort by size within same origin', () => {
       const clusters = [
-        createCluster('Small', 2, 'local'),
-        createCluster('Large', 10, 'local'),
-        createCluster('Medium', 5, 'local'),
+        createClusterHelper('Small', 2, 'local'),
+        createClusterHelper('Large', 10, 'local'),
+        createClusterHelper('Medium', 5, 'local'),
       ];
 
       const positions = arrangeClusterGrid(clusters);
@@ -166,7 +171,7 @@ describe('clusterGrouping', () => {
     });
 
     it('should use default config when not provided', () => {
-      const clusters = [createCluster('A', 1)];
+      const clusters = [createClusterHelper('A', 1)];
 
       const positions = arrangeClusterGrid(clusters);
 
@@ -174,7 +179,7 @@ describe('clusterGrouping', () => {
     });
 
     it('should handle single cluster', () => {
-      const clusters = [createCluster('Only', 5)];
+      const clusters = [createClusterHelper('Only', 5)];
 
       const positions = arrangeClusterGrid(clusters);
 
@@ -188,7 +193,7 @@ describe('clusterGrouping', () => {
     });
 
     it('should respect cluster spacing from config', () => {
-      const clusters = [createCluster('A', 1), createCluster('B', 1)];
+      const clusters = [createClusterHelper('A', 1), createClusterHelper('B', 1)];
       const config = { ...DEFAULT_CLUSTER_CONFIG, clusterSpacing: 200 };
 
       const positions = arrangeClusterGrid(clusters, config);
@@ -205,11 +210,11 @@ describe('clusterGrouping', () => {
     it('should use cluster bounds for spacing', () => {
       const clusters = [
         {
-          ...createCluster('A', 1),
+          ...createClusterHelper('A', 1),
           bounds: { x: 0, y: 0, width: 500, height: 200 },
         },
         {
-          ...createCluster('B', 1),
+          ...createClusterHelper('B', 1),
           bounds: { x: 0, y: 0, width: 300, height: 300 },
         },
       ];
@@ -225,22 +230,22 @@ describe('clusterGrouping', () => {
       const cluster: Cluster = {
         id: 'NoBounds',
         name: 'NoBounds',
-        type: 'project',
-        origin: 'local',
+        type: ClusterType.Project,
+        origin: Origin.Local,
         nodes: [createNode({ id: 'n1', name: 'N1' })],
         metadata: new Map(),
         anchors: [],
         // No bounds specified
       };
 
-      const positions = arrangeClusterGrid([cluster, createCluster('B', 1)]);
+      const positions = arrangeClusterGrid([cluster, createClusterHelper('B', 1)]);
 
       expect(positions.has('NoBounds')).toBe(true);
     });
 
     it('should wrap to next row when exceeding column count', () => {
       // Create enough clusters to require multiple rows
-      const clusters = Array.from({ length: 6 }, (_, i) => createCluster(`Cluster${i}`, 1));
+      const clusters = Array.from({ length: 6 }, (_, i) => createClusterHelper(`Cluster${i}`, 1));
 
       const positions = arrangeClusterGrid(clusters);
 

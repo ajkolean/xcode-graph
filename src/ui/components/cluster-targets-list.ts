@@ -52,7 +52,7 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -126,7 +126,7 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.nodesByType) return html``;
 
     return html`

@@ -69,7 +69,7 @@ export class GraphPanelHeader extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -204,7 +204,7 @@ export class GraphPanelHeader extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const color = this.color || '#8B5CF6';
 
     return html`

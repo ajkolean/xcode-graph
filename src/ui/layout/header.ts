@@ -19,7 +19,7 @@ export class GraphHeader extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
     }
@@ -305,7 +305,7 @@ export class GraphHeader extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <header>
         <!-- Left Section: Logo + Breadcrumbs -->

@@ -2,6 +2,7 @@
  * Cluster fixtures
  */
 
+import { range } from '@shared/collections';
 import { type Cluster, type ClusterNodeMetadata, ClusterType, NodeRole } from '@shared/schemas';
 import { type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { createNode } from './nodes';
@@ -66,7 +67,14 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
   const nodes: GraphNode[] = [];
   const metadata = new Map<string, ClusterNodeMetadata>();
 
-  for (let i = 0; i < nodeCount; i++) {
+  const roleForIndex = (i: number): NodeRole =>
+    i === 0
+      ? NodeRole.Entry
+      : i === nodeCount - 1 && nodeCount > 2
+        ? NodeRole.Test
+        : NodeRole.InternalLib;
+
+  range(nodeCount).forEach((i) => {
     const id = `node-${i}`;
     const isAnchor = i === 0;
     const isTest = i === nodeCount - 1 && nodeCount > 2;
@@ -82,12 +90,12 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
     metadata.set(
       id,
       createNodeMetadata(id, {
-        role: isAnchor ? NodeRole.Entry : isTest ? NodeRole.Test : NodeRole.InternalLib,
+        role: roleForIndex(i),
         layer: isAnchor ? 0 : 1,
         isAnchor,
       }),
     );
-  }
+  });
 
   return {
     id: `cluster-${nodeCount}`,

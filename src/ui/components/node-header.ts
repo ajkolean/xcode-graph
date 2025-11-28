@@ -49,7 +49,7 @@ export class GraphNodeHeader extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
     }
@@ -90,7 +90,7 @@ export class GraphNodeHeader extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.node) return html``;
 
     const iconPath = getNodeIconPath(

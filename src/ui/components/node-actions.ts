@@ -38,7 +38,7 @@ export class GraphNodeActions extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -186,7 +186,7 @@ export class GraphNodeActions extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.node) return html``;
 
     const depButtonClass = this.isDependencyChainActive

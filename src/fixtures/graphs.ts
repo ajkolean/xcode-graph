@@ -2,6 +2,8 @@
  * Graph structure fixtures - common graph patterns for testing
  */
 
+import { range } from '@shared/collections';
+import { adjacentPairs } from '@shared/pairwise';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { createNode } from './nodes';
 
@@ -12,13 +14,17 @@ export function createLinearChain(length: number = 4): { nodes: GraphNode[]; edg
   const nodes: GraphNode[] = [];
   const edges: GraphEdge[] = [];
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const count = Math.min(length, letters.length);
 
-  for (let i = 0; i < Math.min(length, letters.length); i++) {
-    const letter = letters[i]!;
-    nodes.push(createNode({ id: letter, name: `Node${letter}` }));
-    if (i > 0) {
-      edges.push({ source: letters[i - 1]!, target: letter });
-    }
+  nodes.push(
+    ...range(count).map((i) => {
+      const letter = letters[i]!;
+      return createNode({ id: letter, name: `Node${letter}` });
+    }),
+  );
+
+  for (const [source, target] of adjacentPairs(letters.slice(0, count))) {
+    edges.push({ source, target });
   }
 
   return { nodes, edges };

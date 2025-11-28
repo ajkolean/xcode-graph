@@ -43,7 +43,7 @@ export class GraphClusterStats extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -97,7 +97,7 @@ export class GraphClusterStats extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const platformCount = this.platforms?.size || 0;
 
     return html`

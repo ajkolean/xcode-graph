@@ -41,7 +41,7 @@ export class GraphStatsCard extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       flex: 1;
@@ -133,7 +133,7 @@ export class GraphStatsCard extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <div class="container ${this.highlighted ? 'highlighted' : ''}">
         <div class="label">${this.label}</div>

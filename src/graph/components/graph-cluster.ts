@@ -30,7 +30,7 @@
 import { LitElement, svg } from 'lit';
 
 export class GraphCluster extends LitElement {
-  static properties = {
+  static override properties = {
     clusterId: { type: String, attribute: 'cluster-id' },
     x: { type: Number },
     y: { type: Number },

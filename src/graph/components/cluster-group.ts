@@ -35,7 +35,7 @@ import './graph-edges';
 import './graph-node';
 
 export class GraphClusterGroup extends LitElement {
-  static properties = {
+  static override properties = {
     cluster: { attribute: false },
     clusterPosition: { attribute: false },
     nodes: { attribute: false },
@@ -55,7 +55,7 @@ export class GraphClusterGroup extends LitElement {
   };
 
   // No Shadow DOM for SVG
-  protected createRenderRoot() {
+  protected override createRenderRoot() {
     return this;
   }
 
@@ -121,7 +121,7 @@ export class GraphClusterGroup extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.cluster || !this.clusterPosition) return html``;
 
     const clusterPositionsMap = new Map([[this.cluster.id, this.clusterPosition]]);

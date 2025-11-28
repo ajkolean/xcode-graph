@@ -73,7 +73,7 @@ export class GraphNodeList extends NodeListEventsMixin(LitElement) {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -107,7 +107,7 @@ export class GraphNodeList extends NodeListEventsMixin(LitElement) {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const count = this.nodes?.length || 0;
 
     return html`

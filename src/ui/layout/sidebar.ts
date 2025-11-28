@@ -44,7 +44,7 @@ export class GraphSidebar extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       width: var(--sizes-sidebar-expanded);
@@ -291,7 +291,7 @@ export class GraphSidebar extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <aside>
         <nav>

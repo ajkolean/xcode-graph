@@ -6,14 +6,21 @@ import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import './graph-overlays';
 
-const meta = {
+interface Args {
+  zoom: number;
+  nodeCount: number;
+  edgeCount: number;
+  enableAnimation: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Graph Visualization/GraphOverlays',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<Args>;
 
 export const Background: Story = {
   tags: ['showcase'],
@@ -24,8 +31,13 @@ export const Background: Story = {
   `,
 };
 
-const controlsMeta = {
-  component: 'graph-controls',
+export const Controls: Story = {
+  args: {
+    zoom: 1.0,
+    nodeCount: 52,
+    edgeCount: 89,
+    enableAnimation: true,
+  },
   argTypes: {
     zoom: {
       control: { type: 'range', min: 0.25, max: 2.0, step: 0.25 },
@@ -43,16 +55,6 @@ const controlsMeta = {
       control: 'boolean',
       description: 'Enable animations',
     },
-  },
-};
-
-export const Controls: Story = {
-  ...controlsMeta,
-  args: {
-    zoom: 1.0,
-    nodeCount: 52,
-    edgeCount: 89,
-    enableAnimation: true,
   },
   render: (args) => html`
     <div style="width: 600px; height: 400px; background: #0a0a0f; position: relative">

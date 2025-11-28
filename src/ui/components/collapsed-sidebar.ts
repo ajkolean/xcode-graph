@@ -59,7 +59,7 @@ export class GraphCollapsedSidebar extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: flex;
       flex: 1;
@@ -207,7 +207,7 @@ export class GraphCollapsedSidebar extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const showProductTypesBadge = this.nodeTypesFilterSize < (this.typeCounts?.size || 0);
     const showPlatformsBadge = this.platformsFilterSize < (this.platformCounts?.size || 0);
     const showProjectsBadge = this.projectsFilterSize < (this.projectCounts?.size || 0);

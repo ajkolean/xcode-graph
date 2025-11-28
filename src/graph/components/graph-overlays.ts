@@ -25,7 +25,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 // ========================================
 
 export class GraphBackground extends LitElement {
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       position: absolute;
@@ -35,7 +35,7 @@ export class GraphBackground extends LitElement {
     }
   `;
 
-  render() {
+  override render() {
     return svg`
       <svg style="width: 100%; height: 100%;">
         <defs>
@@ -66,7 +66,7 @@ export class GraphControls extends LitElement {
   @property({ type: Boolean, attribute: 'enable-animation' })
   declare enableAnimation: boolean;
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       position: absolute;
@@ -191,7 +191,7 @@ export class GraphControls extends LitElement {
     `;
   }
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         <span>${Math.round(this.zoom * 100)}%</span>
@@ -231,7 +231,7 @@ export class GraphControls extends LitElement {
 // ========================================
 
 export class GraphEmptyStateOverlay extends LitElement {
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       position: absolute;
@@ -266,7 +266,7 @@ export class GraphEmptyStateOverlay extends LitElement {
     }
   `;
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         <div class="content">
@@ -283,7 +283,7 @@ export class GraphEmptyStateOverlay extends LitElement {
 // ========================================
 
 export class GraphInstructions extends LitElement {
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       position: absolute;
@@ -302,7 +302,7 @@ export class GraphInstructions extends LitElement {
     }
   `;
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         Drag nodes to reposition · Click to inspect · Scroll to zoom

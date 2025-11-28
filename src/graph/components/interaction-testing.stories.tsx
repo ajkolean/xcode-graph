@@ -11,7 +11,9 @@ import { expect, userEvent } from 'storybook/test';
 import '@ui/components/clear-filters-button';
 import '@ui/components/stats-card';
 
-const meta: Meta = {
+interface Args {}
+
+const meta: Meta<Args> = {
   title: 'Testing/Shadow DOM Interaction Examples',
   parameters: {
     layout: 'centered',
@@ -19,7 +21,8 @@ const meta: Meta = {
   tags: ['autodocs'],
 };
 
-type Story = StoryObj;
+export default meta;
+type Story = StoryObj<Args>;
 
 // ========================================
 // Example 1: Basic Shadow DOM Query
@@ -279,5 +282,3 @@ export const ComplexScenario: Story = {
     });
   },
 };
-
-export default meta;

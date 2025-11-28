@@ -38,7 +38,7 @@ export class GraphClusterTypeBadge extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
@@ -65,7 +65,7 @@ export class GraphClusterTypeBadge extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const color = this.clusterColor || '#FFA03C';
 
     return html`

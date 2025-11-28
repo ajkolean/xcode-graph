@@ -23,14 +23,14 @@ const iconColor = 'rgba(168, 157, 255, 0.7)';
 // ========================================
 
 export class GraphProductTypesIcon extends LitElement {
-  static styles = css`
+  static override styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
     }
   `;
 
-  render() {
+  override render() {
     return svg`
       <svg
         width="18"
@@ -56,14 +56,14 @@ export class GraphProductTypesIcon extends LitElement {
 // ========================================
 
 export class GraphPlatformsIcon extends LitElement {
-  static styles = css`
+  static override styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
     }
   `;
 
-  render() {
+  override render() {
     return svg`
       <svg
         width="18"
@@ -94,14 +94,14 @@ export class GraphPlatformsIcon extends LitElement {
 // ========================================
 
 export class GraphProjectsIcon extends LitElement {
-  static styles = css`
+  static override styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
     }
   `;
 
-  render() {
+  override render() {
     return svg`
       <svg
         width="18"
@@ -124,14 +124,14 @@ export class GraphProjectsIcon extends LitElement {
 // ========================================
 
 export class GraphPackagesIcon extends LitElement {
-  static styles = css`
+  static override styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
     }
   `;
 
-  render() {
+  override render() {
     return svg`
       <svg
         width="18"

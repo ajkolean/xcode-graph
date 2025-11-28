@@ -1,5 +1,5 @@
-import type { Cluster } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.schema';
+import { type Cluster, ClusterType } from '@shared/schemas';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { describe, expect, it } from 'vitest';
 import { createNode } from '@/fixtures';
 import { analyzeCluster, assignLayers, determineRole, identifyAnchors } from './cluster-analysis';
@@ -198,7 +198,7 @@ describe('clusterAnalysis', () => {
     });
 
     it('should return internal-framework for package nodes', () => {
-      const node = createNode({ id: 'pkg', name: 'Package', type: 'package' });
+      const node = createNode({ id: 'pkg', name: 'Package', type: NodeType.Package });
       const role = determineRole(node, false, false, 0);
 
       expect(role).toBe('internal-framework');
@@ -245,8 +245,8 @@ describe('clusterAnalysis', () => {
     const createCluster = (nodes: GraphNode[]): Cluster => ({
       id: 'test-cluster',
       name: 'TestCluster',
-      type: 'project',
-      origin: 'local',
+      type: ClusterType.Project,
+      origin: Origin.Local,
       nodes,
       metadata: new Map(),
       anchors: [],

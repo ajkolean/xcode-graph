@@ -44,7 +44,7 @@ export class GraphClusterHeader extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
     }
@@ -64,7 +64,7 @@ export class GraphClusterHeader extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const isPackage = this.clusterType === 'package';
     const clusterIcon = isPackage ? icons.Package : icons.Folder;
     const color = this.clusterColor || '#8B5CF6';

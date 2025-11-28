@@ -30,7 +30,7 @@ export class GraphEmptyState extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: var(--spacing-xl) var(--spacing-md);
@@ -167,7 +167,7 @@ export class GraphEmptyState extends LitElement {
     `;
   }
 
-  render() {
+  override render() {
     return html`
       <div class="icon-container">
         ${this.renderSearchIcon()}

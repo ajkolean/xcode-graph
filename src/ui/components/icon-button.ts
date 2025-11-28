@@ -73,7 +73,7 @@ export class GraphIconButton extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: inline-flex;
     }
@@ -214,7 +214,7 @@ export class GraphIconButton extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <button
         ?disabled=${this.disabled}

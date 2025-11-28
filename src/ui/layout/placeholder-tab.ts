@@ -28,7 +28,7 @@ export class GraphPlaceholderTab extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: flex;
       flex: 1;
@@ -61,7 +61,7 @@ export class GraphPlaceholderTab extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <div class="container">
         <div class="title">${this.title}</div>

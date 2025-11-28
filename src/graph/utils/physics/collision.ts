@@ -7,7 +7,7 @@
  * @module utils/physics/collision
  */
 
-import { type SpatialEntity, SpatialHash } from './spatial-hash';
+import { SpatialHash } from './spatial-hash';
 
 // ==================== Type Definitions ====================
 
@@ -50,7 +50,7 @@ export function applyCollisionForces<T extends CollisionEntity>(
 ): void {
   if (entities.length === 0) return;
 
-  const { minDistance = 100, separationPadding, forceStrength, damping = 0.7 } = config;
+  const { minDistance = 100, separationPadding, forceStrength } = config;
 
   // Use spatial hash for efficient O(n log n) collision detection
   const cellSize = Math.max(...entities.map((e) => e.radius * 2 + separationPadding)) || 50;
@@ -99,15 +99,17 @@ export function updatePositions<T extends CollisionEntity>(
   damping = 0.7,
 ): void {
   for (const entity of entities) {
-    if (!entity.vx && !entity.vy) continue;
+    const vx = entity.vx ?? 0;
+    const vy = entity.vy ?? 0;
+    if (vx === 0 && vy === 0) continue;
 
     // Update position
-    entity.x += entity.vx * alpha;
-    entity.y += entity.vy * alpha;
+    entity.x += vx * alpha;
+    entity.y += vy * alpha;
 
     // Apply damping
-    entity.vx *= damping;
-    entity.vy *= damping;
+    entity.vx = vx * damping;
+    entity.vy = vy * damping;
   }
 }
 
@@ -214,7 +216,7 @@ export function applyLinkForces<T extends LinkEntity>(
 /**
  * Pre-configured collision settings for common use cases
  */
-export const CollisionPresets = {
+export const CollisionPresets: Record<string, CollisionConfig> = {
   /**
    * For graph nodes within clusters
    */

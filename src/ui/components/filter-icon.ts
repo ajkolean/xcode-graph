@@ -47,7 +47,7 @@ export class GraphFilterIcon extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
@@ -144,7 +144,7 @@ export class GraphFilterIcon extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     switch (this.name) {
       case 'product-types':
         return this.renderProductTypes();

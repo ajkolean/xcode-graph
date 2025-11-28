@@ -18,11 +18,11 @@ import { customElement } from 'lit/decorators.js';
 
 export class GraphSVGDefs extends LitElement {
   // No Shadow DOM for SVG defs - they need to be in the same SVG context
-  protected createRenderRoot() {
+  protected override createRenderRoot() {
     return this;
   }
 
-  render() {
+  override render() {
     return svg`
       <defs>
         <!-- Glow filters -->

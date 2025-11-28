@@ -25,7 +25,7 @@ import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors'
 import { LitElement, svg } from 'lit';
 
 export class GraphEdge extends LitElement {
-  static properties = {
+  static override properties = {
     x1: { type: Number },
     y1: { type: Number },
     x2: { type: Number },
@@ -39,7 +39,7 @@ export class GraphEdge extends LitElement {
   };
 
   // No Shadow DOM for SVG elements - must be in same SVG context
-  protected createRenderRoot() {
+  protected override createRenderRoot() {
     return this;
   }
 
@@ -62,7 +62,7 @@ export class GraphEdge extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const x1 = this.x1 ?? 0;
     const y1 = this.y1 ?? 0;
     const x2 = this.x2 ?? 0;

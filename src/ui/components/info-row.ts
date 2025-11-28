@@ -42,7 +42,7 @@ export class GraphInfoRow extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: flex;
       align-items: center;
@@ -66,7 +66,7 @@ export class GraphInfoRow extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <span class="label">${this.label}:</span>
       <span class="value">

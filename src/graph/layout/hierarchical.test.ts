@@ -1,5 +1,5 @@
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { type Cluster, ClusterType } from '@shared/schemas';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { describe, expect, it } from 'vitest';
 import { createNode } from '@/fixtures';
 import { computeHierarchicalLayout } from './hierarchical';
@@ -13,8 +13,8 @@ function _createTestCluster(
   return {
     id,
     name: id,
-    type: 'project',
-    origin: 'local',
+    type: ClusterType.Project,
+    origin: Origin.Local,
     nodes,
     metadata: new Map(),
     anchors: nodeData.length > 0 ? [nodeData[0].id] : [],
@@ -33,16 +33,16 @@ describe('hierarchicalLayout', () => {
 
     it('should compute positions for single cluster', () => {
       const nodes: GraphNode[] = [
-        createNode({ id: 'A', name: 'NodeA', type: 'framework' }),
-        createNode({ id: 'B', name: 'NodeB', type: 'library' }),
+        createNode({ id: 'A', name: 'NodeA', type: NodeType.Framework }),
+        createNode({ id: 'B', name: 'NodeB', type: NodeType.Library }),
       ];
       const edges: GraphEdge[] = [{ source: 'A', target: 'B' }];
       const clusters: Cluster[] = [
         {
           id: 'cluster1',
           name: 'Cluster1',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes,
           metadata: new Map(),
           anchors: ['A'],
@@ -58,11 +58,11 @@ describe('hierarchicalLayout', () => {
 
     it('should compute positions for multiple clusters', () => {
       const nodesA: GraphNode[] = [
-        createNode({ id: 'A1', name: 'A1', type: 'framework', project: 'ClusterA' }),
-        createNode({ id: 'A2', name: 'A2', type: 'library', project: 'ClusterA' }),
+        createNode({ id: 'A1', name: 'A1', type: NodeType.Framework, project: 'ClusterA' }),
+        createNode({ id: 'A2', name: 'A2', type: NodeType.Library, project: 'ClusterA' }),
       ];
       const nodesB: GraphNode[] = [
-        createNode({ id: 'B1', name: 'B1', type: 'framework', project: 'ClusterB' }),
+        createNode({ id: 'B1', name: 'B1', type: NodeType.Framework, project: 'ClusterB' }),
       ];
       const allNodes = [...nodesA, ...nodesB];
       const edges: GraphEdge[] = [
@@ -73,8 +73,8 @@ describe('hierarchicalLayout', () => {
         {
           id: 'ClusterA',
           name: 'ClusterA',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes: nodesA,
           metadata: new Map(),
           anchors: ['A1'],
@@ -82,8 +82,8 @@ describe('hierarchicalLayout', () => {
         {
           id: 'ClusterB',
           name: 'ClusterB',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes: nodesB,
           metadata: new Map(),
           anchors: ['B1'],
@@ -98,13 +98,13 @@ describe('hierarchicalLayout', () => {
     });
 
     it('should assign valid cluster positions', () => {
-      const nodes: GraphNode[] = [createNode({ id: 'A', name: 'NodeA', type: 'app' })];
+      const nodes: GraphNode[] = [createNode({ id: 'A', name: 'NodeA', type: NodeType.App })];
       const clusters: Cluster[] = [
         {
           id: 'test',
           name: 'Test',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes,
           metadata: new Map(),
           anchors: ['A'],
@@ -122,16 +122,16 @@ describe('hierarchicalLayout', () => {
 
     it('should assign valid node positions', () => {
       const nodes: GraphNode[] = [
-        createNode({ id: 'A', name: 'NodeA', type: 'framework' }),
-        createNode({ id: 'B', name: 'NodeB', type: 'library' }),
+        createNode({ id: 'A', name: 'NodeA', type: NodeType.Framework }),
+        createNode({ id: 'B', name: 'NodeB', type: NodeType.Library }),
       ];
       const edges: GraphEdge[] = [{ source: 'A', target: 'B' }];
       const clusters: Cluster[] = [
         {
           id: 'cluster',
           name: 'Cluster',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes,
           metadata: new Map(),
           anchors: ['A'],
@@ -149,13 +149,13 @@ describe('hierarchicalLayout', () => {
     });
 
     it('should return clusters in result', () => {
-      const nodes: GraphNode[] = [createNode({ id: 'A', name: 'NodeA', type: 'framework' })];
+      const nodes: GraphNode[] = [createNode({ id: 'A', name: 'NodeA', type: NodeType.Framework })];
       const clusters: Cluster[] = [
         {
           id: 'test',
           name: 'Test',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes,
           metadata: new Map(),
           anchors: ['A'],
@@ -171,8 +171,8 @@ describe('hierarchicalLayout', () => {
       const emptyCluster: Cluster = {
         id: 'empty',
         name: 'Empty',
-        type: 'project',
-        origin: 'local',
+        type: ClusterType.Project,
+        origin: Origin.Local,
         nodes: [],
         metadata: new Map(),
         anchors: [],
@@ -186,18 +186,18 @@ describe('hierarchicalLayout', () => {
 
     it('should handle cross-cluster edges', () => {
       const nodesA: GraphNode[] = [
-        createNode({ id: 'A', name: 'A', type: 'framework', project: 'P1' }),
+        createNode({ id: 'A', name: 'A', type: NodeType.Framework, project: 'P1' }),
       ];
       const nodesB: GraphNode[] = [
-        createNode({ id: 'B', name: 'B', type: 'library', project: 'P2' }),
+        createNode({ id: 'B', name: 'B', type: NodeType.Library, project: 'P2' }),
       ];
       const edges: GraphEdge[] = [{ source: 'A', target: 'B' }];
       const clusters: Cluster[] = [
         {
           id: 'P1',
           name: 'Project1',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes: nodesA,
           metadata: new Map(),
           anchors: ['A'],
@@ -205,8 +205,8 @@ describe('hierarchicalLayout', () => {
         {
           id: 'P2',
           name: 'Project2',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes: nodesB,
           metadata: new Map(),
           anchors: ['B'],
@@ -230,14 +230,14 @@ describe('hierarchicalLayout', () => {
 
     it('should compute cluster dimensions based on node count', () => {
       const smallNodes: GraphNode[] = [
-        createNode({ id: 'S1', name: 'Small1', type: 'framework', project: 'Small' }),
+        createNode({ id: 'S1', name: 'Small1', type: NodeType.Framework, project: 'Small' }),
       ];
       const largeNodes: GraphNode[] = [
-        createNode({ id: 'L1', name: 'Large1', type: 'framework', project: 'Large' }),
-        createNode({ id: 'L2', name: 'Large2', type: 'library', project: 'Large' }),
-        createNode({ id: 'L3', name: 'Large3', type: 'library', project: 'Large' }),
-        createNode({ id: 'L4', name: 'Large4', type: 'library', project: 'Large' }),
-        createNode({ id: 'L5', name: 'Large5', type: 'library', project: 'Large' }),
+        createNode({ id: 'L1', name: 'Large1', type: NodeType.Framework, project: 'Large' }),
+        createNode({ id: 'L2', name: 'Large2', type: NodeType.Library, project: 'Large' }),
+        createNode({ id: 'L3', name: 'Large3', type: NodeType.Library, project: 'Large' }),
+        createNode({ id: 'L4', name: 'Large4', type: NodeType.Library, project: 'Large' }),
+        createNode({ id: 'L5', name: 'Large5', type: NodeType.Library, project: 'Large' }),
       ];
       const smallEdges: GraphEdge[] = [];
       const largeEdges: GraphEdge[] = [
@@ -250,8 +250,8 @@ describe('hierarchicalLayout', () => {
         {
           id: 'Small',
           name: 'Small',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes: smallNodes,
           metadata: new Map(),
           anchors: ['S1'],
@@ -259,8 +259,8 @@ describe('hierarchicalLayout', () => {
         {
           id: 'Large',
           name: 'Large',
-          type: 'project',
-          origin: 'local',
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes: largeNodes,
           metadata: new Map(),
           anchors: ['L1'],

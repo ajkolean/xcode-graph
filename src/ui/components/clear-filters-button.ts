@@ -30,7 +30,7 @@ export class GraphClearFiltersButton extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: 0 var(--spacing-md) var(--spacing-sm);
@@ -89,7 +89,7 @@ export class GraphClearFiltersButton extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     return html`
       <button
         ?disabled=${!this.isActive}

@@ -2,8 +2,8 @@
  * Edge fixtures
  */
 
-import type { GraphEdge } from '@shared/schemas/graph.schema';
 import { pairwise } from '@shared/pairwise';
+import type { GraphEdge } from '@shared/schemas/graph.schema';
 
 /**
  * Convert edges from {from, to} format to {source, target} format

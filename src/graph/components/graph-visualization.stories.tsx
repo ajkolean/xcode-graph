@@ -7,6 +7,7 @@ import { html } from 'lit';
 import { expect } from 'storybook/test';
 import './graph-visualization';
 import { mockGraphEdges, mockGraphNodes } from '@/fixtures';
+import type { GraphNode, GraphEdge } from '@/schemas';
 
 const graphSizePresets = {
   'Small (8 nodes)': {
@@ -23,7 +24,14 @@ const graphSizePresets = {
   },
 };
 
-const meta = {
+interface Args {
+  graphSize: { nodes: GraphNode[]; edges: GraphEdge[] };
+  searchQuery: string;
+  zoom: number;
+  enableAnimation: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Panels & Views/GraphVisualization',
   component: 'graph-visualization',
   parameters: { layout: 'fullscreen' },
@@ -48,14 +56,14 @@ const meta = {
       description: 'Enable transitions and animations',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 export const SimpleGraph: Story = {
   args: {
-    graphSize: 'Small (8 nodes)',
+    graphSize: graphSizePresets['Small (8 nodes)'],
     searchQuery: '',
     zoom: 1.0,
     enableAnimation: false,
@@ -91,7 +99,7 @@ export const SimpleGraph: Story = {
 
 export const FullGraph: Story = {
   args: {
-    graphSize: 'Full Graph',
+    graphSize: graphSizePresets['Full Graph'],
     searchQuery: '',
     zoom: 1.0,
     enableAnimation: false,

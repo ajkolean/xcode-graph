@@ -50,7 +50,7 @@ export class GraphSectionHeader extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: flex;
       align-items: center;
@@ -76,7 +76,7 @@ export class GraphSectionHeader extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     const countText = this.suffix ? `${this.count} ${this.suffix}` : `${this.count}`;
 
     return html`

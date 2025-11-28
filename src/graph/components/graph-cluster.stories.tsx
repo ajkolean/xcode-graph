@@ -6,10 +6,22 @@
 
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html, svg } from 'lit';
-import { expect, userEvent } from 'storybook/test';
+import { expect } from 'storybook/test';
 import './graph-cluster';
 
-const meta = {
+interface Args {
+  clusterId: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+  nodeCount: number;
+  origin: 'local' | 'external';
+  isHovered: boolean;
+}
+
+const meta: Meta<Args> = {
   title: 'Graph Visualization/GraphCluster',
   component: 'graph-cluster',
   parameters: { layout: 'centered' },
@@ -53,10 +65,10 @@ const meta = {
       description: 'Whether cluster is in hover state',
     },
   },
-} satisfies Meta;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<Args>;
 
 // SVG wrapper with required defs
 const svgDefs = svg`

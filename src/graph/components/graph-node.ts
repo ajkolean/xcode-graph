@@ -32,7 +32,7 @@ import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors'
 import { LitElement, svg } from 'lit';
 
 export class GraphNode extends LitElement {
-  static properties = {
+  static override properties = {
     node: { attribute: false },
     x: { type: Number },
     y: { type: Number },
@@ -45,7 +45,7 @@ export class GraphNode extends LitElement {
   };
 
   // No Shadow DOM for SVG elements
-  protected createRenderRoot() {
+  protected override createRenderRoot() {
     return this;
   }
 
@@ -124,7 +124,7 @@ export class GraphNode extends LitElement {
   // Render
   // ========================================
 
-  render() {
+  override render() {
     if (!this.node) return svg``;
 
     const x = this.x ?? 0;
