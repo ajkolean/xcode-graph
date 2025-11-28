@@ -16,6 +16,10 @@ const meta = {
       control: 'text',
       description: 'Header title text',
     },
+    isCollapsed: {
+      control: 'boolean',
+      description: 'Whether the sidebar is in collapsed state',
+    },
   },
 } satisfies Meta;
 
@@ -25,10 +29,14 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     title: 'Filters',
+    isCollapsed: false,
   },
   render: (args) => html`
     <div style="width: 320px; background: #0f0f14; border-radius: 8px; overflow: hidden">
-      <graph-right-sidebar-header title=${args.title}></graph-right-sidebar-header>
+      <graph-right-sidebar-header
+        title=${args.title}
+        ?is-collapsed=${args.isCollapsed}
+      ></graph-right-sidebar-header>
     </div>
   `,
 };
@@ -36,10 +44,29 @@ export const Default: Story = {
 export const NodeDetails: Story = {
   args: {
     title: 'Node Details',
+    isCollapsed: false,
   },
   render: (args) => html`
     <div style="width: 320px; background: #0f0f14; border-radius: 8px; overflow: hidden">
-      <graph-right-sidebar-header title=${args.title}></graph-right-sidebar-header>
+      <graph-right-sidebar-header
+        title=${args.title}
+        ?is-collapsed=${args.isCollapsed}
+      ></graph-right-sidebar-header>
+    </div>
+  `,
+};
+
+export const Collapsed: Story = {
+  args: {
+    title: 'Filters',
+    isCollapsed: true,
+  },
+  render: (args) => html`
+    <div style="width: 320px; background: #0f0f14; border-radius: 8px; overflow: hidden">
+      <graph-right-sidebar-header
+        title=${args.title}
+        ?is-collapsed=${args.isCollapsed}
+      ></graph-right-sidebar-header>
     </div>
   `,
 };

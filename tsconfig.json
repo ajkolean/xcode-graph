@@ -14,7 +14,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "verbatimModuleSyntax": true,
+    "rewriteRelativeImportExtensions": true,
+
+    /* Declaration generation */
+    "declaration": true,
+    "declarationMap": true,
     "isolatedDeclarations": true,
     "composite": true,
 

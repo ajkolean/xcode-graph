@@ -28,4 +28,11 @@ export default defineConfig({
     port: 3000,
     open: true,
   },
+  worker: {
+    format: 'es',
+    plugins: () => [],
+  },
+  optimizeDeps: {
+    exclude: ['comlink'],
+  },
 });
