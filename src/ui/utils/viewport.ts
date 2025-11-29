@@ -136,7 +136,7 @@ function cohenSutherlandIntersect(start: Point, end: Point, bounds: ViewportBoun
     }
 
     // At least one point outside, clip
-    const outcodeOut = outcode0 ? outcode0 : outcode1;
+    const outcodeOut = outcode0 || outcode1;
     let x: number;
     let y: number;
 

@@ -81,7 +81,7 @@ export class GraphRightSidebarHeader extends LitElement {
   override render() {
     return html`
       <div class="container">
-        ${!this.isCollapsed ? html`<h2 class="title">${this.title}</h2>` : ''}
+        ${this.isCollapsed ? '' : html`<h2 class="title">${this.title}</h2>`}
         <graph-icon-button
           variant="ghost"
           color="neutral"

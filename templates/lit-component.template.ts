@@ -8,10 +8,6 @@
 
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-// import { unsafeHTML } from 'lit/directives/unsafe-html.js'; // Uncomment if using icons
-// import { createStoreController } from '@/controllers/zustand.controller'; // Uncomment if using Zustand
-// import { createMachineController } from '@/controllers/zag.controller'; // Uncomment if using Zag
-// import { icons } from '@/controllers/icon.adapter'; // Uncomment if using icons
 
 /**
  * COMPONENT_NAME Component
@@ -81,7 +77,7 @@ export class COMPONENT_NAME extends LitElement {
   // Styles
   // ========================================
 
-  static styles = css`
+  static readonly styles = css`
     :host {
       display: block;
       /* Add host styles */

@@ -128,7 +128,7 @@ export class GraphClusterDetailsPanel extends LitElement {
           .nodesByType=${this.clusterNodes.reduce(
             (acc, node) => {
               const type = node.type;
-              if (!acc[type]) acc[type] = [];
+              acc[type] ??= [];
               acc[type].push(node);
               return acc;
             },

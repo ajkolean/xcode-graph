@@ -190,28 +190,22 @@ export function renderGraphNode(options: GraphNodeOptions) {
   const showTooltip = isHovered && node.name.length > 20;
   const fontWeight = isSelected ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)';
 
-  const renderTooltip = (
-    nodeToRender: GraphNode,
-    posX: number,
-    posY: number,
-    nodeSize: number,
-    zoomColor: string,
-  ) => svg`
+  const renderTooltip = () => svg`
     <rect
-      x="${posX - nodeToRender.name.length * 3.5}"
-      y="${posY - nodeSize - 35}"
-      width="${nodeToRender.name.length * 7}"
+      x="${x - node.name.length * 3.5}"
+      y="${y - size - 35}"
+      width="${node.name.length * 7}"
       height="22"
       rx="4"
       fill="rgba(var(--colors-card-rgb), var(--opacity-95))"
-      stroke="${zoomColor}"
+      stroke="${zoomAdjustedColor}"
       stroke-width="1"
       filter="url(#glow)"
     />
     <text
-      x="${posX}"
-      y="${posY - nodeSize - 20}"
-      fill="${zoomColor}"
+      x="${x}"
+      y="${y - size - 20}"
+      fill="${zoomAdjustedColor}"
       text-anchor="middle"
       style="
         font-family: var(--fonts-body);
@@ -220,9 +214,12 @@ export function renderGraphNode(options: GraphNodeOptions) {
         pointer-events: none;
       "
     >
-      ${nodeToRender.name}
+      ${node.name}
     </text>
   `;
+
+  // Extract nested ternary to avoid nested conditional
+  const tooltipContent = showTooltip ? renderTooltip() : nothing;
 
   return svg`
     <g
@@ -314,7 +311,7 @@ export function renderGraphNode(options: GraphNodeOptions) {
             ${displayName}
           </text>
 
-          ${showTooltip ? renderTooltip(node, x, y, size, zoomAdjustedColor) : nothing}
+          ${tooltipContent}
         </g>
       `
           : nothing

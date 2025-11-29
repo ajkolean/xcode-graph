@@ -113,10 +113,10 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
     const parts: string[] = [];
 
     if (stats.dependencies > 0) {
-      parts.push(`${stats.dependencies} dep${stats.dependencies !== 1 ? 's' : ''}`);
+      parts.push(`${stats.dependencies} dep${stats.dependencies === 1 ? '' : 's'}`);
     }
     if (stats.dependents > 0) {
-      parts.push(`${stats.dependents} dependent${stats.dependents !== 1 ? 's' : ''}`);
+      parts.push(`${stats.dependents} dependent${stats.dependents === 1 ? '' : 's'}`);
     }
 
     return parts.length > 0 ? parts.join(' · ') : undefined;

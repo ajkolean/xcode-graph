@@ -116,27 +116,6 @@ describe('ELEMENT_TAG', () => {
   });
 
   // ========================================
-  // State Management Tests (if using Zustand/Zag)
-  // ========================================
-
-  // it('should subscribe to store changes', async () => {
-  //   const el = await fixture<COMPONENT_NAME>(html`
-  //     <ELEMENT_TAG></ELEMENT_TAG>
-  //   `);
-
-  //   // Get initial value
-  //   const initialValue = el.shadowRoot?.querySelector('.value')?.textContent;
-
-  //   // Update store
-  //   useGraphStore.setState({ someValue: 'new value' });
-  //   await el.updateComplete;
-
-  //   // Verify component updated
-  //   const newValue = el.shadowRoot?.querySelector('.value')?.textContent;
-  //   expect(newValue).to.not.equal(initialValue);
-  // });
-
-  // ========================================
   // Styling Tests
   // ========================================
 
@@ -146,7 +125,7 @@ describe('ELEMENT_TAG', () => {
     `);
 
     const container = el.shadowRoot?.querySelector('.container');
-    const computedStyle = window.getComputedStyle(container as Element);
+    const computedStyle = globalThis.getComputedStyle(container as Element);
 
     expect(computedStyle.backgroundColor).to.exist;
     expect(computedStyle.borderRadius).to.exist;

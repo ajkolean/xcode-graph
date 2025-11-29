@@ -333,8 +333,8 @@ function generateMockData(): GraphData {
 
   // ==================== EDGES (Dependencies) ====================
 
-  // TuistCore internal dependencies
   edges.push(
+    // TuistCore internal dependencies
     { source: 'tuistcore-main', target: 'tuistcore-graph' },
     { source: 'tuistcore-main', target: 'tuistcore-loader' },
     { source: 'tuistcore-main', target: 'tuistcore-generator' },
@@ -345,7 +345,6 @@ function generateMockData(): GraphData {
     { source: 'tuistcore-signing', target: 'tuistcore-main' },
     { source: 'tuistcore-dependencies', target: 'tuistcore-main' },
     { source: 'tuistcore-migration', target: 'tuistcore-loader' },
-
     // TuistCore tests
     { source: 'tuistcore-tests', target: 'tuistcore-main' },
     { source: 'tuistcore-graph-tests', target: 'tuistcore-graph' },
@@ -354,10 +353,8 @@ function generateMockData(): GraphData {
     { source: 'tuistcore-ui-tests', target: 'tuistcore-main' },
     { source: 'tuistcore-acceptance', target: 'tuistcore-main' },
     { source: 'tuistcore-integration', target: 'tuistcore-main' },
-  );
 
-  // TuistKit internal dependencies
-  edges.push(
+    // TuistKit internal dependencies
     { source: 'tuistkit-main', target: 'tuistcore-main' },
     { source: 'tuistkit-main', target: 'tuistkit-automation' },
     { source: 'tuistkit-main', target: 'tuistkit-cloud' },
@@ -369,16 +366,13 @@ function generateMockData(): GraphData {
     { source: 'tuistkit-plugin', target: 'tuistcore-main' },
     { source: 'tuistkit-scaffold', target: 'tuistcore-loader' },
     { source: 'tuistkit-analytics', target: 'tuistkit-cloud' },
-
     // TuistKit tests
     { source: 'tuistkit-tests', target: 'tuistkit-main' },
     { source: 'tuistkit-cloud-tests', target: 'tuistkit-cloud' },
     { source: 'tuistkit-integration', target: 'tuistkit-main' },
     { source: 'tuistkit-e2e', target: 'tuistkit-cli' },
-  );
 
-  // FeatureKit dependencies
-  edges.push(
+    // FeatureKit dependencies
     { source: 'featurekit-home', target: 'uikit-main' },
     { source: 'featurekit-home', target: 'networkkit-main' },
     { source: 'featurekit-home', target: 'datakit-main' },
@@ -390,7 +384,6 @@ function generateMockData(): GraphData {
     { source: 'featurekit-auth', target: 'datakit-keychain' },
     { source: 'featurekit-auth', target: 'firebase-auth' },
     { source: 'featurekit-onboarding', target: 'uikit-main' },
-
     // FeatureKit tests
     { source: 'featurekit-home-tests', target: 'featurekit-home' },
     { source: 'featurekit-profile-tests', target: 'featurekit-profile' },
@@ -398,10 +391,8 @@ function generateMockData(): GraphData {
     { source: 'featurekit-auth-tests', target: 'featurekit-auth' },
     { source: 'featurekit-ui-tests', target: 'featurekit-home' },
     { source: 'featurekit-ui-tests', target: 'featurekit-profile' },
-  );
 
-  // UIKit dependencies
-  edges.push(
+    // UIKit dependencies
     { source: 'uikit-main', target: 'uikit-components' },
     { source: 'uikit-main', target: 'uikit-designsystem' },
     { source: 'uikit-main', target: 'uikit-resources' },
@@ -409,15 +400,12 @@ function generateMockData(): GraphData {
     { source: 'uikit-components', target: 'snapkit-main' },
     { source: 'uikit-animations', target: 'uikit-main' },
     { source: 'uikit-designsystem', target: 'uikit-resources' },
-
     // UIKit tests
     { source: 'uikit-tests', target: 'uikit-main' },
     { source: 'uikit-snapshot', target: 'uikit-components' },
     { source: 'uikit-accessibility', target: 'uikit-main' },
-  );
 
-  // NetworkKit dependencies
-  edges.push(
+    // NetworkKit dependencies
     { source: 'networkkit-main', target: 'networkkit-api' },
     { source: 'networkkit-main', target: 'networkkit-models' },
     { source: 'networkkit-api', target: 'alamofire-main' },
@@ -426,16 +414,13 @@ function generateMockData(): GraphData {
     { source: 'networkkit-websocket', target: 'alamofire-main' },
     { source: 'networkkit-models', target: 'protobuf-main' },
     { source: 'networkkit-mocks', target: 'networkkit-api' },
-
     // NetworkKit tests
     { source: 'networkkit-tests', target: 'networkkit-main' },
     { source: 'networkkit-tests', target: 'nimble-main' },
     { source: 'networkkit-tests', target: 'quick-main' },
     { source: 'networkkit-integration', target: 'networkkit-api' },
-  );
 
-  // DataKit dependencies
-  edges.push(
+    // DataKit dependencies
     { source: 'datakit-main', target: 'datakit-core' },
     { source: 'datakit-main', target: 'datakit-cache' },
     { source: 'datakit-main', target: 'datakit-keychain' },
@@ -443,15 +428,12 @@ function generateMockData(): GraphData {
     { source: 'datakit-core', target: 'datakit-models' },
     { source: 'datakit-cache', target: 'datakit-models' },
     { source: 'datakit-models', target: 'protobuf-main' },
-
     // DataKit tests
     { source: 'datakit-tests', target: 'datakit-main' },
     { source: 'datakit-migration-tests', target: 'datakit-core' },
     { source: 'datakit-performance', target: 'datakit-cache' },
-  );
 
-  // App dependencies
-  edges.push(
+    // App dependencies
     { source: 'app-ios', target: 'featurekit-home' },
     { source: 'app-ios', target: 'featurekit-profile' },
     { source: 'app-ios', target: 'featurekit-settings' },
@@ -466,31 +448,24 @@ function generateMockData(): GraphData {
     { source: 'app-ios', target: 'firebase-crashlytics' },
     { source: 'app-ios', target: 'firebase-messaging' },
     { source: 'app-ios', target: 'nav-main' },
-
     { source: 'app-macos', target: 'tuistkit-main' },
     { source: 'app-macos', target: 'utilskit-main' },
-
     // App tests
     { source: 'app-tests', target: 'app-ios' },
     { source: 'app-tests', target: 'nimble-main' },
     { source: 'app-tests', target: 'quick-main' },
     { source: 'app-ui-tests', target: 'app-ios' },
-  );
 
-  // UtilsKit dependencies
-  edges.push(
+    // UtilsKit dependencies
     { source: 'utilskit-main', target: 'utilskit-extensions' },
     { source: 'utilskit-main', target: 'utilskit-helpers' },
     { source: 'utilskit-main', target: 'utilskit-logger' },
     { source: 'utilskit-logger', target: 'logging-main' },
-
     // UtilsKit tests
     { source: 'utilskit-tests', target: 'utilskit-main' },
     { source: 'utilskit-performance', target: 'utilskit-main' },
-  );
 
-  // External package internal dependencies
-  edges.push(
+    // External package internal dependencies
     { source: 'alamofire-dynamic', target: 'alamofire-main' },
     { source: 'alamofire-tests', target: 'alamofire-main' },
     { source: 'nav-tests', target: 'nav-main' },
@@ -508,10 +483,8 @@ function generateMockData(): GraphData {
     { source: 'firebase-analytics', target: 'firebase-core' },
     { source: 'firebase-crashlytics', target: 'firebase-core' },
     { source: 'firebase-messaging', target: 'firebase-core' },
-  );
 
-  // Additional cross-project dependencies
-  edges.push(
+    // Additional cross-project dependencies
     { source: 'tuistkit-cloud', target: 'networkkit-api' },
     { source: 'tuistkit-cloud', target: 'alamofire-main' },
     { source: 'featurekit-home', target: 'kingfisher-main' },

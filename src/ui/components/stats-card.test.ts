@@ -164,7 +164,7 @@ describe('graph-stats-card', () => {
     const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
     expect(container).to.exist;
 
-    const computedStyle = window.getComputedStyle(container);
+    const computedStyle = globalThis.getComputedStyle(container);
     expect(computedStyle.borderRadius).to.exist;
     expect(computedStyle.padding).to.exist;
   });
