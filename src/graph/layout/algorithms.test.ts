@@ -82,7 +82,7 @@ describe('graphAlgorithms', () => {
 
       // Each node is its own SCC (no cycles)
       expect(sccs.length).toBe(3);
-      expect(sccs.flat().sort()).toEqual(['A', 'B', 'C']);
+      expect(sccs.flat().toSorted((a, b) => a.localeCompare(b))).toEqual(['A', 'B', 'C']);
     });
 
     it('should find cycle as single SCC', () => {
@@ -96,7 +96,7 @@ describe('graphAlgorithms', () => {
 
       // All three nodes form one SCC
       expect(sccs.length).toBe(1);
-      expect(sccs[0].sort()).toEqual(['A', 'B', 'C']);
+      expect(sccs[0].toSorted((a, b) => a.localeCompare(b))).toEqual(['A', 'B', 'C']);
     });
 
     it('should find simple two-node cycle', () => {
@@ -162,7 +162,7 @@ describe('graphAlgorithms', () => {
       // Find the SCC containing B and C
       const cycleScc = sccs.find((scc) => scc.includes('B') && scc.includes('C'));
       expect(cycleScc).toBeDefined();
-      expect(cycleScc!.sort()).toEqual(['B', 'C']);
+      expect(cycleScc!.toSorted((a, b) => a.localeCompare(b))).toEqual(['B', 'C']);
     });
   });
 
@@ -206,7 +206,7 @@ describe('graphAlgorithms', () => {
 
       const sorted = topoSort(nodes, edges);
 
-      expect(sorted.sort()).toEqual(['A', 'B', 'C']);
+      expect(sorted.toSorted((a, b) => a.localeCompare(b))).toEqual(['A', 'B', 'C']);
     });
 
     it('should handle empty graph', () => {

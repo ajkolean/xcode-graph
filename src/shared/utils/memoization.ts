@@ -111,7 +111,7 @@ function shallowArrayEqual<T extends unknown[]>(a: T, b: T): boolean {
  * Useful for caching based on object identity
  */
 export class WeakMapCache<K extends object, V> {
-  private cache = new WeakMap<K, V>();
+  private readonly cache = new WeakMap<K, V>();
 
   get(key: K): V | undefined {
     return this.cache.get(key);
@@ -140,8 +140,8 @@ export class WeakMapCache<K extends object, V> {
  * @param maxSize Maximum number of entries to keep
  */
 export class LRUCache<K, V> {
-  private cache = new Map<K, V>();
-  private maxSize: number;
+  private readonly cache = new Map<K, V>();
+  private readonly maxSize: number;
 
   constructor(maxSize = 100) {
     this.maxSize = maxSize;

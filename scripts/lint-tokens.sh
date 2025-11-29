@@ -47,8 +47,8 @@ check_pattern() {
   local results
   results=$(cd /Users/andykolean/Developer/tuistgraph && $grep_cmd --glob "*.ts" --glob "!**/tokens.ts" --glob "!**/node_modules/**" "$pattern" $COMPONENT_DIRS 2>/dev/null || true)
 
-  if [ -n "$results" ]; then
-    if [ "$severity" = "error" ]; then
+  if [[ -n "$results" ]]; then
+    if [[ "$severity" = "error" ]]; then
       echo -e "${RED}✗ $description${NC}"
       ((VIOLATIONS++)) || true
     else
@@ -61,11 +61,12 @@ check_pattern() {
     done
     local count
     count=$(echo "$results" | wc -l | tr -d ' ')
-    if [ "$count" -gt 10 ]; then
+    if [[ "$count" -gt 10 ]]; then
       echo -e "  ${NC}... and $((count - 10)) more"
     fi
     echo ""
   fi
+  return 0
 }
 
 # Check for hex colors (excluding CSS custom property definitions)
@@ -123,14 +124,14 @@ check_pattern \
 
 # Summary
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-if [ $VIOLATIONS -eq 0 ] && [ $WARNINGS -eq 0 ]; then
+if [[ $VIOLATIONS -eq 0 ]] && [[ $WARNINGS -eq 0 ]]; then
   echo -e "${GREEN}✓ No token violations found!${NC}"
   exit 0
-elif [ $VIOLATIONS -eq 0 ]; then
+elif [[ $VIOLATIONS -eq 0 ]]; then
   echo -e "${YELLOW}⚠ Found $WARNINGS warning(s) - consider fixing${NC}"
   exit 0
 else
-  echo -e "${RED}✗ Found $VIOLATIONS error(s) and $WARNINGS warning(s)${NC}"
+  echo -e "${RED}✗ Found $VIOLATIONS error(s) and $WARNINGS warning(s)${NC}" >&2
   echo ""
   echo -e "${CYAN}Token Reference:${NC}"
   echo "  Colors:    var(--colors-primary), var(--colors-accent), var(--colors-muted), etc."

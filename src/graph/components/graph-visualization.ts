@@ -49,7 +49,7 @@ export class GraphVisualization extends LitElement {
   // Properties
   // ========================================
 
-  static readonly override properties: PropertyDeclarations = {
+  static override readonly properties: PropertyDeclarations = {
     nodes: { attribute: false },
     edges: { attribute: false },
     selectedNode: { attribute: false },
@@ -85,7 +85,7 @@ export class GraphVisualization extends LitElement {
   private declare hoveredCluster: string | null;
 
   @query('svg')
-  private svgElement!: SVGSVGElement;
+  private readonly svgElement!: SVGSVGElement;
 
   private nodeMap: Map<string, GraphNodeType> = new Map();
 
@@ -93,7 +93,7 @@ export class GraphVisualization extends LitElement {
   // Controllers
   // ========================================
 
-  private layout = new GraphLayoutController(this, {
+  private readonly layout = new GraphLayoutController(this, {
     enableAnimation: false,
     animationTicks: 30,
   });
@@ -108,7 +108,7 @@ export class GraphVisualization extends LitElement {
   // Styles
   // ========================================
 
-  static readonly override styles: CSSResultGroup = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       position: relative;

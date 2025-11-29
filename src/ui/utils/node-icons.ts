@@ -2,6 +2,22 @@
  * Node icon utilities for consistent node type representation
  */
 
+// Smartphone icon path (iOS / default)
+const SMARTPHONE_ICON_PATH = `
+  M-8,-16
+  L8,-16
+  A2,2 0 0,1 10,-14
+  L10,14
+  A2,2 0 0,1 8,16
+  L-8,16
+  A2,2 0 0,1 -10,14
+  L-10,-14
+  A2,2 0 0,1 -8,-16
+  Z
+  M-4,12
+  L4,12
+`;
+
 /**
  * Get SVG path data for app nodes based on platform
  * Each platform has a distinctive icon shape
@@ -9,21 +25,7 @@
 export function getAppIconPath(platform: string): string {
   switch (platform) {
     case 'iOS':
-      // Smartphone icon (iOS)
-      return `
-        M-8,-16 
-        L8,-16 
-        A2,2 0 0,1 10,-14
-        L10,14 
-        A2,2 0 0,1 8,16
-        L-8,16 
-        A2,2 0 0,1 -10,14
-        L-10,-14 
-        A2,2 0 0,1 -8,-16
-        Z
-        M-4,12 
-        L4,12
-      `;
+      return SMARTPHONE_ICON_PATH;
 
     case 'macOS':
       // Monitor icon (macOS)
@@ -105,20 +107,7 @@ export function getAppIconPath(platform: string): string {
 
     default:
       // Default smartphone for unknown platforms
-      return `
-        M-8,-16 
-        L8,-16 
-        A2,2 0 0,1 10,-14
-        L10,14 
-        A2,2 0 0,1 8,16
-        L-8,16 
-        A2,2 0 0,1 -10,14
-        L-10,-14 
-        A2,2 0 0,1 -8,-16
-        Z
-        M-4,12 
-        L4,12
-      `;
+      return SMARTPHONE_ICON_PATH;
   }
 }
 

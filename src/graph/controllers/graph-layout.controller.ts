@@ -57,12 +57,12 @@ export interface GraphLayoutConfig {
  * Unified layout controller with composed sub-controllers
  */
 export class GraphLayoutController implements ReactiveController {
-  private host: ReactiveControllerHost;
+  private readonly host: ReactiveControllerHost;
 
   // Sub-controllers (single responsibility)
-  private layoutController: LayoutController;
-  private physicsController: PhysicsController;
-  private animationController: AnimationController;
+  private readonly layoutController: LayoutController;
+  private readonly physicsController: PhysicsController;
+  private readonly animationController: AnimationController;
 
   // Configuration
   enableAnimation: boolean;

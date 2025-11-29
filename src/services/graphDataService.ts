@@ -14,17 +14,17 @@ export class GraphDataService {
   private readonly edgeMap: Map<string, GraphEdge>;
 
   // Indices for O(1) lookups
-  private nodesByType: Map<string, GraphNode[]> = new Map();
-  private nodesByProject: Map<string, GraphNode[]> = new Map();
-  private nodesByPlatform: Map<string, GraphNode[]> = new Map();
-  private nodesByOrigin: Map<string, GraphNode[]> = new Map();
+  private readonly nodesByType: Map<string, GraphNode[]> = new Map();
+  private readonly nodesByProject: Map<string, GraphNode[]> = new Map();
+  private readonly nodesByPlatform: Map<string, GraphNode[]> = new Map();
+  private readonly nodesByOrigin: Map<string, GraphNode[]> = new Map();
 
-  private outgoingEdges: Map<string, GraphEdge[]> = new Map();
-  private incomingEdges: Map<string, GraphEdge[]> = new Map();
+  private readonly outgoingEdges: Map<string, GraphEdge[]> = new Map();
+  private readonly incomingEdges: Map<string, GraphEdge[]> = new Map();
 
   // Cached Sets
-  private projects: Set<string> = new Set();
-  private packages: Set<string> = new Set();
+  private readonly projects: Set<string> = new Set();
+  private readonly packages: Set<string> = new Set();
 
   constructor(nodes: GraphNode[], edges: GraphEdge[]) {
     this.nodes = nodes;

@@ -10,7 +10,7 @@ import { GraphLayoutController } from './graph-layout.controller';
 
 // Mock host
 class MockHost {
-  private controllers: ReactiveController[] = [];
+  private readonly controllers: ReactiveController[] = [];
   updateCount = 0;
 
   addController(controller: ReactiveController) {

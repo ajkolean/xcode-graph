@@ -174,10 +174,20 @@ describe('serializeFilterState', () => {
     const serialized = serializeFilterState(parsed);
 
     // Sort arrays for comparison since Set iteration order may vary
-    expect(serialized.nodeTypes.sort()).toEqual(original.nodeTypes.sort());
-    expect(serialized.platforms.sort()).toEqual(original.platforms.sort());
-    expect(serialized.origins.sort()).toEqual(original.origins.sort());
-    expect(serialized.projects.sort()).toEqual(original.projects.sort());
-    expect(serialized.packages.sort()).toEqual(original.packages.sort());
+    expect(serialized.nodeTypes.toSorted((a, b) => a.localeCompare(b))).toEqual(
+      original.nodeTypes.toSorted((a, b) => a.localeCompare(b)),
+    );
+    expect(serialized.platforms.toSorted((a, b) => a.localeCompare(b))).toEqual(
+      original.platforms.toSorted((a, b) => a.localeCompare(b)),
+    );
+    expect(serialized.origins.toSorted((a, b) => a.localeCompare(b))).toEqual(
+      original.origins.toSorted((a, b) => a.localeCompare(b)),
+    );
+    expect(serialized.projects.toSorted((a, b) => a.localeCompare(b))).toEqual(
+      original.projects.toSorted((a, b) => a.localeCompare(b)),
+    );
+    expect(serialized.packages.toSorted((a, b) => a.localeCompare(b))).toEqual(
+      original.packages.toSorted((a, b) => a.localeCompare(b)),
+    );
   });
 });

@@ -26,7 +26,7 @@ import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors'
 import { LitElement, type PropertyDeclarations, type SVGTemplateResult, svg } from 'lit';
 
 export class GraphClusterCard extends LitElement {
-  static readonly override properties: PropertyDeclarations = {
+  static override readonly properties: PropertyDeclarations = {
     cluster: { attribute: false },
     x: { type: Number },
     y: { type: Number },

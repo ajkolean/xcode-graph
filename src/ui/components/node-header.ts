@@ -117,6 +117,7 @@ export class GraphNodeHeader extends LitElement {
       return this.node.project;
     };
     const subtitle = getSubtitle();
+    const clusterBadgeLabel = this.node.type === 'package' ? 'Package' : 'Project';
 
     return html`
       <graph-panel-header
@@ -146,7 +147,7 @@ export class GraphNodeHeader extends LitElement {
             ? html`
               <graph-badge
                 slot="badges"
-                label=${this.node.type === 'package' ? 'Package' : 'Project'}
+                label=${clusterBadgeLabel}
                 color=${clusterDisplayColor}
               ></graph-badge>
             `

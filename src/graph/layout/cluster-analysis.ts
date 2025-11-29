@@ -106,14 +106,14 @@ export function identifyAnchors(
   );
   if (externalEntryPoints.length > 0) {
     // Return the one with most external dependents
-    const sorted = externalEntryPoints.sort(
+    const sorted = externalEntryPoints.toSorted(
       (a, b) => (externalDependents.get(b.id) || 0) - (externalDependents.get(a.id) || 0),
     );
     return [sorted[0]];
   }
 
   // 4. Fallback: most-depended-upon node
-  const sorted = [...nodes].sort(
+  const sorted = nodes.toSorted(
     (a, b) => (dependents.get(b.id)?.size || 0) - (dependents.get(a.id)?.size || 0),
   );
 

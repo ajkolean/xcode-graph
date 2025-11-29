@@ -54,7 +54,7 @@ export interface AnimationCallbacks {
  * Uses alpha decay for gradual force reduction over animation duration.
  */
 export class AnimationController implements ReactiveController {
-  private host: ReactiveControllerHost;
+  private readonly host: ReactiveControllerHost;
 
   // Configuration
   private totalTicks: number;

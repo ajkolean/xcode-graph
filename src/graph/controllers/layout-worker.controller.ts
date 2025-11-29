@@ -56,7 +56,7 @@ export interface LayoutWorkerConfig {
  * Supports progress callbacks during animated layout computation.
  */
 export class LayoutWorkerController implements ReactiveController {
-  private host: ReactiveControllerHost;
+  private readonly host: ReactiveControllerHost;
 
   // Configuration
   enableAnimation: boolean;
@@ -109,19 +109,7 @@ export class LayoutWorkerController implements ReactiveController {
       }
 
       // Run layout computation in worker
-      if (!this.enableAnimation) {
-        const result = await this.workerAPI.computeInitialLayout({
-          nodes,
-          edges,
-          enableAnimation: false,
-        });
-
-        this.nodePositions = result.nodePositions;
-        this.clusterPositions = result.clusterPositions;
-        this.clusters = result.clusters;
-        this.isSettling = false;
-        this.host.requestUpdate();
-      } else {
+      if (this.enableAnimation) {
         this.isSettling = true;
         const result = await this.workerAPI.computeAnimatedLayout(
           {
@@ -143,6 +131,18 @@ export class LayoutWorkerController implements ReactiveController {
             }
           },
         );
+
+        this.nodePositions = result.nodePositions;
+        this.clusterPositions = result.clusterPositions;
+        this.clusters = result.clusters;
+        this.isSettling = false;
+        this.host.requestUpdate();
+      } else {
+        const result = await this.workerAPI.computeInitialLayout({
+          nodes,
+          edges,
+          enableAnimation: false,
+        });
 
         this.nodePositions = result.nodePositions;
         this.clusterPositions = result.clusterPositions;

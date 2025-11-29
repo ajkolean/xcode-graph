@@ -30,7 +30,7 @@ describe('clusterGrouping', () => {
       const clusters = groupIntoClusters(nodes, edges);
 
       expect(clusters.length).toBe(1);
-      expect(clusters[0].id).toBe('Standalone');
+      expect(clusters[0]?.id).toBe('Standalone');
     });
 
     it('should mark external clusters as package type', () => {
@@ -41,7 +41,7 @@ describe('clusterGrouping', () => {
 
       const clusters = groupIntoClusters(nodes, edges);
 
-      expect(clusters[0].type).toBe(ClusterType.Package);
+      expect(clusters[0]?.type).toBe(ClusterType.Package);
     });
 
     it('should mark local clusters as project type', () => {
@@ -52,7 +52,7 @@ describe('clusterGrouping', () => {
 
       const clusters = groupIntoClusters(nodes, edges);
 
-      expect(clusters[0].type).toBe(ClusterType.Project);
+      expect(clusters[0]?.type).toBe(ClusterType.Project);
     });
 
     it('should preserve node origin in cluster', () => {
@@ -63,7 +63,7 @@ describe('clusterGrouping', () => {
 
       const clusters = groupIntoClusters(nodes, edges);
 
-      expect(clusters[0].origin).toBe(Origin.External);
+      expect(clusters[0]?.origin).toBe(Origin.External);
     });
 
     it('should analyze clusters with edges', () => {
@@ -75,8 +75,8 @@ describe('clusterGrouping', () => {
 
       const clusters = groupIntoClusters(nodes, edges);
 
-      expect(clusters[0].anchors.length).toBeGreaterThan(0);
-      expect(clusters[0].metadata.size).toBe(2);
+      expect(clusters[0]?.anchors.length).toBeGreaterThan(0);
+      expect(clusters[0]?.metadata.size).toBe(2);
     });
 
     it('should handle empty nodes array', () => {
@@ -137,8 +137,8 @@ describe('clusterGrouping', () => {
 
     it('should place local clusters before external', () => {
       const clusters = [
-        createClusterHelper('External', 5, 'external'),
-        createClusterHelper('Local', 5, 'local'),
+        createClusterHelper('External', 5, Origin.External),
+        createClusterHelper('Local', 5, Origin.Local),
       ];
 
       const positions = arrangeClusterGrid(clusters);
@@ -154,9 +154,9 @@ describe('clusterGrouping', () => {
 
     it('should sort by size within same origin', () => {
       const clusters = [
-        createClusterHelper('Small', 2, 'local'),
-        createClusterHelper('Large', 10, 'local'),
-        createClusterHelper('Medium', 5, 'local'),
+        createClusterHelper('Small', 2, Origin.Local),
+        createClusterHelper('Large', 10, Origin.Local),
+        createClusterHelper('Medium', 5, Origin.Local),
       ];
 
       const positions = arrangeClusterGrid(clusters);

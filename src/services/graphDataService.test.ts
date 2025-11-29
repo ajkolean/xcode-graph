@@ -113,7 +113,10 @@ describe('GraphDataService', () => {
         const iosNodes = service.getNodesByPlatform('iOS');
 
         expect(iosNodes).toHaveLength(2);
-        expect(iosNodes.map((n) => n.id).sort()).toEqual(['1', '2']);
+        expect(iosNodes.map((n) => n.id).toSorted((a, b) => a.localeCompare(b))).toEqual([
+          '1',
+          '2',
+        ]);
       });
 
       it('should return empty for non-existent platform', () => {
@@ -284,7 +287,7 @@ describe('GraphDataService', () => {
         const deps = service.getDirectDependencies('A');
 
         expect(deps).toHaveLength(2);
-        expect(deps.map((n) => n.id).sort()).toEqual(['B', 'C']);
+        expect(deps.map((n) => n.id).toSorted((a, b) => a.localeCompare(b))).toEqual(['B', 'C']);
       });
 
       it('should return empty for nodes with no dependencies', () => {
@@ -303,7 +306,10 @@ describe('GraphDataService', () => {
         const dependents = service.getDirectDependents('D');
 
         expect(dependents).toHaveLength(2);
-        expect(dependents.map((n) => n.id).sort()).toEqual(['B', 'C']);
+        expect(dependents.map((n) => n.id).toSorted((a, b) => a.localeCompare(b))).toEqual([
+          'B',
+          'C',
+        ]);
       });
 
       it('should return empty for nodes with no dependents', () => {

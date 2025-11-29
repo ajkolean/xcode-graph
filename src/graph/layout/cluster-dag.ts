@@ -165,7 +165,7 @@ function reduceCrossingsIteration(
   const position = initPositionMap(layerToNodes);
 
   const layers = Array.from(layerToNodes.keys()).sort((a, b) => a - b);
-  const orderedLayers = direction === 'down' ? layers : layers.reverse();
+  const orderedLayers = direction === 'down' ? layers : layers.toReversed();
 
   for (const layer of orderedLayers) {
     const nodes = layerToNodes.get(layer);

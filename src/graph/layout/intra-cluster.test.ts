@@ -17,8 +17,8 @@ describe('simpleClusterLayout', () => {
       const result = simpleClusterLayout(nodes, edges, 100, 100);
 
       expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('A');
-      expect(result[0].ring).toBe(0);
+      expect(result[0]?.id).toBe('A');
+      expect(result[0]?.ring).toBe(0);
     });
 
     it('should position nodes in rings based on dependency depth', () => {
@@ -105,8 +105,8 @@ describe('simpleClusterLayout', () => {
       const nodeB = result.find((n) => n.id === 'B')!;
 
       // Both nodes should be positioned with valid coordinates
-      const distA = Math.sqrt(nodeA.x ** 2 + nodeA.y ** 2);
-      const distB = Math.sqrt(nodeB.x ** 2 + nodeB.y ** 2);
+      const distA = Math.hypot(nodeA.x, nodeA.y);
+      const distB = Math.hypot(nodeB.x, nodeB.y);
 
       // Ring spacing should affect the relative distances
       // Node at higher ring should be further from center
@@ -219,8 +219,8 @@ describe('simpleClusterLayout', () => {
         { id: 'B', x: 0, y: 50, ring: 1, isTest: false },
       ];
       const masses = new Map<string, NodeMass>([
-        ['A', { mass: 5, fanIn: 2, fanOut: 1, transitiveIn: 5, transitiveOut: 2 }],
-        ['B', { mass: 3, fanIn: 1, fanOut: 2, transitiveIn: 3, transitiveOut: 4 }],
+        ['A', { nodeId: 'A', mass: 5, fanIn: 2, fanOut: 1, depth: 0, centrality: 0.5 }],
+        ['B', { nodeId: 'B', mass: 3, fanIn: 1, fanOut: 2, depth: 1, centrality: 0.3 }],
       ]);
 
       const resultWithMass = computeMEC(positions, 0, 0, masses);

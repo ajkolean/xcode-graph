@@ -188,6 +188,41 @@ export function renderGraphNode(options: GraphNodeOptions) {
   const displayName =
     node.name.length > maxLabelLength ? `${node.name.substring(0, maxLabelLength)}...` : node.name;
   const showTooltip = isHovered && node.name.length > 20;
+  const fontWeight = isSelected ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)';
+
+  const renderTooltip = (
+    nodeToRender: GraphNode,
+    posX: number,
+    posY: number,
+    nodeSize: number,
+    zoomColor: string,
+  ) => svg`
+    <rect
+      x="${posX - nodeToRender.name.length * 3.5}"
+      y="${posY - nodeSize - 35}"
+      width="${nodeToRender.name.length * 7}"
+      height="22"
+      rx="4"
+      fill="rgba(var(--colors-card-rgb), var(--opacity-95))"
+      stroke="${zoomColor}"
+      stroke-width="1"
+      filter="url(#glow)"
+    />
+    <text
+      x="${posX}"
+      y="${posY - nodeSize - 20}"
+      fill="${zoomColor}"
+      text-anchor="middle"
+      style="
+        font-family: var(--fonts-body);
+        font-size: var(--font-sizes-sm);
+        font-weight: var(--font-weight-normal);
+        pointer-events: none;
+      "
+    >
+      ${nodeToRender.name}
+    </text>
+  `;
 
   return svg`
     <g
@@ -271,7 +306,7 @@ export function renderGraphNode(options: GraphNodeOptions) {
             style="
               font-family: var(--fonts-body);
               font-size: var(--font-sizes-sm);
-              font-weight: ${isSelected ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)'};
+              font-weight: ${fontWeight};
               pointer-events: none;
               filter: drop-shadow(0 0 8px rgba(var(--colors-card-rgb), var(--opacity-90))) drop-shadow(0 0 4px rgba(var(--colors-card-rgb), 1)) drop-shadow(0 1px 2px rgba(0, 0, 0, var(--opacity-80)));
             "
@@ -279,37 +314,7 @@ export function renderGraphNode(options: GraphNodeOptions) {
             ${displayName}
           </text>
 
-          ${
-            showTooltip
-              ? svg`
-            <rect
-              x="${x - node.name.length * 3.5}"
-              y="${y - size - 35}"
-              width="${node.name.length * 7}"
-              height="22"
-              rx="4"
-              fill="rgba(var(--colors-card-rgb), var(--opacity-95))"
-              stroke="${zoomAdjustedColor}"
-              stroke-width="1"
-              filter="url(#glow)"
-            />
-            <text
-              x="${x}"
-              y="${y - size - 20}"
-              fill="${zoomAdjustedColor}"
-              text-anchor="middle"
-              style="
-                font-family: var(--fonts-body);
-                font-size: var(--font-sizes-sm);
-                font-weight: var(--font-weight-normal);
-                pointer-events: none;
-              "
-            >
-              ${node.name}
-            </text>
-          `
-              : nothing
-          }
+          ${showTooltip ? renderTooltip(node, x, y, size, zoomAdjustedColor) : nothing}
         </g>
       `
           : nothing
@@ -368,6 +373,7 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
 
   // Generate path (bezier curve or straight line)
   const path = useBezier ? generateBezierPath(x1, y1, x2, y2) : `M ${x1},${y1} L ${x2},${y2}`;
+  const animationClass = animated ? 'flow-animation' : '';
 
   return svg`
     <g class="graph-edge" style="transition: opacity var(--durations-slow) ease">
@@ -382,7 +388,7 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
           opacity="${adjustOpacityForZoom(0.3, zoom) * opacityMultiplier}"
           filter="url(#glow-strong)"
           stroke-dasharray="${dashPattern}"
-          class="${animated ? 'flow-animation' : ''}"
+          class="${animationClass}"
           shape-rendering="geometricPrecision"
         />
       `

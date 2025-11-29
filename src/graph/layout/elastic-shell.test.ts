@@ -6,39 +6,39 @@ import {
 } from './elastic-shell';
 import type { NodeMass } from './mass';
 
-describe('elasticShell', () => {
-  // Helper to create test nodes
-  function createTestNodes(count: number, ringDistribution: number[] = []): NodeWithPosition[] {
-    const nodes: NodeWithPosition[] = [];
-    for (let i = 0; i < count; i++) {
-      const ring = ringDistribution[i] ?? Math.floor(i / 2);
-      const angle = (2 * Math.PI * i) / count;
-      const distance = 20 + ring * 30;
-      nodes.push({
-        id: `node-${i}`,
-        x: distance * Math.cos(angle),
-        y: distance * Math.sin(angle),
-        ring,
-      });
-    }
-    return nodes;
-  }
-
-  // Helper to create mass map
-  function createMassMap(nodeIds: string[], masses: number[]): Map<string, NodeMass> {
-    const map = new Map<string, NodeMass>();
-    nodeIds.forEach((id, i) => {
-      map.set(id, {
-        mass: masses[i] ?? 1.0,
-        fanIn: 0,
-        fanOut: 0,
-        transitiveIn: 0,
-        transitiveOut: 0,
-      });
+// Helper to create test nodes (moved to outer scope)
+function createTestNodes(count: number, ringDistribution: number[] = []): NodeWithPosition[] {
+  const nodes: NodeWithPosition[] = [];
+  for (let i = 0; i < count; i++) {
+    const ring = ringDistribution[i] ?? Math.floor(i / 2);
+    const angle = (2 * Math.PI * i) / count;
+    const distance = 20 + ring * 30;
+    nodes.push({
+      id: `node-${i}`,
+      x: distance * Math.cos(angle),
+      y: distance * Math.sin(angle),
+      ring,
     });
-    return map;
   }
+  return nodes;
+}
 
+// Helper to create mass map (moved to outer scope)
+function createMassMap(nodeIds: string[], masses: number[]): Map<string, NodeMass> {
+  const map = new Map<string, NodeMass>();
+  nodeIds.forEach((id, i) => {
+    map.set(id, {
+      mass: masses[i] ?? 1,
+      fanIn: 0,
+      fanOut: 0,
+      transitiveIn: 0,
+      transitiveOut: 0,
+    });
+  });
+  return map;
+}
+
+describe('elasticShell', () => {
   describe('computeElasticShellRadius', () => {
     it('should return minRadius for empty nodes', () => {
       const masses = new Map<string, NodeMass>();
@@ -65,11 +65,11 @@ describe('elasticShell', () => {
       const largeNodes = createTestNodes(10);
       const smallMasses = createMassMap(
         smallNodes.map((n) => n.id),
-        Array(3).fill(1),
+        new Array(3).fill(1),
       );
       const largeMasses = createMassMap(
         largeNodes.map((n) => n.id),
-        Array(10).fill(1),
+        new Array(10).fill(1),
       );
 
       const smallRadius = computeElasticShellRadius(smallNodes, smallMasses);
@@ -108,10 +108,10 @@ describe('elasticShell', () => {
     });
 
     it('should respect custom config maxRadius', () => {
-      const nodes = createTestNodes(20, Array(20).fill(5)); // High ring values
+      const nodes = createTestNodes(20, new Array(20).fill(5)); // High ring values
       const masses = createMassMap(
         nodes.map((n) => n.id),
-        Array(20).fill(10), // High masses
+        new Array(20).fill(10), // High masses
       );
       const config: ElasticShellConfig = {
         baseRadius: 60,

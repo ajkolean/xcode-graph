@@ -93,6 +93,7 @@ export class GraphEdge extends LitElement {
 
     // Generate path (bezier curve or straight line)
     const path = useBezier ? generateBezierPath(x1, y1, x2, y2) : `M ${x1},${y1} L ${x2},${y2}`;
+    const animationClass = animated ? 'flow-animation' : '';
 
     return svg`
       <g class="graph-edge" style="transition: opacity var(--durations-slow) ease">
@@ -107,7 +108,7 @@ export class GraphEdge extends LitElement {
                   opacity="${adjustOpacityForZoom(0.3, zoom) * opacity}"
                   filter="url(#glow-strong)"
                   stroke-dasharray="${dashPattern}"
-                  class="${animated ? 'flow-animation' : ''}"
+                  class="${animationClass}"
                   shape-rendering="geometricPrecision"
                 />
               `

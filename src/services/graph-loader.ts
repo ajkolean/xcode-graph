@@ -50,7 +50,7 @@ export interface ProgressiveLoadConfig {
 }
 
 export class GraphLoader {
-  private config: Required<ProgressiveLoadConfig>;
+  private readonly config: Required<ProgressiveLoadConfig>;
 
   constructor(config: ProgressiveLoadConfig = {}) {
     this.config = {

@@ -52,9 +52,9 @@ export interface SpatialHashConfig {
  * @typeParam T - Entity type (must extend SpatialEntity)
  */
 export class SpatialHash<T extends SpatialEntity> {
-  private cellSize: number;
-  private grid: Map<string, Set<T>>;
-  private bounds?: SpatialHashConfig['bounds'];
+  private readonly cellSize: number;
+  private readonly grid: Map<string, Set<T>>;
+  private readonly bounds?: SpatialHashConfig['bounds'];
 
   constructor(config: SpatialHashConfig) {
     this.cellSize = config.cellSize;

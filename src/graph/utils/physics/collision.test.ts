@@ -19,7 +19,7 @@ describe('applyCollisionForces', () => {
         { id: 'b', x: 5, y: 0, radius: 10, vx: 0, vy: 0 }, // Overlapping!
       ];
 
-      applyCollisionForces(entities, 1.0, CollisionPresets.NODE_COLLISION);
+      applyCollisionForces(entities, 1, CollisionPresets.NODE_COLLISION);
 
       // A should be pushed left (negative vx)
       expect(entities[0].vx).toBeLessThan(0);
@@ -34,7 +34,7 @@ describe('applyCollisionForces', () => {
         { id: 'b', x: 1000, y: 1000, radius: 10, vx: 0, vy: 0 }, // Far apart
       ];
 
-      applyCollisionForces(entities, 1.0, CollisionPresets.NODE_COLLISION);
+      applyCollisionForces(entities, 1, CollisionPresets.NODE_COLLISION);
 
       // No forces should be applied
       expect(entities[0].vx).toBe(0);
@@ -45,14 +45,14 @@ describe('applyCollisionForces', () => {
 
     it('should handle empty entity list', () => {
       expect(() => {
-        applyCollisionForces([], 1.0, CollisionPresets.NODE_COLLISION);
+        applyCollisionForces([], 1, CollisionPresets.NODE_COLLISION);
       }).not.toThrow();
     });
 
     it('should handle single entity', () => {
       const entities: CollisionEntity[] = [{ id: 'a', x: 0, y: 0, radius: 10, vx: 0, vy: 0 }];
 
-      applyCollisionForces(entities, 1.0, CollisionPresets.NODE_COLLISION);
+      applyCollisionForces(entities, 1, CollisionPresets.NODE_COLLISION);
 
       // No changes (nothing to collide with)
       expect(entities[0].vx).toBe(0);
@@ -68,7 +68,7 @@ describe('applyCollisionForces', () => {
       ];
 
       // High alpha (strong forces)
-      applyCollisionForces(entities, 1.0, CollisionPresets.NODE_COLLISION);
+      applyCollisionForces(entities, 1, CollisionPresets.NODE_COLLISION);
       const strongForce = Math.abs(entities[0].vx);
 
       // Reset
@@ -90,7 +90,7 @@ describe('applyCollisionForces', () => {
         { id: 'b', x: 5, y: 0, radius: 10, vx: 0, vy: 0 },
       ];
 
-      applyCollisionForces(entities, 1.0, {
+      applyCollisionForces(entities, 1, {
         separationPadding: 8,
         forceStrength: 0.1, // Weak
       });
@@ -101,7 +101,7 @@ describe('applyCollisionForces', () => {
       entities[0].vx = 0;
       entities[1].vx = 0;
 
-      applyCollisionForces(entities, 1.0, {
+      applyCollisionForces(entities, 1, {
         separationPadding: 8,
         forceStrength: 0.9, // Strong
       });
@@ -121,7 +121,7 @@ describe('applyCollisionForces', () => {
 
       // With padding of 8, min separation is 10+10+8 = 28
       // Current distance is 20, so they should repel
-      applyCollisionForces(entities, 1.0, {
+      applyCollisionForces(entities, 1, {
         separationPadding: 8,
         forceStrength: 0.3,
       });
@@ -147,7 +147,7 @@ describe('applyCollisionForces', () => {
       }
 
       const start = Date.now();
-      applyCollisionForces(entities, 1.0, CollisionPresets.NODE_COLLISION);
+      applyCollisionForces(entities, 1, CollisionPresets.NODE_COLLISION);
       const duration = Date.now() - start;
 
       // Should be fast even with 1000 entities
@@ -160,7 +160,7 @@ describe('updatePositions', () => {
   it('should update positions based on velocity', () => {
     const entities: CollisionEntity[] = [{ id: 'a', x: 0, y: 0, radius: 10, vx: 10, vy: 5 }];
 
-    updatePositions(entities, 1.0);
+    updatePositions(entities, 1);
 
     expect(entities[0].x).toBe(10);
     expect(entities[0].y).toBe(5);
@@ -178,7 +178,7 @@ describe('updatePositions', () => {
   it('should apply damping to velocities', () => {
     const entities: CollisionEntity[] = [{ id: 'a', x: 0, y: 0, radius: 10, vx: 10, vy: 10 }];
 
-    updatePositions(entities, 1.0, 0.7);
+    updatePositions(entities, 1, 0.7);
 
     expect(entities[0].vx).toBe(7); // 10 * 0.7
     expect(entities[0].vy).toBe(7);
@@ -189,7 +189,7 @@ describe('updatePositions', () => {
       { id: 'a', x: 100, y: 100, radius: 10 }, // No vx/vy
     ];
 
-    updatePositions(entities, 1.0);
+    updatePositions(entities, 1);
 
     expect(entities[0].x).toBe(100); // Unchanged
     expect(entities[0].y).toBe(100);

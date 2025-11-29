@@ -51,6 +51,8 @@ function findTargetByNamePattern(
     if (!match) continue;
 
     const baseName = match[1];
+    if (!baseName) continue;
+
     const target = nodes.find((n) => {
       if (n.type.startsWith('test')) return false;
       const nName = n.name.toLowerCase();
@@ -213,6 +215,22 @@ function computeIdealAngle(
 type PositionInfo = { x: number; y: number; angle: number; ring: number };
 
 /**
+ * Options for positioning test nodes
+ */
+interface PositionTestNodesOptions {
+  testNodes: Array<{ id: string; name: string; type: string }>;
+  mainNodes: Array<{ id: string; name: string; type: string }>;
+  adj: AdjacencyList;
+  positionMap: Map<string, PositionInfo>;
+  centerX: number;
+  centerY: number;
+  baseRadius: number;
+  ringSpacing: number;
+  testOffset: number;
+  maxDepth: number;
+}
+
+/**
  * Position nodes in ring 0 (anchors)
  */
 function positionRingZero(
@@ -224,7 +242,7 @@ function positionRingZero(
 ): void {
   const angleStep = (2 * Math.PI) / Math.max(ringNodes.length, 1);
   for (let idx = 0; idx < ringNodes.length; idx++) {
-    const node = ringNodes[idx];
+    const node = ringNodes[idx]!;
     const angle = idx * angleStep;
     positionMap.set(node.id, {
       x: centerX + radius * Math.cos(angle),
@@ -256,7 +274,7 @@ function positionOuterRing(
 
   const angleStep = (2 * Math.PI) / scored.length;
   for (let idx = 0; idx < scored.length; idx++) {
-    const item = scored[idx];
+    const item = scored[idx]!;
     const angle = idx * angleStep;
     positionMap.set(item.node.id, {
       x: centerX + radius * Math.cos(angle),
@@ -270,18 +288,20 @@ function positionOuterRing(
 /**
  * Position test nodes adjacent to their targets
  */
-function positionTestNodes(
-  testNodes: Array<{ id: string; name: string; type: string }>,
-  mainNodes: Array<{ id: string; name: string; type: string }>,
-  adj: AdjacencyList,
-  positionMap: Map<string, PositionInfo>,
-  centerX: number,
-  centerY: number,
-  baseRadius: number,
-  ringSpacing: number,
-  testOffset: number,
-  maxDepth: number,
-): void {
+function positionTestNodes(options: PositionTestNodesOptions): void {
+  const {
+    testNodes,
+    mainNodes,
+    adj,
+    positionMap,
+    centerX,
+    centerY,
+    baseRadius,
+    ringSpacing,
+    testOffset,
+    maxDepth,
+  } = options;
+
   for (const testNode of testNodes) {
     const targetId = findTestTarget(testNode.id, testNode.name, mainNodes, adj);
     const targetPos = targetId ? positionMap.get(targetId) : undefined;
@@ -365,7 +385,7 @@ export function simpleClusterLayout(
   }
 
   // Position tests adjacent to their targets
-  positionTestNodes(
+  positionTestNodes({
     testNodes,
     mainNodes,
     adj,
@@ -376,7 +396,7 @@ export function simpleClusterLayout(
     ringSpacing,
     testOffset,
     maxDepth,
-  );
+  });
 
   // Convert to result format
   return Array.from(positionMap.entries()).map(([id, pos]) => ({
