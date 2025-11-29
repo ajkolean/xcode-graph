@@ -77,7 +77,7 @@ export class GraphEdge extends LitElement {
     // Calculate distance to determine if we should use bezier curve
     const dx = x2 - x1;
     const dy = y2 - y1;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    const distance = Math.hypot(dx, dy);
     const useBezier = distance > 150;
 
     // Adjust color based on zoom level

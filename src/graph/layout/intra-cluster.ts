@@ -420,7 +420,7 @@ export function computeMEC(
   for (const pos of positions) {
     const dx = pos.x - centerX;
     const dy = pos.y - centerY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    const distance = Math.hypot(dx, dy);
     maxDistance = Math.max(maxDistance, distance);
   }
 

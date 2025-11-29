@@ -37,7 +37,7 @@ describe('GraphLoader', () => {
       expect(progressUpdates.length).toBeGreaterThan(5);
 
       // Last update should be complete
-      const lastUpdate = progressUpdates[progressUpdates.length - 1];
+      const lastUpdate = progressUpdates.at(-1);
       expect(lastUpdate.type).toBe('complete');
       expect(lastUpdate.percentage).toBe(100);
       expect(lastUpdate.loadedNodes).toBe(250);
@@ -79,7 +79,7 @@ describe('GraphLoader', () => {
       }
 
       // Final should be 100%
-      expect(percentages[percentages.length - 1]).toBe(100);
+      expect(percentages.at(-1)).toBe(100);
     });
 
     it('should include chunk data in progress updates', async () => {
@@ -194,7 +194,7 @@ describe('GraphLoader', () => {
 
       // Should complete with all chunks processed
       expect(progressUpdates.length).toBeGreaterThan(0);
-      expect(progressUpdates[progressUpdates.length - 1].type).toBe('complete');
+      expect(progressUpdates.at(-1)?.type).toBe('complete');
     });
 
     it('should yield to UI between chunks', async () => {

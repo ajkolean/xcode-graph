@@ -66,7 +66,7 @@ export interface MachineEvent {
 /**
  * Extended event with navigation helpers
  */
-export interface ExtendedEvent<T extends MachineSchema> {
+export interface ExtendedEvent<_T extends MachineSchema> {
   type: string;
   current: () => MachineEvent;
   previous: () => MachineEvent | null;
@@ -82,11 +82,19 @@ export interface ExtendedState<T extends MachineSchema> extends Bindable<T['stat
 }
 
 /**
+ * Function that can track previous dependency values
+ */
+type TrackingFunction = {
+  (): void;
+  prev?: unknown[];
+};
+
+/**
  * Tracker entry for watching dependencies
  */
 interface TrackerEntry {
   deps: Array<() => unknown>;
-  fn: VoidFunction & { prev?: unknown[] };
+  fn: TrackingFunction;
 }
 
 /**
@@ -112,7 +120,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   private previousEvent: MachineEvent | null;
 
   /** Map of state effects and their cleanup functions */
-  private effects: Map<string, VoidFunction>;
+  private readonly effects: Map<string, VoidFunction>;
 
   /** Current transition being processed */
   private transition: Transition<T> | null | undefined;
@@ -121,10 +129,10 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   private cleanups: VoidFunction[];
 
   /** Subscription callbacks */
-  private subscriptions: SubscriptionCallback<T>[];
+  private readonly subscriptions: SubscriptionCallback<T>[];
 
   /** Dependency trackers */
-  private trackers: TrackerEntry[];
+  private readonly trackers: TrackerEntry[];
 
   /** Machine scope for DOM access */
   readonly scope: Scope;
@@ -211,38 +219,52 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
 
     this.state = bindable(() => ({
       defaultValue: machine.initialState({ prop: this.prop }),
-      onChange: (nextState, prevState) => {
-        if (prevState) {
-          const exitEffects = this.effects.get(prevState);
-          exitEffects?.();
-          this.effects.delete(prevState);
-        }
-
-        if (prevState) {
-          this.action(machine.states[prevState]?.exit);
-        }
-
-        this.action(this.transition?.actions);
-
-        const cleanup = this.effect(machine.states[nextState]?.effects);
-        if (cleanup) this.effects.set(nextState, cleanup);
-
-        if (prevState === INIT_STATE) {
-          this.action(machine.entry);
-          const cleanup = this.effect(machine.effects);
-          if (cleanup) this.effects.set(INIT_STATE, cleanup);
-        }
-
-        this.action(machine.states[nextState]?.entry);
-      },
+      onChange: (nextState: T['state'], prevState: T['state']) =>
+        this.handleStateChange(nextState, prevState),
     }));
     this.cleanups.push(subscribe(this.state.ref, () => this.notify()));
   }
 
   /**
+   * Handle state transitions with proper cleanup and effect execution
+   */
+  private handleStateChange(nextState: T['state'], prevState: T['state']): void {
+    this.cleanupPreviousState(prevState);
+    this.executePreviousStateExit(prevState);
+    this.action(this.transition?.actions);
+    this.setupNextStateEffects(nextState);
+    this.handleInitialState(prevState);
+    this.action(this.machine.states[nextState]?.entry);
+  }
+
+  private cleanupPreviousState(prevState: T['state']): void {
+    if (!prevState) return;
+    const exitEffects = this.effects.get(prevState);
+    exitEffects?.();
+    this.effects.delete(prevState);
+  }
+
+  private executePreviousStateExit(prevState: T['state']): void {
+    if (!prevState) return;
+    this.action(this.machine.states[prevState]?.exit);
+  }
+
+  private setupNextStateEffects(nextState: T['state']): void {
+    const cleanup = this.effect(this.machine.states[nextState]?.effects);
+    if (cleanup) this.effects.set(nextState, cleanup);
+  }
+
+  private handleInitialState(prevState: T['state']): void {
+    if (prevState !== INIT_STATE) return;
+    this.action(this.machine.entry);
+    const cleanup = this.effect(this.machine.effects);
+    if (cleanup) this.effects.set(INIT_STATE as T['state'], cleanup);
+  }
+
+  /**
    * Send an event to the machine
    */
-  send = (event: MachineEvent): void => {
+  readonly send = (event: MachineEvent): void => {
     if (this.status !== MachineStatus.Started) return;
 
     queueMicrotask(() => {
@@ -282,12 +304,16 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
    * Stop the machine and clean up effects
    */
   stop(): void {
-    this.effects.forEach((fn) => fn?.());
+    for (const fn of this.effects.values()) {
+      fn?.();
+    }
     this.effects.clear();
     this.transition = null;
     this.action(this.machine.exit);
 
-    this.cleanups.forEach((unsub) => unsub());
+    for (const unsub of this.cleanups) {
+      unsub();
+    }
     this.cleanups = [];
 
     this.status = MachineStatus.Stopped;
@@ -296,7 +322,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   /**
    * Subscribe to machine state changes
    */
-  subscribe = (fn: SubscriptionCallback<T>): void => {
+  readonly subscribe = (fn: SubscriptionCallback<T>): void => {
     this.subscriptions.push(fn);
   };
 
@@ -320,22 +346,24 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   /**
    * Publish state changes to all subscribers
    */
-  private publish = (): void => {
+  private readonly publish = (): void => {
     this.callTrackers();
-    this.subscriptions.forEach((fn) => fn(this.service));
+    for (const fn of this.subscriptions) {
+      fn(this.service);
+    }
   };
 
   /**
    * Set up dependency trackers from machine watch config
    */
-  private setupTrackers = (): void => {
+  private readonly setupTrackers = (): void => {
     this.machine.watch?.(this.getParams() as Params<T>);
   };
 
   /**
    * Call all dependency trackers if their dependencies changed
    */
-  private callTrackers = (): void => {
+  private readonly callTrackers = (): void => {
     this.trackers.forEach(({ deps, fn }) => {
       const next = deps.map((dep) => dep());
       if (!isEqual(fn.prev, next)) {
@@ -348,7 +376,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   /**
    * Get machine params for actions, guards, and effects
    */
-  private getParams = (): Params<T> =>
+  private readonly getParams = (): Params<T> =>
     ({
       state: this.getState(),
       context: this.ctx,
@@ -357,7 +385,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
       send: this.send,
       action: this.action,
       guard: this.guard,
-      track: (deps: Array<() => unknown>, fn: VoidFunction & { prev?: unknown[] }) => {
+      track: (deps: Array<() => unknown>, fn: TrackingFunction) => {
         fn.prev = deps.map((dep) => dep());
         this.trackers.push({ deps, fn });
       },
@@ -371,7 +399,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   /**
    * Execute machine actions by key
    */
-  private action = (
+  private readonly action = (
     keys: T['action'][] | ((params: Params<T>) => T['action'][] | undefined) | undefined,
   ): void => {
     const strs = isFunction(keys) ? keys(this.getParams() as Params<T>) : keys;
@@ -392,7 +420,9 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   /**
    * Evaluate a guard condition
    */
-  private guard = (str: T['guard'] | ((params: Params<T>) => boolean)): boolean | undefined => {
+  private readonly guard = (
+    str: T['guard'] | ((params: Params<T>) => boolean),
+  ): boolean | undefined => {
     if (isFunction(str)) return str(this.getParams() as Params<T>);
     return this.machine.implementations?.guards?.[
       str as keyof typeof this.machine.implementations.guards
@@ -402,7 +432,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   /**
    * Execute machine effects and return cleanup function
    */
-  private effect = (
+  private readonly effect = (
     keys: T['effect'][] | ((params: Params<T>) => T['effect'][] | undefined) | undefined,
   ): VoidFunction | undefined => {
     const strs = isFunction(keys) ? keys(this.getParams() as Params<T>) : keys;
@@ -420,13 +450,17 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
       const cleanup = fn?.(this.getParams() as Params<T>);
       if (cleanup) cleanups.push(cleanup);
     }
-    return () => cleanups.forEach((fn) => fn?.());
+    return () => {
+      for (const fn of cleanups) {
+        fn?.();
+      }
+    };
   };
 
   /**
    * Choose the first matching transition from a list
    */
-  private choose = (
+  private readonly choose = (
     transitions: Transition<T> | Transition<T>[] | undefined,
   ): Transition<T> | undefined => {
     return toArray(transitions).find((t) => {
@@ -440,14 +474,14 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   /**
    * Notify subscribers of state changes
    */
-  private notify = (): void => {
+  private readonly notify = (): void => {
     this.publish();
   };
 
   /**
    * Get current event with navigation helpers
    */
-  private getEvent = (): ExtendedEvent<T> => ({
+  private readonly getEvent = (): ExtendedEvent<T> => ({
     ...this.event,
     current: () => this.event,
     previous: () => this.previousEvent,
@@ -456,7 +490,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   /**
    * Get current state with matching helpers
    */
-  private getState = (): ExtendedState<T> => ({
+  private readonly getState = (): ExtendedState<T> => ({
     ...this.state,
     matches: (...values: T['state'][]) => values.includes(this.state.get() as T['state']),
     hasTag: (tag: T['tag']) =>

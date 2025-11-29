@@ -19,7 +19,7 @@ export class GraphHeader extends LitElement {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
     }

@@ -81,7 +81,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: flex;
       flex: 1;

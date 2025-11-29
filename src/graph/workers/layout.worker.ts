@@ -19,12 +19,11 @@ import {
   updatePositionMap,
 } from '@graph/utils/physics/collision';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.schema';
 import { expose } from 'comlink';
 import type { LayoutInput, LayoutOutput, LayoutProgress, LayoutWorkerAPI } from './layout-api';
 
 class LayoutWorker implements LayoutWorkerAPI {
-  private animationId: number | null = null;
   private isAnimating = false;
   private currentTick = 0;
   private totalTicks = 30;

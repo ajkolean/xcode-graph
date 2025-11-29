@@ -63,7 +63,7 @@ export function applyCollisionForces<T extends CollisionEntity>(
   for (const [a, b] of pairs) {
     const dx = b.x - a.x;
     const dy = b.y - a.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    const distance = Math.hypot(dx, dy);
 
     // Skip if too far apart or overlapping exactly
     if (distance === 0 || distance > minDistance) continue;
@@ -118,7 +118,7 @@ export function updatePositions<T extends CollisionEntity>(
  * Returns radius of bounding circle
  */
 export function calculateBoundingRadius(width: number, height: number): number {
-  return Math.sqrt(width * width + height * height) / 2;
+  return Math.hypot(width, height) / 2;
 }
 
 /**
@@ -193,7 +193,7 @@ export function applyLinkForces<T extends LinkEntity>(
 
     const dx = target.x - source.x;
     const dy = target.y - source.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    const distance = Math.hypot(dx, dy);
 
     if (distance === 0) continue;
 

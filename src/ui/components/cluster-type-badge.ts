@@ -38,7 +38,7 @@ export class GraphClusterTypeBadge extends LitElement {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);

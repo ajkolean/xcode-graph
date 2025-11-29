@@ -13,8 +13,7 @@
  * ```
  */
 
-import { html, LitElement, svg } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { LitElement, svg } from 'lit';
 
 export class GraphSVGDefs extends LitElement {
   // No Shadow DOM for SVG defs - they need to be in the same SVG context

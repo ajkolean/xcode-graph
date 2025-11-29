@@ -344,7 +344,7 @@ export class GraphDataService {
     platforms: Set<string>;
   } {
     const clusterNodes = this.getClusterNodes(clusterId);
-    const clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
+    const _clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
 
     // Optimization: Use index for edge lookup?
     // We need dependencies where source is in clusterNodeIds and target is NOT (usually)

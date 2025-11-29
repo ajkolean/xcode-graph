@@ -25,7 +25,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 // ========================================
 
 export class GraphBackground extends LitElement {
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       position: absolute;
@@ -66,7 +66,7 @@ export class GraphControls extends LitElement {
   @property({ type: Boolean, attribute: 'enable-animation' })
   declare enableAnimation: boolean;
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       position: absolute;
@@ -231,7 +231,7 @@ export class GraphControls extends LitElement {
 // ========================================
 
 export class GraphEmptyStateOverlay extends LitElement {
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       position: absolute;
@@ -283,7 +283,7 @@ export class GraphEmptyStateOverlay extends LitElement {
 // ========================================
 
 export class GraphInstructions extends LitElement {
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       position: absolute;

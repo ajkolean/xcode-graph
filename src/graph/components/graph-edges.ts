@@ -20,7 +20,6 @@ import { type ClusterPosition, type NodePosition, ViewMode } from '@shared/schem
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { html, LitElement } from 'lit';
-import { property } from 'lit/decorators.js';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {

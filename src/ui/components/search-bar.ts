@@ -36,7 +36,7 @@ export class GraphSearchBar extends LitElement {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       padding: 0 var(--spacing-md) var(--spacing-sm);

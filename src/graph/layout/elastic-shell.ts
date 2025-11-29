@@ -107,7 +107,7 @@ function computeOutwardPressure(nodes: NodeWithPosition[], masses: Map<string, N
     const mass = massData ? massData.mass : 1.0;
 
     // Distance from cluster center
-    const distFromCenter = Math.sqrt(node.x * node.x + node.y * node.y);
+    const distFromCenter = Math.hypot(node.x, node.y);
 
     // Avoid division by zero
     if (distFromCenter < 1) continue;

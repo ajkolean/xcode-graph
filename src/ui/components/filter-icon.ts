@@ -47,7 +47,7 @@ export class GraphFilterIcon extends LitElement {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;

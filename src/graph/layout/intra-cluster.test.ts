@@ -81,7 +81,7 @@ describe('simpleClusterLayout', () => {
       result.forEach((node) => {
         const dx = node.x - centerX;
         const dy = node.y - centerY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const distance = Math.hypot(dx, dy);
 
         // Distance should be reasonable (based on ring)
         expect(distance).toBeGreaterThanOrEqual(0);

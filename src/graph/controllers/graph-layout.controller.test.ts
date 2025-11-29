@@ -5,7 +5,7 @@
 
 import type { ReactiveController } from 'lit';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createLinearChain, createNode } from '@/fixtures';
+import { createLinearChain } from '@/fixtures';
 import { GraphLayoutController } from './graph-layout.controller';
 
 // Mock host
@@ -22,11 +22,15 @@ class MockHost {
   }
 
   connectedCallback() {
-    this.controllers.forEach((c) => c.hostConnected?.());
+    for (const c of this.controllers) {
+      c.hostConnected?.();
+    }
   }
 
   disconnectedCallback() {
-    this.controllers.forEach((c) => c.hostDisconnected?.());
+    for (const c of this.controllers) {
+      c.hostDisconnected?.();
+    }
   }
 }
 

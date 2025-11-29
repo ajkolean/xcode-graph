@@ -13,8 +13,7 @@
  * ```
  */
 
-import { css, html, LitElement, svg } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { css, LitElement, svg } from 'lit';
 
 const iconColor = 'rgba(168, 157, 255, 0.7)';
 
@@ -23,7 +22,7 @@ const iconColor = 'rgba(168, 157, 255, 0.7)';
 // ========================================
 
 export class GraphProductTypesIcon extends LitElement {
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
@@ -56,7 +55,7 @@ export class GraphProductTypesIcon extends LitElement {
 // ========================================
 
 export class GraphPlatformsIcon extends LitElement {
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
@@ -94,7 +93,7 @@ export class GraphPlatformsIcon extends LitElement {
 // ========================================
 
 export class GraphProjectsIcon extends LitElement {
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
@@ -124,7 +123,7 @@ export class GraphProjectsIcon extends LitElement {
 // ========================================
 
 export class GraphPackagesIcon extends LitElement {
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: inline-block;
       flex-shrink: 0;

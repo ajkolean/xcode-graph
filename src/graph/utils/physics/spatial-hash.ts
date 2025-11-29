@@ -101,7 +101,9 @@ export class SpatialHash<T extends SpatialEntity> {
     for (const cellKey of cells) {
       const cellEntities = this.grid.get(cellKey);
       if (cellEntities) {
-        cellEntities.forEach((e) => nearby.add(e));
+        for (const e of cellEntities) {
+          nearby.add(e);
+        }
       }
 
       // Also check adjacent cells
@@ -112,7 +114,9 @@ export class SpatialHash<T extends SpatialEntity> {
           const adjacentKey = this.getCellKey(cellX + dx, cellY + dy);
           const adjacentEntities = this.grid.get(adjacentKey);
           if (adjacentEntities) {
-            adjacentEntities.forEach((e) => nearby.add(e));
+            for (const e of adjacentEntities) {
+              nearby.add(e);
+            }
           }
         }
       }

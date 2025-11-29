@@ -74,7 +74,7 @@ export class GraphVirtualRenderer extends LitElement {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: contents;
     }

@@ -122,7 +122,7 @@ export function identifyAnchors(
 
 // Helper: Count internal dependencies for a node
 function countInternalDependencies(
-  nodeId: string,
+  _nodeId: string,
   deps: Set<string>,
   nodeIds: Set<string>,
   testNodes: Set<string>,

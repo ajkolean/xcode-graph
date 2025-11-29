@@ -50,8 +50,6 @@ export interface PhysicsConfig {
  * Forces are scaled by alpha for gradual settling behavior.
  */
 export class PhysicsController implements ReactiveController {
-  private host: ReactiveControllerHost;
-
   // Configuration
   private nodeCollisionStrength: number;
   private clusterCollisionStrength: number;

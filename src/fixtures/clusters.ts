@@ -37,11 +37,17 @@ export function createCluster(overrides: Partial<Cluster> = {}): Cluster {
   ];
 
   const metadata = new Map<string, ClusterNodeMetadata>();
+  const getRoleForIndex = (idx: number): NodeRole => {
+    if (idx === 0) return NodeRole.Entry;
+    if (idx === 2) return NodeRole.Test;
+    return NodeRole.InternalLib;
+  };
+
   defaultNodes.forEach((node, index) => {
     metadata.set(
       node.id,
       createNodeMetadata(node.id, {
-        role: index === 0 ? NodeRole.Entry : index === 2 ? NodeRole.Test : NodeRole.InternalLib,
+        role: getRoleForIndex(index),
         layer: index === 0 ? 0 : 1,
         isAnchor: index === 0,
       }),
@@ -79,11 +85,17 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
     const isAnchor = i === 0;
     const isTest = i === nodeCount - 1 && nodeCount > 2;
 
+    const getNodeType = (): NodeType => {
+      if (isTest) return NodeType.TestUnit;
+      if (isAnchor) return NodeType.Framework;
+      return NodeType.Library;
+    };
+
     nodes.push(
       createNode({
         id,
         name: `Node${i}`,
-        type: isTest ? NodeType.TestUnit : isAnchor ? NodeType.Framework : NodeType.Library,
+        type: getNodeType(),
       }),
     );
 

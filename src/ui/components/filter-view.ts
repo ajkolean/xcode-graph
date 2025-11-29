@@ -111,7 +111,7 @@ export class GraphFilterView extends LitElement {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: flex;
       flex-direction: column;

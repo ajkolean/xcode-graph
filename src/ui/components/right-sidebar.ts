@@ -93,7 +93,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       flex-shrink: 0;
@@ -255,27 +255,22 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
     checked: boolean,
   ) {
     const current = filters.get();
-    const next = { ...current };
+    const filterKeyMap = {
+      nodeType: 'nodeTypes',
+      platform: 'platforms',
+      project: 'projects',
+      package: 'packages',
+    } as const;
 
-    if (type === 'nodeType') {
-      const set = new Set(current.nodeTypes);
-      checked ? set.add(key) : set.delete(key);
-      next.nodeTypes = set;
-    } else if (type === 'platform') {
-      const set = new Set(current.platforms);
-      checked ? set.add(key) : set.delete(key);
-      next.platforms = set;
-    } else if (type === 'project') {
-      const set = new Set(current.projects);
-      checked ? set.add(key) : set.delete(key);
-      next.projects = set;
-    } else if (type === 'package') {
-      const set = new Set(current.packages);
-      checked ? set.add(key) : set.delete(key);
-      next.packages = set;
+    const filterKey = filterKeyMap[type];
+    const set = new Set(current[filterKey]);
+    if (checked) {
+      set.add(key);
+    } else {
+      set.delete(key);
     }
 
-    setFilters(next);
+    setFilters({ ...current, [filterKey]: set });
   }
 
   private handlePreviewChange(preview: PreviewFilter) {
@@ -307,6 +302,244 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
       const element = this.shadowRoot?.getElementById(`filter-section-${section}`);
       element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  }
+
+  // ========================================
+  // Render Helpers
+  // ========================================
+
+  private renderCollapsedSidebar(currentFilters: ReturnType<typeof filters.get>) {
+    return html`
+      <graph-collapsed-sidebar
+        .filteredNodes=${this.filteredNodes}
+        .filteredEdges=${this.filteredEdges}
+        .typeCounts=${this.filterData.typeCounts}
+        .platformCounts=${this.filterData.platformCounts}
+        node-types-filter-size=${currentFilters.nodeTypes.size}
+        platforms-filter-size=${currentFilters.platforms.size}
+        .projectCounts=${this.filterData.projectCounts}
+        .packageCounts=${this.filterData.packageCounts}
+        projects-filter-size=${currentFilters.projects.size}
+        packages-filter-size=${currentFilters.packages.size}
+        @expand-to-section=${(e: CustomEvent) =>
+          this.handleExpandToSection(e.detail.section as SidebarSection)}
+      ></graph-collapsed-sidebar>
+    `;
+  }
+
+  private renderNodeDetails(node: GraphNode, currentViewMode: string, currentZoom: number) {
+    return html`
+      <graph-node-details-panel
+        .node=${node}
+        .allNodes=${this.allNodes}
+        .edges=${this.allEdges}
+        .filteredEdges=${this.filteredEdges}
+        .clusters=${this.clusters}
+        view-mode=${currentViewMode}
+        .zoom=${currentZoom}
+        @close=${() => selectNode(null)}
+        @node-select=${(e: CustomEvent) => selectNode(e.detail.node)}
+        @cluster-select=${(e: CustomEvent) => selectCluster(e.detail.clusterId)}
+        @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
+        @focus-node=${(e: CustomEvent) => focusNode(e.detail.node)}
+        @show-dependents=${(e: CustomEvent) => showDependents(e.detail.node)}
+        @show-impact=${(e: CustomEvent) => showImpact(e.detail.node)}
+      ></graph-node-details-panel>
+    `;
+  }
+
+  private renderClusterDetails(clusterId: string, currentZoom: number) {
+    return html`
+      <graph-cluster-details-panel
+        .cluster=${this.findClusterById(clusterId)}
+        .clusterNodes=${this.allNodes.filter(
+          (n) => (n.type === 'package' ? n.name : n.project) === clusterId,
+        )}
+        .allNodes=${this.allNodes}
+        .edges=${this.allEdges}
+        .filteredEdges=${this.filteredEdges}
+        .zoom=${currentZoom}
+        @close=${() => selectCluster(null)}
+        @node-select=${(e: CustomEvent) => selectNode(e.detail.node)}
+        @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
+      ></graph-cluster-details-panel>
+    `;
+  }
+
+  private renderFilterView(
+    currentFilters: ReturnType<typeof filters.get>,
+    currentSearchQuery: string,
+    currentZoom: number,
+    isFiltersActive: boolean,
+    expandedSections: ReturnType<typeof this.sidebar.get<'expandedSections'>>,
+    nodeTypeItems: Array<{ key: string; count: number; color: string }>,
+    platformItems: Array<{ key: string; count: number; color: string }>,
+    projectItems: Array<{ key: string; count: number; color: string }>,
+    packageItems: Array<{ key: string; count: number; color: string }>,
+  ) {
+    return html`
+      <div class="filter-content">
+        <div class="stats-row">
+          <graph-stats-card
+            label="Nodes"
+            value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
+            ?highlighted=${isFiltersActive}
+          ></graph-stats-card>
+          <graph-stats-card
+            label="Dependencies"
+            value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
+            ?highlighted=${isFiltersActive}
+          ></graph-stats-card>
+        </div>
+
+        <graph-clear-filters-button
+          ?is-active=${isFiltersActive || !!currentSearchQuery}
+          @clear-filters=${() => this.handleClearFilters()}
+        ></graph-clear-filters-button>
+
+        <graph-search-bar
+          search-query=${currentSearchQuery || ''}
+          @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
+          @search-clear=${() => this.handleSearchChange('')}
+        ></graph-search-bar>
+
+        <div class="filter-scroll">
+          <div class="filter-sections">
+            ${this.renderFilterSections(
+              currentFilters,
+              currentZoom,
+              expandedSections,
+              nodeTypeItems,
+              platformItems,
+              projectItems,
+              packageItems,
+            )}
+          </div>
+
+          ${
+            this.filteredNodes?.length === 0
+              ? html`
+                <graph-empty-state
+                  ?has-active-filters=${isFiltersActive || !!currentSearchQuery}
+                  @clear-filters=${() => this.handleClearFilters()}
+                ></graph-empty-state>
+              `
+              : ''
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  private renderFilterSections(
+    currentFilters: ReturnType<typeof filters.get>,
+    currentZoom: number,
+    expandedSections: ReturnType<typeof this.sidebar.get<'expandedSections'>>,
+    nodeTypeItems: Array<{ key: string; count: number; color: string }>,
+    platformItems: Array<{ key: string; count: number; color: string }>,
+    projectItems: Array<{ key: string; count: number; color: string }>,
+    packageItems: Array<{ key: string; count: number; color: string }>,
+  ) {
+    return html`
+      <graph-filter-section
+        id="productTypes"
+        title="Product Types"
+        icon-name="product-types"
+        .items=${nodeTypeItems}
+        .selectedItems=${currentFilters.nodeTypes}
+        ?is-expanded=${expandedSections.productTypes}
+        filter-type="nodeType"
+        .zoom=${currentZoom}
+        @section-toggle=${() => this.handleToggleSection('productTypes')}
+        @item-toggle=${(e: CustomEvent) =>
+          this.handleItemToggle('nodeType', e.detail.key, e.detail.checked)}
+        @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+      ></graph-filter-section>
+
+      <graph-filter-section
+        id="platforms"
+        title="Platforms"
+        icon-name="platforms"
+        .items=${platformItems}
+        .selectedItems=${currentFilters.platforms}
+        ?is-expanded=${expandedSections.platforms}
+        filter-type="platform"
+        .zoom=${currentZoom}
+        @section-toggle=${() => this.handleToggleSection('platforms')}
+        @item-toggle=${(e: CustomEvent) =>
+          this.handleItemToggle('platform', e.detail.key, e.detail.checked)}
+        @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+      ></graph-filter-section>
+
+      <graph-filter-section
+        id="projects"
+        title="Projects"
+        icon-name="projects"
+        .items=${projectItems}
+        .selectedItems=${currentFilters.projects}
+        ?is-expanded=${expandedSections.projects}
+        filter-type="project"
+        .zoom=${currentZoom}
+        @section-toggle=${() => this.handleToggleSection('projects')}
+        @item-toggle=${(e: CustomEvent) =>
+          this.handleItemToggle('project', e.detail.key, e.detail.checked)}
+        @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+      ></graph-filter-section>
+
+      ${
+        packageItems.length
+          ? html`
+            <graph-filter-section
+              id="packages"
+              title="Packages"
+              icon-name="packages"
+              .items=${packageItems}
+              .selectedItems=${currentFilters.packages}
+              ?is-expanded=${expandedSections.packages}
+              filter-type="package"
+              .zoom=${currentZoom}
+              @section-toggle=${() => this.handleToggleSection('packages')}
+              @item-toggle=${(e: CustomEvent) =>
+                this.handleItemToggle('package', e.detail.key, e.detail.checked)}
+              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+            ></graph-filter-section>
+          `
+          : ''
+      }
+    `;
+  }
+
+  private renderExpandedContent(
+    currentSelectedNode: GraphNode | null,
+    currentSelectedCluster: string | null,
+    currentViewMode: string,
+    currentZoom: number,
+    currentFilters: ReturnType<typeof filters.get>,
+    currentSearchQuery: string,
+    isFiltersActive: boolean,
+    expandedSections: ReturnType<typeof this.sidebar.get<'expandedSections'>>,
+    nodeTypeItems: Array<{ key: string; count: number; color: string }>,
+    platformItems: Array<{ key: string; count: number; color: string }>,
+    projectItems: Array<{ key: string; count: number; color: string }>,
+    packageItems: Array<{ key: string; count: number; color: string }>,
+  ) {
+    if (currentSelectedNode) {
+      return this.renderNodeDetails(currentSelectedNode, currentViewMode, currentZoom);
+    }
+    if (currentSelectedCluster) {
+      return this.renderClusterDetails(currentSelectedCluster, currentZoom);
+    }
+    return this.renderFilterView(
+      currentFilters,
+      currentSearchQuery,
+      currentZoom,
+      isFiltersActive,
+      expandedSections,
+      nodeTypeItems,
+      platformItems,
+      projectItems,
+      packageItems,
+    );
   }
 
   // ========================================
@@ -361,6 +594,23 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
       this.removeAttribute('collapsed');
     }
 
+    const sidebarContent = isCollapsed
+      ? this.renderCollapsedSidebar(currentFilters)
+      : this.renderExpandedContent(
+          currentSelectedNode,
+          currentSelectedCluster,
+          currentViewMode,
+          currentZoom,
+          currentFilters,
+          currentSearchQuery,
+          isFiltersActive,
+          expandedSections,
+          nodeTypeItems,
+          platformItems,
+          projectItems,
+          packageItems,
+        );
+
     return html`
       <aside>
         <graph-right-sidebar-header
@@ -369,180 +619,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
           @toggle-collapse=${this.handleToggleCollapse}
         ></graph-right-sidebar-header>
 
-        ${
-          isCollapsed
-            ? html`
-              <graph-collapsed-sidebar
-                .filteredNodes=${this.filteredNodes}
-                .filteredEdges=${this.filteredEdges}
-                .typeCounts=${this.filterData.typeCounts}
-                .platformCounts=${this.filterData.platformCounts}
-                node-types-filter-size=${currentFilters.nodeTypes.size}
-                platforms-filter-size=${currentFilters.platforms.size}
-                .projectCounts=${this.filterData.projectCounts}
-                .packageCounts=${this.filterData.packageCounts}
-                projects-filter-size=${currentFilters.projects.size}
-                packages-filter-size=${currentFilters.packages.size}
-                @expand-to-section=${(e: CustomEvent) =>
-                  this.handleExpandToSection(e.detail.section as SidebarSection)}
-              ></graph-collapsed-sidebar>
-            `
-            : html`
-              <!-- Node Details -->
-              ${
-                currentSelectedNode
-                  ? html`
-                    <graph-node-details-panel
-                      .node=${currentSelectedNode}
-                      .allNodes=${this.allNodes}
-                      .edges=${this.allEdges}
-                      .filteredEdges=${this.filteredEdges}
-                      .clusters=${this.clusters}
-                      view-mode=${currentViewMode}
-                      .zoom=${currentZoom}
-                      @close=${() => selectNode(null)}
-                      @node-select=${(e: CustomEvent) => selectNode(e.detail.node)}
-                      @cluster-select=${(e: CustomEvent) => selectCluster(e.detail.clusterId)}
-                      @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
-                      @focus-node=${(e: CustomEvent) => focusNode(e.detail.node)}
-                      @show-dependents=${(e: CustomEvent) => showDependents(e.detail.node)}
-                      @show-impact=${(e: CustomEvent) => showImpact(e.detail.node)}
-                    ></graph-node-details-panel>
-                  `
-                  : currentSelectedCluster
-                    ? html`
-                      <graph-cluster-details-panel
-                        .cluster=${this.findClusterById(currentSelectedCluster)}
-                        .clusterNodes=${this.allNodes.filter(
-                          (n) =>
-                            (n.type === 'package' ? n.name : n.project) === currentSelectedCluster,
-                        )}
-                        .allNodes=${this.allNodes}
-                        .edges=${this.allEdges}
-                        .filteredEdges=${this.filteredEdges}
-                        .zoom=${currentZoom}
-                        @close=${() => selectCluster(null)}
-                        @node-select=${(e: CustomEvent) => selectNode(e.detail.node)}
-                        @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
-                      ></graph-cluster-details-panel>
-                    `
-                    : html`
-                      <!-- FilterView - Using React wrapper that contains all Lit children -->
-                      <div class="filter-content">
-                        <div class="stats-row">
-                          <graph-stats-card
-                            label="Nodes"
-                            value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
-                            ?highlighted=${isFiltersActive}
-                          ></graph-stats-card>
-                          <graph-stats-card
-                            label="Dependencies"
-                            value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
-                            ?highlighted=${isFiltersActive}
-                          ></graph-stats-card>
-                        </div>
-
-                        <graph-clear-filters-button
-                          ?is-active=${isFiltersActive || !!currentSearchQuery}
-                          @clear-filters=${() => this.handleClearFilters()}
-                        ></graph-clear-filters-button>
-
-                        <graph-search-bar
-                          search-query=${currentSearchQuery || ''}
-                          @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
-                          @search-clear=${() => this.handleSearchChange('')}
-                        ></graph-search-bar>
-
-                        <div class="filter-scroll">
-                          <div class="filter-sections">
-                            <graph-filter-section
-                              id="productTypes"
-                              title="Product Types"
-                              icon-name="product-types"
-                              .items=${nodeTypeItems}
-                              .selectedItems=${currentFilters.nodeTypes}
-                              ?is-expanded=${expandedSections.productTypes}
-                              filter-type="nodeType"
-                              .zoom=${currentZoom}
-                              @section-toggle=${() => this.handleToggleSection('productTypes')}
-                              @item-toggle=${(e: CustomEvent) =>
-                                this.handleItemToggle('nodeType', e.detail.key, e.detail.checked)}
-                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
-                            ></graph-filter-section>
-
-                            <graph-filter-section
-                              id="platforms"
-                              title="Platforms"
-                              icon-name="platforms"
-                              .items=${platformItems}
-                              .selectedItems=${currentFilters.platforms}
-                              ?is-expanded=${expandedSections.platforms}
-                              filter-type="platform"
-                              .zoom=${currentZoom}
-                              @section-toggle=${() => this.handleToggleSection('platforms')}
-                              @item-toggle=${(e: CustomEvent) =>
-                                this.handleItemToggle('platform', e.detail.key, e.detail.checked)}
-                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
-                            ></graph-filter-section>
-
-                            <graph-filter-section
-                              id="projects"
-                              title="Projects"
-                              icon-name="projects"
-                              .items=${projectItems}
-                              .selectedItems=${currentFilters.projects}
-                              ?is-expanded=${expandedSections.projects}
-                              filter-type="project"
-                              .zoom=${currentZoom}
-                              @section-toggle=${() => this.handleToggleSection('projects')}
-                              @item-toggle=${(e: CustomEvent) =>
-                                this.handleItemToggle('project', e.detail.key, e.detail.checked)}
-                              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
-                            ></graph-filter-section>
-
-                            ${
-                              packageItems.length
-                                ? html`
-                                  <graph-filter-section
-                                    id="packages"
-                                    title="Packages"
-                                    icon-name="packages"
-                                    .items=${packageItems}
-                                    .selectedItems=${currentFilters.packages}
-                                    ?is-expanded=${expandedSections.packages}
-                                    filter-type="package"
-                                    .zoom=${currentZoom}
-                                    @section-toggle=${() => this.handleToggleSection('packages')}
-                                    @item-toggle=${(e: CustomEvent) =>
-                                      this.handleItemToggle(
-                                        'package',
-                                        e.detail.key,
-                                        e.detail.checked,
-                                      )}
-                                    @preview-change=${(e: CustomEvent) =>
-                                      this.handlePreviewChange(e.detail)}
-                                  ></graph-filter-section>
-                                `
-                                : ''
-                            }
-                          </div>
-
-                          ${
-                            this.filteredNodes?.length === 0
-                              ? html`
-                                <graph-empty-state
-                                  ?has-active-filters=${isFiltersActive || !!currentSearchQuery}
-                                  @clear-filters=${() => this.handleClearFilters()}
-                                ></graph-empty-state>
-                              `
-                              : ''
-                          }
-                        </div>
-                      </div>
-                    `
-              }
-            `
-        }
+        ${sidebarContent}
       </aside>
     `;
   }
