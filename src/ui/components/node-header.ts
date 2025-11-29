@@ -111,11 +111,12 @@ export class GraphNodeHeader extends LitElement {
     const clusterDisplayColor = adjustColorForZoom(clusterColor, this.zoom);
 
     const showClusterBadge = this.node.project || this.node.type === 'package';
-    const subtitle = showClusterBadge
-      ? this.node.type === 'package'
-        ? this.node.name
-        : this.node.project
-      : undefined;
+    const getSubtitle = (): string | undefined => {
+      if (!showClusterBadge) return undefined;
+      if (this.node.type === 'package') return this.node.name;
+      return this.node.project;
+    };
+    const subtitle = getSubtitle();
 
     return html`
       <graph-panel-header

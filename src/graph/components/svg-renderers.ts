@@ -435,6 +435,134 @@ export interface GraphEdgesOptions {
   viewportBounds?: ViewportBounds; // Optional viewport culling
 }
 
+// Helper types for edge rendering
+interface EdgeEndpoints {
+  sourceNode: GraphNode;
+  targetNode: GraphNode;
+  sourceClusterId: string;
+  targetClusterId: string;
+}
+
+interface EdgePositions {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+interface EdgeVisualState {
+  isHighlighted: boolean;
+  isFocused: boolean;
+  shouldDim: boolean;
+  shouldAnimate: boolean;
+  isCrossCluster: boolean;
+}
+
+/**
+ * Resolves source and target nodes for an edge
+ */
+function resolveEdgeEndpoints(
+  edge: GraphEdge,
+  nodes: GraphNode[],
+  nodeMap?: Map<string, GraphNode>,
+): EdgeEndpoints | null {
+  const sourceNode = nodeMap ? nodeMap.get(edge.source) : nodes.find((n) => n.id === edge.source);
+  const targetNode = nodeMap ? nodeMap.get(edge.target) : nodes.find((n) => n.id === edge.target);
+
+  if (!sourceNode || !targetNode) return null;
+
+  return {
+    sourceNode,
+    targetNode,
+    sourceClusterId: sourceNode.project || 'External',
+    targetClusterId: targetNode.project || 'External',
+  };
+}
+
+/**
+ * Determines if an edge should be rendered based on cluster context
+ */
+function shouldRenderEdge(endpoints: EdgeEndpoints, clusterId?: string): boolean {
+  const { sourceClusterId, targetClusterId } = endpoints;
+
+  if (clusterId) {
+    // When viewing a specific cluster, only show intra-cluster edges
+    return sourceClusterId === clusterId && targetClusterId === clusterId;
+  }
+  // When viewing all clusters, only show cross-cluster edges
+  return sourceClusterId !== targetClusterId;
+}
+
+/**
+ * Calculates edge positions with viewport culling
+ */
+function calculateEdgePositions(
+  edge: GraphEdge,
+  endpoints: EdgeEndpoints,
+  layoutNodePositions: Map<string, NodePosition>,
+  clusterPositions: Map<string, ClusterPosition>,
+  manualNodePositions?: Map<string, { x: number; y: number }>,
+  viewportBounds?: ViewportBounds,
+): EdgePositions | null {
+  const { sourceClusterId, targetClusterId } = endpoints;
+
+  const layoutSourcePos = layoutNodePositions.get(edge.source);
+  const layoutTargetPos = layoutNodePositions.get(edge.target);
+  const sourceCluster = clusterPositions.get(sourceClusterId);
+  const targetCluster = clusterPositions.get(targetClusterId);
+
+  if (!layoutSourcePos || !layoutTargetPos || !sourceCluster || !targetCluster) return null;
+
+  // Resolve positions (manual overrides layout)
+  const sourceManual = manualNodePositions?.get(edge.source);
+  const targetManual = manualNodePositions?.get(edge.target);
+
+  const sourceX = sourceManual?.x ?? layoutSourcePos.x;
+  const sourceY = sourceManual?.y ?? layoutSourcePos.y;
+  const targetX = targetManual?.x ?? layoutTargetPos.x;
+  const targetY = targetManual?.y ?? layoutTargetPos.y;
+
+  const x1 = sourceCluster.x + sourceX;
+  const y1 = sourceCluster.y + sourceY;
+  const x2 = targetCluster.x + targetX;
+  const y2 = targetCluster.y + targetY;
+
+  // Viewport culling: skip edges outside visible area
+  if (viewportBounds && !isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewportBounds)) {
+    return null;
+  }
+
+  return { x1, y1, x2, y2 };
+}
+
+/**
+ * Determines the visual state of an edge
+ */
+function getEdgeVisualState(
+  edge: GraphEdge,
+  endpoints: EdgeEndpoints,
+  selectedNode: GraphNode | null,
+  hoveredNode: string | null,
+  hoveredClusterId: string | null,
+  clusterId?: string,
+): EdgeVisualState {
+  const { sourceClusterId, targetClusterId } = endpoints;
+
+  const isHighlighted = !!(
+    selectedNode &&
+    (edge.source === selectedNode.id || edge.target === selectedNode.id)
+  );
+  const isFocused = hoveredNode === edge.source || hoveredNode === edge.target;
+  const isConnectedToHoveredCluster =
+    hoveredClusterId &&
+    (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
+  const shouldDim = !!(hoveredClusterId && !isConnectedToHoveredCluster);
+  const isCrossCluster = !clusterId;
+  const shouldAnimate = isFocused || isHighlighted;
+
+  return { isHighlighted, isFocused, shouldDim, shouldAnimate, isCrossCluster };
+}
+
 function getEdgeOpacity(
   edge: GraphEdge,
   viewMode: string,
@@ -498,96 +626,41 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
 
   return svg`
     ${edges.map((edge) => {
-      let sourceNode: GraphNode | undefined;
-      let targetNode: GraphNode | undefined;
+      const endpoints = resolveEdgeEndpoints(edge, nodes, nodeMap);
+      if (!endpoints) return nothing;
 
-      if (nodeMap) {
-        sourceNode = nodeMap.get(edge.source);
-        targetNode = nodeMap.get(edge.target);
-      } else {
-        sourceNode = nodes.find((n) => n.id === edge.source);
-        targetNode = nodes.find((n) => n.id === edge.target);
-      }
+      if (!shouldRenderEdge(endpoints, clusterId)) return nothing;
 
-      if (!sourceNode || !targetNode) return nothing;
+      const positions = calculateEdgePositions(
+        edge,
+        endpoints,
+        layoutNodePositions,
+        clusterPositions,
+        manualNodePositions,
+        viewportBounds,
+      );
+      if (!positions) return nothing;
 
-      const sourceClusterId = sourceNode.project || 'External';
-      const targetClusterId = targetNode.project || 'External';
+      const visualState = getEdgeVisualState(
+        edge,
+        endpoints,
+        selectedNode,
+        hoveredNode,
+        hoveredClusterId ?? null,
+        clusterId,
+      );
 
-      // Filter based on cluster context
-      if (clusterId) {
-        if (sourceClusterId !== clusterId || targetClusterId !== clusterId) return nothing;
-      } else {
-        if (sourceClusterId === targetClusterId) return nothing;
-      }
-
-      const layoutSourcePos = layoutNodePositions.get(edge.source);
-      const layoutTargetPos = layoutNodePositions.get(edge.target);
-      const sourceCluster = clusterPositions.get(sourceClusterId);
-      const targetCluster = clusterPositions.get(targetClusterId);
-
-      if (!layoutSourcePos || !layoutTargetPos || !sourceCluster || !targetCluster) return nothing;
-
-      // Resolve positions (manual overrides layout)
-      const sourceManual = manualNodePositions?.get(edge.source);
-      const targetManual = manualNodePositions?.get(edge.target);
-
-      const sourceX = sourceManual?.x ?? layoutSourcePos.x;
-      const sourceY = sourceManual?.y ?? layoutSourcePos.y;
-      const targetX = targetManual?.x ?? layoutTargetPos.x;
-      const targetY = targetManual?.y ?? layoutTargetPos.y;
-
-      // Viewport culling: skip edges outside visible area
-      if (viewportBounds) {
-        const absoluteSourceX = sourceCluster.x + sourceX;
-        const absoluteSourceY = sourceCluster.y + sourceY;
-        const absoluteTargetX = targetCluster.x + targetX;
-        const absoluteTargetY = targetCluster.y + targetY;
-
-        if (
-          !isLineInViewport(
-            { x: absoluteSourceX, y: absoluteSourceY },
-            { x: absoluteTargetX, y: absoluteTargetY },
-            viewportBounds,
-          )
-        ) {
-          return nothing; // Edge not visible, skip rendering
-        }
-      }
-
-      const x1 = sourceCluster.x + sourceX;
-      const y1 = sourceCluster.y + sourceY;
-      const x2 = targetCluster.x + targetX;
-      const y2 = targetCluster.y + targetY;
-
-      const isHighlighted =
-        selectedNode && (edge.source === selectedNode.id || edge.target === selectedNode.id);
-      const isFocused = hoveredNode === edge.source || hoveredNode === edge.target;
-
-      const isConnectedToHoveredCluster =
-        hoveredClusterId &&
-        (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
-
-      const shouldDim = hoveredClusterId && !isConnectedToHoveredCluster;
-      const edgeColor = getNodeTypeColor(targetNode.type);
-      const isCrossCluster = !clusterId;
-      const shouldAnimate = isFocused || isHighlighted;
-
-      const opacity = shouldDim
-        ? getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents) * 0.08
-        : getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
+      const baseOpacity = getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
+      const opacity = visualState.shouldDim ? baseOpacity * 0.08 : baseOpacity;
 
       return renderGraphEdge({
-        x1,
-        y1,
-        x2,
-        y2,
-        color: edgeColor,
-        isHighlighted: isHighlighted || isFocused,
-        isDependent: isCrossCluster,
+        ...positions,
+        color: getNodeTypeColor(endpoints.targetNode.type),
+        isHighlighted: visualState.isHighlighted || visualState.isFocused,
+        isDependent: visualState.isCrossCluster,
         opacity,
         zoom,
-        animated: shouldAnimate,
+        animated: visualState.shouldAnimate,
       });
     })}
   `;
@@ -624,7 +697,7 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
   const {
     cluster,
     clusterPosition,
-    nodes,
+    nodes: _nodes,
     edges,
     layoutNodePositions,
     manualNodePositions,

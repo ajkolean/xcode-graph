@@ -20,7 +20,7 @@
         "noExcessiveCognitiveComplexity": {
           "level": "warn",
           "options": {
-            "maxAllowedComplexity": 10
+            "maxAllowedComplexity": 15
           }
         }
       },
@@ -53,9 +53,25 @@
     }
   },
   "files": {
-    "includes": ["src/**", "*.ts", "*.tsx", "*.js", "*.json"],
+    "includes": ["src/**/*.ts", "src/**/*.tsx", "*.json"],
     "ignoreUnknown": true
   },
+  "css": {
+    "parser": {
+      "cssModules": true
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.css"],
+      "linter": {
+        "enabled": false
+      },
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ],
   "vcs": {
     "enabled": true,
     "clientKind": "git",

@@ -207,7 +207,7 @@ declare module 'storybook/test' {
   interface Expect {
     <T>(actual: T): Assertion<T>;
     anything(): unknown;
-    any(constructor: new (...args: unknown[]) => unknown): unknown;
+    any(ctor: new (...args: unknown[]) => unknown): unknown;
     arrayContaining<T>(expected: T[]): T[];
     objectContaining<T>(expected: Partial<T>): T;
     stringContaining(expected: string): string;

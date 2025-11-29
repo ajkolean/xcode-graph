@@ -99,30 +99,44 @@ export class SpatialHash<T extends SpatialEntity> {
     const cells = this.getCellsForEntity(entity);
 
     for (const cellKey of cells) {
-      const cellEntities = this.grid.get(cellKey);
-      if (cellEntities) {
-        for (const e of cellEntities) {
-          nearby.add(e);
-        }
-      }
+      this.collectEntitiesFromCell(cellKey, nearby);
 
       // Also check adjacent cells
-      const [cellX, cellY] = this.parseCellKey(cellKey);
-      for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= 1; dy++) {
-          if (dx === 0 && dy === 0) continue; // Already checked above
-          const adjacentKey = this.getCellKey(cellX + dx, cellY + dy);
-          const adjacentEntities = this.grid.get(adjacentKey);
-          if (adjacentEntities) {
-            for (const e of adjacentEntities) {
-              nearby.add(e);
-            }
-          }
-        }
+      for (const adjacentKey of this.getAdjacentCellKeys(cellKey)) {
+        this.collectEntitiesFromCell(adjacentKey, nearby);
       }
     }
 
     return Array.from(nearby);
+  }
+
+  /**
+   * Collects entities from a cell into a set
+   */
+  private collectEntitiesFromCell(cellKey: string, target: Set<T>): void {
+    const cellEntities = this.grid.get(cellKey);
+    if (cellEntities) {
+      for (const e of cellEntities) {
+        target.add(e);
+      }
+    }
+  }
+
+  /**
+   * Gets all 8 adjacent cell keys for a given cell
+   */
+  private getAdjacentCellKeys(cellKey: string): string[] {
+    const [cellX, cellY] = this.parseCellKey(cellKey);
+    const keys: string[] = [];
+
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        if (dx === 0 && dy === 0) continue;
+        keys.push(this.getCellKey(cellX + dx, cellY + dy));
+      }
+    }
+
+    return keys;
   }
 
   /**

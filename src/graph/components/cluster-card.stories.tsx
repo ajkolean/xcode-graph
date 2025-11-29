@@ -11,19 +11,17 @@ import { renderClusterCard } from './svg-renderers';
 /** Create a minimal cluster for stories */
 function createStoryCluster(name: string, type: ClusterType, nodeCount: number): Cluster {
   return {
-    id: name.toLowerCase().replace(/\s+/g, '-'),
+    id: name.toLowerCase().replaceAll(/\s+/g, '-'),
     name,
     type,
     origin: type === ClusterType.Package ? Origin.External : Origin.Local,
-    nodes: Array(nodeCount)
-      .fill(null)
-      .map((_, i) => ({
-        id: `node-${i}`,
-        name: `Node${i}`,
-        type: NodeType.Framework,
-        platform: Platform.iOS,
-        origin: Origin.Local,
-      })),
+    nodes: new Array(nodeCount).fill(null).map((_, i) => ({
+      id: `node-${i}`,
+      name: `Node${i}`,
+      type: NodeType.Framework,
+      platform: Platform.iOS,
+      origin: Origin.Local,
+    })),
     anchors: ['node-0'],
     metadata: new Map(),
   };

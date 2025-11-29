@@ -3,6 +3,48 @@
  */
 
 /**
+ * Deep equality check for arrays
+ */
+export function arraysEqual<T>(a: T[], b: T[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((item, index) => deepEqual(item, b[index]));
+}
+
+/**
+ * Deep equality check for Sets (shallow comparison of items)
+ */
+export function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {
+  if (a.size !== b.size) return false;
+  for (const item of a) {
+    if (!b.has(item)) return false;
+  }
+  return true;
+}
+
+/**
+ * Deep equality check for Maps (deep comparison of values)
+ */
+export function mapsEqual<K, V>(a: Map<K, V>, b: Map<K, V>): boolean {
+  if (a.size !== b.size) return false;
+  for (const [key, value] of a) {
+    if (!b.has(key) || !deepEqual(value, b.get(key))) return false;
+  }
+  return true;
+}
+
+/**
+ * Deep equality check for plain objects
+ */
+export function objectsEqual(a: object, b: object): boolean {
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((key) =>
+    deepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]),
+  );
+}
+
+/**
  * Deep equality check for arrays and objects
  * Used to determine if memoized values need to be recomputed
  */
@@ -11,38 +53,11 @@ export function deepEqual<T>(a: T, b: T): boolean {
   if (a == null || b == null) return false;
   if (typeof a !== 'object' || typeof b !== 'object') return false;
 
-  // Handle arrays
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    return a.every((item, index) => deepEqual(item, b[index]));
-  }
+  if (Array.isArray(a) && Array.isArray(b)) return arraysEqual(a, b);
+  if (a instanceof Set && b instanceof Set) return setsEqual(a, b);
+  if (a instanceof Map && b instanceof Map) return mapsEqual(a, b);
 
-  // Handle Sets
-  if (a instanceof Set && b instanceof Set) {
-    if (a.size !== b.size) return false;
-    for (const item of a) {
-      if (!b.has(item)) return false;
-    }
-    return true;
-  }
-
-  // Handle Maps
-  if (a instanceof Map && b instanceof Map) {
-    if (a.size !== b.size) return false;
-    for (const [key, value] of a) {
-      if (!b.has(key) || !deepEqual(value, b.get(key))) return false;
-    }
-    return true;
-  }
-
-  // Handle objects
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-
-  return keysA.every((key) =>
-    deepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]),
-  );
+  return objectsEqual(a, b);
 }
 
 /**

@@ -73,12 +73,11 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
   const nodes: GraphNode[] = [];
   const metadata = new Map<string, ClusterNodeMetadata>();
 
-  const roleForIndex = (i: number): NodeRole =>
-    i === 0
-      ? NodeRole.Entry
-      : i === nodeCount - 1 && nodeCount > 2
-        ? NodeRole.Test
-        : NodeRole.InternalLib;
+  const roleForIndex = (i: number): NodeRole => {
+    if (i === 0) return NodeRole.Entry;
+    if (i === nodeCount - 1 && nodeCount > 2) return NodeRole.Test;
+    return NodeRole.InternalLib;
+  };
 
   range(nodeCount).forEach((i) => {
     const id = `node-${i}`;

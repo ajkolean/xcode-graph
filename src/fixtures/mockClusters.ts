@@ -18,15 +18,16 @@ import { mockGraphNodes } from './mockNodes';
 function createClusterMetadata(nodeIds: string[]): Map<string, ClusterNodeMetadata> {
   const metadata = new Map<string, ClusterNodeMetadata>();
 
+  const getRoleForIndex = (idx: number): NodeRole => {
+    if (idx === 0) return NodeRole.Entry;
+    if (idx < 3) return NodeRole.InternalFramework;
+    return NodeRole.InternalLib;
+  };
+
   nodeIds.forEach((nodeId, index) => {
     metadata.set(nodeId, {
       nodeId,
-      role:
-        index === 0
-          ? NodeRole.Entry
-          : index < 3
-            ? NodeRole.InternalFramework
-            : NodeRole.InternalLib,
+      role: getRoleForIndex(index),
       layer: Math.floor(index / 3),
       isAnchor: index === 0,
       hasExternalDependents: index < 2,

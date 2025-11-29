@@ -15,13 +15,13 @@ import '../src/styles/tokens.css';
 
 // Import all Lit components to register custom elements
 // This ensures customElements.define() is called before stories render
-import '../src/components/ui/clear-filters-button';
-import '../src/components/ui/cluster-type-badge';
-import '../src/components/ui/empty-state';
-import '../src/components/ui/filter-icons';
-import '../src/components/ui/search-bar';
-import '../src/components/ui/sidebar-collapse-icon';
-import '../src/components/ui/stats-card';
+import '../src/ui/components/clear-filters-button';
+import '../src/ui/components/cluster-type-badge';
+import '../src/ui/components/empty-state';
+import '../src/ui/components/filter-icons';
+import '../src/ui/components/search-bar';
+import '../src/ui/components/sidebar-collapse-icon';
+import '../src/ui/components/stats-card';
 
 const preview: Preview = {
   initialGlobals: {

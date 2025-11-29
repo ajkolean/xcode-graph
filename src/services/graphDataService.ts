@@ -5,6 +5,7 @@
 
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { addToMultiMap } from '@shared/utils/collections';
 
 export class GraphDataService {
   private nodes: GraphNode[];
@@ -38,43 +39,29 @@ export class GraphDataService {
 
   private buildIndices() {
     for (const node of this.nodes) {
-      // Type index
-      if (!this.nodesByType.has(node.type)) this.nodesByType.set(node.type, []);
-      this.nodesByType.get(node.type)!.push(node);
+      addToMultiMap(this.nodesByType, node.type, node);
 
-      // Project index & Set
       if (node.project) {
         this.projects.add(node.project);
-        if (!this.nodesByProject.has(node.project)) this.nodesByProject.set(node.project, []);
-        this.nodesByProject.get(node.project)!.push(node);
+        addToMultiMap(this.nodesByProject, node.project, node);
       }
 
-      // Platform index
       if (node.platform) {
-        if (!this.nodesByPlatform.has(node.platform)) this.nodesByPlatform.set(node.platform, []);
-        this.nodesByPlatform.get(node.platform)!.push(node);
+        addToMultiMap(this.nodesByPlatform, node.platform, node);
       }
 
-      // Origin index
       if (node.origin) {
-        if (!this.nodesByOrigin.has(node.origin)) this.nodesByOrigin.set(node.origin, []);
-        this.nodesByOrigin.get(node.origin)!.push(node);
+        addToMultiMap(this.nodesByOrigin, node.origin, node);
       }
 
-      // Packages Set
       if (node.type === 'package') {
         this.packages.add(node.name);
       }
     }
 
     for (const edge of this.edges) {
-      // Outgoing
-      if (!this.outgoingEdges.has(edge.source)) this.outgoingEdges.set(edge.source, []);
-      this.outgoingEdges.get(edge.source)!.push(edge);
-
-      // Incoming
-      if (!this.incomingEdges.has(edge.target)) this.incomingEdges.set(edge.target, []);
-      this.incomingEdges.get(edge.target)!.push(edge);
+      addToMultiMap(this.outgoingEdges, edge.source, edge);
+      addToMultiMap(this.incomingEdges, edge.target, edge);
     }
   }
 
