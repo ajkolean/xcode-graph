@@ -67,9 +67,9 @@ describe('GraphDataService', () => {
         const frameworks = service.getNodesByType('framework');
 
         expect(frameworks.length).toBeGreaterThan(0);
-        frameworks.forEach((node) => {
+        for (const node of frameworks) {
           expect(node.type).toBe('framework');
-        });
+        }
       });
 
       it('should return empty array for non-existent type', () => {
@@ -88,9 +88,9 @@ describe('GraphDataService', () => {
         const coreNodes = service.getNodesByProject('Core');
 
         expect(coreNodes.length).toBeGreaterThan(0);
-        coreNodes.forEach((node) => {
+        for (const node of coreNodes) {
           expect(node.project).toBe('Core');
-        });
+        }
       });
 
       it('should return empty array for non-existent project', () => {
@@ -113,10 +113,8 @@ describe('GraphDataService', () => {
         const iosNodes = service.getNodesByPlatform('iOS');
 
         expect(iosNodes).toHaveLength(2);
-        expect(iosNodes.map((n) => n.id).toSorted((a, b) => a.localeCompare(b))).toEqual([
-          '1',
-          '2',
-        ]);
+        const iosNodeIds = iosNodes.map((n) => n.id).toSorted();
+        expect(iosNodeIds).toEqual(['1', '2']);
       });
 
       it('should return empty for non-existent platform', () => {
@@ -134,9 +132,9 @@ describe('GraphDataService', () => {
 
         const localNodes = service.getNodesByOrigin('local');
 
-        localNodes.forEach((node) => {
+        for (const node of localNodes) {
           expect(node.origin).toBe('local');
-        });
+        }
       });
 
       it('should return external nodes', () => {
@@ -145,9 +143,9 @@ describe('GraphDataService', () => {
 
         const externalNodes = service.getNodesByOrigin('external');
 
-        externalNodes.forEach((node) => {
+        for (const node of externalNodes) {
           expect(node.origin).toBe('external');
-        });
+        }
       });
     });
 
@@ -287,7 +285,8 @@ describe('GraphDataService', () => {
         const deps = service.getDirectDependencies('A');
 
         expect(deps).toHaveLength(2);
-        expect(deps.map((n) => n.id).toSorted((a, b) => a.localeCompare(b))).toEqual(['B', 'C']);
+        const depIds = deps.map((n) => n.id).toSorted();
+        expect(depIds).toEqual(['B', 'C']);
       });
 
       it('should return empty for nodes with no dependencies', () => {
@@ -306,10 +305,8 @@ describe('GraphDataService', () => {
         const dependents = service.getDirectDependents('D');
 
         expect(dependents).toHaveLength(2);
-        expect(dependents.map((n) => n.id).toSorted((a, b) => a.localeCompare(b))).toEqual([
-          'B',
-          'C',
-        ]);
+        const dependentIds = dependents.map((n) => n.id).toSorted();
+        expect(dependentIds).toEqual(['B', 'C']);
       });
 
       it('should return empty for nodes with no dependents', () => {
@@ -402,9 +399,9 @@ describe('GraphDataService', () => {
         const clusterNodes = service.getClusterNodes('Core');
 
         expect(clusterNodes.length).toBeGreaterThan(0);
-        clusterNodes.forEach((n) => {
+        for (const n of clusterNodes) {
           expect(n.project).toBe('Core');
-        });
+        }
       });
 
       it('should return empty for non-existent cluster', () => {

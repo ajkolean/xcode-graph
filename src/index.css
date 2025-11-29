@@ -105,6 +105,16 @@
     border: 0 solid;
     margin: 0;
     padding: 0;
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    opacity: 1;
+    background-color: #0000;
+    border-radius: 0;
+    margin-inline-end: 4px;
+    appearance: button;
   }
 
   html,
@@ -129,6 +139,8 @@
 
   body {
     line-height: inherit;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 
   hr {
@@ -260,27 +272,12 @@
     border-radius: 0;
   }
 
-  ::file-selector-button {
-    font: inherit;
-    font-feature-settings: inherit;
-    font-variation-settings: inherit;
-    letter-spacing: inherit;
-    color: inherit;
-    opacity: 1;
-    background-color: #0000;
-    border-radius: 0;
-  }
-
   :where(select:is([multiple], [size])) optgroup {
     font-weight: bolder;
   }
 
   :where(select:is([multiple], [size])) optgroup option {
     padding-inline-start: 20px;
-  }
-
-  ::file-selector-button {
-    margin-inline-end: 4px;
   }
 
   ::placeholder {
@@ -309,14 +306,11 @@
 
   ::-webkit-datetime-edit {
     display: inline-flex;
+    padding-block: 0;
   }
 
   ::-webkit-datetime-edit-fields-wrapper {
     padding: 0;
-  }
-
-  ::-webkit-datetime-edit {
-    padding-block: 0;
   }
 
   ::-webkit-datetime-edit-year-field {
@@ -360,10 +354,6 @@
     appearance: button;
   }
 
-  ::file-selector-button {
-    appearance: button;
-  }
-
   ::-webkit-inner-spin-button {
     height: auto;
   }
@@ -385,11 +375,6 @@
     * {
       outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
     }
-  }
-
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
   }
 
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) h1 {

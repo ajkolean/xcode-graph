@@ -2,30 +2,30 @@
  * TEMPLATE: Lit Component
  *
  * Use this template to create new Lit components during the migration.
- * Replace COMPONENT_NAME with your component name (e.g., StatsCard, SearchBar)
- * Replace ELEMENT_TAG with the custom element tag (e.g., graph-stats-card, graph-search-bar)
+ * Replace ComponentName with your component name (e.g., StatsCard, SearchBar)
+ * Replace ElementTag with the custom element tag (e.g., graph-stats-card, graph-search-bar)
  */
 
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 /**
- * COMPONENT_NAME Component
+ * ComponentName Component
  *
  * [Brief description of what this component does]
  *
  * @example
  * ```html
- * <ELEMENT_TAG
+ * <element-tag
  *   prop1="value1"
  *   .prop2=${value2}
- * ></ELEMENT_TAG>
+ * ></element-tag>
  * ```
  *
  * @fires component-event - Dispatched when [describe when event fires]
  */
-@customElement('ELEMENT_TAG')
-export class COMPONENT_NAME extends LitElement {
+@customElement('element-tag')
+export class ComponentName extends LitElement {
   // ========================================
   // Properties
   // ========================================
@@ -160,6 +160,6 @@ export class COMPONENT_NAME extends LitElement {
 // Export for use in other TypeScript files
 declare global {
   interface HTMLElementTagNameMap {
-    ELEMENT_TAG: COMPONENT_NAME;
+    'element-tag': ComponentName;
   }
 }

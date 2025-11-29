@@ -47,7 +47,7 @@ function findTargetByNamePattern(
   nodes: Array<{ id: string; name: string; type: string }>,
 ): string | undefined {
   for (const pattern of TEST_NAME_PATTERNS) {
-    const match = testName.match(pattern);
+    const match = pattern.exec(testName);
     if (!match) continue;
 
     const baseName = match[1];
