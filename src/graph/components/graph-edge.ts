@@ -25,7 +25,7 @@ import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors'
 import { LitElement, svg } from 'lit';
 
 export class GraphEdge extends LitElement {
-  static override properties = {
+  static override readonly properties = {
     x1: { type: Number },
     y1: { type: Number },
     x2: { type: Number },

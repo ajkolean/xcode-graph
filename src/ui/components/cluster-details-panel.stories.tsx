@@ -41,7 +41,7 @@ const meta: Meta<Args> = {
       description: 'Cluster configuration',
     },
     zoom: {
-      control: { type: 'range', min: 0.25, max: 2.0, step: 0.25 },
+      control: { type: 'range', min: 0.25, max: 2, step: 0.25 },
       description: 'Zoom level',
     },
   },
@@ -53,7 +53,7 @@ type Story = StoryObj<Args>;
 export const Default: Story = {
   args: {
     clusterPreset: clusterPresets['Medium Project'],
-    zoom: 1.0,
+    zoom: 1,
   },
   render: (args) => html`
     <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">

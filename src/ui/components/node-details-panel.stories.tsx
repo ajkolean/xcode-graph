@@ -37,7 +37,7 @@ const meta: Meta<Args> = {
       description: 'Node type to display',
     },
     zoom: {
-      control: { type: 'range', min: 0.25, max: 2.0, step: 0.25 },
+      control: { type: 'range', min: 0.25, max: 2, step: 0.25 },
       description: 'Zoom level',
     },
   },
@@ -49,7 +49,7 @@ type Story = StoryObj<Args>;
 export const Default: Story = {
   args: {
     nodeType: nodeTypeMap.App,
-    zoom: 1.0,
+    zoom: 1,
   },
   render: (args) => html`
     <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">
@@ -95,7 +95,7 @@ export const AllNodeTypes: Story = {
             .node=${node}
             .allNodes=${mockGraphNodes}
             .edges=${mockGraphEdges}
-            zoom="1.0"
+            zoom="1"
           ></graph-node-details-panel>
         </div>
       `,

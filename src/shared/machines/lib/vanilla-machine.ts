@@ -357,7 +357,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
    * Set up dependency trackers from machine watch config
    */
   private readonly setupTrackers = (): void => {
-    this.machine.watch?.(this.getParams() as Params<T>);
+    this.machine.watch?.(this.getParams());
   };
 
   /**
@@ -402,7 +402,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   private readonly action = (
     keys: T['action'][] | ((params: Params<T>) => T['action'][] | undefined) | undefined,
   ): void => {
-    const strs = isFunction(keys) ? keys(this.getParams() as Params<T>) : keys;
+    const strs = isFunction(keys) ? keys(this.getParams()) : keys;
     if (!strs) return;
     const fns = strs.map((s: T['action']) => {
       const fn =
@@ -413,7 +413,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
       return fn;
     });
     for (const fn of fns) {
-      fn?.(this.getParams() as Params<T>);
+      fn?.(this.getParams());
     }
   };
 
@@ -423,10 +423,10 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   private readonly guard = (
     str: T['guard'] | ((params: Params<T>) => boolean),
   ): boolean | undefined => {
-    if (isFunction(str)) return str(this.getParams() as Params<T>);
+    if (isFunction(str)) return str(this.getParams());
     return this.machine.implementations?.guards?.[
       str as keyof typeof this.machine.implementations.guards
-    ]?.(this.getParams() as Params<T>);
+    ]?.(this.getParams());
   };
 
   /**
@@ -435,7 +435,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   private readonly effect = (
     keys: T['effect'][] | ((params: Params<T>) => T['effect'][] | undefined) | undefined,
   ): VoidFunction | undefined => {
-    const strs = isFunction(keys) ? keys(this.getParams() as Params<T>) : keys;
+    const strs = isFunction(keys) ? keys(this.getParams()) : keys;
     if (!strs) return undefined;
     const fns = strs.map((s: T['effect']) => {
       const fn =
@@ -447,7 +447,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
     });
     const cleanups: VoidFunction[] = [];
     for (const fn of fns) {
-      const cleanup = fn?.(this.getParams() as Params<T>);
+      const cleanup = fn?.(this.getParams());
       if (cleanup) cleanups.push(cleanup);
     }
     return () => {
@@ -466,7 +466,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
     return toArray(transitions).find((t) => {
       let result = !t.guard;
       if (isString(t.guard)) result = !!this.guard(t.guard as T['guard']);
-      else if (isFunction(t.guard)) result = t.guard(this.getParams() as Params<T>);
+      else if (isFunction(t.guard)) result = t.guard(this.getParams());
       return result;
     });
   };

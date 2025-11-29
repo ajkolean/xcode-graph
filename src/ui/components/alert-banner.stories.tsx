@@ -102,7 +102,7 @@ export const Warning: Story = {
   `,
 };
 
-export const ErrorVariant: Story = {
+export const AlertError: Story = {
   args: {
     variant: 'error',
     title: 'Build Failed',

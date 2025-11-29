@@ -31,8 +31,19 @@ import { getNodeIconPath } from '@ui/utils/node-icons';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { LitElement, svg } from 'lit';
 
+/** Parameters for rendering node label */
+interface LabelRenderOptions {
+  position: { x: number; y: number };
+  size: number;
+  color: string;
+  displayName: string;
+  fullName: string;
+  state: { isSelected: boolean; isHovered: boolean };
+  showTooltip: boolean;
+}
+
 export class GraphNode extends LitElement {
-  static override properties = {
+  static override readonly properties = {
     node: { attribute: false },
     x: { type: Number },
     y: { type: Number },
@@ -196,17 +207,11 @@ export class GraphNode extends LitElement {
     `;
   }
 
-  private renderLabel(
-    x: number,
-    y: number,
-    size: number,
-    color: string,
-    displayName: string,
-    fullName: string,
-    isSelected: boolean,
-    isHovered: boolean,
-    showTooltip: boolean,
-  ) {
+  private renderLabel(options: LabelRenderOptions) {
+    const { position, size, color, displayName, fullName, state, showTooltip } = options;
+    const { x, y } = position;
+    const { isSelected, isHovered } = state;
+
     const showBackground = isHovered || isSelected;
     const textFill =
       isSelected || isHovered ? color : 'rgba(var(--colors-foreground-rgb), var(--opacity-90))';
@@ -387,17 +392,15 @@ export class GraphNode extends LitElement {
     );
     const label =
       zoom >= 0.5
-        ? this.renderLabel(
-            x,
-            y,
+        ? this.renderLabel({
+            position: { x, y },
             size,
-            zoomAdjustedColor,
-            this.getDisplayName(this.node.name),
-            this.node.name,
-            isSelected,
-            isHovered,
-            this.getShowTooltip(this.node.name, isHovered),
-          )
+            color: zoomAdjustedColor,
+            displayName: this.getDisplayName(this.node.name),
+            fullName: this.node.name,
+            state: { isSelected, isHovered },
+            showTooltip: this.getShowTooltip(this.node.name, isHovered),
+          })
         : '';
 
     return svg`

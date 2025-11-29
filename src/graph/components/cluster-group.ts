@@ -35,7 +35,7 @@ import './graph-edges';
 import './graph-node';
 
 export class GraphClusterGroup extends LitElement {
-  static override properties = {
+  static override readonly properties = {
     cluster: { attribute: false },
     clusterPosition: { attribute: false },
     nodes: { attribute: false },

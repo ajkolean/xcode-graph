@@ -27,7 +27,7 @@ import './node-list.js';
 import type { Cluster } from '@shared/schemas';
 
 export class GraphNodeDetailsPanel extends LitElement {
-  static override properties = {
+  static override readonly properties = {
     node: { attribute: false },
     allNodes: { attribute: false },
     edges: { attribute: false },

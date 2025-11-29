@@ -112,7 +112,7 @@ const meta: Meta<Args> = {
       description: 'Search query text',
     },
     zoom: {
-      control: { type: 'range', min: 0.25, max: 2.0, step: 0.25 },
+      control: { type: 'range', min: 0.25, max: 2, step: 0.25 },
       description: 'Zoom level',
     },
   },
@@ -125,7 +125,7 @@ export const Default: Story = {
   args: {
     filterPreset: filterPresets['No Filters'],
     searchQuery: '',
-    zoom: 1.0,
+    zoom: 1,
   },
   render: (args) => html`
     <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">
@@ -184,7 +184,7 @@ export const WithActiveFilters: Story = {
   args: {
     filterPreset: filterPresets['Apps & Frameworks'],
     searchQuery: '',
-    zoom: 1.0,
+    zoom: 1,
   },
   render: (args) => html`
     <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">
@@ -230,7 +230,7 @@ export const WithSearch: Story = {
   args: {
     filterPreset: filterPresets['No Filters'],
     searchQuery: 'Core',
-    zoom: 1.0,
+    zoom: 1,
   },
   render: (args) => html`
     <div style="width: 320px; height: 600px; background: #0f0f14; border-radius: 8px; overflow: hidden">
@@ -287,7 +287,7 @@ export const NoPackages: Story = {
         .platformItems=${platformItems}
         .projectItems=${projectItems}
         .packageItems=${[]}
-        zoom="1.0"
+        zoom="1"
       ></graph-filter-view>
     </div>
   `,

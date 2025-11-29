@@ -23,7 +23,7 @@ import { html, LitElement } from 'lit';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {
-  static override properties = {
+  static override readonly properties = {
     edges: { attribute: false },
     nodes: { attribute: false },
     finalNodePositions: { attribute: false },

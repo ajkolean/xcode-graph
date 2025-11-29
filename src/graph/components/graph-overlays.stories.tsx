@@ -33,14 +33,14 @@ export const Background: Story = {
 
 export const Controls: Story = {
   args: {
-    zoom: 1.0,
+    zoom: 1,
     nodeCount: 52,
     edgeCount: 89,
     enableAnimation: true,
   },
   argTypes: {
     zoom: {
-      control: { type: 'range', min: 0.25, max: 2.0, step: 0.25 },
+      control: { type: 'range', min: 0.25, max: 2, step: 0.25 },
       description: 'Zoom level',
     },
     nodeCount: {

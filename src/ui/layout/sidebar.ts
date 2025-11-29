@@ -15,15 +15,16 @@
  */
 
 import { icons } from '@shared/controllers/icon.adapter';
-import type { ActiveTab } from '@shared/schemas';
+import type { ActiveTab as ActiveTabType } from '@shared/schemas';
+
+export type { ActiveTab } from '@shared/schemas';
+
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
-export type { ActiveTab };
-
 interface NavItem {
-  id: ActiveTab;
+  id: ActiveTabType;
   label: string;
   iconSvg: string;
   hasDropdown?: boolean;
@@ -38,7 +39,7 @@ export class GraphSidebar extends LitElement {
    * The currently active tab
    */
   @property({ type: String, attribute: 'active-tab' })
-  declare activeTab: ActiveTab;
+  declare activeTab: ActiveTabType;
 
   // ========================================
   // Styles
@@ -277,7 +278,7 @@ export class GraphSidebar extends LitElement {
   // Event Handlers
   // ========================================
 
-  private handleTabClick(tab: ActiveTab) {
+  private handleTabClick(tab: ActiveTabType) {
     this.dispatchEvent(
       new CustomEvent('tab-change', {
         detail: { tab },

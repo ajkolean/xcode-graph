@@ -50,6 +50,7 @@ import {
   viewMode,
 } from '@graph/signals/index';
 import {
+  type FilterState,
   filters,
   type PreviewFilter,
   searchQuery,
@@ -58,6 +59,52 @@ import {
   setSearchQuery,
   zoom,
 } from '@shared/signals/index';
+
+/** Filter item for filter sections */
+interface FilterItem {
+  key: string;
+  count: number;
+  color: string;
+}
+
+/** Grouped filter items for all filter sections */
+interface FilterItemsGroup {
+  nodeTypeItems: FilterItem[];
+  platformItems: FilterItem[];
+  projectItems: FilterItem[];
+  packageItems: FilterItem[];
+}
+
+/** Expanded sections state */
+interface ExpandedSectionsState {
+  productTypes: boolean;
+  platforms: boolean;
+  projects: boolean;
+  packages: boolean;
+}
+
+/** Options for rendering the filter view */
+interface FilterViewOptions {
+  filters: FilterState;
+  searchQuery: string;
+  zoom: number;
+  isFiltersActive: boolean;
+  expandedSections: ExpandedSectionsState;
+  items: FilterItemsGroup;
+}
+
+/** Options for rendering expanded sidebar content */
+interface ExpandedContentOptions {
+  selectedNode: GraphNode | null;
+  selectedCluster: string | null;
+  viewMode: string;
+  zoom: number;
+  filters: FilterState;
+  searchQuery: string;
+  isFiltersActive: boolean;
+  expandedSections: ExpandedSectionsState;
+  items: FilterItemsGroup;
+}
 
 export class GraphRightSidebar extends SignalWatcher(LitElement) {
   // ========================================
@@ -366,17 +413,16 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
     `;
   }
 
-  private renderFilterView(
-    currentFilters: ReturnType<typeof filters.get>,
-    currentSearchQuery: string,
-    currentZoom: number,
-    isFiltersActive: boolean,
-    expandedSections: ReturnType<typeof this.sidebar.get<'expandedSections'>>,
-    nodeTypeItems: Array<{ key: string; count: number; color: string }>,
-    platformItems: Array<{ key: string; count: number; color: string }>,
-    projectItems: Array<{ key: string; count: number; color: string }>,
-    packageItems: Array<{ key: string; count: number; color: string }>,
-  ) {
+  private renderFilterView(options: FilterViewOptions) {
+    const {
+      filters: currentFilters,
+      searchQuery: currentSearchQuery,
+      zoom: currentZoom,
+      isFiltersActive,
+      expandedSections,
+      items,
+    } = options;
+
     return html`
       <div class="filter-content">
         <div class="stats-row">
@@ -405,15 +451,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
 
         <div class="filter-scroll">
           <div class="filter-sections">
-            ${this.renderFilterSections(
-              currentFilters,
-              currentZoom,
-              expandedSections,
-              nodeTypeItems,
-              platformItems,
-              projectItems,
-              packageItems,
-            )}
+            ${this.renderFilterSections(currentFilters, currentZoom, expandedSections, items)}
           </div>
 
           ${
@@ -432,14 +470,13 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   }
 
   private renderFilterSections(
-    currentFilters: ReturnType<typeof filters.get>,
+    currentFilters: FilterState,
     currentZoom: number,
-    expandedSections: ReturnType<typeof this.sidebar.get<'expandedSections'>>,
-    nodeTypeItems: Array<{ key: string; count: number; color: string }>,
-    platformItems: Array<{ key: string; count: number; color: string }>,
-    projectItems: Array<{ key: string; count: number; color: string }>,
-    packageItems: Array<{ key: string; count: number; color: string }>,
+    expandedSections: ExpandedSectionsState,
+    items: FilterItemsGroup,
   ) {
+    const { nodeTypeItems, platformItems, projectItems, packageItems } = items;
+
     return html`
       <graph-filter-section
         id="productTypes"
@@ -509,37 +546,33 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
     `;
   }
 
-  private renderExpandedContent(
-    currentSelectedNode: GraphNode | null,
-    currentSelectedCluster: string | null,
-    currentViewMode: string,
-    currentZoom: number,
-    currentFilters: ReturnType<typeof filters.get>,
-    currentSearchQuery: string,
-    isFiltersActive: boolean,
-    expandedSections: ReturnType<typeof this.sidebar.get<'expandedSections'>>,
-    nodeTypeItems: Array<{ key: string; count: number; color: string }>,
-    platformItems: Array<{ key: string; count: number; color: string }>,
-    projectItems: Array<{ key: string; count: number; color: string }>,
-    packageItems: Array<{ key: string; count: number; color: string }>,
-  ) {
-    if (currentSelectedNode) {
-      return this.renderNodeDetails(currentSelectedNode, currentViewMode, currentZoom);
-    }
-    if (currentSelectedCluster) {
-      return this.renderClusterDetails(currentSelectedCluster, currentZoom);
-    }
-    return this.renderFilterView(
-      currentFilters,
-      currentSearchQuery,
-      currentZoom,
+  private renderExpandedContent(options: ExpandedContentOptions) {
+    const {
+      selectedNode,
+      selectedCluster,
+      viewMode: currentViewMode,
+      zoom: currentZoom,
+      filters: currentFilters,
+      searchQuery: currentSearchQuery,
       isFiltersActive,
       expandedSections,
-      nodeTypeItems,
-      platformItems,
-      projectItems,
-      packageItems,
-    );
+      items,
+    } = options;
+
+    if (selectedNode) {
+      return this.renderNodeDetails(selectedNode, currentViewMode, currentZoom);
+    }
+    if (selectedCluster) {
+      return this.renderClusterDetails(selectedCluster, currentZoom);
+    }
+    return this.renderFilterView({
+      filters: currentFilters,
+      searchQuery: currentSearchQuery,
+      zoom: currentZoom,
+      isFiltersActive,
+      expandedSections,
+      items,
+    });
   }
 
   // ========================================
@@ -596,20 +629,17 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
 
     const sidebarContent = isCollapsed
       ? this.renderCollapsedSidebar(currentFilters)
-      : this.renderExpandedContent(
-          currentSelectedNode,
-          currentSelectedCluster,
-          currentViewMode,
-          currentZoom,
-          currentFilters,
-          currentSearchQuery,
+      : this.renderExpandedContent({
+          selectedNode: currentSelectedNode,
+          selectedCluster: currentSelectedCluster,
+          viewMode: currentViewMode,
+          zoom: currentZoom,
+          filters: currentFilters,
+          searchQuery: currentSearchQuery,
           isFiltersActive,
           expandedSections,
-          nodeTypeItems,
-          platformItems,
-          projectItems,
-          packageItems,
-        );
+          items: { nodeTypeItems, platformItems, projectItems, packageItems },
+        });
 
     return html`
       <aside>

@@ -48,7 +48,7 @@ const meta: Meta<Args> = {
       description: 'Search query to filter nodes',
     },
     zoom: {
-      control: { type: 'range', min: 0.25, max: 2.0, step: 0.25 },
+      control: { type: 'range', min: 0.25, max: 2, step: 0.25 },
       description: 'Zoom level',
     },
     enableAnimation: {
@@ -65,7 +65,7 @@ export const SimpleGraph: Story = {
   args: {
     graphSize: graphSizePresets['Small (8 nodes)'],
     searchQuery: '',
-    zoom: 1.0,
+    zoom: 1,
     enableAnimation: false,
   },
   render: (args) => html`
@@ -101,7 +101,7 @@ export const FullGraph: Story = {
   args: {
     graphSize: graphSizePresets['Full Graph'],
     searchQuery: '',
-    zoom: 1.0,
+    zoom: 1,
     enableAnimation: false,
   },
   render: (args) => html`
