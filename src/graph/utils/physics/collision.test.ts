@@ -3,12 +3,13 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import { randomNumber } from '../../../shared/utils/random';
 import {
-  applyCollisionForces,
-  type CollisionEntity,
   CollisionPresets,
+  applyCollisionForces,
   calculateBoundingRadius,
   updatePositions,
+  type CollisionEntity,
 } from './collision';
 
 describe('applyCollisionForces', () => {
@@ -138,8 +139,8 @@ describe('applyCollisionForces', () => {
       for (let i = 0; i < 1000; i++) {
         entities.push({
           id: `entity-${i}`,
-          x: Math.random() * 5000,
-          y: Math.random() * 5000,
+          x: randomNumber(0, 5000),
+          y: randomNumber(0, 5000),
           radius: 10,
           vx: 0,
           vy: 0,

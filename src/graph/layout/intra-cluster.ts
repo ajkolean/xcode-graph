@@ -9,6 +9,7 @@
  * - Centrality in graph structure
  */
 
+import { randomNumber } from '../../shared/utils/random';
 import { type AdjacencyList, buildAdjacency } from './algorithms';
 import { computeElasticShellRadius } from './elastic-shell';
 import { selectMassBasedAnchor } from './mass';
@@ -316,7 +317,7 @@ function positionTestNodes(options: PositionTestNodesOptions): void {
       });
     } else {
       const outerRadius = baseRadius + (maxDepth + 1) * ringSpacing;
-      const angle = Math.random() * 2 * Math.PI;
+      const angle = randomNumber(0, 2 * Math.PI);
       positionMap.set(testNode.id, {
         x: centerX + outerRadius * Math.cos(angle),
         y: centerY + outerRadius * Math.sin(angle),

@@ -2,6 +2,8 @@
  * Tests for Spatial Hash Grid
  */
 
+
+import { randomNumber } from '@/shared/utils/random';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createSpatialHash, type SpatialEntity, SpatialHash } from './spatial-hash';
 
@@ -29,7 +31,7 @@ describe('SpatialHash', () => {
       ];
 
       hash.insertMany(entities);
-      const nearby = hash.getNearby(entities[0]);
+      const nearby = hash.getNearby(entities[0]!);
 
       expect(nearby.length).toBeGreaterThanOrEqual(3);
     });
@@ -55,8 +57,8 @@ describe('SpatialHash', () => {
       hash.insertMany(farApart);
 
       // Entities far apart should not be in each other's nearby list
-      const nearby1 = hash.getNearby(farApart[0]);
-      const nearby2 = hash.getNearby(farApart[1]);
+      const nearby1 = hash.getNearby(farApart[0]!);
+      const nearby2 = hash.getNearby(farApart[1]!);
 
       // Each should only find itself
       expect(nearby1.some((e) => e.id === '2')).toBe(false);
@@ -72,7 +74,7 @@ describe('SpatialHash', () => {
       hash.insertMany(nearBoundary);
 
       // Should find each other because of adjacent cell checking
-      const nearby1 = hash.getNearby(nearBoundary[0]);
+      const nearby1 = hash.getNearby(nearBoundary[0]!);
       expect(nearby1.some((e) => e.id === '2')).toBe(true);
     });
   });
@@ -183,8 +185,8 @@ describe('SpatialHash', () => {
       // Create 1000 entities in a 1000x1000 grid
       for (let i = 0; i < 1000; i++) {
         manyEntities.push({
-          x: Math.random() * 1000,
-          y: Math.random() * 1000,
+          x: randomNumber(0, 1000),
+          y: randomNumber(0, 1000),
           radius: 10,
           id: `entity-${i}`,
         });
@@ -198,7 +200,7 @@ describe('SpatialHash', () => {
 
       // Query should also be fast
       const queryStart = Date.now();
-      const nearby = hash.getNearby(manyEntities[0]);
+      const nearby = hash.getNearby(manyEntities[0]!);
       const queryTime = Date.now() - queryStart;
 
       expect(queryTime).toBeLessThan(10); // O(1) average case
@@ -253,7 +255,7 @@ describe('createSpatialHash helper', () => {
     ];
 
     const hash = createSpatialHash(entities);
-    const nearby = hash.getNearby(entities[0]);
+    const nearby = hash.getNearby(entities[0]!);
 
     expect(nearby).toContain(entities[0]);
   });
