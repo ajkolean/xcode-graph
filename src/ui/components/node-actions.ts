@@ -186,20 +186,16 @@ export class GraphNodeActions extends LitElement {
   // Render
   // ========================================
 
+  private getChainButtonClass(isActive: boolean): string {
+    if (!isActive) return '';
+    return this.viewMode === 'both' ? 'both' : 'active';
+  }
+
   override render() {
     if (!this.node) return html``;
 
-    const depButtonClass = this.isDependencyChainActive
-      ? this.viewMode === 'both'
-        ? 'both'
-        : 'active'
-      : '';
-
-    const depentsButtonClass = this.isDependentsChainActive
-      ? this.viewMode === 'both'
-        ? 'both'
-        : 'active'
-      : '';
+    const depButtonClass = this.getChainButtonClass(this.isDependencyChainActive);
+    const depentsButtonClass = this.getChainButtonClass(this.isDependentsChainActive);
 
     const impactButtonClass = this.isImpactActive ? 'active' : '';
 

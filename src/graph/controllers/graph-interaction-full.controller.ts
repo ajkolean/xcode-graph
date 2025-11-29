@@ -40,7 +40,7 @@ export interface GraphInteractionConfig {
  * Tracks manual node positions for user-overridden layouts.
  */
 export class GraphInteractionFullController implements ReactiveController {
-  private host: ReactiveControllerHost;
+  private readonly host: ReactiveControllerHost;
 
   // Configuration (updated externally)
   zoom: number;

@@ -86,7 +86,7 @@ export class GraphEdges extends LitElement {
     if (viewMode === ViewMode.Focused && inDepsChain && this.transitiveDeps) {
       const depth = this.transitiveDeps.edgeDepths.get(edgeKey) || 0;
       const maxDepth = this.transitiveDeps.maxDepth || 1;
-      return 1.0 - (depth / maxDepth) * 0.7;
+      return 1 - (depth / maxDepth) * 0.7;
     }
 
     if (
@@ -96,23 +96,23 @@ export class GraphEdges extends LitElement {
     ) {
       const depth = this.transitiveDependents.edgeDepths.get(edgeKey) || 0;
       const maxDepth = this.transitiveDependents.maxDepth || 1;
-      return 1.0 - (depth / maxDepth) * 0.7;
+      return 1 - (depth / maxDepth) * 0.7;
     }
 
     if (viewMode === ViewMode.Both && (inDepsChain || inDependentsChain)) {
       if (inDepsChain && this.transitiveDeps) {
         const depth = this.transitiveDeps.edgeDepths.get(edgeKey) || 0;
         const maxDepth = this.transitiveDeps.maxDepth || 1;
-        return 1.0 - (depth / maxDepth) * 0.7;
+        return 1 - (depth / maxDepth) * 0.7;
       }
       if (inDependentsChain && this.transitiveDependents) {
         const depth = this.transitiveDependents.edgeDepths.get(edgeKey) || 0;
         const maxDepth = this.transitiveDependents.maxDepth || 1;
-        return 1.0 - (depth / maxDepth) * 0.7;
+        return 1 - (depth / maxDepth) * 0.7;
       }
     }
 
-    return 1.0;
+    return 1;
   }
 
   // ========================================
@@ -123,7 +123,7 @@ export class GraphEdges extends LitElement {
     if (!this.edges || !this.nodes) return html``;
 
     const viewMode = this.viewMode ?? ViewMode.Full;
-    const zoom = this.zoom ?? 1.0;
+    const zoom = this.zoom ?? 1;
     const hoveredClusterId = this.hoveredClusterId ?? null;
 
     return html`
@@ -138,8 +138,8 @@ export class GraphEdges extends LitElement {
         // Filter based on cluster context
         if (this.clusterId) {
           if (sourceClusterId !== this.clusterId || targetClusterId !== this.clusterId) return null;
-        } else {
-          if (sourceClusterId === targetClusterId) return null;
+        } else if (sourceClusterId === targetClusterId) {
+          return null;
         }
 
         const sourcePos = this.finalNodePositions.get(edge.source);

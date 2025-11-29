@@ -45,7 +45,7 @@ export function renderClusterCard(options: ClusterCardOptions) {
     isHighlighted = false,
     isDimmed = false,
     isSelected = false,
-    zoom = 1.0,
+    zoom = 1,
     onClick,
   } = options;
 
@@ -57,7 +57,7 @@ export function renderClusterCard(options: ClusterCardOptions) {
   const cursorStyle = onClick ? 'pointer' : 'default';
   const strokeDasharray = cluster.type === 'project' ? '8 8' : '3 8';
   const fillAlpha = isActive ? '08' : '18';
-  const textOpacity = isActive ? 1.0 : 0.6;
+  const textOpacity = isActive ? 1 : 0.6;
   const fontWeight = isActive ? 600 : 500;
   const textShadow = isActive
     ? `0 0 8px ${zoomAdjustedColor}40, 0 0 16px ${zoomAdjustedColor}20`
@@ -172,7 +172,7 @@ export function renderGraphNode(options: GraphNodeOptions) {
     isSelected = false,
     isHovered = false,
     isDimmed = false,
-    zoom = 1.0,
+    zoom = 1,
     onMouseEnter,
     onMouseLeave,
     onMouseDown,
@@ -344,8 +344,8 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
     color,
     isHighlighted = false,
     isDependent = false,
-    opacity: opacityMultiplier = 1.0,
-    zoom = 1.0,
+    opacity: opacityMultiplier = 1,
+    zoom = 1,
     animated = false,
   } = options;
 
@@ -576,7 +576,7 @@ function getEdgeOpacity(
   if (viewMode === 'focused' && inDepsChain && transitiveDeps) {
     const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
     const maxDepth = transitiveDeps.maxDepth || 1;
-    return 1.0 - (depth / maxDepth) * 0.7;
+    return 1 - (depth / maxDepth) * 0.7;
   }
 
   if (
@@ -586,23 +586,23 @@ function getEdgeOpacity(
   ) {
     const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
     const maxDepth = transitiveDependents.maxDepth || 1;
-    return 1.0 - (depth / maxDepth) * 0.7;
+    return 1 - (depth / maxDepth) * 0.7;
   }
 
   if (viewMode === 'both' && (inDepsChain || inDependentsChain)) {
     if (inDepsChain && transitiveDeps) {
       const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
       const maxDepth = transitiveDeps.maxDepth || 1;
-      return 1.0 - (depth / maxDepth) * 0.7;
+      return 1 - (depth / maxDepth) * 0.7;
     }
     if (inDependentsChain && transitiveDependents) {
       const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
       const maxDepth = transitiveDependents.maxDepth || 1;
-      return 1.0 - (depth / maxDepth) * 0.7;
+      return 1 - (depth / maxDepth) * 0.7;
     }
   }
 
-  return 1.0;
+  return 1;
 }
 
 export function renderGraphEdges(options: GraphEdgesOptions) {
@@ -620,7 +620,7 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
     viewMode = 'full',
     transitiveDeps,
     transitiveDependents,
-    zoom = 1.0,
+    zoom = 1,
     viewportBounds,
   } = options;
 
@@ -706,7 +706,7 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
     isClusterHovered = false,
     isClusterSelected = false,
     searchQuery = '',
-    zoom = 1.0,
+    zoom = 1,
     previewFilter,
     onClusterClick,
     onClusterMouseEnter,

@@ -98,7 +98,7 @@ export class GraphFilterView extends LitElement {
     this.platformItems = [];
     this.projectItems = [];
     this.packageItems = [];
-    this.zoom = 1.0;
+    this.zoom = 1;
     this.expandedSections = {
       productTypes: true,
       platforms: true,

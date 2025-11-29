@@ -36,62 +36,54 @@ export function buildAdjacency(
   return { forward, reverse };
 }
 
+/** State object for Tarjan's SCC algorithm */
+interface TarjanState {
+  index: Map<string, number>;
+  lowlink: Map<string, number>;
+  onStack: Set<string>;
+  stack: string[];
+  sccs: string[][];
+  adj: Map<string, string[]>;
+  currentIndex: { value: number };
+}
+
 // Helper: Process a neighbor in Tarjan's algorithm
-function processNeighbor(
-  w: string,
-  v: string,
-  index: Map<string, number>,
-  lowlink: Map<string, number>,
-  onStack: Set<string>,
-  stack: string[],
-  sccs: string[][],
-  adj: Map<string, string[]>,
-  currentIndex: { value: number },
-): void {
-  if (!index.has(w)) {
-    strongconnectImpl(w, index, lowlink, onStack, stack, sccs, adj, currentIndex);
-    lowlink.set(v, Math.min(lowlink.get(v)!, lowlink.get(w)!));
-  } else if (onStack.has(w)) {
-    lowlink.set(v, Math.min(lowlink.get(v)!, index.get(w)!));
+function processNeighbor(w: string, v: string, state: TarjanState): void {
+  if (!state.index.has(w)) {
+    strongconnectImpl(w, state);
+    state.lowlink.set(v, Math.min(state.lowlink.get(v)!, state.lowlink.get(w)!));
+  } else if (state.onStack.has(w)) {
+    state.lowlink.set(v, Math.min(state.lowlink.get(v)!, state.index.get(w)!));
   }
 }
 
 // Helper: Extract SCC when root is found
-function extractSCC(v: string, onStack: Set<string>, stack: string[]): string[] {
+function extractSCC(v: string, state: TarjanState): string[] {
   const scc: string[] = [];
   let w: string;
   do {
-    w = stack.pop()!;
-    onStack.delete(w);
+    w = state.stack.pop()!;
+    state.onStack.delete(w);
     scc.push(w);
   } while (w !== v);
   return scc;
 }
 
 // Helper: Main strongconnect implementation
-function strongconnectImpl(
-  v: string,
-  index: Map<string, number>,
-  lowlink: Map<string, number>,
-  onStack: Set<string>,
-  stack: string[],
-  sccs: string[][],
-  adj: Map<string, string[]>,
-  currentIndex: { value: number },
-): void {
-  index.set(v, currentIndex.value);
-  lowlink.set(v, currentIndex.value);
-  currentIndex.value++;
-  stack.push(v);
-  onStack.add(v);
+function strongconnectImpl(v: string, state: TarjanState): void {
+  state.index.set(v, state.currentIndex.value);
+  state.lowlink.set(v, state.currentIndex.value);
+  state.currentIndex.value++;
+  state.stack.push(v);
+  state.onStack.add(v);
 
-  const neighbors = adj.get(v) || [];
+  const neighbors = state.adj.get(v) || [];
   for (const w of neighbors) {
-    processNeighbor(w, v, index, lowlink, onStack, stack, sccs, adj, currentIndex);
+    processNeighbor(w, v, state);
   }
 
-  if (lowlink.get(v) === index.get(v)) {
-    sccs.push(extractSCC(v, onStack, stack));
+  if (state.lowlink.get(v) === state.index.get(v)) {
+    state.sccs.push(extractSCC(v, state));
   }
 }
 
@@ -100,20 +92,23 @@ function strongconnectImpl(
  */
 export function tarjanSCC(adj: Map<string, string[]>): string[][] {
   const nodes = Array.from(adj.keys());
-  const index: Map<string, number> = new Map();
-  const lowlink: Map<string, number> = new Map();
-  const onStack: Set<string> = new Set();
-  const stack: string[] = [];
-  const sccs: string[][] = [];
-  const currentIndex = { value: 0 };
+  const state: TarjanState = {
+    index: new Map(),
+    lowlink: new Map(),
+    onStack: new Set(),
+    stack: [],
+    sccs: [],
+    adj,
+    currentIndex: { value: 0 },
+  };
 
   for (const v of nodes) {
-    if (!index.has(v)) {
-      strongconnectImpl(v, index, lowlink, onStack, stack, sccs, adj, currentIndex);
+    if (!state.index.has(v)) {
+      strongconnectImpl(v, state);
     }
   }
 
-  return sccs;
+  return state.sccs;
 }
 
 // Helper: Initialize incoming/outgoing counts for topoSort

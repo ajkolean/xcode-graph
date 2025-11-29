@@ -238,7 +238,9 @@ export class AnimationController implements ReactiveController {
   // Lifecycle
   // ========================================
 
-  hostConnected(): void {}
+  hostConnected(): void {
+    // Required by ReactiveControllerHost interface - no initialization needed
+  }
 
   hostDisconnected(): void {
     try {

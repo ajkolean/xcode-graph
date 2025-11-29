@@ -49,7 +49,7 @@ export class GraphVisualization extends LitElement {
   // Properties
   // ========================================
 
-  static override properties: PropertyDeclarations = {
+  static readonly override properties: PropertyDeclarations = {
     nodes: { attribute: false },
     edges: { attribute: false },
     selectedNode: { attribute: false },
@@ -98,7 +98,7 @@ export class GraphVisualization extends LitElement {
     animationTicks: 30,
   });
 
-  private interaction = new GraphInteractionFullController(this, {
+  private readonly interaction = new GraphInteractionFullController(this, {
     zoom: 1,
     finalNodePositions: new Map(),
     clusterPositions: new Map(),
@@ -108,7 +108,7 @@ export class GraphVisualization extends LitElement {
   // Styles
   // ========================================
 
-  static override styles: CSSResultGroup = css`
+  static readonly override styles: CSSResultGroup = css`
     :host {
       display: block;
       position: relative;

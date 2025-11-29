@@ -68,8 +68,8 @@ export class GraphEdge extends LitElement {
     const x2 = this.x2 ?? 0;
     const y2 = this.y2 ?? 0;
     const color = this.color ?? '#888';
-    const zoom = this.zoom ?? 1.0;
-    const opacity = this.opacity ?? 1.0;
+    const zoom = this.zoom ?? 1;
+    const opacity = this.opacity ?? 1;
     const isDependent = this.isDependent ?? false;
     const animated = this.animated ?? false;
     const isHighlighted = this.isHighlighted ?? false;

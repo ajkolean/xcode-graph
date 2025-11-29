@@ -131,7 +131,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   // ========================================
 
   // Zag sidebar machine (kept - only replacing Zustand)
-  private sidebar = createMachineController(this, sidebarMachine, {
+  private readonly sidebar = createMachineController(this, sidebarMachine, {
     id: 'right-sidebar',
     defaultCollapsed: false,
   });

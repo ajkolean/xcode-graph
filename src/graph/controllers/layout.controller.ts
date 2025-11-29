@@ -158,7 +158,9 @@ export class LayoutController implements ReactiveController {
   // Lifecycle
   // ========================================
 
-  hostConnected(): void {}
+  hostConnected(): void {
+    // Required by ReactiveControllerHost interface - no initialization needed
+  }
 
   hostDisconnected(): void {
     this.clearCache();

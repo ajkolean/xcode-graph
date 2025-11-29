@@ -50,9 +50,9 @@ import type { ReactiveController, ReactiveControllerHost } from 'lit';
  * when machine state or context changes.
  */
 export class ZagController<TSchema extends MachineSchema> implements ReactiveController {
-  private host: ReactiveControllerHost;
-  private instance: VanillaMachine;
-  private _service: Service<TSchema>;
+  private readonly host: ReactiveControllerHost;
+  private readonly instance: VanillaMachine;
+  private readonly _service: Service<TSchema>;
   private unsubscribe?: () => void;
 
   /**

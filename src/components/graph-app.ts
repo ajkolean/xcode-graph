@@ -60,7 +60,7 @@ export class GraphApp extends SignalWatcher(LitElement) {
   // ========================================
   // Data Service
   // ========================================
-  private graphDataService = new GraphDataService(mockGraphData.nodes, mockGraphData.edges);
+  private readonly graphDataService = new GraphDataService(mockGraphData.nodes, mockGraphData.edges);
 
   // ========================================
   // Styles

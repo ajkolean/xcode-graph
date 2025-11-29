@@ -8,10 +8,10 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { addToMultiMap } from '@shared/utils/collections';
 
 export class GraphDataService {
-  private nodes: GraphNode[];
-  private edges: GraphEdge[];
-  private nodeMap: Map<string, GraphNode>;
-  private edgeMap: Map<string, GraphEdge>;
+  private readonly nodes: GraphNode[];
+  private readonly edges: GraphEdge[];
+  private readonly nodeMap: Map<string, GraphNode>;
+  private readonly edgeMap: Map<string, GraphEdge>;
 
   // Indices for O(1) lookups
   private nodesByType: Map<string, GraphNode[]> = new Map();

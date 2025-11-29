@@ -125,7 +125,7 @@ export class GraphClusterGroup extends LitElement {
     if (!this.cluster || !this.clusterPosition) return html``;
 
     const clusterPositionsMap = new Map([[this.cluster.id, this.clusterPosition]]);
-    const zoom = this.zoom ?? 1.0;
+    const zoom = this.zoom ?? 1;
     const viewMode = this.viewMode ?? 'full';
     const searchQuery = this.searchQuery ?? '';
     const isSelected = this.isSelected ?? false;

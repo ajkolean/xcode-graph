@@ -12,9 +12,9 @@ function hexToHSL(hex: string): { h: number; s: number; l: number } {
   hex = hex.replace('#', '');
 
   // Parse hex values
-  const r = parseInt(hex.substring(0, 2), 16) / 255;
-  const g = parseInt(hex.substring(2, 4), 16) / 255;
-  const b = parseInt(hex.substring(4, 6), 16) / 255;
+  const r = Number.parseInt(hex.substring(0, 2), 16) / 255;
+  const g = Number.parseInt(hex.substring(2, 4), 16) / 255;
+  const b = Number.parseInt(hex.substring(4, 6), 16) / 255;
 
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
@@ -95,9 +95,9 @@ function getSaturationMultiplier(zoom: number): number {
   // At zoom 2.0 (zoomed in): 1.0 saturation (full neon)
 
   const minZoom = 0.5;
-  const maxZoom = 2.0;
+  const maxZoom = 2;
   const minSaturation = 0.25; // Very desaturated when zoomed out
-  const maxSaturation = 1.0; // Full saturation when zoomed in
+  const maxSaturation = 1; // Full saturation when zoomed in
 
   // Normalize zoom to 0-1 range
   const normalizedZoom = (zoom - minZoom) / (maxZoom - minZoom);
@@ -113,7 +113,7 @@ function getSaturationMultiplier(zoom: number): number {
  */
 function getLightnessAdjustment(zoom: number): number {
   const minZoom = 0.5;
-  const maxZoom = 2.0;
+  const maxZoom = 2;
 
   // At min zoom: +15 lightness (lighter/softer)
   // At max zoom: 0 lightness (original)
@@ -164,7 +164,7 @@ export function adjustColorForZoom(color: string, zoom: number): string {
  */
 export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number {
   const minZoom = 0.5;
-  const maxZoom = 2.0;
+  const maxZoom = 2;
 
   // At min zoom: reduce opacity by 20%
   // At max zoom: full opacity
@@ -182,7 +182,7 @@ export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number 
  */
 export function getZoomAwareStrokeWidth(baseWidth: number, zoom: number): number {
   const minZoom = 0.5;
-  const maxZoom = 2.0;
+  const maxZoom = 2;
 
   const normalizedZoom = (zoom - minZoom) / (maxZoom - minZoom);
   const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));

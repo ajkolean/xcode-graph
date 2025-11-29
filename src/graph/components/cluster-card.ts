@@ -26,7 +26,7 @@ import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors'
 import { LitElement, type PropertyDeclarations, type SVGTemplateResult, svg } from 'lit';
 
 export class GraphClusterCard extends LitElement {
-  static override properties: PropertyDeclarations = {
+  static readonly override properties: PropertyDeclarations = {
     cluster: { attribute: false },
     x: { type: Number },
     y: { type: Number },
@@ -93,7 +93,7 @@ export class GraphClusterCard extends LitElement {
     const y = this.y ?? 0;
     const width = this.width ?? 0;
     const height = this.height ?? 0;
-    const zoom = this.zoom ?? 1.0;
+    const zoom = this.zoom ?? 1;
     const isHighlighted = this.isHighlighted ?? false;
     const isDimmed = this.isDimmed ?? false;
     const isSelected = this.isSelected ?? false;
@@ -107,7 +107,7 @@ export class GraphClusterCard extends LitElement {
     const cursorStyle = clickable ? 'pointer' : 'default';
     const strokeDasharray = this.cluster.type === 'project' ? '8 8' : '3 8';
     const fillAlpha = isActive ? '08' : '18';
-    const textOpacity = isActive ? 1.0 : 0.6;
+    const textOpacity = isActive ? 1 : 0.6;
     const fontWeight = isActive ? 600 : 500;
     const textShadow = isActive
       ? `0 0 8px ${zoomAdjustedColor}40, 0 0 16px ${zoomAdjustedColor}20`
