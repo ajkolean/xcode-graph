@@ -17,6 +17,7 @@ import { getNodeSize } from '@ui/utils/sizing';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { nothing, svg } from 'lit';
+import { repeat } from 'lit/directives/repeat.js';
 
 // ========================================
 // Cluster Card Renderer
@@ -628,44 +629,48 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
   } = options;
 
   return svg`
-    ${edges.map((edge) => {
-      const endpoints = resolveEdgeEndpoints(edge, nodes, nodeMap);
-      if (!endpoints) return nothing;
+    ${repeat(
+      edges,
+      (edge) => `${edge.source}->${edge.target}`,
+      (edge) => {
+        const endpoints = resolveEdgeEndpoints(edge, nodes, nodeMap);
+        if (!endpoints) return nothing;
 
-      if (!shouldRenderEdge(endpoints, clusterId)) return nothing;
+        if (!shouldRenderEdge(endpoints, clusterId)) return nothing;
 
-      const positions = calculateEdgePositions(
-        edge,
-        endpoints,
-        layoutNodePositions,
-        clusterPositions,
-        manualNodePositions,
-        viewportBounds,
-      );
-      if (!positions) return nothing;
+        const positions = calculateEdgePositions(
+          edge,
+          endpoints,
+          layoutNodePositions,
+          clusterPositions,
+          manualNodePositions,
+          viewportBounds,
+        );
+        if (!positions) return nothing;
 
-      const visualState = getEdgeVisualState(
-        edge,
-        endpoints,
-        selectedNode,
-        hoveredNode,
-        hoveredClusterId ?? null,
-        clusterId,
-      );
+        const visualState = getEdgeVisualState(
+          edge,
+          endpoints,
+          selectedNode,
+          hoveredNode,
+          hoveredClusterId ?? null,
+          clusterId,
+        );
 
-      const baseOpacity = getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
-      const opacity = visualState.shouldDim ? baseOpacity * 0.08 : baseOpacity;
+        const baseOpacity = getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
+        const opacity = visualState.shouldDim ? baseOpacity * 0.08 : baseOpacity;
 
-      return renderGraphEdge({
-        ...positions,
-        color: getNodeTypeColor(endpoints.targetNode.type),
-        isHighlighted: visualState.isHighlighted || visualState.isFocused,
-        isDependent: visualState.isCrossCluster,
-        opacity,
-        zoom,
-        animated: visualState.shouldAnimate,
-      });
-    })}
+        return renderGraphEdge({
+          ...positions,
+          color: getNodeTypeColor(endpoints.targetNode.type),
+          isHighlighted: visualState.isHighlighted || visualState.isFocused,
+          isDependent: visualState.isCrossCluster,
+          opacity,
+          zoom,
+          animated: visualState.shouldAnimate,
+        });
+      },
+    )}
   `;
 }
 

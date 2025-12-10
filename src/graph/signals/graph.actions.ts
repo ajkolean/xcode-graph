@@ -42,11 +42,25 @@ export function selectCluster(clusterId: string | null): void {
 }
 
 /**
- * Set the hovered node for highlighting
+ * Set the hovered node for highlighting (throttled via RAF)
  * @param nodeId - The node ID to highlight, or null to clear
  */
+let pendingHoverUpdate: string | null | undefined;
+let hoverRafId: number | null = null;
+
 export function setHoveredNode(nodeId: string | null): void {
-  hoveredNode.set(nodeId);
+  // Store the pending update
+  pendingHoverUpdate = nodeId;
+
+  // Cancel previous RAF if pending
+  if (hoverRafId !== null) return;
+
+  // Schedule update for next frame
+  hoverRafId = requestAnimationFrame(() => {
+    hoveredNode.set(pendingHoverUpdate ?? null);
+    hoverRafId = null;
+    pendingHoverUpdate = undefined;
+  });
 }
 
 /**
