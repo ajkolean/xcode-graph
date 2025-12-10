@@ -6,28 +6,26 @@
  * @generated
  */
 
-export interface GraphDependency {
-  xcframework?: { _0: GraphDependencyXCFramework };
-  framework?: { path: string; binaryPath: string; dsymPath?: string; bcsymbolmapPaths: string[]; linking: BinaryLinking; architectures: BinaryArchitecture[]; status: LinkingStatus };
-  library?: { path: string; publicHeaders: string; linking: BinaryLinking; architectures: BinaryArchitecture[]; swiftModuleMap?: string };
-  macro?: { path: string };
-  bundle?: { path: string };
-  packageProduct?: { path: string; product: string; type: GraphDependencyPackageProductType };
-  target?: { name: string; path: string; status: LinkingStatus };
-  sdk?: { name: string; path: string; status: LinkingStatus; source: SDKSource };
-}
+export type GraphDependency =
+  | { xcframework: { _0: GraphDependency_XCFramework } }
+  | { framework: { path: string; binaryPath: string; dsymPath?: string; bcsymbolmapPaths: string[]; linking: BinaryLinking; architectures: BinaryArchitecture[]; status: LinkingStatus } }
+  | { library: { path: string; publicHeaders: string; linking: BinaryLinking; architectures: BinaryArchitecture[]; swiftModuleMap?: string } }
+  | { macro: { path: string } }
+  | { bundle: { path: string } }
+  | { packageProduct: { path: string; product: string; type: GraphDependency_PackageProductType } }
+  | { target: { name: string; path: string; status: LinkingStatus } }
+  | { sdk: { name: string; path: string; status: LinkingStatus; source: SDKSource } };
 
-export enum GraphDependencyPackageProductType {
+export enum GraphDependency_PackageProductType {
   Runtime = "runtime",
   RuntimeEmbedded = "runtimeEmbedded",
   Plugin = "plugin",
   Macro = "macro",
 }
 
-export interface AutogenerationOptions {
-  disabled?: Record<string, never>;
-  enabled?: { _0: TestingOptions };
-}
+export type AutogenerationOptions =
+  | { disabled: Record<string, never> }
+  | { enabled: { _0: TestingOptions } };
 
 export enum BinaryArchitecture {
   X8664 = "x8664",
@@ -45,7 +43,7 @@ export enum BinaryLinking {
   Dynamic = "dynamic",
 }
 
-export enum BuildConfigurationVariant {
+export enum BuildConfiguration_Variant {
   Debug = "debug",
   Release = "release",
 }
@@ -153,20 +151,18 @@ export enum FileType {
   SourceFilesWithNamesMatching = "sourceFilesWithNamesMatching",
 }
 
-export interface CompatibleXcodeVersions {
-  all?: Record<string, never>;
-  exact?: { _0: Version };
-  upToNextMajor?: { _0: Version };
-  upToNextMinor?: { _0: Version };
-  list?: { _0: CompatibleXcodeVersions[] };
-}
+export type CompatibleXcodeVersions =
+  | { all: Record<string, never> }
+  | { exact: { _0: Version } }
+  | { upToNextMajor: { _0: Version } }
+  | { upToNextMinor: { _0: Version } }
+  | { list: { _0: CompatibleXcodeVersions[] } };
 
-export interface CopyFileElement {
-  file?: { path: string; condition?: PlatformCondition; codeSignOnCopy: boolean };
-  folderReference?: { path: string; condition?: PlatformCondition; codeSignOnCopy: boolean };
-}
+export type CopyFileElement =
+  | { file: { path: string; condition?: PlatformCondition; codeSignOnCopy: boolean } }
+  | { folderReference: { path: string; condition?: PlatformCondition; codeSignOnCopy: boolean } };
 
-export enum CopyFilesActionDestination {
+export enum CopyFilesAction_Destination {
   AbsolutePath = "absolutePath",
   ProductsDirectory = "productsDirectory",
   Wrapper = "wrapper",
@@ -199,26 +195,23 @@ export enum FileCodeGen {
   Disabled = "disabled",
 }
 
-export interface FileElement {
-  file?: { path: string };
-  folderReference?: { path: string };
-}
+export type FileElement =
+  | { file: { path: string } }
+  | { folderReference: { path: string } };
 
 export enum LaunchStyle {
   Automatically = "automatically",
   WaitForExecutableToBeLaunched = "waitForExecutableToBeLaunched",
 }
 
-export interface MergedBinaryType {
-  disabled?: Record<string, never>;
-  automatic?: Record<string, never>;
-  manual?: { mergeableDependencies: string[] };
-}
+export type MergedBinaryType =
+  | { disabled: Record<string, never> }
+  | { automatic: Record<string, never> }
+  | { manual: { mergeableDependencies: string[] } };
 
-export interface Package {
-  remote?: { url: string; requirement: Requirement };
-  local?: { path: string };
-}
+export type Package =
+  | { remote: { url: string; requirement: Requirement } }
+  | { local: { path: string } };
 
 export enum Platform {
   IOS = "iOS",
@@ -237,10 +230,9 @@ export enum PackagePlatform {
   VisionOS = "visionOS",
 }
 
-export interface PlatformConditionCombinationResult {
-  incompatible?: Record<string, never>;
-  condition?: { _0: PlatformCondition };
-}
+export type PlatformCondition_CombinationResult =
+  | { incompatible: Record<string, never> }
+  | { condition: { _0: PlatformCondition } };
 
 export enum PlatformFilter {
   Ios = "ios",
@@ -252,34 +244,30 @@ export enum PlatformFilter {
   Visionos = "visionos",
 }
 
-export interface Plist {
-  infoPlist?: { _0: InfoPlist };
-  entitlements?: { _0: Entitlements };
-}
+export type Plist =
+  | { infoPlist: { _0: InfoPlist } }
+  | { entitlements: { _0: Entitlements } };
 
-export interface PlistValue {
-  string?: { _0: string };
-  integer?: { _0: number };
-  real?: { _0: number };
-  boolean?: { _0: boolean };
-  dictionary?: { _0: { [key: string]: PlistValue } };
-  array?: { _0: PlistValue[] };
-}
+export type Plist_Value =
+  | { string: { _0: string } }
+  | { integer: { _0: number } }
+  | { real: { _0: number } }
+  | { boolean: { _0: boolean } }
+  | { dictionary: { _0: { [key: string]: Plist_Value } } }
+  | { array: { _0: Plist_Value[] } };
 
-export interface InfoPlist {
-  file?: { path: string; configuration?: BuildConfiguration };
-  generatedFile?: { path: string; data: string; configuration?: BuildConfiguration };
-  dictionary?: { _0: { [key: string]: PlistValue }; configuration?: BuildConfiguration };
-  variable?: { _0: string; configuration?: BuildConfiguration };
-  extendingDefault?: { with: { [key: string]: PlistValue }; configuration?: BuildConfiguration };
-}
+export type InfoPlist =
+  | { file: { path: string; configuration?: BuildConfiguration } }
+  | { generatedFile: { path: string; data: string; configuration?: BuildConfiguration } }
+  | { dictionary: { _0: { [key: string]: Plist_Value }; configuration?: BuildConfiguration } }
+  | { variable: { _0: string; configuration?: BuildConfiguration } }
+  | { extendingDefault: { with: { [key: string]: Plist_Value }; configuration?: BuildConfiguration } };
 
-export interface Entitlements {
-  file?: { path: string; configuration?: BuildConfiguration };
-  generatedFile?: { path: string; data: string; configuration?: BuildConfiguration };
-  dictionary?: { _0: { [key: string]: PlistValue }; configuration?: BuildConfiguration };
-  variable?: { _0: string; configuration?: BuildConfiguration };
-}
+export type Entitlements =
+  | { file: { path: string; configuration?: BuildConfiguration } }
+  | { generatedFile: { path: string; data: string; configuration?: BuildConfiguration } }
+  | { dictionary: { _0: { [key: string]: Plist_Value }; configuration?: BuildConfiguration } }
+  | { variable: { _0: string; configuration?: BuildConfiguration } };
 
 export enum Product {
   App = "app",
@@ -304,46 +292,39 @@ export enum Product {
   Macro = "macro",
 }
 
-export interface ProjectType {
-  local?: Record<string, never>;
-  external?: { hash?: string };
-}
+export type ProjectType =
+  | { local: Record<string, never> }
+  | { external: { hash?: string } };
 
-export interface ProjectGroup {
-  group?: { name: string };
-}
+export type ProjectGroup =
+  | { group: { name: string } };
 
-export interface ProjectOptionsAutomaticSchemesOptions {
-  enabled?: { targetSchemesGrouping: ProjectOptionsAutomaticSchemesOptionsTargetSchemesGrouping; codeCoverageEnabled: boolean; testingOptions: TestingOptions; testLanguage?: string; testRegion?: string; testScreenCaptureFormat?: ScreenCaptureFormat; runLanguage?: string; runRegion?: string };
-  disabled?: Record<string, never>;
-}
+export type Project_Options_AutomaticSchemesOptions =
+  | { enabled: { targetSchemesGrouping: Project_Options_AutomaticSchemesOptions_TargetSchemesGrouping; codeCoverageEnabled: boolean; testingOptions: TestingOptions; testLanguage?: string; testRegion?: string; testScreenCaptureFormat?: ScreenCaptureFormat; runLanguage?: string; runRegion?: string } }
+  | { disabled: Record<string, never> };
 
-export interface ProjectOptionsAutomaticSchemesOptionsTargetSchemesGrouping {
-  singleScheme?: Record<string, never>;
-  byNameSuffix?: { build: string[]; test: string[]; run: string[] };
-  notGrouped?: Record<string, never>;
-}
+export type Project_Options_AutomaticSchemesOptions_TargetSchemesGrouping =
+  | { singleScheme: Record<string, never> }
+  | { byNameSuffix: { build: string[]; test: string[]; run: string[] } }
+  | { notGrouped: Record<string, never> };
 
-export interface Requirement {
-  upToNextMajor?: { _0: string };
-  upToNextMinor?: { _0: string };
-  range?: { from: string; to: string };
-  exact?: { _0: string };
-  branch?: { _0: string };
-  revision?: { _0: string };
-}
+export type Requirement =
+  | { upToNextMajor: { _0: string } }
+  | { upToNextMinor: { _0: string } }
+  | { range: { from: string; to: string } }
+  | { exact: { _0: string } }
+  | { branch: { _0: string } }
+  | { revision: { _0: string } };
 
-export interface ResourceFileElement {
-  file?: { path: string; tags: string[]; inclusionCondition?: PlatformCondition };
-  folderReference?: { path: string; tags: string[]; inclusionCondition?: PlatformCondition };
-}
+export type ResourceFileElement =
+  | { file: { path: string; tags: string[]; inclusionCondition?: PlatformCondition } }
+  | { folderReference: { path: string; tags: string[]; inclusionCondition?: PlatformCondition } };
 
-export interface ResourceSynthesizerTemplate {
-  file?: { _0: string };
-  defaultTemplate?: { _0: string };
-}
+export type ResourceSynthesizer_Template =
+  | { file: { _0: string } }
+  | { defaultTemplate: { _0: string } };
 
-export enum ResourceSynthesizerParser {
+export enum ResourceSynthesizer_Parser {
   Strings = "strings",
   StringsCatalog = "stringsCatalog",
   Assets = "assets",
@@ -356,7 +337,7 @@ export enum ResourceSynthesizerParser {
   Files = "files",
 }
 
-export enum RunActionOptionsGPUFrameCaptureMode {
+export enum RunActionOptions_GPUFrameCaptureMode {
   AutoEnabled = "autoEnabled",
   Metal = "metal",
   OpenGL = "openGL",
@@ -379,21 +360,18 @@ export enum ScreenCaptureFormat {
   ScreenRecording = "screenRecording",
 }
 
-export interface SettingValue {
-  string?: { _0: string };
-  array?: { _0: string[] };
-}
+export type SettingValue =
+  | { string: { _0: string } }
+  | { array: { _0: string[] } };
 
-export interface DefaultSettings {
-  recommended?: { excluding: string[] };
-  essential?: { excluding: string[] };
-  none?: Record<string, never>;
-}
+export type DefaultSettings =
+  | { recommended: { excluding: string[] } }
+  | { essential: { excluding: string[] } }
+  | { none: Record<string, never> };
 
-export interface SimulatedLocation {
-  gpxFile?: { _0: string };
-  reference?: { _0: string };
-}
+export type SimulatedLocation =
+  | { gpxFile: { _0: string } }
+  | { reference: { _0: string } };
 
 export enum LinkingStatus {
   Required = "required",
@@ -401,65 +379,60 @@ export enum LinkingStatus {
   None = "none",
 }
 
-export interface XCFrameworkSignature {
-  unsigned?: Record<string, never>;
-  signedWithAppleCertificate?: { teamIdentifier: string; teamName: string };
-  selfSigned?: { fingerprint: string };
-}
+export type XCFrameworkSignature =
+  | { unsigned: Record<string, never> }
+  | { signedWithAppleCertificate: { teamIdentifier: string; teamName: string } }
+  | { selfSigned: { fingerprint: string } };
 
-export interface TargetDependency {
-  target?: { name: string; status: LinkingStatus; condition?: PlatformCondition };
-  project?: { target: string; path: string; status: LinkingStatus; condition?: PlatformCondition };
-  framework?: { path: string; status: LinkingStatus; condition?: PlatformCondition };
-  xcframework?: { path: string; expectedSignature?: XCFrameworkSignature; status: LinkingStatus; condition?: PlatformCondition };
-  library?: { path: string; publicHeaders: string; swiftModuleMap?: string; condition?: PlatformCondition };
-  package?: { product: string; type: TargetDependencyPackageType; condition?: PlatformCondition };
-  sdk?: { name: string; status: LinkingStatus; condition?: PlatformCondition };
-  xctest?: Record<string, never>;
-}
+export type TargetDependency =
+  | { target: { name: string; status: LinkingStatus; condition?: PlatformCondition } }
+  | { project: { target: string; path: string; status: LinkingStatus; condition?: PlatformCondition } }
+  | { framework: { path: string; status: LinkingStatus; condition?: PlatformCondition } }
+  | { xcframework: { path: string; expectedSignature?: XCFrameworkSignature; status: LinkingStatus; condition?: PlatformCondition } }
+  | { library: { path: string; publicHeaders: string; swiftModuleMap?: string; condition?: PlatformCondition } }
+  | { package: { product: string; type: TargetDependency_PackageType; condition?: PlatformCondition } }
+  | { sdk: { name: string; status: LinkingStatus; condition?: PlatformCondition } }
+  | { xctest: Record<string, never> };
 
-export enum TargetDependencyPackageType {
+export enum TargetDependency_PackageType {
   Runtime = "runtime",
   RuntimeEmbedded = "runtimeEmbedded",
   Plugin = "plugin",
   Macro = "macro",
 }
 
-export enum TargetScriptOrder {
+export enum TargetScript_Order {
   Pre = "pre",
   Post = "post",
 }
 
-export interface TargetScriptScript {
-  tool?: { path: string; args: string[] };
-  scriptPath?: { path: string; args: string[] };
-  embedded?: { _0: string };
-}
+export type TargetScript_Script =
+  | { tool: { path: string; args: string[] } }
+  | { scriptPath: { path: string; args: string[] } }
+  | { embedded: { _0: string } };
 
 export enum TargetType {
   Local = "local",
   Remote = "remote",
 }
 
-export enum TestableTargetParallelization {
+export enum TestableTarget_Parallelization {
   None = "none",
   SwiftTestingOnly = "swiftTestingOnly",
   All = "all",
 }
 
-export interface WorkspaceGenerationOptionsAutogeneratedWorkspaceSchemes {
-  disabled?: Record<string, never>;
-  enabled?: { codeCoverageMode: WorkspaceGenerationOptionsAutogeneratedWorkspaceSchemesCodeCoverageMode; testingOptions: TestingOptions; testLanguage?: string; testRegion?: string; testScreenCaptureFormat?: ScreenCaptureFormat };
-}
+export type Workspace_GenerationOptions_AutogeneratedWorkspaceSchemes =
+  | { disabled: Record<string, never> }
+  | { enabled: { codeCoverageMode: Workspace_GenerationOptions_AutogeneratedWorkspaceSchemes_CodeCoverageMode; testingOptions: TestingOptions; testLanguage?: string; testRegion?: string; testScreenCaptureFormat?: ScreenCaptureFormat } };
 
-export interface WorkspaceGenerationOptionsAutogeneratedWorkspaceSchemesCodeCoverageMode {
-  all?: Record<string, never>;
-  relevant?: Record<string, never>;
-  targets?: { _0: TargetReference[] };
-  disabled?: Record<string, never>;
-}
+export type Workspace_GenerationOptions_AutogeneratedWorkspaceSchemes_CodeCoverageMode =
+  | { all: Record<string, never> }
+  | { relevant: Record<string, never> }
+  | { targets: { _0: TargetReference[] } }
+  | { disabled: Record<string, never> };
 
-export enum XCFrameworkInfoPlistLibraryPlatform {
+export enum XCFrameworkInfoPlist_Library_Platform {
   IOS = "iOS",
   MacOS = "macOS",
   TvOS = "tvOS",
@@ -467,42 +440,39 @@ export enum XCFrameworkInfoPlistLibraryPlatform {
   VisionOS = "visionOS",
 }
 
-export interface PackageInfoDependencyKind {
-  fileSystem?: { name?: string; path: string };
-  sourceControl?: { name?: string; location: string };
-  registry?: { id: string };
-}
+export type PackageInfo_Dependency_Kind =
+  | { fileSystem: { name?: string; path: string } }
+  | { sourceControl: { name?: string; location: string } }
+  | { registry: { id: string } };
 
-export interface PackageInfoProductProductType {
-  library?: { _0: PackageInfoProductProductTypeLibraryType };
-  executable?: Record<string, never>;
-  plugin?: Record<string, never>;
-  test?: Record<string, never>;
-}
+export type PackageInfo_Product_ProductType =
+  | { library: { _0: PackageInfo_Product_ProductType_LibraryType } }
+  | { executable: Record<string, never> }
+  | { plugin: Record<string, never> }
+  | { test: Record<string, never> };
 
-export enum PackageInfoProductProductTypeLibraryType {
+export enum PackageInfo_Product_ProductType_LibraryType {
   Static = "static",
   Dynamic = "dynamic",
   Automatic = "automatic",
 }
 
-export interface PackageInfoTargetDependency {
-  target?: { name: string; condition?: PackageInfoPackageConditionDescription };
-  product?: { name: string; package: string; moduleAliases?: { [key: string]: string }; condition?: PackageInfoPackageConditionDescription };
-  byName?: { name: string; condition?: PackageInfoPackageConditionDescription };
-}
+export type PackageInfo_Target_Dependency =
+  | { target: { name: string; condition?: PackageInfo_PackageConditionDescription } }
+  | { product: { name: string; package: string; moduleAliases?: { [key: string]: string }; condition?: PackageInfo_PackageConditionDescription } }
+  | { byName: { name: string; condition?: PackageInfo_PackageConditionDescription } };
 
-export enum PackageInfoTargetResourceRule {
+export enum PackageInfo_Target_Resource_Rule {
   Process = "process",
   Copy = "copy",
 }
 
-export enum PackageInfoTargetResourceLocalization {
+export enum PackageInfo_Target_Resource_Localization {
   Default = "default",
   Base = "base",
 }
 
-export enum PackageInfoTargetTargetType {
+export enum PackageInfo_Target_TargetType {
   Regular = "regular",
   Executable = "executable",
   Test = "test",
@@ -512,17 +482,17 @@ export enum PackageInfoTargetTargetType {
   Macro = "macro",
 }
 
-export enum PackageInfoTargetTargetBuildSettingDescription {
+export enum PackageInfo_Target_TargetBuildSettingDescription {
 }
 
-export enum PackageInfoTargetTargetBuildSettingDescriptionTool {
+export enum PackageInfo_Target_TargetBuildSettingDescription_Tool {
   C = "c",
   Cxx = "cxx",
   Swift = "swift",
   Linker = "linker",
 }
 
-export enum PackageInfoTargetTargetBuildSettingDescriptionSettingName {
+export enum PackageInfo_Target_TargetBuildSettingDescription_SettingName {
   SwiftLanguageMode = "swiftLanguageMode",
   HeaderSearchPath = "headerSearchPath",
   Define = "define",
@@ -558,7 +528,7 @@ export interface Graph {
   dependencyConditions: (GraphEdge | PlatformCondition)[];
 }
 
-export interface GraphDependencyXCFramework {
+export interface GraphDependency_XCFramework {
   path: string;
   infoPlist: XCFrameworkInfoPlist;
   linking: BinaryLinking;
@@ -608,7 +578,7 @@ export interface BuildAction {
 
 export interface BuildConfiguration {
   name: string;
-  variant: BuildConfigurationVariant;
+  variant: BuildConfiguration_Variant;
 }
 
 export interface BuildRule {
@@ -758,8 +728,8 @@ export interface PlatformCondition {
 export interface PrivacyManifest {
   tracking: boolean;
   trackingDomains: string[];
-  collectedDataTypes: { [key: string]: PlistValue }[];
-  accessedApiTypes: { [key: string]: PlistValue }[];
+  collectedDataTypes: { [key: string]: Plist_Value }[];
+  accessedApiTypes: { [key: string]: Plist_Value }[];
 }
 
 export interface ProfileAction {
@@ -779,7 +749,7 @@ export interface Project {
   classPrefix?: string;
   defaultKnownRegions?: string[];
   developmentRegion?: string;
-  options: ProjectOptions;
+  options: Project_Options;
   targets: { [key: string]: Target };
   packages: Package[];
   schemes: Scheme[];
@@ -792,15 +762,15 @@ export interface Project {
   "type": ProjectType;
 }
 
-export interface ProjectOptions {
-  automaticSchemesOptions: ProjectOptionsAutomaticSchemesOptions;
+export interface Project_Options {
+  automaticSchemesOptions: Project_Options_AutomaticSchemesOptions;
   disableBundleAccessors: boolean;
   disableShowEnvironmentVarsInScriptPhases: boolean;
   disableSynthesizedResourceAccessors: boolean;
-  textSettings: ProjectOptionsTextSettings;
+  textSettings: Project_Options_TextSettings;
 }
 
-export interface ProjectOptionsTextSettings {
+export interface Project_Options_TextSettings {
   usesTabs?: boolean;
   indentWidth?: number;
   tabWidth?: number;
@@ -821,13 +791,13 @@ export interface ResourceFileElements {
 }
 
 export interface ResourceSynthesizer {
-  parser: ResourceSynthesizerParser;
-  parserOptions: { [key: string]: ResourceSynthesizerParserOption };
+  parser: ResourceSynthesizer_Parser;
+  parserOptions: { [key: string]: ResourceSynthesizer_Parser_Option };
   extensions: string[];
-  template: ResourceSynthesizerTemplate;
+  template: ResourceSynthesizer_Template;
 }
 
-export interface ResourceSynthesizerParserOption {
+export interface ResourceSynthesizer_Parser_Option {
   anyCodableValue: unknown;
 }
 
@@ -855,7 +825,7 @@ export interface RunActionOptions {
   region?: string;
   storeKitConfigurationPath?: string;
   simulatedLocation?: SimulatedLocation;
-  enableGPUFrameCaptureMode: RunActionOptionsGPUFrameCaptureMode;
+  enableGPUFrameCaptureMode: RunActionOptions_GPUFrameCaptureMode;
 }
 
 export interface Scheme {
@@ -953,8 +923,8 @@ export interface TargetReference {
 
 export interface TargetScript {
   name: string;
-  script: TargetScriptScript;
-  order: TargetScriptOrder;
+  script: TargetScript_Script;
+  order: TargetScript_Order;
   inputPaths: string[];
   inputFileListPaths: string[];
   outputPaths: string[];
@@ -994,7 +964,7 @@ export interface TestPlan {
 export interface TestableTarget {
   target: TargetReference;
   isSkipped: boolean;
-  parallelization: TestableTargetParallelization;
+  parallelization: TestableTarget_Parallelization;
   isRandomExecutionOrdering: boolean;
   simulatedLocation?: SimulatedLocation;
 }
@@ -1019,25 +989,25 @@ export interface Workspace {
   schemes: Scheme[];
   ideTemplateMacros?: IDETemplateMacros;
   additionalFiles: FileElement[];
-  generationOptions: WorkspaceGenerationOptions;
+  generationOptions: Workspace_GenerationOptions;
 }
 
-export interface WorkspaceGenerationOptions {
+export interface Workspace_GenerationOptions {
   enableAutomaticXcodeSchemes?: boolean;
-  autogeneratedWorkspaceSchemes: WorkspaceGenerationOptionsAutogeneratedWorkspaceSchemes;
+  autogeneratedWorkspaceSchemes: Workspace_GenerationOptions_AutogeneratedWorkspaceSchemes;
   lastXcodeUpgradeCheck?: Version;
   renderMarkdownReadme: boolean;
 }
 
 export interface XCFrameworkInfoPlist {
-  libraries: XCFrameworkInfoPlistLibrary[];
+  libraries: XCFrameworkInfoPlist_Library[];
 }
 
-export interface XCFrameworkInfoPlistLibrary {
+export interface XCFrameworkInfoPlist_Library {
   identifier: string;
   path: string;
   mergeable: boolean;
-  platform: Platform;
+  platform: XCFrameworkInfoPlist_Library_Platform;
   architectures: BinaryArchitecture[];
 }
 
@@ -1053,52 +1023,52 @@ export interface PackageInfo {
   toolsVersion: Version;
 }
 
-export interface PackageInfoPlatform {
+export interface PackageInfo_Platform {
   platformName: string;
   version: string;
   options: string[];
 }
 
-export interface PackageInfoPackageConditionDescription {
+export interface PackageInfo_PackageConditionDescription {
   platformNames: string[];
   config?: string;
 }
 
-export interface PackageInfoDependency {
-  kind: PackageInfoDependencyKind;
+export interface PackageInfo_Dependency {
+  kind: PackageInfo_Dependency_Kind;
 }
 
-export interface PackageInfoProduct {
+export interface PackageInfo_Product {
   name: string;
-  "type": PackageInfoProductProductType;
+  "type": PackageInfo_Product_ProductType;
   targets: string[];
 }
 
-export interface PackageInfoTarget {
+export interface PackageInfo_Target {
   name: string;
   path?: string;
   url?: string;
   sources?: string[];
-  resources: PackageInfoTargetResource[];
+  resources: PackageInfo_Target_Resource[];
   exclude: string[];
-  dependencies: PackageInfoTargetDependency[];
+  dependencies: PackageInfo_Target_Dependency[];
   publicHeadersPath?: string;
   "type": TargetType;
-  settings: PackageInfoTargetTargetBuildSettingDescriptionSetting[];
+  settings: PackageInfo_Target_TargetBuildSettingDescription_Setting[];
   checksum?: string;
   packageAccess: boolean;
 }
 
-export interface PackageInfoTargetResource {
-  rule: PackageInfoTargetResourceRule;
+export interface PackageInfo_Target_Resource {
+  rule: PackageInfo_Target_Resource_Rule;
   path: string;
-  localization?: PackageInfoTargetResourceLocalization;
+  localization?: PackageInfo_Target_Resource_Localization;
 }
 
-export interface PackageInfoTargetTargetBuildSettingDescriptionSetting {
-  tool: PackageInfoTargetTargetBuildSettingDescriptionTool;
-  name: PackageInfoTargetTargetBuildSettingDescriptionSettingName;
-  condition?: PackageInfoPackageConditionDescription;
+export interface PackageInfo_Target_TargetBuildSettingDescription_Setting {
+  tool: PackageInfo_Target_TargetBuildSettingDescription_Tool;
+  name: PackageInfo_Target_TargetBuildSettingDescription_SettingName;
+  condition?: PackageInfo_PackageConditionDescription;
   value: string[];
 }
 

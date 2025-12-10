@@ -12,10 +12,15 @@ class ExtractedType {
         self.parent = parent
     }
 
-    /// Fully qualified name by traversing parent chain
+    /// Fully qualified name by traversing parent chain (using dots)
     var qualifiedName: String {
         guard let parent = parent else { return name }
-        return parent.qualifiedName + name
+        return parent.qualifiedName + "." + name
+    }
+
+    /// TypeScript-safe name (dots replaced with underscores)
+    var tsName: String {
+        qualifiedName.replacingOccurrences(of: ".", with: "_")
     }
 }
 
