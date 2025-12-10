@@ -752,7 +752,7 @@ export interface UnsupportedPlatformError {
 }
 
 export interface PlatformCondition {
-  platformFilters: PlatformFilter[];
+  platformFilters: PlatformFilters;
 }
 
 export interface PrivacyManifest {
@@ -779,7 +779,7 @@ export interface Project {
   classPrefix?: string;
   defaultKnownRegions?: string[];
   developmentRegion?: string;
-  options: SchemeDiagnosticsOptions;
+  options: ProjectOptions;
   targets: { [key: string]: Target };
   packages: Package[];
   schemes: Scheme[];
@@ -879,13 +879,13 @@ export interface SchemeDiagnosticsOptions {
 }
 
 export interface Configuration {
-  settings: { [key: string]: SettingValue };
+  settings: SettingsDictionary;
   xcconfig?: string;
 }
 
 export interface Settings {
-  base: { [key: string]: SettingValue };
-  baseDebug: { [key: string]: SettingValue };
+  base: SettingsDictionary;
+  baseDebug: SettingsDictionary;
   configurations: (BuildConfiguration | Configuration)[];
   defaultSettings: DefaultSettings;
   defaultConfiguration?: string;
@@ -914,7 +914,7 @@ export interface Target {
   validResourceCompatibleFolderExtensions: string[];
   validFolderExtensions: string[];
   name: string;
-  destinations: Destination[];
+  destinations: Destinations;
   product: Product;
   bundleId: string;
   productName: string;
@@ -953,7 +953,7 @@ export interface TargetReference {
 
 export interface TargetScript {
   name: string;
-  script: TargetScript;
+  script: TargetScriptScript;
   order: TargetScriptOrder;
   inputPaths: string[];
   inputFileListPaths: string[];
@@ -1081,7 +1081,7 @@ export interface PackageInfoTarget {
   sources?: string[];
   resources: PackageInfoTargetResource[];
   exclude: string[];
-  dependencies: GraphDependency[];
+  dependencies: PackageInfoTargetDependency[];
   publicHeadersPath?: string;
   "type": TargetType;
   settings: PackageInfoTargetTargetBuildSettingDescriptionSetting[];
@@ -1090,7 +1090,7 @@ export interface PackageInfoTarget {
 }
 
 export interface PackageInfoTargetResource {
-  rule: BuildRule;
+  rule: PackageInfoTargetResourceRule;
   path: string;
   localization?: PackageInfoTargetResourceLocalization;
 }

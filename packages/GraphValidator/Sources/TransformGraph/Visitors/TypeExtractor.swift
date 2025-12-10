@@ -14,19 +14,20 @@ final class TypeExtractor: SyntaxVisitor {
     override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
         let isPublic = node.modifiers.contains { $0.name.text == "public" }
 
-        var properties: [ExtractedProperty] = []
-        for member in node.memberBlock.members {
-            if let varDecl = member.decl.as(VariableDeclSyntax.self) {
-                properties.append(contentsOf: varDecl.extractedProperties)
-            }
-        }
-
         let extracted = ExtractedStruct(
             name: node.name.text,
-            properties: properties,
+            properties: [],
             isPublic: isPublic,
             parent: currentParent
         )
+
+        // Extract properties with parent set to the struct
+        for member in node.memberBlock.members {
+            if let varDecl = member.decl.as(VariableDeclSyntax.self) {
+                extracted.properties.append(contentsOf: varDecl.extractedProperties(parent: extracted))
+            }
+        }
+
         structs.append(extracted)
         parentStack.append(extracted)
         return .visitChildren
@@ -39,19 +40,20 @@ final class TypeExtractor: SyntaxVisitor {
     override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
         let isPublic = node.modifiers.contains { $0.name.text == "public" }
 
-        var cases: [ExtractedEnumCase] = []
-        for member in node.memberBlock.members {
-            if let caseDecl = member.decl.as(EnumCaseDeclSyntax.self) {
-                cases.append(contentsOf: caseDecl.extractedCases)
-            }
-        }
-
         let extracted = ExtractedEnum(
             name: node.name.text,
-            cases: cases,
+            cases: [],
             isPublic: isPublic,
             parent: currentParent
         )
+
+        // Extract cases with parent set to the enum
+        for member in node.memberBlock.members {
+            if let caseDecl = member.decl.as(EnumCaseDeclSyntax.self) {
+                extracted.cases.append(contentsOf: caseDecl.extractedCases(parent: extracted))
+            }
+        }
+
         enums.append(extracted)
         parentStack.append(extracted)
         return .visitChildren
