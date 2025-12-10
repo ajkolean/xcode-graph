@@ -8,6 +8,7 @@ import {
   createProjectGraph,
 } from '../fixtures';
 import { GraphDataService } from './graphDataService';
+import { GraphStatsService } from './graphStatsService';
 
 describe('GraphDataService', () => {
   describe('getAllNodes', () => {
@@ -466,7 +467,7 @@ describe('GraphDataService', () => {
       const { nodes, edges } = createProjectGraph();
       const service = new GraphDataService(nodes, edges);
 
-      const stats = service.getNodeStats('core');
+      const stats = GraphStatsService.getNodeStats(service, 'core');
 
       expect(stats).toHaveProperty('dependencies');
       expect(stats).toHaveProperty('dependents');
@@ -478,7 +479,7 @@ describe('GraphDataService', () => {
       const { nodes, edges } = createLinearChain(3);
       const service = new GraphDataService(nodes, edges);
 
-      const stats = service.getNodeStats('A');
+      const stats = GraphStatsService.getNodeStats(service, 'A');
 
       // A -> B -> C, so A has 2 transitive deps (B and C, not counting itself)
       expect(stats.transitiveDeps).toBe(2);
@@ -490,7 +491,7 @@ describe('GraphDataService', () => {
       const { nodes, edges } = createProjectGraph();
       const service = new GraphDataService(nodes, edges);
 
-      const stats = service.getClusterStats('Core');
+      const stats = GraphStatsService.getClusterStats(service, 'Core');
 
       expect(stats.nodeCount).toBeGreaterThan(0);
       expect(typeof stats.dependencies).toBe('number');
@@ -502,7 +503,7 @@ describe('GraphDataService', () => {
       const { nodes, edges } = createProjectGraph();
       const service = new GraphDataService(nodes, edges);
 
-      const stats = service.getClusterStats('NonExistent');
+      const stats = GraphStatsService.getClusterStats(service, 'NonExistent');
 
       expect(stats.nodeCount).toBe(0);
     });
@@ -518,7 +519,7 @@ describe('GraphDataService', () => {
       const edges: GraphEdge[] = [{ source: 'A', target: 'B' }];
       const service = new GraphDataService(nodes, edges);
 
-      const stats = service.getGraphStats();
+      const stats = GraphStatsService.getGraphStats(service);
 
       expect(stats.totalNodes).toBe(3);
       expect(stats.totalEdges).toBe(1);

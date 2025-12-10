@@ -120,7 +120,9 @@ function computeClusterLayoutAndDimension(
  * Compute the visual dimension for a cluster based on its node layout
  */
 function computeClusterDimension(cluster: Cluster, nodes: GraphNode[], edges: GraphEdge[]): number {
-  const clusterNodes = nodes.filter((n) => cluster.nodes.some((cn) => cn.id === n.id));
+  // Optimization: Use Set for O(1) lookup instead of O(m) .some()
+  const clusterNodeIds = new Set(cluster.nodes.map((n) => n.id));
+  const clusterNodes = nodes.filter((n) => clusterNodeIds.has(n.id));
   return computeClusterLayoutAndDimension(clusterNodes, edges).dimension;
 }
 

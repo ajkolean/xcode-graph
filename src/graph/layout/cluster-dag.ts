@@ -200,6 +200,40 @@ function reduceCrossings(
 }
 
 /**
+ * Compute dynamic spacing based on graph characteristics
+ */
+function computeDynamicSpacing(
+  superNodes: SuperNode[],
+  clusterDimensions: Map<string, number>,
+  layerCount: number,
+): { layerGapY: number; clusterGapX: number } {
+  if (superNodes.length === 0) {
+    return { layerGapY: 280, clusterGapX: 60 };
+  }
+
+  // Calculate average cluster dimension
+  const dimensions = Array.from(clusterDimensions.values());
+  const avgDimension = dimensions.reduce((sum, d) => sum + d, 0) / dimensions.length || 250;
+
+  // Base gaps: proportion of average cluster size
+  const baseLayerGapY = avgDimension * 1.1; // 110% of cluster height
+  const baseClusterGapX = avgDimension * 0.25; // 25% of cluster width
+
+  // Scale based on graph density
+  // More layers = tighter vertical spacing
+  const layerDensityFactor = Math.max(0.7, Math.min(1.2, 1 / Math.log2(layerCount + 2)));
+
+  // More nodes per layer = tighter horizontal spacing
+  const nodesPerLayer = superNodes.length / Math.max(1, layerCount);
+  const horizontalDensityFactor = Math.max(0.6, Math.min(1.0, 1 / Math.log2(nodesPerLayer + 2)));
+
+  return {
+    layerGapY: Math.round(baseLayerGapY * layerDensityFactor),
+    clusterGapX: Math.round(baseClusterGapX * horizontalDensityFactor),
+  };
+}
+
+/**
  * Layout clusters in layers with proper spacing and crossing reduction
  */
 export function layoutClusters(
@@ -209,14 +243,10 @@ export function layoutClusters(
   options: {
     layerGapY?: number;
     clusterGapX?: number;
+    useDynamicSpacing?: boolean;
   } = {},
 ): ClusterLayoutResult[] {
-  const {
-    layerGapY = 280, // Reduced from 450
-    clusterGapX = 60, // Reduced from 100
-  } = options;
-
-  // Assign layers based on topological depth
+  // Assign layers first to determine layer count
   const superDepth = assignLayers(
     superNodes.map((s) => s.id),
     superEdges,
@@ -229,6 +259,17 @@ export function layoutClusters(
     if (!layerToNodes.has(d)) layerToNodes.set(d, []);
     layerToNodes.get(d)!.push(sn);
   }
+
+  const layerCount = layerToNodes.size;
+
+  // Compute dynamic or use provided spacing
+  const useDynamicSpacing = options.useDynamicSpacing ?? true;
+  const dynamicSpacing = useDynamicSpacing
+    ? computeDynamicSpacing(superNodes, clusterDimensions, layerCount)
+    : { layerGapY: 280, clusterGapX: 60 };
+
+  const layerGapY = options.layerGapY ?? dynamicSpacing.layerGapY;
+  const clusterGapX = options.clusterGapX ?? dynamicSpacing.clusterGapX;
 
   // Apply barycentric crossing reduction
   const optimizedLayers = reduceCrossings(layerToNodes, superEdges, 3);

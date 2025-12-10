@@ -96,6 +96,26 @@ export class GraphVisualization extends LitElement {
     return this.nodeMap ?? this.internalNodeMap;
   }
 
+  // Hover throttling
+  private hoverUpdatePending = false;
+  private pendingHoveredCluster: string | null = null;
+
+  /**
+   * Throttled hover update using requestAnimationFrame
+   * Prevents re-rendering on every mousemove event
+   */
+  private scheduleHoverUpdate(clusterId: string | null): void {
+    this.pendingHoveredCluster = clusterId;
+
+    if (!this.hoverUpdatePending) {
+      this.hoverUpdatePending = true;
+      requestAnimationFrame(() => {
+        this.hoveredCluster = this.pendingHoveredCluster;
+        this.hoverUpdatePending = false;
+      });
+    }
+  }
+
   // ========================================
   // Controllers
   // ========================================
@@ -159,6 +179,58 @@ export class GraphVisualization extends LitElement {
   // ========================================
   // Lifecycle
   // ========================================
+
+  /**
+   * Optimize re-renders by only updating when relevant props change
+   */
+  override shouldUpdate(changedProps: PropertyValues<this>): boolean {
+    // Always update on initial render
+    if (!changedProps.size) return true;
+
+    // Update if nodes/edges changed (data changed)
+    if (changedProps.has('nodes') || changedProps.has('edges')) return true;
+
+    // Update if selection changed
+    if (changedProps.has('selectedNode') || changedProps.has('selectedCluster')) return true;
+
+    // Update if view mode changed
+    if (changedProps.has('viewMode')) return true;
+
+    // Update if zoom changed significantly (>1% change to avoid micro-updates)
+    if (changedProps.has('zoom')) {
+      const oldZoom = changedProps.get('zoom') ?? 1;
+      const newZoom = this.zoom ?? 1;
+      if (Math.abs(newZoom - oldZoom) > 0.01) return true;
+    }
+
+    // Update if animation setting changed
+    if (changedProps.has('enableAnimation')) return true;
+
+    // Update if transitive deps changed
+    if (changedProps.has('transitiveDeps') || changedProps.has('transitiveDependents')) return true;
+
+    // Update if filter preview changed
+    if (changedProps.has('previewFilter')) return true;
+
+    // Update if search query changed
+    if (changedProps.has('searchQuery')) return true;
+
+    // Update if internal hover state changed
+    if (changedProps.has('hoveredCluster')) {
+      // Only update if hover actually changed (not just same value)
+      const oldHover = changedProps.get('hoveredCluster');
+      return oldHover !== this.hoveredCluster;
+    }
+
+    // Update if external hover node changed
+    if (changedProps.has('hoveredNode')) {
+      const oldHover = changedProps.get('hoveredNode');
+      return oldHover !== this.hoveredNode;
+    }
+
+    // Otherwise, skip update
+    return false;
+  }
 
   override willUpdate(changedProps: PropertyValues<this>): void {
     // Update layout when nodes/edges change
@@ -339,10 +411,10 @@ export class GraphVisualization extends LitElement {
                         }),
                       ),
                     onClusterMouseEnter: () => {
-                      this.hoveredCluster = cluster.id;
+                      this.scheduleHoverUpdate(cluster.id);
                     },
                     onClusterMouseLeave: () => {
-                      this.hoveredCluster = null;
+                      this.scheduleHoverUpdate(null);
                     },
                     onNodeMouseEnter: (nodeId) =>
                       this.dispatchEvent(
