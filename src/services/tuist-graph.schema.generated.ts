@@ -50,7 +50,7 @@ export enum BuildConfigurationVariant {
   Release = "release",
 }
 
-export enum BuildRuleCompilerSpec {
+export enum CompilerSpec {
   AppIntentsMetadataExtractor = "appIntentsMetadataExtractor",
   AppShortcutStringsMetadataExtractor = "appShortcutStringsMetadataExtractor",
   AppleClang = "appleClang",
@@ -104,7 +104,7 @@ export enum BuildRuleCompilerSpec {
   CustomScript = "customScript",
 }
 
-export enum BuildRuleFileType {
+export enum FileType {
   InstrumentsPackageDefinition = "instrumentsPackageDefinition",
   MetalAIR = "metalAIR",
   MachO = "machO",
@@ -539,7 +539,7 @@ export enum PackageInfoTargetTargetBuildSettingDescriptionSettingName {
 
 export interface DependenciesGraph {
   externalDependencies: { [key: string]: TargetDependency[] };
-  externalProjects: { [key: string]: Project };
+  externalProjects: (string | Project)[];
   none: DependenciesGraph;
 }
 
@@ -552,10 +552,10 @@ export interface Graph {
   name: string;
   path: string;
   workspace: Workspace;
-  projects: { [key: string]: Project };
-  packages: { [key: string]: { [key: string]: Package } };
-  dependencies: { [key: string]: GraphDependency[] };
-  dependencyConditions: { [key: string]: PlatformCondition };
+  projects: (string | Project)[];
+  packages: (string | { [key: string]: Package })[];
+  dependencies: (GraphDependency | GraphDependency[])[];
+  dependencyConditions: (GraphEdge | PlatformCondition)[];
 }
 
 export interface GraphDependencyXCFramework {
@@ -612,9 +612,9 @@ export interface BuildConfiguration {
 }
 
 export interface BuildRule {
-  compilerSpec: BuildRuleCompilerSpec;
+  compilerSpec: CompilerSpec;
   filePatterns?: string;
-  fileType: BuildRuleFileType;
+  fileType: FileType;
   name?: string;
   outputFiles: string[];
   inputFiles?: string[];
@@ -636,7 +636,7 @@ export interface BuildableFolder {
 
 export interface BuildableFolderException {
   excluded: string[];
-  compilerFlags: { [key: string]: string };
+  compilerFlags: (string | string)[];
   publicHeaders: string[];
   privateHeaders: string[];
 }
@@ -779,7 +779,7 @@ export interface Project {
   classPrefix?: string;
   defaultKnownRegions?: string[];
   developmentRegion?: string;
-  options: WorkspaceGenerationOptions;
+  options: SchemeDiagnosticsOptions;
   targets: { [key: string]: Target };
   packages: Package[];
   schemes: Scheme[];
@@ -886,7 +886,7 @@ export interface Configuration {
 export interface Settings {
   base: { [key: string]: SettingValue };
   baseDebug: { [key: string]: SettingValue };
-  configurations: { [key: string]: Configuration };
+  configurations: (BuildConfiguration | Configuration)[];
   defaultSettings: DefaultSettings;
   defaultConfiguration?: string;
 }
@@ -953,7 +953,7 @@ export interface TargetReference {
 
 export interface TargetScript {
   name: string;
-  script: TargetScriptScript;
+  script: TargetScript;
   order: TargetScriptOrder;
   inputPaths: string[];
   inputFileListPaths: string[];
@@ -1081,7 +1081,7 @@ export interface PackageInfoTarget {
   sources?: string[];
   resources: PackageInfoTargetResource[];
   exclude: string[];
-  dependencies: TargetDependency[];
+  dependencies: GraphDependency[];
   publicHeadersPath?: string;
   "type": TargetType;
   settings: PackageInfoTargetTargetBuildSettingDescriptionSetting[];
@@ -1107,3 +1107,9 @@ export interface PackageTrait {
   name: string;
   description?: string;
 }
+
+export type Destinations = Destination[];
+
+export type PlatformFilters = PlatformFilter[];
+
+export type SettingsDictionary = { [key: string]: SettingValue };
