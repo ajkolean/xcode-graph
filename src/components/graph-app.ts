@@ -21,7 +21,7 @@
 import { SignalWatcher } from '@lit-labs/signals';
 import type { ActiveTab } from '@shared/schemas';
 import { css, html, LitElement } from 'lit';
-import { mockGraphData } from '@/fixtures/largeGraph';
+import { tuistGraphData } from '@/fixtures/tuist-graph-data';
 import { GraphAnalysisService } from '@/services/graphAnalysisService';
 import { GraphDataService } from '@/services/graphDataService';
 import '@ui/layout/graph-tab';
@@ -66,7 +66,7 @@ export class GraphApp extends SignalWatcher(LitElement) {
   private dataFingerprint: string | null = null;
   private filtersInitialized = false;
 
-  private refreshGraphData(nodes: typeof mockGraphData.nodes, edges: typeof mockGraphData.edges) {
+  private refreshGraphData(nodes: typeof tuistGraphData.nodes, edges: typeof tuistGraphData.edges) {
     const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((n) => n.id).join(',')}-${edges.map((e) => `${e.source}->${e.target}`).join(',')}`;
     if (fingerprint === this.dataFingerprint) return;
     this.dataFingerprint = fingerprint;
@@ -133,8 +133,8 @@ export class GraphApp extends SignalWatcher(LitElement) {
     super.connectedCallback();
 
     // Initialize data signals with graph data
-    setGraphData(mockGraphData.nodes, mockGraphData.edges);
-    this.refreshGraphData(mockGraphData.nodes, mockGraphData.edges);
+    setGraphData(tuistGraphData.nodes, tuistGraphData.edges);
+    this.refreshGraphData(tuistGraphData.nodes, tuistGraphData.edges);
   }
 
   override updated(): void {

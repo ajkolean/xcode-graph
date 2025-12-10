@@ -14,12 +14,12 @@ import type {
 } from '@/shared/schemas/graph.schema';
 import { NodeType, Origin, Platform } from '@/shared/schemas/graph.schema';
 import type {
-  ProjectValue,
+  Graph,
+  GraphDependency,
+  Project,
   DeploymentTargets as RawDeploymentTargets,
   Product as RawProduct,
-  TargetValue,
-  TuistGraph,
-  TuistGraphDependency,
+  Target,
 } from './tuist-graph.schema.generated';
 import { Product } from './tuist-graph.schema.generated';
 
@@ -84,8 +84,8 @@ function mapDestinations(raw: unknown): Destination[] | undefined {
 
   const rawObj = raw as Record<string, unknown>;
   const destinations = Object.keys(rawObj)
-    .filter((key) => key in destinationMap)
-    .map((key) => destinationMap[key]);
+    .map((key) => destinationMap[key])
+    .filter((d): d is Destination => d !== undefined);
 
   return destinations.length > 0 ? destinations : undefined;
 }
@@ -105,15 +105,16 @@ function getOriginFromProject(
 // Dependency Utilities
 // =============================================================================
 
-function getDependencyKey(dep: TuistGraphDependency): string {
-  if (dep.target) return `target:${dep.target.path}:${dep.target.name}`;
-  if (dep.packageProduct) return `package:${dep.packageProduct.path}:${dep.packageProduct.product}`;
-  if (dep.xcframework) return `xcframework:${dep.xcframework._0.path}`;
-  if (dep.sdk) return `sdk:${dep.sdk.name}`;
-  if (dep.framework) return `framework:${dep.framework.path}`;
-  if (dep.library) return `library:${dep.library.path}`;
-  if (dep.bundle) return `bundle:${dep.bundle.path}`;
-  if (dep.macro) return `macro:${dep.macro.path}`;
+function getDependencyKey(dep: GraphDependency): string {
+  if ('target' in dep) return `target:${dep.target.path}:${dep.target.name}`;
+  if ('packageProduct' in dep)
+    return `package:${dep.packageProduct.path}:${dep.packageProduct.product}`;
+  if ('xcframework' in dep) return `xcframework:${dep.xcframework._0.path}`;
+  if ('sdk' in dep) return `sdk:${dep.sdk.name}`;
+  if ('framework' in dep) return `framework:${dep.framework.path}`;
+  if ('library' in dep) return `library:${dep.library.path}`;
+  if ('bundle' in dep) return `bundle:${dep.bundle.path}`;
+  if ('macro' in dep) return `macro:${dep.macro.path}`;
   return `unknown:${JSON.stringify(dep)}`;
 }
 
@@ -126,29 +127,29 @@ function getNameFromPath(path: string, extensions: string[]): string {
   return result;
 }
 
-function getDependencyName(dep: TuistGraphDependency): string {
-  if (dep.target) return dep.target.name;
-  if (dep.packageProduct) return dep.packageProduct.product;
-  if (dep.xcframework) return getNameFromPath(dep.xcframework._0.path, ['.xcframework']);
-  if (dep.sdk) return dep.sdk.name.replace('.framework', '');
-  if (dep.framework) return getNameFromPath(dep.framework.path, ['.framework']);
-  if (dep.library) return getNameFromPath(dep.library.path, ['.a', '.dylib']);
-  if (dep.bundle) return getNameFromPath(dep.bundle.path, ['.bundle']);
-  if (dep.macro) return getNameFromPath(dep.macro.path, []);
+function getDependencyName(dep: GraphDependency): string {
+  if ('target' in dep) return dep.target.name;
+  if ('packageProduct' in dep) return dep.packageProduct.product;
+  if ('xcframework' in dep) return getNameFromPath(dep.xcframework._0.path, ['.xcframework']);
+  if ('sdk' in dep) return dep.sdk.name.replace('.framework', '');
+  if ('framework' in dep) return getNameFromPath(dep.framework.path, ['.framework']);
+  if ('library' in dep) return getNameFromPath(dep.library.path, ['.a', '.dylib']);
+  if ('bundle' in dep) return getNameFromPath(dep.bundle.path, ['.bundle']);
+  if ('macro' in dep) return getNameFromPath(dep.macro.path, []);
   return 'Unknown';
 }
 
-function getNodeTypeForDependency(dep: TuistGraphDependency): NodeType {
-  if (dep.sdk || dep.xcframework || dep.framework) return NodeType.Framework;
-  if (dep.packageProduct) return NodeType.Package;
+function getNodeTypeForDependency(dep: GraphDependency): NodeType {
+  if ('sdk' in dep || 'xcframework' in dep || 'framework' in dep) return NodeType.Framework;
+  if ('packageProduct' in dep) return NodeType.Package;
   return NodeType.Library;
 }
 
-function getOriginForDependency(dep: TuistGraphDependency): Origin {
-  if (dep.sdk || dep.xcframework || dep.packageProduct) return Origin.External;
-  if (dep.target) {
+function getOriginForDependency(dep: GraphDependency): Origin {
+  if ('sdk' in dep || 'xcframework' in dep || 'packageProduct' in dep) return Origin.External;
+  if ('target' in dep) {
     const externalPaths = ['.build/checkouts/', '.build/registry/downloads/'];
-    if (externalPaths.some((p) => dep.target!.path.includes(p))) return Origin.External;
+    if (externalPaths.some((p) => dep.target.path.includes(p))) return Origin.External;
   }
   return Origin.Local;
 }
@@ -158,7 +159,7 @@ function getOriginForDependency(dep: TuistGraphDependency): Origin {
 // =============================================================================
 
 interface TargetLookupData {
-  target: TargetValue;
+  target: Target;
   projectName: string;
   projectPath: string;
   origin: Origin;
@@ -167,7 +168,7 @@ interface TargetLookupData {
 /** Create a rich GraphNode from target data */
 function createNodeFromTarget(
   key: string,
-  target: TargetValue,
+  target: Target,
   projectName: string,
   projectPath: string,
   origin: Origin,
@@ -203,7 +204,7 @@ function createNodeFromTarget(
 }
 
 /** Create a basic GraphNode from dependency info */
-function createNodeFromDependency(dep: TuistGraphDependency): GraphNode {
+function createNodeFromDependency(dep: GraphDependency): GraphNode {
   return {
     id: getDependencyKey(dep),
     name: getDependencyName(dep),
@@ -217,17 +218,22 @@ function createNodeFromDependency(dep: TuistGraphDependency): GraphNode {
 // Transform Steps
 // =============================================================================
 
-/** Build lookup map and initial nodes from projects */
-function extractProjectTargets(projects: Record<string, ProjectValue>): {
+/** Build lookup map and initial nodes from projects (flat alternating array) */
+function extractProjectTargets(projects: (string | Project)[]): {
   nodes: Map<string, GraphNode>;
   lookup: Map<string, TargetLookupData>;
 } {
   const nodes = new Map<string, GraphNode>();
   const lookup = new Map<string, TargetLookupData>();
 
-  for (const [projectPath, project] of Object.entries(projects)) {
+  // Projects is flat alternating: [path, Project, path, Project, ...]
+  for (let i = 0; i < projects.length; i += 2) {
+    const projectPath = projects[i] as string;
+    const project = projects[i + 1] as Project;
+
     const origin = getOriginFromProject(projectPath, project.type);
 
+    // Targets is { [key: string]: Target } because key is String
     for (const [, target] of Object.entries(project.targets)) {
       const key = `target:${projectPath}:${target.name}`;
       lookup.set(key, { target, projectName: project.name, projectPath, origin });
@@ -238,29 +244,23 @@ function extractProjectTargets(projects: Record<string, ProjectValue>): {
   return { nodes, lookup };
 }
 
-/** Parse a dependency key from the raw JSON format */
-function parseDependencyKey(depKeyRaw: string): { key: string; dep: TuistGraphDependency | null } {
-  try {
-    const dep = JSON.parse(depKeyRaw) as TuistGraphDependency;
-    return { key: getDependencyKey(dep), dep };
-  } catch {
-    return { key: depKeyRaw, dep: null };
-  }
-}
-
-/** Process dependencies to create edges and missing nodes */
+/** Process dependencies (flat alternating array) to create edges and missing nodes */
 function processDependencies(
-  dependencies: Record<string, TuistGraphDependency[]>,
+  dependencies: (GraphDependency | GraphDependency[])[],
   nodes: Map<string, GraphNode>,
   lookup: Map<string, TargetLookupData>,
 ): GraphEdge[] {
   const edges: GraphEdge[] = [];
 
-  for (const [depKeyRaw, targetDeps] of Object.entries(dependencies)) {
-    const { key: sourceKey, dep: sourceDep } = parseDependencyKey(depKeyRaw);
+  // Dependencies is flat alternating: [sourceDep, targetDeps[], sourceDep, targetDeps[], ...]
+  for (let i = 0; i < dependencies.length; i += 2) {
+    const sourceDep = dependencies[i] as GraphDependency;
+    const targetDeps = dependencies[i + 1] as GraphDependency[];
+
+    const sourceKey = getDependencyKey(sourceDep);
 
     // Create source node if missing
-    if (!nodes.has(sourceKey) && sourceDep) {
+    if (!nodes.has(sourceKey)) {
       nodes.set(sourceKey, createNodeFromDependency(sourceDep));
     }
 
@@ -297,7 +297,7 @@ function processDependencies(
  * Transform a raw Tuist graph JSON into our GraphData format.
  * Extracts all rich metadata from projects, targets, and dependencies.
  */
-export function transformTuistGraph(raw: TuistGraph): GraphData {
+export function transformTuistGraph(raw: Graph): GraphData {
   const { nodes, lookup } = extractProjectTargets(raw.projects);
   const edges = processDependencies(raw.dependencies, nodes, lookup);
 
@@ -310,12 +310,12 @@ export function transformTuistGraph(raw: TuistGraph): GraphData {
 /** Load and transform a Tuist graph from a JSON file URL */
 export async function loadTuistGraph(jsonPath: string): Promise<GraphData> {
   const response = await fetch(jsonPath);
-  const raw = (await response.json()) as TuistGraph;
+  const raw = (await response.json()) as Graph;
   return transformTuistGraph(raw);
 }
 
 /** Parse and transform a Tuist graph from a JSON string */
 export function parseTuistGraph(jsonString: string): GraphData {
-  const raw = JSON.parse(jsonString) as TuistGraph;
+  const raw = JSON.parse(jsonString) as Graph;
   return transformTuistGraph(raw);
 }

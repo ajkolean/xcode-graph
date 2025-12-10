@@ -1,13 +1,10 @@
-import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { describe, expect, it } from 'vitest';
 import type { Graph } from './tuist-graph.schema.generated';
 
-// Path to the shared fixture used by both Swift and TypeScript tests
-const FIXTURE_PATH = resolve(
-  __dirname,
-  '../../packages/GraphValidator/Tests/GraphValidatorTests/Resources/graph.json'
-);
+// Path to the fixture (copied from Swift test resources)
+const FIXTURE_PATH = resolve(__dirname, '../fixtures/tuist-graph.json');
 
 describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
   it('should parse the same graph.json that Swift decodes', () => {
@@ -80,9 +77,10 @@ describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
       const project = graph.projects[i];
       if (typeof project === 'object' && project !== null && 'targets' in project) {
         // targets is { [key: string]: Target } because key is String
-        const targetEntries = Object.entries(project.targets);
-        if (targetEntries.length > 0) {
-          const [targetName, target] = targetEntries[0];
+        const targetNames = Object.keys(project.targets);
+        if (targetNames.length > 0) {
+          const targetName = targetNames[0]!;
+          const target = project.targets[targetName]!;
 
           expect(typeof targetName).toBe('string');
           expect(typeof target.name).toBe('string');
