@@ -16,7 +16,7 @@ struct TypeScriptGenerator {
 
     func generateInterface(for s: ExtractedStruct) -> String {
         var lines: [String] = []
-        lines.append("export interface \(s.qualifiedName) {")
+        lines.append("export interface \(s.tsName) {")
 
         for prop in s.properties {
             let tsType: String
@@ -40,7 +40,7 @@ struct TypeScriptGenerator {
 
         if isSimpleEnum {
             var lines: [String] = []
-            lines.append("export enum \(e.qualifiedName) {")
+            lines.append("export enum \(e.tsName) {")
             for enumCase in e.cases {
                 // PascalCase the enum case name
                 let pascalName = enumCase.name.prefix(1).uppercased() + enumCase.name.dropFirst()
@@ -50,12 +50,12 @@ struct TypeScriptGenerator {
             return lines.joined(separator: "\n")
         }
 
-        // Tagged union - generate as interface with optional properties
-        var lines: [String] = []
-        lines.append("export interface \(e.qualifiedName) {")
+        // Tagged union - generate as Union Type
+        var unionParts: [String] = []
+        
         for enumCase in e.cases {
             if enumCase.associatedValues.isEmpty {
-                lines.append("  \(enumCase.name)?: Record<string, never>;")
+                unionParts.append("  | { \(enumCase.name): Record<string, never> }")
             } else if enumCase.associatedValues.count == 1 && enumCase.associatedValues[0].name.hasPrefix("_") {
                 let av = enumCase.associatedValues[0]
                 let tsType: String
@@ -64,7 +64,7 @@ struct TypeScriptGenerator {
                 } else {
                     tsType = "unknown"
                 }
-                lines.append("  \(enumCase.name)?: { \(av.name): \(tsType) };")
+                unionParts.append("  | { \(enumCase.name): { \(av.name): \(tsType) } }")
             } else {
                 var avParts: [String] = []
                 for av in enumCase.associatedValues {
@@ -77,16 +77,16 @@ struct TypeScriptGenerator {
                     let optional = av.isOptional ? "?" : ""
                     avParts.append("\(av.name)\(optional): \(tsType)")
                 }
-                lines.append("  \(enumCase.name)?: { \(avParts.joined(separator: "; ")) };")
+                unionParts.append("  | { \(enumCase.name): { \(avParts.joined(separator: "; ")) } }")
             }
         }
-        lines.append("}")
-        return lines.joined(separator: "\n")
+        
+        return "export type \(e.tsName) =\n" + unionParts.joined(separator: "\n") + ";"
     }
 
     func generateTypealias(for t: ExtractedTypealias) -> String {
         let tsType = typeMapper.map(t.underlyingType)
-        return "export type \(t.qualifiedName) = \(tsType);"
+        return "export type \(t.tsName) = \(tsType);"
     }
 
     func generate() -> String {

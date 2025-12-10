@@ -48,11 +48,18 @@ struct TransformGraph: ParsableCommand {
         swiftFiles.sort { $0.path < $1.path }
         print("Found \(swiftFiles.count) Swift files in \(sourceDir)")
 
-        let extractor = TypeExtractor(viewMode: .sourceAccurate)
-
+        // Parse all files once
+        var sourceFiles: [SourceFileSyntax] = []
         for fileURL in swiftFiles {
             let source = try String(contentsOf: fileURL)
             let syntax = Parser.parse(source: source)
+            sourceFiles.append(syntax)
+        }
+
+        let extractor = TypeExtractor(viewMode: .sourceAccurate)
+
+        // Extract all types in a single pass
+        for syntax in sourceFiles {
             extractor.walk(syntax)
         }
 
@@ -80,7 +87,7 @@ struct TransformGraph: ParsableCommand {
         )
         let typescript = generator.generate()
 
-        try typescript.write(toFile: output, atomically: true, encoding: .utf8)
+        try typescript.write(toFile: output, atomically: true, encoding: String.Encoding.utf8)
         print("Generated: \(output)")
     }
 }

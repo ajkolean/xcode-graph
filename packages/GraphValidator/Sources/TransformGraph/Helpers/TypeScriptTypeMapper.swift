@@ -11,6 +11,11 @@ struct TypeScriptTypeMapper {
         self.knownTypes = types
     }
 
+    /// Convert dots to underscores for TypeScript output
+    private func toTSName(_ name: String) -> String {
+        name.replacingOccurrences(of: ".", with: "_")
+    }
+
     /// Convert Swift TypeSyntax to TypeScript type string
     /// - Parameters:
     ///   - syntax: The Swift type syntax
@@ -44,6 +49,7 @@ struct TypeScriptTypeMapper {
 
             if let genericArgs = identifier.genericArgumentClause {
                 let args = Array(genericArgs.arguments)
+                
 
                 switch typeName {
                 case "Set", "Array":
@@ -75,18 +81,24 @@ struct TypeScriptTypeMapper {
             if let baseIdentifier = member.baseType.as(IdentifierTypeSyntax.self),
                baseIdentifier.name.text == "Self",
                let context = context {
-                let replacedName = context.qualifiedName + "." + member.name.text
-                return mapSimple(replacedName, context: nil)
-            }
-            // For other member types like Dependency.Kind, try context + just the member name first
-            if let context = context {
-                let scopedName = context.qualifiedName + member.name.text
+                let scopedName = context.qualifiedName + "." + member.name.text
                 if knownTypes.contains(scopedName) {
-                    return scopedName
+                    return toTSName(scopedName)
                 }
             }
-            // Fall back to flattened name
-            return mapSimple(syntax.flattenedName, context: context)
+            // For member types like Plist.Value or GraphDependency.XCFramework
+            let flattened = syntax.flattenedName
+            if knownTypes.contains(flattened) {
+                return toTSName(flattened)
+            }
+            // Try context + member name as fallback
+            if let context = context {
+                let scopedName = context.qualifiedName + "." + member.name.text
+                if knownTypes.contains(scopedName) {
+                    return toTSName(scopedName)
+                }
+            }
+            return mapSimple(flattened, context: context)
 
         default:
             return mapSimple(syntax.description.trimmingCharacters(in: .whitespaces), context: context)
@@ -120,25 +132,28 @@ struct TypeScriptTypeMapper {
                 return cleaned
             }
 
-            // 2. Self-reference check (recursive types like PlistValue referencing "Value")
+            // 2. Self-reference check (recursive types like Plist.Value referencing "Value")
             if let context = context, context.name == cleaned {
-                return context.qualifiedName
+                return toTSName(context.qualifiedName)
             }
 
-            // 3. Scope-based lookup: walk up parent chain trying scope + typeName
+            // 3. Scope-based lookup: walk up parent chain trying scope.qualifiedName + typeName
             // Try current scope, then parent scope, then grandparent, etc.
             if let context = context {
                 var currentScope: ExtractedType? = context
                 while let scope = currentScope {
-                    let scopedName = scope.qualifiedName + cleaned
+                    let scopedName = scope.qualifiedName + "." + cleaned
                     if knownTypes.contains(scopedName) {
-                        return scopedName
+                        return toTSName(scopedName)
                     }
                     currentScope = scope.parent
                 }
             }
 
-            // 4. Fall back to baseName if it's in knownTypes (global types)
+            // 4. Fall back to direct lookup or baseName if it's in knownTypes (global types)
+            if knownTypes.contains(cleaned) {
+                return toTSName(cleaned)
+            }
             if knownTypes.contains(baseName) {
                 return baseName
             }

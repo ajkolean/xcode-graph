@@ -64,7 +64,7 @@ final class TypeExtractor: SyntaxVisitor {
     }
 
     override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
-        // Find the extended type by name
+        // Push extended type onto parent stack so nested types get proper parent
         let extendedName = node.extendedType.flattenedName
         if let existingType = findType(named: extendedName) {
             parentStack.append(existingType)
@@ -79,6 +79,7 @@ final class TypeExtractor: SyntaxVisitor {
     }
 
     override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
+
         let isPublic = node.modifiers.contains { $0.name.text == "public" }
         let extracted = ExtractedTypealias(
             name: node.name.text,
@@ -90,7 +91,7 @@ final class TypeExtractor: SyntaxVisitor {
         return .skipChildren
     }
 
-    /// Find an existing type by qualified name
+    /// Find an existing type by qualified name (using dots)
     private func findType(named name: String) -> ExtractedType? {
         structs.first { $0.qualifiedName == name } ??
         enums.first { $0.qualifiedName == name }
