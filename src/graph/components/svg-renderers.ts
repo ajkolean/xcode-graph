@@ -636,7 +636,7 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
         const endpoints = resolveEdgeEndpoints(edge, nodes, nodeMap);
         if (!endpoints) return nothing;
 
-        if (!shouldRenderEdge(endpoints, clusterId)) return nothing;
+        if (!shouldRenderEdge(endpoints, clusterId ?? undefined)) return nothing;
 
         const positions = calculateEdgePositions(
           edge,
@@ -654,7 +654,7 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
           selectedNode,
           hoveredNode,
           hoveredClusterId ?? null,
-          clusterId,
+          clusterId ?? undefined,
         );
 
         const baseOpacity = getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
@@ -745,62 +745,68 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
         isHighlighted: isClusterHovered,
         isSelected: isClusterSelected,
         zoom,
-        onClick: onClusterClick,
+        ...(onClusterClick ? { onClick: onClusterClick } : {}),
       })}
 
       <!-- Nodes -->
       <g class="nodes">
-        ${clusterNodes.map((node) => {
-          const layoutPos = layoutNodePositions.get(node.id);
-          if (!layoutPos) return nothing;
+        ${repeat(
+          clusterNodes,
+          (node) => node.id,
+          (node) => {
+            const layoutPos = layoutNodePositions.get(node.id);
+            if (!layoutPos) return nothing;
 
-          // Resolve position (manual overrides layout)
-          const manualPos = manualNodePositions?.get(node.id);
-          const posX = manualPos?.x ?? layoutPos.x;
-          const posY = manualPos?.y ?? layoutPos.y;
+            // Resolve position (manual overrides layout)
+            const manualPos = manualNodePositions?.get(node.id);
+            const posX = manualPos?.x ?? layoutPos.x;
+            const posY = manualPos?.y ?? layoutPos.y;
 
-          const isSelectedNode = selectedNode?.id === node.id;
-          const isHovered = hoveredNode === node.id;
-          const isConnected = selectedNode && connectedNodes.has(node.id);
-          const isSearchMatch =
-            searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
+            const isSelectedNode = selectedNode?.id === node.id;
+            const isHovered = hoveredNode === node.id;
+            const isConnected = selectedNode && connectedNodes.has(node.id);
+            const isSearchMatch =
+              searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-          const matchesPreview =
-            !previewFilter ||
-            (previewFilter.type === 'nodeType' && node.type === previewFilter.value) ||
-            (previewFilter.type === 'platform' && node.platform === previewFilter.value) ||
-            (previewFilter.type === 'origin' && node.origin === previewFilter.value) ||
-            (previewFilter.type === 'project' && node.project === previewFilter.value) ||
-            (previewFilter.type === 'package' &&
-              node.type === 'package' &&
-              node.name === previewFilter.value);
+            const matchesPreview =
+              !previewFilter ||
+              (previewFilter.type === 'nodeType' && node.type === previewFilter.value) ||
+              (previewFilter.type === 'platform' && node.platform === previewFilter.value) ||
+              (previewFilter.type === 'origin' && node.origin === previewFilter.value) ||
+              (previewFilter.type === 'project' && node.project === previewFilter.value) ||
+              (previewFilter.type === 'package' &&
+                node.type === 'package' &&
+                node.name === previewFilter.value);
 
-          const isDimmed =
-            (searchQuery && !isSearchMatch) ||
-            (selectedNode && !isSelectedNode && !isConnected) ||
-            (previewFilter && !matchesPreview);
+            const isDimmed =
+              !!(
+                (searchQuery && !isSearchMatch) ||
+                (selectedNode && !isSelectedNode && !isConnected) ||
+                (previewFilter && !matchesPreview)
+              );
 
-          const size = getNodeSize(node, edges);
-          const color = getNodeTypeColor(node.type);
-          const x = clusterPosition.x + posX;
-          const y = clusterPosition.y + posY;
+            const size = getNodeSize(node, edges);
+            const color = getNodeTypeColor(node.type);
+            const x = clusterPosition.x + posX;
+            const y = clusterPosition.y + posY;
 
-          return renderGraphNode({
-            node,
-            x,
-            y,
-            size,
-            color,
-            isSelected: isSelectedNode,
-            isHovered,
-            isDimmed,
-            zoom,
-            onMouseEnter: () => onNodeMouseEnter?.(node.id),
-            onMouseLeave: onNodeMouseLeave,
-            onMouseDown: (e) => onNodeMouseDown?.(node.id, e),
-            onClick: (e) => onNodeClick?.(node, e),
-          });
-        })}
+            return renderGraphNode({
+              node,
+              x,
+              y,
+              size,
+              color,
+              isSelected: isSelectedNode,
+              isHovered,
+              isDimmed,
+              zoom,
+              ...(onNodeMouseEnter ? { onMouseEnter: () => onNodeMouseEnter(node.id) } : {}),
+              ...(onNodeMouseLeave ? { onMouseLeave: onNodeMouseLeave } : {}),
+              ...(onNodeMouseDown ? { onMouseDown: (e: MouseEvent) => onNodeMouseDown(node.id, e) } : {}),
+              ...(onNodeClick ? { onClick: (e: MouseEvent) => onNodeClick(node, e) } : {}),
+            });
+          },
+        )}
       </g>
     </g>
   `;

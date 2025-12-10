@@ -20,6 +20,7 @@ import { type ClusterPosition, type NodePosition, ViewMode } from '@shared/schem
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { html, LitElement } from 'lit';
+import { repeat } from 'lit/directives/repeat.js';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {
@@ -126,67 +127,75 @@ export class GraphEdges extends LitElement {
     const zoom = this.zoom ?? 1;
     const hoveredClusterId = this.hoveredClusterId ?? null;
 
+    // Pre-compute node map to avoid O(n) finds on every edge
+    const nodeMap = new Map(this.nodes.map((n) => [n.id, n]));
+
     return html`
-      ${this.edges.map((edge) => {
-        const sourceNode = this.nodes.find((n) => n.id === edge.source);
-        const targetNode = this.nodes.find((n) => n.id === edge.target);
-        if (!sourceNode || !targetNode) return null;
+      ${repeat(
+        this.edges,
+        (edge) => `${edge.source}->${edge.target}`,
+        (edge) => {
+          const sourceNode = nodeMap.get(edge.source);
+          const targetNode = nodeMap.get(edge.target);
+          if (!sourceNode || !targetNode) return null;
 
-        const sourceClusterId = sourceNode.project || 'External';
-        const targetClusterId = targetNode.project || 'External';
+          const sourceClusterId = sourceNode.project || 'External';
+          const targetClusterId = targetNode.project || 'External';
 
-        // Filter based on cluster context
-        if (this.clusterId) {
-          if (sourceClusterId !== this.clusterId || targetClusterId !== this.clusterId) return null;
-        } else if (sourceClusterId === targetClusterId) {
-          return null;
-        }
+          // Filter based on cluster context
+          if (this.clusterId) {
+            if (sourceClusterId !== this.clusterId || targetClusterId !== this.clusterId)
+              return null;
+          } else if (sourceClusterId === targetClusterId) {
+            return null;
+          }
 
-        const sourcePos = this.finalNodePositions.get(edge.source);
-        const targetPos = this.finalNodePositions.get(edge.target);
-        const sourceCluster = this.clusterPositions.get(sourceClusterId);
-        const targetCluster = this.clusterPositions.get(targetClusterId);
+          const sourcePos = this.finalNodePositions?.get(edge.source);
+          const targetPos = this.finalNodePositions?.get(edge.target);
+          const sourceCluster = this.clusterPositions?.get(sourceClusterId);
+          const targetCluster = this.clusterPositions?.get(targetClusterId);
 
-        if (!sourcePos || !targetPos || !sourceCluster || !targetCluster) return null;
+          if (!sourcePos || !targetPos || !sourceCluster || !targetCluster) return null;
 
-        const x1 = sourceCluster.x + sourcePos.x;
-        const y1 = sourceCluster.y + sourcePos.y;
-        const x2 = targetCluster.x + targetPos.x;
-        const y2 = targetCluster.y + targetPos.y;
+          const x1 = sourceCluster.x + sourcePos.x;
+          const y1 = sourceCluster.y + sourcePos.y;
+          const x2 = targetCluster.x + targetPos.x;
+          const y2 = targetCluster.y + targetPos.y;
 
-        const isHighlighted =
-          this.selectedNode &&
-          (edge.source === this.selectedNode.id || edge.target === this.selectedNode.id);
-        const isFocused = this.hoveredNode === edge.source || this.hoveredNode === edge.target;
+          const isHighlighted =
+            this.selectedNode &&
+            (edge.source === this.selectedNode.id || edge.target === this.selectedNode.id);
+          const isFocused = this.hoveredNode === edge.source || this.hoveredNode === edge.target;
 
-        const isConnectedToHoveredCluster =
-          hoveredClusterId &&
-          (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
+          const isConnectedToHoveredCluster =
+            hoveredClusterId &&
+            (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
 
-        const shouldDim = hoveredClusterId && !isConnectedToHoveredCluster;
-        const edgeColor = getNodeTypeColor(targetNode.type);
-        const isCrossCluster = !this.clusterId;
-        const shouldAnimate = isFocused || isHighlighted;
+          const shouldDim = hoveredClusterId && !isConnectedToHoveredCluster;
+          const edgeColor = getNodeTypeColor(targetNode.type);
+          const isCrossCluster = !this.clusterId;
+          const shouldAnimate = isFocused || isHighlighted;
 
-        const opacity = shouldDim
-          ? this.getEdgeOpacity(edge, viewMode) * 0.08
-          : this.getEdgeOpacity(edge, viewMode);
+          const opacity = shouldDim
+            ? this.getEdgeOpacity(edge, viewMode) * 0.08
+            : this.getEdgeOpacity(edge, viewMode);
 
-        return html`
-          <graph-edge
-            .x1=${x1}
-            .y1=${y1}
-            .x2=${x2}
-            .y2=${y2}
-            .color=${edgeColor}
-            .isHighlighted=${isHighlighted || isFocused}
-            .isDependent=${isCrossCluster}
-            .opacity=${opacity}
-            .zoom=${zoom}
-            .animated=${shouldAnimate}
-          ></graph-edge>
-        `;
-      })}
+          return html`
+            <graph-edge
+              .x1=${x1}
+              .y1=${y1}
+              .x2=${x2}
+              .y2=${y2}
+              .color=${edgeColor}
+              .isHighlighted=${isHighlighted || isFocused}
+              .isDependent=${isCrossCluster}
+              .opacity=${opacity}
+              .zoom=${zoom}
+              .animated=${shouldAnimate}
+            ></graph-edge>
+          `;
+        },
+      )}
     `;
   }
 }

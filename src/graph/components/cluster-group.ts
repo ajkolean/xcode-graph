@@ -80,17 +80,36 @@ export class GraphClusterGroup extends LitElement {
   declare previewFilter: PreviewFilter | undefined;
   private declare isClusterHovered: boolean | undefined;
 
+  // Hover throttling
+  private hoverUpdatePending = false;
+  private pendingHoverState = false;
+
+  /**
+   * Throttled hover update using requestAnimationFrame
+   */
+  private scheduleHoverUpdate(hovered: boolean): void {
+    this.pendingHoverState = hovered;
+
+    if (!this.hoverUpdatePending) {
+      this.hoverUpdatePending = true;
+      requestAnimationFrame(() => {
+        this.isClusterHovered = this.pendingHoverState;
+        this.hoverUpdatePending = false;
+      });
+    }
+  }
+
   // ========================================
   // Event Handlers
   // ========================================
 
   private handleClusterMouseEnter() {
-    this.isClusterHovered = true;
+    this.scheduleHoverUpdate(true);
     this.dispatchEvent(new CustomEvent('cluster-mouseenter', { bubbles: true, composed: true }));
   }
 
   private handleClusterMouseLeave() {
-    this.isClusterHovered = false;
+    this.scheduleHoverUpdate(false);
     this.dispatchEvent(new CustomEvent('cluster-mouseleave', { bubbles: true, composed: true }));
   }
 
@@ -103,6 +122,65 @@ export class GraphClusterGroup extends LitElement {
       e.preventDefault();
       this.handleClusterClick();
     }
+  }
+
+  // ========================================
+  // Lifecycle
+  // ========================================
+
+  override shouldUpdate(changedProps: Map<PropertyKey, unknown>): boolean {
+    // Always update on initial render
+    if (!changedProps.size) return true;
+
+    // Update if cluster data changed
+    if (changedProps.has('cluster') || changedProps.has('clusterPosition')) return true;
+
+    // Update if nodes/edges changed
+    if (changedProps.has('nodes') || changedProps.has('edges')) return true;
+
+    // Update if positions changed
+    if (changedProps.has('finalNodePositions')) return true;
+
+    // Update if selection changed
+    if (changedProps.has('selectedNode') || changedProps.has('isSelected')) return true;
+
+    // Update if view mode changed
+    if (changedProps.has('viewMode')) return true;
+
+    // Update if zoom changed significantly
+    if (changedProps.has('zoom')) {
+      const oldZoom = (changedProps.get('zoom') as number) ?? 1;
+      const newZoom = this.zoom ?? 1;
+      if (Math.abs(newZoom - oldZoom) > 0.01) return true;
+    }
+
+    // Update if transitive deps changed
+    if (changedProps.has('transitiveDeps') || changedProps.has('transitiveDependents')) return true;
+
+    // Update if filter preview changed
+    if (changedProps.has('previewFilter')) return true;
+
+    // Update if search query changed
+    if (changedProps.has('searchQuery')) return true;
+
+    // Update if hover state changed
+    if (changedProps.has('hoveredNode')) {
+      const oldHover = changedProps.get('hoveredNode');
+      return oldHover !== this.hoveredNode;
+    }
+
+    if (changedProps.has('hoveredClusterId')) {
+      const oldHover = changedProps.get('hoveredClusterId');
+      return oldHover !== this.hoveredClusterId;
+    }
+
+    if (changedProps.has('isClusterHovered')) {
+      const oldHover = changedProps.get('isClusterHovered');
+      return oldHover !== this.isClusterHovered;
+    }
+
+    // Otherwise, skip update
+    return false;
   }
 
   // ========================================

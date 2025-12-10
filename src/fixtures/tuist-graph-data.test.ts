@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { tuistGraphData, rawTuistGraph } from './tuist-graph-data';
+import { describe, expect, it } from 'vitest';
+import { rawTuistGraph, tuistGraphData } from './tuist-graph-data';
 
 describe('tuist-graph-data fixture', () => {
   it('should load raw Tuist graph JSON', () => {
