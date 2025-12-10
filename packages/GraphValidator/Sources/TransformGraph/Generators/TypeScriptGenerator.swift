@@ -21,7 +21,7 @@ struct TypeScriptGenerator {
         for prop in s.properties {
             let tsType: String
             if let syntax = prop.typeSyntax {
-                tsType = typeMapper.map(syntax)
+                tsType = typeMapper.map(syntax, context: prop.parent)
             } else {
                 tsType = "unknown"
             }
@@ -60,7 +60,7 @@ struct TypeScriptGenerator {
                 let av = enumCase.associatedValues[0]
                 let tsType: String
                 if let syntax = av.typeSyntax {
-                    tsType = typeMapper.map(syntax)
+                    tsType = typeMapper.map(syntax, context: av.parent)
                 } else {
                     tsType = "unknown"
                 }
@@ -70,7 +70,7 @@ struct TypeScriptGenerator {
                 for av in enumCase.associatedValues {
                     let tsType: String
                     if let syntax = av.typeSyntax {
-                        tsType = typeMapper.map(syntax)
+                        tsType = typeMapper.map(syntax, context: av.parent)
                     } else {
                         tsType = "unknown"
                     }

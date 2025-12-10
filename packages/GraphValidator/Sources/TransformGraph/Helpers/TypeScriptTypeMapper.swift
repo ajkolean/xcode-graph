@@ -2,7 +2,6 @@ import SwiftSyntax
 
 struct TypeScriptTypeMapper {
     private let knownTypes: Set<String>
-    private let typeAliases: [String: String]
 
     init(structs: [ExtractedStruct], enums: [ExtractedEnum], typealiases: [ExtractedTypealias]) {
         var types = Set<String>()
@@ -10,60 +9,32 @@ struct TypeScriptTypeMapper {
         for e in enums { types.insert(e.qualifiedName) }
         for t in typealiases { types.insert(t.qualifiedName) }
         self.knownTypes = types
-
-        var aliases: [String: String] = [:]
-        // For each qualified name like "BuildRuleCompilerSpec", map all suffix components:
-        // "CompilerSpec" -> "BuildRuleCompilerSpec", "Spec" -> "BuildRuleCompilerSpec"
-        for typeName in types {
-            // Find all component boundaries (lowercase followed by uppercase)
-            var splitIndices: [String.Index] = []
-            var i = typeName.startIndex
-            while i < typeName.endIndex {
-                let nextIndex = typeName.index(after: i)
-                if nextIndex < typeName.endIndex {
-                    let char = typeName[i]
-                    let nextChar = typeName[nextIndex]
-                    if char.isLowercase && nextChar.isUppercase {
-                        splitIndices.append(nextIndex)
-                    }
-                }
-                i = nextIndex
-            }
-            // Create aliases for all suffixes (not the full name itself)
-            for splitIndex in splitIndices {
-                let simpleName = String(typeName[splitIndex...])
-                if simpleName != typeName && simpleName.count > 1 {
-                    // Only add if not already mapped (prefer shorter qualified names)
-                    if aliases[simpleName] == nil {
-                        aliases[simpleName] = typeName
-                    }
-                }
-            }
-        }
-        self.typeAliases = aliases
     }
 
     /// Convert Swift TypeSyntax to TypeScript type string
-    func map(_ syntax: TypeSyntax) -> String {
+    /// - Parameters:
+    ///   - syntax: The Swift type syntax
+    ///   - context: Optional parent context for resolving Self.* patterns
+    func map(_ syntax: TypeSyntax, context: ExtractedType? = nil) -> String {
         switch syntax.kind {
         case .optionalType:
             let optional = syntax.cast(OptionalTypeSyntax.self)
-            return map(optional.wrappedType)
+            return map(optional.wrappedType, context: context)
 
         case .arrayType:
             let array = syntax.cast(ArrayTypeSyntax.self)
-            return "\(map(array.element))[]"
+            return "\(map(array.element, context: context))[]"
 
         case .dictionaryType:
             let dict = syntax.cast(DictionaryTypeSyntax.self)
             let keyTypeName = dict.key.description.trimmingCharacters(in: .whitespaces)
-            let valueType = map(dict.value)
+            let valueType = map(dict.value, context: context)
             // Swift Codable encodes dictionaries with String keys as JSON objects,
             // but non-String keys (structs, enums, etc.) as flat alternating arrays [K, V, K, V, ...]
             if keyTypeName == "String" {
                 return "{ [key: string]: \(valueType) }"
             } else {
-                let keyType = map(dict.key)
+                let keyType = map(dict.key, context: context)
                 return "(\(keyType) | \(valueType))[]"
             }
 
@@ -77,18 +48,18 @@ struct TypeScriptTypeMapper {
                 switch typeName {
                 case "Set", "Array":
                     if let first = args.first {
-                        return "\(map(first.argument))[]"
+                        return "\(map(first.argument, context: context))[]"
                     }
                 case "Dictionary":
                     if args.count >= 2 {
                         let keyTypeName = args[0].argument.description.trimmingCharacters(in: .whitespaces)
-                        let valueType = map(args[1].argument)
+                        let valueType = map(args[1].argument, context: context)
                         // Swift Codable encodes dictionaries with String keys as JSON objects,
                         // but non-String keys (structs, enums, etc.) as flat alternating arrays [K, V, K, V, ...]
                         if keyTypeName == "String" {
                             return "{ [key: string]: \(valueType) }"
                         } else {
-                            let keyType = map(args[0].argument)
+                            let keyType = map(args[0].argument, context: context)
                             return "(\(keyType) | \(valueType))[]"
                         }
                     }
@@ -96,18 +67,37 @@ struct TypeScriptTypeMapper {
                     break
                 }
             }
-            return mapSimple(typeName)
+            return mapSimple(typeName, context: context)
 
         case .memberType:
-            return mapSimple(syntax.flattenedName)
+            let member = syntax.cast(MemberTypeSyntax.self)
+            // Replace Self with parent's qualified name: Self.Platform → XCFrameworkInfoPlistLibrary.Platform
+            if let baseIdentifier = member.baseType.as(IdentifierTypeSyntax.self),
+               baseIdentifier.name.text == "Self",
+               let context = context {
+                let replacedName = context.qualifiedName + "." + member.name.text
+                return mapSimple(replacedName, context: nil)
+            }
+            // For other member types like Dependency.Kind, try context + just the member name first
+            if let context = context {
+                let scopedName = context.qualifiedName + member.name.text
+                if knownTypes.contains(scopedName) {
+                    return scopedName
+                }
+            }
+            // Fall back to flattened name
+            return mapSimple(syntax.flattenedName, context: context)
 
         default:
-            return mapSimple(syntax.description.trimmingCharacters(in: .whitespaces))
+            return mapSimple(syntax.description.trimmingCharacters(in: .whitespaces), context: context)
         }
     }
 
     /// Convert a simple Swift type name to TypeScript
-    private func mapSimple(_ typeName: String) -> String {
+    /// - Parameters:
+    ///   - typeName: The Swift type name
+    ///   - context: Optional parent context for resolving Self.* patterns
+    private func mapSimple(_ typeName: String, context: ExtractedType? = nil) -> String {
         let cleaned = typeName
             .replacingOccurrences(of: "?", with: "")
             .trimmingCharacters(in: .whitespaces)
@@ -124,26 +114,35 @@ struct TypeScriptTypeMapper {
             return "boolean"
         case "Any", "AnyCodable":
             return "unknown"
-        case "PlatformFilters":
-            return "PlatformFilter[]"
-        case "SettingsDictionary":
-            return "{ [key: string]: SettingValue }"
-        case "Destinations":
-            return "Destination[]"
-        // Handle Self.Type patterns (Swift's nested type reference)
-        case "SelfPlatform":
-            return "Platform"
         default:
-            if knownTypes.contains(baseName) || knownTypes.contains(cleaned) {
+            // 1. Direct lookup for fully qualified names
+            if knownTypes.contains(cleaned) {
+                return cleaned
+            }
+
+            // 2. Self-reference check (recursive types like PlistValue referencing "Value")
+            if let context = context, context.name == cleaned {
+                return context.qualifiedName
+            }
+
+            // 3. Scope-based lookup: walk up parent chain trying scope + typeName
+            // Try current scope, then parent scope, then grandparent, etc.
+            if let context = context {
+                var currentScope: ExtractedType? = context
+                while let scope = currentScope {
+                    let scopedName = scope.qualifiedName + cleaned
+                    if knownTypes.contains(scopedName) {
+                        return scopedName
+                    }
+                    currentScope = scope.parent
+                }
+            }
+
+            // 4. Fall back to baseName if it's in knownTypes (global types)
+            if knownTypes.contains(baseName) {
                 return baseName
             }
-            // Check type aliases for nested types (e.g., Variant -> BuildConfigurationVariant)
-            if let qualifiedName = typeAliases[cleaned] {
-                return qualifiedName
-            }
-            if let qualifiedName = typeAliases[baseName] {
-                return qualifiedName
-            }
+
             return "unknown"
         }
     }

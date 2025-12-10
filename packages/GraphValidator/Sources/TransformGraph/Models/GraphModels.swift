@@ -20,7 +20,7 @@ class ExtractedType {
 }
 
 final class ExtractedStruct: ExtractedType {
-    let properties: [ExtractedProperty]
+    var properties: [ExtractedProperty]
 
     init(name: String, properties: [ExtractedProperty], isPublic: Bool, parent: ExtractedType? = nil) {
         self.properties = properties
@@ -29,7 +29,7 @@ final class ExtractedStruct: ExtractedType {
 }
 
 final class ExtractedEnum: ExtractedType {
-    let cases: [ExtractedEnumCase]
+    var cases: [ExtractedEnumCase]
 
     init(name: String, cases: [ExtractedEnumCase], isPublic: Bool, parent: ExtractedType? = nil) {
         self.cases = cases
@@ -53,7 +53,7 @@ struct ExtractedEnumCase {
 
 struct ExtractedProperty {
     let name: String
-    let type: String
     let typeSyntax: TypeSyntax?
     let isOptional: Bool
+    weak var parent: ExtractedType?
 }
