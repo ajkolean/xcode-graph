@@ -13,23 +13,19 @@ export function applyGraphFilters(
   searchQuery: string,
 ) {
   const normalizedQuery = searchQuery.trim().toLowerCase();
-  const hasProjectFilter = filters.projects.size > 0;
-  const hasPackageFilter = filters.packages.size > 0;
 
-  // Filter nodes
+  // Filter nodes (whitelist approach: only show nodes that match ALL filter criteria)
   const filteredNodes = nodes.filter((node) => {
     if (!filters.nodeTypes.has(node.type)) return false;
     if (!filters.platforms.has(node.platform)) return false;
     if (!filters.origins.has(node.origin)) return false;
-    if (
-      node.project &&
-      node.type !== 'package' &&
-      hasProjectFilter &&
-      !filters.projects.has(node.project)
-    )
+
+    // Project filter: only applies to non-package nodes with a project
+    if (node.project && node.type !== 'package' && !filters.projects.has(node.project))
       return false;
-    if (node.type === 'package' && hasPackageFilter && !filters.packages.has(node.name))
-      return false;
+
+    // Package filter: only applies to package nodes
+    if (node.type === 'package' && !filters.packages.has(node.name)) return false;
 
     // Search filter
     if (normalizedQuery) {

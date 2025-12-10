@@ -137,6 +137,10 @@ export class GraphApp extends SignalWatcher(LitElement) {
     this.refreshGraphData(mockGraphData.nodes, mockGraphData.edges);
   }
 
+  override updated(): void {
+    this.refreshGraphData(allNodes.get(), allEdges.get());
+  }
+
   // ========================================
   // Event Handlers
   // ========================================
@@ -152,9 +156,6 @@ export class GraphApp extends SignalWatcher(LitElement) {
   // ========================================
 
   override render() {
-    // Keep derived graph data (filters, cycles) in sync if graph data changes later
-    this.refreshGraphData(allNodes.get(), allEdges.get());
-
     // Access computed signals - automatically tracks dependencies
     const display = displayData.get();
     const filtered = filteredData.get();
