@@ -56,6 +56,27 @@ export enum Origin {
 
 // ==================== Type Definitions ====================
 
+/** Deployment target versions per platform */
+export interface DeploymentTargets {
+  iOS?: string;
+  macOS?: string;
+  tvOS?: string;
+  watchOS?: string;
+  visionOS?: string;
+}
+
+/** Target destination enum */
+export type Destination =
+  | 'iPhone'
+  | 'iPad'
+  | 'mac'
+  | 'macCatalyst'
+  | 'macWithiPadDesign'
+  | 'appleTv'
+  | 'appleWatch'
+  | 'appleVision'
+  | 'appleVisionWithiPadDesign';
+
 /** Graph node structure */
 export interface GraphNode {
   /** Unique identifier for the node */
@@ -72,6 +93,20 @@ export interface GraphNode {
   project?: string;
   /** Number of targets in this node */
   targetCount?: number;
+  /** Bundle identifier for the target */
+  bundleId?: string;
+  /** Product name for the target */
+  productName?: string;
+  /** Deployment target versions per platform */
+  deploymentTargets?: DeploymentTargets;
+  /** Supported destinations (devices) */
+  destinations?: Destination[];
+  /** Source file paths */
+  sourcePaths?: string[];
+  /** Metadata tags */
+  tags?: string[];
+  /** Path to the target/project */
+  path?: string;
 }
 
 /** Graph edge structure */
@@ -98,6 +133,26 @@ export const OriginSchema: z.ZodType<Origin> = z.nativeEnum(Origin);
 
 // ==================== Entity Schemas ====================
 
+export const DeploymentTargetsSchema = z.object({
+  iOS: z.string().optional(),
+  macOS: z.string().optional(),
+  tvOS: z.string().optional(),
+  watchOS: z.string().optional(),
+  visionOS: z.string().optional(),
+});
+
+export const DestinationSchema = z.enum([
+  'iPhone',
+  'iPad',
+  'mac',
+  'macCatalyst',
+  'macWithiPadDesign',
+  'appleTv',
+  'appleWatch',
+  'appleVision',
+  'appleVisionWithiPadDesign',
+]);
+
 /**
  * Graph node schema - validates individual graph nodes
  */
@@ -109,6 +164,13 @@ export const GraphNodeSchema: z.ZodType<GraphNode> = z.object({
   origin: OriginSchema,
   project: z.string().optional(),
   targetCount: z.number().int().nonnegative().optional(),
+  bundleId: z.string().optional(),
+  productName: z.string().optional(),
+  deploymentTargets: DeploymentTargetsSchema.optional(),
+  destinations: z.array(DestinationSchema).optional(),
+  sourcePaths: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
+  path: z.string().optional(),
 });
 
 /**

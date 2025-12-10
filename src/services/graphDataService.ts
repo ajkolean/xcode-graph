@@ -11,6 +11,8 @@ import {
   type Origin,
 } from '@shared/schemas/graph.schema';
 import { addToMultiMap } from '@shared/utils/collections';
+import { GraphAnalysisService } from './graphAnalysisService';
+import { GraphStatsService } from './graphStatsService';
 
 export class GraphDataService {
   private readonly nodes: GraphNode[];
@@ -300,5 +302,58 @@ export class GraphDataService {
    */
   getAllPackages(): Set<string> {
     return this.packages;
+  }
+
+  // ==================== Delegated Analysis/Stats ====================
+
+  /**
+   * Detect circular dependencies (delegated to GraphAnalysisService)
+   */
+  findCircularDependencies(): string[][] {
+    return GraphAnalysisService.findCircularDependencies(this);
+  }
+
+  /**
+   * Check if there's a path between two nodes (delegated to GraphAnalysisService)
+   */
+  hasPath(fromId: string, toId: string): boolean {
+    return GraphAnalysisService.hasPath(this, fromId, toId);
+  }
+
+  /**
+   * Get node statistics (delegated to GraphStatsService)
+   */
+  getNodeStats(nodeId: string): {
+    dependencies: number;
+    dependents: number;
+    transitiveDeps: number;
+    transitiveDependents: number;
+  } {
+    return GraphStatsService.getNodeStats(this, nodeId);
+  }
+
+  /**
+   * Get cluster statistics (delegated to GraphStatsService)
+   */
+  getClusterStats(clusterId: string): {
+    nodeCount: number;
+    dependencies: number;
+    dependents: number;
+    platforms: Set<string>;
+  } {
+    return GraphStatsService.getClusterStats(this, clusterId);
+  }
+
+  /**
+   * Get graph-wide statistics (delegated to GraphStatsService)
+   */
+  getGraphStats(): {
+    totalNodes: number;
+    totalEdges: number;
+    avgDependencies: number;
+    maxDependencies: number;
+    isolatedNodes: number;
+  } {
+    return GraphStatsService.getGraphStats(this);
   }
 }

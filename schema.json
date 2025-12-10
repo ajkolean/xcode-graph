@@ -1,0 +1,7481 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/Schema",
+  "definitions": {
+    "Schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DependencyUnion"
+          }
+        },
+        "dependencyConditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DependencyCondition"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "path": {
+          "$ref": "#/definitions/Path"
+        },
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectElement"
+          }
+        },
+        "workspace": {
+          "$ref": "#/definitions/Workspace"
+        }
+      },
+      "required": [
+        "dependencies",
+        "dependencyConditions",
+        "name",
+        "packages",
+        "path",
+        "projects",
+        "workspace"
+      ],
+      "title": "Schema"
+    },
+    "PurpleDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/FromTarget"
+        },
+        "sdk": {
+          "$ref": "#/definitions/FromTarget"
+        },
+        "xcframework": {
+          "$ref": "#/definitions/PurpleXcframework"
+        }
+      },
+      "required": [],
+      "title": "PurpleDependency"
+    },
+    "FromClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/FromTarget"
+        }
+      },
+      "required": ["target"],
+      "title": "FromClass"
+    },
+    "FromTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      },
+      "required": ["name", "path", "status"],
+      "title": "FromTarget"
+    },
+    "PurpleXcframework": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_0": {
+          "$ref": "#/definitions/Xcframework0"
+        }
+      },
+      "required": ["_0"],
+      "title": "PurpleXcframework"
+    },
+    "Xcframework0": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "infoPlist": {
+          "$ref": "#/definitions/0_InfoPlist"
+        },
+        "linking": {
+          "type": "string"
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "moduleMaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "path": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "swiftModules": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": [
+        "infoPlist",
+        "linking",
+        "mergeable",
+        "moduleMaps",
+        "path",
+        "status",
+        "swiftModules"
+      ],
+      "title": "Xcframework0"
+    },
+    "0_InfoPlist": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "AvailableLibraries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AvailableLibrary"
+          }
+        }
+      },
+      "required": ["AvailableLibraries"],
+      "title": "0_InfoPlist"
+    },
+    "AvailableLibrary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "LibraryIdentifier": {
+          "type": "string"
+        },
+        "LibraryPath": {
+          "type": "string"
+        },
+        "MergeableMetadata": {
+          "type": "boolean"
+        },
+        "SupportedArchitectures": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "SupportedPlatform": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "LibraryIdentifier",
+        "LibraryPath",
+        "MergeableMetadata",
+        "SupportedArchitectures",
+        "SupportedPlatform"
+      ],
+      "title": "AvailableLibrary"
+    },
+    "DependencyCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "$ref": "#/definitions/FromClass"
+        },
+        "to": {
+          "$ref": "#/definitions/FromClass"
+        },
+        "platformFilters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DependencyConditionPlatformFilter"
+          }
+        }
+      },
+      "required": [],
+      "title": "DependencyCondition"
+    },
+    "DependencyConditionPlatformFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "macos": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "watchos": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "ios": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "tvos": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "catalyst": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "visionos": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": [],
+      "title": "DependencyConditionPlatformFilter"
+    },
+    "Disabled": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "Disabled"
+    },
+    "ProjectProject": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "lastUpgradeCheck": {
+          "$ref": "#/definitions/LastUpgradeCheck"
+        },
+        "name": {
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/ProjectOptions"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "path": {
+          "type": "string"
+        },
+        "resourceSynthesizers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResourceSynthesizer"
+          }
+        },
+        "schemes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Scheme"
+          }
+        },
+        "settings": {
+          "$ref": "#/definitions/ProjectSettings"
+        },
+        "sourceRootPath": {
+          "type": "string"
+        },
+        "targets": {
+          "$ref": "#/definitions/Targets"
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectType"
+        },
+        "xcodeProjPath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "filesGroup",
+        "name",
+        "options",
+        "packages",
+        "path",
+        "resourceSynthesizers",
+        "schemes",
+        "settings",
+        "sourceRootPath",
+        "targets",
+        "type",
+        "xcodeProjPath"
+      ],
+      "title": "ProjectProject"
+    },
+    "FilesGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "$ref": "#/definitions/Group"
+        }
+      },
+      "required": ["group"],
+      "title": "FilesGroup"
+    },
+    "Group": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/GroupName"
+        }
+      },
+      "required": ["name"],
+      "title": "Group"
+    },
+    "ProjectOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "automaticSchemesOptions": {
+          "$ref": "#/definitions/AutomaticSchemesOptions"
+        },
+        "disableBundleAccessors": {
+          "type": "boolean"
+        },
+        "disableShowEnvironmentVarsInScriptPhases": {
+          "type": "boolean"
+        },
+        "disableSynthesizedResourceAccessors": {
+          "type": "boolean"
+        },
+        "textSettings": {
+          "$ref": "#/definitions/TextSettings"
+        }
+      },
+      "required": [
+        "automaticSchemesOptions",
+        "disableBundleAccessors",
+        "disableShowEnvironmentVarsInScriptPhases",
+        "disableSynthesizedResourceAccessors",
+        "textSettings"
+      ],
+      "title": "ProjectOptions"
+    },
+    "AutomaticSchemesOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "disabled": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "enabled": {
+          "$ref": "#/definitions/Enabled"
+        }
+      },
+      "required": [],
+      "title": "AutomaticSchemesOptions"
+    },
+    "Enabled": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "codeCoverageEnabled": {
+          "type": "boolean"
+        },
+        "targetSchemesGrouping": {
+          "$ref": "#/definitions/TargetSchemesGrouping"
+        },
+        "testingOptions": {
+          "type": "integer"
+        }
+      },
+      "required": ["codeCoverageEnabled", "targetSchemesGrouping", "testingOptions"],
+      "title": "Enabled"
+    },
+    "TargetSchemesGrouping": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "byNameSuffix": {
+          "$ref": "#/definitions/ByNameSuffix"
+        }
+      },
+      "required": ["byNameSuffix"],
+      "title": "TargetSchemesGrouping"
+    },
+    "ByNameSuffix": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "build": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "run": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "test": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["build", "run", "test"],
+      "title": "ByNameSuffix"
+    },
+    "TextSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "indentWidth": {
+          "type": "integer"
+        },
+        "tabWidth": {
+          "type": "integer"
+        },
+        "usesTabs": {
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "title": "TextSettings"
+    },
+    "ResourceSynthesizer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Extension"
+          }
+        },
+        "parser": {
+          "$ref": "#/definitions/Parser"
+        },
+        "parserOptions": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "template": {
+          "$ref": "#/definitions/Template"
+        }
+      },
+      "required": ["extensions", "parser", "parserOptions", "template"],
+      "title": "ResourceSynthesizer"
+    },
+    "Template": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultTemplate": {
+          "$ref": "#/definitions/DefaultTemplate"
+        }
+      },
+      "required": ["defaultTemplate"],
+      "title": "Template"
+    },
+    "DefaultTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_0": {
+          "type": "string",
+          "qt-uri-protocols": ["https"],
+          "qt-uri-extensions": [".xml"]
+        }
+      },
+      "required": ["_0"],
+      "title": "DefaultTemplate"
+    },
+    "Scheme": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "buildAction": {
+          "$ref": "#/definitions/BuildAction"
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "runAction": {
+          "$ref": "#/definitions/RunAction"
+        },
+        "shared": {
+          "type": "boolean"
+        },
+        "testAction": {
+          "$ref": "#/definitions/TestAction"
+        }
+      },
+      "required": ["buildAction", "hidden", "name", "shared"],
+      "title": "Scheme"
+    },
+    "BuildAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "findImplicitDependencies": {
+          "type": "boolean"
+        },
+        "parallelizeBuild": {
+          "type": "boolean"
+        },
+        "postActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PostAction"
+          }
+        },
+        "preActions": {
+          "type": "array",
+          "items": {}
+        },
+        "runPostActionsOnFailure": {
+          "type": "boolean"
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Executable"
+          }
+        }
+      },
+      "required": [
+        "findImplicitDependencies",
+        "parallelizeBuild",
+        "postActions",
+        "preActions",
+        "runPostActionsOnFailure",
+        "targets"
+      ],
+      "title": "BuildAction"
+    },
+    "PostAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scriptText": {
+          "type": "string"
+        },
+        "showEnvVarsInLog": {
+          "type": "boolean"
+        },
+        "title": {
+          "$ref": "#/definitions/Title"
+        },
+        "target": {
+          "$ref": "#/definitions/Executable"
+        }
+      },
+      "required": ["scriptText", "showEnvVarsInLog", "title"],
+      "title": "PostAction"
+    },
+    "Executable": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "projectPath": {
+          "$ref": "#/definitions/Path"
+        }
+      },
+      "required": ["name", "projectPath"],
+      "title": "Executable"
+    },
+    "RunAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "$ref": "#/definitions/Arguments"
+        },
+        "attachDebugger": {
+          "type": "boolean"
+        },
+        "configurationName": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "diagnosticsOptions": {
+          "$ref": "#/definitions/DiagnosticsOptions"
+        },
+        "launchStyle": {
+          "$ref": "#/definitions/LaunchStyle"
+        },
+        "metalOptions": {
+          "$ref": "#/definitions/MetalOptions"
+        },
+        "options": {
+          "$ref": "#/definitions/RunActionOptions"
+        },
+        "postActions": {
+          "type": "array",
+          "items": {}
+        },
+        "preActions": {
+          "type": "array",
+          "items": {}
+        },
+        "useCustomWorkingDirectory": {
+          "type": "boolean"
+        },
+        "executable": {
+          "$ref": "#/definitions/Executable"
+        }
+      },
+      "required": [
+        "arguments",
+        "attachDebugger",
+        "configurationName",
+        "diagnosticsOptions",
+        "launchStyle",
+        "metalOptions",
+        "options",
+        "postActions",
+        "preActions",
+        "useCustomWorkingDirectory"
+      ],
+      "title": "RunAction"
+    },
+    "Arguments": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "environmentVariables": {
+          "$ref": "#/definitions/EnvironmentVariables"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LaunchArgument"
+          }
+        }
+      },
+      "required": ["environmentVariables", "launchArguments"],
+      "title": "Arguments"
+    },
+    "EnvironmentVariables": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "TUIST_CONFIG_SRCROOT": {
+          "$ref": "#/definitions/TUISTAUTHEMAILClass"
+        },
+        "TUIST_FRAMEWORK_SEARCH_PATHS": {
+          "$ref": "#/definitions/TUISTAUTHEMAILClass"
+        },
+        "TUIST_OAUTH_CLIENT_ID": {
+          "$ref": "#/definitions/TUISTAUTHEMAILClass"
+        },
+        "TUIST_URL": {
+          "$ref": "#/definitions/TUISTAUTHEMAILClass"
+        },
+        "TUIST_AUTH_EMAIL": {
+          "$ref": "#/definitions/TUISTAUTHEMAILClass"
+        },
+        "TUIST_AUTH_PASSWORD": {
+          "$ref": "#/definitions/TUISTAUTHEMAILClass"
+        }
+      },
+      "required": ["TUIST_CONFIG_SRCROOT", "TUIST_FRAMEWORK_SEARCH_PATHS"],
+      "title": "EnvironmentVariables"
+    },
+    "TUISTAUTHEMAILClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "value": {
+          "$ref": "#/definitions/Value"
+        }
+      },
+      "required": ["isEnabled", "value"],
+      "title": "TUISTAUTHEMAILClass"
+    },
+    "LaunchArgument": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["isEnabled", "name"],
+      "title": "LaunchArgument"
+    },
+    "DiagnosticsOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "addressSanitizerEnabled": {
+          "type": "boolean"
+        },
+        "detectStackUseAfterReturnEnabled": {
+          "type": "boolean"
+        },
+        "mainThreadCheckerEnabled": {
+          "type": "boolean"
+        },
+        "performanceAntipatternCheckerEnabled": {
+          "type": "boolean"
+        },
+        "threadSanitizerEnabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "addressSanitizerEnabled",
+        "detectStackUseAfterReturnEnabled",
+        "mainThreadCheckerEnabled",
+        "performanceAntipatternCheckerEnabled",
+        "threadSanitizerEnabled"
+      ],
+      "title": "DiagnosticsOptions"
+    },
+    "LaunchStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "automatically": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": ["automatically"],
+      "title": "LaunchStyle"
+    },
+    "MetalOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "apiValidation": {
+          "type": "boolean"
+        },
+        "logGraphicsOverview": {
+          "type": "boolean"
+        },
+        "shaderValidation": {
+          "type": "boolean"
+        },
+        "showGraphicsOverview": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "apiValidation",
+        "logGraphicsOverview",
+        "shaderValidation",
+        "showGraphicsOverview"
+      ],
+      "title": "MetalOptions"
+    },
+    "RunActionOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enableGPUFrameCaptureMode": {
+          "$ref": "#/definitions/EnableGPUFrameCaptureMode"
+        }
+      },
+      "required": ["enableGPUFrameCaptureMode"],
+      "title": "RunActionOptions"
+    },
+    "TestAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attachDebugger": {
+          "type": "boolean"
+        },
+        "codeCoverageTargets": {
+          "type": "array",
+          "items": {}
+        },
+        "configurationName": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "coverage": {
+          "type": "boolean"
+        },
+        "diagnosticsOptions": {
+          "$ref": "#/definitions/DiagnosticsOptions"
+        },
+        "language": {
+          "type": "string"
+        },
+        "postActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PostAction"
+          }
+        },
+        "preActions": {
+          "type": "array",
+          "items": {}
+        },
+        "skippedTests": {
+          "type": "array",
+          "items": {}
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TargetElement"
+          }
+        }
+      },
+      "required": [
+        "attachDebugger",
+        "codeCoverageTargets",
+        "configurationName",
+        "coverage",
+        "diagnosticsOptions",
+        "postActions",
+        "preActions",
+        "skippedTests",
+        "targets"
+      ],
+      "title": "TestAction"
+    },
+    "TargetElement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isRandomExecutionOrdering": {
+          "type": "boolean"
+        },
+        "isSkipped": {
+          "type": "boolean"
+        },
+        "parallelization": {
+          "$ref": "#/definitions/Parallelization"
+        },
+        "target": {
+          "$ref": "#/definitions/Executable"
+        }
+      },
+      "required": ["isRandomExecutionOrdering", "isSkipped", "parallelization", "target"],
+      "title": "TargetElement"
+    },
+    "Parallelization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "none": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "all": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": [],
+      "title": "Parallelization"
+    },
+    "ProjectSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/PurpleBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PurpleConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "ProjectSettings"
+    },
+    "PurpleBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ALWAYS_SEARCH_USER_PATHS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CLANG_ENABLE_OBJC_WEAK": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "ENABLE_STRICT_OBJC_MSGSEND": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "FRAMEWORK_SEARCH_PATHS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "GCC_NO_COMMON_BLOCKS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "GCC_PREPROCESSOR_DEFINITIONS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "GCC_WARN_INHIBIT_ALL_WARNINGS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "GENERATE_MASTER_OBJECT_FILE": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "OTHER_SWIFT_FLAGS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "SWIFT_SUPPRESS_WARNINGS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "USE_HEADERMAP": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CLANG_CXX_LANGUAGE_STANDARD": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "SWIFT_VERSION": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "GCC_C_LANGUAGE_STANDARD": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": [],
+      "title": "PurpleBase"
+    },
+    "FRAMEWORKSEARCHPATHSArray": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_0": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["_0"],
+      "title": "FRAMEWORKSEARCHPATHSArray"
+    },
+    "PurpleConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/PurpleSettings"
+        }
+      },
+      "required": [],
+      "title": "PurpleConfiguration"
+    },
+    "PurpleSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "ENABLE_TESTABILITY": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": [],
+      "title": "PurpleSettings"
+    },
+    "DefaultSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recommended": {
+          "$ref": "#/definitions/Recommended"
+        }
+      },
+      "required": ["recommended"],
+      "title": "DefaultSettings"
+    },
+    "Recommended": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "excluding": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": ["excluding"],
+      "title": "Recommended"
+    },
+    "Targets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "HTTPTypes": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "HTTPTypesFoundation": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "CNIOBoringSSL": {
+          "$ref": "#/definitions/CnioAtomics"
+        },
+        "CNIOBoringSSLShims": {
+          "$ref": "#/definitions/CnioAtomics"
+        },
+        "NIOSSL": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "X509": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "_CertificateInternals": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "MachOKit": {
+          "$ref": "#/definitions/MachOKit"
+        },
+        "MachOKitC": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "SwiftASN1": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "KeychainAccess": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "EventSource": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Logging": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "ZIPFoundation": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Nuke": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NukeExtensions": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NukeUI": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NukeVideo": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "CGRPCNIOTransportZlib": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "GRPCNIOTransportCore": {
+          "$ref": "#/definitions/Grpc"
+        },
+        "GRPCNIOTransportHTTP2": {
+          "$ref": "#/definitions/Grpc"
+        },
+        "GRPCNIOTransportHTTP2Posix": {
+          "$ref": "#/definitions/Grpc"
+        },
+        "GRPCNIOTransportHTTP2TransportServices": {
+          "$ref": "#/definitions/Grpc"
+        },
+        "ComplexModule": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Numerics": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "RealModule": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "_NumericsShims": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "IssueReporting": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "IssueReportingPackageSupport": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "IssueReportingTestSupport": {
+          "$ref": "#/definitions/IssueReportingTestSupport"
+        },
+        "XCTestDynamicOverlay": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "CNIOExtrasZlib": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "NIOCertificateReloading": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOExtras": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOHTTPCompression": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOHTTPResponsiveness": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOHTTPTypes": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOHTTPTypesHTTP1": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOHTTPTypesHTTP2": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOResumableUpload": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOSOCKS": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "OpenAPIURLSession": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "ConcurrencyHelpers": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "ServiceLifecycle": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "ServiceLifecycleTestKit": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "UnixSignals": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "AEXML": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "CCryptoBoringSSL": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "CCryptoBoringSSLShims": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "Crypto": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "CryptoBoringWrapper": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "_CryptoExtras": {
+          "$ref": "#/definitions/CryptoExtras"
+        },
+        "Queuer": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "CNIOAtomics": {
+          "$ref": "#/definitions/CnioAtomics"
+        },
+        "CNIODarwin": {
+          "$ref": "#/definitions/CnioAtomics"
+        },
+        "CNIOLLHTTP": {
+          "$ref": "#/definitions/CnioAtomics"
+        },
+        "CNIOLinux": {
+          "$ref": "#/definitions/CnioAtomics"
+        },
+        "CNIOPosix": {
+          "$ref": "#/definitions/CnioAtomics"
+        },
+        "CNIOSHA1": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "CNIOWASI": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "CNIOWindows": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "NIO": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOConcurrencyHelpers": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOCore": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOEmbedded": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOFileSystem": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOFoundationCompat": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOHTTP1": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOPosix": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOTLS": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOTestUtils": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOWebSocket": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "_NIOBase64": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "_NIOConcurrency": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "_NIODataStructures": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "_NIOFileSystem": {
+          "$ref": "#/definitions/FileSystem"
+        },
+        "_NIOFileSystemFoundationCompat": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "CustomDump": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "GRPCProtobuf": {
+          "$ref": "#/definitions/Grpc"
+        },
+        "SwiftProtobuf": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftProtobufPluginLibrary": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Command": {
+          "$ref": "#/definitions/Command"
+        },
+        "XcodeProj": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "FileSystem": {
+          "$ref": "#/definitions/FileSystem"
+        },
+        "FileSystemTesting": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Glob": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "XMLCoder": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "AsyncAlgorithms": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "StencilSwiftKit": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Stencil": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "GRPCCodeGen": {
+          "$ref": "#/definitions/Grpc"
+        },
+        "GRPCCore": {
+          "$ref": "#/definitions/Grpc"
+        },
+        "GRPCInProcessTransport": {
+          "$ref": "#/definitions/Grpc"
+        },
+        "Rainbow": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "ObjcExceptionBridging": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "XCGLogger": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "AnyCodable": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "TSCBasic": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "TSCLibc": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "TSCTestSupport": {
+          "$ref": "#/definitions/IssueReportingTestSupport"
+        },
+        "TSCUtility": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "TSCclibc": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "DOT": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "GraphViz": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "GraphVizBuilder": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Tools": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "RawStructuredFieldValues": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "StructuredFieldValues": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftGenCLI": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftGenKit": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "InlineSnapshotTesting": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SnapshotTesting": {
+          "$ref": "#/definitions/IssueReportingTestSupport"
+        },
+        "SnapshotTestingCustomDump": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "ArgumentParser": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "ArgumentParserToolInfo": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Algorithms": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Kanna": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Noora": {
+          "$ref": "#/definitions/Command"
+        },
+        "NIOHPACK": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOHTTP2": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "OrderedSet": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Gzip": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "system-zlib": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "PathKit": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "FileIO": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Path": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Mockable": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "MockableMacro": {
+          "$ref": "#/definitions/MockableMacro"
+        },
+        "Colorizer": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "NIOTransportServices": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "CSystem": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "SystemPackage": {
+          "$ref": "#/definitions/SystemPackage"
+        },
+        "LoggingOSLog": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Atomics": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "_AtomicsShims": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "XcbeautifyLib": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "MCP": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "CYaml": {
+          "$ref": "#/definitions/CnioAtomics"
+        },
+        "Yams": {
+          "$ref": "#/definitions/Yams"
+        },
+        "libzstd": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "OpenAPIRuntime": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "TuistApp": {
+          "$ref": "#/definitions/TuistApp"
+        },
+        "TuistAppStorage": {
+          "$ref": "#/definitions/TuistAppStorageClass"
+        },
+        "TuistAuthentication": {
+          "$ref": "#/definitions/TuistAuthentication"
+        },
+        "TuistErrorHandling": {
+          "$ref": "#/definitions/TuistErrorHandlingClass"
+        },
+        "TuistMenuBar": {
+          "$ref": "#/definitions/ProjectAutomation"
+        },
+        "TuistMenuBarTests": {
+          "$ref": "#/definitions/ProjectAutomation"
+        },
+        "TuistNoora": {
+          "$ref": "#/definitions/TuistErrorHandlingClass"
+        },
+        "TuistOnboarding": {
+          "$ref": "#/definitions/TuistOnboardingClass"
+        },
+        "TuistPreviews": {
+          "$ref": "#/definitions/TuistOnboardingClass"
+        },
+        "TuistProfile": {
+          "$ref": "#/definitions/TuistOnboardingClass"
+        },
+        "CryptoSwift": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Difference": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "XCLogParser": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "XcodeHasher": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "FluidMenuBarExtra": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "FileLogging": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftBasicFormat": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftCompilerPlugin": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftCompilerPluginMessageHandling": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftDiagnostics": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftIDEUtils": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftIfConfig": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftLexicalLookup": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftLibraryPluginProvider": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftOperators": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftParser": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftParserDiagnostics": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftRefactor": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntax": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntax509": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntax510": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntax600": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntax601": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntax602": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntaxBuilder": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntaxMacroExpansion": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntaxMacros": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntaxMacrosGenericTestSupport": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "SwiftSyntaxMacrosTestSupport": {
+          "$ref": "#/definitions/IssueReportingTestSupport"
+        },
+        "_SwiftLibraryPluginProviderCShims": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "_SwiftSyntaxCShims": {
+          "$ref": "#/definitions/CCryptoBoringSSL"
+        },
+        "_SwiftSyntaxGenericTestSupport": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "Rosalind": {
+          "$ref": "#/definitions/Command"
+        },
+        "BitCollections": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "Collections": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "DequeModule": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "HashTreeCollections": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "HeapModule": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "InternalCollectionsUtilities": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "OrderedCollections": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "_RopeModule": {
+          "$ref": "#/definitions/BitCollections"
+        },
+        "SwiftyJSON": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "XcodeGraph": {
+          "$ref": "#/definitions/Aexml"
+        },
+        "XcodeGraphMapper": {
+          "$ref": "#/definitions/FileSystem"
+        },
+        "XcodeMetadata": {
+          "$ref": "#/definitions/FileSystem"
+        },
+        "ProjectAutomation": {
+          "$ref": "#/definitions/ProjectAutomation"
+        },
+        "ProjectDescription": {
+          "$ref": "#/definitions/ProjectAutomation"
+        },
+        "TuistAcceptanceTesting": {
+          "$ref": "#/definitions/TuistAcceptanceTesting"
+        },
+        "TuistAnalytics": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistAsyncQueue": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistAsyncQueueTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistAutomation": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistAutomationAcceptanceTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistAutomationTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistCAS": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistCASAnalytics": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistCASAnalyticsTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistCASTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistCI": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistCITests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistCache": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistCacheTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistCore": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistCoreTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistDependencies": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistDependenciesAcceptanceTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistDependenciesTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistGenerator": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistGeneratorAcceptanceTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistGeneratorTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistGit": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistGitTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistHasher": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistHasherTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistKit": {
+          "$ref": "#/definitions/TuistKit"
+        },
+        "TuistKitAcceptanceTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistKitTests": {
+          "$ref": "#/definitions/TuistKitTests"
+        },
+        "TuistLaunchctl": {
+          "$ref": "#/definitions/TuistLaunchctlClass"
+        },
+        "TuistLaunchctlTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistLoader": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistLoaderTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistMigration": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistMigrationTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistOIDC": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistOIDCTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistPlugin": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistPluginTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistProcess": {
+          "$ref": "#/definitions/TuistLaunchctlClass"
+        },
+        "TuistRootDirectoryLocator": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistRootDirectoryLocatorTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistScaffold": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistScaffoldTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistServer": {
+          "$ref": "#/definitions/TuistServer"
+        },
+        "TuistServerTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistSimulator": {
+          "$ref": "#/definitions/TuistAppStorageClass"
+        },
+        "TuistSupport": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistSupportTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistTesting": {
+          "$ref": "#/definitions/TuistTesting"
+        },
+        "TuistXCActivityLog": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistXCActivityLogTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistXCResultService": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistXCResultServiceTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "TuistXcodeProjectOrWorkspacePathLocator": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "TuistXcodeProjectOrWorkspacePathLocatorTests": {
+          "$ref": "#/definitions/TuistTests"
+        },
+        "tuist": {
+          "$ref": "#/definitions/TuistClass"
+        },
+        "tuistbenchmark": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        },
+        "tuistfixturegenerator": {
+          "$ref": "#/definitions/TuistAnalyticsClass"
+        }
+      },
+      "required": [],
+      "title": "Targets"
+    },
+    "Aexml": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AEXMLDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/AEXMLSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "Aexml"
+    },
+    "AEXMLDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "$ref": "#/definitions/DependencyProject"
+        },
+        "target": {
+          "$ref": "#/definitions/PurpleTarget"
+        }
+      },
+      "required": [],
+      "title": "AEXMLDependency"
+    },
+    "DependencyProject": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "target": {
+          "type": "string"
+        },
+        "condition": {
+          "$ref": "#/definitions/ProjectCondition"
+        }
+      },
+      "required": ["path", "status", "target"],
+      "title": "DependencyProject"
+    },
+    "ProjectCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platformFilters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DependencyConditionPlatformFilter"
+          }
+        }
+      },
+      "required": ["platformFilters"],
+      "title": "ProjectCondition"
+    },
+    "PurpleTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "condition": {
+          "$ref": "#/definitions/PurpleCondition"
+        }
+      },
+      "required": ["name", "status"],
+      "title": "PurpleTarget"
+    },
+    "PurpleCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platformFilters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PurplePlatformFilter"
+          }
+        }
+      },
+      "required": ["platformFilters"],
+      "title": "PurpleCondition"
+    },
+    "PurplePlatformFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "watchos": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "ios": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "tvos": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "macos": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": [],
+      "title": "PurplePlatformFilter"
+    },
+    "AEXMLDeploymentTargets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "iOS": {
+          "type": "string"
+        },
+        "macOS": {
+          "type": "string"
+        },
+        "tvOS": {
+          "type": "string"
+        },
+        "visionOS": {
+          "type": "string"
+        },
+        "watchOS": {
+          "type": "string"
+        }
+      },
+      "required": ["iOS", "macOS", "tvOS", "visionOS", "watchOS"],
+      "title": "AEXMLDeploymentTargets"
+    },
+    "AEXMLInfoPlist": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "extendingDefault": {
+          "$ref": "#/definitions/PurpleExtendingDefault"
+        }
+      },
+      "required": ["extendingDefault"],
+      "title": "AEXMLInfoPlist"
+    },
+    "PurpleExtendingDefault": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "with": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": ["with"],
+      "title": "PurpleExtendingDefault"
+    },
+    "AutogeneratedWorkspaceSchemes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "disabled": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": ["disabled"],
+      "title": "AutogeneratedWorkspaceSchemes"
+    },
+    "Metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["tags"],
+      "title": "Metadata"
+    },
+    "Resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Resource"
+          }
+        }
+      },
+      "required": ["resources"],
+      "title": "Resources"
+    },
+    "Resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "file": {
+          "$ref": "#/definitions/File"
+        },
+        "folderReference": {
+          "$ref": "#/definitions/FolderReference"
+        }
+      },
+      "required": [],
+      "title": "Resource"
+    },
+    "File": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {}
+        },
+        "inclusionCondition": {
+          "$ref": "#/definitions/InclusionCondition"
+        }
+      },
+      "required": ["path", "tags"],
+      "title": "File"
+    },
+    "InclusionCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platformFilters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InclusionConditionPlatformFilter"
+          }
+        }
+      },
+      "required": ["platformFilters"],
+      "title": "InclusionCondition"
+    },
+    "InclusionConditionPlatformFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ios": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": ["ios"],
+      "title": "InclusionConditionPlatformFilter"
+    },
+    "FolderReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": ["path", "tags"],
+      "title": "FolderReference"
+    },
+    "AEXMLSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/SettingsClass"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FluffyConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "AEXMLSettings"
+    },
+    "SettingsClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "OTHER_SWIFT_FLAGS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        }
+      },
+      "required": [],
+      "title": "SettingsClass"
+    },
+    "FluffyConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": [],
+      "title": "FluffyConfiguration"
+    },
+    "Source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": ["path"],
+      "title": "Source"
+    },
+    "AEXMLType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "remote": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": ["remote"],
+      "title": "AEXMLType"
+    },
+    "BitCollections": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BitCollectionsDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/BitCollectionsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "BitCollections"
+    },
+    "BitCollectionsDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/FluffyTarget"
+        }
+      },
+      "required": ["target"],
+      "title": "BitCollectionsDependency"
+    },
+    "FluffyTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      },
+      "required": ["name", "status"],
+      "title": "FluffyTarget"
+    },
+    "BitCollectionsSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/FluffyBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FluffyConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "BitCollectionsSettings"
+    },
+    "FluffyBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "OTHER_SWIFT_FLAGS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        }
+      },
+      "required": ["OTHER_SWIFT_FLAGS", "SWIFT_ACTIVE_COMPILATION_CONDITIONS"],
+      "title": "FluffyBase"
+    },
+    "CCryptoBoringSSL": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CCryptoBoringSSLDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/CCryptoBoringSSLSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        },
+        "headers": {
+          "$ref": "#/definitions/Headers"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "CCryptoBoringSSL"
+    },
+    "CCryptoBoringSSLDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/FluffyTarget"
+        },
+        "sdk": {
+          "$ref": "#/definitions/FluffyTarget"
+        }
+      },
+      "required": [],
+      "title": "CCryptoBoringSSLDependency"
+    },
+    "Headers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "private": {
+          "type": "array",
+          "items": {}
+        },
+        "project": {
+          "type": "array",
+          "items": {}
+        },
+        "public": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["private", "project", "public"],
+      "title": "Headers"
+    },
+    "CCryptoBoringSSLSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/TentacledBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FluffyConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "CCryptoBoringSSLSettings"
+    },
+    "TentacledBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "DEFINES_MODULE": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "HEADER_SEARCH_PATHS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "MODULEMAP_FILE": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "OTHER_CFLAGS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "OTHER_SWIFT_FLAGS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "GCC_PREPROCESSOR_DEFINITIONS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        }
+      },
+      "required": [
+        "DEFINES_MODULE",
+        "HEADER_SEARCH_PATHS",
+        "MODULEMAP_FILE",
+        "OTHER_CFLAGS",
+        "OTHER_SWIFT_FLAGS"
+      ],
+      "title": "TentacledBase"
+    },
+    "CnioAtomics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BitCollectionsDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/CCryptoBoringSSLSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "CnioAtomics"
+    },
+    "Command": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommandDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/CommandSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "Command"
+    },
+    "CommandDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "$ref": "#/definitions/DependencyProject"
+        }
+      },
+      "required": ["project"],
+      "title": "CommandDependency"
+    },
+    "CommandSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/SettingsClass"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TentacledConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "CommandSettings"
+    },
+    "TentacledConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/FluffySettings"
+        }
+      },
+      "required": [],
+      "title": "TentacledConfiguration"
+    },
+    "FluffySettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        }
+      },
+      "required": [],
+      "title": "FluffySettings"
+    },
+    "FileSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/CommandSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "FileSystem"
+    },
+    "FileSystemDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/FluffyTarget"
+        },
+        "project": {
+          "$ref": "#/definitions/DependencyProject"
+        }
+      },
+      "required": [],
+      "title": "FileSystemDependency"
+    },
+    "Grpc": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/GRPCCodeGenSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "Grpc"
+    },
+    "GRPCCodeGenSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/StickyBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FluffyConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "GRPCCodeGenSettings"
+    },
+    "StickyBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "OTHER_SWIFT_FLAGS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "SWIFT_VERSION": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": ["OTHER_SWIFT_FLAGS", "SWIFT_VERSION"],
+      "title": "StickyBase"
+    },
+    "IssueReportingTestSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BitCollectionsDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/IssueReportingTestSupportSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "IssueReportingTestSupport"
+    },
+    "IssueReportingTestSupportSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/IndigoBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FluffyConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "IssueReportingTestSupportSettings"
+    },
+    "IndigoBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ENABLE_TESTING_SEARCH_PATHS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "OTHER_SWIFT_FLAGS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        }
+      },
+      "required": ["ENABLE_TESTING_SEARCH_PATHS", "OTHER_SWIFT_FLAGS"],
+      "title": "IndigoBase"
+    },
+    "MachOKit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/MachOKitSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "MachOKit"
+    },
+    "MachOKitSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/SettingsClass"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StickyConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "MachOKitSettings"
+    },
+    "StickyConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/SettingsClass"
+        }
+      },
+      "required": [],
+      "title": "StickyConfiguration"
+    },
+    "MockableMacro": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommandDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/AEXMLSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "MockableMacro"
+    },
+    "MockableMacroDeploymentTargets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "macOS": {
+          "$ref": "#/definitions/MACOS"
+        }
+      },
+      "required": ["macOS"],
+      "title": "MockableMacroDeploymentTargets"
+    },
+    "ProjectAutomation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectAutomationDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/ProjectAutomationSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "sources",
+        "type"
+      ],
+      "title": "ProjectAutomation"
+    },
+    "BuildableFolder": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "exceptions": {
+          "$ref": "#/definitions/Exceptions"
+        },
+        "path": {
+          "type": "string"
+        },
+        "resolvedFiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        }
+      },
+      "required": ["exceptions", "path", "resolvedFiles"],
+      "title": "BuildableFolder"
+    },
+    "Exceptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "exceptions": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "required": ["exceptions"],
+      "title": "Exceptions"
+    },
+    "ProjectAutomationDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/FluffyTarget"
+        },
+        "project": {
+          "$ref": "#/definitions/DependencyProject"
+        },
+        "xcframework": {
+          "$ref": "#/definitions/FluffyXcframework"
+        }
+      },
+      "required": [],
+      "title": "ProjectAutomationDependency"
+    },
+    "FluffyXcframework": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      },
+      "required": ["path", "status"],
+      "title": "FluffyXcframework"
+    },
+    "ProjectAutomationSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/IndecentBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IndigoConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "ProjectAutomationSettings"
+    },
+    "IndecentBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "BUILD_LIBRARY_FOR_DISTRIBUTION": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "MACOSX_DEPLOYMENT_TARGET": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": ["BUILD_LIBRARY_FOR_DISTRIBUTION", "MACOSX_DEPLOYMENT_TARGET"],
+      "title": "IndecentBase"
+    },
+    "IndigoConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/TentacledSettings"
+        }
+      },
+      "required": [],
+      "title": "IndigoConfiguration"
+    },
+    "TentacledSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SWIFT_STRICT_CONCURRENCY": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": ["SWIFT_STRICT_CONCURRENCY"],
+      "title": "TentacledSettings"
+    },
+    "ProjectAutomationType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "local": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": ["local"],
+      "title": "ProjectAutomationType"
+    },
+    "SystemPackage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BitCollectionsDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/SystemPackageSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "SystemPackage"
+    },
+    "SystemPackageSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/FrameworkSearchPaths"
+          }
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TentacledConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "SystemPackageSettings"
+    },
+    "FrameworkSearchPaths": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "array": {
+          "$ref": "#/definitions/FRAMEWORKSEARCHPATHSArray"
+        }
+      },
+      "required": ["array"],
+      "title": "FrameworkSearchPaths"
+    },
+    "TuistAcceptanceTesting": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAcceptanceTestingSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistAcceptanceTesting"
+    },
+    "TuistAcceptanceTestingSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/HilariousBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IndecentConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "TuistAcceptanceTestingSettings"
+    },
+    "HilariousBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "MACOSX_DEPLOYMENT_TARGET": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": ["MACOSX_DEPLOYMENT_TARGET"],
+      "title": "HilariousBase"
+    },
+    "IndecentConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/StickySettings"
+        }
+      },
+      "required": [],
+      "title": "IndecentConfiguration"
+    },
+    "StickySettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ENABLE_TESTING_SEARCH_PATHS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": ["ENABLE_TESTING_SEARCH_PATHS"],
+      "title": "StickySettings"
+    },
+    "TuistAnalyticsClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAnalyticsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistAnalyticsClass"
+    },
+    "TuistAnalyticsSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/HilariousBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HilariousConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "TuistAnalyticsSettings"
+    },
+    "HilariousConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/IndigoSettings"
+        }
+      },
+      "required": [],
+      "title": "HilariousConfiguration"
+    },
+    "IndigoSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": [],
+      "title": "IndigoSettings"
+    },
+    "TuistApp": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TuistAppDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/TuistAppInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAppSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistApp"
+    },
+    "TuistAppDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "$ref": "#/definitions/DependencyProject"
+        },
+        "target": {
+          "$ref": "#/definitions/TentacledTarget"
+        }
+      },
+      "required": [],
+      "title": "TuistAppDependency"
+    },
+    "TentacledTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "condition": {
+          "$ref": "#/definitions/FluffyCondition"
+        }
+      },
+      "required": ["name", "status"],
+      "title": "TentacledTarget"
+    },
+    "FluffyCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platformFilters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FluffyPlatformFilter"
+          }
+        }
+      },
+      "required": ["platformFilters"],
+      "title": "FluffyCondition"
+    },
+    "FluffyPlatformFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "macos": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "ios": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": [],
+      "title": "FluffyPlatformFilter"
+    },
+    "TuistAppInfoPlist": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "extendingDefault": {
+          "$ref": "#/definitions/FluffyExtendingDefault"
+        }
+      },
+      "required": ["extendingDefault"],
+      "title": "TuistAppInfoPlist"
+    },
+    "FluffyExtendingDefault": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "with": {
+          "$ref": "#/definitions/With"
+        }
+      },
+      "required": ["with"],
+      "title": "FluffyExtendingDefault"
+    },
+    "With": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CFBundleDisplayName": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CFBundleShortVersionString": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CFBundleURLTypes": {
+          "$ref": "#/definitions/CFBundleURLTypes"
+        },
+        "CFBundleVersion": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "LSApplicationCategoryType": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "LSUIElement": {
+          "$ref": "#/definitions/LSUIElement"
+        },
+        "SUFeedURL": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "SUPublicEDKey": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "UILaunchStoryboardName": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "UISupportedInterfaceOrientations": {
+          "$ref": "#/definitions/UISupportedInterfaceOrientations"
+        }
+      },
+      "required": [
+        "CFBundleDisplayName",
+        "CFBundleShortVersionString",
+        "CFBundleURLTypes",
+        "CFBundleVersion",
+        "LSApplicationCategoryType",
+        "LSUIElement",
+        "SUFeedURL",
+        "SUPublicEDKey",
+        "UILaunchStoryboardName",
+        "UISupportedInterfaceOrientations"
+      ],
+      "title": "With"
+    },
+    "CFBundleURLTypes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "array": {
+          "$ref": "#/definitions/CFBundleURLTypesArray"
+        }
+      },
+      "required": ["array"],
+      "title": "CFBundleURLTypes"
+    },
+    "CFBundleURLTypesArray": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_0": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/0_Element"
+          }
+        }
+      },
+      "required": ["_0"],
+      "title": "CFBundleURLTypesArray"
+    },
+    "0_Element": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dictionary": {
+          "$ref": "#/definitions/Dictionary"
+        }
+      },
+      "required": ["dictionary"],
+      "title": "0_Element"
+    },
+    "Dictionary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_0": {
+          "$ref": "#/definitions/Dictionary0"
+        }
+      },
+      "required": ["_0"],
+      "title": "Dictionary"
+    },
+    "Dictionary0": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CFBundleTypeRole": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CFBundleURLName": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CFBundleURLSchemes": {
+          "$ref": "#/definitions/UISupportedInterfaceOrientations"
+        }
+      },
+      "required": ["CFBundleTypeRole", "CFBundleURLName", "CFBundleURLSchemes"],
+      "title": "Dictionary0"
+    },
+    "UISupportedInterfaceOrientations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "array": {
+          "$ref": "#/definitions/UISupportedInterfaceOrientationsArray"
+        }
+      },
+      "required": ["array"],
+      "title": "UISupportedInterfaceOrientations"
+    },
+    "UISupportedInterfaceOrientationsArray": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_0": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AlwaysSearchUserPaths"
+          }
+        }
+      },
+      "required": ["_0"],
+      "title": "UISupportedInterfaceOrientationsArray"
+    },
+    "AlwaysSearchUserPaths": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "string": {
+          "$ref": "#/definitions/DefaultTemplate"
+        }
+      },
+      "required": ["string"],
+      "title": "AlwaysSearchUserPaths"
+    },
+    "LSUIElement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "boolean": {
+          "$ref": "#/definitions/Boolean"
+        }
+      },
+      "required": ["boolean"],
+      "title": "LSUIElement"
+    },
+    "Boolean": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "_0": {
+          "type": "boolean"
+        }
+      },
+      "required": ["_0"],
+      "title": "Boolean"
+    },
+    "TuistAppSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/AmbitiousBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AmbitiousConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "TuistAppSettings"
+    },
+    "AmbitiousBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ASSETCATALOG_COMPILER_APPICON_NAME": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphone*]": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CODE_SIGN_IDENTITY": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "CODE_SIGN_STYLE": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "DEVELOPMENT_TEAM": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": [
+        "ASSETCATALOG_COMPILER_APPICON_NAME",
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphone*]",
+        "CODE_SIGN_IDENTITY",
+        "CODE_SIGN_STYLE",
+        "DEVELOPMENT_TEAM"
+      ],
+      "title": "AmbitiousBase"
+    },
+    "AmbitiousConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/IndecentSettings"
+        }
+      },
+      "required": [],
+      "title": "AmbitiousConfiguration"
+    },
+    "IndecentSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ENABLE_HARDENED_RUNTIME": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "OTHER_CODE_SIGN_FLAGS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "PROVISIONING_PROFILE_SPECIFIER[sdk=iphone*]": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": [],
+      "title": "IndecentSettings"
+    },
+    "TuistAppStorageClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommandDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/TuistAppStorageDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAnalyticsSettings"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "sources",
+        "type"
+      ],
+      "title": "TuistAppStorageClass"
+    },
+    "TuistAppStorageDeploymentTargets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "iOS": {
+          "type": "string"
+        },
+        "macOS": {
+          "$ref": "#/definitions/MACOS"
+        }
+      },
+      "required": ["iOS", "macOS"],
+      "title": "TuistAppStorageDeploymentTargets"
+    },
+    "TuistTests": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/TuistAsyncQueueTestsProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAsyncQueueTestsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistTests"
+    },
+    "TuistAsyncQueueTestsSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/HilariousBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CunningConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "TuistAsyncQueueTestsSettings"
+    },
+    "CunningConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/ConfigurationNameEnum"
+        },
+        "variant": {
+          "$ref": "#/definitions/Variant"
+        },
+        "settings": {
+          "$ref": "#/definitions/HilariousSettings"
+        }
+      },
+      "required": [],
+      "title": "CunningConfiguration"
+    },
+    "HilariousSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "CODE_SIGN_IDENTITY": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": [],
+      "title": "HilariousSettings"
+    },
+    "TuistAuthentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/TuistAppStorageDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "sources",
+        "type"
+      ],
+      "title": "TuistAuthentication"
+    },
+    "TuistErrorHandlingClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommandDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/TuistErrorHandlingDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "sources",
+        "type"
+      ],
+      "title": "TuistErrorHandlingClass"
+    },
+    "TuistErrorHandlingDeploymentTargets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "iOS": {
+          "type": "string"
+        }
+      },
+      "required": ["iOS"],
+      "title": "TuistErrorHandlingDeploymentTargets"
+    },
+    "TuistKit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TuistKitDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAnalyticsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistKit"
+    },
+    "TuistKitDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/StickyTarget"
+        },
+        "project": {
+          "$ref": "#/definitions/DependencyProject"
+        }
+      },
+      "required": [],
+      "title": "TuistKitDependency"
+    },
+    "StickyTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "condition": {
+          "$ref": "#/definitions/TentacledCondition"
+        }
+      },
+      "required": ["name", "status"],
+      "title": "StickyTarget"
+    },
+    "TentacledCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platformFilters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TentacledPlatformFilter"
+          }
+        }
+      },
+      "required": ["platformFilters"],
+      "title": "TentacledCondition"
+    },
+    "TentacledPlatformFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "macos": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": ["macos"],
+      "title": "TentacledPlatformFilter"
+    },
+    "TuistKitTests": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TuistKitDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/TuistAsyncQueueTestsProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAsyncQueueTestsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistKitTests"
+    },
+    "TuistLaunchctlClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommandDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAnalyticsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistLaunchctlClass"
+    },
+    "TuistOnboardingClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/TuistErrorHandlingDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "sources",
+        "type"
+      ],
+      "title": "TuistOnboardingClass"
+    },
+    "TuistServer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TuistKitDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/TuistAppStorageDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAnalyticsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistServer"
+    },
+    "TuistTesting": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TuistTestingDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistAnalyticsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistTesting"
+    },
+    "TuistTestingDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/FluffyTarget"
+        },
+        "project": {
+          "$ref": "#/definitions/DependencyProject"
+        },
+        "xctest": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": [],
+      "title": "TuistTestingDependency"
+    },
+    "Yams": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BitCollectionsDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/YamsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "Yams"
+    },
+    "YamsSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/CunningBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FluffyConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "YamsSettings"
+    },
+    "CunningBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "GCC_PREPROCESSOR_DEFINITIONS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        },
+        "OTHER_SWIFT_FLAGS": {
+          "$ref": "#/definitions/FrameworkSearchPaths"
+        }
+      },
+      "required": ["GCC_PREPROCESSOR_DEFINITIONS", "OTHER_SWIFT_FLAGS"],
+      "title": "CunningBase"
+    },
+    "CryptoExtras": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {}
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/AEXMLDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/BitCollectionsSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Source"
+          }
+        },
+        "type": {
+          "$ref": "#/definitions/AEXMLType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "CryptoExtras"
+    },
+    "TuistClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "buildRules": {
+          "type": "array",
+          "items": {}
+        },
+        "buildableFolders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildableFolder"
+          }
+        },
+        "bundleId": {
+          "type": "string"
+        },
+        "copyFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "coreDataModels": {
+          "type": "array",
+          "items": {}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileSystemDependency"
+          }
+        },
+        "deploymentTargets": {
+          "$ref": "#/definitions/MockableMacroDeploymentTargets"
+        },
+        "destinations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Destination"
+          }
+        },
+        "environmentVariables": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "filesGroup": {
+          "$ref": "#/definitions/FilesGroup"
+        },
+        "infoPlist": {
+          "$ref": "#/definitions/AEXMLInfoPlist"
+        },
+        "launchArguments": {
+          "type": "array",
+          "items": {}
+        },
+        "mergeable": {
+          "type": "boolean"
+        },
+        "mergedBinaryType": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "metadata": {
+          "$ref": "#/definitions/Metadata"
+        },
+        "name": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array",
+          "items": {}
+        },
+        "playgrounds": {
+          "type": "array",
+          "items": {}
+        },
+        "product": {
+          "$ref": "#/definitions/AEXMLProduct"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "prune": {
+          "type": "boolean"
+        },
+        "rawScriptBuildPhases": {
+          "type": "array",
+          "items": {}
+        },
+        "resources": {
+          "$ref": "#/definitions/Resources"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {}
+        },
+        "settings": {
+          "$ref": "#/definitions/TuistSettings"
+        },
+        "sources": {
+          "type": "array",
+          "items": {}
+        },
+        "type": {
+          "$ref": "#/definitions/ProjectAutomationType"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "buildRules",
+        "buildableFolders",
+        "bundleId",
+        "copyFiles",
+        "coreDataModels",
+        "dependencies",
+        "deploymentTargets",
+        "destinations",
+        "environmentVariables",
+        "filesGroup",
+        "infoPlist",
+        "launchArguments",
+        "mergeable",
+        "mergedBinaryType",
+        "metadata",
+        "name",
+        "packages",
+        "playgrounds",
+        "product",
+        "productName",
+        "prune",
+        "rawScriptBuildPhases",
+        "resources",
+        "scripts",
+        "settings",
+        "sources",
+        "type"
+      ],
+      "title": "TuistClass"
+    },
+    "TuistSettings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/MagentaBase"
+        },
+        "baseDebug": {
+          "$ref": "#/definitions/Disabled"
+        },
+        "configurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HilariousConfiguration"
+          }
+        },
+        "defaultSettings": {
+          "$ref": "#/definitions/DefaultSettings"
+        }
+      },
+      "required": ["base", "baseDebug", "configurations", "defaultSettings"],
+      "title": "TuistSettings"
+    },
+    "MagentaBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "LD_RUNPATH_SEARCH_PATHS": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        },
+        "MACOSX_DEPLOYMENT_TARGET": {
+          "$ref": "#/definitions/AlwaysSearchUserPaths"
+        }
+      },
+      "required": ["LD_RUNPATH_SEARCH_PATHS", "MACOSX_DEPLOYMENT_TARGET"],
+      "title": "MagentaBase"
+    },
+    "ProjectType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "external": {
+          "$ref": "#/definitions/External"
+        },
+        "local": {
+          "$ref": "#/definitions/Disabled"
+        }
+      },
+      "required": [],
+      "title": "ProjectType"
+    },
+    "External": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hash": {
+          "type": "string"
+        }
+      },
+      "required": ["hash"],
+      "title": "External"
+    },
+    "Workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "additionalFiles": {
+          "type": "array",
+          "items": {}
+        },
+        "generationOptions": {
+          "$ref": "#/definitions/GenerationOptions"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "$ref": "#/definitions/Path"
+        },
+        "projects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "schemes": {
+          "type": "array",
+          "items": {}
+        },
+        "xcWorkspacePath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "additionalFiles",
+        "generationOptions",
+        "name",
+        "path",
+        "projects",
+        "schemes",
+        "xcWorkspacePath"
+      ],
+      "title": "Workspace"
+    },
+    "GenerationOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "autogeneratedWorkspaceSchemes": {
+          "$ref": "#/definitions/AutogeneratedWorkspaceSchemes"
+        },
+        "enableAutomaticXcodeSchemes": {
+          "type": "boolean"
+        },
+        "renderMarkdownReadme": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "autogeneratedWorkspaceSchemes",
+        "enableAutomaticXcodeSchemes",
+        "renderMarkdownReadme"
+      ],
+      "title": "GenerationOptions"
+    },
+    "DependencyUnion": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PurpleDependency"
+          }
+        },
+        {
+          "$ref": "#/definitions/FromClass"
+        }
+      ],
+      "title": "DependencyUnion"
+    },
+    "ProjectElement": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ProjectProject"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "ProjectElement"
+    },
+    "Status": {
+      "type": "string",
+      "enum": ["required"],
+      "title": "Status"
+    },
+    "Path": {
+      "type": "string",
+      "enum": ["/Users/andykolean/Developer/tuist", "/Users/andykolean/Developer/tuist/app"],
+      "title": "Path"
+    },
+    "GroupName": {
+      "type": "string",
+      "enum": ["Project"],
+      "title": "GroupName"
+    },
+    "LastUpgradeCheck": {
+      "type": "string",
+      "enum": ["99.9.9"],
+      "title": "LastUpgradeCheck"
+    },
+    "Extension": {
+      "type": "string",
+      "enum": ["stringsdict", "strings", "xcassets", "plist", "ttc", "ttf", "woff", "otf"],
+      "title": "Extension"
+    },
+    "Parser": {
+      "type": "string",
+      "enum": ["strings", "assets", "plists", "fonts"],
+      "title": "Parser"
+    },
+    "Title": {
+      "type": "string",
+      "enum": ["Inspect build", "Inspect test"],
+      "title": "Title"
+    },
+    "Value": {
+      "type": "string",
+      "enum": ["tuistrocks@tuist.dev", "tuistrocks", "$(SRCROOT)", "$(FRAMEWORK_SEARCH_PATHS)", ""],
+      "title": "Value"
+    },
+    "ConfigurationNameEnum": {
+      "type": "string",
+      "enum": ["Debug", "Release"],
+      "title": "ConfigurationNameEnum"
+    },
+    "EnableGPUFrameCaptureMode": {
+      "type": "string",
+      "enum": ["autoEnabled"],
+      "title": "EnableGPUFrameCaptureMode"
+    },
+    "Variant": {
+      "type": "string",
+      "enum": ["debug", "release"],
+      "title": "Variant"
+    },
+    "Destination": {
+      "type": "string",
+      "enum": [
+        "appleVision",
+        "appleTv",
+        "macWithiPadDesign",
+        "appleWatch",
+        "mac",
+        "macCatalyst",
+        "iPhone",
+        "appleVisionWithiPadDesign",
+        "iPad"
+      ],
+      "title": "Destination"
+    },
+    "AEXMLProduct": {
+      "type": "string",
+      "enum": ["staticFramework", "commandLineTool"],
+      "title": "AEXMLProduct"
+    },
+    "MACOS": {
+      "type": "string",
+      "enum": ["12.0", "15.0", "15.0.0"],
+      "title": "MACOS"
+    },
+    "TuistAsyncQueueTestsProduct": {
+      "type": "string",
+      "enum": ["unit_tests"],
+      "title": "TuistAsyncQueueTestsProduct"
+    }
+  }
+}

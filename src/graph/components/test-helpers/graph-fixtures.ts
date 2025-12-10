@@ -7,7 +7,13 @@
 
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import { ClusterType } from '@shared/schemas/cluster.schema';
-import { type GraphEdge, type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import {
+  type GraphEdge,
+  type GraphNode,
+  NodeType,
+  Origin,
+  Platform,
+} from '@shared/schemas/graph.schema';
 
 /**
  * Create a small test graph with 3 nodes and 2 edges
@@ -189,7 +195,6 @@ export function createMockClusters(nodes: GraphNode[]): Cluster[] {
     metadata: new Map(),
   }));
 }
-
 
 /**
  * Create a single test node
