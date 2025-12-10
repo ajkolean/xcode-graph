@@ -127,8 +127,8 @@ export function clearFilters(defaults?: FilterState): void {
 export function initializeFromData(projects: Set<string>, packages: Set<string>): void {
   filters.set({
     ...DEFAULT_FILTERS,
-    projects,
-    packages,
+    projects: new Set(projects),
+    packages: new Set(packages),
   });
   allProjects.set(new Set(projects));
   allPackages.set(new Set(packages));

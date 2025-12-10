@@ -31,7 +31,6 @@ import './stats-card';
 import './search-bar';
 import './clear-filters-button';
 import './filter-section';
-import './filter-icons';
 import './empty-state';
 
 export interface FilterItem {
@@ -301,7 +300,6 @@ export class GraphFilterView extends LitElement {
             @item-toggle=${(e: CustomEvent) => this.handleItemToggle('nodeType', e.detail.key, e.detail.checked)}
             @preview-change=${this.handlePreviewChange}
           >
-            <graph-product-types-icon slot="icon"></graph-product-types-icon>
           </graph-filter-section>
 
           <div class="section-divider"></div>
@@ -320,7 +318,6 @@ export class GraphFilterView extends LitElement {
             @item-toggle=${(e: CustomEvent) => this.handleItemToggle('platform', e.detail.key, e.detail.checked)}
             @preview-change=${this.handlePreviewChange}
           >
-            <graph-platforms-icon slot="icon"></graph-platforms-icon>
           </graph-filter-section>
 
           <div class="section-divider"></div>
@@ -339,7 +336,6 @@ export class GraphFilterView extends LitElement {
             @item-toggle=${(e: CustomEvent) => this.handleItemToggle('project', e.detail.key, e.detail.checked)}
             @preview-change=${this.handlePreviewChange}
           >
-            <graph-projects-icon slot="icon"></graph-projects-icon>
           </graph-filter-section>
 
           ${
@@ -361,7 +357,6 @@ export class GraphFilterView extends LitElement {
                   @item-toggle=${(e: CustomEvent) => this.handleItemToggle('package', e.detail.key, e.detail.checked)}
                   @preview-change=${this.handlePreviewChange}
                 >
-                  <graph-packages-icon slot="icon"></graph-packages-icon>
                 </graph-filter-section>
               `
               : ''

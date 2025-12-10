@@ -37,7 +37,7 @@ import {
   svg,
   type TemplateResult,
 } from 'lit';
-import { eventOptions, query, state } from 'lit/decorators.js';
+import { query, state } from 'lit/decorators.js';
 import './cluster-group';
 import './graph-edges';
 import './graph-overlays';
@@ -52,6 +52,7 @@ export class GraphVisualization extends LitElement {
   static override readonly properties: PropertyDeclarations = {
     nodes: { attribute: false },
     edges: { attribute: false },
+    nodeMap: { attribute: false }, // Added property
     selectedNode: { attribute: false },
     selectedCluster: { attribute: false },
     hoveredNode: { attribute: false },
@@ -66,6 +67,7 @@ export class GraphVisualization extends LitElement {
 
   declare nodes: GraphNodeType[] | undefined;
   declare edges: GraphEdge[] | undefined;
+  declare nodeMap: Map<string, GraphNodeType> | undefined; // Added declaration
   declare selectedNode: GraphNodeType | null | undefined;
   declare selectedCluster: string | null | undefined;
   declare hoveredNode: string | null | undefined;
@@ -87,7 +89,12 @@ export class GraphVisualization extends LitElement {
   @query('svg')
   private readonly svgElement!: SVGSVGElement;
 
-  private nodeMap: Map<string, GraphNodeType> = new Map();
+  // Use internal map if property is not provided
+  private internalNodeMap: Map<string, GraphNodeType> = new Map();
+
+  private get effectiveNodeMap(): Map<string, GraphNodeType> {
+    return this.nodeMap ?? this.internalNodeMap;
+  }
 
   // ========================================
   // Controllers
@@ -156,8 +163,10 @@ export class GraphVisualization extends LitElement {
   override willUpdate(changedProps: PropertyValues<this>): void {
     // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
-      // Optimization: Compute nodeMap for O(1) lookups
-      this.nodeMap = new Map((this.nodes ?? []).map((n) => [n.id, n]));
+      // Optimization: Compute nodeMap for O(1) lookups ONLY if not provided via props
+      if (!this.nodeMap) {
+        this.internalNodeMap = new Map((this.nodes ?? []).map((n) => [n.id, n]));
+      }
 
       this.layout.enableAnimation = this.enableAnimation ?? false;
       this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
@@ -223,12 +232,13 @@ export class GraphVisualization extends LitElement {
     }
   }
 
-  @eventOptions({ passive: true })
   private handleWheel(e: WheelEvent) {
     // Only zoom if Ctrl/Cmd key is pressed (also captures trackpad pinch)
     if (!e.ctrlKey && !e.metaKey) {
       return;
     }
+
+    e.preventDefault();
 
     const eventName = e.deltaY < 0 ? 'zoom-in' : 'zoom-out';
     this.dispatchEvent(
@@ -283,7 +293,7 @@ export class GraphVisualization extends LitElement {
                   ${renderGraphEdges({
                     edges: this.edges ?? [],
                     nodes: this.nodes ?? [],
-                    nodeMap: this.nodeMap,
+                    nodeMap: this.effectiveNodeMap,
                     layoutNodePositions: this.layout.nodePositions,
                     manualNodePositions: this.interaction.manualNodePositions,
                     clusterPositions: this.layout.clusterPositions,

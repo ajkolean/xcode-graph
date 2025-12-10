@@ -2,9 +2,8 @@
  * Tests for Spatial Hash Grid
  */
 
-
-import { randomNumber } from '@/shared/utils/random';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { randomNumber } from '@/shared/utils/random';
 import { createSpatialHash, type SpatialEntity, SpatialHash } from './spatial-hash';
 
 describe('SpatialHash', () => {

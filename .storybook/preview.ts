@@ -18,7 +18,7 @@ import '../src/styles/tokens.css';
 import '../src/ui/components/clear-filters-button';
 import '../src/ui/components/cluster-type-badge';
 import '../src/ui/components/empty-state';
-import '../src/ui/components/filter-icons';
+import '../src/ui/components/filter-icon';
 import '../src/ui/components/search-bar';
 import '../src/ui/components/sidebar-collapse-icon';
 import '../src/ui/components/stats-card';

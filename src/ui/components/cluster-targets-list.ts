@@ -101,8 +101,8 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
   private getNodeStats(nodeId: string): { dependencies: number; dependents: number } {
     if (!this.edges) return { dependencies: 0, dependents: 0 };
 
-    const dependencies = this.edges.filter((e) => e.target === nodeId).length;
-    const dependents = this.edges.filter((e) => e.source === nodeId).length;
+    const dependencies = this.edges.filter((e) => e.source === nodeId).length;
+    const dependents = this.edges.filter((e) => e.target === nodeId).length;
     return { dependencies, dependents };
   }
 

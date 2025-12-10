@@ -13,12 +13,11 @@
  * ```
  */
 
+import { FILTER_ICON_COLOR } from '@ui/utils/colors';
 import { css, LitElement, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export type FilterIconName = 'product-types' | 'platforms' | 'projects' | 'packages';
-
-const iconColor = 'rgba(168, 157, 255, 0.7)';
 
 export class GraphFilterIcon extends LitElement {
   // ========================================
@@ -65,7 +64,7 @@ export class GraphFilterIcon extends LitElement {
         height="${this.size}"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="${iconColor}"
+        stroke="${FILTER_ICON_COLOR}"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -85,7 +84,7 @@ export class GraphFilterIcon extends LitElement {
         height="${this.size}"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="${iconColor}"
+        stroke="${FILTER_ICON_COLOR}"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -95,10 +94,10 @@ export class GraphFilterIcon extends LitElement {
         <line x1="3" y1="14.5" x2="21" y2="14.5" />
         <line x1="9.5" y1="3" x2="9.5" y2="21" />
         <line x1="14.5" y1="3" x2="14.5" y2="21" />
-        <circle cx="9.5" cy="9.5" r="1.5" fill="${iconColor}" />
-        <circle cx="14.5" cy="9.5" r="1.5" fill="${iconColor}" />
-        <circle cx="9.5" cy="14.5" r="1.5" fill="${iconColor}" />
-        <circle cx="14.5" cy="14.5" r="1.5" fill="${iconColor}" />
+        <circle cx="9.5" cy="9.5" r="1.5" fill="${FILTER_ICON_COLOR}" />
+        <circle cx="14.5" cy="9.5" r="1.5" fill="${FILTER_ICON_COLOR}" />
+        <circle cx="9.5" cy="14.5" r="1.5" fill="${FILTER_ICON_COLOR}" />
+        <circle cx="14.5" cy="14.5" r="1.5" fill="${FILTER_ICON_COLOR}" />
       </svg>
     `;
   }
@@ -110,7 +109,7 @@ export class GraphFilterIcon extends LitElement {
         height="${this.size}"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="${iconColor}"
+        stroke="${FILTER_ICON_COLOR}"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -127,7 +126,7 @@ export class GraphFilterIcon extends LitElement {
         height="${this.size}"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="${iconColor}"
+        stroke="${FILTER_ICON_COLOR}"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"

@@ -22,12 +22,14 @@ import { SignalWatcher } from '@lit-labs/signals';
 import type { ActiveTab } from '@shared/schemas';
 import { css, html, LitElement } from 'lit';
 import { mockGraphData } from '@/fixtures/largeGraph';
+import { GraphAnalysisService } from '@/services/graphAnalysisService';
 import { GraphDataService } from '@/services/graphDataService';
 import '@ui/layout/graph-tab';
 import '@ui/layout/header';
 import '@ui/layout/placeholder-tab';
 import '@ui/layout/sidebar';
 import '@ui/components/cycle-warning';
+import '@ui/components/error-notification-container';
 
 // Import signals and actions from graph module
 import {
@@ -60,10 +62,36 @@ export class GraphApp extends SignalWatcher(LitElement) {
   // ========================================
   // Data Service
   // ========================================
-  private readonly graphDataService = new GraphDataService(
-    mockGraphData.nodes,
-    mockGraphData.edges,
-  );
+  private graphDataService: GraphDataService | null = null;
+  private dataFingerprint: string | null = null;
+  private filtersInitialized = false;
+
+  private refreshGraphData(nodes: typeof mockGraphData.nodes, edges: typeof mockGraphData.edges) {
+    const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((n) => n.id).join(',')}-${edges.map((e) => `${e.source}->${e.target}`).join(',')}`;
+    if (fingerprint === this.dataFingerprint) return;
+    this.dataFingerprint = fingerprint;
+
+    this.graphDataService = new GraphDataService(nodes, edges);
+
+    // Only seed filters once; otherwise we would overwrite user selections
+    if (!this.filtersInitialized) {
+      initializeFromData(
+        this.graphDataService.getAllProjects(),
+        this.graphDataService.getAllPackages(),
+      );
+      this.filtersInitialized = true;
+    }
+
+    const cycles = GraphAnalysisService.findCircularDependencies(this.graphDataService);
+    setCircularDependencies(cycles);
+
+    if (cycles.length > 0) {
+      console.warn(
+        `[GraphApp] Detected ${cycles.length} circular ${cycles.length === 1 ? 'dependency' : 'dependencies'}:`,
+        cycles,
+      );
+    }
+  }
 
   // ========================================
   // Styles
@@ -106,28 +134,7 @@ export class GraphApp extends SignalWatcher(LitElement) {
 
     // Initialize data signals with graph data
     setGraphData(mockGraphData.nodes, mockGraphData.edges);
-
-    // Initialize filters from data
-    const projects = new Set(
-      mockGraphData.nodes
-        .map((n) => n.project)
-        .filter((p): p is string => p !== undefined && p !== ''),
-    );
-    const packages = new Set(
-      mockGraphData.nodes.filter((n) => n.type === 'package').map((n) => n.name),
-    );
-    initializeFromData(projects, packages);
-
-    // Detect circular dependencies
-    const cycles = this.graphDataService.findCircularDependencies();
-    setCircularDependencies(cycles);
-
-    if (cycles.length > 0) {
-      console.warn(
-        `[GraphApp] Detected ${cycles.length} circular ${cycles.length === 1 ? 'dependency' : 'dependencies'}:`,
-        cycles,
-      );
-    }
+    this.refreshGraphData(mockGraphData.nodes, mockGraphData.edges);
   }
 
   // ========================================
@@ -145,6 +152,9 @@ export class GraphApp extends SignalWatcher(LitElement) {
   // ========================================
 
   override render() {
+    // Keep derived graph data (filters, cycles) in sync if graph data changes later
+    this.refreshGraphData(allNodes.get(), allEdges.get());
+
     // Access computed signals - automatically tracks dependencies
     const display = displayData.get();
     const filtered = filteredData.get();
@@ -187,6 +197,8 @@ export class GraphApp extends SignalWatcher(LitElement) {
           }
         </div>
       </div>
+
+      <graph-error-notification-container></graph-error-notification-container>
     `;
   }
 }

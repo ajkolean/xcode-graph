@@ -9,6 +9,7 @@
  * Result: Tight when nodes are few, expands for high-mass systems
  */
 
+import { LAYOUT_CONSTANTS } from './layout-constants';
 import type { NodeMass } from './mass';
 
 export interface ElasticShellConfig {
@@ -83,8 +84,7 @@ export function computeElasticShellRadius(
   }
 
   // Step 3: Minimal padding (shell wants to be tight!)
-  const padding = 20; // Reduced from 40
-  radius = radius + padding;
+  radius = radius + LAYOUT_CONSTANTS.CLUSTER_PADDING;
 
   // Final clamp
   return Math.max(config.minRadius, Math.min(config.maxRadius, radius));
@@ -113,7 +113,7 @@ function computeOutwardPressure(nodes: NodeWithPosition[], masses: Map<string, N
     if (distFromCenter < 1) continue;
 
     // Ring influence (inner rings push less, outer rings push more)
-    const ringFactor = 1 + node.ring * 0.3;
+    const ringFactor = 1 + node.ring * LAYOUT_CONSTANTS.RING_FACTOR;
 
     // Pressure formula: mass × ringFactor / distance²
     // (Inverse square law - like gravity!)

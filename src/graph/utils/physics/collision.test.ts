@@ -5,11 +5,11 @@
 import { describe, expect, it } from 'vitest';
 import { randomNumber } from '../../../shared/utils/random';
 import {
-  CollisionPresets,
   applyCollisionForces,
+  type CollisionEntity,
+  CollisionPresets,
   calculateBoundingRadius,
   updatePositions,
-  type CollisionEntity,
 } from './collision';
 
 describe('applyCollisionForces', () => {

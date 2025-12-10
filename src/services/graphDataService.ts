@@ -4,7 +4,12 @@
  */
 
 import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import {
+  type GraphEdge,
+  type GraphNode,
+  NodeType,
+  type Origin,
+} from '@shared/schemas/graph.schema';
 import { addToMultiMap } from '@shared/utils/collections';
 
 export class GraphDataService {
@@ -54,7 +59,7 @@ export class GraphDataService {
         addToMultiMap(this.nodesByOrigin, node.origin, node);
       }
 
-      if (node.type === 'package') {
+      if (node.type === NodeType.Package) {
         this.packages.add(node.name);
       }
     }
@@ -105,7 +110,7 @@ export class GraphDataService {
   /**
    * Get nodes by origin
    */
-  getNodesByOrigin(origin: 'local' | 'external'): GraphNode[] {
+  getNodesByOrigin(origin: Origin): GraphNode[] {
     return this.nodesByOrigin.get(origin) || [];
   }
 
@@ -251,9 +256,9 @@ export class GraphDataService {
   getClusterNodes(clusterId: string): GraphNode[] {
     // Optimization: use indices
     const projectNodes = (this.nodesByProject.get(clusterId) || []).filter(
-      (n) => n.type !== 'package',
+      (n) => n.type !== NodeType.Package,
     );
-    const packageNodes = (this.nodesByType.get('package') || []).filter(
+    const packageNodes = (this.nodesByType.get(NodeType.Package) || []).filter(
       (n) => n.name === clusterId,
     );
 
@@ -271,7 +276,7 @@ export class GraphDataService {
     }
 
     const firstNode = clusterNodes[0];
-    const clusterType = firstNode?.type === 'package' ? 'package' : 'project';
+    const clusterType = firstNode?.type === NodeType.Package ? NodeType.Package : 'project';
     const clusterOrigin = clusterNodes.some((n) => n.origin === 'external') ? 'external' : 'local';
 
     return {
@@ -295,186 +300,5 @@ export class GraphDataService {
    */
   getAllPackages(): Set<string> {
     return this.packages;
-  }
-
-  // ==================== Statistics ====================
-
-  /**
-   * Get node statistics
-   */
-  getNodeStats(nodeId: string): {
-    dependencies: number;
-    dependents: number;
-    transitiveDeps: number;
-    transitiveDependents: number;
-  } {
-    const deps = this.getDirectDependencies(nodeId);
-    const dependents = this.getDirectDependents(nodeId);
-    const transitiveDeps = this.getTransitiveDependencies(nodeId);
-    const transitiveDependents = this.getTransitiveDependents(nodeId);
-
-    return {
-      dependencies: deps.length,
-      dependents: dependents.length,
-      transitiveDeps: transitiveDeps.nodes.size - 1, // Exclude self
-      transitiveDependents: transitiveDependents.nodes.size - 1, // Exclude self
-    };
-  }
-
-  /**
-   * Get cluster statistics
-   */
-  getClusterStats(clusterId: string): {
-    nodeCount: number;
-    dependencies: number;
-    dependents: number;
-    platforms: Set<string>;
-  } {
-    const clusterNodes = this.getClusterNodes(clusterId);
-    const _clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
-
-    // Optimization: Use index for edge lookup?
-    // We need dependencies where source is in clusterNodeIds and target is NOT (usually)
-    // But the original implementation just counted "edges where source is in cluster".
-    // Let's stick to the original logic but use indices?
-    // Original: this.edges.filter((e) => clusterNodeIds.has(e.source)).length;
-    // Optimized: sum of getOutgoingEdges(nodeId).length for all nodes in cluster
-
-    let dependencies = 0;
-    for (const node of clusterNodes) {
-      dependencies += this.getOutgoingEdges(node.id).length;
-    }
-
-    // Original: this.edges.filter((e) => clusterNodeIds.has(e.target)).length;
-    // Optimized: sum of getIncomingEdges(nodeId).length for all nodes in cluster
-    let dependents = 0;
-    for (const node of clusterNodes) {
-      dependents += this.getIncomingEdges(node.id).length;
-    }
-
-    const platforms = new Set(clusterNodes.map((n) => n.platform).filter(Boolean));
-
-    return {
-      nodeCount: clusterNodes.length,
-      dependencies,
-      dependents,
-      platforms,
-    };
-  }
-
-  // ==================== Graph Analysis ====================
-
-  /**
-   * Check if there's a path between two nodes
-   */
-  hasPath(fromId: string, toId: string): boolean {
-    const visited = new Set<string>();
-    const queue = [fromId];
-
-    while (queue.length > 0) {
-      const currentId = queue.shift()!;
-
-      if (currentId === toId) return true;
-      if (visited.has(currentId)) continue;
-      visited.add(currentId);
-
-      // Optimized: use getDirectDependencies which uses indices
-      const deps = this.getDirectDependencies(currentId);
-
-      for (const dep of deps) {
-        if (!visited.has(dep.id)) {
-          queue.push(dep.id);
-        }
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Detect circular dependencies
-   */
-  findCircularDependencies(): string[][] {
-    const cycles: string[][] = [];
-    const visited = new Set<string>();
-    const recStack = new Set<string>();
-
-    const dfs = (nodeId: string, path: string[]): void => {
-      visited.add(nodeId);
-      recStack.add(nodeId);
-      path.push(nodeId);
-
-      const deps = this.getDirectDependencies(nodeId);
-
-      for (const dep of deps) {
-        if (!visited.has(dep.id)) {
-          dfs(dep.id, [...path]);
-        } else if (recStack.has(dep.id)) {
-          // Found a cycle
-          const cycleStart = path.indexOf(dep.id);
-          const cycle = path.slice(cycleStart);
-          cycles.push([...cycle, dep.id]);
-        }
-      }
-
-      recStack.delete(nodeId);
-    };
-
-    this.nodes.forEach((node) => {
-      if (!visited.has(node.id)) {
-        dfs(node.id, []);
-      }
-    });
-
-    return cycles;
-  }
-
-  /**
-   * Get overall graph statistics
-   */
-  getGraphStats(): {
-    totalNodes: number;
-    totalEdges: number;
-    avgDependencies: number;
-    maxDependencies: number;
-    isolatedNodes: number;
-  } {
-    // Optimized: calculate from indices
-    const depCounts = new Map<string, number>();
-
-    for (const node of this.nodes) {
-      // Default to 0
-      depCounts.set(node.id, 0);
-    }
-
-    // Iterate incoming edges map to count dependencies (wait, dependency count usually refers to OUTGOING edges, i.e. "I depend on X")
-    // Original code:
-    // for (const edge of this.edges) {
-    //   depCounts.set(edge.source, (depCounts.get(edge.source) || 0) + 1);
-    // }
-    // This counts OUTGOING edges from source. Correct.
-
-    for (const [sourceId, edges] of this.outgoingEdges) {
-      depCounts.set(sourceId, edges.length);
-    }
-
-    const counts = Array.from(depCounts.values());
-    const totalDeps = counts.reduce((sum, c) => sum + c, 0);
-    const avgDeps = this.nodes.length > 0 ? totalDeps / this.nodes.length : 0;
-    const maxDeps = Math.max(0, ...counts);
-    // Isolated means no incoming or outgoing edges
-    const isolated = this.nodes.filter((node) => {
-      const outgoing = this.outgoingEdges.get(node.id)?.length ?? 0;
-      const incoming = this.incomingEdges.get(node.id)?.length ?? 0;
-      return outgoing === 0 && incoming === 0;
-    }).length;
-
-    return {
-      totalNodes: this.nodes.length,
-      totalEdges: this.edges.length,
-      avgDependencies: avgDeps,
-      maxDependencies: maxDeps,
-      isolatedNodes: isolated,
-    };
   }
 }

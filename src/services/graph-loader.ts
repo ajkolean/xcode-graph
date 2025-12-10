@@ -52,6 +52,20 @@ export interface ProgressiveLoadConfig {
 export class GraphLoader {
   private readonly config: Required<ProgressiveLoadConfig>;
 
+  /**
+   * Priority ordering for node types during loading
+   * Lower numbers are loaded first
+   */
+  private static readonly TYPE_PRIORITY: Record<string, number> = {
+    app: 1,
+    framework: 2,
+    library: 3,
+    cli: 4,
+    package: 5,
+    'test-unit': 6,
+    'test-ui': 7,
+  };
+
   constructor(config: ProgressiveLoadConfig = {}) {
     this.config = {
       chunkSize: config.chunkSize ?? 100,
@@ -239,18 +253,8 @@ export class GraphLoader {
       if (!aIsPriority && bIsPriority) return 1;
 
       // Node type priority
-      const typePriority: Record<string, number> = {
-        app: 1,
-        framework: 2,
-        library: 3,
-        cli: 4,
-        package: 5,
-        'test-unit': 6,
-        'test-ui': 7,
-      };
-
-      const aPriority = typePriority[a.type] || 10;
-      const bPriority = typePriority[b.type] || 10;
+      const aPriority = GraphLoader.TYPE_PRIORITY[a.type] || 10;
+      const bPriority = GraphLoader.TYPE_PRIORITY[b.type] || 10;
 
       return aPriority - bPriority;
     });

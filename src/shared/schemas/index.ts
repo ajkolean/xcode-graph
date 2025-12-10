@@ -72,3 +72,19 @@ export {
 
 export type { ClusterPosition, NodePosition } from './simulation.schema';
 export { ClusterPositionSchema, NodePositionSchema } from './simulation.schema';
+
+// ==================== Error Schemas ====================
+
+export type { AppError, ErrorNotificationState } from './error.schema';
+export {
+  AppErrorSchema,
+  DEFAULT_MAX_VISIBLE_TOASTS,
+  DEFAULT_TOAST_DURATION,
+  ERROR_CATEGORY_VALUES,
+  ERROR_SEVERITY_VALUES,
+  ErrorCategory,
+  ErrorCategorySchema,
+  ErrorNotificationStateSchema,
+  ErrorSeverity,
+  ErrorSeveritySchema,
+} from './error.schema';

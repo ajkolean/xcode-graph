@@ -11,6 +11,10 @@
  * @module utils/rendering
  */
 
+// ==================== Color Constants ====================
+
+export { FILTER_ICON_COLOR } from './colors';
+
 // ==================== Color Generation ====================
 
 export {

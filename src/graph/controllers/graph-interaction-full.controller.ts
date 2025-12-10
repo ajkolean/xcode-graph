@@ -10,10 +10,6 @@
  * - Zoom via wheel (external callback)
  * - Movement tracking (distinguish click from drag)
  *
- * **Difference from GraphInteractionController:**
- * This controller adds node dragging support with manual position tracking,
- * making it heavier but more feature-complete.
- *
  * @module controllers/graph-interaction-full
  */
 
@@ -57,6 +53,7 @@ export class GraphInteractionFullController implements ReactiveController {
 
   // SVG reference (set after render)
   private svgElement: SVGSVGElement | null = null;
+  private readonly handleWindowMouseUp = () => this.handleMouseUp();
 
   constructor(host: ReactiveControllerHost, config: GraphInteractionConfig) {
     this.host = host;
@@ -162,13 +159,14 @@ export class GraphInteractionFullController implements ReactiveController {
   // ========================================
 
   hostConnected(): void {
-    // Event handlers attached via template
+    window.addEventListener('mouseup', this.handleWindowMouseUp, { capture: true });
   }
 
   hostDisconnected(): void {
     try {
       this.isDragging = false;
       this.draggedNode = null;
+      window.removeEventListener('mouseup', this.handleWindowMouseUp, { capture: true });
     } catch (error) {
       console.error('[GraphInteractionFullController] Error during cleanup:', error);
       // Ensure state is reset even if error occurs

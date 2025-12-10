@@ -4,6 +4,14 @@
  * Similar to Figma, VSCode minimap, GitHub dependency graph, JetBrains tools
  */
 
+import {
+  ZOOM_CONFIG,
+  ZOOM_LIGHTNESS_ADJUSTMENT,
+  ZOOM_OPACITY,
+  ZOOM_SATURATION,
+  ZOOM_STROKE_WIDTH,
+} from './zoom-constants';
+
 /**
  * Converts hex color to HSL
  */
@@ -94,17 +102,13 @@ function getSaturationMultiplier(zoom: number): number {
   // At zoom 1.0 (default): 0.6 saturation (moderate)
   // At zoom 2.0 (zoomed in): 1.0 saturation (full neon)
 
-  const minZoom = 0.5;
-  const maxZoom = 2;
-  const minSaturation = 0.25; // Very desaturated when zoomed out
-  const maxSaturation = 1; // Full saturation when zoomed in
-
   // Normalize zoom to 0-1 range
-  const normalizedZoom = (zoom - minZoom) / (maxZoom - minZoom);
+  const normalizedZoom =
+    (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
   const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
 
   // Linear interpolation
-  return minSaturation + (maxSaturation - minSaturation) * clampedZoom;
+  return ZOOM_SATURATION.MIN + (ZOOM_SATURATION.MAX - ZOOM_SATURATION.MIN) * clampedZoom;
 }
 
 /**
@@ -112,15 +116,13 @@ function getSaturationMultiplier(zoom: number): number {
  * When zoomed out, slightly increase lightness for better readability
  */
 function getLightnessAdjustment(zoom: number): number {
-  const minZoom = 0.5;
-  const maxZoom = 2;
-
   // At min zoom: +15 lightness (lighter/softer)
   // At max zoom: 0 lightness (original)
-  const normalizedZoom = (zoom - minZoom) / (maxZoom - minZoom);
+  const normalizedZoom =
+    (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
   const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
 
-  return 15 * (1 - clampedZoom);
+  return ZOOM_LIGHTNESS_ADJUSTMENT.AT_MIN_ZOOM * (1 - clampedZoom);
 }
 
 /**
@@ -163,15 +165,15 @@ export function adjustColorForZoom(color: string, zoom: number): string {
  * Some elements should be more transparent when zoomed out
  */
 export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number {
-  const minZoom = 0.5;
-  const maxZoom = 2;
-
   // At min zoom: reduce opacity by 20%
   // At max zoom: full opacity
-  const normalizedZoom = (zoom - minZoom) / (maxZoom - minZoom);
+  const normalizedZoom =
+    (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
   const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
 
-  const opacityMultiplier = 0.8 + 0.2 * clampedZoom;
+  const opacityMultiplier =
+    ZOOM_OPACITY.MIN_MULTIPLIER +
+    (ZOOM_OPACITY.MAX_MULTIPLIER - ZOOM_OPACITY.MIN_MULTIPLIER) * clampedZoom;
 
   return baseOpacity * opacityMultiplier;
 }
@@ -181,13 +183,15 @@ export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number 
  * Thinner strokes when zoomed out for cleaner look
  */
 export function getZoomAwareStrokeWidth(baseWidth: number, zoom: number): number {
-  const minZoom = 0.5;
-  const maxZoom = 2;
-
-  const normalizedZoom = (zoom - minZoom) / (maxZoom - minZoom);
+  const normalizedZoom =
+    (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
   const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
 
   // At min zoom: 70% of base width
   // At max zoom: 100% of base width
-  return baseWidth * (0.7 + 0.3 * clampedZoom);
+  return (
+    baseWidth *
+    (ZOOM_STROKE_WIDTH.MIN_MULTIPLIER +
+      (ZOOM_STROKE_WIDTH.MAX_MULTIPLIER - ZOOM_STROKE_WIDTH.MIN_MULTIPLIER) * clampedZoom)
+  );
 }

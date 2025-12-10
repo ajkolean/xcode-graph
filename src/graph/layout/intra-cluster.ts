@@ -12,6 +12,7 @@
 import { randomNumber } from '../../shared/utils/random';
 import { type AdjacencyList, buildAdjacency } from './algorithms';
 import { computeElasticShellRadius } from './elastic-shell';
+import { LAYOUT_CONSTANTS } from './layout-constants';
 import { selectMassBasedAnchor } from './mass';
 
 export interface NodeCartesian {
@@ -445,5 +446,5 @@ export function computeMEC(
     maxDistance = Math.max(maxDistance, distance);
   }
 
-  return maxDistance + 20; // Reduced padding from 40 to 20
+  return maxDistance + LAYOUT_CONSTANTS.CLUSTER_PADDING;
 }
