@@ -9,6 +9,8 @@ describe('tuist-graph-data fixture', () => {
   });
 
   it('should transform to GraphData format', () => {
+    console.log('Nodes:', tuistGraphData.nodes.length);
+    console.log('Edges:', tuistGraphData.edges.length);
     expect(tuistGraphData.nodes.length).toBeGreaterThan(0);
     expect(tuistGraphData.edges.length).toBeGreaterThan(0);
   });
