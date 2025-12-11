@@ -216,8 +216,8 @@ function computeDynamicSpacing(
   const avgDimension = dimensions.reduce((sum, d) => sum + d, 0) / dimensions.length || 250;
 
   // Base gaps: proportion of average cluster size
-  const baseLayerGapY = avgDimension * 1.1; // 110% of cluster height
-  const baseClusterGapX = avgDimension * 0.25; // 25% of cluster width
+  const baseLayerGapY = avgDimension * 1.25; // 125% of cluster height
+  const baseClusterGapX = avgDimension * 0.45; // 45% of cluster width
 
   // Scale based on graph density
   // More layers = tighter vertical spacing
