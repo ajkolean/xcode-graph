@@ -240,11 +240,7 @@ export function determineRole(
 
   if (node.type === NodeType.Cli) return NodeRole.Tool;
 
-  // High-dependency frameworks/libs are internal-framework
-  if ((node.type === NodeType.Framework || node.type === NodeType.Package) && dependentCount >= 3) {
-    return NodeRole.InternalFramework;
-  }
-
+  // Frameworks and packages are always internal-framework
   if (node.type === NodeType.Framework || node.type === NodeType.Package) {
     return NodeRole.InternalFramework;
   }
