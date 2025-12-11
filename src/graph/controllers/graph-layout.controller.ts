@@ -112,7 +112,7 @@ export class GraphLayoutController implements ReactiveController {
   /**
    * Compute layout with optional animation
    */
-  computeLayout(nodes: GraphNode[], edges: GraphEdge[]): void {
+  async computeLayout(nodes: GraphNode[], edges: GraphEdge[]): Promise<void> {
     if (nodes.length === 0) {
       this._nodePositions = new Map();
       this._clusterPositions = new Map();
@@ -121,7 +121,7 @@ export class GraphLayoutController implements ReactiveController {
     }
 
     // Step 1: Compute deterministic layout (LayoutController)
-    const layout = this.layoutController.computeLayout(nodes, edges);
+    const layout = await this.layoutController.computeLayout(nodes, edges);
 
     this._clusters = layout.clusters;
 

@@ -18,7 +18,7 @@
 
 import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
-import { computeHierarchicalLayout } from '@graph/layout-v2/hierarchical';
+import { computeHierarchicalLayout } from '@graph/layout-v2/elk-layout';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
@@ -66,7 +66,7 @@ export class LayoutController implements ReactiveController {
    * @param forceRecompute - Force recomputation even if cached
    * @returns Layout result with positions and clusters
    */
-  computeLayout(nodes: GraphNode[], edges: GraphEdge[], forceRecompute = false): LayoutResult {
+  async computeLayout(nodes: GraphNode[], edges: GraphEdge[], forceRecompute = false): Promise<LayoutResult> {
     // Return cached result if inputs haven't changed
     if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
       return this.cachedResult;
@@ -96,7 +96,7 @@ export class LayoutController implements ReactiveController {
       clusterPositions: initialClusterPos,
       nodePositions: initialNodePos,
       clusters: layoutClusters,
-    } = computeHierarchicalLayout(nodes, edges, analyzedClusters);
+    } = await computeHierarchicalLayout(nodes, edges, analyzedClusters);
 
     // Step 4: Add velocity properties for physics simulation
     const nodePositions = new Map<string, NodePosition>();

@@ -151,7 +151,10 @@ export class GraphCanvas extends LitElement {
   override willUpdate(changedProps: PropertyValues<this>) {
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       this.layout.enableAnimation = this.enableAnimation;
-      this.layout.computeLayout(this.nodes, this.edges);
+      // Fire async layout computation
+      this.layout.computeLayout(this.nodes, this.edges).then(() => {
+        this.requestUpdate(); // Trigger render when layout completes
+      });
       this.manualNodePositions.clear();
       this.updatePathCache();
     }
