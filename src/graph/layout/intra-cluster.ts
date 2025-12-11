@@ -1,12 +1,9 @@
 /**
- * Simple cluster layout with ring-based positioning
- * Updated to use mass-based anchor selection
+ * Intra-cluster layout: Force-directed positioning
  *
- * The "sun" of each solar system is determined by gravitational mass:
- * - Fan-in (how many depend on it)
- * - Fan-out (how many dependencies)
- * - Depth in hierarchy
- * - Centrality in graph structure
+ * Positions nodes within a cluster using a localized force-directed simulation.
+ * This provides a more organic and adaptable layout than rigid rings,
+ * accurately reflecting dependency structures and clustering related targets.
  */
 
 import { randomNumber } from '../../shared/utils/random';
@@ -19,7 +16,7 @@ export interface NodeCartesian {
   id: string;
   x: number;
   y: number;
-  ring: number;
+  ring: number; // Retained for compatibility, though less meaningful in force layout
   isTest: boolean;
 }
 
@@ -27,10 +24,13 @@ export interface SimpleLayoutOptions {
   baseRadius?: number;
   ringSpacing?: number;
   maxDepth?: number;
-  testOffset?: number; // Radial offset for tests from their target
+  testOffset?: number;
 }
 
-// Test name patterns for matching tests to their targets
+// ========================================
+// Heuristics
+// ========================================
+
 const TEST_NAME_PATTERNS = [
   /^(.+?)(Tests?)$/i,
   /^(.+?)(Test)$/i,
@@ -41,9 +41,6 @@ const TEST_NAME_PATTERNS = [
   /^(.+?)(E2ETests?)$/i,
 ];
 
-/**
- * Try to match test name to a target node using name patterns
- */
 function findTargetByNamePattern(
   testName: string,
   nodes: Array<{ id: string; name: string; type: string }>,
@@ -51,25 +48,19 @@ function findTargetByNamePattern(
   for (const pattern of TEST_NAME_PATTERNS) {
     const match = pattern.exec(testName);
     if (!match) continue;
-
     const baseName = match[1];
     if (!baseName) continue;
-
     const target = nodes.find((n) => {
       if (n.type.startsWith('test')) return false;
       const nName = n.name.toLowerCase();
       const bName = baseName.toLowerCase();
       return nName === bName || nName.startsWith(bName) || bName.startsWith(nName);
     });
-
     if (target) return target.id;
   }
   return undefined;
 }
 
-/**
- * Find target by first non-test dependency
- */
 function findTargetByDependency(
   testId: string,
   nodes: Array<{ id: string; name: string; type: string }>,
@@ -78,28 +69,211 @@ function findTargetByDependency(
   const deps = adj.forward.get(testId) || [];
   for (const dep of deps) {
     const depNode = nodes.find((n) => n.id === dep);
-    if (depNode && !depNode.type.startsWith('test')) {
-      return dep;
-    }
+    if (depNode && !depNode.type.startsWith('test')) return dep;
   }
   return undefined;
 }
 
-/**
- * Find what a test targets using heuristics
- */
 function findTestTarget(
   testId: string,
   testName: string,
   nodes: Array<{ id: string; name: string; type: string }>,
   adj: AdjacencyList,
 ): string | undefined {
-  // Try name pattern matching first
-  const byName = findTargetByNamePattern(testName, nodes);
-  if (byName) return byName;
+  return findTargetByNamePattern(testName, nodes) || findTargetByDependency(testId, nodes, adj);
+}
 
-  // Fall back to dependency analysis
-  return findTargetByDependency(testId, nodes, adj);
+// ========================================
+// Force Simulation
+// ========================================
+
+interface SimulationNode {
+  id: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  isTest: boolean;
+  targetId?: string; // For tests
+  mass: number;
+}
+
+/**
+ * Run a deterministic force-directed simulation for the cluster
+ */
+function runForceSimulation(
+  nodes: Array<{ id: string; name: string; type: string }>,
+  adj: AdjacencyList,
+  anchors: string[],
+  centerX: number,
+  centerY: number,
+  options: SimpleLayoutOptions,
+): NodeCartesian[] {
+  const nodeCount = nodes.length;
+  if (nodeCount === 0) return [];
+
+  // 1. Initialize Nodes
+  // Place anchors at center, others randomly in a small circle
+  const simNodes: Map<string, SimulationNode> = new Map();
+  
+  for (const node of nodes) {
+    const isAnchor = anchors.includes(node.id);
+    const isTest = node.type.startsWith('test');
+    
+    // Deterministic random start
+    const angle = randomNumber(0, Math.PI * 2);
+    const radius = isAnchor ? 0 : randomNumber(10, 50);
+
+    simNodes.set(node.id, {
+      id: node.id,
+      x: centerX + radius * Math.cos(angle),
+      y: centerY + radius * Math.sin(angle),
+      vx: 0,
+      vy: 0,
+      isTest,
+      mass: isAnchor ? 5 : (isTest ? 1 : 2),
+      targetId: isTest ? findTestTarget(node.id, node.name, nodes, adj) : undefined,
+    });
+  }
+
+  // 2. Constants & Scaling
+  // Scale parameters based on cluster size to prevent overcrowding
+  const scale = Math.sqrt(nodeCount); 
+  const sizeFactor = Math.max(1, scale / 2); // 1.0 for small, grows for large
+
+  const ITERATIONS = 300;
+  const DT = 0.5; // Time step
+  
+  // Dynamic forces
+  // Stronger repulsion for dense clusters
+  const REPULSION = 4000 * sizeFactor; 
+  // Weaker center gravity for large clusters to allow expansion
+  const CENTER_GRAVITY = 0.02 / sizeFactor; 
+  
+  const ATTRACTION = 0.05;
+  const TEST_ATTRACTION = 0.3;
+  const DAMPING = 0.8;
+  
+  // Longer edges for larger clusters to reduce clutter
+  const IDEAL_EDGE_LEN = 60 + (nodeCount > 20 ? 30 : 0); 
+  const MIN_DIST = 40 + (nodeCount > 50 ? 10 : 0); // Collision radius
+
+  const nodeList = Array.from(simNodes.values());
+
+  // 3. Simulation Loop
+  for (let i = 0; i < ITERATIONS; i++) {
+    // Apply forces
+    for (const node of nodeList) {
+      let fx = 0;
+      let fy = 0;
+
+      // A. Center Gravity (Pull anchors strongly, others weakly)
+      const isAnchor = anchors.includes(node.id);
+      const gravity = isAnchor ? 0.1 : CENTER_GRAVITY;
+      fx += (centerX - node.x) * gravity;
+      fy += (centerY - node.y) * gravity;
+
+      // B. Repulsion (All nodes repel)
+      for (const other of nodeList) {
+        if (node.id === other.id) continue;
+        const dx = node.x - other.x;
+        const dy = node.y - other.y;
+        const distSq = dx * dx + dy * dy;
+        const dist = Math.sqrt(distSq) || 0.1;
+        
+        if (dist < 300 * sizeFactor) { // Optimization cutoff scaled by size
+           const force = REPULSION / (distSq + 1);
+           fx += (dx / dist) * force;
+           fy += (dy / dist) * force;
+        }
+        
+        // Hard collision (prevent overlap)
+        if (dist < MIN_DIST) {
+            const push = (MIN_DIST - dist) * 0.5;
+            fx += (dx / dist) * push * 5; // Strong push
+            fy += (dy / dist) * push * 5;
+        }
+      }
+
+      // C. Edges (Springs)
+      const deps = adj.forward.get(node.id) || [];
+      for (const depId of deps) {
+        const target = simNodes.get(depId);
+        if (target) {
+           const dx = target.x - node.x;
+           const dy = target.y - node.y;
+           const dist = Math.hypot(dx, dy);
+           const springForce = (dist - IDEAL_EDGE_LEN) * ATTRACTION;
+           fx += (dx / dist) * springForce;
+           fy += (dy / dist) * springForce;
+        }
+      }
+      
+      // D. Test Constraint (Pull to target)
+      if (node.isTest && node.targetId) {
+          const target = simNodes.get(node.targetId);
+          if (target) {
+              const dx = target.x - node.x;
+              const dy = target.y - node.y;
+              const dist = Math.hypot(dx, dy);
+              // Tests want to be very close (e.g. 30px)
+              const testSpring = (dist - 35) * TEST_ATTRACTION;
+              fx += (dx / dist) * testSpring;
+              fy += (dy / dist) * testSpring;
+          }
+      }
+
+      // Update Velocity
+      node.vx = (node.vx + fx * DT) * DAMPING;
+      node.vy = (node.vy + fy * DT) * DAMPING;
+    }
+
+    // Apply Velocity
+    for (const node of nodeList) {
+        // Anchors stay closer to center (optional constraint)
+        if (anchors.includes(node.id) && i > ITERATIONS * 0.8) {
+             node.vx *= 0.1;
+             node.vy *= 0.1;
+        }
+        node.x += node.vx * DT;
+        node.y += node.vy * DT;
+    }
+  }
+
+  // 4. Convert to NodeCartesian
+  return nodeList.map(n => ({
+      id: n.id,
+      x: n.x,
+      y: n.y,
+      isTest: n.isTest,
+      ring: Math.floor(Math.hypot(n.x - centerX, n.y - centerY) / 100) // Approx ring for compat
+  }));
+}
+
+// ========================================
+// Public API
+// ========================================
+
+export function simpleClusterLayout(
+  nodes: Array<{ id: string; name: string; type: string }>,
+  edges: Array<{ from: string; to: string }>,
+  centerX: number,
+  centerY: number,
+  options: SimpleLayoutOptions = {},
+): NodeCartesian[] {
+  if (nodes.length === 0) return [];
+
+  // Build graph topology
+  const adj = buildAdjacency(
+    nodes.map((n) => n.id),
+    edges,
+  );
+
+  // Identify central nodes
+  const anchors = selectAnchors(nodes, edges);
+
+  // Run simulation
+  return runForceSimulation(nodes, adj, anchors, centerX, centerY, options);
 }
 
 /**
@@ -109,14 +283,9 @@ function selectAnchors(
   nodes: Array<{ id: string; type: string }>,
   edges: Array<{ from: string; to: string }>,
 ): string[] {
-  // Use mass-based anchor selection
   const anchor = selectMassBasedAnchor(nodes, edges);
+  if (anchor) return [anchor];
 
-  if (anchor) {
-    return [anchor];
-  }
-
-  // Fallback: nodes with no incoming edges (roots)
   const adj = buildAdjacency(
     nodes.map((n) => n.id),
     edges,
@@ -126,295 +295,14 @@ function selectAnchors(
     return incoming.length === 0 && !n.type.startsWith('test');
   });
 
-  if (roots.length > 0) {
-    return roots.map((r) => r.id);
-  }
+  if (roots.length > 0) return roots.map((r) => r.id);
 
-  // Last fallback: first non-test node
   const firstNonTest = nodes.find((n) => !n.type.startsWith('test'));
   return firstNonTest ? [firstNonTest.id] : [];
 }
 
 /**
- * Compute ring depth for each node via BFS from anchors
- * Following dependency edges (app -> framework -> lib)
- */
-function computeRingDepth(
-  nodeIds: string[],
-  anchors: string[],
-  adj: AdjacencyList,
-  maxDepth: number,
-): Map<string, number> {
-  const depth = new Map<string, number>();
-  const queue: string[] = [];
-
-  // Start from anchors at ring 0
-  for (const anchor of anchors) {
-    depth.set(anchor, 0);
-    queue.push(anchor);
-  }
-
-  // BFS
-  while (queue.length > 0) {
-    const id = queue.shift()!;
-    const d = depth.get(id)!;
-
-    if (d >= maxDepth) continue;
-
-    // Follow dependencies outward
-    const deps = adj.forward.get(id) || [];
-    for (const dep of deps) {
-      const currentDepth = depth.get(dep);
-      if (currentDepth === undefined || currentDepth > d + 1) {
-        depth.set(dep, d + 1);
-        queue.push(dep);
-      }
-    }
-  }
-
-  // Unreached nodes go to outer ring
-  for (const id of nodeIds) {
-    if (!depth.has(id)) {
-      depth.set(id, maxDepth);
-    }
-  }
-
-  return depth;
-}
-
-/**
- * Calculate ideal angle for a node based on its connections
- */
-function computeIdealAngle(
-  nodeId: string,
-  ring: number,
-  adj: AdjacencyList,
-  positionMap: Map<string, { angle: number; ring: number }>,
-): number {
-  // Get neighbors (both directions)
-  const allNeighbors = [...(adj.forward.get(nodeId) || []), ...(adj.reverse.get(nodeId) || [])];
-
-  // Only consider neighbors in inner rings (already placed)
-  const innerNeighbors = allNeighbors
-    .map((nId) => positionMap.get(nId))
-    .filter((pos): pos is { angle: number; ring: number } => pos !== undefined && pos.ring < ring);
-
-  if (innerNeighbors.length === 0) {
-    return 0; // No guidance, will be positioned later
-  }
-
-  // Compute average angle (geometric mean)
-  let sumX = 0;
-  let sumY = 0;
-  for (const pos of innerNeighbors) {
-    sumX += Math.cos(pos.angle);
-    sumY += Math.sin(pos.angle);
-  }
-
-  return Math.atan2(sumY, sumX);
-}
-
-type PositionInfo = { x: number; y: number; angle: number; ring: number };
-
-/**
- * Options for positioning test nodes
- */
-interface PositionTestNodesOptions {
-  testNodes: Array<{ id: string; name: string; type: string }>;
-  mainNodes: Array<{ id: string; name: string; type: string }>;
-  adj: AdjacencyList;
-  positionMap: Map<string, PositionInfo>;
-  centerX: number;
-  centerY: number;
-  baseRadius: number;
-  ringSpacing: number;
-  testOffset: number;
-  maxDepth: number;
-}
-
-/**
- * Position nodes in ring 0 (anchors)
- */
-function positionRingZero(
-  ringNodes: Array<{ id: string; name: string; type: string }>,
-  centerX: number,
-  centerY: number,
-  radius: number,
-  positionMap: Map<string, PositionInfo>,
-): void {
-  const angleStep = (2 * Math.PI) / Math.max(ringNodes.length, 1);
-  for (let idx = 0; idx < ringNodes.length; idx++) {
-    const node = ringNodes[idx]!;
-    const angle = idx * angleStep;
-    positionMap.set(node.id, {
-      x: centerX + radius * Math.cos(angle),
-      y: centerY + radius * Math.sin(angle),
-      angle,
-      ring: 0,
-    });
-  }
-}
-
-/**
- * Position nodes in outer rings based on connections
- */
-function positionOuterRing(
-  ringNodes: Array<{ id: string; name: string; type: string }>,
-  ring: number,
-  centerX: number,
-  centerY: number,
-  radius: number,
-  adj: AdjacencyList,
-  positionMap: Map<string, PositionInfo>,
-): void {
-  const scored = ringNodes.map((node) => ({
-    node,
-    idealAngle: computeIdealAngle(node.id, ring, adj, positionMap),
-  }));
-
-  scored.sort((a, b) => a.idealAngle - b.idealAngle);
-
-  const angleStep = (2 * Math.PI) / scored.length;
-  for (let idx = 0; idx < scored.length; idx++) {
-    const item = scored[idx]!;
-    const angle = idx * angleStep;
-    positionMap.set(item.node.id, {
-      x: centerX + radius * Math.cos(angle),
-      y: centerY + radius * Math.sin(angle),
-      angle,
-      ring,
-    });
-  }
-}
-
-/**
- * Position test nodes adjacent to their targets
- */
-function positionTestNodes(options: PositionTestNodesOptions): void {
-  const {
-    testNodes,
-    mainNodes,
-    adj,
-    positionMap,
-    centerX,
-    centerY,
-    baseRadius,
-    ringSpacing,
-    testOffset,
-    maxDepth,
-  } = options;
-
-  for (const testNode of testNodes) {
-    const targetId = findTestTarget(testNode.id, testNode.name, mainNodes, adj);
-    const targetPos = targetId ? positionMap.get(targetId) : undefined;
-
-    if (targetPos) {
-      const testRadius = targetPos.ring * ringSpacing + baseRadius + testOffset;
-      positionMap.set(testNode.id, {
-        x: centerX + testRadius * Math.cos(targetPos.angle),
-        y: centerY + testRadius * Math.sin(targetPos.angle),
-        angle: targetPos.angle,
-        ring: -1,
-      });
-    } else {
-      const outerRadius = baseRadius + (maxDepth + 1) * ringSpacing;
-      const angle = randomNumber(0, 2 * Math.PI);
-      positionMap.set(testNode.id, {
-        x: centerX + outerRadius * Math.cos(angle),
-        y: centerY + outerRadius * Math.sin(angle),
-        angle,
-        ring: -1,
-      });
-    }
-  }
-}
-
-/**
- * Simple radial cluster layout with tests adjacent to targets
- */
-export function simpleClusterLayout(
-  nodes: Array<{ id: string; name: string; type: string }>,
-  edges: Array<{ from: string; to: string }>,
-  centerX: number,
-  centerY: number,
-  options: SimpleLayoutOptions = {},
-): NodeCartesian[] {
-  const { baseRadius = 40, ringSpacing = 65, maxDepth = 3, testOffset = 28 } = options;
-
-  if (nodes.length === 0) return [];
-
-  const adj = buildAdjacency(
-    nodes.map((n) => n.id),
-    edges,
-  );
-
-  // Separate tests from main nodes
-  const mainNodes = nodes.filter((n) => !n.type.startsWith('test'));
-  const testNodes = nodes.filter((n) => n.type.startsWith('test'));
-
-  // Find anchors and compute ring depths for main nodes
-  const anchors = selectAnchors(mainNodes, edges);
-  const ringDepth = computeRingDepth(
-    mainNodes.map((n) => n.id),
-    anchors,
-    adj,
-    maxDepth,
-  );
-
-  // Group main nodes by ring
-  const ringGroups = new Map<number, typeof mainNodes>();
-  for (const node of mainNodes) {
-    const ring = ringDepth.get(node.id) ?? maxDepth;
-    if (!ringGroups.has(ring)) {
-      ringGroups.set(ring, []);
-    }
-    ringGroups.get(ring)!.push(node);
-  }
-
-  // Position main nodes ring by ring
-  const positionMap = new Map<string, PositionInfo>();
-  const sortedRings = Array.from(ringGroups.keys()).sort((a, b) => a - b);
-
-  for (const ring of sortedRings) {
-    const ringNodes = ringGroups.get(ring)!;
-    const radius = baseRadius + ring * ringSpacing;
-
-    if (ring === 0) {
-      positionRingZero(ringNodes, centerX, centerY, radius, positionMap);
-    } else {
-      positionOuterRing(ringNodes, ring, centerX, centerY, radius, adj, positionMap);
-    }
-  }
-
-  // Position tests adjacent to their targets
-  positionTestNodes({
-    testNodes,
-    mainNodes,
-    adj,
-    positionMap,
-    centerX,
-    centerY,
-    baseRadius,
-    ringSpacing,
-    testOffset,
-    maxDepth,
-  });
-
-  // Convert to result format
-  return Array.from(positionMap.entries()).map(([id, pos]) => ({
-    id,
-    x: pos.x,
-    y: pos.y,
-    ring: pos.ring,
-    isTest: testNodes.some((t) => t.id === id),
-  }));
-}
-
-/**
- * Compute minimum enclosing circle radius using elastic shell
- * The shell is a flexible membrane that balances:
- * - Inward compression (wants to stay small)
- * - Outward pressure from nodes (based on mass)
+ * Compute minimum enclosing circle radius
  */
 export function computeMEC(
   positions: NodeCartesian[],
@@ -424,20 +312,16 @@ export function computeMEC(
 ): number {
   if (positions.length === 0) return 100;
 
-  // If masses provided, use elastic shell computation
   if (masses && masses.size > 0) {
-    // Convert positions to relative coordinates
     const nodesWithPos = positions.map((p) => ({
       id: p.id,
       x: p.x - centerX,
       y: p.y - centerY,
       ring: p.ring,
     }));
-
     return computeElasticShellRadius(nodesWithPos, masses);
   }
 
-  // Fallback: simple MEC (maximum distance + padding)
   let maxDistance = 0;
   for (const pos of positions) {
     const dx = pos.x - centerX;
