@@ -13,6 +13,7 @@ import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { computeMEC, simpleClusterLayout } from './intra-cluster';
 import { computeNodeMasses } from './mass';
+import { getConnectionCount } from '@graph/utils/connections';
 
 // ==================== Type Definitions ====================
 
@@ -76,88 +77,35 @@ const MAX_DIMENSION = 900;
 const DIMENSION_PADDING = 16;
 
 /**
- * Simple force relaxation for nodes inside a single cluster.
- * Keeps nodes within a bounding radius while spacing them apart and following internal links.
+ * Select the anchor cluster (sun) based on total connectivity mass.
+ * 
+ * Simple heuristic: The cluster with the highest sum of node edges (in or out)
+ * is considered the anchor. This favors large, highly connected projects (like the App).
  */
-function relaxNodesWithinCluster(
-  positions: Array<{ id: string; x: number; y: number }>,
-  internalEdges: Array<{ from: string; to: string }>,
-  boundRadius: number,
-  iterations = 120,
-) {
-  const linkStrength = 0.025;
-  const linkDist = 50;
-  const collisionRadius = 14;
-  const collisionPadding = 6;
-  const gravity = 0.01;
-  const margin = 8;
-  const clampRadius = Math.max(boundRadius - margin, collisionRadius);
+function selectClusterAnchor(
+  clusters: Cluster[],
+  allEdges: GraphEdge[]
+): string | null {
+    if (clusters.length === 0) return null;
 
-  const nodes = positions.map((p) => ({ ...p, vx: 0, vy: 0 }));
-  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+    let maxEdges = -Infinity;
+    let anchor: string | null = null;
 
-  for (let iter = 0; iter < iterations; iter++) {
-    // Link attraction
-    for (const edge of internalEdges) {
-      const a = nodeMap.get(edge.from);
-      const b = nodeMap.get(edge.to);
-      if (!a || !b) continue;
-      let dx = b.x - a.x;
-      let dy = b.y - a.y;
-      let dist = Math.hypot(dx, dy) || 0.001;
-      const delta = dist - linkDist;
-      const force = delta * linkStrength;
-      dx /= dist;
-      dy /= dist;
-      a.vx += dx * force;
-      a.vy += dy * force;
-      b.vx -= dx * force;
-      b.vy -= dy * force;
-    }
-
-    // Collision
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const a = nodes[i];
-        const b = nodes[j];
-        let dx = b.x - a.x;
-        let dy = b.y - a.y;
-        let dist = Math.hypot(dx, dy) || 0.001;
-        const minDist = collisionRadius * 2 + collisionPadding;
-        const overlap = minDist - dist;
-        if (overlap > 0) {
-          dx /= dist;
-          dy /= dist;
-          const force = overlap * 0.5;
-          a.x -= dx * force;
-          a.y -= dy * force;
-          b.x += dx * force;
-          b.y += dy * force;
+    for (const cluster of clusters) {
+        let totalClusterEdges = 0;
+        
+        // Sum edges for all nodes in this cluster
+        for (const node of cluster.nodes) {
+            totalClusterEdges += getConnectionCount(node.id, allEdges);
         }
-      }
+        
+        if (totalClusterEdges > maxEdges) {
+            maxEdges = totalClusterEdges;
+            anchor = cluster.id;
+        }
     }
-
-    // Integrate + gravity and clamp
-    for (const n of nodes) {
-      n.vx -= n.x * gravity;
-      n.vy -= n.y * gravity;
-      n.x += n.vx;
-      n.y += n.vy;
-      n.vx *= 0.85;
-      n.vy *= 0.85;
-
-      const d = Math.hypot(n.x, n.y);
-      if (d > clampRadius) {
-        const scale = clampRadius / d;
-        n.x *= scale;
-        n.y *= scale;
-        n.vx *= 0.5;
-        n.vy *= 0.5;
-      }
-    }
-  }
-
-  return nodes.map((n) => ({ id: n.id, x: n.x, y: n.y }));
+    
+    return anchor;
 }
 
 /**
@@ -172,6 +120,7 @@ function forceClusterPacking(
   clusterIds: string[],
   clusterEdges: Array<{ from: string; to: string }>,
   clusterDimensions: Map<string, number>,
+  anchors: string[] = [],
   iterations = 400,
 ) {
   const padding = 32; // extra space around cluster bounds
@@ -179,13 +128,18 @@ function forceClusterPacking(
   const collisionPadding = 26;
   const linkStrength = 0.02;
   const collisionStrength = 0.9;
-  const gravity = 0.002;
+  const baseGravity = 0.002;
+  const anchorGravity = 0.2; // Strong pull for anchor
 
   const nodes = clusterIds.map((id, idx) => {
     const dim = clusterDimensions.get(id) ?? 140;
     const r = dim / 2 + padding;
+    
+    // Anchors start at center
+    const isAnchor = anchors.includes(id);
     const angle = (idx / Math.max(1, clusterIds.length)) * Math.PI * 2;
-    const radius = Math.sqrt(clusterIds.length) * (dim + padding);
+    const radius = isAnchor ? 0 : Math.sqrt(clusterIds.length) * (dim + padding);
+    
     return {
       id,
       r,
@@ -193,6 +147,7 @@ function forceClusterPacking(
       y: Math.sin(angle) * radius,
       vx: 0,
       vy: 0,
+      isAnchor,
     };
   });
 
@@ -244,22 +199,40 @@ function forceClusterPacking(
 
     // Apply velocities and gravity
     for (const n of nodes) {
+      const gravity = n.isAnchor ? anchorGravity : baseGravity;
+      
       n.vx -= n.x * gravity;
       n.vy -= n.y * gravity;
       n.x += n.vx;
       n.y += n.vy;
       n.vx *= 0.85;
       n.vy *= 0.85;
+      
+      // Anchor strict centering optimization
+      if (n.isAnchor && iter > iterations * 0.8) {
+          n.x *= 0.1; // Strong dampen
+          n.y *= 0.1;
+      }
     }
   }
 
   // Normalize to center around origin
-  const minX = Math.min(...nodes.map((n) => n.x - n.r));
-  const maxX = Math.max(...nodes.map((n) => n.x + n.r));
-  const minY = Math.min(...nodes.map((n) => n.y - n.r));
-  const maxY = Math.max(...nodes.map((n) => n.y + n.r));
-  const offsetX = (minX + maxX) / 2;
-  const offsetY = (minY + maxY) / 2;
+  // If we have an anchor, we usually want THAT at (0,0), not the geometric center of all nodes
+  let offsetX = 0;
+  let offsetY = 0;
+  
+  const anchorNode = nodes.find(n => n.isAnchor);
+  if (anchorNode) {
+      offsetX = anchorNode.x;
+      offsetY = anchorNode.y;
+  } else {
+      const minX = Math.min(...nodes.map((n) => n.x - n.r));
+      const maxX = Math.max(...nodes.map((n) => n.x + n.r));
+      const minY = Math.min(...nodes.map((n) => n.y - n.r));
+      const maxY = Math.max(...nodes.map((n) => n.y + n.r));
+      offsetX = (minX + maxX) / 2;
+      offsetY = (minY + maxY) / 2;
+  }
 
   const positions = new Map<string, { x: number; y: number }>();
   for (const n of nodes) {
@@ -475,8 +448,12 @@ export function computeHierarchicalLayout(
   const clusterEdges = extractClusterEdges(edges, nodeToCluster);
   const clusterDimensions = preComputeClusterDimensions(clusters, nodes, edges);
 
+  // Identify anchor cluster using simplified total edge count (FanIn + FanOut)
+  const anchorId = selectClusterAnchor(clusters, edges); // Pass ALL edges
+  const anchors = anchorId ? [anchorId] : [];
+
   // Force-pack clusters to avoid overlap while keeping related clusters closer
-  const clusterCenters = forceClusterPacking(clusterIds, clusterEdges, clusterDimensions);
+  const clusterCenters = forceClusterPacking(clusterIds, clusterEdges, clusterDimensions, anchors);
   resolveClusterCollisions(clusterCenters, clusterDimensions);
 
   const clusterPositions = new Map<string, ClusterPosition>();
