@@ -1,7 +1,7 @@
 /**
- * d3-force based clustered graph layout
+ * D3-force based clustered graph layout
  *
- * Replaces custom physics code with battle-tested d3-force simulation.
+ * Main orchestration of force simulation with cluster boundaries and edge bundling.
  * Uses d3-force-clustering for natural cluster grouping.
  */
 
@@ -9,30 +9,28 @@ import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import * as d3 from 'd3-force';
 import forceClustering from 'd3-force-clustering';
-import forceBoundary from './boundary';
 import { forceEdgeBundling } from './edge-bundling';
+import { forceClusterRepulsion, createClusterBoundaryForce } from './forces';
 
 export interface HierarchicalLayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
   nodePositions: Map<string, NodePosition>;
   clusters: Cluster[];
-  bundledEdges?: Array<Array<{ x: number; y: number }>>; // Bundled edge paths
+  bundledEdges?: Array<Array<{ x: number; y: number }>>;
 }
 
 // Layout configuration
 const CONFIG = {
   // Node-level forces
   nodeRadius: 6,
-  nodeCollisionPadding: 12, // Increased from 8 to prevent overlap
+  nodeCollisionPadding: 12,
   linkDistance: 50,
   linkStrength: 0.4,
-  nodeCharge: -120, // Increased repulsion to spread nodes
+  nodeCharge: -120,
 
-  // Cluster forces (using d3-force-clustering)
+  // Cluster forces
   clusterStrength: 0.3,
   clusterDistanceMin: 10,
-
-  // Cluster-to-cluster repulsion (custom force)
   clusterRepulsionStrength: 2500,
   clusterRepulsionMinDist: 180,
 
@@ -43,10 +41,32 @@ const CONFIG = {
   minClusterSize: 80,
   clusterNodeSpacing: 12,
   clusterPadding: 40,
-};
+
+  // Edge bundling
+  bundlingCycles: 4,
+  bundlingIterations: 60,
+  compatibilityThreshold: 0.7,
+} as const;
+
+// Simulation node type
+interface SimNode {
+  id: string;
+  clusterId?: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+}
+
+// Cluster center type
+interface ClusterCenter {
+  id: string;
+  cx: number;
+  cy: number;
+}
 
 /**
- * Build a map from node ID to cluster ID
+ * Build node-to-cluster mapping
  */
 function buildNodeToClusterMap(clusters: Cluster[]): Map<string, string> {
   const map = new Map<string, string>();
@@ -59,42 +79,7 @@ function buildNodeToClusterMap(clusters: Cluster[]): Map<string, string> {
 }
 
 /**
- * Custom cluster-to-cluster repulsion force
- * Prevents clusters from piling up on top of each other
- */
-function forceClusterRepulsion(
-  clusterCenters: Array<{ id: string; cx: number; cy: number }>,
-  strength: number,
-  minDist: number,
-) {
-  return () => {
-    for (let i = 0; i < clusterCenters.length; i++) {
-      const a = clusterCenters[i]!;
-      for (let j = i + 1; j < clusterCenters.length; j++) {
-        const b = clusterCenters[j]!;
-
-        let dx = b.cx - a.cx;
-        let dy = b.cy - a.cy;
-        let dist = Math.hypot(dx, dy);
-
-        if (dist < minDist) dist = minDist;
-
-        const force = strength / (dist * dist);
-
-        const fx = force * dx;
-        const fy = force * dy;
-
-        a.cx -= fx;
-        a.cy -= fy;
-        b.cx += fx;
-        b.cy += fy;
-      }
-    }
-  };
-}
-
-/**
- * Main layout function using d3-force with d3-force-clustering
+ * Main layout computation
  */
 export function computeHierarchicalLayout(
   nodes: GraphNode[],
@@ -109,74 +94,71 @@ export function computeHierarchicalLayout(
     };
   }
 
-  // Build node-to-cluster mapping
+  // Build mappings
   const nodeToCluster = buildNodeToClusterMap(clusters);
 
-  // Prepare simulation nodes with cluster info
-  const simNodes: any[] = nodes.map((n) => ({
+  // Pre-calculate cluster sizes
+  const clusterSizes = new Map<string, number>();
+  for (const cluster of clusters) {
+    const size = CONFIG.minClusterSize + cluster.nodes.length * CONFIG.clusterNodeSpacing;
+    clusterSizes.set(cluster.id, size);
+  }
+
+  // Create simulation nodes with type safety
+  const simNodes: SimNode[] = nodes.map((n) => ({
     id: n.id,
     clusterId: nodeToCluster.get(n.id),
-    x: Math.random() * 100 - 50, // Random initial positions
+    x: Math.random() * 100 - 50,
     y: Math.random() * 100 - 50,
     vx: 0,
     vy: 0,
   }));
 
-  // Prepare edges for d3 (d3 needs source/target as objects or indices)
+  // Create edges for D3
   const simLinks = edges.map((e) => ({
     source: e.source,
     target: e.target,
   }));
 
-  // Pre-calculate cluster sizes based on node count
-  const clusterSizes = new Map<string, number>();
+  // Create cluster centers (using Map for O(1) lookups)
+  const clusterCenterMap = new Map<string, ClusterCenter>();
   for (const cluster of clusters) {
-    const size = 120 + cluster.nodes.length * 15;
-    clusterSizes.set(cluster.id, size);
+    clusterCenterMap.set(cluster.id, { id: cluster.id, cx: 0, cy: 0 });
   }
 
-  // Build cluster centers array for cluster-to-cluster repulsion
-  const clusterCenters = clusters.map((c) => ({
-    id: c.id,
-    cx: 0,
-    cy: 0,
-  }));
-
-  // Update cluster centers each tick before applying repulsion
+  // Update cluster centers based on node positions
   function updateClusterCenters() {
-    for (const cc of clusterCenters) {
+    for (const [clusterId, center] of clusterCenterMap) {
       let sumX = 0;
       let sumY = 0;
       let count = 0;
 
-      for (const n of simNodes) {
-        if (n.clusterId === cc.id) {
-          sumX += n.x ?? 0;
-          sumY += n.y ?? 0;
+      for (const node of simNodes) {
+        if (node.clusterId === clusterId) {
+          sumX += node.x;
+          sumY += node.y;
           count++;
         }
       }
 
       if (count > 0) {
-        cc.cx = sumX / count;
-        cc.cy = sumY / count;
+        center.cx = sumX / count;
+        center.cy = sumY / count;
       }
     }
   }
 
-  // Create cluster repulsion force
-  const clusterRepel = forceClusterRepulsion(
-    clusterCenters,
+  // Create cluster repulsion force (proper D3 force)
+  const clusterRepelForce = forceClusterRepulsion(
     CONFIG.clusterRepulsionStrength,
     CONFIG.clusterRepulsionMinDist,
   );
+  clusterRepelForce.initialize(Array.from(clusterCenterMap.values()));
 
-  // Create per-cluster boundary forces BEFORE simulation
-  const clusterBoundaryData: Array<{
+  // Create per-cluster boundary forces
+  const boundaryForceData: Array<{
     clusterId: string;
-    nodes: any[];
-    force: any;
-    center: { cx: number; cy: number };
+    force: (alpha: number) => void;
   }> = [];
 
   for (const cluster of clusters) {
@@ -186,48 +168,25 @@ export function computeHierarchicalLayout(
 
     if (clusterNodes.length === 0) continue;
 
-    const center = clusterCenters.find(c => c.id === cluster.id)!;
-    const boundaryForce = forceBoundary(-maxRadius, -maxRadius, maxRadius, maxRadius)
-      .hardBoundary(true)
-      .strength(1.0);
+    const center = clusterCenterMap.get(cluster.id)!;
+    const boundaryForce = createClusterBoundaryForce(clusterNodes, center, maxRadius);
 
-    clusterBoundaryData.push({
+    boundaryForceData.push({
       clusterId: cluster.id,
-      nodes: clusterNodes,
       force: boundaryForce,
-      center,
     });
   }
 
-  // Custom force function that applies all cluster boundaries
+  // Combined boundary force for all clusters
   function applyAllClusterBoundaries(alpha: number) {
-    for (const { force: boundaryForce, nodes: clusterNodes, center } of clusterBoundaryData) {
-      // Shift to cluster-relative coordinates
-      for (const node of clusterNodes) {
-        node.x = (node.x ?? 0) - center.cx;
-        node.y = (node.y ?? 0) - center.cy;
-      }
-
-      // Apply boundary force
-      boundaryForce(alpha);
-
-      // Shift back to absolute
-      for (const node of clusterNodes) {
-        node.x = (node.x ?? 0) + center.cx;
-        node.y = (node.y ?? 0) + center.cy;
-      }
+    for (const { force } of boundaryForceData) {
+      force(alpha);
     }
   }
 
-  // Initialize all boundary forces
-  for (const { force: boundaryForce, nodes: clusterNodes } of clusterBoundaryData) {
-    boundaryForce.initialize(clusterNodes);
-  }
-
-  // Create force simulation with all forces
+  // Create D3 force simulation
   const simulation = d3
     .forceSimulation(simNodes)
-    // Link force: pulls connected nodes together
     .force(
       'link',
       d3
@@ -236,14 +195,8 @@ export function computeHierarchicalLayout(
         .distance(CONFIG.linkDistance)
         .strength(CONFIG.linkStrength),
     )
-
-    // Charge force: repulsion between all nodes
     .force('charge', d3.forceManyBody().strength(CONFIG.nodeCharge))
-
-    // Collision force: prevents node overlap
     .force('collision', d3.forceCollide().radius(CONFIG.nodeRadius + CONFIG.nodeCollisionPadding))
-
-    // Cluster force: pulls nodes toward their cluster center
     .force(
       'cluster',
       forceClustering()
@@ -251,39 +204,26 @@ export function computeHierarchicalLayout(
         .distanceMin(CONFIG.clusterDistanceMin)
         .clusterId((d: any) => d.clusterId),
     )
-
-    // Boundary force: keeps nodes within their cluster bounds
     .force('boundaries', applyAllClusterBoundaries)
-
-    // Center force: keeps everything centered
     .force('center', d3.forceCenter(0, 0))
-
-    .stop(); // Don't auto-tick, we'll run it manually
+    .stop();
 
   // Run simulation to completion
   for (let i = 0; i < CONFIG.iterations; i++) {
     updateClusterCenters();
-
-    // Update cluster centers in boundary data
-    for (const data of clusterBoundaryData) {
-      const center = clusterCenters.find(c => c.id === data.clusterId);
-      if (center) {
-        data.center.cx = center.cx;
-        data.center.cy = center.cy;
-      }
-    }
-
-    clusterRepel();
+    // Note: clusterRepelForce operates on cluster centers, not nodes
+    // This is called manually because it affects cluster metadata, not node positions directly
+    clusterRepelForce(simulation.alpha());
     simulation.tick();
   }
 
-  // Extract node positions
+  // Extract node positions (STILL ABSOLUTE at this point!)
   const nodePositions = new Map<string, NodePosition>();
   for (const node of simNodes) {
     nodePositions.set(node.id, {
       id: node.id,
-      x: node.x ?? 0,
-      y: node.y ?? 0,
+      x: node.x,
+      y: node.y,
       vx: 0,
       vy: 0,
       clusterId: node.clusterId ?? '',
@@ -291,17 +231,34 @@ export function computeHierarchicalLayout(
     });
   }
 
-  // Calculate cluster bounds and positions
+  // CRITICAL: Run edge bundling BEFORE converting to relative coordinates
+  // Bundling needs global coordinate system for cross-cluster edges
+  const nodeMap: Record<string, { x: number; y: number }> = {};
+  for (const [nodeId, pos] of nodePositions) {
+    nodeMap[nodeId] = { x: pos.x, y: pos.y };
+  }
+
+  let bundledEdges: Array<Array<{ x: number; y: number }>> | undefined;
+
+  if (edges.length < 500) {
+    const bundlingEdges = edges.map(e => ({ source: e.source, target: e.target }));
+    bundledEdges = forceEdgeBundling(nodeMap, bundlingEdges, {
+      K: 0.1,
+      C: CONFIG.bundlingCycles,
+      I_initial: CONFIG.bundlingIterations,
+      compatibility_threshold: CONFIG.compatibilityThreshold,
+    });
+  }
+
+  // Calculate cluster positions and bounds
   const clusterPositions = new Map<string, ClusterPosition>();
 
   for (const cluster of clusters) {
-    // Get all nodes in this cluster
     const clusterNodes = cluster.nodes
       .map((n) => nodePositions.get(n.id))
       .filter((p): p is NodePosition => p !== undefined);
 
     if (clusterNodes.length === 0) {
-      // Empty cluster
       clusterPositions.set(cluster.id, {
         id: cluster.id,
         x: 0,
@@ -315,58 +272,31 @@ export function computeHierarchicalLayout(
       continue;
     }
 
-    // Calculate bounding box
-    const xs = clusterNodes.map((n) => n.x);
-    const ys = clusterNodes.map((n) => n.y);
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
+    // Get cluster center from simulation
+    const center = clusterCenterMap.get(cluster.id);
+    if (!center) continue;
 
-    // Calculate center
-    const centerX = (minX + maxX) / 2;
-    const centerY = (minY + maxY) / 2;
-
-    // Calculate dimensions with padding
-    const contentWidth = maxX - minX + CONFIG.nodeRadius * 2;
-    const contentHeight = maxY - minY + CONFIG.nodeRadius * 2;
-
-    // Size based on node count with minimum
-    const nodeCountSize = CONFIG.minClusterSize + clusterNodes.length * CONFIG.clusterNodeSpacing;
-    const width = Math.max(nodeCountSize, contentWidth + CONFIG.clusterPadding * 2);
-    const height = Math.max(nodeCountSize, contentHeight + CONFIG.clusterPadding * 2);
+    const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
 
     clusterPositions.set(cluster.id, {
       id: cluster.id,
-      x: centerX,
-      y: centerY,
-      width,
-      height,
+      x: center.cx,
+      y: center.cy,
+      width: size,
+      height: size,
       vx: 0,
       vy: 0,
       nodeCount: clusterNodes.length,
     });
 
-    // Convert node positions to be RELATIVE to cluster center
+    // ⚠️ CRITICAL COORDINATE SYSTEM CHANGE ⚠️
+    // Converting node positions from ABSOLUTE to RELATIVE (cluster-local)
+    // Downstream rendering MUST compute: absoluteX = cluster.x + node.x
     for (const node of clusterNodes) {
-      node.x -= centerX;
-      node.y -= centerY;
+      node.x -= center.cx;
+      node.y -= center.cy;
     }
   }
-
-  // Compute edge bundling (using ABSOLUTE positions before conversion)
-  const nodeMap: Record<string, { x: number; y: number }> = {};
-  for (const [nodeId, pos] of nodePositions) {
-    nodeMap[nodeId] = { x: pos.x, y: pos.y };
-  }
-
-  const bundlingEdges = edges.map(e => ({ source: e.source, target: e.target }));
-  const bundledEdges = forceEdgeBundling(nodeMap, bundlingEdges, {
-    K: 0.1,
-    C: 4, // cycles - fewer for performance
-    I_initial: 60, // iterations
-    compatibility_threshold: 0.7,
-  });
 
   return {
     nodePositions,
