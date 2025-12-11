@@ -9,7 +9,7 @@
 
 import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
-import { computeHierarchicalLayout } from '@graph/layout-v2/hierarchical';
+import { computeHierarchicalLayout } from '@graph/layout-v2/elk-layout';
 import {
   applyCollisionForces,
   applyLinkForces,
@@ -52,7 +52,7 @@ class LayoutWorker implements LayoutWorkerAPI {
     });
 
     // Step 2: Compute deterministic layout
-    const { clusterPositions, nodePositions, clusters } = computeHierarchicalLayout(
+    const { clusterPositions, nodePositions, clusters } = await computeHierarchicalLayout(
       nodes,
       edges,
       analyzedClusters,
