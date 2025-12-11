@@ -9,7 +9,6 @@
 
 import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
-import { computeHierarchicalLayout } from '@graph/layout-v2/elk-layout';
 import {
   applyCollisionForces,
   applyLinkForces,
@@ -17,10 +16,11 @@ import {
   calculateBoundingRadius,
   LinkForcePresets,
   updatePositionMap,
-} from '@graph/utils/physics/collision';
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge } from '@shared/schemas/graph.schema';
-import { expose } from 'comlink';
+utils/physicscollision
+  applytype C Cluster ClusterPositions NodePosition import tysharedCschemas, NodePosition } from '@shared/schemas';
+import type { GraphEdgeh.schema';/graph.schema
+import osexpose'comlink'comlink
+import { computeHierarchicalLayouteHierarch@/graph/layout/d3-layoutout } from '@/graph/layout/d3-layout';
 import type { LayoutInput, LayoutOutput, LayoutProgress, LayoutWorkerAPI } from './layout-api';
 
 class LayoutWorker implements LayoutWorkerAPI {
