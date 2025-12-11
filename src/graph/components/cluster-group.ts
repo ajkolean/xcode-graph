@@ -29,7 +29,8 @@ import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/grap
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
-import { html, LitElement } from 'lit';
+import { html, LitElement, type PropertyValues } from 'lit';
+import { trackLitPerformance } from '@/utils/lit-performance-tracker';
 import './cluster-card';
 import './graph-edges';
 import './graph-node';
@@ -128,59 +129,48 @@ export class GraphClusterGroup extends LitElement {
   // Lifecycle
   // ========================================
 
-  override shouldUpdate(changedProps: Map<PropertyKey, unknown>): boolean {
-    // Always update on initial render
-    if (!changedProps.size) return true;
+  private hasSignificantZoomChange(changedProps: Map<PropertyKey, unknown>): boolean {
+    if (!changedProps.has('zoom')) return false;
+    const oldZoom = (changedProps.get('zoom') as number) ?? 1;
+    const newZoom = this.zoom ?? 1;
+    return Math.abs(newZoom - oldZoom) > 0.01;
+  }
 
-    // Update if cluster data changed
-    if (changedProps.has('cluster') || changedProps.has('clusterPosition')) return true;
-
-    // Update if nodes/edges changed
-    if (changedProps.has('nodes') || changedProps.has('edges')) return true;
-
-    // Update if positions changed
-    if (changedProps.has('finalNodePositions')) return true;
-
-    // Update if selection changed
-    if (changedProps.has('selectedNode') || changedProps.has('isSelected')) return true;
-
-    // Update if view mode changed
-    if (changedProps.has('viewMode')) return true;
-
-    // Update if zoom changed significantly
-    if (changedProps.has('zoom')) {
-      const oldZoom = (changedProps.get('zoom') as number) ?? 1;
-      const newZoom = this.zoom ?? 1;
-      if (Math.abs(newZoom - oldZoom) > 0.01) return true;
-    }
-
-    // Update if transitive deps changed
-    if (changedProps.has('transitiveDeps') || changedProps.has('transitiveDependents')) return true;
-
-    // Update if filter preview changed
-    if (changedProps.has('previewFilter')) return true;
-
-    // Update if search query changed
-    if (changedProps.has('searchQuery')) return true;
-
-    // Update if hover state changed
+  private hasHoverStateChange(changedProps: Map<PropertyKey, unknown>): boolean {
     if (changedProps.has('hoveredNode')) {
       const oldHover = changedProps.get('hoveredNode');
-      return oldHover !== this.hoveredNode;
+      if (oldHover !== this.hoveredNode) return true;
     }
-
     if (changedProps.has('hoveredClusterId')) {
       const oldHover = changedProps.get('hoveredClusterId');
-      return oldHover !== this.hoveredClusterId;
+      if (oldHover !== this.hoveredClusterId) return true;
     }
-
     if (changedProps.has('isClusterHovered')) {
       const oldHover = changedProps.get('isClusterHovered');
-      return oldHover !== this.isClusterHovered;
+      if (oldHover !== this.isClusterHovered) return true;
     }
-
-    // Otherwise, skip update
     return false;
+  }
+
+  override shouldUpdate(changedProps: Map<PropertyKey, unknown>): boolean {
+    if (!changedProps.size) return true;
+
+    return (
+      changedProps.has('cluster') ||
+      changedProps.has('clusterPosition') ||
+      changedProps.has('nodes') ||
+      changedProps.has('edges') ||
+      changedProps.has('finalNodePositions') ||
+      changedProps.has('selectedNode') ||
+      changedProps.has('isSelected') ||
+      changedProps.has('viewMode') ||
+      changedProps.has('transitiveDeps') ||
+      changedProps.has('transitiveDependents') ||
+      changedProps.has('previewFilter') ||
+      changedProps.has('searchQuery') ||
+      this.hasSignificantZoomChange(changedProps) ||
+      this.hasHoverStateChange(changedProps)
+    );
   }
 
   // ========================================
@@ -198,6 +188,11 @@ export class GraphClusterGroup extends LitElement {
   // ========================================
   // Render
   // ========================================
+
+  override updated(changed: PropertyValues) {
+    super.updated(changed);
+    trackLitPerformance(this, changed);
+  }
 
   override render() {
     if (!this.cluster || !this.clusterPosition) return html``;
