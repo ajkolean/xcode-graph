@@ -51,6 +51,4 @@ export {
   type TransitiveResult,
 } from './traversal';
 
-// ==================== Physics ====================
-
-export * from './physics';
+// Physics utilities removed - D3 handles force simulation
