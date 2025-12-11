@@ -66,10 +66,11 @@ function extractClusterEdges(
 }
 
 /** Shared layout options */
-const LAYOUT_OPTIONS = { baseRadius: 20, ringSpacing: 34, maxDepth: 3, testOffset: 16 };
+const LAYOUT_OPTIONS = { baseRadius: 24, ringSpacing: 48, maxDepth: 4, testOffset: 18 };
 
 /** Minimum cluster dimension */
 const MIN_DIMENSION = 90;
+const MAX_DIMENSION = 900;
 
 /** Dimension padding added to MEC radius */
 const DIMENSION_PADDING = 16;
@@ -357,9 +358,12 @@ function computeClusterLayoutAndDimension(
 
   const mecRadius = computeMEC(positions, 0, 0, masses);
   const nodeCount = clusterNodes.length;
-  const rawDimension = mecRadius * 2 + DIMENSION_PADDING;
-  const cappedDimension = Math.min(rawDimension, MIN_DIMENSION + Math.sqrt(nodeCount) * 55);
-  const dimension = Math.max(MIN_DIMENSION, cappedDimension);
+
+  // Linear scale with node count, but never below MEC-based size
+  const linearDimension = MIN_DIMENSION + nodeCount * 12;
+  const radialDimension = mecRadius * 2 + DIMENSION_PADDING;
+  const rawDimension = Math.max(linearDimension, radialDimension);
+  const dimension = Math.max(MIN_DIMENSION, Math.min(rawDimension, MAX_DIMENSION));
 
   return { positions, dimension };
 }
