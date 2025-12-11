@@ -22,10 +22,7 @@ export interface LayoutOptions {
 /**
  * Arrange nodes in a circle - simple and guaranteed to work
  */
-export function layoutCompleteGraph(
-  nodes: Node[],
-  options: LayoutOptions = {},
-): NodePosition[] {
+export function layoutCompleteGraph(nodes: Node[], options: LayoutOptions = {}): NodePosition[] {
   if (nodes.length === 0) return [];
   if (nodes.length === 1) return [{ id: nodes[0]!.id, x: 0, y: 0 }];
 

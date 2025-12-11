@@ -36,7 +36,15 @@ function runForceSimulation(
   const nodeCount = nodes.length;
   if (nodeCount === 0) return [];
   if (nodeCount === 1) {
-    return [{ id: nodes[0].id, x: centerX, y: centerY, ring: 0, isTest: nodes[0].type.startsWith('test') }];
+    return [
+      {
+        id: nodes[0].id,
+        x: centerX,
+        y: centerY,
+        ring: 0,
+        isTest: nodes[0].type.startsWith('test'),
+      },
+    ];
   }
 
   // Initialize nodes in a circle around origin (0,0) - we'll translate later
@@ -122,7 +130,7 @@ function runForceSimulation(
   }
 
   // Return positions relative to origin - caller will translate to cluster center
-  return simNodes.map(n => ({
+  return simNodes.map((n) => ({
     id: n.id,
     x: n.x,
     y: n.y,
