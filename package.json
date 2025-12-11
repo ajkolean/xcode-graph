@@ -37,10 +37,13 @@
     "dotenv-cli": "^11.0.0",
     "jsdom": "^27.2.0",
     "shadow-dom-testing-library": "^1.13.1",
+    "stats.js": "^0.17.0",
     "storybook": "^10.1.2",
     "typedoc": "^0.28.14",
     "vite": "7.2.4",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.14",
+    "web-vitals": "^5.1.0",
+    "why-did-you-render": "^1.0.1"
   },
   "scripts": {
     "dev": "vite",
@@ -72,8 +75,8 @@
     "onlyBuiltDependencies": [
       "@swc/core",
       "@vaadin/vaadin-usage-statistics",
-      "core-js",
       "esbuild",
+      "maplibre-gl",
       "unrs-resolver"
     ]
   },

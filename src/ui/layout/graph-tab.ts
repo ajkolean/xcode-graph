@@ -15,12 +15,13 @@
  */
 
 import type { TransitiveResult } from '@graph/utils';
-import { SignalWatcher } from '@lit-labs/signals';
+import { Signal, SignalWatcher } from '@lit-labs/signals';
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import '@graph/components/graph-visualization';
+import '@graph/components/graph-canvas';
 import '../components/right-sidebar';
 
 // Import signals
@@ -155,12 +156,13 @@ export class GraphTab extends SignalWatcher(LitElement) {
         <div class="content">
           <!-- Graph Visualization -->
           <div class="graph-container">
+            <!--
             <graph-visualization
               .nodes=${this.displayNodes}
               .edges=${this.displayEdges}
               .selectedNode=${selectedNode.get()}
               .selectedCluster=${selectedCluster.get()}
-              .hoveredNode=${hoveredNode.get()}
+              .hoveredNode=${Signal.subtle.untrack(() => hoveredNode.get())}
               search-query=${searchQuery.get() || ''}
               view-mode=${viewMode.get()}
               .zoom=${zoom.get()}
@@ -176,6 +178,29 @@ export class GraphTab extends SignalWatcher(LitElement) {
               @zoom-reset=${this.handleZoomReset}
               @toggle-animation=${this.handleToggleAnimation}
             ></graph-visualization>
+            -->
+            
+            <graph-canvas
+              .nodes=${this.displayNodes}
+              .edges=${this.displayEdges}
+              .selectedNode=${selectedNode.get()}
+              .selectedCluster=${selectedCluster.get()}
+              .hoveredNode=${Signal.subtle.untrack(() => hoveredNode.get())}
+              search-query=${searchQuery.get() || ''}
+              view-mode=${viewMode.get()}
+              .zoom=${zoom.get()}
+              ?enable-animation=${enableAnimation.get()}
+              .transitiveDeps=${this.transitiveDeps}
+              .transitiveDependents=${this.transitiveDependents}
+              .previewFilter=${previewFilter.get()}
+              @node-select=${this.handleNodeSelect}
+              @cluster-select=${this.handleClusterSelect}
+              @node-hover=${this.handleNodeHover}
+              @zoom-in=${this.handleZoomIn}
+              @zoom-out=${this.handleZoomOut}
+              @zoom-reset=${this.handleZoomReset}
+              @toggle-animation=${this.handleToggleAnimation}
+            ></graph-canvas>
           </div>
 
           <!-- Right Sidebar -->

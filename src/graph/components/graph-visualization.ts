@@ -181,55 +181,50 @@ export class GraphVisualization extends LitElement {
   // ========================================
 
   /**
+   * Check if zoom changed significantly
+   */
+  private hasSignificantZoomChange(changedProps: PropertyValues<this>): boolean {
+    if (!changedProps.has('zoom')) return false;
+    const oldZoom = changedProps.get('zoom') ?? 1;
+    const newZoom = this.zoom ?? 1;
+    return Math.abs(newZoom - oldZoom) > 0.01;
+  }
+
+  /**
+   * Check if hover state changed
+   */
+  private hasHoverStateChange(changedProps: PropertyValues<this>): boolean {
+    if (changedProps.has('hoveredCluster')) {
+      const oldHover = changedProps.get('hoveredCluster');
+      if (oldHover !== this.hoveredCluster) return true;
+    }
+    if (changedProps.has('hoveredNode')) {
+      const oldHover = changedProps.get('hoveredNode');
+      if (oldHover !== this.hoveredNode) return true;
+    }
+    return false;
+  }
+
+  /**
    * Optimize re-renders by only updating when relevant props change
    */
   override shouldUpdate(changedProps: PropertyValues<this>): boolean {
-    // Always update on initial render
     if (!changedProps.size) return true;
 
-    // Update if nodes/edges changed (data changed)
-    if (changedProps.has('nodes') || changedProps.has('edges')) return true;
-
-    // Update if selection changed
-    if (changedProps.has('selectedNode') || changedProps.has('selectedCluster')) return true;
-
-    // Update if view mode changed
-    if (changedProps.has('viewMode')) return true;
-
-    // Update if zoom changed significantly (>1% change to avoid micro-updates)
-    if (changedProps.has('zoom')) {
-      const oldZoom = changedProps.get('zoom') ?? 1;
-      const newZoom = this.zoom ?? 1;
-      if (Math.abs(newZoom - oldZoom) > 0.01) return true;
-    }
-
-    // Update if animation setting changed
-    if (changedProps.has('enableAnimation')) return true;
-
-    // Update if transitive deps changed
-    if (changedProps.has('transitiveDeps') || changedProps.has('transitiveDependents')) return true;
-
-    // Update if filter preview changed
-    if (changedProps.has('previewFilter')) return true;
-
-    // Update if search query changed
-    if (changedProps.has('searchQuery')) return true;
-
-    // Update if internal hover state changed
-    if (changedProps.has('hoveredCluster')) {
-      // Only update if hover actually changed (not just same value)
-      const oldHover = changedProps.get('hoveredCluster');
-      return oldHover !== this.hoveredCluster;
-    }
-
-    // Update if external hover node changed
-    if (changedProps.has('hoveredNode')) {
-      const oldHover = changedProps.get('hoveredNode');
-      return oldHover !== this.hoveredNode;
-    }
-
-    // Otherwise, skip update
-    return false;
+    return (
+      changedProps.has('nodes') ||
+      changedProps.has('edges') ||
+      changedProps.has('selectedNode') ||
+      changedProps.has('selectedCluster') ||
+      changedProps.has('viewMode') ||
+      changedProps.has('enableAnimation') ||
+      changedProps.has('transitiveDeps') ||
+      changedProps.has('transitiveDependents') ||
+      changedProps.has('previewFilter') ||
+      changedProps.has('searchQuery') ||
+      this.hasSignificantZoomChange(changedProps) ||
+      this.hasHoverStateChange(changedProps)
+    );
   }
 
   override willUpdate(changedProps: PropertyValues<this>): void {
