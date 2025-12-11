@@ -43,6 +43,8 @@ export interface LayoutResult {
  * Positions are initialized with zero velocity for physics simulation.
  */
 export class LayoutController implements ReactiveController {
+  private host: ReactiveControllerHost;
+
   // Cached layout result
   private cachedResult: LayoutResult | null = null;
   private cachedNodes: GraphNode[] = [];
