@@ -41,7 +41,6 @@ import {
   enableAnimation,
   layoutDimension,
   previewFilter,
-  resetZoom,
   searchQuery,
   setZoom,
   toggleAnimation,

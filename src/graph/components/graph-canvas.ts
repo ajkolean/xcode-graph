@@ -1,4 +1,5 @@
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
+import { Starfield } from './starfield';
 import type { TransitiveResult } from '@graph/utils';
 import { getConnectedNodes } from '@graph/utils/connections';
 import { ViewMode } from '@shared/schemas';
@@ -93,8 +94,8 @@ export class GraphCanvas extends LitElement {
   private time = 0;
   private didInitialFit = false;
 
-  // Starfield State
-  private starfield: Array<{ x: number; y: number; r: number; a: number; depth: number }> = [];
+  // Starfield
+  private starfield = new Starfield();
 
   constructor() {
     super();
@@ -210,61 +211,6 @@ export class GraphCanvas extends LitElement {
   }
 
   /**
-   * Generate a starfield with sparse dust and occasional bright stars.
-   * Stars have depth values for parallax effect during panning.
-   */
-  private generateStarfield(width: number, height: number, count = 400) {
-    this.starfield = [];
-
-    for (let i = 0; i < count; i++) {
-      const isBright = Math.random() < 0.025; // ~2.5% bright stars
-
-      this.starfield.push({
-        x: Math.random() * width * 2 - width * 0.5, // Extend beyond viewport for parallax
-        y: Math.random() * height * 2 - height * 0.5,
-        r: isBright ? Math.random() * 1.5 + 1.0 : Math.random() * 0.8 + 0.2,
-        a: isBright ? Math.random() * 0.4 + 0.5 : Math.random() * 0.2 + 0.05,
-        depth: Math.random() * 0.8 + 0.1, // 0.1 = far (slow), 0.9 = near (faster)
-      });
-    }
-
-    // Sort by depth so distant stars render first
-    this.starfield.sort((a, b) => a.depth - b.depth);
-  }
-
-  /**
-   * Render starfield with parallax based on pan position.
-   * Stars at different depths move at different rates.
-   */
-  private renderStarfield(width: number, height: number) {
-    this.ctx.save();
-
-    for (const star of this.starfield) {
-      // Parallax: deeper stars move less with pan
-      const parallaxFactor = star.depth * 0.15;
-      const sx = star.x + this.pan.x * parallaxFactor;
-      const sy = star.y + this.pan.y * parallaxFactor;
-
-      // Wrap stars that go off screen
-      const wrappedX = (((sx % (width * 2)) + width * 2) % (width * 2)) - width * 0.5;
-      const wrappedY = (((sy % (height * 2)) + height * 2) % (height * 2)) - height * 0.5;
-
-      // Skip if outside visible area
-      if (wrappedX < -5 || wrappedX > width + 5 || wrappedY < -5 || wrappedY > height + 5) {
-        continue;
-      }
-
-      this.ctx.globalAlpha = star.a;
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.beginPath();
-      this.ctx.arc(wrappedX, wrappedY, star.r, 0, Math.PI * 2);
-      this.ctx.fill();
-    }
-
-    this.ctx.restore();
-  }
-
-  /**
    * Fit graph into viewport: compute bounding box of all clusters and adjust pan/zoom.
    */
   fitToViewport() {
@@ -329,7 +275,7 @@ export class GraphCanvas extends LitElement {
     this.canvas.style.height = `${rect.height}px`;
 
     // Regenerate starfield for new canvas size
-    this.generateStarfield(rect.width, rect.height);
+    this.starfield.generate(rect.width, rect.height);
 
     this.renderCanvas();
   }
@@ -625,7 +571,7 @@ export class GraphCanvas extends LitElement {
     this.ctx.clearRect(0, 0, width, height);
 
     // Render starfield first (behind everything, in screen space)
-    this.renderStarfield(width, height);
+    this.starfield.render(this.ctx, this.pan.x, this.pan.y);
 
     // Apply world transform for graph elements
     this.ctx.save();
