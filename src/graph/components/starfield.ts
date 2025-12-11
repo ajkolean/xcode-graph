@@ -4,7 +4,10 @@
  * Renders a subtle starfield with depth-based parallax effect.
  * Stars are generated once and rendered efficiently each frame.
  *
- * @module graph/components/starfield
+ * Usage:
+ *   const starfield = new Starfield();
+ *   starfield.generate(canvas.width, canvas.height);
+ *   starfield.render(ctx, panX, panY);
  */
 
 export interface Star {
@@ -13,6 +16,7 @@ export interface Star {
   r: number;
   a: number;
   depth: number;
+  color: string;
 }
 
 export interface StarfieldOptions {
@@ -22,17 +26,26 @@ export interface StarfieldOptions {
   brightRatio?: number;
   /** Parallax intensity multiplier (default: 0.15) */
   parallaxIntensity?: number;
+  /**
+   * How far beyond the viewport to spawn stars (default: 2.0).
+   * 2.0 means stars live in a region 2x the canvas size.
+   */
+  spanMultiplier?: number;
 }
+
+const STAR_PALETTE = [
+  '#f7f1da', // soft warm off-white
+  '#f5e0b5', // warmer, almost golden
+  '#d6e0ff', // occasional cool blue-white
+];
 
 const DEFAULT_OPTIONS: Required<StarfieldOptions> = {
   count: 400,
   brightRatio: 0.025,
   parallaxIntensity: 0.15,
+  spanMultiplier: 2.0,
 };
 
-/**
- * Starfield renderer with parallax support
- */
 export class Starfield {
   private stars: Star[] = [];
   private width = 0;
@@ -44,64 +57,135 @@ export class Starfield {
   }
 
   /**
+   * Update configuration at runtime.
+   * Existing stars are preserved until you call `generate`/`resizeIfNeeded`.
+   */
+  public setOptions(options: StarfieldOptions): void {
+    this.options = { ...this.options, ...options };
+  }
+
+  /**
+   * True if the starfield needs to be regenerated for the given dimensions.
+   */
+  public needsRegeneration(width: number, height: number): boolean {
+    return (
+      width > 0 &&
+      height > 0 &&
+      (this.width !== width || this.height !== height || this.stars.length === 0)
+    );
+  }
+
+  /**
+   * Convenience: regenerate stars if the canvas size changed.
+   */
+  public resizeIfNeeded(width: number, height: number): void {
+    if (this.needsRegeneration(width, height)) {
+      this.generate(width, height);
+    }
+  }
+
+  /**
    * Generate stars for the given canvas dimensions.
    * Call this on initialization and when canvas resizes.
    */
-  generate(width: number, height: number): void {
+  public generate(width: number, height: number): void {
     this.width = width;
     this.height = height;
-    this.stars = [];
+    this.stars = [] as Star[];
 
-    const { count, brightRatio } = this.options;
+    if (width <= 0 || height <= 0) return;
+
+    const { count, brightRatio, spanMultiplier } = this.options;
+
+    const spanX = width * spanMultiplier;
+    const spanY = height * spanMultiplier;
+    const offsetX = spanX * 0.25; // center the spawn region
+    const offsetY = spanY * 0.25;
+    const palette = STAR_PALETTE;
 
     for (let i = 0; i < count; i++) {
       const isBright = Math.random() < brightRatio;
 
+      // Depth in [0.1, 0.9] to avoid extremes
+      const depth = Math.random() * 0.8 + 0.1;
+
       this.stars.push({
-        // Extend beyond viewport for parallax scrolling
-        x: Math.random() * width * 2 - width * 0.5,
-        y: Math.random() * height * 2 - height * 0.5,
-        // Bright stars are larger and more opaque
+        x: Math.random() * spanX - offsetX,
+        y: Math.random() * spanY - offsetY,
         r: isBright ? Math.random() * 1.5 + 1.0 : Math.random() * 0.8 + 0.2,
         a: isBright ? Math.random() * 0.4 + 0.5 : Math.random() * 0.2 + 0.05,
-        // Depth for parallax: 0.1 = far (slow), 0.9 = near (faster)
-        depth: Math.random() * 0.8 + 0.1,
+        depth,
+        color:
+          palette[
+            isBright
+              ? Math.random() < 0.7
+                ? 1
+                : 0 // bright: mostly golden, sometimes neutral
+              : Math.random() < 0.9
+                ? 0
+                : 2 // dim: mostly neutral, rare cool blue
+          ],
       });
     }
 
-    // Sort by depth so distant stars render first
+    // Sort by depth so distant stars render first (behind nearer ones)
     this.stars.sort((a, b) => a.depth - b.depth);
   }
 
   /**
    * Render the starfield with parallax based on pan position.
    * Stars at different depths move at different rates.
+   *
+   * @param ctx  Canvas context
+   * @param panX Camera pan offset in world space X
+   * @param panY Camera pan offset in world space Y
    */
-  render(ctx: CanvasRenderingContext2D, panX: number, panY: number): void {
-    if (this.stars.length === 0) return;
+  public render(ctx: CanvasRenderingContext2D, panX: number, panY: number): void {
+    const stars = this.stars;
+    const count = stars.length;
+
+    if (count === 0 || this.width <= 0 || this.height <= 0) return;
 
     const { width, height } = this;
-    const { parallaxIntensity } = this.options;
+    const { parallaxIntensity, spanMultiplier } = this.options;
+
+    // Precompute values used in wrapping math
+    const spanX = width * spanMultiplier;
+    const spanY = height * spanMultiplier;
+    const halfWidth = width * 0.5;
+    const halfHeight = height * 0.5;
 
     ctx.save();
 
-    for (const star of this.stars) {
-      // Parallax: deeper stars move less with pan
+    for (let i = 0; i < count; i++) {
+      const star = stars[i];
+
+      // Parallax: nearer stars (depth → 1) move more with pan.
       const parallaxFactor = star.depth * parallaxIntensity;
+
       const sx = star.x + panX * parallaxFactor;
       const sy = star.y + panY * parallaxFactor;
 
-      // Wrap stars that go off screen for seamless scrolling
-      const wrappedX = (((sx % (width * 2)) + width * 2) % (width * 2)) - width * 0.5;
-      const wrappedY = (((sy % (height * 2)) + height * 2) % (height * 2)) - height * 0.5;
+      // Wrap stars to create an infinite tiling effect.
+      // We keep them inside [-halfWidth, width + halfWidth] range.
+      let wrappedX = sx;
+      let wrappedY = sy;
 
-      // Skip if outside visible area
+      // Fast "mod in range" without allocations.
+      if (spanX > 0) {
+        wrappedX = ((sx + spanX) % spanX) - (spanX * 0.5 - halfWidth);
+      }
+      if (spanY > 0) {
+        wrappedY = ((sy + spanY) % spanY) - (spanY * 0.5 - halfHeight);
+      }
+
+      // Skip if outside visible area (+ small margin)
       if (wrappedX < -5 || wrappedX > width + 5 || wrappedY < -5 || wrappedY > height + 5) {
         continue;
       }
 
       ctx.globalAlpha = star.a;
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = star.color;
       ctx.beginPath();
       ctx.arc(wrappedX, wrappedY, star.r, 0, Math.PI * 2);
       ctx.fill();
@@ -110,10 +194,8 @@ export class Starfield {
     ctx.restore();
   }
 
-  /**
-   * Check if starfield needs regeneration (dimensions changed)
-   */
-  needsRegeneration(width: number, height: number): boolean {
-    return this.width !== width || this.height !== height || this.stars.length === 0;
+  /** Clear all stars (e.g. when tearing down the canvas) */
+  public clear(): void {
+    this.stars = [];
   }
 }

@@ -155,8 +155,8 @@ export class GraphTab extends SignalWatcher(LitElement) {
 
   private handleToggleDimension() {
     toggleLayoutDimension();
-    // Layout will re-run automatically when layoutDimension signal changes
-    // as components watching the signal will trigger re-layout
+    // Trigger layout recompute with new dimension
+    this.canvasElement?.recomputeLayout();
   }
 
   private handleZoomChange(e: CustomEvent) {

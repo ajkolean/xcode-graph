@@ -20,6 +20,7 @@ import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { layoutDimension } from '@shared/signals/index';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import { computeHierarchicalLayout } from '@/graph/layout/d3-layout';
 
@@ -49,6 +50,7 @@ export class LayoutController implements ReactiveController {
   private cachedResult: LayoutResult | null = null;
   private cachedNodes: GraphNode[] = [];
   private cachedEdges: GraphEdge[] = [];
+  private cachedDimension: '2d' | '3d' = '2d';
 
   constructor(host: ReactiveControllerHost) {
     this.host = host;
@@ -94,11 +96,14 @@ export class LayoutController implements ReactiveController {
     });
 
     // Step 3: Compute hierarchical layout positions using d3-force
+    // Pass the current dimension from the signal for 2D/3D layout
     const {
       clusterPositions: initialClusterPos,
       nodePositions: initialNodePos,
       clusters: layoutClusters,
-    } = computeHierarchicalLayout(nodes, edges, analyzedClusters);
+    } = computeHierarchicalLayout(nodes, edges, analyzedClusters, {
+      dimension: layoutDimension.get(),
+    });
 
     // Step 4: Add velocity properties for physics simulation
     const nodePositions = new Map<string, NodePosition>();
@@ -142,7 +147,9 @@ export class LayoutController implements ReactiveController {
   // ========================================
 
   private isSameInput(nodes: GraphNode[], edges: GraphEdge[]): boolean {
+    const currentDimension = layoutDimension.get();
     return (
+      currentDimension === this.cachedDimension &&
       nodes.length === this.cachedNodes.length &&
       edges.length === this.cachedEdges.length &&
       nodes === this.cachedNodes &&
@@ -154,6 +161,7 @@ export class LayoutController implements ReactiveController {
     this.cachedResult = result;
     this.cachedNodes = nodes;
     this.cachedEdges = edges;
+    this.cachedDimension = layoutDimension.get();
   }
 
   // ========================================
