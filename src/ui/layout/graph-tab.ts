@@ -210,6 +210,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
             .filteredNodes=${this.filteredNodes}
             .filteredEdges=${this.filteredEdges}
             .clusters=${this.clusters}
+            collapsed
           >
             <slot name="filter-view" slot="filter-view"></slot>
           </graph-right-sidebar>

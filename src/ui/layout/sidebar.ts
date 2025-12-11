@@ -22,6 +22,8 @@ export type { ActiveTab } from '@shared/schemas';
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import '@ui/components/sidebar-collapse-icon';
+import '@ui/components/sidebar-collapse-icon';
 
 interface NavItem {
   id: ActiveTabType;
@@ -31,6 +33,11 @@ interface NavItem {
 }
 
 export class GraphSidebar extends LitElement {
+  @property({ type: Boolean, reflect: true })
+  declare collapsed: boolean;
+  @property({ type: Boolean })
+  declare defaultCollapsed: boolean;
+
   // ========================================
   // Properties
   // ========================================
@@ -41,6 +48,14 @@ export class GraphSidebar extends LitElement {
   @property({ type: String, attribute: 'active-tab' })
   declare activeTab: ActiveTabType;
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    // Initialize collapsed state from attribute or defaultCollapsed prop
+    if (this.defaultCollapsed || this.hasAttribute('collapsed')) {
+      this.collapsed = true;
+    }
+  }
+
   // ========================================
   // Styles
   // ========================================
@@ -50,6 +65,11 @@ export class GraphSidebar extends LitElement {
       display: block;
       width: var(--sizes-sidebar-expanded);
       flex-shrink: 0;
+      transition: width var(--durations-normal) var(--easings-default);
+    }
+
+    :host([collapsed]) {
+      width: var(--sizes-sidebar-collapsed);
     }
 
     aside {
@@ -60,6 +80,7 @@ export class GraphSidebar extends LitElement {
       border-right: var(--border-widths-thin) solid var(--colors-sidebar-border);
       position: relative;
       overflow: hidden;
+      width: 100%;
     }
 
     /* Noise texture */
@@ -75,9 +96,29 @@ export class GraphSidebar extends LitElement {
     nav {
       flex: 1;
       padding: var(--spacing-md) var(--spacing-3);
-      overflow-y: auto;
+      overflow: hidden;
       position: relative;
       z-index: 1;
+    }
+
+    .collapse-button {
+      position: absolute;
+      top: var(--spacing-2);
+      right: var(--spacing-2);
+      width: var(--sizes-sidebar-collapsed);
+      height: var(--sizes-sidebar-collapsed);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--colors-muted-foreground);
+      cursor: pointer;
+      transition: transform var(--durations-fast) var(--easings-default);
+    }
+
+    :host([collapsed]) .collapse-button {
+      transform: rotate(180deg);
     }
 
     .nav-items {
@@ -288,6 +329,10 @@ export class GraphSidebar extends LitElement {
     );
   }
 
+  private toggleCollapse() {
+    this.collapsed = !this.collapsed;
+  }
+
   // ========================================
   // Render
   // ========================================
@@ -295,6 +340,9 @@ export class GraphSidebar extends LitElement {
   override render() {
     return html`
       <aside>
+        <button class="collapse-button" @click=${this.toggleCollapse} title="Toggle sidebar">
+          <graph-sidebar-collapse-icon ?is-collapsed=${this.collapsed}></graph-sidebar-collapse-icon>
+        </button>
         <nav>
           <div class="nav-items">
             ${this.navItems.map((item) => {

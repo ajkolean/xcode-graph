@@ -18,7 +18,7 @@
 
 import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
-import { computeHierarchicalLayout } from '@graph/layout/hierarchical';
+import { computeHierarchicalLayout } from '@graph/layout-v2/hierarchical';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';

@@ -9,7 +9,7 @@
 
 import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
-import { computeHierarchicalLayout } from '@graph/layout/hierarchical';
+import { computeHierarchicalLayout } from '@graph/layout-v2/hierarchical';
 import {
   applyCollisionForces,
   applyLinkForces,
