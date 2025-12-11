@@ -33,11 +33,11 @@ function layoutCluster(cluster: Cluster) {
 
   // Simple circular layout - nodes arranged in circle at exact radius
   const positions = layoutCompleteGraph(
-    cluster.nodes.map(n => ({ id: n.id, radius: 6 })),
+    cluster.nodes.map((n) => ({ id: n.id, radius: 6 })),
     { maxRadius: layoutRadius },
   );
 
-  const nodePositions = new Map(positions.map(p => [p.id, { x: p.x, y: p.y }]));
+  const nodePositions = new Map(positions.map((p) => [p.id, { x: p.x, y: p.y }]));
 
   return { id: cluster.id, nodePositions, size };
 }
@@ -51,14 +51,14 @@ export function computeHierarchicalLayout(
   clusters: Cluster[],
 ): HierarchicalLayoutResult {
   // Step 1: Layout each cluster
-  const clusterLayouts = clusters.map(c => layoutCluster(c));
+  const clusterLayouts = clusters.map((c) => layoutCluster(c));
 
   // Step 2: Layout clusters in circle
   const avgSize = clusterLayouts.reduce((sum, cl) => sum + cl.size, 0) / clusterLayouts.length;
-  const clusterLayoutRadius = clusterLayouts.length * (avgSize + 60) / (2 * Math.PI);
+  const clusterLayoutRadius = (clusterLayouts.length * (avgSize + 60)) / (2 * Math.PI);
 
   const clusterPositions = layoutCompleteGraph(
-    clusterLayouts.map(cl => ({ id: cl.id, radius: cl.size / 2 })),
+    clusterLayouts.map((cl) => ({ id: cl.id, radius: cl.size / 2 })),
     { maxRadius: clusterLayoutRadius },
   );
 
@@ -67,7 +67,7 @@ export function computeHierarchicalLayout(
   const nodePosMap = new Map<string, NodePosition>();
 
   for (const clLayout of clusterLayouts) {
-    const center = clusterPositions.find(p => p.id === clLayout.id);
+    const center = clusterPositions.find((p) => p.id === clLayout.id);
     if (!center) continue;
 
     // Store cluster

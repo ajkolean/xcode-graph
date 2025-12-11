@@ -27,7 +27,7 @@ const MIN_CLUSTER_SIZE = 80;
 interface ClusterLayout {
   id: string;
   nodePositions: Map<string, { x: number; y: number }>; // relative to cluster center
-  width: number;  // full cluster width (for box)
+  width: number; // full cluster width (for box)
   height: number; // full cluster height
 }
 
@@ -169,7 +169,7 @@ async function layoutClusterWithElk(
   }
 
   // ELK child nodes
-  const elkNodes: ElkNode[] = cluster.nodes.map(node => ({
+  const elkNodes: ElkNode[] = cluster.nodes.map((node) => ({
     id: String(node.id),
     width: NODE_WIDTH,
     height: NODE_HEIGHT,
@@ -178,10 +178,7 @@ async function layoutClusterWithElk(
   const elkEdges: ElkExtendedEdge[] = buildElkEdgesFromGraphEdges(edges);
 
   // Rough pre-size; ELK will refine
-  const approxSize = Math.max(
-    MIN_CLUSTER_SIZE,
-    40 + cluster.nodes.length * 20,
-  );
+  const approxSize = Math.max(MIN_CLUSTER_SIZE, 40 + cluster.nodes.length * 20);
 
   const graph: ElkNode = {
     id: cluster.id,
@@ -212,13 +209,9 @@ async function layoutClusterWithElk(
 
   // Prefer ELK's computed width/height; fall back to approx
   const layoutWidth =
-    typeof layout.width === 'number' && layout.width > 0
-      ? layout.width
-      : approxSize;
+    typeof layout.width === 'number' && layout.width > 0 ? layout.width : approxSize;
   const layoutHeight =
-    typeof layout.height === 'number' && layout.height > 0
-      ? layout.height
-      : approxSize;
+    typeof layout.height === 'number' && layout.height > 0 ? layout.height : approxSize;
 
   const centerX = layoutWidth / 2;
   const centerY = layoutHeight / 2;
@@ -295,7 +288,7 @@ async function layoutClustersWithElk(
     ];
   }
 
-  const elkNodes: ElkNode[] = clusterLayouts.map(cl => ({
+  const elkNodes: ElkNode[] = clusterLayouts.map((cl) => ({
     id: cl.id,
     width: cl.width,
     height: cl.height,
@@ -333,15 +326,13 @@ async function layoutClustersWithElk(
     }));
   }
 
-  const totalWidth =
-    typeof layout.width === 'number' && layout.width > 0 ? layout.width : 0;
-  const totalHeight =
-    typeof layout.height === 'number' && layout.height > 0 ? layout.height : 0;
+  const totalWidth = typeof layout.width === 'number' && layout.width > 0 ? layout.width : 0;
+  const totalHeight = typeof layout.height === 'number' && layout.height > 0 ? layout.height : 0;
 
   const centerX = totalWidth / 2;
   const centerY = totalHeight / 2;
 
-  return children.map(node => {
+  return children.map((node) => {
     const nodeWidth = node.width ?? MIN_CLUSTER_SIZE;
     const nodeHeight = node.height ?? MIN_CLUSTER_SIZE;
 
@@ -369,11 +360,11 @@ export async function computeHierarchicalLayout(
   edges: GraphEdge[],
   clusters: Cluster[],
 ): Promise<HierarchicalLayoutResult> {
-  const {
-    nodeToClusterId,
-    intraClusterEdges,
-    interClusterEdges,
-  } = partitionEdgesByCluster(nodes, edges, clusters);
+  const { nodeToClusterId, intraClusterEdges, interClusterEdges } = partitionEdgesByCluster(
+    nodes,
+    edges,
+    clusters,
+  );
 
   // Layout each cluster (sequentially; easy to switch to Promise.all if desired)
   const clusterLayouts: ClusterLayout[] = [];
@@ -384,10 +375,7 @@ export async function computeHierarchicalLayout(
   }
 
   // Layout clusters as a higher-level graph (force layout)
-  const clusterCenters = await layoutClustersWithElk(
-    clusterLayouts,
-    interClusterEdges,
-  );
+  const clusterCenters = await layoutClustersWithElk(clusterLayouts, interClusterEdges);
 
   const clusterCenterMap = new Map<string, ClusterCenter>();
   for (const center of clusterCenters) {

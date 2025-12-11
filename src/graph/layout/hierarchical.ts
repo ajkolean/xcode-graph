@@ -11,9 +11,9 @@
 
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { setSeed } from '@shared/utils/random';
 import { computeMEC, simpleClusterLayout } from './intra-cluster';
 import { computeNodeMasses } from './mass';
-import { setSeed } from '@shared/utils/random';
 
 // ==================== Type Definitions ====================
 
@@ -81,25 +81,22 @@ const DIMENSION_PADDING = 16;
  *
  * The largest cluster (most nodes) becomes the center of the layout.
  */
-function selectClusterAnchor(
-  clusters: Cluster[],
-  _allEdges: GraphEdge[]
-): string | null {
-    if (clusters.length === 0) return null;
+function selectClusterAnchor(clusters: Cluster[], _allEdges: GraphEdge[]): string | null {
+  if (clusters.length === 0) return null;
 
-    let maxNodes = -Infinity;
-    let anchor: string | null = null;
+  let maxNodes = -Infinity;
+  let anchor: string | null = null;
 
-    for (const cluster of clusters) {
-        const nodeCount = cluster.nodes.length;
+  for (const cluster of clusters) {
+    const nodeCount = cluster.nodes.length;
 
-        if (nodeCount > maxNodes) {
-            maxNodes = nodeCount;
-            anchor = cluster.id;
-        }
+    if (nodeCount > maxNodes) {
+      maxNodes = nodeCount;
+      anchor = cluster.id;
     }
+  }
 
-    return anchor;
+  return anchor;
 }
 
 /**
@@ -217,18 +214,18 @@ function forceClusterPacking(
   // If we have an anchor, we usually want THAT at (0,0), not the geometric center of all nodes
   let offsetX = 0;
   let offsetY = 0;
-  
-  const anchorNode = nodes.find(n => n.isAnchor);
+
+  const anchorNode = nodes.find((n) => n.isAnchor);
   if (anchorNode) {
-      offsetX = anchorNode.x;
-      offsetY = anchorNode.y;
+    offsetX = anchorNode.x;
+    offsetY = anchorNode.y;
   } else {
-      const minX = Math.min(...nodes.map((n) => n.x - n.r));
-      const maxX = Math.max(...nodes.map((n) => n.x + n.r));
-      const minY = Math.min(...nodes.map((n) => n.y - n.r));
-      const maxY = Math.max(...nodes.map((n) => n.y + n.r));
-      offsetX = (minX + maxX) / 2;
-      offsetY = (minY + maxY) / 2;
+    const minX = Math.min(...nodes.map((n) => n.x - n.r));
+    const maxX = Math.max(...nodes.map((n) => n.x + n.r));
+    const minY = Math.min(...nodes.map((n) => n.y - n.r));
+    const maxY = Math.max(...nodes.map((n) => n.y + n.r));
+    offsetX = (minX + maxX) / 2;
+    offsetY = (minY + maxY) / 2;
   }
 
   const positions = new Map<string, { x: number; y: number }>();
@@ -378,7 +375,9 @@ function positionNodesInLayout(
   nodePositions: Map<string, NodePosition>,
   clusterDimensionHints?: Map<string, number>,
 ): void {
-  const clusterNodes = nodes.filter((n) => layout.projectIds.includes(nodeToCluster.get(n.id) || ''));
+  const clusterNodes = nodes.filter((n) =>
+    layout.projectIds.includes(nodeToCluster.get(n.id) || ''),
+  );
 
   if (clusterNodes.length === 0) return;
 

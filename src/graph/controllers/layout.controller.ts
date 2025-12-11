@@ -18,7 +18,7 @@
 
 import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
-import { computeHierarchicalLayout } from '@graph/layout-v2/elk-layout';
+import { computeHierarchicalLayout } from '@graph/layout-v2/d3-layout';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
@@ -66,7 +66,7 @@ export class LayoutController implements ReactiveController {
    * @param forceRecompute - Force recomputation even if cached
    * @returns Layout result with positions and clusters
    */
-  async computeLayout(nodes: GraphNode[], edges: GraphEdge[], forceRecompute = false): Promise<LayoutResult> {
+  computeLayout(nodes: GraphNode[], edges: GraphEdge[], forceRecompute = false): LayoutResult {
     // Return cached result if inputs haven't changed
     if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
       return this.cachedResult;
@@ -91,12 +91,12 @@ export class LayoutController implements ReactiveController {
       analyzeCluster(cluster, edges);
     });
 
-    // Step 3: Compute hierarchical layout positions
+    // Step 3: Compute hierarchical layout positions using d3-force
     const {
       clusterPositions: initialClusterPos,
       nodePositions: initialNodePos,
       clusters: layoutClusters,
-    } = await computeHierarchicalLayout(nodes, edges, analyzedClusters);
+    } = computeHierarchicalLayout(nodes, edges, analyzedClusters);
 
     // Step 4: Add velocity properties for physics simulation
     const nodePositions = new Map<string, NodePosition>();
