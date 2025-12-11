@@ -281,6 +281,7 @@ export class GraphCanvas extends LitElement {
     } else {
         let hitNodeId: string | null = null;
         let hitClusterId: string | null = null;
+        let hitNodeCluster: string | null = null;
         
         for (let i = this.nodes.length - 1; i >= 0; i--) {
             const node = this.nodes[i];
@@ -295,6 +296,7 @@ export class GraphCanvas extends LitElement {
                  
                  if ((worldPos.x - wx) ** 2 + (worldPos.y - wy) ** 2 <= size ** 2) {
                      hitNodeId = node.id;
+                     hitNodeCluster = node.project || 'External';
                      break;
                  }
             }
@@ -304,8 +306,10 @@ export class GraphCanvas extends LitElement {
             this.hoveredNode = hitNodeId;
             this.dispatchEvent(new CustomEvent('node-hover', { detail: { nodeId: hitNodeId }, bubbles: true, composed: true }));
         }
-        
-        if (!hitNodeId) {
+
+        if (hitNodeCluster) {
+          hitClusterId = hitNodeCluster;
+        } else {
             for (const cluster of this.layout.clusters) {
                const pos = this.layout.clusterPositions.get(cluster.id);
                if (!pos) continue;
@@ -328,20 +332,28 @@ export class GraphCanvas extends LitElement {
     }
   }
 
-  private handleCanvasMouseUp = () => {
-      this.isDragging = false;
-      this.draggedNodeId = null;
-      setTimeout(() => {
-        this.hasMoved = false;
-      }, 0);
+  private handleCanvasMouseUp = (e?: MouseEvent) => {
+    this.isDragging = false;
+    this.draggedNodeId = null;
+    setTimeout(() => {
+      this.hasMoved = false;
+    }, 0);
+
+    // Only clear hover state when leaving the canvas
+    if (e?.type === 'mouseleave') {
       if (this.hoveredNode) {
         this.hoveredNode = null;
-        this.dispatchEvent(new CustomEvent('node-hover', { detail: { nodeId: null }, bubbles: true, composed: true }));
+        this.dispatchEvent(
+          new CustomEvent('node-hover', { detail: { nodeId: null }, bubbles: true, composed: true }),
+        );
       }
       if (this.hoveredCluster) {
         this.hoveredCluster = null;
-        this.dispatchEvent(new CustomEvent('cluster-hover', { detail: { clusterId: null }, bubbles: true, composed: true }));
+        this.dispatchEvent(
+          new CustomEvent('cluster-hover', { detail: { clusterId: null }, bubbles: true, composed: true }),
+        );
       }
+    }
   }
 
   private handleCanvasWheel = (e: WheelEvent) => {
@@ -696,11 +708,16 @@ export class GraphCanvas extends LitElement {
 
           if (!isLineInViewport({x: x1, y: y1}, {x: x2, y: y2}, viewport)) continue;
 
-          const isHighlighted = this.hoveredNode === edge.source || this.hoveredNode === edge.target || 
-                                (this.selectedNode && (this.selectedNode.id === edge.source || this.selectedNode.id === edge.target));
+          const touchesHoveredNode =
+            this.hoveredNode === edge.source || this.hoveredNode === edge.target;
+          const isHighlighted =
+            touchesHoveredNode ||
+            (this.selectedNode &&
+              (this.selectedNode.id === edge.source || this.selectedNode.id === edge.target));
 
-          const isConnectedToHoveredCluster = this.hoveredCluster && 
-              (sourceClusterId === this.hoveredCluster || targetClusterId === this.hoveredCluster);
+          const isConnectedToHoveredCluster =
+            this.hoveredCluster &&
+            (sourceClusterId === this.hoveredCluster || targetClusterId === this.hoveredCluster);
           
           const shouldDim = !!(this.hoveredCluster && !isConnectedToHoveredCluster);
           const isDependent = sourceClusterId !== targetClusterId;
