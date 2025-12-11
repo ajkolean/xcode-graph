@@ -23,11 +23,11 @@ export function setActiveTab(tab: ActiveTab): void {
 // ==================== Zoom Actions ====================
 
 /**
- * Set zoom level (clamped to 0.2-2.0)
+ * Set zoom level (clamped to 0.1-5.0)
  * @param value - The new zoom level
  */
 export function setZoom(value: number): void {
-  zoom.set(Math.max(0.2, Math.min(2, value)));
+  zoom.set(Math.max(0.1, Math.min(5, value)));
 }
 
 /**

@@ -10,7 +10,7 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import * as d3 from 'd3-force';
 import forceClustering from 'd3-force-clustering';
 import { forceEdgeBundling } from './edge-bundling';
-import { forceClusterRepulsion, createClusterBoundaryForce } from './forces';
+import { createClusterBoundaryForce, forceClusterRepulsion } from './forces';
 
 export interface HierarchicalLayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
@@ -23,32 +23,32 @@ export interface HierarchicalLayoutResult {
 const CONFIG = {
   // Node-level forces
   nodeRadius: 6,
-  nodeCollisionPadding: 12,
-  linkDistance: 50,
-  linkStrength: 0.4,
-  nodeCharge: -120,
+  nodeCollisionPadding: 16,
+  linkDistance: 65,
+  linkStrength: 0.35,
+  nodeCharge: -90,
 
   // Cluster forces
-  clusterStrength: 0.3,
-  clusterDistanceMin: 10,
-  clusterRepulsionStrength: 2500,
-  clusterRepulsionMinDist: 180,
+  clusterStrength: 0.25,
+  clusterDistanceMin: 20,
+  clusterRepulsionStrength: 20000,
+  clusterPadding: 140,
 
   // Layer biasing (gentle vertical structure)
-  layerSpacing: 40,
-  layerStrength: 0.1,
+  layerSpacing: 70,
+  layerStrength: 0.25,
 
   // Simulation
   iterations: 300,
 
   // Cluster sizing
   minClusterSize: 80,
-  clusterNodeSpacing: 12,
+  clusterNodeSpacing: 16,
 
   // Edge bundling
-  bundlingCycles: 4,
-  bundlingIterations: 60,
-  compatibilityThreshold: 0.7,
+  bundlingCycles: 5,
+  bundlingIterations: 80,
+  compatibilityThreshold: 0.8,
 } as const;
 
 // Simulation node type
@@ -120,14 +120,16 @@ export function computeHierarchicalLayout(
   }
 
   // Create simulation nodes with type safety
-  const simNodes = nodes.map((n): SimNode => ({
-    id: n.id,
-    clusterId: nodeToCluster.get(n.id),
-    x: Math.random() * 100 - 50,
-    y: Math.random() * 100 - 50,
-    vx: 0,
-    vy: 0,
-  }));
+  const simNodes = nodes.map(
+    (n): SimNode => ({
+      id: n.id,
+      clusterId: nodeToCluster.get(n.id),
+      x: Math.random() * 100 - 50,
+      y: Math.random() * 100 - 50,
+      vx: 0,
+      vy: 0,
+    }),
+  );
 
   // Create edges for D3 with cluster awareness
   const simLinks = edges.map((e) => {
@@ -143,16 +145,24 @@ export function computeHierarchicalLayout(
   });
 
   // Create cluster centers with radius (using Map for O(1) lookups)
+  // Use grid-based initial positioning to reduce overlap
   const clusterCenterMap = new Map<string, ClusterCenter>();
-  for (const cluster of clusters) {
+  const cols = Math.ceil(Math.sqrt(clusters.length));
+  const initialSpacing = 300;
+
+  clusters.forEach((cluster, i) => {
     const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
+
+    const colIndex = i % cols;
+    const rowIndex = Math.floor(i / cols);
+
     clusterCenterMap.set(cluster.id, {
       id: cluster.id,
-      cx: 0,
-      cy: 0,
+      cx: (colIndex - (cols - 1) / 2) * initialSpacing,
+      cy: (rowIndex - 0.5) * initialSpacing,
       radius: size / 2,
     });
-  }
+  });
 
   // Update cluster centers based on node positions
   function updateClusterCenters() {
@@ -179,7 +189,7 @@ export function computeHierarchicalLayout(
   // Create cluster repulsion force (size-aware, proper D3 force)
   const clusterRepelForce = forceClusterRepulsion(
     CONFIG.clusterRepulsionStrength,
-    60, // Extra padding beyond radii
+    CONFIG.clusterPadding,
   );
   clusterRepelForce.initialize(Array.from(clusterCenterMap.values()));
 
@@ -192,7 +202,7 @@ export function computeHierarchicalLayout(
   for (const cluster of clusters) {
     const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
     const maxRadius = size / 2 - CONFIG.nodeRadius - 10;
-    const clusterNodes = simNodes.filter(n => n.clusterId === cluster.id);
+    const clusterNodes = simNodes.filter((n) => n.clusterId === cluster.id);
 
     if (clusterNodes.length === 0) continue;
 
@@ -220,12 +230,8 @@ export function computeHierarchicalLayout(
       d3
         .forceLink(simLinks)
         .id((d: any) => d.id)
-        .distance((l: any) =>
-          l.sameCluster ? CONFIG.linkDistance : CONFIG.linkDistance * 2.5
-        )
-        .strength((l: any) =>
-          l.sameCluster ? CONFIG.linkStrength : CONFIG.linkStrength * 0.15
-        ),
+        .distance((l: any) => (l.sameCluster ? CONFIG.linkDistance : CONFIG.linkDistance * 3.5))
+        .strength((l: any) => (l.sameCluster ? CONFIG.linkStrength : CONFIG.linkStrength * 0.05)),
     )
     .force('charge', d3.forceManyBody().strength(CONFIG.nodeCharge))
     .force('collision', d3.forceCollide().radius(CONFIG.nodeRadius + CONFIG.nodeCollisionPadding))
@@ -241,10 +247,12 @@ export function computeHierarchicalLayout(
     // Layer biasing: gently pull nodes into horizontal bands by layer
     .force(
       'layerY',
-      d3.forceY((d: any) => {
-        const layer = nodeLayer.get(d.id);
-        return layer != null ? layer * CONFIG.layerSpacing : 0;
-      }).strength(CONFIG.layerStrength),
+      d3
+        .forceY((d: any) => {
+          const layer = nodeLayer.get(d.id);
+          return layer != null ? layer * CONFIG.layerSpacing : 0;
+        })
+        .strength(CONFIG.layerStrength),
     )
     .stop();
 
@@ -302,8 +310,8 @@ export function computeHierarchicalLayout(
 
   // Bundle only cross-cluster edges (cleaner visual separation)
   const crossClusterEdges = edges
-    .filter(e => nodeToCluster.get(e.source) !== nodeToCluster.get(e.target))
-    .map(e => ({ source: e.source, target: e.target }));
+    .filter((e) => nodeToCluster.get(e.source) !== nodeToCluster.get(e.target))
+    .map((e) => ({ source: e.source, target: e.target }));
 
   let bundledEdges: Array<Array<{ x: number; y: number }>> | undefined;
 

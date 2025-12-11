@@ -24,10 +24,12 @@ export default function forceBoundary(
 ) {
   let strength: ValueOrAccessor<number> = constant(0.1);
   let hardBoundary = true;
-  let border: ValueOrAccessor<number> = constant(Math.min(
-    (typeof x1 === 'number' ? x1 : 100) - (typeof x0 === 'number' ? x0 : -100),
-    (typeof y1 === 'number' ? y1 : 100) - (typeof y0 === 'number' ? y0 : -100)
-  ) / 2);
+  let border: ValueOrAccessor<number> = constant(
+    Math.min(
+      (typeof x1 === 'number' ? x1 : 100) - (typeof x0 === 'number' ? x0 : -100),
+      (typeof y1 === 'number' ? y1 : 100) - (typeof y0 === 'number' ? y0 : -100),
+    ) / 2,
+  );
 
   let nodes: BoundaryNode[] = [];
   let strengthsX: number[] = [];
@@ -53,8 +55,12 @@ export default function forceBoundary(
     for (let i = 0, n = nodes.length; i < n; ++i) {
       const node = nodes[i]!;
 
-      if ((node.x! < (x0z[i]! + borderz[i]!) || node.x! > (x1z[i]! - borderz[i]!)) ||
-        (node.y! < (y0z[i]! + borderz[i]!) || node.y! > (y1z[i]! - borderz[i]!))) {
+      if (
+        node.x! < x0z[i]! + borderz[i]! ||
+        node.x! > x1z[i]! - borderz[i]! ||
+        node.y! < y0z[i]! + borderz[i]! ||
+        node.y! > y1z[i]! - borderz[i]!
+      ) {
         node.vx = (node.vx ?? 0) + getVx(halfX[i]!, node.x!, strengthsX[i]!, borderz[i]!, alpha);
         node.vy = (node.vy ?? 0) + getVx(halfY[i]!, node.y!, strengthsY[i]!, borderz[i]!, alpha);
       }
@@ -91,8 +97,8 @@ export default function forceBoundary(
       const y0Val = +y0Fn(node, i, nodes);
       const y1Val = +y1Fn(node, i, nodes);
 
-      strengthsX[i] = (isNaN(x0Val) || isNaN(x1Val)) ? 0 : +strengthFn(node, i, nodes);
-      strengthsY[i] = (isNaN(y0Val) || isNaN(y1Val)) ? 0 : +strengthFn(node, i, nodes);
+      strengthsX[i] = isNaN(x0Val) || isNaN(x1Val) ? 0 : +strengthFn(node, i, nodes);
+      strengthsY[i] = isNaN(y0Val) || isNaN(y1Val) ? 0 : +strengthFn(node, i, nodes);
 
       x0z[i] = x0Val;
       x1z[i] = x1Val;
@@ -105,48 +111,48 @@ export default function forceBoundary(
     }
   }
 
-  force.initialize = function (_: BoundaryNode[]) {
+  force.initialize = (_: BoundaryNode[]) => {
     nodes = _;
     initialize();
   };
 
-  force.x0 = function (_: ValueOrAccessor<number>) {
+  force.x0 = (_: ValueOrAccessor<number>) => {
     x0Fn = typeof _ === 'function' ? _ : constant(+_);
     initialize();
     return force;
   };
 
-  force.x1 = function (_: ValueOrAccessor<number>) {
+  force.x1 = (_: ValueOrAccessor<number>) => {
     x1Fn = typeof _ === 'function' ? _ : constant(+_);
     initialize();
     return force;
   };
 
-  force.y0 = function (_: ValueOrAccessor<number>) {
+  force.y0 = (_: ValueOrAccessor<number>) => {
     y0Fn = typeof _ === 'function' ? _ : constant(+_);
     initialize();
     return force;
   };
 
-  force.y1 = function (_: ValueOrAccessor<number>) {
+  force.y1 = (_: ValueOrAccessor<number>) => {
     y1Fn = typeof _ === 'function' ? _ : constant(+_);
     initialize();
     return force;
   };
 
-  force.strength = function (_: ValueOrAccessor<number>) {
+  force.strength = (_: ValueOrAccessor<number>) => {
     strength = typeof _ === 'function' ? _ : constant(+_);
     initialize();
     return force;
   };
 
-  force.border = function (_: ValueOrAccessor<number>) {
+  force.border = (_: ValueOrAccessor<number>) => {
     border = typeof _ === 'function' ? _ : constant(+_);
     initialize();
     return force;
   };
 
-  force.hardBoundary = function (_: boolean) {
+  force.hardBoundary = (_: boolean) => {
     hardBoundary = _;
     return force;
   };

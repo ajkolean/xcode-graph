@@ -48,7 +48,7 @@ export function forceEdgeBundling(
   const subdivisions: Point[][] = [];
 
   // Filter self-loops
-  const filteredEdges = edges.filter(e => {
+  const filteredEdges = edges.filter((e) => {
     const src = nodes[e.source];
     const tgt = nodes[e.target];
     return src && tgt && (Math.abs(src.x - tgt.x) > eps || Math.abs(src.y - tgt.y) > eps);
@@ -71,8 +71,14 @@ export function forceEdgeBundling(
   const euclidean = (p: Point, q: Point) => Math.hypot(p.x - q.x, p.y - q.y);
 
   const compatibilityScore = (P: Edge, Q: Edge) => {
-    const pVec = { x: nodes[P.target]!.x - nodes[P.source]!.x, y: nodes[P.target]!.y - nodes[P.source]!.y };
-    const qVec = { x: nodes[Q.target]!.x - nodes[Q.source]!.x, y: nodes[Q.target]!.y - nodes[Q.source]!.y };
+    const pVec = {
+      x: nodes[P.target]!.x - nodes[P.source]!.x,
+      y: nodes[P.target]!.y - nodes[P.source]!.y,
+    };
+    const qVec = {
+      x: nodes[Q.target]!.x - nodes[Q.source]!.x,
+      y: nodes[Q.target]!.y - nodes[Q.source]!.y,
+    };
 
     const pLen = edgeLength(P);
     const qLen = edgeLength(Q);
@@ -121,8 +127,9 @@ export function forceEdgeBundling(
       for (let e = 0; e < filteredEdges.length; e++) {
         const sub = subdivisions[e]!;
         const newPoints: Point[] = [sub[0]!];
-        const totalLength = sub.reduce((sum, p, i) =>
-          i === 0 ? 0 : sum + euclidean(p, sub[i - 1]!), 0
+        const totalLength = sub.reduce(
+          (sum, p, i) => (i === 0 ? 0 : sum + euclidean(p, sub[i - 1]!)),
+          0,
         );
         const segmentLength = totalLength / (P + 1);
 

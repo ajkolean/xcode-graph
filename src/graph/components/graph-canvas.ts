@@ -209,7 +209,7 @@ export class GraphCanvas extends LitElement {
   /**
    * Fit graph into viewport: compute bounding box of all clusters and adjust pan/zoom.
    */
-  private fitToViewport() {
+  fitToViewport() {
     if (!this.layout.clusterPositions.size) return;
     const rect = this.getBoundingClientRect();
     let minX = Infinity;
@@ -242,6 +242,11 @@ export class GraphCanvas extends LitElement {
       x: rect.width / 2 - centerX * fitZoom,
       y: rect.height / 2 - centerY * fitZoom,
     };
+
+    // Sync zoom with parent signal
+    this.dispatchEvent(
+      new CustomEvent('zoom-change', { detail: this.zoom, bubbles: true, composed: true }),
+    );
   }
 
   // ========================================
