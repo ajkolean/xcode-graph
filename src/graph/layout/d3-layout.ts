@@ -7,10 +7,24 @@
 
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import * as d3 from 'd3-force';
+import * as d3Force2D from 'd3-force';
+import * as d3Force3D from 'd3-force-3d';
 import forceClustering from 'd3-force-clustering';
 import { forceEdgeBundling } from './edge-bundling';
 import { createClusterBoundaryForce, forceClusterRepulsion } from './forces';
+
+// Type for selecting 2D or 3D force module
+type D3ForceModule = typeof d3Force2D;
+
+/** Layout dimension: 2D or 3D */
+export type LayoutDimension = '2d' | '3d';
+
+/**
+ * Get the appropriate d3-force module based on dimension
+ */
+function getD3(dimension: LayoutDimension): D3ForceModule {
+  return (dimension === '3d' ? d3Force3D : d3Force2D) as unknown as D3ForceModule;
+}
 
 export interface HierarchicalLayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
@@ -41,6 +55,10 @@ const CONFIG = {
   // Simulation
   iterations: 300,
 
+  // 3D-specific
+  initialZSpread: 200,
+  zCenterStrength: 0.05,
+
   // Cluster sizing
   minClusterSize: 80,
   clusterNodeSpacing: 16,
@@ -57,8 +75,10 @@ interface SimNode {
   clusterId?: string;
   x: number;
   y: number;
+  z?: number; // 3D only
   vx: number;
   vy: number;
+  vz?: number; // 3D only
 }
 
 // Cluster center type
@@ -67,6 +87,26 @@ interface ClusterCenter {
   cx: number;
   cy: number;
   radius: number;
+}
+
+/**
+ * Compute average z-center for a cluster's nodes
+ */
+function computeClusterZCenter(nodes: SimNode[]): number {
+  if (nodes.length === 0) return 0;
+  const sum = nodes.reduce((acc, n) => acc + (n.z ?? 0), 0);
+  return sum / nodes.length;
+}
+
+/**
+ * Compute z-depth (extent) for a cluster's nodes
+ */
+function computeClusterZDepth(nodes: SimNode[]): number {
+  if (nodes.length === 0) return 0;
+  const zValues = nodes.map((n) => n.z ?? 0);
+  const minZ = Math.min(...zValues);
+  const maxZ = Math.max(...zValues);
+  return Math.max(maxZ - minZ, 50); // minimum depth of 50
 }
 
 /**
@@ -82,6 +122,12 @@ function buildNodeToClusterMap(clusters: Cluster[]): Map<string, string> {
   return map;
 }
 
+/** Options for layout computation */
+export interface LayoutOptions {
+  /** Layout dimension: 2D or 3D (default: '2d') */
+  dimension?: LayoutDimension;
+}
+
 /**
  * Main layout computation
  */
@@ -89,7 +135,11 @@ export function computeHierarchicalLayout(
   nodes: GraphNode[],
   edges: GraphEdge[],
   clusters: Cluster[],
+  opts: LayoutOptions = {},
 ): HierarchicalLayoutResult {
+  const dimension: LayoutDimension = opts.dimension ?? '2d';
+  const d3 = getD3(dimension);
+
   if (nodes.length === 0) {
     return {
       nodePositions: new Map(),
@@ -126,8 +176,10 @@ export function computeHierarchicalLayout(
       clusterId: nodeToCluster.get(n.id),
       x: Math.random() * 100 - 50,
       y: Math.random() * 100 - 50,
+      z: dimension === '3d' ? (Math.random() - 0.5) * CONFIG.initialZSpread : 0,
       vx: 0,
       vy: 0,
+      vz: 0,
     }),
   );
 
@@ -256,6 +308,11 @@ export function computeHierarchicalLayout(
     )
     .stop();
 
+  // Add z-centering force for 3D mode
+  if (dimension === '3d' && 'forceZ' in d3) {
+    (simulation as any).force('z', (d3 as any).forceZ(0).strength(CONFIG.zCenterStrength));
+  }
+
   // Run simulation to completion
   for (let i = 0; i < CONFIG.iterations; i++) {
     // Track cluster centers before repulsion
@@ -294,8 +351,10 @@ export function computeHierarchicalLayout(
       id: node.id,
       x: node.x,
       y: node.y,
+      ...(dimension === '3d' ? { z: node.z ?? 0 } : {}),
       vx: 0,
       vy: 0,
+      ...(dimension === '3d' ? { vz: 0 } : {}),
       clusterId: node.clusterId ?? '',
       radius: CONFIG.nodeRadius,
     });
@@ -332,6 +391,9 @@ export function computeHierarchicalLayout(
       .map((n) => nodePositions.get(n.id))
       .filter((p): p is NodePosition => p !== undefined);
 
+    // Get sim nodes for z calculations (needed for 3D)
+    const clusterSimNodes = simNodes.filter((n) => n.clusterId === cluster.id);
+
     if (clusterNodes.length === 0) {
       clusterPositions.set(cluster.id, {
         id: cluster.id,
@@ -352,10 +414,17 @@ export function computeHierarchicalLayout(
 
     const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
 
+    // Calculate 3D cluster z-center and depth
+    const clusterZ = dimension === '3d' ? computeClusterZCenter(clusterSimNodes) : undefined;
+    const clusterDepth = dimension === '3d' ? computeClusterZDepth(clusterSimNodes) : undefined;
+
     clusterPositions.set(cluster.id, {
       id: cluster.id,
       x: center.cx,
       y: center.cy,
+      ...(dimension === '3d' && clusterZ !== undefined && clusterDepth !== undefined
+        ? { z: clusterZ, vz: 0, depth: clusterDepth }
+        : {}),
       width: size,
       height: size,
       vx: 0,
@@ -369,6 +438,10 @@ export function computeHierarchicalLayout(
     for (const node of clusterNodes) {
       node.x -= center.cx;
       node.y -= center.cy;
+      // Convert z to cluster-relative in 3D mode
+      if (dimension === '3d' && clusterZ !== undefined) {
+        node.z = (node.z ?? 0) - clusterZ;
+      }
     }
   }
 

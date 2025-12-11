@@ -36,15 +36,18 @@ export {
   resetZoom,
   setActiveTab,
   setEnableAnimation,
+  setLayoutDimension,
   setPreviewFilter,
   setZoom,
   toggleAnimation,
+  toggleLayoutDimension,
   zoomIn,
   zoomOut,
 } from './ui.actions';
 export {
   activeTab,
   enableAnimation,
+  layoutDimension,
   type PreviewFilter,
   previewFilter,
   resetUISignals,
