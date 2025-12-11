@@ -2,14 +2,7 @@
  * Test Utilities - Centralized exports for testing helpers
  */
 
-export {
-  AnimationCallbackTracker,
-  simulateAnimationFrames,
-  waitForAnimationComplete,
-  waitForAnimationProgress,
-  waitForAnimationTick,
-} from './animation-helpers';
-// Animation mocks and helpers
+// Animation helpers removed - D3 runs synchronously
 export {
   installAnimationFrameMock,
   MockAnimationFrame,

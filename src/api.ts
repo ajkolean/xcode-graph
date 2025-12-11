@@ -44,7 +44,6 @@ export type { ClusterPosition, NodePosition } from './shared/schemas/simulation.
 
 export * from './graph/layout';
 export * from './graph/utils';
-export * from './graph/utils/physics';
 export * from './ui/utils';
 
 // ==================== Library ====================
