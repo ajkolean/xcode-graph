@@ -79,8 +79,10 @@ export class GraphCanvas extends LitElement {
   private isDragging = false;
   private hasMoved = false;
   private draggedNodeId: string | null = null;
+  private draggedClusterId: string | null = null;
   private lastMousePos = { x: 0, y: 0 };
   private manualNodePositions = new Map<string, { x: number; y: number }>();
+  private manualClusterPositions = new Map<string, { x: number; y: number }>();
   private pathCache = new Map<string, Path2D>();
 
   // Hover State
@@ -159,7 +161,9 @@ export class GraphCanvas extends LitElement {
       // D3 layout is synchronous - runs to completion immediately
       this.layout.computeLayout(this.nodes, this.edges);
       this.manualNodePositions.clear();
+      this.manualClusterPositions.clear(); // Clear manual cluster positions on new data
       this.updatePathCache();
+      this.didInitialFit = false; // Reset fit flag when data changes
     }
 
     if (changedProps.has('enableAnimation')) {
@@ -168,6 +172,18 @@ export class GraphCanvas extends LitElement {
         this.layout.stopAnimation();
       } else if (this.nodes.length > 0) {
         this.layout.computeLayout(this.nodes, this.edges);
+      }
+    }
+  }
+
+  override updated(changedProps: PropertyValues<this>) {
+    super.updated(changedProps);
+
+    // Fit viewport once after layout completes (not during render)
+    if ((changedProps.has('nodes') || changedProps.has('edges')) && !this.didInitialFit) {
+      if (this.layout.clusterPositions.size > 0) {
+        this.fitToViewport();
+        this.didInitialFit = true;
       }
     }
   }
@@ -260,15 +276,52 @@ export class GraphCanvas extends LitElement {
     const { x, y } = this.getMousePos(e);
     const worldPos = this.screenToWorld(x, y);
 
+    // Check clusters first (if holding shift/cmd, allow cluster drag)
+    if (e.shiftKey || e.metaKey) {
+      for (const cluster of this.layout.clusters) {
+        const layoutPos = this.layout.clusterPositions.get(cluster.id);
+        if (!layoutPos) continue;
+
+        const manualPos = this.manualClusterPositions.get(cluster.id);
+        const cx = manualPos?.x ?? layoutPos.x;
+        const cy = manualPos?.y ?? layoutPos.y;
+        const halfW = layoutPos.width / 2;
+        const halfH = layoutPos.height / 2;
+
+        if (
+          worldPos.x >= cx - halfW &&
+          worldPos.x <= cx + halfW &&
+          worldPos.y >= cy - halfH &&
+          worldPos.y <= cy + halfH
+        ) {
+          this.draggedClusterId = cluster.id;
+          this.dispatchEvent(
+            new CustomEvent('cluster-select', {
+              detail: { clusterId: cluster.id },
+              bubbles: true,
+              composed: true,
+            }),
+          );
+          this.isDragging = false;
+          return;
+        }
+      }
+    }
+
+    // Check nodes
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const node = this.nodes[i];
       const layoutPos = this.layout.nodePositions.get(node.id);
       const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
 
       if (layoutPos && clusterPos) {
+        const manualClusterPos = this.manualClusterPositions.get(node.project || 'External');
+        const clusterX = manualClusterPos?.x ?? clusterPos.x;
+        const clusterY = manualClusterPos?.y ?? clusterPos.y;
+
         const manualPos = this.manualNodePositions.get(node.id);
-        const wx = clusterPos.x + (manualPos?.x ?? layoutPos.x);
-        const wy = clusterPos.y + (manualPos?.y ?? layoutPos.y);
+        const wx = clusterX + (manualPos?.x ?? layoutPos.x);
+        const wy = clusterY + (manualPos?.y ?? layoutPos.y);
         const size = getNodeSize(node, this.edges);
 
         const dx = worldPos.x - wx;
@@ -285,18 +338,22 @@ export class GraphCanvas extends LitElement {
       }
     }
 
+    // Check clusters (for selection without dragging)
     for (const cluster of this.layout.clusters) {
-      const pos = this.layout.clusterPositions.get(cluster.id);
-      if (!pos) continue;
+      const layoutPos = this.layout.clusterPositions.get(cluster.id);
+      if (!layoutPos) continue;
 
-      const halfW = pos.width / 2;
-      const halfH = pos.height / 2;
+      const manualPos = this.manualClusterPositions.get(cluster.id);
+      const cx = manualPos?.x ?? layoutPos.x;
+      const cy = manualPos?.y ?? layoutPos.y;
+      const halfW = layoutPos.width / 2;
+      const halfH = layoutPos.height / 2;
 
       if (
-        worldPos.x >= pos.x - halfW &&
-        worldPos.x <= pos.x + halfW &&
-        worldPos.y >= pos.y - halfH &&
-        worldPos.y <= pos.y + halfH
+        worldPos.x >= cx - halfW &&
+        worldPos.x <= cx + halfW &&
+        worldPos.y >= cy - halfH &&
+        worldPos.y <= cy + halfH
       ) {
         this.dispatchEvent(
           new CustomEvent('cluster-select', {
@@ -325,15 +382,27 @@ export class GraphCanvas extends LitElement {
     const { x, y } = this.getMousePos(e);
     const worldPos = this.screenToWorld(x, y);
 
-    if (this.draggedNodeId) {
+    if (this.draggedClusterId) {
+      // Dragging entire cluster
+      this.hasMoved = true;
+      this.manualClusterPositions.set(this.draggedClusterId, {
+        x: worldPos.x,
+        y: worldPos.y,
+      });
+    } else if (this.draggedNodeId) {
+      // Dragging individual node
       this.hasMoved = true;
       const node = this.nodes.find((n) => n.id === this.draggedNodeId);
       if (node) {
-        const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
-        if (clusterPos) {
+        const layoutClusterPos = this.layout.clusterPositions.get(node.project || 'External');
+        if (layoutClusterPos) {
+          const manualClusterPos = this.manualClusterPositions.get(node.project || 'External');
+          const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
+          const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
+
           this.manualNodePositions.set(node.id, {
-            x: worldPos.x - clusterPos.x,
-            y: worldPos.y - clusterPos.y,
+            x: worldPos.x - clusterX,
+            y: worldPos.y - clusterY,
           });
         }
       }
@@ -416,6 +485,7 @@ export class GraphCanvas extends LitElement {
   private handleCanvasMouseUp = (e?: MouseEvent) => {
     this.isDragging = false;
     this.draggedNodeId = null;
+    this.draggedClusterId = null;
     setTimeout(() => {
       this.hasMoved = false;
     }, 0);
@@ -495,11 +565,6 @@ export class GraphCanvas extends LitElement {
     const width = this.canvas.width / (window.devicePixelRatio || 1);
     const height = this.canvas.height / (window.devicePixelRatio || 1);
 
-    if (!this.didInitialFit && this.layout.clusterPositions.size > 0) {
-      this.fitToViewport();
-      this.didInitialFit = true;
-    }
-
     this.ctx.clearRect(0, 0, width, height);
     this.ctx.save();
     this.ctx.translate(this.pan.x, this.pan.y);
@@ -570,24 +635,29 @@ export class GraphCanvas extends LitElement {
     const activeClusterId = this.selectedCluster || this.hoveredCluster;
 
     for (const cluster of this.layout.clusters) {
-      const pos = this.layout.clusterPositions.get(cluster.id);
-      if (!pos) continue;
+      const layoutPos = this.layout.clusterPositions.get(cluster.id);
+      if (!layoutPos) continue;
 
-      const halfW = pos.width / 2;
-      const halfH = pos.height / 2;
+      // Use manual position if cluster was dragged
+      const manualPos = this.manualClusterPositions.get(cluster.id);
+      const cx = manualPos?.x ?? layoutPos.x;
+      const cy = manualPos?.y ?? layoutPos.y;
+
+      const halfW = layoutPos.width / 2;
+      const halfH = layoutPos.height / 2;
       if (
-        pos.x + halfW < viewport.minX ||
-        pos.x - halfW > viewport.maxX ||
-        pos.y + halfH < viewport.minY ||
-        pos.y - halfH > viewport.maxY
+        cx + halfW < viewport.minX ||
+        cx - halfW > viewport.maxX ||
+        cy + halfH < viewport.minY ||
+        cy - halfH > viewport.maxY
       ) {
         continue;
       }
 
-      const x = pos.x - halfW;
-      const y = pos.y - halfH;
-      const width = pos.width;
-      const height = pos.height;
+      const x = cx - halfW;
+      const y = cy - halfH;
+      const width = layoutPos.width;
+      const height = layoutPos.height;
 
       const clusterColor = generateColor(cluster.name, cluster.type);
       const isHighlighted = this.hoveredCluster === cluster.id;
@@ -646,20 +716,25 @@ export class GraphCanvas extends LitElement {
 
     for (const node of this.nodes) {
       const layoutPos = this.layout.nodePositions.get(node.id);
-      const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
+      const layoutClusterPos = this.layout.clusterPositions.get(node.project || 'External');
 
-      if (!layoutPos || !clusterPos) continue;
+      if (!layoutPos || !layoutClusterPos) continue;
       const clusterId = node.project || 'External';
+
+      // Use manual cluster position if cluster was dragged
+      const manualClusterPos = this.manualClusterPositions.get(clusterId);
+      const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
+      const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
 
       const manualPos = this.manualNodePositions.get(node.id);
       const relX = manualPos?.x ?? layoutPos.x;
       const relY = manualPos?.y ?? layoutPos.y;
-      const x = clusterPos.x + relX;
-      const y = clusterPos.y + relY;
+      const x = clusterX + relX;
+      const y = clusterY + relY;
 
       // Verify node is within cluster bounds
       const distFromClusterCenter = Math.hypot(relX, relY);
-      const clusterRadius = clusterPos.width / 2;
+      const clusterRadius = layoutClusterPos.width / 2;
       if (distFromClusterCenter > clusterRadius) {
         console.error(
           `[Render] Node ${node.id} outside cluster! Dist: ${distFromClusterCenter.toFixed(1)}, ClusterRadius: ${clusterRadius.toFixed(1)}`,
@@ -809,20 +884,29 @@ export class GraphCanvas extends LitElement {
       const targetLayout = this.layout.nodePositions.get(edge.target);
       if (!sourceLayout || !targetLayout) continue;
 
-      const sCluster = this.layout.clusterPositions.get(sourceNode.project || 'External');
-      const tCluster = this.layout.clusterPositions.get(targetNode.project || 'External');
-      if (!sCluster || !tCluster) continue;
+      const sClusterLayout = this.layout.clusterPositions.get(sourceNode.project || 'External');
+      const tClusterLayout = this.layout.clusterPositions.get(targetNode.project || 'External');
+      if (!sClusterLayout || !tClusterLayout) continue;
 
       const sourceClusterId = sourceNode.project || 'External';
       const targetClusterId = targetNode.project || 'External';
 
+      // Use manual cluster positions if clusters were dragged
+      const sClusterManual = this.manualClusterPositions.get(sourceClusterId);
+      const tClusterManual = this.manualClusterPositions.get(targetClusterId);
+
+      const sClusterX = sClusterManual?.x ?? sClusterLayout.x;
+      const sClusterY = sClusterManual?.y ?? sClusterLayout.y;
+      const tClusterX = tClusterManual?.x ?? tClusterLayout.x;
+      const tClusterY = tClusterManual?.y ?? tClusterLayout.y;
+
       const sManual = this.manualNodePositions.get(edge.source);
       const tManual = this.manualNodePositions.get(edge.target);
 
-      const x1 = sCluster.x + (sManual?.x ?? sourceLayout.x);
-      const y1 = sCluster.y + (sManual?.y ?? sourceLayout.y);
-      const x2 = tCluster.x + (tManual?.x ?? targetLayout.x);
-      const y2 = tCluster.y + (tManual?.y ?? targetLayout.y);
+      const x1 = sClusterX + (sManual?.x ?? sourceLayout.x);
+      const y1 = sClusterY + (sManual?.y ?? sourceLayout.y);
+      const x2 = tClusterX + (tManual?.x ?? targetLayout.x);
+      const y2 = tClusterY + (tManual?.y ?? targetLayout.y);
 
       if (!isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport)) continue;
 
