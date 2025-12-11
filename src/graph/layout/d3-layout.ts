@@ -20,10 +20,10 @@ export interface HierarchicalLayoutResult {
 const CONFIG = {
   // Node-level forces
   nodeRadius: 6,
-  nodeCollisionPadding: 8,
-  linkDistance: 60,
-  linkStrength: 0.55, // Increased for more coherent shapes
-  nodeCharge: -80, // Reduced for tighter clusters
+  nodeCollisionPadding: 12, // Increased from 8 to prevent overlap
+  linkDistance: 50,
+  linkStrength: 0.4,
+  nodeCharge: -120, // Increased repulsion to spread nodes
 
   // Cluster forces (using d3-force-clustering)
   clusterStrength: 0.3,
@@ -66,9 +66,9 @@ function forceClusterRepulsion(
 ) {
   return () => {
     for (let i = 0; i < clusterCenters.length; i++) {
+      const a = clusterCenters[i]!;
       for (let j = i + 1; j < clusterCenters.length; j++) {
-        const a = clusterCenters[i];
-        const b = clusterCenters[j];
+        const b = clusterCenters[j]!;
 
         let dx = b.cx - a.cx;
         let dy = b.cy - a.cy;
@@ -110,11 +110,13 @@ export function computeHierarchicalLayout(
   const nodeToCluster = buildNodeToClusterMap(clusters);
 
   // Prepare simulation nodes with cluster info
-  const simNodes = nodes.map((n) => ({
+  const simNodes: any[] = nodes.map((n) => ({
     id: n.id,
     clusterId: nodeToCluster.get(n.id),
     x: Math.random() * 100 - 50, // Random initial positions
     y: Math.random() * 100 - 50,
+    vx: 0,
+    vy: 0,
   }));
 
   // Prepare edges for d3 (d3 needs source/target as objects or indices)
@@ -122,6 +124,13 @@ export function computeHierarchicalLayout(
     source: e.source,
     target: e.target,
   }));
+
+  // Pre-calculate cluster sizes based on node count
+  const clusterSizes = new Map<string, number>();
+  for (const cluster of clusters) {
+    const size = 120 + cluster.nodes.length * 15;
+    clusterSizes.set(cluster.id, size);
+  }
 
   // Build cluster centers array for cluster-to-cluster repulsion
   const clusterCenters = clusters.map((c) => ({
@@ -193,11 +202,37 @@ export function computeHierarchicalLayout(
 
     .stop(); // Don't auto-tick, we'll run it manually
 
-  // Run simulation to completion with cluster repulsion
+  // Custom boundary constraint - enforce cluster boundaries each tick
+  function enforceClusterBoundaries() {
+    for (const node of simNodes) {
+      if (!node.clusterId) continue;
+
+      const center = clusterCenters.find(c => c.id === node.clusterId);
+      if (!center) continue;
+
+      const size = clusterSizes.get(node.clusterId) ?? CONFIG.minClusterSize;
+      const maxRadius = size / 2 - CONFIG.nodeRadius - 10;
+
+      const dx = (node.x ?? 0) - center.cx;
+      const dy = (node.y ?? 0) - center.cy;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > maxRadius && dist > 0) {
+        const scale = maxRadius / dist;
+        node.x = center.cx + dx * scale;
+        node.y = center.cy + dy * scale;
+        node.vx = 0;
+        node.vy = 0;
+      }
+    }
+  }
+
+  // Run simulation to completion with cluster repulsion and boundaries
   for (let i = 0; i < CONFIG.iterations; i++) {
     updateClusterCenters();
     clusterRepel();
     simulation.tick();
+    enforceClusterBoundaries(); // Hard constraint after each tick
   }
 
   // Extract node positions
