@@ -1,15 +1,17 @@
 /**
- * Cluster-to-cluster repulsion force (proper D3 force interface)
+ * Size-aware cluster-to-cluster repulsion force (proper D3 force interface)
  * Prevents cluster centers from collapsing into each other
+ * Uses cluster radius for accurate collision detection
  */
 
 interface ClusterCenter {
   id: string;
   cx: number;
   cy: number;
+  radius: number; // Half of cluster width/height
 }
 
-export function forceClusterRepulsion(strength: number, minDist: number) {
+export function forceClusterRepulsion(strength: number, extraPadding: number) {
   let clusterCenters: ClusterCenter[] = [];
 
   function force(alpha: number) {
@@ -23,15 +25,18 @@ export function forceClusterRepulsion(strength: number, minDist: number) {
 
         const dx = b.cx - a.cx;
         const dy = b.cy - a.cy;
-        let dist = Math.hypot(dx, dy);
+        let dist = Math.hypot(dx, dy) || 1e-6;
 
-        // Prevent division by zero
+        // Minimum distance = sum of radii + padding
+        const minDist = a.radius + b.radius + extraPadding;
         if (dist < minDist) dist = minDist;
 
         // Inverse square repulsion
         const forceVal = effectiveStrength / (dist * dist);
-        const fx = forceVal * dx;
-        const fy = forceVal * dy;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        const fx = forceVal * nx;
+        const fy = forceVal * ny;
 
         a.cx -= fx;
         a.cy -= fy;
@@ -51,8 +56,8 @@ export function forceClusterRepulsion(strength: number, minDist: number) {
     return force;
   };
 
-  force.minDistance = (d: number) => {
-    minDist = d;
+  force.padding = (p: number) => {
+    extraPadding = p;
     return force;
   };
 

@@ -29,6 +29,9 @@ export function forceEdgeBundling(
   edges: Edge[],
   config: BundlingConfig = {},
 ): Point[][] {
+  // Early exit for empty input
+  if (edges.length === 0) return [];
+
   const {
     K = 0.1,
     S_initial = 0.1,
@@ -50,6 +53,8 @@ export function forceEdgeBundling(
     const tgt = nodes[e.target];
     return src && tgt && (Math.abs(src.x - tgt.x) > eps || Math.abs(src.y - tgt.y) > eps);
   });
+
+  if (filteredEdges.length === 0) return [];
 
   // Helper functions
   const edgeLength = (e: Edge) => {
