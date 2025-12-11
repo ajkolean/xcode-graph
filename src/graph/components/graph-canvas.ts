@@ -12,7 +12,7 @@ import { getNodeSize } from '@ui/utils/sizing';
 import { calculateViewportBounds, isCircleInViewport, isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { css, html, LitElement, type PropertyValues } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 
 @customElement('graph-canvas')
 export class GraphCanvas extends LitElement {
@@ -70,7 +70,7 @@ export class GraphCanvas extends LitElement {
   });
 
   // Interaction State
-  private pan = { x: 0, y: 0 };
+  private pan: { x: number; y: number };
   private isDragging = false;
   private hasMoved = false;
   private draggedNodeId: string | null = null;
@@ -84,6 +84,7 @@ export class GraphCanvas extends LitElement {
   // Animation State
   private animationFrameId: number | null = null;
   private time = 0;
+  private didInitialFit = false;
 
   constructor() {
     super();
@@ -183,6 +184,44 @@ export class GraphCanvas extends LitElement {
       this.pan = { x: rect.width / 2, y: rect.height / 2 };
   }
 
+  /**
+   * Fit graph into viewport: compute bounding box of all clusters and adjust pan/zoom.
+   */
+  private fitToViewport() {
+      if (!this.layout.clusterPositions.size) return;
+      const rect = this.getBoundingClientRect();
+      let minX = Infinity;
+      let maxX = -Infinity;
+      let minY = Infinity;
+      let maxY = -Infinity;
+
+      this.layout.clusterPositions.forEach((pos) => {
+        const halfW = pos.width / 2;
+        const halfH = pos.height / 2;
+        minX = Math.min(minX, pos.x - halfW);
+        maxX = Math.max(maxX, pos.x + halfW);
+        minY = Math.min(minY, pos.y - halfH);
+        maxY = Math.max(maxY, pos.y + halfH);
+      });
+
+      if (!isFinite(minX) || !isFinite(maxX) || !isFinite(minY) || !isFinite(maxY)) return;
+
+      const graphWidth = maxX - minX;
+      const graphHeight = maxY - minY;
+      const padding = 40;
+      const scaleX = (rect.width - padding * 2) / graphWidth;
+      const scaleY = (rect.height - padding * 2) / graphHeight;
+      const fitZoom = Math.max(0.1, Math.min(1.5, Math.min(scaleX, scaleY)));
+
+      this.zoom = fitZoom;
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+      this.pan = {
+        x: rect.width / 2 - centerX * fitZoom,
+        y: rect.height / 2 - centerY * fitZoom,
+      };
+  }
+
   // ========================================
   // Event Handlers
   // ========================================
@@ -199,6 +238,7 @@ export class GraphCanvas extends LitElement {
     this.canvas.width = rect.width * dpr;
     this.canvas.height = rect.height * dpr;
     
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(dpr, dpr);
     this.canvas.style.width = `${rect.width}px`;
     this.canvas.style.height = `${rect.height}px`;
@@ -274,8 +314,7 @@ export class GraphCanvas extends LitElement {
     } else if (this.isDragging) {
         const dx = e.clientX - this.lastMousePos.x;
         const dy = e.clientY - this.lastMousePos.y;
-        this.pan.x += dx;
-        this.pan.y += dy;
+        this.pan = { x: this.pan.x + dx, y: this.pan.y + dy };
         this.lastMousePos = { x: e.clientX, y: e.clientY };
         this.hasMoved = true;
     } else {
@@ -369,8 +408,10 @@ export class GraphCanvas extends LitElement {
         
         this.zoom = newZoom;
         
-        this.pan.x = x - worldPos.x * this.zoom;
-        this.pan.y = y - worldPos.y * this.zoom;
+        this.pan = {
+            x: x - worldPos.x * this.zoom,
+            y: y - worldPos.y * this.zoom
+        };
         
         this.dispatchEvent(new CustomEvent('zoom-change', { detail: this.zoom, bubbles: true, composed: true }));
     }
@@ -401,6 +442,11 @@ export class GraphCanvas extends LitElement {
       
       const width = this.canvas.width / (window.devicePixelRatio || 1);
       const height = this.canvas.height / (window.devicePixelRatio || 1);
+
+      if (!this.didInitialFit && this.layout.clusterPositions.size > 0) {
+        this.fitToViewport();
+        this.didInitialFit = true;
+      }
 
       this.ctx.clearRect(0, 0, width, height);
       this.ctx.save();
@@ -550,8 +596,17 @@ export class GraphCanvas extends LitElement {
           const clusterId = node.project || 'External';
           
           const manualPos = this.manualNodePositions.get(node.id);
-          const x = clusterPos.x + (manualPos?.x ?? layoutPos.x);
-          const y = clusterPos.y + (manualPos?.y ?? layoutPos.y);
+          const relX = manualPos?.x ?? layoutPos.x;
+          const relY = manualPos?.y ?? layoutPos.y;
+          const x = clusterPos.x + relX;
+          const y = clusterPos.y + relY;
+
+          // Verify node is within cluster bounds
+          const distFromClusterCenter = Math.hypot(relX, relY);
+          const clusterRadius = clusterPos.width / 2;
+          if (distFromClusterCenter > clusterRadius) {
+            console.error(`[Render] Node ${node.id} outside cluster! Dist: ${distFromClusterCenter.toFixed(1)}, ClusterRadius: ${clusterRadius.toFixed(1)}`);
+          }
           const size = getNodeSize(node, this.edges);
           if (!isCircleInViewport({ x, y }, size, viewport)) continue;
           const color = getNodeTypeColor(node.type);

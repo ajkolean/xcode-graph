@@ -79,14 +79,66 @@ export class PhysicsController implements ReactiveController {
     clusters: Cluster[],
     alpha: number,
   ): void {
-    // 1. Node collision within clusters
-    this.applyNodeCollisions(nodePositions, clusters, alpha);
+    // Nodes are frozen in relative positions - no forces applied
+    // Only used if animation is enabled (currently disabled by default)
+  }
 
-    // 2. Cluster spacing
-    this.applyClusterSpacing(clusterPositions, alpha);
+  /**
+   * Update node positions to follow their cluster's movement
+   * Nodes stay in fixed positions relative to cluster center
+   */
+  private updateNodesWithClusters(
+    nodePositions: Map<string, NodePosition>,
+    clusterPositions: Map<string, ClusterPosition>,
+    clusters: Cluster[],
+  ): void {
+    // For each cluster, move all its nodes by the cluster's velocity
+    for (const cluster of clusters) {
+      const clusterPos = clusterPositions.get(cluster.id);
+      if (!clusterPos) continue;
 
-    // 3. Link attraction
-    this.applyLinkAttractionForces(nodePositions, edges, alpha);
+      for (const node of cluster.nodes) {
+        const nodePos = nodePositions.get(node.id);
+        if (!nodePos) continue;
+
+        // Nodes move with their cluster
+        nodePos.x += clusterPos.vx;
+        nodePos.y += clusterPos.vy;
+      }
+    }
+  }
+
+  /**
+   * STRICTLY enforce cluster boundaries - nodes CANNOT escape
+   */
+  private enforceClusterBoundaries(
+    nodePositions: Map<string, NodePosition>,
+    clusterPositions: Map<string, ClusterPosition>,
+  ): void {
+    for (const [_nodeId, nodePos] of nodePositions) {
+      const clusterPos = clusterPositions.get(nodePos.clusterId);
+      if (!clusterPos) continue;
+
+      // Hard boundary - cluster radius minus node radius
+      const clusterRadius = clusterPos.width / 2;
+      const nodeRadius = nodePos.radius ?? 6;
+      const maxRadius = clusterRadius - nodeRadius - 2; // 2px safety margin
+
+      // Distance from cluster center
+      const dx = nodePos.x - clusterPos.x;
+      const dy = nodePos.y - clusterPos.y;
+      const dist = Math.hypot(dx, dy);
+
+      // ALWAYS clamp if outside boundary
+      if (dist > maxRadius) {
+        const scale = dist > 0 ? maxRadius / dist : 0;
+        nodePos.x = clusterPos.x + dx * scale;
+        nodePos.y = clusterPos.y + dy * scale;
+        // Kill velocity when hitting boundary
+        nodePos.vx = 0;
+        nodePos.vy = 0;
+      }
+    }
   }
 
   // ========================================

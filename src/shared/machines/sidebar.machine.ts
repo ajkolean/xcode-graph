@@ -111,7 +111,7 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
   props({ props }) {
     return {
       id: props.id ?? 'sidebar',
-      defaultCollapsed: props.defaultCollapsed ?? false,
+      defaultCollapsed: props.defaultCollapsed ?? true,
       onCollapseChange: props.onCollapseChange,
     };
   },

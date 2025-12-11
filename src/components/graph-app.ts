@@ -174,6 +174,7 @@ export class GraphApp extends SignalWatcher(LitElement) {
       <div class="main-layout">
         <graph-sidebar
           active-tab=${currentTab}
+          collapsed
           @tab-change=${this.handleTabChange}
         ></graph-sidebar>
 
