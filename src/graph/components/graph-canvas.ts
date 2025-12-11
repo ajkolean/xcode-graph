@@ -1,13 +1,15 @@
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
-import { Starfield } from './starfield';
 import type { TransitiveResult } from '@graph/utils';
 import { getConnectedNodes } from '@graph/utils/connections';
 import { ViewMode } from '@shared/schemas';
+import type { Cluster } from '@shared/schemas/cluster.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
+import { layoutDimension } from '@shared/signals/index';
 import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
+import { getNodeIconPath3D } from '@ui/utils/node-icons-3d';
 import { generateBezierPath } from '@ui/utils/paths';
 import { getNodeSize } from '@ui/utils/sizing';
 import {
@@ -19,6 +21,7 @@ import {
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { css, html, LitElement, type PropertyValues } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
+import { Starfield } from './starfield';
 
 @customElement('graph-canvas')
 export class GraphCanvas extends LitElement {
@@ -86,6 +89,12 @@ export class GraphCanvas extends LitElement {
   private manualClusterPositions = new Map<string, { x: number; y: number }>();
   private pathCache = new Map<string, Path2D>();
 
+  // 3D Camera Rotation State (for Cmd+drag rotation in 3D mode)
+  private cameraRotation = { pitch: 0, yaw: 0 }; // pitch = up/down (radians), yaw = left/right (radians)
+  private isRotating = false; // true when Cmd+dragging to rotate
+  private rotationStartPos = { x: 0, y: 0 }; // Mouse position when rotation started
+  private rotationStartAngles = { pitch: 0, yaw: 0 }; // Angles when rotation started
+
   // Hover State
   private hoveredCluster: string | null = null;
 
@@ -131,9 +140,14 @@ export class GraphCanvas extends LitElement {
       outline: none;
       cursor: grab;
     }
-    
+
     canvas:active {
       cursor: grabbing;
+    }
+
+    /* Rotation cursor when Cmd is held in 3D mode */
+    :host([rotating]) canvas {
+      cursor: move;
     }
   `;
 
@@ -197,9 +211,13 @@ export class GraphCanvas extends LitElement {
   }
 
   private getPathForNode(node: GraphNode): Path2D {
-    const key = `${node.type}-${node.platform}`;
+    const dimension = layoutDimension.get();
+    const key = `${node.type}-${node.platform}-${dimension}`;
     if (!this.pathCache.has(key)) {
-      const pathString = getNodeIconPath(node.type, node.platform);
+      const pathString =
+        dimension === '3d'
+          ? getNodeIconPath3D(node.type, node.platform)
+          : getNodeIconPath(node.type, node.platform);
       this.pathCache.set(key, new Path2D(pathString));
     }
     return this.pathCache.get(key)!;
@@ -208,6 +226,18 @@ export class GraphCanvas extends LitElement {
   private centerGraph() {
     const rect = this.getBoundingClientRect();
     this.pan = { x: rect.width / 2, y: rect.height / 2 };
+  }
+
+  /**
+   * Force recompute the layout (e.g., when dimension changes)
+   */
+  recomputeLayout() {
+    if (this.nodes.length === 0) return;
+    this.layout.enableAnimation = this.enableAnimation;
+    this.layout.computeLayout(this.nodes, this.edges);
+    this.manualNodePositions.clear();
+    this.manualClusterPositions.clear();
+    this.updatePathCache();
   }
 
   /**
@@ -287,6 +317,17 @@ export class GraphCanvas extends LitElement {
 
     const { x, y } = this.getMousePos(e);
     const worldPos = this.screenToWorld(x, y);
+
+    // Check for Cmd+drag to start 3D rotation (in 3D mode only, without shift)
+    const is3D = layoutDimension.get() === '3d';
+    if (is3D && e.metaKey && !e.shiftKey) {
+      this.isRotating = true;
+      this.isDragging = false;
+      this.rotationStartPos = { x: e.clientX, y: e.clientY };
+      this.rotationStartAngles = { ...this.cameraRotation };
+      this.setAttribute('rotating', '');
+      return;
+    }
 
     // Check clusters first (if holding shift/cmd, allow cluster drag)
     if (e.shiftKey || e.metaKey) {
@@ -388,6 +429,27 @@ export class GraphCanvas extends LitElement {
     const { x, y } = this.getMousePos(e);
     const worldPos = this.screenToWorld(x, y);
 
+    // Handle 3D camera rotation with Cmd+drag
+    if (this.isRotating) {
+      const dx = e.clientX - this.rotationStartPos.x;
+      const dy = e.clientY - this.rotationStartPos.y;
+
+      // Sensitivity: how much rotation per pixel of mouse movement
+      const sensitivity = 0.005;
+
+      // Yaw changes with horizontal mouse movement
+      // Pitch changes with vertical mouse movement
+      this.cameraRotation = {
+        yaw: this.rotationStartAngles.yaw + dx * sensitivity,
+        pitch: Math.max(
+          -Math.PI / 3, // Limit pitch to ±60°
+          Math.min(Math.PI / 3, this.rotationStartAngles.pitch + dy * sensitivity),
+        ),
+      };
+      this.hasMoved = true;
+      return;
+    }
+
     if (this.draggedClusterId) {
       // Dragging entire cluster
       this.hasMoved = true;
@@ -487,6 +549,10 @@ export class GraphCanvas extends LitElement {
 
   private handleCanvasMouseUp = (e?: MouseEvent) => {
     this.isDragging = false;
+    if (this.isRotating) {
+      this.isRotating = false;
+      this.removeAttribute('rotating');
+    }
     this.draggedNodeId = null;
     this.draggedClusterId = null;
     setTimeout(() => {
@@ -641,6 +707,16 @@ export class GraphCanvas extends LitElement {
 
   private renderClusters(viewport: ViewportBounds) {
     const activeClusterId = this.selectedCluster || this.hoveredCluster;
+    const is3D = layoutDimension.get() === '3d';
+
+    // Build projected cluster positions for sorting and rendering
+    const projectedClusters: Array<{
+      cluster: Cluster;
+      cx: number;
+      cy: number;
+      cz: number;
+      radius: number;
+    }> = [];
 
     for (const cluster of this.layout.clusters) {
       const layoutPos = this.layout.clusterPositions.get(cluster.id);
@@ -648,18 +724,45 @@ export class GraphCanvas extends LitElement {
 
       // Use manual position if cluster was dragged
       const manualPos = this.manualClusterPositions.get(cluster.id);
-      const cx = manualPos?.x ?? layoutPos.x;
-      const cy = manualPos?.y ?? layoutPos.y;
+      const worldX = manualPos?.x ?? layoutPos.x;
+      const worldY = manualPos?.y ?? layoutPos.y;
+      const worldZ = layoutPos.z ?? 0;
+
+      // Apply 3D camera rotation
+      const projected = this.project3D(worldX, worldY, worldZ);
 
       // Use circular clusters - radius is half of the larger dimension
       const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
 
+      projectedClusters.push({
+        cluster,
+        cx: projected.x,
+        cy: projected.y,
+        cz: projected.z,
+        radius,
+      });
+    }
+
+    // In 3D mode, sort clusters by projected z (furthest first for painter's algorithm)
+    if (is3D) {
+      projectedClusters.sort((a, b) => a.cz - b.cz);
+    }
+
+    for (const { cluster, cx, cy, cz, radius } of projectedClusters) {
+      const layoutPos = this.layout.clusterPositions.get(cluster.id);
+      if (!layoutPos) continue;
+
+      // 3D depth effects for clusters: scale and opacity based on projected z
+      const depthScale = is3D ? Math.max(0.6, 1 + cz / 400) : 1;
+      const depthOpacity = is3D ? Math.max(0.5, Math.min(1, 0.6 + (cz + 200) / 400)) : 1;
+      const scaledRadius = radius * depthScale;
+
       // Viewport culling with circular bounds
       if (
-        cx + radius < viewport.minX ||
-        cx - radius > viewport.maxX ||
-        cy + radius < viewport.minY ||
-        cy - radius > viewport.maxY
+        cx + scaledRadius < viewport.minX ||
+        cx - scaledRadius > viewport.maxX ||
+        cy + scaledRadius < viewport.minY ||
+        cy - scaledRadius > viewport.maxY
       ) {
         continue;
       }
@@ -672,23 +775,46 @@ export class GraphCanvas extends LitElement {
 
       const shouldDim = activeClusterId && activeClusterId !== cluster.id;
 
-      this.ctx.globalAlpha = shouldDim ? 0.3 : 1.0;
+      this.ctx.globalAlpha = (shouldDim ? 0.3 : 1.0) * depthOpacity;
 
-      // Draw circular cluster fill
+      // Draw cluster fill - 3D sphere or 2D circle
       this.ctx.beginPath();
-      this.ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      this.ctx.fillStyle = clusterColor;
-      this.ctx.globalAlpha = isActive ? 0.05 : 0.08;
+      this.ctx.arc(cx, cy, scaledRadius, 0, Math.PI * 2);
+
+      if (is3D) {
+        // 3D sphere with radial gradient for depth effect
+        const gradient = this.ctx.createRadialGradient(
+          cx - scaledRadius * 0.3, // Highlight offset to upper-left
+          cy - scaledRadius * 0.3,
+          scaledRadius * 0.1,
+          cx,
+          cy,
+          scaledRadius,
+        );
+        // Parse cluster color and create gradient stops
+        gradient.addColorStop(0, `color-mix(in srgb, ${clusterColor} 25%, white)`);
+        gradient.addColorStop(0.4, `color-mix(in srgb, ${clusterColor} 15%, transparent)`);
+        gradient.addColorStop(0.8, `color-mix(in srgb, ${clusterColor} 10%, transparent)`);
+        gradient.addColorStop(1, `color-mix(in srgb, ${clusterColor} 5%, transparent)`);
+        this.ctx.fillStyle = gradient;
+        this.ctx.globalAlpha = (isActive ? 0.4 : 0.3) * depthOpacity;
+      } else {
+        this.ctx.fillStyle = clusterColor;
+        this.ctx.globalAlpha = isActive ? 0.05 : 0.08;
+      }
       this.ctx.fill();
 
-      this.ctx.globalAlpha = shouldDim ? 0.3 : 1.0;
+      this.ctx.globalAlpha = (shouldDim ? 0.3 : 1.0) * depthOpacity;
 
-      // Draw circular cluster border
+      // Draw cluster border
       this.ctx.lineWidth = isActive ? 2.5 : 2;
       this.ctx.strokeStyle = clusterColor;
-      this.ctx.globalAlpha = (isActive ? 0.9 : borderOpacity) * (shouldDim ? 0.3 : 1.0);
+      this.ctx.globalAlpha = (isActive ? 0.9 : borderOpacity) * (shouldDim ? 0.3 : 1.0) * depthOpacity;
 
-      if (cluster.type === 'project') {
+      if (is3D) {
+        // 3D mode: solid border for sphere look
+        this.ctx.setLineDash([]);
+      } else if (cluster.type === 'project') {
         this.ctx.setLineDash([8, 8]);
       } else {
         this.ctx.setLineDash([3, 8]);
@@ -702,17 +828,33 @@ export class GraphCanvas extends LitElement {
       this.ctx.setLineDash([]);
       this.ctx.lineDashOffset = 0;
 
-      // Draw label at top of circle
-      this.ctx.globalAlpha = (isActive ? 1 : 0.7) * (shouldDim ? 0.3 : 1.0);
+      // In 3D mode, add a subtle inner highlight arc for sphere effect
+      if (is3D) {
+        this.ctx.beginPath();
+        this.ctx.arc(
+          cx - scaledRadius * 0.2,
+          cy - scaledRadius * 0.2,
+          scaledRadius * 0.6,
+          Math.PI * 1.2,
+          Math.PI * 1.8,
+        );
+        this.ctx.strokeStyle = `color-mix(in srgb, ${clusterColor} 40%, white)`;
+        this.ctx.lineWidth = 1.5;
+        this.ctx.globalAlpha = 0.3 * (shouldDim ? 0.3 : 1.0) * depthOpacity;
+        this.ctx.stroke();
+      }
+
+      // Draw label at top of circle/sphere
+      this.ctx.globalAlpha = (isActive ? 1 : 0.7) * (shouldDim ? 0.3 : 1.0) * depthOpacity;
       this.ctx.fillStyle = clusterColor;
       this.ctx.font = `${isActive ? 600 : 500} 13px var(--fonts-body, sans-serif)`;
       this.ctx.textAlign = 'center';
-      this.ctx.fillText(cluster.name, cx, cy - radius - 12);
+      this.ctx.fillText(cluster.name, cx, cy - scaledRadius - 12);
 
       // Draw node count below cluster name
       this.ctx.font = `${isActive ? 500 : 400} 11px var(--fonts-body, sans-serif)`;
-      this.ctx.globalAlpha = (isActive ? 0.8 : 0.5) * (shouldDim ? 0.3 : 1.0);
-      this.ctx.fillText(`${cluster.nodes.length} targets`, cx, cy - radius + 4);
+      this.ctx.globalAlpha = (isActive ? 0.8 : 0.5) * (shouldDim ? 0.3 : 1.0) * depthOpacity;
+      this.ctx.fillText(`${cluster.nodes.length} targets`, cx, cy - scaledRadius + 4);
 
       this.ctx.globalAlpha = 1.0;
     }
@@ -722,34 +864,67 @@ export class GraphCanvas extends LitElement {
     const connectedNodes = this.selectedNode
       ? getConnectedNodes(this.selectedNode.id, this.edges)
       : new Set<string>();
+    const is3D = layoutDimension.get() === '3d';
+
+    // Build projected positions for all nodes (needed for sorting by projected z)
+    const projectedNodes: Array<{
+      node: GraphNode;
+      x: number;
+      y: number;
+      z: number;
+      clusterId: string;
+    }> = [];
 
     for (const node of this.nodes) {
       const layoutPos = this.layout.nodePositions.get(node.id);
       const layoutClusterPos = this.layout.clusterPositions.get(node.project || 'External');
-
       if (!layoutPos || !layoutClusterPos) continue;
-      const clusterId = node.project || 'External';
 
-      // Use manual cluster position if cluster was dragged
+      const clusterId = node.project || 'External';
       const manualClusterPos = this.manualClusterPositions.get(clusterId);
       const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
       const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
+      const clusterZ = layoutClusterPos.z ?? 0;
 
       const manualPos = this.manualNodePositions.get(node.id);
       const relX = manualPos?.x ?? layoutPos.x;
       const relY = manualPos?.y ?? layoutPos.y;
-      const x = clusterX + relX;
-      const y = clusterY + relY;
+      const relZ = layoutPos.z ?? 0;
 
-      // Verify node is within cluster bounds
-      const distFromClusterCenter = Math.hypot(relX, relY);
-      const clusterRadius = layoutClusterPos.width / 2;
-      if (distFromClusterCenter > clusterRadius) {
-        console.error(
-          `[Render] Node ${node.id} outside cluster! Dist: ${distFromClusterCenter.toFixed(1)}, ClusterRadius: ${clusterRadius.toFixed(1)}`,
-        );
-      }
-      const size = getNodeSize(node, this.edges);
+      // World position (before camera rotation)
+      const worldX = clusterX + relX;
+      const worldY = clusterY + relY;
+      const worldZ = clusterZ + relZ;
+
+      // Apply 3D camera rotation
+      const projected = this.project3D(worldX, worldY, worldZ);
+      projectedNodes.push({
+        node,
+        x: projected.x,
+        y: projected.y,
+        z: projected.z,
+        clusterId,
+      });
+    }
+
+    // In 3D mode, sort nodes by projected z so that nodes with higher z (closer) render on top
+    if (is3D) {
+      projectedNodes.sort((a, b) => a.z - b.z);
+    }
+
+    for (const { node, x, y, z: projectedZ, clusterId } of projectedNodes) {
+      const layoutPos = this.layout.nodePositions.get(node.id);
+      const layoutClusterPos = this.layout.clusterPositions.get(clusterId);
+      if (!layoutPos || !layoutClusterPos) continue;
+
+      // 3D depth effects: use projected z for depth
+      // z typically ranges from -150 to +150 after rotation, map to noticeable depth effects
+      // Scale: further away → smaller, closer → larger
+      const depthScale = is3D ? Math.max(0.5, 1 + projectedZ / 250) : 1;
+      // Opacity: nodes further from camera (low z) fade more
+      const depthOpacity = is3D ? Math.max(0.4, Math.min(1, 0.5 + (projectedZ + 150) / 300)) : 1;
+
+      const size = getNodeSize(node, this.edges) * depthScale;
       if (!isCircleInViewport({ x, y }, size, viewport)) continue;
       const color = getNodeTypeColor(node.type);
       const adjustedColor = adjustColorForZoom(color, this.zoom);
@@ -780,16 +955,16 @@ export class GraphCanvas extends LitElement {
         (this.previewFilter && !matchesPreview) ||
         clusterDim;
 
-      this.ctx.globalAlpha = isDimmed ? 0.3 : 1.0;
+      this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * depthOpacity;
 
       if (isSelected) {
         const pulse = (Math.sin(this.time / 200) + 1) / 2;
         this.ctx.beginPath();
         this.ctx.arc(x, y, size + 8 + pulse * 4, 0, Math.PI * 2);
         this.ctx.strokeStyle = adjustedColor;
-        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * 0.3 * (1 - pulse);
+        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * depthOpacity * 0.3 * (1 - pulse);
         this.ctx.stroke();
-        this.ctx.globalAlpha = isDimmed ? 0.3 : 1.0;
+        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * depthOpacity;
       }
 
       if (isHovered || isSelected) {
@@ -827,12 +1002,12 @@ export class GraphCanvas extends LitElement {
         this.ctx.textAlign = 'center';
         this.ctx.fillStyle = adjustedColor;
 
-        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * 0.9;
+        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * depthOpacity * 0.9;
         this.ctx.shadowColor = 'rgba(30, 30, 35, 0.9)';
         this.ctx.shadowBlur = 8;
         this.ctx.fillText(labelText, x, y + size + 22);
 
-        this.ctx.globalAlpha = isDimmed ? 0.3 : 1.0;
+        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * depthOpacity;
         this.ctx.shadowColor = 'transparent';
         this.ctx.shadowBlur = 0;
         this.ctx.fillText(labelText, x, y + size + 22);
@@ -906,16 +1081,29 @@ export class GraphCanvas extends LitElement {
 
       const sClusterX = sClusterManual?.x ?? sClusterLayout.x;
       const sClusterY = sClusterManual?.y ?? sClusterLayout.y;
+      const sClusterZ = sClusterLayout.z ?? 0;
       const tClusterX = tClusterManual?.x ?? tClusterLayout.x;
       const tClusterY = tClusterManual?.y ?? tClusterLayout.y;
+      const tClusterZ = tClusterLayout.z ?? 0;
 
       const sManual = this.manualNodePositions.get(edge.source);
       const tManual = this.manualNodePositions.get(edge.target);
 
-      const x1 = sClusterX + (sManual?.x ?? sourceLayout.x);
-      const y1 = sClusterY + (sManual?.y ?? sourceLayout.y);
-      const x2 = tClusterX + (tManual?.x ?? targetLayout.x);
-      const y2 = tClusterY + (tManual?.y ?? targetLayout.y);
+      // Compute world positions including z
+      const worldX1 = sClusterX + (sManual?.x ?? sourceLayout.x);
+      const worldY1 = sClusterY + (sManual?.y ?? sourceLayout.y);
+      const worldZ1 = sClusterZ + (sourceLayout.z ?? 0);
+      const worldX2 = tClusterX + (tManual?.x ?? targetLayout.x);
+      const worldY2 = tClusterY + (tManual?.y ?? targetLayout.y);
+      const worldZ2 = tClusterZ + (targetLayout.z ?? 0);
+
+      // Apply 3D camera rotation
+      const p1 = this.project3D(worldX1, worldY1, worldZ1);
+      const p2 = this.project3D(worldX2, worldY2, worldZ2);
+      const x1 = p1.x;
+      const y1 = p1.y;
+      const x2 = p2.x;
+      const y2 = p2.y;
 
       if (!isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport)) continue;
 
@@ -990,6 +1178,56 @@ export class GraphCanvas extends LitElement {
     };
   }
 
+  /**
+   * Apply 3D camera rotation to a point.
+   * Uses simple rotation matrices for pitch (X-axis) and yaw (Y-axis).
+   * Returns the projected 2D coordinates and the projected z for depth sorting.
+   */
+  private project3D(
+    x: number,
+    y: number,
+    z: number,
+  ): { x: number; y: number; z: number } {
+    const is3D = layoutDimension.get() === '3d';
+    if (!is3D || (this.cameraRotation.pitch === 0 && this.cameraRotation.yaw === 0)) {
+      return { x, y, z };
+    }
+
+    const { pitch, yaw } = this.cameraRotation;
+    const cosPitch = Math.cos(pitch);
+    const sinPitch = Math.sin(pitch);
+    const cosYaw = Math.cos(yaw);
+    const sinYaw = Math.sin(yaw);
+
+    // First rotate around Y-axis (yaw) - horizontal rotation
+    const x1 = x * cosYaw + z * sinYaw;
+    const z1 = -x * sinYaw + z * cosYaw;
+    const y1 = y;
+
+    // Then rotate around X-axis (pitch) - vertical rotation
+    const y2 = y1 * cosPitch - z1 * sinPitch;
+    const z2 = y1 * sinPitch + z1 * cosPitch;
+    const x2 = x1;
+
+    return { x: x2, y: y2, z: z2 };
+  }
+
+  /**
+   * Reset camera rotation to default (front view)
+   */
+  resetCameraRotation() {
+    this.cameraRotation = { pitch: 0, yaw: 0 };
+  }
+
+  private handleCanvasDblClick = (e: MouseEvent) => {
+    // Double-click with Cmd in 3D mode resets camera rotation
+    const is3D = layoutDimension.get() === '3d';
+    if (is3D && e.metaKey) {
+      this.resetCameraRotation();
+      e.preventDefault();
+    }
+  };
+
   override render() {
     return html`
       <canvas
@@ -998,6 +1236,7 @@ export class GraphCanvas extends LitElement {
         @mouseup=${this.handleCanvasMouseUp}
         @mouseleave=${this.handleCanvasMouseUp}
         @wheel=${this.handleCanvasWheel}
+        @dblclick=${this.handleCanvasDblClick}
       ></canvas>
     `;
   }

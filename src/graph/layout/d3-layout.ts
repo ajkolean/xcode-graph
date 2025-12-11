@@ -40,24 +40,25 @@ const CONFIG = {
   nodeCollisionPadding: 16,
   linkDistance: 65,
   linkStrength: 0.35,
-  nodeCharge: -90,
+  nodeCharge: -120, // Stronger repulsion for more spread
 
   // Cluster forces
   clusterStrength: 0.25,
   clusterDistanceMin: 20,
-  clusterRepulsionStrength: 20000,
-  clusterPadding: 140,
+  clusterRepulsionStrength: 25000, // Stronger cluster repulsion
+  clusterPadding: 160, // More padding between clusters
 
-  // Layer biasing (gentle vertical structure)
-  layerSpacing: 70,
-  layerStrength: 0.25,
+  // Layer biasing (very gentle - just a hint of structure)
+  layerSpacing: 50,
+  layerStrength: 0.08, // Much weaker - let natural forces dominate
 
   // Simulation
   iterations: 300,
 
   // 3D-specific
-  initialZSpread: 200,
-  zCenterStrength: 0.05,
+  initialZSpread: 400,
+  zCenterStrength: 0.005, // Very weak z-centering
+  zLayerStrength: 0.12, // Layer-based z positioning
 
   // Cluster sizing
   minClusterSize: 80,
@@ -197,21 +198,22 @@ export function computeHierarchicalLayout(
   });
 
   // Create cluster centers with radius (using Map for O(1) lookups)
-  // Use grid-based initial positioning to reduce overlap
+  // Use spiral-based initial positioning for more organic distribution
   const clusterCenterMap = new Map<string, ClusterCenter>();
-  const cols = Math.ceil(Math.sqrt(clusters.length));
-  const initialSpacing = 300;
+  const initialSpacing = 350;
 
   clusters.forEach((cluster, i) => {
     const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
 
-    const colIndex = i % cols;
-    const rowIndex = Math.floor(i / cols);
+    // Spiral positioning: angle increases, radius grows with index
+    // This creates a more natural, less grid-like initial arrangement
+    const angle = i * 2.4; // Golden angle approximation for even distribution
+    const radius = Math.sqrt(i + 1) * initialSpacing * 0.5;
 
     clusterCenterMap.set(cluster.id, {
       id: cluster.id,
-      cx: (colIndex - (cols - 1) / 2) * initialSpacing,
-      cy: (rowIndex - 0.5) * initialSpacing,
+      cx: Math.cos(angle) * radius,
+      cy: Math.sin(angle) * radius,
       radius: size / 2,
     });
   });
@@ -308,9 +310,31 @@ export function computeHierarchicalLayout(
     )
     .stop();
 
-  // Add z-centering force for 3D mode
-  if (dimension === '3d' && 'forceZ' in d3) {
-    (simulation as any).force('z', (d3 as any).forceZ(0).strength(CONFIG.zCenterStrength));
+  // Enable 3D mode: set numDimensions to 3 and add z-based forces
+  if (dimension === '3d') {
+    // numDimensions(3) tells d3-force-3d to simulate in 3D (x, y, z coordinates)
+    if ('numDimensions' in simulation) {
+      (simulation as any).numDimensions(3);
+    }
+    // Add layer-based z positioning: nodes at different layers get different z depths
+    // This creates a front-to-back layering effect in 3D
+    if ('forceZ' in d3) {
+      (simulation as any).force(
+        'layerZ',
+        (d3 as any)
+          .forceZ((d: any) => {
+            const layer = nodeLayer.get(d.id);
+            // Layer 0 (entry points) at front, higher layers recede into the back
+            return layer != null ? -layer * CONFIG.layerSpacing * 0.8 : 0;
+          })
+          .strength(CONFIG.zLayerStrength),
+      );
+      // Very weak general z-centering to prevent drift
+      (simulation as any).force(
+        'zCenter',
+        (d3 as any).forceZ(0).strength(CONFIG.zCenterStrength),
+      );
+    }
   }
 
   // Run simulation to completion
