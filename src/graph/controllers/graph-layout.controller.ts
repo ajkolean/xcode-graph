@@ -115,7 +115,7 @@ export class GraphLayoutController implements ReactiveController {
     this._nodePositions = layout.nodePositions;
     this._clusterPositions = layout.clusterPositions;
 
-    this.host.requestUpdate();
+    // No requestUpdate() needed - we're already in an update cycle
   }
 
   /**
