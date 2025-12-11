@@ -16,7 +16,7 @@ export interface HierarchicalLayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
   nodePositions: Map<string, NodePosition>;
   clusters: Cluster[];
-  bundledEdges?: Array<Array<{ x: number; y: number }>>;
+  bundledEdges?: Array<Array<{ x: number; y: number }>> | undefined;
 }
 
 // Layout configuration
@@ -105,7 +105,7 @@ export function computeHierarchicalLayout(
   }
 
   // Create simulation nodes with type safety
-  const simNodes: SimNode[] = nodes.map((n) => ({
+  const simNodes = nodes.map((n): SimNode => ({
     id: n.id,
     clusterId: nodeToCluster.get(n.id),
     x: Math.random() * 100 - 50,
