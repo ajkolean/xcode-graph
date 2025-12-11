@@ -28,7 +28,7 @@ export function forceEdgeBundling(
   nodes: Record<string, Point>,
   edges: Edge[],
   config: BundlingConfig = {},
-) {
+): Point[][] {
   const {
     K = 0.1,
     S_initial = 0.1,
@@ -53,21 +53,21 @@ export function forceEdgeBundling(
 
   // Helper functions
   const edgeLength = (e: Edge) => {
-    const src = nodes[e.source];
-    const tgt = nodes[e.target];
+    const src = nodes[e.source]!;
+    const tgt = nodes[e.target]!;
     return Math.hypot(tgt.x - src.x, tgt.y - src.y) || eps;
   };
 
   const edgeMidpoint = (e: Edge): Point => ({
-    x: (nodes[e.source].x + nodes[e.target].x) / 2,
-    y: (nodes[e.source].y + nodes[e.target].y) / 2,
+    x: (nodes[e.source]!.x + nodes[e.target]!.x) / 2,
+    y: (nodes[e.source]!.y + nodes[e.target]!.y) / 2,
   });
 
   const euclidean = (p: Point, q: Point) => Math.hypot(p.x - q.x, p.y - q.y);
 
   const compatibilityScore = (P: Edge, Q: Edge) => {
-    const pVec = { x: nodes[P.target].x - nodes[P.source].x, y: nodes[P.target].y - nodes[P.source].y };
-    const qVec = { x: nodes[Q.target].x - nodes[Q.source].x, y: nodes[Q.target].y - nodes[Q.source].y };
+    const pVec = { x: nodes[P.target]!.x - nodes[P.source]!.x, y: nodes[P.target]!.y - nodes[P.source]!.y };
+    const qVec = { x: nodes[Q.target]!.x - nodes[Q.source]!.x, y: nodes[Q.target]!.y - nodes[Q.source]!.y };
 
     const pLen = edgeLength(P);
     const qLen = edgeLength(Q);
@@ -91,15 +91,16 @@ export function forceEdgeBundling(
   // Initialize
   for (let i = 0; i < filteredEdges.length; i++) {
     compatibility_list[i] = [];
-    subdivisions[i] = [nodes[filteredEdges[i].source], nodes[filteredEdges[i].target]];
+    const edge = filteredEdges[i]!;
+    subdivisions[i] = [nodes[edge.source]!, nodes[edge.target]!];
   }
 
   // Compute compatibility
   for (let i = 0; i < filteredEdges.length - 1; i++) {
     for (let j = i + 1; j < filteredEdges.length; j++) {
-      if (compatibilityScore(filteredEdges[i], filteredEdges[j]) >= compatibility_threshold) {
-        compatibility_list[i].push(j);
-        compatibility_list[j].push(i);
+      if (compatibilityScore(filteredEdges[i]!, filteredEdges[j]!) >= compatibility_threshold) {
+        compatibility_list[i]!.push(j);
+        compatibility_list[j]!.push(i);
       }
     }
   }
@@ -113,27 +114,30 @@ export function forceEdgeBundling(
     // Subdivide edges
     if (cycle > 0) {
       for (let e = 0; e < filteredEdges.length; e++) {
-        const newPoints: Point[] = [subdivisions[e][0]];
-        const totalLength = subdivisions[e].reduce((sum, p, i) =>
-          i === 0 ? 0 : sum + euclidean(p, subdivisions[e][i - 1]), 0
+        const sub = subdivisions[e]!;
+        const newPoints: Point[] = [sub[0]!];
+        const totalLength = sub.reduce((sum, p, i) =>
+          i === 0 ? 0 : sum + euclidean(p, sub[i - 1]!), 0
         );
         const segmentLength = totalLength / (P + 1);
 
         let currentDist = 0;
-        for (let i = 1; i < subdivisions[e].length; i++) {
-          const segDist = euclidean(subdivisions[e][i], subdivisions[e][i - 1]);
+        for (let i = 1; i < sub.length; i++) {
+          const segDist = euclidean(sub[i]!, sub[i - 1]!);
           currentDist += segDist;
 
           while (currentDist >= segmentLength && newPoints.length < P + 1) {
             const t = 1 - (currentDist - segmentLength) / segDist;
+            const p1 = sub[i - 1]!;
+            const p2 = sub[i]!;
             newPoints.push({
-              x: subdivisions[e][i - 1].x + t * (subdivisions[e][i].x - subdivisions[e][i - 1].x),
-              y: subdivisions[e][i - 1].y + t * (subdivisions[e][i].y - subdivisions[e][i - 1].y),
+              x: p1.x + t * (p2.x - p1.x),
+              y: p1.y + t * (p2.y - p1.y),
             });
             currentDist -= segmentLength;
           }
         }
-        newPoints.push(subdivisions[e][subdivisions[e].length - 1]);
+        newPoints.push(sub[sub.length - 1]!);
         subdivisions[e] = newPoints;
       }
     }
@@ -143,40 +147,42 @@ export function forceEdgeBundling(
       const forces: Point[][] = [];
 
       for (let e = 0; e < filteredEdges.length; e++) {
-        forces[e] = subdivisions[e].map(() => ({ x: 0, y: 0 }));
-        const kP = K / (edgeLength(filteredEdges[e]) * (P + 1));
+        const sub = subdivisions[e]!;
+        forces[e] = sub.map(() => ({ x: 0, y: 0 }));
+        const kP = K / (edgeLength(filteredEdges[e]!) * (P + 1));
 
-        for (let i = 1; i < subdivisions[e].length - 1; i++) {
+        for (let i = 1; i < sub.length - 1; i++) {
           // Spring force
-          const prev = subdivisions[e][i - 1];
-          const curr = subdivisions[e][i];
-          const next = subdivisions[e][i + 1];
-          forces[e][i].x += (prev.x - curr.x + next.x - curr.x) * kP;
-          forces[e][i].y += (prev.y - curr.y + next.y - curr.y) * kP;
+          const prev = sub[i - 1]!;
+          const curr = sub[i]!;
+          const next = sub[i + 1]!;
+          forces[e]![i]!.x += (prev.x - curr.x + next.x - curr.x) * kP;
+          forces[e]![i]!.y += (prev.y - curr.y + next.y - curr.y) * kP;
 
           // Electrostatic force
-          for (const oe of compatibility_list[e]) {
-            const other = subdivisions[oe][i];
+          for (const oe of compatibility_list[e]!) {
+            const other = subdivisions[oe]![i]!;
             const dx = other.x - curr.x;
             const dy = other.y - curr.y;
             const dist = euclidean(other, curr);
             if (dist > eps) {
               const strength = 1 / dist;
-              forces[e][i].x += dx * strength;
-              forces[e][i].y += dy * strength;
+              forces[e]![i]!.x += dx * strength;
+              forces[e]![i]!.y += dy * strength;
             }
           }
 
-          forces[e][i].x *= S;
-          forces[e][i].y *= S;
+          forces[e]![i]!.x *= S;
+          forces[e]![i]!.y *= S;
         }
       }
 
       // Apply forces
       for (let e = 0; e < filteredEdges.length; e++) {
-        for (let i = 1; i < subdivisions[e].length - 1; i++) {
-          subdivisions[e][i].x += forces[e][i].x;
-          subdivisions[e][i].y += forces[e][i].y;
+        const sub = subdivisions[e]!;
+        for (let i = 1; i < sub.length - 1; i++) {
+          sub[i]!.x += forces[e]![i]!.x;
+          sub[i]!.y += forces[e]![i]!.y;
         }
       }
     }
