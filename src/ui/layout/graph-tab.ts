@@ -14,13 +14,13 @@
  * ```
  */
 
+import type { GraphCanvas } from '@graph/components/graph-canvas';
 import type { TransitiveResult } from '@graph/utils';
 import { Signal, SignalWatcher } from '@lit-labs/signals';
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { css, html, LitElement } from 'lit';
 import { property, query } from 'lit/decorators.js';
-import type { GraphCanvas } from '@graph/components/graph-canvas';
 import '@graph/components/graph-visualization';
 import '@graph/components/graph-canvas';
 import '@graph/components/graph-overlays';
@@ -39,11 +39,13 @@ import {
 } from '@graph/signals/index';
 import {
   enableAnimation,
+  layoutDimension,
   previewFilter,
   resetZoom,
   searchQuery,
   setZoom,
   toggleAnimation,
+  toggleLayoutDimension,
   zoom,
   zoomIn,
   zoomOut,
@@ -152,6 +154,12 @@ export class GraphTab extends SignalWatcher(LitElement) {
     toggleAnimation();
   }
 
+  private handleToggleDimension() {
+    toggleLayoutDimension();
+    // Layout will re-run automatically when layoutDimension signal changes
+    // as components watching the signal will trigger re-layout
+  }
+
   private handleZoomChange(e: CustomEvent) {
     setZoom(e.detail);
   }
@@ -196,10 +204,12 @@ export class GraphTab extends SignalWatcher(LitElement) {
               .nodeCount=${this.displayNodes.length}
               .edgeCount=${this.displayEdges.length}
               ?enable-animation=${enableAnimation.get()}
+              .layoutDimension=${layoutDimension.get()}
               @zoom-in=${this.handleZoomIn}
               @zoom-out=${this.handleZoomOut}
               @zoom-reset=${this.handleZoomReset}
               @toggle-animation=${this.handleToggleAnimation}
+              @toggle-dimension=${this.handleToggleDimension}
             ></graph-controls>
 
             <graph-canvas

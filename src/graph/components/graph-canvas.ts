@@ -93,6 +93,9 @@ export class GraphCanvas extends LitElement {
   private time = 0;
   private didInitialFit = false;
 
+  // Starfield State
+  private starfield: Array<{ x: number; y: number; r: number; a: number; depth: number }> = [];
+
   constructor() {
     super();
     this.nodes = [];
@@ -207,6 +210,61 @@ export class GraphCanvas extends LitElement {
   }
 
   /**
+   * Generate a starfield with sparse dust and occasional bright stars.
+   * Stars have depth values for parallax effect during panning.
+   */
+  private generateStarfield(width: number, height: number, count = 400) {
+    this.starfield = [];
+
+    for (let i = 0; i < count; i++) {
+      const isBright = Math.random() < 0.025; // ~2.5% bright stars
+
+      this.starfield.push({
+        x: Math.random() * width * 2 - width * 0.5, // Extend beyond viewport for parallax
+        y: Math.random() * height * 2 - height * 0.5,
+        r: isBright ? Math.random() * 1.5 + 1.0 : Math.random() * 0.8 + 0.2,
+        a: isBright ? Math.random() * 0.4 + 0.5 : Math.random() * 0.2 + 0.05,
+        depth: Math.random() * 0.8 + 0.1, // 0.1 = far (slow), 0.9 = near (faster)
+      });
+    }
+
+    // Sort by depth so distant stars render first
+    this.starfield.sort((a, b) => a.depth - b.depth);
+  }
+
+  /**
+   * Render starfield with parallax based on pan position.
+   * Stars at different depths move at different rates.
+   */
+  private renderStarfield(width: number, height: number) {
+    this.ctx.save();
+
+    for (const star of this.starfield) {
+      // Parallax: deeper stars move less with pan
+      const parallaxFactor = star.depth * 0.15;
+      const sx = star.x + this.pan.x * parallaxFactor;
+      const sy = star.y + this.pan.y * parallaxFactor;
+
+      // Wrap stars that go off screen
+      const wrappedX = (((sx % (width * 2)) + width * 2) % (width * 2)) - width * 0.5;
+      const wrappedY = (((sy % (height * 2)) + height * 2) % (height * 2)) - height * 0.5;
+
+      // Skip if outside visible area
+      if (wrappedX < -5 || wrappedX > width + 5 || wrappedY < -5 || wrappedY > height + 5) {
+        continue;
+      }
+
+      this.ctx.globalAlpha = star.a;
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.beginPath();
+      this.ctx.arc(wrappedX, wrappedY, star.r, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+
+    this.ctx.restore();
+  }
+
+  /**
    * Fit graph into viewport: compute bounding box of all clusters and adjust pan/zoom.
    */
   fitToViewport() {
@@ -270,6 +328,9 @@ export class GraphCanvas extends LitElement {
     this.canvas.style.width = `${rect.width}px`;
     this.canvas.style.height = `${rect.height}px`;
 
+    // Regenerate starfield for new canvas size
+    this.generateStarfield(rect.width, rect.height);
+
     this.renderCanvas();
   }
 
@@ -290,15 +351,12 @@ export class GraphCanvas extends LitElement {
         const manualPos = this.manualClusterPositions.get(cluster.id);
         const cx = manualPos?.x ?? layoutPos.x;
         const cy = manualPos?.y ?? layoutPos.y;
-        const halfW = layoutPos.width / 2;
-        const halfH = layoutPos.height / 2;
+        const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
 
-        if (
-          worldPos.x >= cx - halfW &&
-          worldPos.x <= cx + halfW &&
-          worldPos.y >= cy - halfH &&
-          worldPos.y <= cy + halfH
-        ) {
+        // Circular hit test
+        const dx = worldPos.x - cx;
+        const dy = worldPos.y - cy;
+        if (dx * dx + dy * dy <= radius * radius) {
           this.draggedClusterId = cluster.id;
           this.dispatchEvent(
             new CustomEvent('cluster-select', {
@@ -351,15 +409,12 @@ export class GraphCanvas extends LitElement {
       const manualPos = this.manualClusterPositions.get(cluster.id);
       const cx = manualPos?.x ?? layoutPos.x;
       const cy = manualPos?.y ?? layoutPos.y;
-      const halfW = layoutPos.width / 2;
-      const halfH = layoutPos.height / 2;
+      const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
 
-      if (
-        worldPos.x >= cx - halfW &&
-        worldPos.x <= cx + halfW &&
-        worldPos.y >= cy - halfH &&
-        worldPos.y <= cy + halfH
-      ) {
+      // Circular hit test
+      const dx = worldPos.x - cx;
+      const dy = worldPos.y - cy;
+      if (dx * dx + dy * dy <= radius * radius) {
         this.dispatchEvent(
           new CustomEvent('cluster-select', {
             detail: { clusterId: cluster.id },
@@ -459,15 +514,12 @@ export class GraphCanvas extends LitElement {
           const pos = this.layout.clusterPositions.get(cluster.id);
           if (!pos) continue;
 
-          const halfW = pos.width / 2;
-          const halfH = pos.height / 2;
+          const radius = Math.max(pos.width, pos.height) / 2;
 
-          if (
-            worldPos.x >= pos.x - halfW &&
-            worldPos.x <= pos.x + halfW &&
-            worldPos.y >= pos.y - halfH &&
-            worldPos.y <= pos.y + halfH
-          ) {
+          // Circular hit test
+          const dx = worldPos.x - pos.x;
+          const dy = worldPos.y - pos.y;
+          if (dx * dx + dy * dy <= radius * radius) {
             hitClusterId = cluster.id;
             break;
           }
@@ -571,6 +623,11 @@ export class GraphCanvas extends LitElement {
     const height = this.canvas.height / (window.devicePixelRatio || 1);
 
     this.ctx.clearRect(0, 0, width, height);
+
+    // Render starfield first (behind everything, in screen space)
+    this.renderStarfield(width, height);
+
+    // Apply world transform for graph elements
     this.ctx.save();
     this.ctx.translate(this.pan.x, this.pan.y);
     this.ctx.scale(this.zoom, this.zoom);
@@ -648,21 +705,18 @@ export class GraphCanvas extends LitElement {
       const cx = manualPos?.x ?? layoutPos.x;
       const cy = manualPos?.y ?? layoutPos.y;
 
-      const halfW = layoutPos.width / 2;
-      const halfH = layoutPos.height / 2;
+      // Use circular clusters - radius is half of the larger dimension
+      const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
+
+      // Viewport culling with circular bounds
       if (
-        cx + halfW < viewport.minX ||
-        cx - halfW > viewport.maxX ||
-        cy + halfH < viewport.minY ||
-        cy - halfH > viewport.maxY
+        cx + radius < viewport.minX ||
+        cx - radius > viewport.maxX ||
+        cy + radius < viewport.minY ||
+        cy - radius > viewport.maxY
       ) {
         continue;
       }
-
-      const x = cx - halfW;
-      const y = cy - halfH;
-      const width = layoutPos.width;
-      const height = layoutPos.height;
 
       const clusterColor = generateColor(cluster.name, cluster.type);
       const isHighlighted = this.hoveredCluster === cluster.id;
@@ -674,15 +728,17 @@ export class GraphCanvas extends LitElement {
 
       this.ctx.globalAlpha = shouldDim ? 0.3 : 1.0;
 
+      // Draw circular cluster fill
       this.ctx.beginPath();
-      this.ctx.roundRect(x, y, width, height, 8);
+      this.ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       this.ctx.fillStyle = clusterColor;
-      this.ctx.globalAlpha = isActive ? 0.03 : 0.09;
+      this.ctx.globalAlpha = isActive ? 0.05 : 0.08;
       this.ctx.fill();
 
       this.ctx.globalAlpha = shouldDim ? 0.3 : 1.0;
 
-      this.ctx.lineWidth = 3.5;
+      // Draw circular cluster border
+      this.ctx.lineWidth = isActive ? 2.5 : 2;
       this.ctx.strokeStyle = clusterColor;
       this.ctx.globalAlpha = (isActive ? 0.9 : borderOpacity) * (shouldDim ? 0.3 : 1.0);
 
@@ -700,15 +756,17 @@ export class GraphCanvas extends LitElement {
       this.ctx.setLineDash([]);
       this.ctx.lineDashOffset = 0;
 
-      this.ctx.globalAlpha = (isActive ? 1 : 0.6) * (shouldDim ? 0.3 : 1.0);
+      // Draw label at top of circle
+      this.ctx.globalAlpha = (isActive ? 1 : 0.7) * (shouldDim ? 0.3 : 1.0);
       this.ctx.fillStyle = clusterColor;
-      this.ctx.font = `${isActive ? 600 : 500} 14px var(--fonts-body, sans-serif)`;
-      this.ctx.textAlign = 'left';
-      this.ctx.fillText(cluster.name, x + 12, y + 20);
+      this.ctx.font = `${isActive ? 600 : 500} 13px var(--fonts-body, sans-serif)`;
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(cluster.name, cx, cy - radius - 12);
 
-      this.ctx.textAlign = 'right';
-      this.ctx.font = `${isActive ? 600 : 500} 12px var(--fonts-body, sans-serif)`;
-      this.ctx.fillText(`${cluster.nodes.length} targets`, x + width - 12, y + 20);
+      // Draw node count below cluster name
+      this.ctx.font = `${isActive ? 500 : 400} 11px var(--fonts-body, sans-serif)`;
+      this.ctx.globalAlpha = (isActive ? 0.8 : 0.5) * (shouldDim ? 0.3 : 1.0);
+      this.ctx.fillText(`${cluster.nodes.length} targets`, cx, cy - radius + 4);
 
       this.ctx.globalAlpha = 1.0;
     }

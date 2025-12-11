@@ -9,6 +9,7 @@
     "@zag-js/store": "^1.30.0",
     "@zag-js/utils": "1.30.0",
     "d3-force": "^3.0.0",
+    "d3-force-3d": "^3.0.6",
     "d3-force-clustering": "^1.0.0",
     "lit": "^3.3.1",
     "signal-polyfill": "^0.2.2",

@@ -23,6 +23,10 @@ export interface NodePosition {
   vx: number;
   /** Y velocity for physics animation */
   vy: number;
+  /** Z position in 3D mode */
+  z?: number;
+  /** Z velocity in 3D mode */
+  vz?: number;
   /** Parent cluster ID */
   clusterId: string;
   /** Visual radius of the node */
@@ -51,10 +55,16 @@ export interface ClusterPosition {
   vx: number;
   /** Y velocity for physics animation */
   vy: number;
+  /** Z position of cluster center in 3D mode */
+  z?: number;
+  /** Z velocity in 3D mode */
+  vz?: number;
   /** Width of cluster bounding box */
   width: number;
   /** Height of cluster bounding box */
   height: number;
+  /** Depth of cluster bounding box in 3D mode */
+  depth?: number;
   /** Number of nodes in this cluster */
   nodeCount: number;
 }
@@ -70,6 +80,8 @@ export const NodePositionSchema: z.ZodType<NodePosition> = z.object({
   y: z.number(),
   vx: z.number(),
   vy: z.number(),
+  z: z.number().optional(),
+  vz: z.number().optional(),
   clusterId: z.string(),
   radius: z.number(),
   targetRadius: z.number().optional(),
@@ -88,7 +100,10 @@ export const ClusterPositionSchema: z.ZodType<ClusterPosition> = z.object({
   y: z.number(),
   vx: z.number(),
   vy: z.number(),
+  z: z.number().optional(),
+  vz: z.number().optional(),
   width: z.number().positive(),
   height: z.number().positive(),
+  depth: z.number().positive().optional(),
   nodeCount: z.number().int().nonnegative(),
 });

@@ -66,6 +66,9 @@ export class GraphControls extends LitElement {
   @property({ type: Boolean, attribute: 'enable-animation' })
   declare enableAnimation: boolean;
 
+  @property({ type: String, attribute: 'layout-dimension' })
+  declare layoutDimension: '2d' | '3d';
+
   static override readonly styles = css`
     :host {
       display: block;
@@ -158,6 +161,33 @@ export class GraphControls extends LitElement {
       height: 100%;
       stroke: currentColor;
     }
+
+    .dimension-toggle {
+      display: flex;
+      align-items: center;
+      padding: var(--spacing-1) var(--spacing-2);
+      border-radius: var(--radii-md);
+      transition: all var(--durations-normal);
+      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      background: none;
+      cursor: pointer;
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      font-weight: var(--font-weights-medium);
+      color: var(--colors-muted-foreground);
+      min-width: 32px;
+      justify-content: center;
+    }
+
+    .dimension-toggle:hover {
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+    }
+
+    .dimension-toggle.active-3d {
+      border-color: color-mix(in srgb, var(--colors-primary) 50%, transparent);
+      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      color: var(--colors-primary);
+    }
   `;
 
   private handleZoomIn() {
@@ -176,6 +206,16 @@ export class GraphControls extends LitElement {
     this.dispatchEvent(
       new CustomEvent('toggle-animation', {
         detail: { enabled: !this.enableAnimation },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private handleToggleDimension() {
+    this.dispatchEvent(
+      new CustomEvent('toggle-dimension', {
+        detail: { dimension: this.layoutDimension === '2d' ? '3d' : '2d' },
         bubbles: true,
         composed: true,
       }),
@@ -222,7 +262,13 @@ export class GraphControls extends LitElement {
 
         <div class="divider"></div>
 
-        <!-- Animation button removed - will be replaced with 2D/3D toggle -->
+        <button
+          class="dimension-toggle ${this.layoutDimension === '3d' ? 'active-3d' : ''}"
+          @click=${this.handleToggleDimension}
+          title="${this.layoutDimension === '2d' ? 'Switch to 3D layout' : 'Switch to 2D layout'}"
+        >
+          ${this.layoutDimension === '2d' ? '2D' : '3D'}
+        </button>
       </div>
     `;
   }
