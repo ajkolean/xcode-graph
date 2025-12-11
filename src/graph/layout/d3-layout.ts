@@ -34,6 +34,10 @@ const CONFIG = {
   clusterRepulsionStrength: 2500,
   clusterRepulsionMinDist: 180,
 
+  // Layer biasing (gentle vertical structure)
+  layerSpacing: 40,
+  layerStrength: 0.1,
+
   // Simulation
   iterations: 300,
 
@@ -96,6 +100,17 @@ export function computeHierarchicalLayout(
 
   // Build mappings
   const nodeToCluster = buildNodeToClusterMap(clusters);
+
+  // Extract layer information from cluster metadata
+  const nodeLayer = new Map<string, number>();
+  for (const cluster of clusters) {
+    for (const node of cluster.nodes) {
+      const metadata = cluster.metadata?.get(node.id);
+      if (metadata?.layer != null) {
+        nodeLayer.set(node.id, metadata.layer);
+      }
+    }
+  }
 
   // Pre-calculate cluster sizes
   const clusterSizes = new Map<string, number>();
@@ -223,6 +238,14 @@ export function computeHierarchicalLayout(
     )
     .force('boundaries', applyAllClusterBoundaries)
     .force('center', d3.forceCenter(0, 0))
+    // Layer biasing: gently pull nodes into horizontal bands by layer
+    .force(
+      'layerY',
+      d3.forceY((d: any) => {
+        const layer = nodeLayer.get(d.id);
+        return layer != null ? layer * CONFIG.layerSpacing : 0;
+      }).strength(CONFIG.layerStrength),
+    )
     .stop();
 
   // Run simulation to completion
