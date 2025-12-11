@@ -16,12 +16,12 @@
  * @module controllers/layout
  */
 
-import { computeHierarchicalLayout } from '@/graph/layout/d3-layout';
 import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
+import { computeHierarchicalLayout } from '@/graph/layout/d3-layout';
 
 // ==================== Type Definitions ====================
 

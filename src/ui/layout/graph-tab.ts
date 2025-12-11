@@ -19,9 +19,11 @@ import { Signal, SignalWatcher } from '@lit-labs/signals';
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { css, html, LitElement } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
+import type { GraphCanvas } from '@graph/components/graph-canvas';
 import '@graph/components/graph-visualization';
 import '@graph/components/graph-canvas';
+import '@graph/components/graph-overlays';
 import '../components/right-sidebar';
 
 // Import signals
@@ -40,6 +42,7 @@ import {
   previewFilter,
   resetZoom,
   searchQuery,
+  setZoom,
   toggleAnimation,
   zoom,
   zoomIn,
@@ -50,6 +53,9 @@ export class GraphTab extends SignalWatcher(LitElement) {
   // ========================================
   // Properties
   // ========================================
+
+  @query('graph-canvas')
+  private declare canvasElement: GraphCanvas;
 
   @property({ attribute: false })
   declare displayNodes: GraphNode[];
@@ -138,11 +144,16 @@ export class GraphTab extends SignalWatcher(LitElement) {
   }
 
   private handleZoomReset() {
-    resetZoom();
+    // Fit to viewport instead of resetting to 1.0
+    this.canvasElement?.fitToViewport();
   }
 
   private handleToggleAnimation() {
     toggleAnimation();
+  }
+
+  private handleZoomChange(e: CustomEvent) {
+    setZoom(e.detail);
   }
 
   // ========================================
@@ -180,6 +191,17 @@ export class GraphTab extends SignalWatcher(LitElement) {
             ></graph-visualization>
             -->
             
+            <graph-controls
+              .zoom=${zoom.get()}
+              .nodeCount=${this.displayNodes.length}
+              .edgeCount=${this.displayEdges.length}
+              ?enable-animation=${enableAnimation.get()}
+              @zoom-in=${this.handleZoomIn}
+              @zoom-out=${this.handleZoomOut}
+              @zoom-reset=${this.handleZoomReset}
+              @toggle-animation=${this.handleToggleAnimation}
+            ></graph-controls>
+
             <graph-canvas
               .nodes=${this.displayNodes}
               .edges=${this.displayEdges}
@@ -199,6 +221,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
               @zoom-in=${this.handleZoomIn}
               @zoom-out=${this.handleZoomOut}
               @zoom-reset=${this.handleZoomReset}
+              @zoom-change=${this.handleZoomChange}
               @toggle-animation=${this.handleToggleAnimation}
             ></graph-canvas>
           </div>

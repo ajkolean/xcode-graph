@@ -72,6 +72,7 @@ export class GraphControls extends LitElement {
       position: absolute;
       top: var(--spacing-md);
       left: var(--spacing-md);
+      z-index: 10;
     }
 
     .container {
@@ -181,6 +182,16 @@ export class GraphControls extends LitElement {
     );
   }
 
+  private handleWheel(e: WheelEvent) {
+    // Stop wheel events from propagating to the canvas
+    e.stopPropagation();
+  }
+
+  private handleMouseDown(e: MouseEvent) {
+    // Stop mouse events from propagating to the canvas
+    e.stopPropagation();
+  }
+
   private renderOrbitIcon() {
     return svg`
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -193,7 +204,7 @@ export class GraphControls extends LitElement {
 
   override render() {
     return html`
-      <div class="container">
+      <div class="container" @wheel=${this.handleWheel} @mousedown=${this.handleMouseDown}>
         <span>${Math.round(this.zoom * 100)}%</span>
         <div class="divider"></div>
 
@@ -211,16 +222,7 @@ export class GraphControls extends LitElement {
 
         <div class="divider"></div>
 
-        <button
-          class="animation-button ${this.enableAnimation ? 'active' : ''}"
-          @click=${this.handleToggleAnimation}
-          title="Toggle space ballet animation"
-        >
-          <span class="orbit-icon">${this.renderOrbitIcon()}</span>
-          <span style="font-size: var(--text-label)">
-            ${this.enableAnimation ? 'Animated' : 'Static'}
-          </span>
-        </button>
+        <!-- Animation button removed - will be replaced with 2D/3D toggle -->
       </div>
     `;
   }
