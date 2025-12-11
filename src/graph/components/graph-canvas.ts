@@ -156,10 +156,8 @@ export class GraphCanvas extends LitElement {
   override willUpdate(changedProps: PropertyValues<this>) {
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       this.layout.enableAnimation = this.enableAnimation;
-      // Fire async layout computation
-      this.layout.computeLayout(this.nodes, this.edges).then(() => {
-        this.requestUpdate(); // Trigger render when layout completes
-      });
+      // D3 layout is synchronous - runs to completion immediately
+      this.layout.computeLayout(this.nodes, this.edges);
       this.manualNodePositions.clear();
       this.updatePathCache();
     }

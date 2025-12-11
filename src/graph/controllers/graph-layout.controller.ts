@@ -37,9 +37,7 @@
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import { AnimationController } from './animation.controller';
 import { LayoutController } from './layout.controller';
-import { PhysicsController } from './physics.controller';
 
 // ==================== Type Definitions ====================
 
@@ -59,12 +57,10 @@ export interface GraphLayoutConfig {
 export class GraphLayoutController implements ReactiveController {
   private readonly host: ReactiveControllerHost;
 
-  // Sub-controllers (single responsibility)
+  // Sub-controllers
   private readonly layoutController: LayoutController;
-  private readonly physicsController: PhysicsController;
-  private readonly animationController: AnimationController;
 
-  // Configuration
+  // Configuration (kept for backwards compatibility but ignored)
   enableAnimation: boolean;
 
   // State (delegated from sub-controllers)
@@ -81,7 +77,7 @@ export class GraphLayoutController implements ReactiveController {
   }
 
   get isSettling(): boolean {
-    return this.animationController.isActive;
+    return false; // No animation - D3 runs to completion
   }
 
   private _nodePositions = new Map<string, NodePosition>();
@@ -92,16 +88,8 @@ export class GraphLayoutController implements ReactiveController {
     this.host = host;
     this.enableAnimation = config.enableAnimation ?? true;
 
-    // Initialize sub-controllers
+    // Initialize layout controller (D3 handles physics/animation)
     this.layoutController = new LayoutController(host);
-    this.physicsController = new PhysicsController(host, {
-      nodeCollisionStrength: config.nodeCollisionStrength,
-      clusterCollisionStrength: config.clusterCollisionStrength,
-    });
-    this.animationController = new AnimationController(host, {
-      totalTicks: config.animationTicks ?? 30,
-    });
-
     host.addController(this);
   }
 
@@ -110,9 +98,9 @@ export class GraphLayoutController implements ReactiveController {
   // ========================================
 
   /**
-   * Compute layout with optional animation
+   * Compute layout - D3 runs synchronously to completion
    */
-  async computeLayout(nodes: GraphNode[], edges: GraphEdge[]): Promise<void> {
+  computeLayout(nodes: GraphNode[], edges: GraphEdge[]): void {
     if (nodes.length === 0) {
       this._nodePositions = new Map();
       this._clusterPositions = new Map();
@@ -120,60 +108,35 @@ export class GraphLayoutController implements ReactiveController {
       return;
     }
 
-    // Step 1: Compute deterministic layout (LayoutController)
-    const layout = await this.layoutController.computeLayout(nodes, edges);
+    // D3 layout runs synchronously to completion
+    const layout = this.layoutController.computeLayout(nodes, edges);
 
     this._clusters = layout.clusters;
+    this._nodePositions = layout.nodePositions;
+    this._clusterPositions = layout.clusterPositions;
 
-    // If animation disabled, use positions directly
-    if (!this.enableAnimation) {
-      this._nodePositions = layout.nodePositions;
-      this._clusterPositions = layout.clusterPositions;
-      this.host.requestUpdate();
-      return;
-    }
-
-    // Step 2: Start physics animation (AnimationController + PhysicsController)
-    this.animationController.startAnimation(
-      layout.nodePositions,
-      layout.clusterPositions,
-      edges,
-      layout.clusters,
-      this.physicsController,
-      {
-        onTick: () => {
-          // Positions are mutated in place by AnimationController
-          // We just need to ensure our references are up to date (though they shouldn't change)
-          this._nodePositions = layout.nodePositions;
-          this._clusterPositions = layout.clusterPositions;
-        },
-        onComplete: () => {
-          this._nodePositions = layout.nodePositions;
-          this._clusterPositions = layout.clusterPositions;
-        },
-      },
-    );
+    this.host.requestUpdate();
   }
 
   /**
-   * Stop ongoing animation
+   * Stop animation - no-op (D3 runs synchronously)
    */
   stopAnimation(): void {
-    this.animationController.stop();
+    // No-op
   }
 
   /**
-   * Get animation progress (0-1)
+   * Get animation progress - always complete
    */
   getProgress(): number {
-    return this.animationController.progress;
+    return 1;
   }
 
   /**
-   * Check if animation is active
+   * Check if animation is active - always false
    */
   isAnimationActive(): boolean {
-    return this.animationController.isActive;
+    return false;
   }
 
   // ========================================
@@ -182,18 +145,19 @@ export class GraphLayoutController implements ReactiveController {
 
   setEnableAnimation(enabled: boolean): void {
     this.enableAnimation = enabled;
+    // Ignored - animation always disabled with D3
   }
 
-  setAnimationTicks(ticks: number): void {
-    this.animationController.setTotalTicks(ticks);
+  setAnimationTicks(_ticks: number): void {
+    // No-op
   }
 
-  setNodeCollisionStrength(strength: number): void {
-    this.physicsController.setNodeCollisionStrength(strength);
+  setNodeCollisionStrength(_strength: number): void {
+    // No-op - D3 handles collision
   }
 
-  setClusterCollisionStrength(strength: number): void {
-    this.physicsController.setClusterCollisionStrength(strength);
+  setClusterCollisionStrength(_strength: number): void {
+    // No-op - D3 handles collision
   }
 
   // ========================================
@@ -205,12 +169,6 @@ export class GraphLayoutController implements ReactiveController {
   }
 
   hostDisconnected(): void {
-    try {
-      this.stopAnimation();
-    } catch (error) {
-      console.error('[GraphLayoutController] Error during cleanup:', error);
-      // Force stop
-      this.animationController.stop();
-    }
+    // No cleanup needed - D3 runs synchronously
   }
 }
