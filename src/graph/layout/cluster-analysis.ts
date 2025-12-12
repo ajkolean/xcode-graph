@@ -1,5 +1,13 @@
-import { type Cluster, type ClusterNodeMetadata, NodeRole } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.schema';
+import {
+  type Cluster,
+  type ClusterNodeMetadata,
+  NodeRole,
+} from "@shared/schemas";
+import {
+  type GraphEdge,
+  type GraphNode,
+  NodeType,
+} from "@shared/schemas/graph.schema";
 
 /**
  * Analyzes a cluster to determine node roles, anchors, and layers
@@ -26,7 +34,9 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
   // Count external dependents
   const externalDependents = new Map<string, number>();
   cluster.nodes.forEach((node) => {
-    const count = allEdges.filter((e) => e.target === node.id && !nodeIds.has(e.source)).length;
+    const count = allEdges.filter(
+      (e) => e.target === node.id && !nodeIds.has(e.source),
+    ).length;
     externalDependents.set(node.id, count);
   });
 
@@ -39,10 +49,16 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
       testNodes.add(node.id);
 
       // Find what this test depends on (its subjects)
-      const subjects = Array.from(dependencies.get(node.id) || []).filter((depId) => {
-        const depNode = cluster.nodes.find((n) => n.id === depId);
-        return depNode && depNode.type !== NodeType.TestUnit && depNode.type !== NodeType.TestUi;
-      });
+      const subjects = Array.from(dependencies.get(node.id) || []).filter(
+        (depId) => {
+          const depNode = cluster.nodes.find((n) => n.id === depId);
+          return (
+            depNode &&
+            depNode.type !== NodeType.TestUnit &&
+            depNode.type !== NodeType.TestUi
+          );
+        },
+      );
 
       if (subjects.length > 0) {
         testSubjects.set(node.id, subjects);
@@ -102,19 +118,23 @@ export function identifyAnchors(
   // 3. Try frameworks/libs with external dependents
   const externalEntryPoints = nodes.filter(
     (n) =>
-      (n.type === 'framework' || n.type === 'library') && (externalDependents.get(n.id) || 0) > 0,
+      (n.type === "framework" || n.type === "library") &&
+      (externalDependents.get(n.id) || 0) > 0,
   );
   if (externalEntryPoints.length > 0) {
     // Return the one with most external dependents
     const sorted = externalEntryPoints.toSorted(
-      (a, b) => (externalDependents.get(b.id) || 0) - (externalDependents.get(a.id) || 0),
+      (a, b) =>
+        (externalDependents.get(b.id) || 0) -
+        (externalDependents.get(a.id) || 0),
     );
     return [sorted[0]];
   }
 
   // 4. Fallback: most-depended-upon node
   const sorted = nodes.toSorted(
-    (a, b) => (dependents.get(b.id)?.size || 0) - (dependents.get(a.id)?.size || 0),
+    (a, b) =>
+      (dependents.get(b.id)?.size || 0) - (dependents.get(a.id)?.size || 0),
   );
 
   return sorted.length > 0 ? [sorted[0]] : [];
@@ -168,8 +188,18 @@ function calculateInternalEdgeCounts(
     if (testNodes.has(node.id)) continue;
 
     const deps = dependencies.get(node.id) || new Set();
-    const depsCount = countInternalDependencies(node.id, deps, nodeIds, testNodes);
-    const dependentsCount = countInternalDependents(node.id, nodes, dependencies, testNodes);
+    const depsCount = countInternalDependencies(
+      node.id,
+      deps,
+      nodeIds,
+      testNodes,
+    );
+    const dependentsCount = countInternalDependents(
+      node.id,
+      nodes,
+      dependencies,
+      testNodes,
+    );
     internalEdgeCounts.set(node.id, depsCount + dependentsCount);
   }
 
@@ -177,11 +207,17 @@ function calculateInternalEdgeCounts(
 }
 
 // Helper: Distribute nodes into layers
-function distributeIntoLayers(sortedNodes: GraphNode[], layers: Map<string, number>): void {
+function distributeIntoLayers(
+  sortedNodes: GraphNode[],
+  layers: Map<string, number>,
+): void {
   if (sortedNodes.length === 0) return;
 
   const targetNodesPerLayer = 4;
-  const numLayers = Math.max(2, Math.ceil(sortedNodes.length / targetNodesPerLayer));
+  const numLayers = Math.max(
+    2,
+    Math.ceil(sortedNodes.length / targetNodesPerLayer),
+  );
   const nodesPerLayer = Math.ceil(sortedNodes.length / numLayers);
 
   for (let index = 0; index < sortedNodes.length; index++) {
@@ -203,7 +239,11 @@ export function assignLayers(
   testNodes: Set<string>,
 ): Map<string, number> {
   const layers = new Map<string, number>();
-  const internalEdgeCounts = calculateInternalEdgeCounts(nodes, dependencies, testNodes);
+  const internalEdgeCounts = calculateInternalEdgeCounts(
+    nodes,
+    dependencies,
+    testNodes,
+  );
 
   // Anchors always get layer 0
   for (const anchor of anchors) {

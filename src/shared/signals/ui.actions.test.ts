@@ -5,10 +5,13 @@
  * Tests tab switching, zoom controls, animation toggle, and preview filters.
  */
 
-import type { ActiveTab } from '@shared/schemas';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { SignalSnapshot } from '../../test-utils/signal-helpers';
-import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
+import type { ActiveTab } from "@shared/schemas";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { SignalSnapshot } from "../../test-utils/signal-helpers";
+import {
+  createSignalSnapshot,
+  restoreSignalSnapshot,
+} from "../../test-utils/signal-helpers";
 import {
   resetZoom,
   setActiveTab,
@@ -18,14 +21,25 @@ import {
   toggleAnimation,
   zoomIn,
   zoomOut,
-} from './ui.actions';
-import { activeTab, enableAnimation, type PreviewFilter, previewFilter, zoom } from './ui.signals';
+} from "./ui.actions";
+import {
+  activeTab,
+  enableAnimation,
+  type PreviewFilter,
+  previewFilter,
+  zoom,
+} from "./ui.signals";
 
-describe('ui.actions', () => {
+describe("ui.actions", () => {
   let snapshot: SignalSnapshot;
 
   beforeEach(() => {
-    snapshot = createSignalSnapshot([activeTab, zoom, enableAnimation, previewFilter]);
+    snapshot = createSignalSnapshot([
+      activeTab,
+      zoom,
+      enableAnimation,
+      previewFilter,
+    ]);
   });
 
   afterEach(() => {
@@ -34,21 +48,21 @@ describe('ui.actions', () => {
 
   // ==================== Tab Actions ====================
 
-  describe('setActiveTab', () => {
-    it('should set active tab to graph', () => {
-      setActiveTab('graph');
+  describe("setActiveTab", () => {
+    it("should set active tab to graph", () => {
+      setActiveTab("graph");
 
-      expect(activeTab.get()).toBe('graph');
+      expect(activeTab.get()).toBe("graph");
     });
 
-    it('should set active tab to placeholder', () => {
-      setActiveTab('placeholder');
+    it("should set active tab to placeholder", () => {
+      setActiveTab("placeholder");
 
-      expect(activeTab.get()).toBe('placeholder');
+      expect(activeTab.get()).toBe("placeholder");
     });
 
-    it('should allow switching between tabs', () => {
-      const tabs: ActiveTab[] = ['graph', 'placeholder'];
+    it("should allow switching between tabs", () => {
+      const tabs: ActiveTab[] = ["graph", "placeholder"];
 
       for (const tab of tabs) {
         setActiveTab(tab);
@@ -56,62 +70,62 @@ describe('ui.actions', () => {
       }
     });
 
-    it('should replace previous tab', () => {
-      setActiveTab('graph');
-      setActiveTab('placeholder');
+    it("should replace previous tab", () => {
+      setActiveTab("graph");
+      setActiveTab("placeholder");
 
-      expect(activeTab.get()).toBe('placeholder');
+      expect(activeTab.get()).toBe("placeholder");
     });
   });
 
   // ==================== Zoom Actions ====================
 
-  describe('setZoom', () => {
-    it('should set zoom level', () => {
+  describe("setZoom", () => {
+    it("should set zoom level", () => {
       setZoom(1.5);
 
       expect(zoom.get()).toBe(1.5);
     });
 
-    it('should clamp zoom to minimum 0.2', () => {
+    it("should clamp zoom to minimum 0.2", () => {
       setZoom(0.1);
 
       expect(zoom.get()).toBe(0.2);
     });
 
-    it('should clamp zoom to maximum 2.0', () => {
+    it("should clamp zoom to maximum 2.0", () => {
       setZoom(3.0);
 
       expect(zoom.get()).toBe(2);
     });
 
-    it('should allow zoom at exact minimum', () => {
+    it("should allow zoom at exact minimum", () => {
       setZoom(0.2);
 
       expect(zoom.get()).toBe(0.2);
     });
 
-    it('should allow zoom at exact maximum', () => {
+    it("should allow zoom at exact maximum", () => {
       setZoom(2);
 
       expect(zoom.get()).toBe(2);
     });
 
-    it('should handle negative values by clamping to minimum', () => {
+    it("should handle negative values by clamping to minimum", () => {
       setZoom(-1);
 
       expect(zoom.get()).toBe(0.2);
     });
 
-    it('should handle zero by clamping to minimum', () => {
+    it("should handle zero by clamping to minimum", () => {
       setZoom(0);
 
       expect(zoom.get()).toBe(0.2);
     });
   });
 
-  describe('zoomIn', () => {
-    it('should increase zoom by 0.1', () => {
+  describe("zoomIn", () => {
+    it("should increase zoom by 0.1", () => {
       zoom.set(1);
 
       zoomIn();
@@ -119,7 +133,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(1.1);
     });
 
-    it('should not exceed maximum zoom of 2.0', () => {
+    it("should not exceed maximum zoom of 2.0", () => {
       zoom.set(1.95);
 
       zoomIn();
@@ -127,7 +141,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(2);
     });
 
-    it('should clamp to maximum when zooming in from 2.0', () => {
+    it("should clamp to maximum when zooming in from 2.0", () => {
       zoom.set(2);
 
       zoomIn();
@@ -135,7 +149,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(2);
     });
 
-    it('should handle multiple zoom in operations', () => {
+    it("should handle multiple zoom in operations", () => {
       zoom.set(1);
 
       zoomIn();
@@ -146,8 +160,8 @@ describe('ui.actions', () => {
     });
   });
 
-  describe('zoomOut', () => {
-    it('should decrease zoom by 0.1', () => {
+  describe("zoomOut", () => {
+    it("should decrease zoom by 0.1", () => {
       zoom.set(1);
 
       zoomOut();
@@ -155,7 +169,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBeCloseTo(0.9, 1);
     });
 
-    it('should not go below minimum zoom of 0.2', () => {
+    it("should not go below minimum zoom of 0.2", () => {
       zoom.set(0.25);
 
       zoomOut();
@@ -163,7 +177,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(0.2);
     });
 
-    it('should clamp to minimum when zooming out from 0.2', () => {
+    it("should clamp to minimum when zooming out from 0.2", () => {
       zoom.set(0.2);
 
       zoomOut();
@@ -171,7 +185,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(0.2);
     });
 
-    it('should handle multiple zoom out operations', () => {
+    it("should handle multiple zoom out operations", () => {
       zoom.set(1);
 
       zoomOut();
@@ -182,8 +196,8 @@ describe('ui.actions', () => {
     });
   });
 
-  describe('resetZoom', () => {
-    it('should reset zoom to 1.0', () => {
+  describe("resetZoom", () => {
+    it("should reset zoom to 1.0", () => {
       zoom.set(1.5);
 
       resetZoom();
@@ -191,7 +205,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(1);
     });
 
-    it('should reset from minimum zoom', () => {
+    it("should reset from minimum zoom", () => {
       zoom.set(0.2);
 
       resetZoom();
@@ -199,7 +213,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(1);
     });
 
-    it('should reset from maximum zoom', () => {
+    it("should reset from maximum zoom", () => {
       zoom.set(2);
 
       resetZoom();
@@ -210,8 +224,8 @@ describe('ui.actions', () => {
 
   // ==================== Animation Actions ====================
 
-  describe('toggleAnimation', () => {
-    it('should toggle animation from false to true', () => {
+  describe("toggleAnimation", () => {
+    it("should toggle animation from false to true", () => {
       enableAnimation.set(false);
 
       toggleAnimation();
@@ -219,7 +233,7 @@ describe('ui.actions', () => {
       expect(enableAnimation.get()).toBe(true);
     });
 
-    it('should toggle animation from true to false', () => {
+    it("should toggle animation from true to false", () => {
       enableAnimation.set(true);
 
       toggleAnimation();
@@ -227,7 +241,7 @@ describe('ui.actions', () => {
       expect(enableAnimation.get()).toBe(false);
     });
 
-    it('should handle multiple toggles', () => {
+    it("should handle multiple toggles", () => {
       const initial = enableAnimation.get();
 
       toggleAnimation();
@@ -237,20 +251,20 @@ describe('ui.actions', () => {
     });
   });
 
-  describe('setEnableAnimation', () => {
-    it('should enable animation', () => {
+  describe("setEnableAnimation", () => {
+    it("should enable animation", () => {
       setEnableAnimation(true);
 
       expect(enableAnimation.get()).toBe(true);
     });
 
-    it('should disable animation', () => {
+    it("should disable animation", () => {
       setEnableAnimation(false);
 
       expect(enableAnimation.get()).toBe(false);
     });
 
-    it('should replace previous value', () => {
+    it("should replace previous value", () => {
       setEnableAnimation(true);
       setEnableAnimation(false);
 
@@ -260,11 +274,11 @@ describe('ui.actions', () => {
 
   // ==================== Preview Filter Actions ====================
 
-  describe('setPreviewFilter', () => {
-    it('should set node type preview filter', () => {
+  describe("setPreviewFilter", () => {
+    it("should set node type preview filter", () => {
       const preview: PreviewFilter = {
-        type: 'nodeType',
-        value: 'framework',
+        type: "nodeType",
+        value: "framework",
       };
 
       setPreviewFilter(preview);
@@ -272,10 +286,10 @@ describe('ui.actions', () => {
       expect(previewFilter.get()).toEqual(preview);
     });
 
-    it('should set platform preview filter', () => {
+    it("should set platform preview filter", () => {
       const preview: PreviewFilter = {
-        type: 'platform',
-        value: 'iOS',
+        type: "platform",
+        value: "iOS",
       };
 
       setPreviewFilter(preview);
@@ -283,10 +297,10 @@ describe('ui.actions', () => {
       expect(previewFilter.get()).toEqual(preview);
     });
 
-    it('should set origin preview filter', () => {
+    it("should set origin preview filter", () => {
       const preview: PreviewFilter = {
-        type: 'origin',
-        value: 'local',
+        type: "origin",
+        value: "local",
       };
 
       setPreviewFilter(preview);
@@ -294,10 +308,10 @@ describe('ui.actions', () => {
       expect(previewFilter.get()).toEqual(preview);
     });
 
-    it('should set project preview filter', () => {
+    it("should set project preview filter", () => {
       const preview: PreviewFilter = {
-        type: 'project',
-        value: 'MyProject',
+        type: "project",
+        value: "MyProject",
       };
 
       setPreviewFilter(preview);
@@ -305,10 +319,10 @@ describe('ui.actions', () => {
       expect(previewFilter.get()).toEqual(preview);
     });
 
-    it('should set package preview filter', () => {
+    it("should set package preview filter", () => {
       const preview: PreviewFilter = {
-        type: 'package',
-        value: 'MyPackage',
+        type: "package",
+        value: "MyPackage",
       };
 
       setPreviewFilter(preview);
@@ -316,10 +330,10 @@ describe('ui.actions', () => {
       expect(previewFilter.get()).toEqual(preview);
     });
 
-    it('should set cluster preview filter', () => {
+    it("should set cluster preview filter", () => {
       const preview: PreviewFilter = {
-        type: 'cluster',
-        value: 'cluster-1',
+        type: "cluster",
+        value: "cluster-1",
       };
 
       setPreviewFilter(preview);
@@ -327,26 +341,26 @@ describe('ui.actions', () => {
       expect(previewFilter.get()).toEqual(preview);
     });
 
-    it('should clear preview filter with null', () => {
-      setPreviewFilter({ type: 'nodeType', value: 'framework' });
+    it("should clear preview filter with null", () => {
+      setPreviewFilter({ type: "nodeType", value: "framework" });
 
       setPreviewFilter(null);
 
       expect(previewFilter.get()).toBeNull();
     });
 
-    it('should replace previous preview filter', () => {
-      setPreviewFilter({ type: 'nodeType', value: 'framework' });
-      setPreviewFilter({ type: 'platform', value: 'iOS' });
+    it("should replace previous preview filter", () => {
+      setPreviewFilter({ type: "nodeType", value: "framework" });
+      setPreviewFilter({ type: "platform", value: "iOS" });
 
-      expect(previewFilter.get()).toEqual({ type: 'platform', value: 'iOS' });
+      expect(previewFilter.get()).toEqual({ type: "platform", value: "iOS" });
     });
   });
 
   // ==================== Integration Tests ====================
 
-  describe('integration scenarios', () => {
-    it('should handle zoom in and out sequence', () => {
+  describe("integration scenarios", () => {
+    it("should handle zoom in and out sequence", () => {
       zoom.set(1);
 
       zoomIn();
@@ -356,7 +370,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBeCloseTo(1.1, 1);
     });
 
-    it('should handle zoom to limits and reset', () => {
+    it("should handle zoom to limits and reset", () => {
       setZoom(2);
       expect(zoom.get()).toBe(2);
 
@@ -367,7 +381,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(1);
     });
 
-    it('should handle rapid zoom in beyond limit', () => {
+    it("should handle rapid zoom in beyond limit", () => {
       zoom.set(1.5);
 
       zoomIn();
@@ -379,7 +393,7 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(2);
     });
 
-    it('should handle rapid zoom out beyond limit', () => {
+    it("should handle rapid zoom out beyond limit", () => {
       zoom.set(0.5);
 
       zoomOut();
@@ -391,19 +405,22 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(0.2);
     });
 
-    it('should maintain state across multiple operations', () => {
-      setActiveTab('graph');
+    it("should maintain state across multiple operations", () => {
+      setActiveTab("graph");
       setZoom(1.5);
       setEnableAnimation(true);
-      setPreviewFilter({ type: 'nodeType', value: 'framework' });
+      setPreviewFilter({ type: "nodeType", value: "framework" });
 
-      expect(activeTab.get()).toBe('graph');
+      expect(activeTab.get()).toBe("graph");
       expect(zoom.get()).toBe(1.5);
       expect(enableAnimation.get()).toBe(true);
-      expect(previewFilter.get()).toEqual({ type: 'nodeType', value: 'framework' });
+      expect(previewFilter.get()).toEqual({
+        type: "nodeType",
+        value: "framework",
+      });
     });
 
-    it('should handle animation toggle while other state changes', () => {
+    it("should handle animation toggle while other state changes", () => {
       setZoom(1.5);
 
       toggleAnimation();
@@ -418,13 +435,16 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(1.2);
     });
 
-    it('should handle preview filter changes during zoom', () => {
-      setPreviewFilter({ type: 'nodeType', value: 'framework' });
+    it("should handle preview filter changes during zoom", () => {
+      setPreviewFilter({ type: "nodeType", value: "framework" });
 
       zoomIn();
-      expect(previewFilter.get()).toEqual({ type: 'nodeType', value: 'framework' });
+      expect(previewFilter.get()).toEqual({
+        type: "nodeType",
+        value: "framework",
+      });
 
-      setPreviewFilter({ type: 'platform', value: 'iOS' });
+      setPreviewFilter({ type: "platform", value: "iOS" });
       expect(zoom.get()).toBeCloseTo(1.1, 1);
     });
   });

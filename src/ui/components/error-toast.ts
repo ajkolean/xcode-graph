@@ -23,23 +23,23 @@
  * ```
  */
 
-import type { AppError } from '@shared/schemas/error.schema';
-import { ErrorSeverity } from '@shared/schemas/error.schema';
-import { css, html, LitElement, type PropertyValues } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import type { AppError } from "@shared/schemas/error.schema";
+import { ErrorSeverity } from "@shared/schemas/error.schema";
+import { css, html, LitElement, type PropertyValues } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
 // ==================== Severity Icons ====================
 
 const SEVERITY_ICONS = {
-  [ErrorSeverity.Info]: 'ℹ️',
-  [ErrorSeverity.Warning]: '⚠️',
-  [ErrorSeverity.Error]: '❌',
-  [ErrorSeverity.Critical]: '🚨',
+  [ErrorSeverity.Info]: "ℹ️",
+  [ErrorSeverity.Warning]: "⚠️",
+  [ErrorSeverity.Error]: "❌",
+  [ErrorSeverity.Critical]: "🚨",
 };
 
 // ==================== Component ====================
 
-@customElement('graph-error-toast')
+@customElement("graph-error-toast")
 export class GraphErrorToast extends LitElement {
   // ========================================
   // Properties
@@ -170,19 +170,19 @@ export class GraphErrorToast extends LitElement {
     }
 
     /* Severity-specific colors */
-    :host([data-severity='info']) {
+    :host([data-severity="info"]) {
       --severity-color: var(--color-info, #3b82f6);
     }
 
-    :host([data-severity='warning']) {
+    :host([data-severity="warning"]) {
       --severity-color: var(--color-warning, #f59e0b);
     }
 
-    :host([data-severity='error']) {
+    :host([data-severity="error"]) {
       --severity-color: var(--color-error, #ef4444);
     }
 
-    :host([data-severity='critical']) {
+    :host([data-severity="critical"]) {
       --severity-color: var(--color-critical, #dc2626);
     }
   `;
@@ -192,9 +192,9 @@ export class GraphErrorToast extends LitElement {
   // ========================================
 
   override updated(changed: PropertyValues): void {
-    if (changed.has('error') && this.error) {
+    if (changed.has("error") && this.error) {
       // Set data attribute for severity-based styling
-      this.setAttribute('data-severity', this.error.severity);
+      this.setAttribute("data-severity", this.error.severity);
 
       // Trigger slide-in animation
       requestAnimationFrame(() => {
@@ -217,7 +217,7 @@ export class GraphErrorToast extends LitElement {
     // Wait for animation to complete before dispatching
     setTimeout(() => {
       this.dispatchEvent(
-        new CustomEvent('dismiss', {
+        new CustomEvent("dismiss", {
           detail: { errorId: this.error?.id },
           bubbles: true,
           composed: true,
@@ -232,7 +232,7 @@ export class GraphErrorToast extends LitElement {
     }
 
     this.dispatchEvent(
-      new CustomEvent('action', {
+      new CustomEvent("action", {
         detail: { error: this.error },
         bubbles: true,
         composed: true,
@@ -253,57 +253,49 @@ export class GraphErrorToast extends LitElement {
     const hasAction = this.error.actionLabel && this.error.actionType;
 
     return html`
-      <div
-        class="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
+      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <span class="icon" aria-hidden="true">${icon}</span>
 
         <div class="content">
           <p class="message">${this.error.message}</p>
 
-          ${this.error.details ? html`<pre class="details">${this.error.details}</pre>` : null}
-
-          ${
-            hasAction
-              ? html`
-                  <div class="actions">
-                    <button
-                      class="action-button"
-                      @click=${this.handleAction}
-                      aria-label=${this.error.actionLabel}
-                    >
-                      ${this.error.actionLabel}
-                    </button>
-                  </div>
-                `
-              : null
-          }
+          ${this.error.details
+            ? html`<pre class="details">${this.error.details}</pre>`
+            : null}
+          ${hasAction
+            ? html`
+                <div class="actions">
+                  <button
+                    class="action-button"
+                    @click=${this.handleAction}
+                    aria-label=${this.error.actionLabel}
+                  >
+                    ${this.error.actionLabel}
+                  </button>
+                </div>
+              `
+            : null}
         </div>
 
-        ${
-          this.error.dismissible
-            ? html`
-                <span
-                  class="close-icon"
-                  @click=${this.handleDismiss}
-                  role="button"
-                  tabindex="0"
-                  aria-label="Dismiss notification"
-                  @keydown=${(e: KeyboardEvent) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      this.handleDismiss();
-                    }
-                  }}
-                >
-                  ×
-                </span>
-              `
-            : null
-        }
+        ${this.error.dismissible
+          ? html`
+              <span
+                class="close-icon"
+                @click=${this.handleDismiss}
+                role="button"
+                tabindex="0"
+                aria-label="Dismiss notification"
+                @keydown=${(e: KeyboardEvent) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    this.handleDismiss();
+                  }
+                }}
+              >
+                ×
+              </span>
+            `
+          : null}
       </div>
     `;
   }
@@ -311,6 +303,6 @@ export class GraphErrorToast extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-error-toast': GraphErrorToast;
+    "graph-error-toast": GraphErrorToast;
   }
 }

@@ -20,17 +20,17 @@
  * ```
  */
 
-import { SignalWatcher } from '@lit-labs/signals';
-import type { AppError } from '@shared/schemas/error.schema';
-import { getToastErrors } from '@shared/signals/error.signals';
-import { css, html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
-import { errorService } from '@/services/error-service';
-import './error-toast';
+import { SignalWatcher } from "@lit-labs/signals";
+import type { AppError } from "@shared/schemas/error.schema";
+import { getToastErrors } from "@shared/signals/error.signals";
+import { css, html, LitElement } from "lit";
+import { customElement } from "lit/decorators.js";
+import { errorService } from "@/services/error-service";
+import "./error-toast";
 
 // ==================== Component ====================
 
-@customElement('graph-error-notification-container')
+@customElement("graph-error-notification-container")
 export class GraphErrorNotificationContainer extends SignalWatcher(LitElement) {
   // ========================================
   // Styles
@@ -109,6 +109,6 @@ export class GraphErrorNotificationContainer extends SignalWatcher(LitElement) {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-error-notification-container': GraphErrorNotificationContainer;
+    "graph-error-notification-container": GraphErrorNotificationContainer;
   }
 }

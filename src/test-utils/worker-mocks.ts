@@ -2,7 +2,11 @@
  * Worker Mocks - Test utilities for Web Worker testing
  */
 
-import type { LayoutInput, LayoutOutput, LayoutProgress } from '@/graph/workers/layout-api';
+import type {
+  LayoutInput,
+  LayoutOutput,
+  LayoutProgress,
+} from "@/graph/workers/layout-api";
 
 /**
  * Mock Web Worker for layout computation
@@ -17,7 +21,7 @@ export class MockLayoutWorker {
 
   // Mock behavior configuration
   public shouldError = false;
-  public errorMessage = 'Mock worker error';
+  public errorMessage = "Mock worker error";
   public computeDelay = 0;
 
   constructor() {
@@ -29,7 +33,7 @@ export class MockLayoutWorker {
    */
   postMessage(message: unknown): void {
     if (this.terminated) {
-      throw new Error('Worker has been terminated');
+      throw new Error("Worker has been terminated");
     }
 
     this.messagesSent.push(message);
@@ -52,9 +56,9 @@ export class MockLayoutWorker {
     listener: EventListenerOrEventListenerObject,
     _options?: boolean | AddEventListenerOptions,
   ): void {
-    if (type === 'message') {
+    if (type === "message") {
       this.onMessageHandler = listener as (event: MessageEvent) => void;
-    } else if (type === 'error') {
+    } else if (type === "error") {
       this.onErrorHandler = listener as (event: ErrorEvent) => void;
     }
   }
@@ -67,9 +71,9 @@ export class MockLayoutWorker {
     _listener: EventListenerOrEventListenerObject,
     _options?: boolean | EventListenerOptions,
   ): void {
-    if (type === 'message') {
+    if (type === "message") {
       this.onMessageHandler = null;
-    } else if (type === 'error') {
+    } else if (type === "error") {
       this.onErrorHandler = null;
     }
   }
@@ -92,7 +96,7 @@ export class MockLayoutWorker {
    */
   triggerMessage(data: unknown): void {
     if (this.onMessageHandler) {
-      const event = new MessageEvent('message', { data });
+      const event = new MessageEvent("message", { data });
       this.onMessageHandler(event);
     }
   }
@@ -102,7 +106,7 @@ export class MockLayoutWorker {
    */
   triggerError(error: Error): void {
     if (this.onErrorHandler) {
-      const event = new ErrorEvent('error', {
+      const event = new ErrorEvent("error", {
         message: error.message,
         error,
       });

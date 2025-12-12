@@ -7,15 +7,15 @@
  * @module signals/graph.actions
  */
 
-import { ViewMode } from '@shared/schemas/app.schema';
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import { ViewMode } from "@shared/schemas/app.schema";
+import type { GraphNode } from "@shared/schemas/graph.schema";
 import {
   circularDependencies,
   hoveredNode,
   selectedCluster,
   selectedNode,
   viewMode,
-} from './graph.signals';
+} from "./graph.signals";
 
 // ==================== Basic Actions ====================
 

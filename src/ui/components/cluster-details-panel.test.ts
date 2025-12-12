@@ -5,12 +5,12 @@
  * Tests rendering, computed properties, event bubbling, and props propagation.
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { describe, it } from 'vitest';
-import type { GraphClusterDetailsPanel } from './cluster-details-panel';
-import './cluster-details-panel';
+import { expect, fixture, html } from "@open-wc/testing";
+import type { Cluster } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { describe, it } from "vitest";
+import type { GraphClusterDetailsPanel } from "./cluster-details-panel";
+import "./cluster-details-panel";
 
 // ========================================
 // Mock Data
@@ -18,61 +18,61 @@ import './cluster-details-panel';
 
 const mockClusterNodes: GraphNode[] = [
   {
-    id: 'node1',
-    name: 'CoreLib',
-    type: 'framework',
-    origin: 'internal',
-    platform: 'iOS',
-    project: 'MyApp',
+    id: "node1",
+    name: "CoreLib",
+    type: "framework",
+    origin: "internal",
+    platform: "iOS",
+    project: "MyApp",
   },
   {
-    id: 'node2',
-    name: 'Utils',
-    type: 'staticLibrary',
-    origin: 'internal',
-    platform: 'iOS',
-    project: 'MyApp',
+    id: "node2",
+    name: "Utils",
+    type: "staticLibrary",
+    origin: "internal",
+    platform: "iOS",
+    project: "MyApp",
   },
   {
-    id: 'node3',
-    name: 'NetworkKit',
-    type: 'framework',
-    origin: 'internal',
-    platform: 'macOS',
-    project: 'MyApp',
+    id: "node3",
+    name: "NetworkKit",
+    type: "framework",
+    origin: "internal",
+    platform: "macOS",
+    project: "MyApp",
   },
 ];
 
 const mockAllNodes: GraphNode[] = [
   ...mockClusterNodes,
   {
-    id: 'external1',
-    name: 'External',
-    type: 'framework',
-    origin: 'external',
-    platform: 'iOS',
+    id: "external1",
+    name: "External",
+    type: "framework",
+    origin: "external",
+    platform: "iOS",
   },
 ];
 
 const mockEdges: GraphEdge[] = [
-  { source: 'node1', target: 'node2' }, // Internal dependency
-  { source: 'node3', target: 'node1' }, // Internal dependent
-  { source: 'node1', target: 'external1' }, // External dependency
+  { source: "node1", target: "node2" }, // Internal dependency
+  { source: "node3", target: "node1" }, // Internal dependent
+  { source: "node1", target: "external1" }, // External dependency
 ];
 
 const mockCluster: Cluster = {
-  id: 'MyApp',
-  name: 'MyApp',
-  type: 'project',
-  origin: 'local',
+  id: "MyApp",
+  name: "MyApp",
+  type: "project",
+  origin: "local",
   nodes: mockClusterNodes,
 };
 
 const mockExternalCluster: Cluster = {
-  id: 'ExternalPackage',
-  name: 'ExternalPackage',
-  type: 'package',
-  origin: 'external',
+  id: "ExternalPackage",
+  name: "ExternalPackage",
+  type: "package",
+  origin: "external",
   nodes: [],
 };
 
@@ -80,8 +80,8 @@ const mockExternalCluster: Cluster = {
 // Rendering Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Rendering', () => {
-  it('should render with all required sub-components', async () => {
+describe("graph-cluster-details-panel - Rendering", () => {
+  it("should render with all required sub-components", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -94,10 +94,12 @@ describe('graph-cluster-details-panel - Rendering', () => {
 
     expect(el).to.exist;
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    const typeBadge = el.shadowRoot?.querySelector('graph-cluster-type-badge');
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    const typeBadge = el.shadowRoot?.querySelector("graph-cluster-type-badge");
+    const stats = el.shadowRoot?.querySelector("graph-cluster-stats");
+    const targetsList = el.shadowRoot?.querySelector(
+      "graph-cluster-targets-list",
+    );
 
     expect(header).to.exist;
     expect(typeBadge).to.exist;
@@ -105,7 +107,7 @@ describe('graph-cluster-details-panel - Rendering', () => {
     expect(targetsList).to.exist;
   });
 
-  it('should render empty when cluster is null', async () => {
+  it("should render empty when cluster is null", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .clusterNodes=${mockClusterNodes}
@@ -114,11 +116,11 @@ describe('graph-cluster-details-panel - Rendering', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
     expect(header).to.not.exist;
   });
 
-  it('should render empty when cluster is undefined', async () => {
+  it("should render empty when cluster is undefined", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${undefined}
@@ -128,11 +130,11 @@ describe('graph-cluster-details-panel - Rendering', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
     expect(header).to.not.exist;
   });
 
-  it('should render scrollable container', async () => {
+  it("should render scrollable container", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -142,7 +144,7 @@ describe('graph-cluster-details-panel - Rendering', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const scrollable = el.shadowRoot?.querySelector('.scrollable');
+    const scrollable = el.shadowRoot?.querySelector(".scrollable");
     expect(scrollable).to.exist;
   });
 });
@@ -151,8 +153,8 @@ describe('graph-cluster-details-panel - Rendering', () => {
 // Property Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Properties', () => {
-  it('should accept cluster property', async () => {
+describe("graph-cluster-details-panel - Properties", () => {
+  it("should accept cluster property", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -165,7 +167,7 @@ describe('graph-cluster-details-panel - Properties', () => {
     expect(el.cluster).to.equal(mockCluster);
   });
 
-  it('should accept clusterNodes property', async () => {
+  it("should accept clusterNodes property", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -178,7 +180,7 @@ describe('graph-cluster-details-panel - Properties', () => {
     expect(el.clusterNodes).to.equal(mockClusterNodes);
   });
 
-  it('should accept allNodes property', async () => {
+  it("should accept allNodes property", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -191,7 +193,7 @@ describe('graph-cluster-details-panel - Properties', () => {
     expect(el.allNodes).to.equal(mockAllNodes);
   });
 
-  it('should accept edges property', async () => {
+  it("should accept edges property", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -204,7 +206,7 @@ describe('graph-cluster-details-panel - Properties', () => {
     expect(el.edges).to.equal(mockEdges);
   });
 
-  it('should accept filteredEdges property', async () => {
+  it("should accept filteredEdges property", async () => {
     const filteredEdges = [mockEdges[0]];
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
@@ -219,7 +221,7 @@ describe('graph-cluster-details-panel - Properties', () => {
     expect(el.filteredEdges).to.equal(filteredEdges);
   });
 
-  it('should accept zoom property', async () => {
+  it("should accept zoom property", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -238,8 +240,8 @@ describe('graph-cluster-details-panel - Properties', () => {
 // Computed Properties Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Computed Properties', () => {
-  it('should compute cluster stats', async () => {
+describe("graph-cluster-details-panel - Computed Properties", () => {
+  it("should compute cluster stats", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -249,19 +251,19 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector("graph-cluster-stats");
     expect(stats).to.exist;
 
     // Should compute dependencies (outgoing edges from cluster nodes)
     // node1->node2, node1->external1, node3->node1 = 3 total
-    expect(stats?.getAttribute('total-dependencies')).to.equal('3');
+    expect(stats?.getAttribute("total-dependencies")).to.equal("3");
 
     // Should compute dependents (incoming edges to cluster nodes)
     // node3->node1 = 1 total
-    expect(stats?.getAttribute('total-dependents')).to.equal('2');
+    expect(stats?.getAttribute("total-dependents")).to.equal("2");
   });
 
-  it('should compute platforms from cluster nodes', async () => {
+  it("should compute platforms from cluster nodes", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -271,11 +273,11 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector("graph-cluster-stats");
     expect(stats).to.exist;
   });
 
-  it('should compute filtered stats when filteredEdges provided', async () => {
+  it("should compute filtered stats when filteredEdges provided", async () => {
     const filteredEdges = [mockEdges[0]]; // Only first edge
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
@@ -287,16 +289,16 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector("graph-cluster-stats");
 
     // Filtered counts
-    expect(stats?.getAttribute('filtered-dependencies')).to.equal('1');
+    expect(stats?.getAttribute("filtered-dependencies")).to.equal("1");
 
     // Total counts (all edges from cluster nodes)
-    expect(stats?.getAttribute('total-dependencies')).to.equal('3');
+    expect(stats?.getAttribute("total-dependencies")).to.equal("3");
   });
 
-  it('should detect external cluster origin', async () => {
+  it("should detect external cluster origin", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockExternalCluster}
@@ -306,11 +308,11 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.hasAttribute('is-external')).to.be.true;
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    expect(header?.hasAttribute("is-external")).to.be.true;
   });
 
-  it('should not mark local cluster as external', async () => {
+  it("should not mark local cluster as external", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -320,11 +322,11 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.hasAttribute('is-external')).to.be.false;
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    expect(header?.hasAttribute("is-external")).to.be.false;
   });
 
-  it('should compute cluster color based on name and type', async () => {
+  it("should compute cluster color based on name and type", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -335,11 +337,11 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.getAttribute('cluster-color')).to.exist;
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    expect(header?.getAttribute("cluster-color")).to.exist;
   });
 
-  it('should adjust cluster color based on zoom', async () => {
+  it("should adjust cluster color based on zoom", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -350,8 +352,8 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    const color = header?.getAttribute('cluster-color');
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    const color = header?.getAttribute("cluster-color");
     expect(color).to.exist;
   });
 });
@@ -360,8 +362,8 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
 // Event Bubbling Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Event Bubbling', () => {
-  it('should bubble close event from header', async () => {
+describe("graph-cluster-details-panel - Event Bubbling", () => {
+  it("should bubble close event from header", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -372,17 +374,19 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
     `);
 
     let eventFired = false;
-    el.addEventListener('close', () => {
+    el.addEventListener("close", () => {
       eventFired = true;
     });
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    header?.dispatchEvent(new CustomEvent('back', { bubbles: true, composed: true }));
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    header?.dispatchEvent(
+      new CustomEvent("back", { bubbles: true, composed: true }),
+    );
 
     expect(eventFired).to.be.true;
   });
 
-  it('should bubble node-select event from targets list', async () => {
+  it("should bubble node-select event from targets list", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -395,14 +399,16 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
     let eventFired = false;
     let eventDetail: unknown = null;
 
-    el.addEventListener('node-select', ((e: CustomEvent) => {
+    el.addEventListener("node-select", ((e: CustomEvent) => {
       eventFired = true;
       eventDetail = e.detail;
     }) as EventListener);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector(
+      "graph-cluster-targets-list",
+    );
     targetsList?.dispatchEvent(
-      new CustomEvent('node-select', {
+      new CustomEvent("node-select", {
         detail: { node: mockClusterNodes[0] },
         bubbles: true,
         composed: true,
@@ -410,10 +416,12 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
     );
 
     expect(eventFired).to.be.true;
-    expect((eventDetail as { node: GraphNode }).node).to.equal(mockClusterNodes[0]);
+    expect((eventDetail as { node: GraphNode }).node).to.equal(
+      mockClusterNodes[0],
+    );
   });
 
-  it('should bubble node-hover event from targets list', async () => {
+  it("should bubble node-hover event from targets list", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -426,22 +434,24 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
     let eventFired = false;
     let eventDetail: unknown = null;
 
-    el.addEventListener('node-hover', ((e: CustomEvent) => {
+    el.addEventListener("node-hover", ((e: CustomEvent) => {
       eventFired = true;
       eventDetail = e.detail;
     }) as EventListener);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector(
+      "graph-cluster-targets-list",
+    );
     targetsList?.dispatchEvent(
-      new CustomEvent('node-hover', {
-        detail: { nodeId: 'node1' },
+      new CustomEvent("node-hover", {
+        detail: { nodeId: "node1" },
         bubbles: true,
         composed: true,
       }),
     );
 
     expect(eventFired).to.be.true;
-    expect((eventDetail as { nodeId: string }).nodeId).to.equal('node1');
+    expect((eventDetail as { nodeId: string }).nodeId).to.equal("node1");
   });
 });
 
@@ -449,8 +459,8 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
 // Props Propagation Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Props Propagation', () => {
-  it('should propagate cluster name to header', async () => {
+describe("graph-cluster-details-panel - Props Propagation", () => {
+  it("should propagate cluster name to header", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -460,11 +470,11 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.getAttribute('cluster-name')).to.equal('MyApp');
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    expect(header?.getAttribute("cluster-name")).to.equal("MyApp");
   });
 
-  it('should propagate cluster type to header', async () => {
+  it("should propagate cluster type to header", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -474,11 +484,11 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.getAttribute('cluster-type')).to.equal('project');
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    expect(header?.getAttribute("cluster-type")).to.equal("project");
   });
 
-  it('should propagate cluster type to type badge', async () => {
+  it("should propagate cluster type to type badge", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -488,11 +498,11 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const badge = el.shadowRoot?.querySelector('graph-cluster-type-badge');
-    expect(badge?.getAttribute('cluster-type')).to.equal('project');
+    const badge = el.shadowRoot?.querySelector("graph-cluster-type-badge");
+    expect(badge?.getAttribute("cluster-type")).to.equal("project");
   });
 
-  it('should propagate cluster nodes to targets list', async () => {
+  it("should propagate cluster nodes to targets list", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -502,11 +512,13 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
-    expect(targetsList?.getAttribute('total-targets-count')).to.equal('3');
+    const targetsList = el.shadowRoot?.querySelector(
+      "graph-cluster-targets-list",
+    );
+    expect(targetsList?.getAttribute("total-targets-count")).to.equal("3");
   });
 
-  it('should propagate edges to targets list', async () => {
+  it("should propagate edges to targets list", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -516,11 +528,13 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector(
+      "graph-cluster-targets-list",
+    );
     expect(targetsList).to.exist;
   });
 
-  it('should propagate zoom to targets list', async () => {
+  it("should propagate zoom to targets list", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -531,11 +545,13 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector(
+      "graph-cluster-targets-list",
+    );
     expect(targetsList).to.exist;
   });
 
-  it('should group nodes by type for targets list', async () => {
+  it("should group nodes by type for targets list", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -545,7 +561,9 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector(
+      "graph-cluster-targets-list",
+    );
     expect(targetsList).to.exist;
   });
 });
@@ -554,8 +572,8 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
 // Edge Cases
 // ========================================
 
-describe('graph-cluster-details-panel - Edge Cases', () => {
-  it('should handle empty cluster nodes', async () => {
+describe("graph-cluster-details-panel - Edge Cases", () => {
+  it("should handle empty cluster nodes", async () => {
     const emptyCluster: Cluster = {
       ...mockCluster,
       nodes: [],
@@ -570,11 +588,11 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector("graph-cluster-stats");
     expect(stats).to.exist;
   });
 
-  it('should handle empty edges array', async () => {
+  it("should handle empty edges array", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -584,19 +602,19 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
-    expect(stats?.getAttribute('total-dependencies')).to.equal('0');
-    expect(stats?.getAttribute('total-dependents')).to.equal('0');
+    const stats = el.shadowRoot?.querySelector("graph-cluster-stats");
+    expect(stats?.getAttribute("total-dependencies")).to.equal("0");
+    expect(stats?.getAttribute("total-dependents")).to.equal("0");
   });
 
-  it('should handle nodes with no platform', async () => {
+  it("should handle nodes with no platform", async () => {
     const noPlatformNodes: GraphNode[] = [
       {
-        id: 'node1',
-        name: 'Node1',
-        type: 'framework',
-        origin: 'internal',
-        platform: '',
+        id: "node1",
+        name: "Node1",
+        type: "framework",
+        origin: "internal",
+        platform: "",
       },
     ];
 
@@ -609,11 +627,11 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector("graph-cluster-stats");
     expect(stats).to.exist;
   });
 
-  it('should update when cluster changes', async () => {
+  it("should update when cluster changes", async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -623,22 +641,22 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
       ></graph-cluster-details-panel>
     `);
 
-    let header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.getAttribute('cluster-name')).to.equal('MyApp');
+    let header = el.shadowRoot?.querySelector("graph-cluster-header");
+    expect(header?.getAttribute("cluster-name")).to.equal("MyApp");
 
     el.cluster = mockExternalCluster;
     await el.updateComplete;
 
-    header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.getAttribute('cluster-name')).to.equal('ExternalPackage');
+    header = el.shadowRoot?.querySelector("graph-cluster-header");
+    expect(header?.getAttribute("cluster-name")).to.equal("ExternalPackage");
   });
 
-  it('should handle package type cluster', async () => {
+  it("should handle package type cluster", async () => {
     const packageCluster: Cluster = {
-      id: 'MyPackage',
-      name: 'MyPackage',
-      type: 'package',
-      origin: 'local',
+      id: "MyPackage",
+      name: "MyPackage",
+      type: "package",
+      origin: "local",
       nodes: [],
     };
 
@@ -651,7 +669,7 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.getAttribute('cluster-type')).to.equal('package');
+    const header = el.shadowRoot?.querySelector("graph-cluster-header");
+    expect(header?.getAttribute("cluster-type")).to.equal("package");
   });
 });

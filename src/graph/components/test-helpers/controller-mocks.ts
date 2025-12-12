@@ -5,12 +5,16 @@
  * Allows testing components without heavy controller dependencies.
  */
 
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import { ClusterType } from '@shared/schemas/cluster.schema';
-import { type GraphEdge, type GraphNode, Origin } from '@shared/schemas/graph.schema';
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import type { GraphInteractionConfig } from '../../../graph/controllers/graph-interaction-full.controller';
-import type { GraphLayoutConfig } from '../../../graph/controllers/graph-layout.controller';
+import type { Cluster, ClusterPosition, NodePosition } from "@shared/schemas";
+import { ClusterType } from "@shared/schemas/cluster.schema";
+import {
+  type GraphEdge,
+  type GraphNode,
+  Origin,
+} from "@shared/schemas/graph.schema";
+import type { ReactiveController, ReactiveControllerHost } from "lit";
+import type { GraphInteractionConfig } from "../../../graph/controllers/graph-interaction-full.controller";
+import type { GraphLayoutConfig } from "../../../graph/controllers/graph-layout.controller";
 
 /**
  * Mock Graph Layout Controller
@@ -52,7 +56,7 @@ export class MockGraphLayoutController implements ReactiveController {
     nodes.forEach((node, index) => {
       this.nodePositions.set(node.id, {
         id: node.id,
-        clusterId: node.project || 'External',
+        clusterId: node.project || "External",
         x: 100 + (index % 5) * 100,
         y: 100 + Math.floor(index / 5) * 100,
         radius: 24,
@@ -64,23 +68,25 @@ export class MockGraphLayoutController implements ReactiveController {
     // Create cluster positions
     const clusterMap = new Map<string, GraphNode[]>();
     nodes.forEach((node) => {
-      const clusterId = node.project || 'External';
+      const clusterId = node.project || "External";
       if (!clusterMap.has(clusterId)) {
         clusterMap.set(clusterId, []);
       }
       clusterMap.get(clusterId)!.push(node);
     });
 
-    this.clusters = Array.from(clusterMap.entries()).map(([id, clusterNodes]) => ({
-      id,
-      name: id,
-      type: ClusterType.Project,
-      origin: Origin.Local,
-      nodeIds: clusterNodes.map((n) => n.id),
-      nodes: clusterNodes,
-      anchors: [],
-      metadata: new Map(),
-    }));
+    this.clusters = Array.from(clusterMap.entries()).map(
+      ([id, clusterNodes]) => ({
+        id,
+        name: id,
+        type: ClusterType.Project,
+        origin: Origin.Local,
+        nodeIds: clusterNodes.map((n) => n.id),
+        nodes: clusterNodes,
+        anchors: [],
+        metadata: new Map(),
+      }),
+    );
 
     this.clusterPositions.clear();
     this.clusters.forEach((cluster, index) => {
@@ -183,8 +189,10 @@ export class MockGraphInteractionController implements ReactiveController {
   updateConfig(config: Partial<GraphInteractionConfig>): void {
     this.updateConfigCalls.push(config);
     if (config.zoom !== undefined) this.zoom = config.zoom;
-    if (config.finalNodePositions) this.finalNodePositions = config.finalNodePositions;
-    if (config.clusterPositions) this.clusterPositions = config.clusterPositions;
+    if (config.finalNodePositions)
+      this.finalNodePositions = config.finalNodePositions;
+    if (config.clusterPositions)
+      this.clusterPositions = config.clusterPositions;
   }
 
   handleMouseDown = (e: MouseEvent): void => {

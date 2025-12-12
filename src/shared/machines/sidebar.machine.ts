@@ -7,7 +7,7 @@
  * @module machines/sidebar
  */
 
-import { createMachine, type MachineSchema } from '@zag-js/core';
+import { createMachine, type MachineSchema } from "@zag-js/core";
 
 // ==================== Type Definitions ====================
 
@@ -18,14 +18,18 @@ import { createMachine, type MachineSchema } from '@zag-js/core';
  * - `clusterDetails`: Shows details for the selected cluster
  * - `filters`: Shows filter controls for the graph
  */
-export type SidebarTab = 'nodeDetails' | 'clusterDetails' | 'filters';
+export type SidebarTab = "nodeDetails" | "clusterDetails" | "filters";
 
 /**
  * Collapsible section identifiers for the filters accordion
  *
  * Each section can be independently expanded or collapsed.
  */
-export type SidebarSection = 'productTypes' | 'platforms' | 'projects' | 'packages';
+export type SidebarSection =
+  | "productTypes"
+  | "platforms"
+  | "projects"
+  | "packages";
 
 // ==================== Machine Schema ====================
 
@@ -46,30 +50,30 @@ interface SidebarMachineSchema extends MachineSchema {
     selectedNodeId: string | null;
     selectedClusterId: string | null;
   };
-  state: 'collapsed' | 'expanded';
+  state: "collapsed" | "expanded";
   event:
-    | { type: 'TOGGLE' }
-    | { type: 'EXPAND' }
-    | { type: 'COLLAPSE' }
-    | { type: 'SELECT_NODE'; nodeId: string }
-    | { type: 'SELECT_CLUSTER'; clusterId: string }
-    | { type: 'CLEAR_SELECTION' }
-    | { type: 'SWITCH_TAB'; tab: SidebarTab }
-    | { type: 'TOGGLE_SECTION'; section: SidebarSection }
-    | { type: 'EXPAND_TO_SECTION'; section: SidebarSection };
+    | { type: "TOGGLE" }
+    | { type: "EXPAND" }
+    | { type: "COLLAPSE" }
+    | { type: "SELECT_NODE"; nodeId: string }
+    | { type: "SELECT_CLUSTER"; clusterId: string }
+    | { type: "CLEAR_SELECTION" }
+    | { type: "SWITCH_TAB"; tab: SidebarTab }
+    | { type: "TOGGLE_SECTION"; section: SidebarSection }
+    | { type: "EXPAND_TO_SECTION"; section: SidebarSection };
   action:
-    | 'setSelectedNode'
-    | 'setSelectedCluster'
-    | 'clearSelectedNode'
-    | 'clearSelectedCluster'
-    | 'clearSelections'
-    | 'switchToNodeDetails'
-    | 'switchToClusterDetails'
-    | 'switchToFilters'
-    | 'switchTab'
-    | 'toggleSection'
-    | 'expandSection'
-    | 'notifyCollapseChange';
+    | "setSelectedNode"
+    | "setSelectedCluster"
+    | "clearSelectedNode"
+    | "clearSelectedCluster"
+    | "clearSelections"
+    | "switchToNodeDetails"
+    | "switchToClusterDetails"
+    | "switchToFilters"
+    | "switchTab"
+    | "toggleSection"
+    | "expandSection"
+    | "notifyCollapseChange";
 }
 
 // ==================== Machine Definition ====================
@@ -110,7 +114,7 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
    */
   props({ props }) {
     return {
-      id: props.id ?? 'sidebar',
+      id: props.id ?? "sidebar",
       defaultCollapsed: props.defaultCollapsed ?? true,
       onCollapseChange: props.onCollapseChange,
     };
@@ -122,7 +126,7 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
   context({ bindable }) {
     return {
       activeTab: bindable(() => ({
-        defaultValue: 'filters' as SidebarTab,
+        defaultValue: "filters" as SidebarTab,
       })),
       expandedSections: bindable(() => ({
         defaultValue: {
@@ -145,7 +149,7 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
    * Determine initial state based on defaultCollapsed prop
    */
   initialState({ prop }) {
-    return prop('defaultCollapsed') ? 'collapsed' : 'expanded';
+    return prop("defaultCollapsed") ? "collapsed" : "expanded";
   },
 
   // ==================== State Definitions ====================
@@ -160,21 +164,29 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
      * - EXPAND_TO_SECTION (auto-expands and shows filter section)
      */
     collapsed: {
-      entry: ['notifyCollapseChange'],
+      entry: ["notifyCollapseChange"],
       on: {
-        TOGGLE: { target: 'expanded' },
-        EXPAND: { target: 'expanded' },
+        TOGGLE: { target: "expanded" },
+        EXPAND: { target: "expanded" },
         EXPAND_TO_SECTION: {
-          target: 'expanded',
-          actions: ['expandSection', 'clearSelections', 'switchToFilters'],
+          target: "expanded",
+          actions: ["expandSection", "clearSelections", "switchToFilters"],
         },
         SELECT_NODE: {
-          target: 'expanded',
-          actions: ['setSelectedNode', 'clearSelectedCluster', 'switchToNodeDetails'],
+          target: "expanded",
+          actions: [
+            "setSelectedNode",
+            "clearSelectedCluster",
+            "switchToNodeDetails",
+          ],
         },
         SELECT_CLUSTER: {
-          target: 'expanded',
-          actions: ['setSelectedCluster', 'clearSelectedNode', 'switchToClusterDetails'],
+          target: "expanded",
+          actions: [
+            "setSelectedCluster",
+            "clearSelectedNode",
+            "switchToClusterDetails",
+          ],
         },
       },
     },
@@ -189,27 +201,35 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
      * - Section accordion control
      */
     expanded: {
-      entry: ['notifyCollapseChange'],
+      entry: ["notifyCollapseChange"],
       on: {
-        TOGGLE: { target: 'collapsed' },
-        COLLAPSE: { target: 'collapsed' },
+        TOGGLE: { target: "collapsed" },
+        COLLAPSE: { target: "collapsed" },
         SELECT_NODE: {
-          actions: ['setSelectedNode', 'clearSelectedCluster', 'switchToNodeDetails'],
+          actions: [
+            "setSelectedNode",
+            "clearSelectedCluster",
+            "switchToNodeDetails",
+          ],
         },
         SELECT_CLUSTER: {
-          actions: ['setSelectedCluster', 'clearSelectedNode', 'switchToClusterDetails'],
+          actions: [
+            "setSelectedCluster",
+            "clearSelectedNode",
+            "switchToClusterDetails",
+          ],
         },
         CLEAR_SELECTION: {
-          actions: ['clearSelections', 'switchToFilters'],
+          actions: ["clearSelections", "switchToFilters"],
         },
         SWITCH_TAB: {
-          actions: ['switchTab'],
+          actions: ["switchTab"],
         },
         TOGGLE_SECTION: {
-          actions: ['toggleSection'],
+          actions: ["toggleSection"],
         },
         EXPAND_TO_SECTION: {
-          actions: ['expandSection', 'clearSelections', 'switchToFilters'],
+          actions: ["expandSection", "clearSelections", "switchToFilters"],
         },
       },
     },
@@ -221,52 +241,52 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
     actions: {
       /** Store the selected node ID in context */
       setSelectedNode: ({ context, event }) => {
-        if (event.type === 'SELECT_NODE') {
-          context.set('selectedNodeId', event.nodeId);
+        if (event.type === "SELECT_NODE") {
+          context.set("selectedNodeId", event.nodeId);
         }
       },
       /** Store the selected cluster ID in context */
       setSelectedCluster: ({ context, event }) => {
-        if (event.type === 'SELECT_CLUSTER') {
-          context.set('selectedClusterId', event.clusterId);
+        if (event.type === "SELECT_CLUSTER") {
+          context.set("selectedClusterId", event.clusterId);
         }
       },
       /** Clear selected node ID */
       clearSelectedNode: ({ context }) => {
-        context.set('selectedNodeId', null);
+        context.set("selectedNodeId", null);
       },
       /** Clear selected cluster ID */
       clearSelectedCluster: ({ context }) => {
-        context.set('selectedClusterId', null);
+        context.set("selectedClusterId", null);
       },
       /** Clear both node and cluster selections */
       clearSelections: ({ context }) => {
-        context.set('selectedNodeId', null);
-        context.set('selectedClusterId', null);
+        context.set("selectedNodeId", null);
+        context.set("selectedClusterId", null);
       },
       /** Switch to node details tab */
       switchToNodeDetails: ({ context }) => {
-        context.set('activeTab', 'nodeDetails');
+        context.set("activeTab", "nodeDetails");
       },
       /** Switch to cluster details tab */
       switchToClusterDetails: ({ context }) => {
-        context.set('activeTab', 'clusterDetails');
+        context.set("activeTab", "clusterDetails");
       },
       /** Switch to filters tab */
       switchToFilters: ({ context }) => {
-        context.set('activeTab', 'filters');
+        context.set("activeTab", "filters");
       },
       /** Switch to the tab specified in the event */
       switchTab: ({ context, event }) => {
-        if (event.type === 'SWITCH_TAB') {
-          context.set('activeTab', event.tab);
+        if (event.type === "SWITCH_TAB") {
+          context.set("activeTab", event.tab);
         }
       },
       /** Toggle an accordion section open/closed */
       toggleSection: ({ context, event }) => {
-        if (event.type === 'TOGGLE_SECTION') {
-          const sections = context.get('expandedSections');
-          context.set('expandedSections', {
+        if (event.type === "TOGGLE_SECTION") {
+          const sections = context.get("expandedSections");
+          context.set("expandedSections", {
             ...sections,
             [event.section]: !sections[event.section],
           });
@@ -274,9 +294,9 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
       },
       /** Force expand a specific accordion section */
       expandSection: ({ context, event }) => {
-        if (event.type === 'EXPAND_TO_SECTION') {
-          const sections = context.get('expandedSections');
-          context.set('expandedSections', {
+        if (event.type === "EXPAND_TO_SECTION") {
+          const sections = context.get("expandedSections");
+          context.set("expandedSections", {
             ...sections,
             [event.section]: true,
           });
@@ -284,9 +304,9 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
       },
       /** Notify external callback when collapse state changes */
       notifyCollapseChange: ({ prop, state }) => {
-        const onCollapseChange = prop('onCollapseChange');
+        const onCollapseChange = prop("onCollapseChange");
         if (onCollapseChange) {
-          onCollapseChange(state.get() === 'collapsed');
+          onCollapseChange(state.get() === "collapsed");
         }
       },
     },

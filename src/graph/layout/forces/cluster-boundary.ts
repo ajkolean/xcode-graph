@@ -112,7 +112,8 @@ export function computeNodeTargetRadius(
   }
 
   // Calculate total degree
-  const degree = (metadata.dependencyCount ?? 0) + (metadata.dependsOnCount ?? 0);
+  const degree =
+    (metadata.dependencyCount ?? 0) + (metadata.dependsOnCount ?? 0);
 
   // High degree nodes closer to center
   // r0 = 30 + 110 - log2(degree+1)*18, clamped to [25, clusterRadius*0.9]

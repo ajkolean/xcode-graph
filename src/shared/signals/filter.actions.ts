@@ -7,8 +7,14 @@
  * @module signals/filter.actions
  */
 
-import type { FilterState } from '@shared/schemas/app.schema';
-import { allPackages, allProjects, DEFAULT_FILTERS, filters, searchQuery } from './filter.signals';
+import type { FilterState } from "@shared/schemas/app.schema";
+import {
+  allPackages,
+  allProjects,
+  DEFAULT_FILTERS,
+  filters,
+  searchQuery,
+} from "./filter.signals";
 
 // ==================== Helper Functions ====================
 
@@ -116,7 +122,7 @@ export function togglePackage(pkg: string): void {
  */
 export function clearFilters(defaults?: FilterState): void {
   filters.set(defaults ?? { ...DEFAULT_FILTERS });
-  searchQuery.set('');
+  searchQuery.set("");
 }
 
 /**
@@ -124,7 +130,10 @@ export function clearFilters(defaults?: FilterState): void {
  * @param projects - Set of all available projects
  * @param packages - Set of all available packages
  */
-export function initializeFromData(projects: Set<string>, packages: Set<string>): void {
+export function initializeFromData(
+  projects: Set<string>,
+  packages: Set<string>,
+): void {
   filters.set({
     ...DEFAULT_FILTERS,
     projects: new Set(projects),

@@ -3,14 +3,14 @@
  * Provides single source of truth for all graph data operations
  */
 
-import type { Cluster } from '@shared/schemas';
+import type { Cluster } from "@shared/schemas";
 import {
   type GraphEdge,
   type GraphNode,
   NodeType,
   type Origin,
-} from '@shared/schemas/graph.schema';
-import { addToMultiMap } from '@shared/utils/collections';
+} from "@shared/schemas/graph.schema";
+import { addToMultiMap } from "@shared/utils/collections";
 
 export class GraphDataService {
   private readonly nodes: GraphNode[];
@@ -121,7 +121,8 @@ export class GraphDataService {
     const lowerQuery = query.toLowerCase();
     return this.nodes.filter(
       (n) =>
-        n.name.toLowerCase().includes(lowerQuery) || n.project?.toLowerCase().includes(lowerQuery),
+        n.name.toLowerCase().includes(lowerQuery) ||
+        n.project?.toLowerCase().includes(lowerQuery),
     );
   }
 
@@ -172,7 +173,9 @@ export class GraphDataService {
   getDirectDependencies(nodeId: string): GraphNode[] {
     const outgoing = this.getOutgoingEdges(nodeId);
     const depIds = outgoing.map((e) => e.target);
-    return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
+    return depIds
+      .map((id) => this.nodeMap.get(id))
+      .filter((n): n is GraphNode => n !== undefined);
   }
 
   /**
@@ -181,7 +184,9 @@ export class GraphDataService {
   getDirectDependents(nodeId: string): GraphNode[] {
     const incoming = this.getIncomingEdges(nodeId);
     const depIds = incoming.map((e) => e.source);
-    return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
+    return depIds
+      .map((id) => this.nodeMap.get(id))
+      .filter((n): n is GraphNode => n !== undefined);
   }
 
   /**
@@ -195,7 +200,9 @@ export class GraphDataService {
     const visited = new Set<string>([nodeId]);
     const edges = new Set<string>();
     const depths = new Map<string, number>();
-    const queue: Array<{ id: string; depth: number }> = [{ id: nodeId, depth: 0 }];
+    const queue: Array<{ id: string; depth: number }> = [
+      { id: nodeId, depth: 0 },
+    ];
 
     while (queue.length > 0) {
       const { id, depth } = queue.shift()!;
@@ -227,7 +234,9 @@ export class GraphDataService {
     const visited = new Set<string>([nodeId]);
     const edges = new Set<string>();
     const depths = new Map<string, number>();
-    const queue: Array<{ id: string; depth: number }> = [{ id: nodeId, depth: 0 }];
+    const queue: Array<{ id: string; depth: number }> = [
+      { id: nodeId, depth: 0 },
+    ];
 
     while (queue.length > 0) {
       const { id, depth } = queue.shift()!;
@@ -276,8 +285,11 @@ export class GraphDataService {
     }
 
     const firstNode = clusterNodes[0];
-    const clusterType = firstNode?.type === NodeType.Package ? NodeType.Package : 'project';
-    const clusterOrigin = clusterNodes.some((n) => n.origin === 'external') ? 'external' : 'local';
+    const clusterType =
+      firstNode?.type === NodeType.Package ? NodeType.Package : "project";
+    const clusterOrigin = clusterNodes.some((n) => n.origin === "external")
+      ? "external"
+      : "local";
 
     return {
       id: clusterId,

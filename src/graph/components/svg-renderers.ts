@@ -6,16 +6,19 @@
  * in the SVG namespace don't work as web components.
  */
 
-import { getConnectedNodes } from '@graph/utils/connections';
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { generateColor } from '@ui/utils/color-generator';
-import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { generateBezierPath } from '@ui/utils/paths';
-import { getNodeSize } from '@ui/utils/sizing';
-import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
-import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
-import { nothing, svg } from 'lit';
+import { getConnectedNodes } from "@graph/utils/connections";
+import type { Cluster, ClusterPosition, NodePosition } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { generateColor } from "@ui/utils/color-generator";
+import { getNodeTypeColor } from "@ui/utils/node-colors";
+import { generateBezierPath } from "@ui/utils/paths";
+import { getNodeSize } from "@ui/utils/sizing";
+import { isLineInViewport, type ViewportBounds } from "@ui/utils/viewport";
+import {
+  adjustColorForZoom,
+  adjustOpacityForZoom,
+} from "@ui/utils/zoom-colors";
+import { nothing, svg } from "lit";
 
 // ========================================
 // Cluster Card Renderer
@@ -53,14 +56,14 @@ export function renderClusterCard(options: ClusterCardOptions) {
   const borderOpacity = adjustOpacityForZoom(0.5, zoom);
 
   const isActive = isHighlighted || isSelected;
-  const cursorStyle = onClick ? 'pointer' : 'default';
-  const strokeDasharray = cluster.type === 'project' ? '8 8' : '3 8';
-  const fillAlpha = isActive ? '08' : '18';
+  const cursorStyle = onClick ? "pointer" : "default";
+  const strokeDasharray = cluster.type === "project" ? "8 8" : "3 8";
+  const fillAlpha = isActive ? "08" : "18";
   const textOpacity = isActive ? 1 : 0.6;
   const fontWeight = isActive ? 600 : 500;
   const textShadow = isActive
     ? `0 0 8px ${zoomAdjustedColor}40, 0 0 16px ${zoomAdjustedColor}20`
-    : 'none';
+    : "none";
 
   return svg`
     <g
@@ -97,7 +100,7 @@ export function renderClusterCard(options: ClusterCardOptions) {
         stroke-linecap="round"
         style="
           transition: stroke-opacity var(--durations-normal) ease-in-out;
-          ${isSelected ? 'animation: marchingAnts var(--durations-slower) linear infinite' : ''}
+          ${isSelected ? "animation: marchingAnts var(--durations-slower) linear infinite" : ""}
         "
       />
 
@@ -187,9 +190,13 @@ export function renderGraphNode(options: GraphNodeOptions) {
 
   const maxLabelLength = 20;
   const displayName =
-    node.name.length > maxLabelLength ? `${node.name.substring(0, maxLabelLength)}...` : node.name;
+    node.name.length > maxLabelLength
+      ? `${node.name.substring(0, maxLabelLength)}...`
+      : node.name;
   const showTooltip = isHovered && node.name.length > 20;
-  const fontWeight = isSelected ? 'var(--font-weight-medium)' : 'var(--font-weight-normal)';
+  const fontWeight = isSelected
+    ? "var(--font-weight-medium)"
+    : "var(--font-weight-normal)";
 
   const renderTooltip = () => svg`
     <rect
@@ -278,7 +285,7 @@ export function renderGraphNode(options: GraphNodeOptions) {
       <!-- Icon shape (using reusable def for performance) -->
       <g
         transform="translate(${x}, ${y})"
-        filter="${isSelected || isHovered ? 'url(#glow)' : ''}"
+        filter="${isSelected || isHovered ? "url(#glow)" : ""}"
       >
         <use
           href="#${shapeId}"
@@ -367,11 +374,13 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
   const finalOpacity = zoomOpacity * opacityMultiplier;
 
   // Cross-cluster = long dashes "8,4", Regular = short dashes "4,2"
-  const dashPattern = isDependent ? '8,4' : '4,2';
+  const dashPattern = isDependent ? "8,4" : "4,2";
 
   // Generate path (bezier curve or straight line)
-  const path = useBezier ? generateBezierPath(x1, y1, x2, y2) : `M ${x1},${y1} L ${x2},${y2}`;
-  const animationClass = animated ? 'flow-animation' : '';
+  const path = useBezier
+    ? generateBezierPath(x1, y1, x2, y2)
+    : `M ${x1},${y1} L ${x2},${y2}`;
+  const animationClass = animated ? "flow-animation" : "";
 
   return svg`
     <g class="graph-edge" style="transition: opacity var(--durations-slow) ease">
@@ -399,7 +408,7 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
         fill="none"
         opacity="${finalOpacity}"
         stroke-dasharray="${dashPattern}"
-        class="${animated ? 'flow-animation' : ''}"
+        class="${animated ? "flow-animation" : ""}"
         shape-rendering="geometricPrecision"
         style="transition: opacity var(--durations-slow) ease, stroke-width var(--durations-normal) ease"
       />
@@ -470,23 +479,30 @@ function resolveEdgeEndpoints(
   nodes: GraphNode[],
   nodeMap?: Map<string, GraphNode>,
 ): EdgeEndpoints | null {
-  const sourceNode = nodeMap ? nodeMap.get(edge.source) : nodes.find((n) => n.id === edge.source);
-  const targetNode = nodeMap ? nodeMap.get(edge.target) : nodes.find((n) => n.id === edge.target);
+  const sourceNode = nodeMap
+    ? nodeMap.get(edge.source)
+    : nodes.find((n) => n.id === edge.source);
+  const targetNode = nodeMap
+    ? nodeMap.get(edge.target)
+    : nodes.find((n) => n.id === edge.target);
 
   if (!sourceNode || !targetNode) return null;
 
   return {
     sourceNode,
     targetNode,
-    sourceClusterId: sourceNode.project || 'External',
-    targetClusterId: targetNode.project || 'External',
+    sourceClusterId: sourceNode.project || "External",
+    targetClusterId: targetNode.project || "External",
   };
 }
 
 /**
  * Determines if an edge should be rendered based on cluster context
  */
-function shouldRenderEdge(endpoints: EdgeEndpoints, clusterId?: string): boolean {
+function shouldRenderEdge(
+  endpoints: EdgeEndpoints,
+  clusterId?: string,
+): boolean {
   const { sourceClusterId, targetClusterId } = endpoints;
 
   if (clusterId) {
@@ -515,7 +531,8 @@ function calculateEdgePositions(
   const sourceCluster = clusterPositions.get(sourceClusterId);
   const targetCluster = clusterPositions.get(targetClusterId);
 
-  if (!layoutSourcePos || !layoutTargetPos || !sourceCluster || !targetCluster) return null;
+  if (!layoutSourcePos || !layoutTargetPos || !sourceCluster || !targetCluster)
+    return null;
 
   // Resolve positions (manual overrides layout)
   const sourceManual = manualNodePositions?.get(edge.source);
@@ -532,7 +549,10 @@ function calculateEdgePositions(
   const y2 = targetCluster.y + targetY;
 
   // Viewport culling: skip edges outside visible area
-  if (viewportBounds && !isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewportBounds)) {
+  if (
+    viewportBounds &&
+    !isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewportBounds)
+  ) {
     return null;
   }
 
@@ -559,7 +579,8 @@ function getEdgeVisualState(
   const isFocused = hoveredNode === edge.source || hoveredNode === edge.target;
   const isConnectedToHoveredCluster =
     hoveredClusterId &&
-    (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
+    (sourceClusterId === hoveredClusterId ||
+      targetClusterId === hoveredClusterId);
   const shouldDim = !!(hoveredClusterId && !isConnectedToHoveredCluster);
   const isCrossCluster = !clusterId;
   const shouldAnimate = isFocused || isHighlighted;
@@ -570,21 +591,21 @@ function getEdgeVisualState(
 function getEdgeOpacity(
   edge: GraphEdge,
   viewMode: string,
-  transitiveDeps?: GraphEdgesOptions['transitiveDeps'],
-  transitiveDependents?: GraphEdgesOptions['transitiveDependents'],
+  transitiveDeps?: GraphEdgesOptions["transitiveDeps"],
+  transitiveDependents?: GraphEdgesOptions["transitiveDependents"],
 ): number {
   const edgeKey = `${edge.source}->${edge.target}`;
   const inDepsChain = transitiveDeps?.edges.has(edgeKey);
   const inDependentsChain = transitiveDependents?.edges.has(edgeKey);
 
-  if (viewMode === 'focused' && inDepsChain && transitiveDeps) {
+  if (viewMode === "focused" && inDepsChain && transitiveDeps) {
     const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
     const maxDepth = transitiveDeps.maxDepth || 1;
     return 1 - (depth / maxDepth) * 0.7;
   }
 
   if (
-    (viewMode === 'dependents' || viewMode === 'impact') &&
+    (viewMode === "dependents" || viewMode === "impact") &&
     inDependentsChain &&
     transitiveDependents
   ) {
@@ -593,7 +614,7 @@ function getEdgeOpacity(
     return 1 - (depth / maxDepth) * 0.7;
   }
 
-  if (viewMode === 'both' && (inDepsChain || inDependentsChain)) {
+  if (viewMode === "both" && (inDepsChain || inDependentsChain)) {
     if (inDepsChain && transitiveDeps) {
       const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
       const maxDepth = transitiveDeps.maxDepth || 1;
@@ -621,7 +642,7 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
     hoveredNode,
     clusterId,
     hoveredClusterId,
-    viewMode = 'full',
+    viewMode = "full",
     transitiveDeps,
     transitiveDependents,
     zoom = 1,
@@ -654,7 +675,12 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
         clusterId ?? undefined,
       );
 
-      const baseOpacity = getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
+      const baseOpacity = getEdgeOpacity(
+        edge,
+        viewMode,
+        transitiveDeps,
+        transitiveDependents,
+      );
       const opacity = visualState.shouldDim ? baseOpacity * 0.25 : baseOpacity;
 
       return renderGraphEdge({
@@ -709,7 +735,7 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
     hoveredNode,
     isClusterHovered = false,
     isClusterSelected = false,
-    searchQuery = '',
+    searchQuery = "",
     zoom = 1,
     previewFilter,
     onClusterClick,
@@ -759,16 +785,21 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
           const isHovered = hoveredNode === node.id;
           const isConnected = selectedNode && connectedNodes.has(node.id);
           const isSearchMatch =
-            searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
+            searchQuery &&
+            node.name.toLowerCase().includes(searchQuery.toLowerCase());
 
           const matchesPreview =
             !previewFilter ||
-            (previewFilter.type === 'nodeType' && node.type === previewFilter.value) ||
-            (previewFilter.type === 'platform' && node.platform === previewFilter.value) ||
-            (previewFilter.type === 'origin' && node.origin === previewFilter.value) ||
-            (previewFilter.type === 'project' && node.project === previewFilter.value) ||
-            (previewFilter.type === 'package' &&
-              node.type === 'package' &&
+            (previewFilter.type === "nodeType" &&
+              node.type === previewFilter.value) ||
+            (previewFilter.type === "platform" &&
+              node.platform === previewFilter.value) ||
+            (previewFilter.type === "origin" &&
+              node.origin === previewFilter.value) ||
+            (previewFilter.type === "project" &&
+              node.project === previewFilter.value) ||
+            (previewFilter.type === "package" &&
+              node.type === "package" &&
               node.name === previewFilter.value);
 
           const isDimmed =
@@ -791,12 +822,16 @@ export function renderClusterGroup(options: ClusterGroupOptions) {
             isHovered,
             isDimmed: isDimmed ?? false,
             zoom,
-            ...(onNodeMouseEnter ? { onMouseEnter: () => onNodeMouseEnter(node.id) } : {}),
+            ...(onNodeMouseEnter
+              ? { onMouseEnter: () => onNodeMouseEnter(node.id) }
+              : {}),
             ...(onNodeMouseLeave ? { onMouseLeave: onNodeMouseLeave } : {}),
             ...(onNodeMouseDown
               ? { onMouseDown: (e: MouseEvent) => onNodeMouseDown(node.id, e) }
               : {}),
-            ...(onNodeClick ? { onClick: (e: MouseEvent) => onNodeClick(node, e) } : {}),
+            ...(onNodeClick
+              ? { onClick: (e: MouseEvent) => onNodeClick(node, e) }
+              : {}),
           });
         })}
       </g>

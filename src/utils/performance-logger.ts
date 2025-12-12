@@ -7,7 +7,7 @@
 
 interface PerformanceEntry {
   timestamp: number;
-  type: 'fps' | 'web-vital' | 'component-render' | 'interaction';
+  type: "fps" | "web-vital" | "component-render" | "interaction";
   data: Record<string, any>;
 }
 
@@ -19,11 +19,14 @@ interface PerformanceSession {
   entries: PerformanceEntry[];
 }
 
-const SESSION_KEY = 'tuist-graph-perf-session';
+const SESSION_KEY = "tuist-graph-perf-session";
 let currentSession: PerformanceSession | null = null;
 
 /** Start a new performance logging session */
-export function startPerformanceSession(graphSize: { nodes: number; edges: number }) {
+export function startPerformanceSession(graphSize: {
+  nodes: number;
+  edges: number;
+}) {
   if (import.meta.env.PROD) return;
 
   currentSession = {
@@ -34,11 +37,17 @@ export function startPerformanceSession(graphSize: { nodes: number; edges: numbe
     entries: [],
   };
 
-  console.log('[Performance Logger] Session started:', currentSession.sessionId);
+  console.log(
+    "[Performance Logger] Session started:",
+    currentSession.sessionId,
+  );
 }
 
 /** Log a performance entry */
-export function logPerformanceEntry(type: PerformanceEntry['type'], data: Record<string, any>) {
+export function logPerformanceEntry(
+  type: PerformanceEntry["type"],
+  data: Record<string, any>,
+) {
   if (!currentSession) return;
 
   const entry: PerformanceEntry = {
@@ -61,7 +70,7 @@ function saveSession() {
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
   } catch (e) {
-    console.warn('[Performance Logger] Failed to save session:', e);
+    console.warn("[Performance Logger] Failed to save session:", e);
   }
 }
 
@@ -73,23 +82,23 @@ export function getCurrentSession(): PerformanceSession | null {
 /** Download session as JSON file */
 export function downloadPerformanceLog() {
   if (!currentSession) {
-    console.warn('[Performance Logger] No active session');
+    console.warn("[Performance Logger] No active session");
     return;
   }
 
   saveSession();
 
   const blob = new Blob([JSON.stringify(currentSession, null, 2)], {
-    type: 'application/json',
+    type: "application/json",
   });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = `tuist-graph-perf-${currentSession.sessionId}.json`;
   a.click();
   URL.revokeObjectURL(url);
 
-  console.log('[Performance Logger] Downloaded:', a.download);
+  console.log("[Performance Logger] Downloaded:", a.download);
 }
 
 /** Load session from localStorage */
@@ -98,27 +107,30 @@ export function loadLastSession(): PerformanceSession | null {
     const json = localStorage.getItem(SESSION_KEY);
     return json ? JSON.parse(json) : null;
   } catch (e) {
-    console.warn('[Performance Logger] Failed to load session:', e);
+    console.warn("[Performance Logger] Failed to load session:", e);
     return null;
   }
 }
 
 /** Generate performance report */
 export function generatePerformanceReport(): string {
-  if (!currentSession) return 'No active session';
+  if (!currentSession) return "No active session";
 
   const duration = Date.now() - currentSession.startTime;
-  const fpsEntries = currentSession.entries.filter((e) => e.type === 'fps');
-  const componentRenders = currentSession.entries.filter((e) => e.type === 'component-render');
+  const fpsEntries = currentSession.entries.filter((e) => e.type === "fps");
+  const componentRenders = currentSession.entries.filter(
+    (e) => e.type === "component-render",
+  );
 
   const avgFps =
     fpsEntries.length > 0
-      ? fpsEntries.reduce((sum, e) => sum + (e.data['fps'] as number), 0) / fpsEntries.length
+      ? fpsEntries.reduce((sum, e) => sum + (e.data["fps"] as number), 0) /
+        fpsEntries.length
       : 0;
 
   const rendersByComponent = componentRenders.reduce(
     (acc, e) => {
-      const component = e.data['component'] as string;
+      const component = e.data["component"] as string;
       acc[component] = (acc[component] || 0) + 1;
       return acc;
     },
@@ -139,7 +151,7 @@ FPS Metrics:
 Component Renders:
 ${Object.entries(rendersByComponent)
   .map(([comp, count]) => `- ${comp}: ${count} renders`)
-  .join('\n')}
+  .join("\n")}
 
 Total Events: ${currentSession.entries.length}
   `.trim();

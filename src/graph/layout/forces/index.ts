@@ -6,9 +6,9 @@ export {
   computeNodeTargetRadius,
   createClusterBoundaryForce,
   createClusterRadialForce,
-} from './cluster-boundary';
+} from "./cluster-boundary";
 export {
   forceClusterAttraction,
   forceClusterRepulsion,
-} from './cluster-repulsion';
-export { type Vec2, vec2 } from './vector';
+} from "./cluster-repulsion";
+export { type Vec2, vec2 } from "./vector";

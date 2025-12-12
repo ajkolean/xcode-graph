@@ -17,8 +17,8 @@
  * ```
  */
 
-import type { LitElement, PropertyValues } from 'lit';
-import { logPerformanceEntry } from './performance-logger';
+import type { LitElement, PropertyValues } from "lit";
+import { logPerformanceEntry } from "./performance-logger";
 
 interface RenderStats {
   component: string;
@@ -73,7 +73,7 @@ export function trackLitPerformance(
     );
 
     // Log to performance session
-    logPerformanceEntry('component-render', {
+    logPerformanceEntry("component-render", {
       component: componentName,
       renderCount: stats.renderCount,
       timeSinceLastRender: Math.round(timeSinceLastRender),
@@ -90,7 +90,7 @@ export function getPerformanceStats(): RenderStats[] {
 
 /** Log performance summary to console */
 export function logPerformanceStats() {
-  console.group('[Lit Performance Stats]');
+  console.group("[Lit Performance Stats]");
   for (const stats of componentStats.values()) {
     console.log(`${stats.component}:`, {
       renders: stats.renderCount,

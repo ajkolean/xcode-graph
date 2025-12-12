@@ -7,7 +7,7 @@
  * @module schemas/graph
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ==================== Native Enums ====================
 
@@ -23,24 +23,24 @@ import { z } from 'zod';
  * - Package: External dependency
  */
 export enum NodeType {
-  App = 'app',
-  Framework = 'framework',
-  Library = 'library',
-  TestUnit = 'test-unit',
-  TestUi = 'test-ui',
-  Cli = 'cli',
-  Package = 'package',
+  App = "app",
+  Framework = "framework",
+  Library = "library",
+  TestUnit = "test-unit",
+  TestUi = "test-ui",
+  Cli = "cli",
+  Package = "package",
 }
 
 /**
  * Platform enum - Apple platform targets
  */
 export enum Platform {
-  iOS = 'iOS',
-  macOS = 'macOS',
-  visionOS = 'visionOS',
-  tvOS = 'tvOS',
-  watchOS = 'watchOS',
+  iOS = "iOS",
+  macOS = "macOS",
+  visionOS = "visionOS",
+  tvOS = "tvOS",
+  watchOS = "watchOS",
 }
 
 /**
@@ -50,8 +50,8 @@ export enum Platform {
  * - External: Third-party dependency
  */
 export enum Origin {
-  Local = 'local',
-  External = 'external',
+  Local = "local",
+  External = "external",
 }
 
 // ==================== Type Definitions ====================
@@ -67,15 +67,15 @@ export interface DeploymentTargets {
 
 /** Target destination enum */
 export type Destination =
-  | 'iPhone'
-  | 'iPad'
-  | 'mac'
-  | 'macCatalyst'
-  | 'macWithiPadDesign'
-  | 'appleTv'
-  | 'appleWatch'
-  | 'appleVision'
-  | 'appleVisionWithiPadDesign';
+  | "iPhone"
+  | "iPad"
+  | "mac"
+  | "macCatalyst"
+  | "macWithiPadDesign"
+  | "appleTv"
+  | "appleWatch"
+  | "appleVision"
+  | "appleVisionWithiPadDesign";
 
 /** Graph node structure */
 export interface GraphNode {
@@ -142,23 +142,23 @@ export const DeploymentTargetsSchema = z.object({
 });
 
 export const DestinationSchema = z.enum([
-  'iPhone',
-  'iPad',
-  'mac',
-  'macCatalyst',
-  'macWithiPadDesign',
-  'appleTv',
-  'appleWatch',
-  'appleVision',
-  'appleVisionWithiPadDesign',
+  "iPhone",
+  "iPad",
+  "mac",
+  "macCatalyst",
+  "macWithiPadDesign",
+  "appleTv",
+  "appleWatch",
+  "appleVision",
+  "appleVisionWithiPadDesign",
 ]);
 
 /**
  * Graph node schema - validates individual graph nodes
  */
 export const GraphNodeSchema: z.ZodType<GraphNode> = z.object({
-  id: z.string().min(1, 'Node ID is required'),
-  name: z.string().min(1, 'Node name is required'),
+  id: z.string().min(1, "Node ID is required"),
+  name: z.string().min(1, "Node name is required"),
   type: NodeTypeSchema,
   platform: PlatformSchema,
   origin: OriginSchema,
@@ -177,8 +177,8 @@ export const GraphNodeSchema: z.ZodType<GraphNode> = z.object({
  * Graph edge schema - validates directed edges between nodes
  */
 export const GraphEdgeSchema: z.ZodType<GraphEdge> = z.object({
-  source: z.string().min(1, 'Edge source is required'),
-  target: z.string().min(1, 'Edge target is required'),
+  source: z.string().min(1, "Edge source is required"),
+  target: z.string().min(1, "Edge target is required"),
 });
 
 /**
@@ -194,9 +194,11 @@ export const GraphDataSchema: z.ZodType<GraphData> = z
   .refine(
     (data) => {
       const nodeIds = new Set(data.nodes.map((n) => n.id));
-      return data.edges.every((e) => nodeIds.has(e.source) && nodeIds.has(e.target));
+      return data.edges.every(
+        (e) => nodeIds.has(e.source) && nodeIds.has(e.target),
+      );
     },
-    { message: 'All edge endpoints must reference existing nodes' },
+    { message: "All edge endpoints must reference existing nodes" },
   );
 
 // ==================== Value Arrays ====================

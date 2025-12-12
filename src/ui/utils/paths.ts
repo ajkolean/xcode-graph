@@ -14,7 +14,12 @@ const MAX_CACHE_SIZE = 1000;
  * Generate cache key from coordinates
  * Rounds to nearest integer to improve cache hits
  */
-function getPathCacheKey(x1: number, y1: number, x2: number, y2: number): string {
+function getPathCacheKey(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+): string {
   const rx1 = Math.round(x1);
   const ry1 = Math.round(y1);
   const rx2 = Math.round(x2);
@@ -37,7 +42,12 @@ function getPathCacheKey(x1: number, y1: number, x2: number, y2: number): string
  * @param y2 - End Y coordinate
  * @returns SVG path string (M ... C ...)
  */
-export function generateBezierPath(x1: number, y1: number, x2: number, y2: number): string {
+export function generateBezierPath(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+): string {
   const cacheKey = getPathCacheKey(x1, y1, x2, y2);
 
   // Check cache

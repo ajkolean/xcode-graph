@@ -17,7 +17,7 @@ export {
   getConnectionCount,
   getDependencyCount,
   getDependentCount,
-} from './connections';
+} from "./connections";
 
 // ==================== Node Visibility ====================
 
@@ -26,11 +26,11 @@ export {
   matchesSearch,
   shouldDimNode,
   shouldShowEdge,
-} from './visibility';
+} from "./visibility";
 
 // ==================== Filtering ====================
 
-export { generateColorMap } from './filters';
+export { generateColorMap } from "./filters";
 
 // ==================== Node Computations ====================
 
@@ -38,17 +38,17 @@ export {
   computeClusterStats,
   computeFilters,
   computeNodeDependencies,
-} from './node-utils';
+} from "./node-utils";
 
 // ==================== Graph Filtering ====================
 
-export { applyGraphFilters } from './graph-filters';
+export { applyGraphFilters } from "./graph-filters";
 
 // ==================== Graph Traversal ====================
 
 export {
   computeTransitiveDependencies,
   type TransitiveResult,
-} from './traversal';
+} from "./traversal";
 
 // Physics utilities removed - D3 handles force simulation

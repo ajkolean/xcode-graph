@@ -14,17 +14,17 @@
  * ```
  */
 
-import type { GraphCanvas } from '@graph/components/graph-canvas';
-import type { TransitiveResult } from '@graph/utils';
-import { Signal, SignalWatcher } from '@lit-labs/signals';
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement } from 'lit';
-import { property, query } from 'lit/decorators.js';
-import '@graph/components/graph-visualization';
-import '@graph/components/graph-canvas';
-import '@graph/components/graph-overlays';
-import '../components/right-sidebar';
+import type { GraphCanvas } from "@graph/components/graph-canvas";
+import type { TransitiveResult } from "@graph/utils";
+import { Signal, SignalWatcher } from "@lit-labs/signals";
+import type { Cluster } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { css, html, LitElement } from "lit";
+import { property, query } from "lit/decorators.js";
+import "@graph/components/graph-visualization";
+import "@graph/components/graph-canvas";
+import "@graph/components/graph-overlays";
+import "../components/right-sidebar";
 
 // Import signals
 // Import actions
@@ -36,7 +36,7 @@ import {
   selectNode,
   setHoveredNode,
   viewMode,
-} from '@graph/signals/index';
+} from "@graph/signals/index";
 import {
   enableAnimation,
   layoutDimension,
@@ -48,15 +48,15 @@ import {
   zoom,
   zoomIn,
   zoomOut,
-} from '@shared/signals/index';
+} from "@shared/signals/index";
 
 export class GraphTab extends SignalWatcher(LitElement) {
   // ========================================
   // Properties
   // ========================================
 
-  @query('graph-canvas')
-  private declare canvasElement: GraphCanvas;
+  @query("graph-canvas")
+  declare private canvasElement: GraphCanvas;
 
   @property({ attribute: false })
   declare displayNodes: GraphNode[];
@@ -181,7 +181,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
               .selectedNode=${selectedNode.get()}
               .selectedCluster=${selectedCluster.get()}
               .hoveredNode=${Signal.subtle.untrack(() => hoveredNode.get())}
-              search-query=${searchQuery.get() || ''}
+              search-query=${searchQuery.get() || ""}
               view-mode=${viewMode.get()}
               .zoom=${zoom.get()}
               ?enable-animation=${enableAnimation.get()}
@@ -197,7 +197,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
               @toggle-animation=${this.handleToggleAnimation}
             ></graph-visualization>
             -->
-            
+
             <graph-controls
               .zoom=${zoom.get()}
               .nodeCount=${this.displayNodes.length}
@@ -217,7 +217,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
               .selectedNode=${selectedNode.get()}
               .selectedCluster=${selectedCluster.get()}
               .hoveredNode=${Signal.subtle.untrack(() => hoveredNode.get())}
-              search-query=${searchQuery.get() || ''}
+              search-query=${searchQuery.get() || ""}
               view-mode=${viewMode.get()}
               .zoom=${zoom.get()}
               ?enable-animation=${enableAnimation.get()}
@@ -255,11 +255,11 @@ export class GraphTab extends SignalWatcher(LitElement) {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-tab': GraphTab;
+    "graph-tab": GraphTab;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-tab')) {
-  customElements.define('graph-tab', GraphTab);
+if (!customElements.get("graph-tab")) {
+  customElements.define("graph-tab", GraphTab);
 }

@@ -7,9 +7,9 @@
  * @module signals/ui
  */
 
-import { signal } from '@lit-labs/signals';
-import { type ActiveTab, DEFAULT_ACTIVE_TAB } from '@shared/schemas';
-import type { LayoutDimension } from '@/graph/layout/d3-layout';
+import { signal } from "@lit-labs/signals";
+import { type ActiveTab, DEFAULT_ACTIVE_TAB } from "@shared/schemas";
+import type { LayoutDimension } from "@/graph/layout/d3-layout";
 
 // ==================== Types ====================
 
@@ -20,7 +20,7 @@ import type { LayoutDimension } from '@/graph/layout/d3-layout';
  */
 export type PreviewFilter = {
   /** Type of filter being previewed */
-  type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
+  type: "nodeType" | "platform" | "origin" | "project" | "package" | "cluster";
   /** Value being previewed */
   value: string;
 } | null;
@@ -40,7 +40,7 @@ export const enableAnimation = signal<boolean>(false);
 export const previewFilter = signal<PreviewFilter>(null);
 
 /** Layout dimension: 2D or 3D */
-export const layoutDimension = signal<LayoutDimension>('2d');
+export const layoutDimension = signal<LayoutDimension>("2d");
 
 // ==================== Reset Utility ====================
 
@@ -53,5 +53,5 @@ export function resetUISignals(): void {
   zoom.set(1);
   enableAnimation.set(false);
   previewFilter.set(null);
-  layoutDimension.set('2d');
+  layoutDimension.set("2d");
 }

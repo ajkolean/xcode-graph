@@ -51,7 +51,11 @@ export function forceEdgeBundling(
   const filteredEdges = edges.filter((e) => {
     const src = nodes[e.source];
     const tgt = nodes[e.target];
-    return src && tgt && (Math.abs(src.x - tgt.x) > eps || Math.abs(src.y - tgt.y) > eps);
+    return (
+      src &&
+      tgt &&
+      (Math.abs(src.x - tgt.x) > eps || Math.abs(src.y - tgt.y) > eps)
+    );
   });
 
   if (filteredEdges.length === 0) return [];
@@ -89,7 +93,8 @@ export function forceEdgeBundling(
 
     // Scale compatibility
     const lavg = (pLen + qLen) / 2;
-    const scale = 2 / (lavg / Math.min(pLen, qLen) + Math.max(pLen, qLen) / lavg);
+    const scale =
+      2 / (lavg / Math.min(pLen, qLen) + Math.max(pLen, qLen) / lavg);
 
     // Position compatibility
     const midP = edgeMidpoint(P);
@@ -109,7 +114,10 @@ export function forceEdgeBundling(
   // Compute compatibility
   for (let i = 0; i < filteredEdges.length - 1; i++) {
     for (let j = i + 1; j < filteredEdges.length; j++) {
-      if (compatibilityScore(filteredEdges[i]!, filteredEdges[j]!) >= compatibility_threshold) {
+      if (
+        compatibilityScore(filteredEdges[i]!, filteredEdges[j]!) >=
+        compatibility_threshold
+      ) {
         compatibility_list[i]!.push(j);
         compatibility_list[j]!.push(i);
       }

@@ -7,7 +7,7 @@
  * @module test-utils/signal-helpers
  */
 
-import type { Signal } from '@lit-labs/signals';
+import type { Signal } from "@lit-labs/signals";
 
 /**
  * Snapshot of signal values
@@ -32,7 +32,9 @@ export type SignalSnapshot = Map<Signal.State<unknown>, unknown>;
  * restoreSignalSnapshot(snapshot);
  * ```
  */
-export function createSignalSnapshot(signals: Signal.State<unknown>[]): SignalSnapshot {
+export function createSignalSnapshot(
+  signals: Signal.State<unknown>[],
+): SignalSnapshot {
   const snapshot = new Map<Signal.State<unknown>, unknown>();
 
   for (const sig of signals) {

@@ -4,21 +4,21 @@
  * Tests for virtual rendering optimization (viewport culling).
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
-import { describe, it } from 'vitest';
-import type { GraphVirtualRenderer } from './virtual-renderer';
-import './virtual-renderer';
+import { expect, fixture, html } from "@open-wc/testing";
+import { describe, it } from "vitest";
+import type { GraphVirtualRenderer } from "./virtual-renderer";
+import "./virtual-renderer";
 import {
   createLargeTestGraph,
   createMockNodePositions,
   createNodeInViewport,
   createNodeOutsideViewport,
   createViewportBounds,
-} from './test-helpers/graph-fixtures';
-import { countSvgElements } from './test-helpers/svg-assertions';
+} from "./test-helpers/graph-fixtures";
+import { countSvgElements } from "./test-helpers/svg-assertions";
 
-describe('graph-virtual-renderer', () => {
-  it('should render with default properties', async () => {
+describe("graph-virtual-renderer", () => {
+  it("should render with default properties", async () => {
     const el = await fixture<GraphVirtualRenderer>(
       html`<graph-virtual-renderer></graph-virtual-renderer>`,
     );
@@ -30,7 +30,7 @@ describe('graph-virtual-renderer', () => {
     expect(el.zoom).to.equal(1);
   });
 
-  it('should accept viewport dimensions', async () => {
+  it("should accept viewport dimensions", async () => {
     const el = await fixture<GraphVirtualRenderer>(
       html`<graph-virtual-renderer
         viewportWidth="1920"
@@ -42,7 +42,7 @@ describe('graph-virtual-renderer', () => {
     expect(el.viewportHeight).to.equal(1080);
   });
 
-  it('should accept pan and zoom properties', async () => {
+  it("should accept pan and zoom properties", async () => {
     const el = await fixture<GraphVirtualRenderer>(
       html`<graph-virtual-renderer
         panX="100"
@@ -56,15 +56,21 @@ describe('graph-virtual-renderer', () => {
     expect(el.zoom).to.equal(1.5);
   });
 
-  it('should render nodes inside viewport', async () => {
+  it("should render nodes inside viewport", async () => {
     const viewport = createViewportBounds(1000, 800, 0, 0, 1);
-    const { node: node1, position: pos1 } = createNodeInViewport('node1', viewport);
-    const { node: node2, position: pos2 } = createNodeInViewport('node2', viewport);
+    const { node: node1, position: pos1 } = createNodeInViewport(
+      "node1",
+      viewport,
+    );
+    const { node: node2, position: pos2 } = createNodeInViewport(
+      "node2",
+      viewport,
+    );
 
     const nodes = [node1, node2];
     const positions = new Map([
-      ['node1', pos1],
-      ['node2', pos2],
+      ["node1", pos1],
+      ["node2", pos2],
     ]);
 
     const el = await fixture<GraphVirtualRenderer>(
@@ -86,15 +92,21 @@ describe('graph-virtual-renderer', () => {
     expect(stats.visibleNodes).to.equal(2);
   });
 
-  it('should cull nodes outside viewport', async () => {
+  it("should cull nodes outside viewport", async () => {
     const viewport = createViewportBounds(1000, 800, 0, 0, 1);
-    const { node: node1, position: pos1 } = createNodeInViewport('node1', viewport);
-    const { node: node2, position: pos2 } = createNodeOutsideViewport('node2', viewport);
+    const { node: node1, position: pos1 } = createNodeInViewport(
+      "node1",
+      viewport,
+    );
+    const { node: node2, position: pos2 } = createNodeOutsideViewport(
+      "node2",
+      viewport,
+    );
 
     const nodes = [node1, node2];
     const positions = new Map([
-      ['node1', pos1],
-      ['node2', pos2],
+      ["node1", pos1],
+      ["node2", pos2],
     ]);
 
     const el = await fixture<GraphVirtualRenderer>(
@@ -117,12 +129,15 @@ describe('graph-virtual-renderer', () => {
     expect(stats.culledNodes).to.equal(1);
   });
 
-  it('should recalculate visible nodes when viewport changes', async () => {
+  it("should recalculate visible nodes when viewport changes", async () => {
     const viewport = createViewportBounds(1000, 800, 0, 0, 1);
-    const { node: node1, position: pos1 } = createNodeInViewport('node1', viewport);
+    const { node: node1, position: pos1 } = createNodeInViewport(
+      "node1",
+      viewport,
+    );
 
     const nodes = [node1];
-    const positions = new Map([['node1', pos1]]);
+    const positions = new Map([["node1", pos1]]);
 
     const el = await fixture<GraphVirtualRenderer>(
       html`<graph-virtual-renderer
@@ -149,12 +164,15 @@ describe('graph-virtual-renderer', () => {
     expect(stats.visibleNodes).to.equal(0);
   });
 
-  it('should recalculate visible nodes when zoom changes', async () => {
+  it("should recalculate visible nodes when zoom changes", async () => {
     const viewport = createViewportBounds(1000, 800, 0, 0, 1);
-    const { node: node1, position: pos1 } = createNodeInViewport('node1', viewport);
+    const { node: node1, position: pos1 } = createNodeInViewport(
+      "node1",
+      viewport,
+    );
 
     const nodes = [node1];
-    const positions = new Map([['node1', pos1]]);
+    const positions = new Map([["node1", pos1]]);
 
     const el = await fixture<GraphVirtualRenderer>(
       html`<graph-virtual-renderer
@@ -175,12 +193,15 @@ describe('graph-virtual-renderer', () => {
     expect(stats.totalNodes).to.equal(1);
   });
 
-  it('should use buffer margin for smooth scrolling', async () => {
+  it("should use buffer margin for smooth scrolling", async () => {
     const viewport = createViewportBounds(1000, 800, 0, 0, 1);
-    const { node: node1, position: pos1 } = createNodeInViewport('node1', viewport);
+    const { node: node1, position: pos1 } = createNodeInViewport(
+      "node1",
+      viewport,
+    );
 
     const nodes = [node1];
-    const positions = new Map([['node1', pos1]]);
+    const positions = new Map([["node1", pos1]]);
 
     const el = await fixture<GraphVirtualRenderer>(
       html`<graph-virtual-renderer
@@ -193,7 +214,7 @@ describe('graph-virtual-renderer', () => {
     expect(el.bufferMargin).to.equal(200);
   });
 
-  it('should handle large graphs efficiently', async () => {
+  it("should handle large graphs efficiently", async () => {
     const { nodes } = createLargeTestGraph(100);
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
@@ -217,7 +238,7 @@ describe('graph-virtual-renderer', () => {
     expect(stats.culledNodes).to.be.greaterThan(0);
   });
 
-  it('should provide virtual rendering statistics', async () => {
+  it("should provide virtual rendering statistics", async () => {
     const { nodes } = createLargeTestGraph(50);
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
@@ -232,18 +253,18 @@ describe('graph-virtual-renderer', () => {
 
     const stats = el.getVirtualRenderingStats();
 
-    expect(stats).to.have.property('totalNodes');
-    expect(stats).to.have.property('visibleNodes');
-    expect(stats).to.have.property('culledNodes');
-    expect(stats).to.have.property('cullingRatio');
-    expect(stats).to.have.property('percentageCulled');
-    expect(stats).to.have.property('renderCount');
+    expect(stats).to.have.property("totalNodes");
+    expect(stats).to.have.property("visibleNodes");
+    expect(stats).to.have.property("culledNodes");
+    expect(stats).to.have.property("cullingRatio");
+    expect(stats).to.have.property("percentageCulled");
+    expect(stats).to.have.property("renderCount");
 
     expect(stats.totalNodes).to.equal(50);
     expect(stats.culledNodes).to.equal(stats.totalNodes - stats.visibleNodes);
   });
 
-  it('should calculate culling ratio correctly', async () => {
+  it("should calculate culling ratio correctly", async () => {
     const { nodes } = createLargeTestGraph(100);
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
@@ -261,7 +282,7 @@ describe('graph-virtual-renderer', () => {
     expect(stats.cullingRatio).to.equal(expectedRatio);
   });
 
-  it('should calculate percentage culled correctly', async () => {
+  it("should calculate percentage culled correctly", async () => {
     const { nodes } = createLargeTestGraph(100);
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
@@ -275,11 +296,12 @@ describe('graph-virtual-renderer', () => {
     await el.updateComplete;
 
     const stats = el.getVirtualRenderingStats();
-    const expectedPercentage = ((stats.totalNodes - stats.visibleNodes) / stats.totalNodes) * 100;
+    const expectedPercentage =
+      ((stats.totalNodes - stats.visibleNodes) / stats.totalNodes) * 100;
     expect(stats.percentageCulled).to.equal(expectedPercentage);
   });
 
-  it('should increment render count on updates', async () => {
+  it("should increment render count on updates", async () => {
     const { nodes } = createLargeTestGraph(10);
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
@@ -302,10 +324,10 @@ describe('graph-virtual-renderer', () => {
     expect(newRenderCount).to.be.greaterThan(initialRenderCount);
   });
 
-  it('should handle nodes without positions gracefully', async () => {
+  it("should handle nodes without positions gracefully", async () => {
     const { nodes } = createLargeTestGraph(10);
     // Don't provide positions for some nodes
-    const positions = createMockNodePositions(['node0', 'node1', 'node2']);
+    const positions = createMockNodePositions(["node0", "node1", "node2"]);
 
     const el = await fixture<GraphVirtualRenderer>(
       html`<graph-virtual-renderer

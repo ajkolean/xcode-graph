@@ -5,15 +5,15 @@
  * Provides consistent mock data for nodes, edges, clusters, and positions.
  */
 
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import { ClusterType } from '@shared/schemas/cluster.schema';
+import type { Cluster, ClusterPosition, NodePosition } from "@shared/schemas";
+import { ClusterType } from "@shared/schemas/cluster.schema";
 import {
   type GraphEdge,
   type GraphNode,
   NodeType,
   Origin,
   Platform,
-} from '@shared/schemas/graph.schema';
+} from "@shared/schemas/graph.schema";
 
 /**
  * Create a small test graph with 3 nodes and 2 edges
@@ -24,39 +24,39 @@ export function createSmallTestGraph(): {
 } {
   const nodes: GraphNode[] = [
     {
-      id: 'node1',
-      name: 'AppTarget',
+      id: "node1",
+      name: "AppTarget",
       type: NodeType.App,
       platform: Platform.iOS,
-      project: 'ProjectA',
+      project: "ProjectA",
       origin: Origin.Local,
     },
     {
-      id: 'node2',
-      name: 'Framework1',
+      id: "node2",
+      name: "Framework1",
       type: NodeType.Framework,
       platform: Platform.iOS,
-      project: 'ProjectA',
+      project: "ProjectA",
       origin: Origin.Local,
     },
     {
-      id: 'node3',
-      name: 'Framework2',
+      id: "node3",
+      name: "Framework2",
       type: NodeType.Framework,
       platform: Platform.iOS,
-      project: 'ProjectB',
+      project: "ProjectB",
       origin: Origin.Local,
     },
   ];
 
   const edges: GraphEdge[] = [
     {
-      source: 'node1',
-      target: 'node2',
+      source: "node1",
+      target: "node2",
     },
     {
-      source: 'node2',
-      target: 'node3',
+      source: "node2",
+      target: "node3",
     },
   ];
 
@@ -73,54 +73,54 @@ export function createMediumTestGraph(): {
   const nodes: GraphNode[] = [
     // ProjectA nodes
     {
-      id: 'app1',
-      name: 'App',
+      id: "app1",
+      name: "App",
       type: NodeType.App,
       platform: Platform.iOS,
-      project: 'ProjectA',
+      project: "ProjectA",
       origin: Origin.Local,
     },
     {
-      id: 'framework1',
-      name: 'Core',
+      id: "framework1",
+      name: "Core",
       type: NodeType.Framework,
       platform: Platform.iOS,
-      project: 'ProjectA',
+      project: "ProjectA",
       origin: Origin.Local,
     },
     {
-      id: 'framework2',
-      name: 'UI',
+      id: "framework2",
+      name: "UI",
       type: NodeType.Framework,
       platform: Platform.iOS,
-      project: 'ProjectA',
+      project: "ProjectA",
       origin: Origin.Local,
     },
     // ProjectB nodes
     {
-      id: 'lib1',
-      name: 'Network',
+      id: "lib1",
+      name: "Network",
       type: NodeType.Library,
       platform: Platform.iOS,
-      project: 'ProjectB',
+      project: "ProjectB",
       origin: Origin.Local,
     },
     {
-      id: 'lib2',
-      name: 'Utils',
+      id: "lib2",
+      name: "Utils",
       type: NodeType.Library,
       platform: Platform.iOS,
-      project: 'ProjectB',
+      project: "ProjectB",
       origin: Origin.Local,
     },
   ];
 
   const edges: GraphEdge[] = [
-    { source: 'app1', target: 'framework1' },
-    { source: 'app1', target: 'framework2' },
-    { source: 'framework1', target: 'lib1' },
-    { source: 'framework2', target: 'lib1' },
-    { source: 'lib1', target: 'lib2' },
+    { source: "app1", target: "framework1" },
+    { source: "app1", target: "framework2" },
+    { source: "framework1", target: "lib1" },
+    { source: "framework2", target: "lib1" },
+    { source: "lib1", target: "lib2" },
   ];
 
   return { nodes, edges };
@@ -129,13 +129,15 @@ export function createMediumTestGraph(): {
 /**
  * Create mock node positions for testing
  */
-export function createMockNodePositions(nodeIds: string[]): Map<string, NodePosition> {
+export function createMockNodePositions(
+  nodeIds: string[],
+): Map<string, NodePosition> {
   const positions = new Map<string, NodePosition>();
 
   nodeIds.forEach((id, index) => {
     positions.set(id, {
       id,
-      clusterId: 'ProjectA',
+      clusterId: "ProjectA",
       x: 100 + index * 150,
       y: 100 + index * 50,
       radius: 24,
@@ -150,7 +152,9 @@ export function createMockNodePositions(nodeIds: string[]): Map<string, NodePosi
 /**
  * Create mock cluster positions for testing
  */
-export function createMockClusterPositions(clusterIds: string[]): Map<string, ClusterPosition> {
+export function createMockClusterPositions(
+  clusterIds: string[],
+): Map<string, ClusterPosition> {
   const positions = new Map<string, ClusterPosition>();
 
   clusterIds.forEach((id, index) => {
@@ -177,7 +181,7 @@ export function createMockClusters(nodes: GraphNode[]): Cluster[] {
 
   // Group nodes by project
   for (const node of nodes) {
-    const clusterId = node.project || 'External';
+    const clusterId = node.project || "External";
     if (!clusterMap.has(clusterId)) {
       clusterMap.set(clusterId, []);
     }
@@ -201,11 +205,11 @@ export function createMockClusters(nodes: GraphNode[]): Cluster[] {
  */
 export function createTestNode(overrides: Partial<GraphNode> = {}): GraphNode {
   return {
-    id: 'test-node',
-    name: 'TestNode',
+    id: "test-node",
+    name: "TestNode",
     type: NodeType.Framework,
     platform: Platform.iOS,
-    project: 'TestProject',
+    project: "TestProject",
     origin: Origin.Local,
     ...overrides,
   };
@@ -214,7 +218,7 @@ export function createTestNode(overrides: Partial<GraphNode> = {}): GraphNode {
 /**
  * Create a single test edge
  */
-export function createTestEdge(source = 'node1', target = 'node2'): GraphEdge {
+export function createTestEdge(source = "node1", target = "node2"): GraphEdge {
   return { source, target };
 }
 
@@ -259,7 +263,12 @@ export function createLargeTestGraph(nodeCount = 100): {
     nodes.push({
       id: `node${i}`,
       name: `Node${i}`,
-      type: i % 3 === 0 ? NodeType.App : i % 3 === 1 ? NodeType.Framework : NodeType.Library,
+      type:
+        i % 3 === 0
+          ? NodeType.App
+          : i % 3 === 1
+            ? NodeType.Framework
+            : NodeType.Library,
       platform: i % 2 === 0 ? Platform.iOS : Platform.macOS,
       project: `Project${projectIndex}`,
       origin: Origin.Local,
@@ -314,7 +323,7 @@ export function createNodeInViewport(
 
   return {
     node: createTestNode({ id, name: `Node-${id}` }),
-    position: { id, clusterId: 'test-cluster', x, y, radius: 24, vx: 0, vy: 0 },
+    position: { id, clusterId: "test-cluster", x, y, radius: 24, vx: 0, vy: 0 },
   };
 }
 
@@ -330,6 +339,6 @@ export function createNodeOutsideViewport(
 
   return {
     node: createTestNode({ id, name: `Node-${id}` }),
-    position: { id, clusterId: 'test-cluster', x, y, radius: 24, vx: 0, vy: 0 },
+    position: { id, clusterId: "test-cluster", x, y, radius: 24, vx: 0, vy: 0 },
   };
 }

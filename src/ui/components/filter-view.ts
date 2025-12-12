@@ -24,14 +24,14 @@
  * @fires clear-filters - Dispatched when clear filters button is clicked
  */
 
-import type { FilterState } from '@shared/schemas';
-import { css, html, LitElement } from 'lit';
-import { property, state } from 'lit/decorators.js';
-import './stats-card';
-import './search-bar';
-import './clear-filters-button';
-import './filter-section';
-import './empty-state';
+import type { FilterState } from "@shared/schemas";
+import { css, html, LitElement } from "lit";
+import { property, state } from "lit/decorators.js";
+import "./stats-card";
+import "./search-bar";
+import "./clear-filters-button";
+import "./filter-section";
+import "./empty-state";
 
 export interface FilterItem {
   key: string;
@@ -44,22 +44,22 @@ export class GraphFilterView extends LitElement {
   // Properties
   // ========================================
 
-  @property({ type: Number, attribute: 'filtered-nodes-count' })
+  @property({ type: Number, attribute: "filtered-nodes-count" })
   declare filteredNodesCount: number;
 
-  @property({ type: Number, attribute: 'total-nodes-count' })
+  @property({ type: Number, attribute: "total-nodes-count" })
   declare totalNodesCount: number;
 
-  @property({ type: Number, attribute: 'filtered-edges-count' })
+  @property({ type: Number, attribute: "filtered-edges-count" })
   declare filteredEdgesCount: number;
 
-  @property({ type: Number, attribute: 'total-edges-count' })
+  @property({ type: Number, attribute: "total-edges-count" })
   declare totalEdgesCount: number;
 
   @property({ attribute: false })
   declare filters: FilterState;
 
-  @property({ type: String, attribute: 'search-query' })
+  @property({ type: String, attribute: "search-query" })
   declare searchQuery: string;
 
   @property({ attribute: false })
@@ -78,7 +78,7 @@ export class GraphFilterView extends LitElement {
   declare zoom: number;
 
   @state()
-  private declare expandedSections: Record<string, boolean>;
+  declare private expandedSections: Record<string, boolean>;
 
   constructor() {
     super();
@@ -92,7 +92,7 @@ export class GraphFilterView extends LitElement {
       projects: new Set(),
       packages: new Set(),
     };
-    this.searchQuery = '';
+    this.searchQuery = "";
     this.nodeTypeItems = [];
     this.platformItems = [];
     this.projectItems = [];
@@ -162,7 +162,7 @@ export class GraphFilterView extends LitElement {
 
   private handleSearchChange(e: CustomEvent<{ query: string }>) {
     this.dispatchEvent(
-      new CustomEvent('search-change', {
+      new CustomEvent("search-change", {
         detail: { query: e.detail.query },
         bubbles: true,
         composed: true,
@@ -172,8 +172,8 @@ export class GraphFilterView extends LitElement {
 
   private handleSearchClear() {
     this.dispatchEvent(
-      new CustomEvent('search-change', {
-        detail: { query: '' },
+      new CustomEvent("search-change", {
+        detail: { query: "" },
         bubbles: true,
         composed: true,
       }),
@@ -182,7 +182,7 @@ export class GraphFilterView extends LitElement {
 
   private handleClearFilters() {
     this.dispatchEvent(
-      new CustomEvent('clear-filters', {
+      new CustomEvent("clear-filters", {
         bubbles: true,
         composed: true,
       }),
@@ -196,7 +196,7 @@ export class GraphFilterView extends LitElement {
       [section]: !this.expandedSections[section],
     };
     this.dispatchEvent(
-      new CustomEvent('section-toggle', {
+      new CustomEvent("section-toggle", {
         detail: { section },
         bubbles: true,
         composed: true,
@@ -217,7 +217,7 @@ export class GraphFilterView extends LitElement {
     const newFilters = { ...this.filters, [filterKey]: newSet };
 
     this.dispatchEvent(
-      new CustomEvent('filters-change', {
+      new CustomEvent("filters-change", {
         detail: { filters: newFilters },
         bubbles: true,
         composed: true,
@@ -227,7 +227,7 @@ export class GraphFilterView extends LitElement {
 
   private handlePreviewChange(e: CustomEvent) {
     this.dispatchEvent(
-      new CustomEvent('preview-change', {
+      new CustomEvent("preview-change", {
         detail: e.detail,
         bubbles: true,
         composed: true,
@@ -237,16 +237,16 @@ export class GraphFilterView extends LitElement {
 
   private getFilterKey(filterType: string): keyof FilterState {
     switch (filterType) {
-      case 'nodeType':
-        return 'nodeTypes';
-      case 'platform':
-        return 'platforms';
-      case 'project':
-        return 'projects';
-      case 'package':
-        return 'packages';
+      case "nodeType":
+        return "nodeTypes";
+      case "platform":
+        return "platforms";
+      case "project":
+        return "projects";
+      case "package":
+        return "packages";
       default:
-        return 'nodeTypes';
+        return "nodeTypes";
     }
   }
 
@@ -296,8 +296,9 @@ export class GraphFilterView extends LitElement {
             .selectedItems=${this.filters.nodeTypes}
             filter-type="nodeType"
             .zoom=${this.zoom}
-            @section-toggle=${() => this.handleSectionToggle('productTypes')}
-            @item-toggle=${(e: CustomEvent) => this.handleItemToggle('nodeType', e.detail.key, e.detail.checked)}
+            @section-toggle=${() => this.handleSectionToggle("productTypes")}
+            @item-toggle=${(e: CustomEvent) =>
+              this.handleItemToggle("nodeType", e.detail.key, e.detail.checked)}
             @preview-change=${this.handlePreviewChange}
           >
           </graph-filter-section>
@@ -314,8 +315,9 @@ export class GraphFilterView extends LitElement {
             .selectedItems=${this.filters.platforms}
             filter-type="platform"
             .zoom=${this.zoom}
-            @section-toggle=${() => this.handleSectionToggle('platforms')}
-            @item-toggle=${(e: CustomEvent) => this.handleItemToggle('platform', e.detail.key, e.detail.checked)}
+            @section-toggle=${() => this.handleSectionToggle("platforms")}
+            @item-toggle=${(e: CustomEvent) =>
+              this.handleItemToggle("platform", e.detail.key, e.detail.checked)}
             @preview-change=${this.handlePreviewChange}
           >
           </graph-filter-section>
@@ -332,15 +334,15 @@ export class GraphFilterView extends LitElement {
             .selectedItems=${this.filters.projects}
             filter-type="project"
             .zoom=${this.zoom}
-            @section-toggle=${() => this.handleSectionToggle('projects')}
-            @item-toggle=${(e: CustomEvent) => this.handleItemToggle('project', e.detail.key, e.detail.checked)}
+            @section-toggle=${() => this.handleSectionToggle("projects")}
+            @item-toggle=${(e: CustomEvent) =>
+              this.handleItemToggle("project", e.detail.key, e.detail.checked)}
             @preview-change=${this.handlePreviewChange}
           >
           </graph-filter-section>
 
-          ${
-            this.packageItems.length > 0
-              ? html`
+          ${this.packageItems.length > 0
+            ? html`
                 <div class="section-divider"></div>
 
                 <!-- Packages -->
@@ -353,28 +355,30 @@ export class GraphFilterView extends LitElement {
                   .selectedItems=${this.filters.packages}
                   filter-type="package"
                   .zoom=${this.zoom}
-                  @section-toggle=${() => this.handleSectionToggle('packages')}
-                  @item-toggle=${(e: CustomEvent) => this.handleItemToggle('package', e.detail.key, e.detail.checked)}
+                  @section-toggle=${() => this.handleSectionToggle("packages")}
+                  @item-toggle=${(e: CustomEvent) =>
+                    this.handleItemToggle(
+                      "package",
+                      e.detail.key,
+                      e.detail.checked,
+                    )}
                   @preview-change=${this.handlePreviewChange}
                 >
                 </graph-filter-section>
               `
-              : ''
-          }
+            : ""}
         </div>
       </div>
 
       <!-- Empty State -->
-      ${
-        this.filteredNodesCount === 0
-          ? html`
+      ${this.filteredNodesCount === 0
+        ? html`
             <graph-empty-state
               ?has-active-filters=${this.isFiltersActive}
               @clear-filters=${this.handleClearFilters}
             ></graph-empty-state>
           `
-          : ''
-      }
+        : ""}
     `;
   }
 }
@@ -382,11 +386,11 @@ export class GraphFilterView extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-filter-view': GraphFilterView;
+    "graph-filter-view": GraphFilterView;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-filter-view')) {
-  customElements.define('graph-filter-view', GraphFilterView);
+if (!customElements.get("graph-filter-view")) {
+  customElements.define("graph-filter-view", GraphFilterView);
 }

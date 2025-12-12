@@ -15,26 +15,29 @@
  * ```
  */
 
-import { generateColorMap } from '@graph/utils/filters';
-import { computeFilters } from '@graph/utils/node-utils';
-import { SignalWatcher } from '@lit-labs/signals';
-import { createMachineController } from '@shared/controllers/zag.controller';
-import { type SidebarSection, sidebarMachine } from '@shared/machines/sidebar.machine';
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { PLATFORM_COLOR } from '@ui/utils/platform-icons';
-import { css, html, LitElement } from 'lit';
-import { property } from 'lit/decorators.js';
-import './right-sidebar-header';
-import './collapsed-sidebar';
-import './node-details-panel';
-import './cluster-details-panel';
-import './clear-filters-button';
-import './search-bar';
-import './filter-section';
-import './empty-state';
-import './stats-card';
+import { generateColorMap } from "@graph/utils/filters";
+import { computeFilters } from "@graph/utils/node-utils";
+import { SignalWatcher } from "@lit-labs/signals";
+import { createMachineController } from "@shared/controllers/zag.controller";
+import {
+  type SidebarSection,
+  sidebarMachine,
+} from "@shared/machines/sidebar.machine";
+import type { Cluster } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { getNodeTypeColor } from "@ui/utils/node-colors";
+import { PLATFORM_COLOR } from "@ui/utils/platform-icons";
+import { css, html, LitElement } from "lit";
+import { property } from "lit/decorators.js";
+import "./right-sidebar-header";
+import "./collapsed-sidebar";
+import "./node-details-panel";
+import "./cluster-details-panel";
+import "./clear-filters-button";
+import "./search-bar";
+import "./filter-section";
+import "./empty-state";
+import "./stats-card";
 
 // Import signals
 // Import actions
@@ -48,7 +51,7 @@ import {
   showDependents,
   showImpact,
   viewMode,
-} from '@graph/signals/index';
+} from "@graph/signals/index";
 import {
   type FilterState,
   filters,
@@ -58,7 +61,7 @@ import {
   setPreviewFilter,
   setSearchQuery,
   zoom,
-} from '@shared/signals/index';
+} from "@shared/signals/index";
 
 /** Filter item for filter sections */
 interface FilterItem {
@@ -132,7 +135,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
 
   // Zag sidebar machine (kept - only replacing Zustand)
   private readonly sidebar = createMachineController(this, sidebarMachine, {
-    id: 'right-sidebar',
+    id: "right-sidebar",
     defaultCollapsed: true,
   });
 
@@ -160,16 +163,21 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      background: linear-gradient(180deg, var(--colors-sidebar) 0%, var(--colors-background) 100%);
+      background: linear-gradient(
+        180deg,
+        var(--colors-sidebar) 0%,
+        var(--colors-background) 100%
+      );
       border-left: var(--border-widths-thin) solid var(--colors-sidebar-border);
-      box-shadow: -8px 0 24px rgba(var(--colors-background-rgb), var(--opacity-30)),
-                  inset 1px 0 0 rgba(var(--colors-foreground-rgb), var(--opacity-4));
+      box-shadow:
+        -8px 0 24px rgba(var(--colors-background-rgb), var(--opacity-30)),
+        inset 1px 0 0 rgba(var(--colors-foreground-rgb), var(--opacity-4));
       position: relative;
     }
 
     /* Noise texture overlay */
     aside::before {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       background-image: var(--effect-noise);
@@ -180,7 +188,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
 
     /* Subtle scan line effect */
     aside::after {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       background: var(--effect-scanlines);
@@ -201,7 +209,8 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
       flex: 1;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
+      scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20))
+        transparent;
     }
 
     .filter-scroll::-webkit-scrollbar {
@@ -254,14 +263,16 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
     if (existing) return existing;
 
     const clusterNodes = this.allNodes.filter(
-      (n) => (n.type === 'package' ? n.name : n.project) === clusterId,
+      (n) => (n.type === "package" ? n.name : n.project) === clusterId,
     );
     if (clusterNodes.length === 0) return undefined;
 
     const firstNode = clusterNodes[0];
     if (!firstNode) return undefined;
-    const type = firstNode.type === 'package' ? 'package' : 'project';
-    const origin = clusterNodes.some((n) => n.origin === 'external') ? 'external' : 'local';
+    const type = firstNode.type === "package" ? "package" : "project";
+    const origin = clusterNodes.some((n) => n.origin === "external")
+      ? "external"
+      : "local";
 
     return {
       id: clusterId,
@@ -273,13 +284,13 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   }
 
   private get isCollapsed(): boolean {
-    return this.sidebar.matches('collapsed');
+    return this.sidebar.matches("collapsed");
   }
 
   private get headerTitle(): string {
-    if (selectedNode.get()) return 'Node Details';
-    if (selectedCluster.get()) return 'Cluster Details';
-    return 'Project Overview';
+    if (selectedNode.get()) return "Node Details";
+    if (selectedCluster.get()) return "Cluster Details";
+    return "Project Overview";
   }
 
   // ========================================
@@ -293,20 +304,20 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   private handleClearFilters() {
     const clearAll = this.filterData.createClearFilters(setFilters);
     clearAll();
-    setSearchQuery('');
+    setSearchQuery("");
   }
 
   private handleItemToggle(
-    type: 'nodeType' | 'platform' | 'project' | 'package',
+    type: "nodeType" | "platform" | "project" | "package",
     key: string,
     checked: boolean,
   ) {
     const current = filters.get();
     const filterKeyMap = {
-      nodeType: 'nodeTypes',
-      platform: 'platforms',
-      project: 'projects',
-      package: 'packages',
+      nodeType: "nodeTypes",
+      platform: "platforms",
+      project: "projects",
+      package: "packages",
     } as const;
 
     const filterKey = filterKeyMap[type];
@@ -329,11 +340,11 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   // ========================================
 
   private handleToggleCollapse() {
-    this.sidebar.send({ type: 'TOGGLE' });
+    this.sidebar.send({ type: "TOGGLE" });
   }
 
   private handleToggleSection(section: SidebarSection) {
-    this.sidebar.send({ type: 'TOGGLE_SECTION', section });
+    this.sidebar.send({ type: "TOGGLE_SECTION", section });
   }
 
   private handleExpandToSection(section: SidebarSection) {
@@ -342,12 +353,14 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
     if (selectedCluster.get()) selectCluster(null);
 
     // Expand to section
-    this.sidebar.send({ type: 'EXPAND_TO_SECTION', section });
+    this.sidebar.send({ type: "EXPAND_TO_SECTION", section });
 
     // Scroll to section
     setTimeout(() => {
-      const element = this.shadowRoot?.getElementById(`filter-section-${section}`);
-      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const element = this.shadowRoot?.getElementById(
+        `filter-section-${section}`,
+      );
+      element?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
   }
 
@@ -355,7 +368,9 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   // Render Helpers
   // ========================================
 
-  private renderCollapsedSidebar(currentFilters: ReturnType<typeof filters.get>) {
+  private renderCollapsedSidebar(
+    currentFilters: ReturnType<typeof filters.get>,
+  ) {
     return html`
       <graph-collapsed-sidebar
         .filteredNodes=${this.filteredNodes}
@@ -374,7 +389,11 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
     `;
   }
 
-  private renderNodeDetails(node: GraphNode, currentViewMode: string, currentZoom: number) {
+  private renderNodeDetails(
+    node: GraphNode,
+    currentViewMode: string,
+    currentZoom: number,
+  ) {
     return html`
       <graph-node-details-panel
         .node=${node}
@@ -400,7 +419,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
       <graph-cluster-details-panel
         .cluster=${this.findClusterById(clusterId)}
         .clusterNodes=${this.allNodes.filter(
-          (n) => (n.type === 'package' ? n.name : n.project) === clusterId,
+          (n) => (n.type === "package" ? n.name : n.project) === clusterId,
         )}
         .allNodes=${this.allNodes}
         .edges=${this.allEdges}
@@ -428,12 +447,14 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
         <div class="stats-row">
           <graph-stats-card
             label="Nodes"
-            value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
+            value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ??
+            0}"
             ?highlighted=${isFiltersActive}
           ></graph-stats-card>
           <graph-stats-card
             label="Dependencies"
-            value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
+            value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ??
+            0}"
             ?highlighted=${isFiltersActive}
           ></graph-stats-card>
         </div>
@@ -444,26 +465,30 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
         ></graph-clear-filters-button>
 
         <graph-search-bar
-          search-query=${currentSearchQuery || ''}
-          @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
-          @search-clear=${() => this.handleSearchChange('')}
+          search-query=${currentSearchQuery || ""}
+          @search-change=${(e: CustomEvent) =>
+            this.handleSearchChange(e.detail.query)}
+          @search-clear=${() => this.handleSearchChange("")}
         ></graph-search-bar>
 
         <div class="filter-scroll">
           <div class="filter-sections">
-            ${this.renderFilterSections(currentFilters, currentZoom, expandedSections, items)}
+            ${this.renderFilterSections(
+              currentFilters,
+              currentZoom,
+              expandedSections,
+              items,
+            )}
           </div>
 
-          ${
-            this.filteredNodes?.length === 0
-              ? html`
+          ${this.filteredNodes?.length === 0
+            ? html`
                 <graph-empty-state
                   ?has-active-filters=${isFiltersActive || !!currentSearchQuery}
                   @clear-filters=${() => this.handleClearFilters()}
                 ></graph-empty-state>
               `
-              : ''
-          }
+            : ""}
         </div>
       </div>
     `;
@@ -487,10 +512,11 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
         ?is-expanded=${expandedSections.productTypes}
         filter-type="nodeType"
         .zoom=${currentZoom}
-        @section-toggle=${() => this.handleToggleSection('productTypes')}
+        @section-toggle=${() => this.handleToggleSection("productTypes")}
         @item-toggle=${(e: CustomEvent) =>
-          this.handleItemToggle('nodeType', e.detail.key, e.detail.checked)}
-        @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+          this.handleItemToggle("nodeType", e.detail.key, e.detail.checked)}
+        @preview-change=${(e: CustomEvent) =>
+          this.handlePreviewChange(e.detail)}
       ></graph-filter-section>
 
       <graph-filter-section
@@ -502,10 +528,11 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
         ?is-expanded=${expandedSections.platforms}
         filter-type="platform"
         .zoom=${currentZoom}
-        @section-toggle=${() => this.handleToggleSection('platforms')}
+        @section-toggle=${() => this.handleToggleSection("platforms")}
         @item-toggle=${(e: CustomEvent) =>
-          this.handleItemToggle('platform', e.detail.key, e.detail.checked)}
-        @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+          this.handleItemToggle("platform", e.detail.key, e.detail.checked)}
+        @preview-change=${(e: CustomEvent) =>
+          this.handlePreviewChange(e.detail)}
       ></graph-filter-section>
 
       <graph-filter-section
@@ -517,15 +544,15 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
         ?is-expanded=${expandedSections.projects}
         filter-type="project"
         .zoom=${currentZoom}
-        @section-toggle=${() => this.handleToggleSection('projects')}
+        @section-toggle=${() => this.handleToggleSection("projects")}
         @item-toggle=${(e: CustomEvent) =>
-          this.handleItemToggle('project', e.detail.key, e.detail.checked)}
-        @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+          this.handleItemToggle("project", e.detail.key, e.detail.checked)}
+        @preview-change=${(e: CustomEvent) =>
+          this.handlePreviewChange(e.detail)}
       ></graph-filter-section>
 
-      ${
-        packageItems.length
-          ? html`
+      ${packageItems.length
+        ? html`
             <graph-filter-section
               id="packages"
               title="Packages"
@@ -535,14 +562,18 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
               ?is-expanded=${expandedSections.packages}
               filter-type="package"
               .zoom=${currentZoom}
-              @section-toggle=${() => this.handleToggleSection('packages')}
+              @section-toggle=${() => this.handleToggleSection("packages")}
               @item-toggle=${(e: CustomEvent) =>
-                this.handleItemToggle('package', e.detail.key, e.detail.checked)}
-              @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
+                this.handleItemToggle(
+                  "package",
+                  e.detail.key,
+                  e.detail.checked,
+                )}
+              @preview-change=${(e: CustomEvent) =>
+                this.handlePreviewChange(e.detail)}
             ></graph-filter-section>
           `
-          : ''
-      }
+        : ""}
     `;
   }
 
@@ -581,7 +612,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
 
   override render() {
     const isCollapsed = this.isCollapsed;
-    const expandedSections = this.sidebar.get('expandedSections');
+    const expandedSections = this.sidebar.get("expandedSections");
     const filterData = this.filterData;
     const currentFilters = filters.get();
     const currentSearchQuery = searchQuery.get();
@@ -591,11 +622,13 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
     const currentZoom = zoom.get();
     const isFiltersActive = filterData.hasActiveFilters(currentFilters);
 
-    const nodeTypeItems = Array.from(filterData.typeCounts.entries()).map(([type, count]) => ({
-      key: type,
-      count,
-      color: getNodeTypeColor(type),
-    }));
+    const nodeTypeItems = Array.from(filterData.typeCounts.entries()).map(
+      ([type, count]) => ({
+        key: type,
+        count,
+        color: getNodeTypeColor(type),
+      }),
+    );
 
     const platformItems = Array.from(filterData.platformCounts.entries()).map(
       ([platform, count]) => ({
@@ -605,26 +638,36 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
       }),
     );
 
-    const projectColors = generateColorMap(filterData.projectCounts.keys(), 'project');
-    const packageColors = generateColorMap(filterData.packageCounts.keys(), 'package');
+    const projectColors = generateColorMap(
+      filterData.projectCounts.keys(),
+      "project",
+    );
+    const packageColors = generateColorMap(
+      filterData.packageCounts.keys(),
+      "package",
+    );
 
-    const projectItems = Array.from(filterData.projectCounts.entries()).map(([project, count]) => ({
-      key: project,
-      count,
-      color: projectColors.get(project) || '#6F2CFF',
-    }));
+    const projectItems = Array.from(filterData.projectCounts.entries()).map(
+      ([project, count]) => ({
+        key: project,
+        count,
+        color: projectColors.get(project) || "#6F2CFF",
+      }),
+    );
 
-    const packageItems = Array.from(filterData.packageCounts.entries()).map(([pkg, count]) => ({
-      key: pkg,
-      count,
-      color: packageColors.get(pkg) || '#FF9800',
-    }));
+    const packageItems = Array.from(filterData.packageCounts.entries()).map(
+      ([pkg, count]) => ({
+        key: pkg,
+        count,
+        color: packageColors.get(pkg) || "#FF9800",
+      }),
+    );
 
     // Update host attribute for CSS
     if (isCollapsed) {
-      this.setAttribute('collapsed', '');
+      this.setAttribute("collapsed", "");
     } else {
-      this.removeAttribute('collapsed');
+      this.removeAttribute("collapsed");
     }
 
     const sidebarContent = isCollapsed
@@ -658,11 +701,11 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-right-sidebar': GraphRightSidebar;
+    "graph-right-sidebar": GraphRightSidebar;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-right-sidebar')) {
-  customElements.define('graph-right-sidebar', GraphRightSidebar);
+if (!customElements.get("graph-right-sidebar")) {
+  customElements.define("graph-right-sidebar", GraphRightSidebar);
 }

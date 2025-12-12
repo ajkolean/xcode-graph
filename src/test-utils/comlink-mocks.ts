@@ -2,7 +2,7 @@
  * Comlink Mocks - Test utilities for Comlink worker communication
  */
 
-import type { LayoutWorkerAPI } from '@/graph/workers/layout-api';
+import type { LayoutWorkerAPI } from "@/graph/workers/layout-api";
 
 /**
  * Mock Comlink wrap function
@@ -28,7 +28,7 @@ export function createMockComlinkWrap() {
       for (let i = 0; i < totalTicks; i++) {
         setTimeout(() => {
           onProgress({
-            type: 'progress',
+            type: "progress",
             tickCount: i,
             totalTicks,
             nodePositions: new Map(),
@@ -40,7 +40,7 @@ export function createMockComlinkWrap() {
       // Send completion
       setTimeout(() => {
         onProgress({
-          type: 'complete',
+          type: "complete",
           tickCount: totalTicks,
           totalTicks,
         });
@@ -81,7 +81,7 @@ export function createMockComlinkWrap() {
 export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
   // Configuration
   public shouldError = false;
-  public errorMessage = 'Mock worker error';
+  public errorMessage = "Mock worker error";
   public computeDelay = 0;
   public animationDelay = 10;
 
@@ -121,7 +121,10 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
     return this.mockInitialOutput;
   }
 
-  async computeAnimatedLayout(input: unknown, onProgress: (progress: unknown) => void) {
+  async computeAnimatedLayout(
+    input: unknown,
+    onProgress: (progress: unknown) => void,
+  ) {
     this.computeAnimatedLayoutCalls++;
 
     if (this.shouldError) {
@@ -135,7 +138,7 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
     for (let i = 0; i < totalTicks; i++) {
       await this.delay(this.animationDelay);
       onProgress({
-        type: 'progress',
+        type: "progress",
         tickCount: i,
         totalTicks,
       });
@@ -143,7 +146,7 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
 
     // Send completion
     onProgress({
-      type: 'complete',
+      type: "complete",
       tickCount: totalTicks,
       totalTicks,
     });

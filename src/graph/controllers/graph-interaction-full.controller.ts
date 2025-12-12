@@ -13,8 +13,8 @@
  * @module controllers/graph-interaction-full
  */
 
-import type { ClusterPosition, NodePosition } from '@shared/schemas';
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
+import type { ClusterPosition, NodePosition } from "@shared/schemas";
+import type { ReactiveController, ReactiveControllerHost } from "lit";
 
 // ==================== Type Definitions ====================
 
@@ -77,8 +77,10 @@ export class GraphInteractionFullController implements ReactiveController {
 
   updateConfig(config: Partial<GraphInteractionConfig>) {
     if (config.zoom !== undefined) this.zoom = config.zoom;
-    if (config.finalNodePositions) this.finalNodePositions = config.finalNodePositions;
-    if (config.clusterPositions) this.clusterPositions = config.clusterPositions;
+    if (config.finalNodePositions)
+      this.finalNodePositions = config.finalNodePositions;
+    if (config.clusterPositions)
+      this.clusterPositions = config.clusterPositions;
   }
 
   // ========================================
@@ -87,7 +89,7 @@ export class GraphInteractionFullController implements ReactiveController {
 
   handleMouseDown = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (target.tagName === 'svg') {
+    if (target.tagName === "svg") {
       this.isDragging = true;
       this.dragStart = { x: e.clientX - this.pan.x, y: e.clientY - this.pan.y };
       this.hasMoved = false;
@@ -159,16 +161,23 @@ export class GraphInteractionFullController implements ReactiveController {
   // ========================================
 
   hostConnected(): void {
-    window.addEventListener('mouseup', this.handleWindowMouseUp, { capture: true });
+    window.addEventListener("mouseup", this.handleWindowMouseUp, {
+      capture: true,
+    });
   }
 
   hostDisconnected(): void {
     try {
       this.isDragging = false;
       this.draggedNode = null;
-      window.removeEventListener('mouseup', this.handleWindowMouseUp, { capture: true });
+      window.removeEventListener("mouseup", this.handleWindowMouseUp, {
+        capture: true,
+      });
     } catch (error) {
-      console.error('[GraphInteractionFullController] Error during cleanup:', error);
+      console.error(
+        "[GraphInteractionFullController] Error during cleanup:",
+        error,
+      );
       // Ensure state is reset even if error occurs
       this.isDragging = false;
       this.draggedNode = null;

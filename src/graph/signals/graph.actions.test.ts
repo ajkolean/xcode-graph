@@ -5,11 +5,14 @@
  * Tests selection, view mode, circular dependencies, and complex interactions.
  */
 
-import { ViewMode } from '@shared/schemas/app.schema';
-import type { GraphNode } from '@shared/schemas/graph.schema';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { SignalSnapshot } from '../../test-utils/signal-helpers';
-import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
+import { ViewMode } from "@shared/schemas/app.schema";
+import type { GraphNode } from "@shared/schemas/graph.schema";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { SignalSnapshot } from "../../test-utils/signal-helpers";
+import {
+  createSignalSnapshot,
+  restoreSignalSnapshot,
+} from "../../test-utils/signal-helpers";
 import {
   focusNode,
   resetView,
@@ -20,27 +23,27 @@ import {
   setViewMode,
   showDependents,
   showImpact,
-} from './graph.actions';
+} from "./graph.actions";
 import {
   circularDependencies,
   hoveredNode,
   selectedCluster,
   selectedNode,
   viewMode,
-} from './graph.signals';
+} from "./graph.signals";
 
-describe('graph.actions', () => {
+describe("graph.actions", () => {
   let snapshot: SignalSnapshot;
 
   // Helper to create a test node
   const createTestNode = (id: string, name = `Node ${id}`): GraphNode => ({
     id,
     name,
-    type: 'framework',
+    type: "framework",
     path: `/path/to/${id}`,
-    platform: 'ios',
-    project: 'TestProject',
-    origin: 'first-party',
+    platform: "ios",
+    project: "TestProject",
+    origin: "first-party",
   });
 
   beforeEach(() => {
@@ -59,26 +62,26 @@ describe('graph.actions', () => {
 
   // ==================== Basic Actions ====================
 
-  describe('selectNode', () => {
-    it('should set selected node', () => {
-      const node = createTestNode('node-1');
+  describe("selectNode", () => {
+    it("should set selected node", () => {
+      const node = createTestNode("node-1");
 
       selectNode(node);
 
       expect(selectedNode.get()).toBe(node);
     });
 
-    it('should clear selected cluster when selecting node', () => {
-      selectedCluster.set('cluster-1');
+    it("should clear selected cluster when selecting node", () => {
+      selectedCluster.set("cluster-1");
 
-      const node = createTestNode('node-1');
+      const node = createTestNode("node-1");
       selectNode(node);
 
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should set view mode to Full when deselecting node', () => {
-      const node = createTestNode('node-1');
+    it("should set view mode to Full when deselecting node", () => {
+      const node = createTestNode("node-1");
       selectNode(node);
       viewMode.set(ViewMode.Focused);
 
@@ -87,17 +90,17 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should not change view mode when selecting node', () => {
+    it("should not change view mode when selecting node", () => {
       viewMode.set(ViewMode.Focused);
-      const node = createTestNode('node-1');
+      const node = createTestNode("node-1");
 
       selectNode(node);
 
       expect(viewMode.get()).toBe(ViewMode.Focused);
     });
 
-    it('should allow selecting null to deselect', () => {
-      const node = createTestNode('node-1');
+    it("should allow selecting null to deselect", () => {
+      const node = createTestNode("node-1");
       selectNode(node);
 
       selectNode(null);
@@ -106,32 +109,32 @@ describe('graph.actions', () => {
     });
   });
 
-  describe('selectCluster', () => {
-    it('should set selected cluster', () => {
-      selectCluster('cluster-1');
+  describe("selectCluster", () => {
+    it("should set selected cluster", () => {
+      selectCluster("cluster-1");
 
-      expect(selectedCluster.get()).toBe('cluster-1');
+      expect(selectedCluster.get()).toBe("cluster-1");
     });
 
-    it('should clear selected node when selecting cluster', () => {
-      const node = createTestNode('node-1');
+    it("should clear selected node when selecting cluster", () => {
+      const node = createTestNode("node-1");
       selectedNode.set(node);
 
-      selectCluster('cluster-1');
+      selectCluster("cluster-1");
 
       expect(selectedNode.get()).toBeNull();
     });
 
-    it('should set view mode to Full when selecting cluster', () => {
+    it("should set view mode to Full when selecting cluster", () => {
       viewMode.set(ViewMode.Focused);
 
-      selectCluster('cluster-1');
+      selectCluster("cluster-1");
 
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should set view mode to Full when deselecting cluster', () => {
-      selectCluster('cluster-1');
+    it("should set view mode to Full when deselecting cluster", () => {
+      selectCluster("cluster-1");
       viewMode.set(ViewMode.Focused);
 
       selectCluster(null);
@@ -139,8 +142,8 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should allow selecting null to deselect', () => {
-      selectCluster('cluster-1');
+    it("should allow selecting null to deselect", () => {
+      selectCluster("cluster-1");
 
       selectCluster(null);
 
@@ -148,61 +151,61 @@ describe('graph.actions', () => {
     });
   });
 
-  describe('setHoveredNode', () => {
-    it('should set hovered node ID', () => {
-      setHoveredNode('node-1');
+  describe("setHoveredNode", () => {
+    it("should set hovered node ID", () => {
+      setHoveredNode("node-1");
 
-      expect(hoveredNode.get()).toBe('node-1');
+      expect(hoveredNode.get()).toBe("node-1");
     });
 
-    it('should allow clearing hovered node with null', () => {
-      setHoveredNode('node-1');
+    it("should allow clearing hovered node with null", () => {
+      setHoveredNode("node-1");
 
       setHoveredNode(null);
 
       expect(hoveredNode.get()).toBeNull();
     });
 
-    it('should allow changing hovered node', () => {
-      setHoveredNode('node-1');
-      setHoveredNode('node-2');
+    it("should allow changing hovered node", () => {
+      setHoveredNode("node-1");
+      setHoveredNode("node-2");
 
-      expect(hoveredNode.get()).toBe('node-2');
+      expect(hoveredNode.get()).toBe("node-2");
     });
   });
 
-  describe('setViewMode', () => {
-    it('should set view mode to Full', () => {
+  describe("setViewMode", () => {
+    it("should set view mode to Full", () => {
       setViewMode(ViewMode.Full);
 
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should set view mode to Focused', () => {
+    it("should set view mode to Focused", () => {
       setViewMode(ViewMode.Focused);
 
       expect(viewMode.get()).toBe(ViewMode.Focused);
     });
 
-    it('should set view mode to Dependents', () => {
+    it("should set view mode to Dependents", () => {
       setViewMode(ViewMode.Dependents);
 
       expect(viewMode.get()).toBe(ViewMode.Dependents);
     });
 
-    it('should set view mode to Both', () => {
+    it("should set view mode to Both", () => {
       setViewMode(ViewMode.Both);
 
       expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
-    it('should set view mode to Impact', () => {
+    it("should set view mode to Impact", () => {
       setViewMode(ViewMode.Impact);
 
       expect(viewMode.get()).toBe(ViewMode.Impact);
     });
 
-    it('should allow changing view mode multiple times', () => {
+    it("should allow changing view mode multiple times", () => {
       setViewMode(ViewMode.Focused);
       expect(viewMode.get()).toBe(ViewMode.Focused);
 
@@ -214,11 +217,11 @@ describe('graph.actions', () => {
     });
   });
 
-  describe('setCircularDependencies', () => {
-    it('should set circular dependencies', () => {
+  describe("setCircularDependencies", () => {
+    it("should set circular dependencies", () => {
       const cycles = [
-        ['node-1', 'node-2', 'node-1'],
-        ['node-3', 'node-4', 'node-5', 'node-3'],
+        ["node-1", "node-2", "node-1"],
+        ["node-3", "node-4", "node-5", "node-3"],
       ];
 
       setCircularDependencies(cycles);
@@ -226,18 +229,18 @@ describe('graph.actions', () => {
       expect(circularDependencies.get()).toEqual(cycles);
     });
 
-    it('should allow setting empty array', () => {
-      setCircularDependencies([['node-1', 'node-2', 'node-1']]);
+    it("should allow setting empty array", () => {
+      setCircularDependencies([["node-1", "node-2", "node-1"]]);
 
       setCircularDependencies([]);
 
       expect(circularDependencies.get()).toEqual([]);
     });
 
-    it('should replace previous circular dependencies', () => {
-      setCircularDependencies([['node-1', 'node-2', 'node-1']]);
+    it("should replace previous circular dependencies", () => {
+      setCircularDependencies([["node-1", "node-2", "node-1"]]);
 
-      const newCycles = [['node-3', 'node-4', 'node-3']];
+      const newCycles = [["node-3", "node-4", "node-3"]];
       setCircularDependencies(newCycles);
 
       expect(circularDependencies.get()).toEqual(newCycles);
@@ -246,9 +249,9 @@ describe('graph.actions', () => {
 
   // ==================== Complex Actions ====================
 
-  describe('focusNode', () => {
-    it('should select node and set view mode to Focused', () => {
-      const node = createTestNode('node-1');
+  describe("focusNode", () => {
+    it("should select node and set view mode to Focused", () => {
+      const node = createTestNode("node-1");
 
       focusNode(node);
 
@@ -256,17 +259,17 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Focused);
     });
 
-    it('should clear selected cluster when focusing node', () => {
-      selectedCluster.set('cluster-1');
-      const node = createTestNode('node-1');
+    it("should clear selected cluster when focusing node", () => {
+      selectedCluster.set("cluster-1");
+      const node = createTestNode("node-1");
 
       focusNode(node);
 
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should cycle from Focused to Full when clicking same node', () => {
-      const node = createTestNode('node-1');
+    it("should cycle from Focused to Full when clicking same node", () => {
+      const node = createTestNode("node-1");
       focusNode(node);
       expect(viewMode.get()).toBe(ViewMode.Focused);
 
@@ -275,8 +278,8 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should cycle from Both to Dependents when clicking same node', () => {
-      const node = createTestNode('node-1');
+    it("should cycle from Both to Dependents when clicking same node", () => {
+      const node = createTestNode("node-1");
       selectedNode.set(node);
       viewMode.set(ViewMode.Both);
 
@@ -285,8 +288,8 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Dependents);
     });
 
-    it('should cycle from Dependents to Both when clicking same node', () => {
-      const node = createTestNode('node-1');
+    it("should cycle from Dependents to Both when clicking same node", () => {
+      const node = createTestNode("node-1");
       selectedNode.set(node);
       viewMode.set(ViewMode.Dependents);
 
@@ -295,9 +298,9 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
-    it('should reset to Focused when clicking different node', () => {
-      const node1 = createTestNode('node-1');
-      const node2 = createTestNode('node-2');
+    it("should reset to Focused when clicking different node", () => {
+      const node1 = createTestNode("node-1");
+      const node2 = createTestNode("node-2");
 
       focusNode(node1);
       viewMode.set(ViewMode.Full);
@@ -309,9 +312,9 @@ describe('graph.actions', () => {
     });
   });
 
-  describe('showDependents', () => {
-    it('should select node and set view mode to Dependents', () => {
-      const node = createTestNode('node-1');
+  describe("showDependents", () => {
+    it("should select node and set view mode to Dependents", () => {
+      const node = createTestNode("node-1");
 
       showDependents(node);
 
@@ -319,17 +322,17 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Dependents);
     });
 
-    it('should clear selected cluster when showing dependents', () => {
-      selectedCluster.set('cluster-1');
-      const node = createTestNode('node-1');
+    it("should clear selected cluster when showing dependents", () => {
+      selectedCluster.set("cluster-1");
+      const node = createTestNode("node-1");
 
       showDependents(node);
 
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should cycle from Dependents to Full when clicking same node', () => {
-      const node = createTestNode('node-1');
+    it("should cycle from Dependents to Full when clicking same node", () => {
+      const node = createTestNode("node-1");
       showDependents(node);
       expect(viewMode.get()).toBe(ViewMode.Dependents);
 
@@ -338,8 +341,8 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should cycle from Both to Focused when clicking same node', () => {
-      const node = createTestNode('node-1');
+    it("should cycle from Both to Focused when clicking same node", () => {
+      const node = createTestNode("node-1");
       selectedNode.set(node);
       viewMode.set(ViewMode.Both);
 
@@ -348,8 +351,8 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Focused);
     });
 
-    it('should cycle from Focused to Both when clicking same node', () => {
-      const node = createTestNode('node-1');
+    it("should cycle from Focused to Both when clicking same node", () => {
+      const node = createTestNode("node-1");
       selectedNode.set(node);
       viewMode.set(ViewMode.Focused);
 
@@ -358,9 +361,9 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
-    it('should reset to Dependents when clicking different node', () => {
-      const node1 = createTestNode('node-1');
-      const node2 = createTestNode('node-2');
+    it("should reset to Dependents when clicking different node", () => {
+      const node1 = createTestNode("node-1");
+      const node2 = createTestNode("node-2");
 
       showDependents(node1);
       viewMode.set(ViewMode.Full);
@@ -372,9 +375,9 @@ describe('graph.actions', () => {
     });
   });
 
-  describe('showImpact', () => {
-    it('should select node and set view mode to Impact', () => {
-      const node = createTestNode('node-1');
+  describe("showImpact", () => {
+    it("should select node and set view mode to Impact", () => {
+      const node = createTestNode("node-1");
 
       showImpact(node);
 
@@ -382,17 +385,17 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Impact);
     });
 
-    it('should clear selected cluster when showing impact', () => {
-      selectedCluster.set('cluster-1');
-      const node = createTestNode('node-1');
+    it("should clear selected cluster when showing impact", () => {
+      selectedCluster.set("cluster-1");
+      const node = createTestNode("node-1");
 
       showImpact(node);
 
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should always set view mode to Impact regardless of current mode', () => {
-      const node = createTestNode('node-1');
+    it("should always set view mode to Impact regardless of current mode", () => {
+      const node = createTestNode("node-1");
       viewMode.set(ViewMode.Focused);
 
       showImpact(node);
@@ -404,9 +407,9 @@ describe('graph.actions', () => {
     });
   });
 
-  describe('resetView', () => {
-    it('should clear selected node', () => {
-      const node = createTestNode('node-1');
+  describe("resetView", () => {
+    it("should clear selected node", () => {
+      const node = createTestNode("node-1");
       selectedNode.set(node);
 
       resetView();
@@ -414,15 +417,15 @@ describe('graph.actions', () => {
       expect(selectedNode.get()).toBeNull();
     });
 
-    it('should clear selected cluster', () => {
-      selectedCluster.set('cluster-1');
+    it("should clear selected cluster", () => {
+      selectedCluster.set("cluster-1");
 
       resetView();
 
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should set view mode to Full', () => {
+    it("should set view mode to Full", () => {
       viewMode.set(ViewMode.Focused);
 
       resetView();
@@ -430,10 +433,10 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should clear all selections and reset view mode', () => {
-      const node = createTestNode('node-1');
+    it("should clear all selections and reset view mode", () => {
+      const node = createTestNode("node-1");
       selectedNode.set(node);
-      selectedCluster.set('cluster-1');
+      selectedCluster.set("cluster-1");
       viewMode.set(ViewMode.Impact);
 
       resetView();
@@ -446,25 +449,25 @@ describe('graph.actions', () => {
 
   // ==================== Integration Tests ====================
 
-  describe('integration scenarios', () => {
-    it('should handle switching between node and cluster selection', () => {
-      const node = createTestNode('node-1');
+  describe("integration scenarios", () => {
+    it("should handle switching between node and cluster selection", () => {
+      const node = createTestNode("node-1");
 
       selectNode(node);
       expect(selectedNode.get()).toBe(node);
       expect(selectedCluster.get()).toBeNull();
 
-      selectCluster('cluster-1');
+      selectCluster("cluster-1");
       expect(selectedNode.get()).toBeNull();
-      expect(selectedCluster.get()).toBe('cluster-1');
+      expect(selectedCluster.get()).toBe("cluster-1");
 
       selectNode(node);
       expect(selectedNode.get()).toBe(node);
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should handle complex view mode cycling with focusNode', () => {
-      const node = createTestNode('node-1');
+    it("should handle complex view mode cycling with focusNode", () => {
+      const node = createTestNode("node-1");
 
       // First click: Focused
       focusNode(node);
@@ -486,8 +489,8 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
-    it('should handle complex view mode cycling with showDependents', () => {
-      const node = createTestNode('node-1');
+    it("should handle complex view mode cycling with showDependents", () => {
+      const node = createTestNode("node-1");
 
       // First click: Dependents
       showDependents(node);
@@ -509,25 +512,25 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
-    it('should maintain hover state independently of selection', () => {
-      const node = createTestNode('node-1');
+    it("should maintain hover state independently of selection", () => {
+      const node = createTestNode("node-1");
 
-      setHoveredNode('node-2');
+      setHoveredNode("node-2");
       selectNode(node);
 
-      expect(hoveredNode.get()).toBe('node-2');
+      expect(hoveredNode.get()).toBe("node-2");
       expect(selectedNode.get()).toBe(node);
     });
 
-    it('should handle rapid selection changes', () => {
-      const node1 = createTestNode('node-1');
-      const node2 = createTestNode('node-2');
-      const node3 = createTestNode('node-3');
+    it("should handle rapid selection changes", () => {
+      const node1 = createTestNode("node-1");
+      const node2 = createTestNode("node-2");
+      const node3 = createTestNode("node-3");
 
       selectNode(node1);
-      selectCluster('cluster-1');
+      selectCluster("cluster-1");
       selectNode(node2);
-      selectCluster('cluster-2');
+      selectCluster("cluster-2");
       selectNode(node3);
 
       expect(selectedNode.get()).toBe(node3);

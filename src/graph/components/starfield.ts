@@ -34,9 +34,9 @@ export interface StarfieldOptions {
 }
 
 const STAR_PALETTE = [
-  '#f7f1da', // soft warm off-white
-  '#f5e0b5', // warmer, almost golden
-  '#d6e0ff', // occasional cool blue-white
+  "#f7f1da", // soft warm off-white
+  "#f5e0b5", // warmer, almost golden
+  "#d6e0ff", // occasional cool blue-white
 ];
 
 const DEFAULT_OPTIONS: Required<StarfieldOptions> = {
@@ -71,7 +71,9 @@ export class Starfield {
     return (
       width > 0 &&
       height > 0 &&
-      (this.width !== width || this.height !== height || this.stars.length === 0)
+      (this.width !== width ||
+        this.height !== height ||
+        this.stars.length === 0)
     );
   }
 
@@ -140,7 +142,11 @@ export class Starfield {
    * @param panX Camera pan offset in world space X
    * @param panY Camera pan offset in world space Y
    */
-  public render(ctx: CanvasRenderingContext2D, panX: number, panY: number): void {
+  public render(
+    ctx: CanvasRenderingContext2D,
+    panX: number,
+    panY: number,
+  ): void {
     const stars = this.stars;
     const count = stars.length;
 
@@ -180,7 +186,12 @@ export class Starfield {
       }
 
       // Skip if outside visible area (+ small margin)
-      if (wrappedX < -5 || wrappedX > width + 5 || wrappedY < -5 || wrappedY > height + 5) {
+      if (
+        wrappedX < -5 ||
+        wrappedX > width + 5 ||
+        wrappedY < -5 ||
+        wrappedY > height + 5
+      ) {
         continue;
       }
 

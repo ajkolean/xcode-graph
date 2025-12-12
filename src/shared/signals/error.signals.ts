@@ -7,9 +7,9 @@
  * @module signals/error
  */
 
-import { signal } from '@lit-labs/signals';
-import type { AppError } from '@shared/schemas/error.schema';
-import { DEFAULT_MAX_VISIBLE_TOASTS } from '@shared/schemas/error.schema';
+import { signal } from "@lit-labs/signals";
+import type { AppError } from "@shared/schemas/error.schema";
+import { DEFAULT_MAX_VISIBLE_TOASTS } from "@shared/schemas/error.schema";
 
 // ==================== State Signals ====================
 

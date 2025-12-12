@@ -7,8 +7,8 @@
  * @module signals/ui.actions
  */
 
-import type { ActiveTab } from '@shared/schemas';
-import type { LayoutDimension } from '@/graph/layout/d3-layout';
+import type { ActiveTab } from "@shared/schemas";
+import type { LayoutDimension } from "@/graph/layout/d3-layout";
 import {
   activeTab,
   enableAnimation,
@@ -16,7 +16,7 @@ import {
   type PreviewFilter,
   previewFilter,
   zoom,
-} from './ui.signals';
+} from "./ui.signals";
 
 // ==================== Tab Actions ====================
 
@@ -92,7 +92,7 @@ export function setPreviewFilter(preview: PreviewFilter): void {
  * Toggle between 2D and 3D layout
  */
 export function toggleLayoutDimension(): void {
-  layoutDimension.set(layoutDimension.get() === '2d' ? '3d' : '2d');
+  layoutDimension.set(layoutDimension.get() === "2d" ? "3d" : "2d");
 }
 
 /**

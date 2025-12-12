@@ -36,7 +36,10 @@ export const SMALL_GRAPH_CONFIG: PerformanceConfig = {
 };
 
 /** Auto-select config based on graph size */
-export function getPerformanceConfig(nodeCount: number, edgeCount: number): PerformanceConfig {
+export function getPerformanceConfig(
+  nodeCount: number,
+  edgeCount: number,
+): PerformanceConfig {
   if (nodeCount > 200 || edgeCount > 500) {
     console.log(
       `[Performance] Using LARGE_GRAPH_CONFIG for ${nodeCount} nodes, ${edgeCount} edges`,

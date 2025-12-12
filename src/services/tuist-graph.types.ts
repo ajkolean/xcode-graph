@@ -22,7 +22,7 @@ export interface FromTarget {
 }
 
 export enum Status {
-  Required = 'required',
+  Required = "required",
 }
 
 export interface PurpleXcframework {
@@ -73,8 +73,8 @@ export interface DependencyConditionPlatformFilter {
 export type Disabled = {};
 
 export enum Path {
-  UsersAndykoleanDeveloperTuist = '/Users/andykolean/Developer/tuist',
-  UsersAndykoleanDeveloperTuistApp = '/Users/andykolean/Developer/tuist/app',
+  UsersAndykoleanDeveloperTuist = "/Users/andykolean/Developer/tuist",
+  UsersAndykoleanDeveloperTuistApp = "/Users/andykolean/Developer/tuist/app",
 }
 
 export interface ProjectProject {
@@ -103,11 +103,11 @@ export interface Group {
 }
 
 export enum GroupName {
-  Project = 'Project',
+  Project = "Project",
 }
 
 export enum LastUpgradeCheck {
-  The9999 = '99.9.9',
+  The9999 = "99.9.9",
 }
 
 export interface ProjectOptions {
@@ -153,21 +153,21 @@ export interface ResourceSynthesizer {
 }
 
 export enum Extension {
-  Otf = 'otf',
-  Plist = 'plist',
-  Strings = 'strings',
-  Stringsdict = 'stringsdict',
-  Ttc = 'ttc',
-  Ttf = 'ttf',
-  Woff = 'woff',
-  Xcassets = 'xcassets',
+  Otf = "otf",
+  Plist = "plist",
+  Strings = "strings",
+  Stringsdict = "stringsdict",
+  Ttc = "ttc",
+  Ttf = "ttf",
+  Woff = "woff",
+  Xcassets = "xcassets",
 }
 
 export enum Parser {
-  Assets = 'assets',
-  Fonts = 'fonts',
-  Plists = 'plists',
-  Strings = 'strings',
+  Assets = "assets",
+  Fonts = "fonts",
+  Plists = "plists",
+  Strings = "strings",
 }
 
 export interface Template {
@@ -209,8 +209,8 @@ export interface Executable {
 }
 
 export enum Title {
-  InspectBuild = 'Inspect build',
-  InspectTest = 'Inspect test',
+  InspectBuild = "Inspect build",
+  InspectTest = "Inspect test",
 }
 
 export interface RunAction {
@@ -247,11 +247,11 @@ export interface TUISTAUTHEMAILClass {
 }
 
 export enum Value {
-  Empty = '',
-  FrameworkSearchPaths = '$(FRAMEWORK_SEARCH_PATHS)',
-  Srcroot = '$(SRCROOT)',
-  Tuistrocks = 'tuistrocks',
-  TuistrocksTuistDev = 'tuistrocks@tuist.dev',
+  Empty = "",
+  FrameworkSearchPaths = "$(FRAMEWORK_SEARCH_PATHS)",
+  Srcroot = "$(SRCROOT)",
+  Tuistrocks = "tuistrocks",
+  TuistrocksTuistDev = "tuistrocks@tuist.dev",
 }
 
 export interface LaunchArgument {
@@ -260,8 +260,8 @@ export interface LaunchArgument {
 }
 
 export enum ConfigurationNameEnum {
-  Debug = 'Debug',
-  Release = 'Release',
+  Debug = "Debug",
+  Release = "Release",
 }
 
 export interface DiagnosticsOptions {
@@ -288,7 +288,7 @@ export interface RunActionOptions {
 }
 
 export enum EnableGPUFrameCaptureMode {
-  AutoEnabled = 'autoEnabled',
+  AutoEnabled = "autoEnabled",
 }
 
 export interface TestAction {
@@ -366,8 +366,8 @@ export interface PurpleSettings {
 }
 
 export enum Variant {
-  Debug = 'debug',
-  Release = 'release',
+  Debug = "debug",
+  Release = "release",
 }
 
 export interface DefaultSettings {
@@ -545,7 +545,7 @@ export interface Targets {
   SwiftSyntaxMacrosGenericTestSupport?: Aexml;
   SwiftSyntaxMacrosTestSupport?: IssueReportingTestSupport;
   SwiftyJSON?: Aexml;
-  'system-zlib'?: CCryptoBoringSSL;
+  "system-zlib"?: CCryptoBoringSSL;
   SystemPackage?: SystemPackage;
   Tools?: Aexml;
   TSCBasic?: Aexml;
@@ -712,15 +712,15 @@ export interface AEXMLDeploymentTargets {
 }
 
 export enum Destination {
-  AppleTv = 'appleTv',
-  AppleVision = 'appleVision',
-  AppleVisionWithiPadDesign = 'appleVisionWithiPadDesign',
-  AppleWatch = 'appleWatch',
-  IPad = 'iPad',
-  IPhone = 'iPhone',
-  Mac = 'mac',
-  MacCatalyst = 'macCatalyst',
-  MacWithiPadDesign = 'macWithiPadDesign',
+  AppleTv = "appleTv",
+  AppleVision = "appleVision",
+  AppleVisionWithiPadDesign = "appleVisionWithiPadDesign",
+  AppleWatch = "appleWatch",
+  IPad = "iPad",
+  IPhone = "iPhone",
+  Mac = "mac",
+  MacCatalyst = "macCatalyst",
+  MacWithiPadDesign = "macWithiPadDesign",
 }
 
 export interface AEXMLInfoPlist {
@@ -740,8 +740,8 @@ export interface Metadata {
 }
 
 export enum AEXMLProduct {
-  CommandLineTool = 'commandLineTool',
-  StaticFramework = 'staticFramework',
+  CommandLineTool = "commandLineTool",
+  StaticFramework = "staticFramework",
 }
 
 export interface Resources {
@@ -1193,9 +1193,9 @@ export interface MockableMacroDeploymentTargets {
 }
 
 export enum Macos {
-  The120 = '12.0',
-  The150 = '15.0',
-  The1500 = '15.0.0',
+  The120 = "12.0",
+  The150 = "15.0",
+  The1500 = "15.0.0",
 }
 
 export interface ProjectAutomation {
@@ -1535,7 +1535,7 @@ export interface TuistAppSettings {
 
 export interface AmbitiousBase {
   ASSETCATALOG_COMPILER_APPICON_NAME: AlwaysSearchUserPaths;
-  'CODE_SIGN_ENTITLEMENTS[sdk=iphone*]': AlwaysSearchUserPaths;
+  "CODE_SIGN_ENTITLEMENTS[sdk=iphone*]": AlwaysSearchUserPaths;
   CODE_SIGN_IDENTITY: AlwaysSearchUserPaths;
   CODE_SIGN_STYLE: AlwaysSearchUserPaths;
   DEVELOPMENT_TEAM: AlwaysSearchUserPaths;
@@ -1550,8 +1550,8 @@ export interface AmbitiousConfiguration {
 export interface IndecentSettings {
   ENABLE_HARDENED_RUNTIME?: AlwaysSearchUserPaths;
   OTHER_CODE_SIGN_FLAGS?: AlwaysSearchUserPaths;
-  'PROVISIONING_PROFILE_SPECIFIER[sdk=iphone*]'?: AlwaysSearchUserPaths;
-  'PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]'?: AlwaysSearchUserPaths;
+  "PROVISIONING_PROFILE_SPECIFIER[sdk=iphone*]"?: AlwaysSearchUserPaths;
+  "PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]"?: AlwaysSearchUserPaths;
 }
 
 export interface TuistAppStorageClass {
@@ -1622,7 +1622,7 @@ export interface TuistTests {
 }
 
 export enum TuistAsyncQueueTestsProduct {
-  UnitTests = 'unit_tests',
+  UnitTests = "unit_tests",
 }
 
 export interface TuistAsyncQueueTestsSettings {

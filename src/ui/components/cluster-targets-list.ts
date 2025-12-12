@@ -18,12 +18,12 @@
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { getNodeTypeLabel } from '@ui/utils/node-icons';
-import { css, html, LitElement } from 'lit';
-import { property } from 'lit/decorators.js';
-import { NodeListEventsMixin } from './node-list-events';
-import './list-item-row';
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { getNodeTypeLabel } from "@ui/utils/node-icons";
+import { css, html, LitElement } from "lit";
+import { property } from "lit/decorators.js";
+import { NodeListEventsMixin } from "./node-list-events";
+import "./list-item-row";
 
 export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
   // ========================================
@@ -36,10 +36,10 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
   @property({ attribute: false })
   declare nodesByType: Record<string, GraphNode[]>;
 
-  @property({ type: Number, attribute: 'filtered-targets-count' })
+  @property({ type: Number, attribute: "filtered-targets-count" })
   declare filteredTargetsCount: number;
 
-  @property({ type: Number, attribute: 'total-targets-count' })
+  @property({ type: Number, attribute: "total-targets-count" })
   declare totalTargetsCount: number;
 
   @property({ attribute: false })
@@ -98,7 +98,10 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
   // Helpers
   // ========================================
 
-  private getNodeStats(nodeId: string): { dependencies: number; dependents: number } {
+  private getNodeStats(nodeId: string): {
+    dependencies: number;
+    dependents: number;
+  } {
     if (!this.edges) return { dependencies: 0, dependents: 0 };
 
     const dependencies = this.edges.filter((e) => e.source === nodeId).length;
@@ -113,13 +116,17 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
     const parts: string[] = [];
 
     if (stats.dependencies > 0) {
-      parts.push(`${stats.dependencies} dep${stats.dependencies === 1 ? '' : 's'}`);
+      parts.push(
+        `${stats.dependencies} dep${stats.dependencies === 1 ? "" : "s"}`,
+      );
     }
     if (stats.dependents > 0) {
-      parts.push(`${stats.dependents} dependent${stats.dependents === 1 ? '' : 's'}`);
+      parts.push(
+        `${stats.dependents} dependent${stats.dependents === 1 ? "" : "s"}`,
+      );
     }
 
-    return parts.length > 0 ? parts.join(' · ') : undefined;
+    return parts.length > 0 ? parts.join(" · ") : undefined;
   }
 
   // ========================================
@@ -131,36 +138,37 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
 
     return html`
       <h3 class="main-title">
-        Targets (${this.filteredTargetsCount || 0}/${this.totalTargetsCount || 0})
+        Targets
+        (${this.filteredTargetsCount || 0}/${this.totalTargetsCount || 0})
       </h3>
 
       <div class="sections">
         ${Object.entries(this.nodesByType).map(
           ([type, nodes]) => html`
-          <div class="type-section">
-            <div class="type-header">
-              ${getNodeTypeLabel(type)} (${nodes.length})
-            </div>
+            <div class="type-section">
+              <div class="type-header">
+                ${getNodeTypeLabel(type)} (${nodes.length})
+              </div>
 
-            <div class="node-list">
-              ${nodes.map((node) => {
-                const stats = this.getNodeStats(node.id);
-                const subtitle = this.formatNodeStatsSubtitle(stats);
+              <div class="node-list">
+                ${nodes.map((node) => {
+                  const stats = this.getNodeStats(node.id);
+                  const subtitle = this.formatNodeStatsSubtitle(stats);
 
-                return html`
-                  <graph-list-item-row
-                    .node=${node}
-                    subtitle=${subtitle || ''}
-                    .zoom=${this.zoom}
-                    @row-select=${this.handleNodeSelect}
-                    @row-hover=${this.handleNodeHover}
-                    @row-hover-end=${this.handleHoverEnd}
-                  ></graph-list-item-row>
-                `;
-              })}
+                  return html`
+                    <graph-list-item-row
+                      .node=${node}
+                      subtitle=${subtitle || ""}
+                      .zoom=${this.zoom}
+                      @row-select=${this.handleNodeSelect}
+                      @row-hover=${this.handleNodeHover}
+                      @row-hover-end=${this.handleHoverEnd}
+                    ></graph-list-item-row>
+                  `;
+                })}
+              </div>
             </div>
-          </div>
-        `,
+          `,
         )}
       </div>
     `;
@@ -170,11 +178,11 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-targets-list': GraphClusterTargetsList;
+    "graph-cluster-targets-list": GraphClusterTargetsList;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-targets-list')) {
-  customElements.define('graph-cluster-targets-list', GraphClusterTargetsList);
+if (!customElements.get("graph-cluster-targets-list")) {
+  customElements.define("graph-cluster-targets-list", GraphClusterTargetsList);
 }

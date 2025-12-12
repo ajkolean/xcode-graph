@@ -7,8 +7,13 @@
  * @module test-utils/machine-helpers
  */
 
-import { VanillaMachine } from '@shared/machines/lib/vanilla-machine';
-import type { Machine, MachineContext, MachineSchema, Service } from '@zag-js/core';
+import { VanillaMachine } from "@shared/machines/lib/vanilla-machine";
+import type {
+  Machine,
+  MachineContext,
+  MachineSchema,
+  Service,
+} from "@zag-js/core";
 
 /**
  * Configuration for creating a test machine service
@@ -17,9 +22,9 @@ export interface MachineTestConfig<TSchema extends MachineSchema> {
   /** The machine to test */
   machine: Machine<TSchema>;
   /** Initial props to pass to the machine */
-  props?: TSchema['props'];
+  props?: TSchema["props"];
   /** Initial context values (partial override) */
-  context?: Partial<TSchema['context']>;
+  context?: Partial<TSchema["context"]>;
 }
 
 /**
@@ -35,11 +40,13 @@ export interface MachineTestContext<TSchema extends MachineSchema> {
   /** The interpreted service */
   service: Service<MachineContext<TSchema>>;
   /** Get the current state */
-  getState: () => TSchema['state'];
+  getState: () => TSchema["state"];
   /** Get a context value */
-  getContext: <K extends keyof TSchema['context']>(key: K) => TSchema['context'][K];
+  getContext: <K extends keyof TSchema["context"]>(
+    key: K,
+  ) => TSchema["context"][K];
   /** Send an event and wait for it to be processed */
-  sendAndWait: (event: TSchema['event']) => Promise<void>;
+  sendAndWait: (event: TSchema["event"]) => Promise<void>;
   /** Cleanup function to stop the service */
   cleanup: () => void;
 }
@@ -70,7 +77,7 @@ export interface MachineTestContext<TSchema extends MachineSchema> {
 export function createMachineTestContext<TSchema extends MachineSchema>(
   config: MachineTestConfig<TSchema>,
 ): MachineTestContext<TSchema> {
-  const { machine, props = {} as TSchema['props'], context } = config;
+  const { machine, props = {} as TSchema["props"], context } = config;
 
   // Create the Vanilla Machine instance with props
   const instance = new VanillaMachine(machine, props);
@@ -80,7 +87,7 @@ export function createMachineTestContext<TSchema extends MachineSchema>(
   if (context) {
     for (const [key, value] of Object.entries(context)) {
       service.setContext((ctx) => {
-        ctx.set(key as keyof TSchema['context'], value);
+        ctx.set(key as keyof TSchema["context"], value);
       });
     }
   }
@@ -90,9 +97,10 @@ export function createMachineTestContext<TSchema extends MachineSchema>(
 
   return {
     service,
-    getState: () => service.state.get() as TSchema['state'],
-    getContext: <K extends keyof TSchema['context']>(key: K) => service.context.get(key),
-    sendAndWait: async (event: TSchema['event']) => {
+    getState: () => service.state.get() as TSchema["state"],
+    getContext: <K extends keyof TSchema["context"]>(key: K) =>
+      service.context.get(key),
+    sendAndWait: async (event: TSchema["event"]) => {
       service.send(event);
       // Wait for microtask queue to flush (VanillaMachine uses queueMicrotask)
       await new Promise((resolve) => queueMicrotask(resolve));
@@ -110,11 +118,13 @@ export function createMachineTestContext<TSchema extends MachineSchema>(
  */
 export function assertMachineState<TSchema extends MachineSchema>(
   ctx: MachineTestContext<TSchema>,
-  expectedState: TSchema['state'],
+  expectedState: TSchema["state"],
 ): void {
   const currentState = ctx.getState();
   if (currentState !== expectedState) {
-    throw new Error(`Expected state "${String(expectedState)}" but got "${String(currentState)}"`);
+    throw new Error(
+      `Expected state "${String(expectedState)}" but got "${String(currentState)}"`,
+    );
   }
 }
 
@@ -128,8 +138,12 @@ export function assertMachineState<TSchema extends MachineSchema>(
  */
 export function assertMachineContext<
   TSchema extends MachineSchema,
-  K extends keyof TSchema['context'],
->(ctx: MachineTestContext<TSchema>, key: K, expectedValue: TSchema['context'][K]): void {
+  K extends keyof TSchema["context"],
+>(
+  ctx: MachineTestContext<TSchema>,
+  key: K,
+  expectedValue: TSchema["context"][K],
+): void {
   const currentValue = ctx.getContext(key);
   if (currentValue !== expectedValue) {
     throw new Error(

@@ -5,7 +5,7 @@
  * Stateless service that operates on GraphDataService.
  */
 
-import type { GraphDataService } from './graphDataService';
+import type { GraphDataService } from "./graphDataService";
 
 export class GraphStatsService {
   /**
@@ -57,7 +57,9 @@ export class GraphStatsService {
       dependents += service.getIncomingEdges(node.id).length;
     }
 
-    const platforms = new Set(clusterNodes.map((n) => n.platform).filter(Boolean));
+    const platforms = new Set(
+      clusterNodes.map((n) => n.platform).filter(Boolean),
+    );
 
     return {
       nodeCount: clusterNodes.length,

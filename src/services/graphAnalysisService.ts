@@ -5,13 +5,17 @@
  * Stateless service that operates on GraphDataService.
  */
 
-import type { GraphDataService } from './graphDataService';
+import type { GraphDataService } from "./graphDataService";
 
 export class GraphAnalysisService {
   /**
    * Check if there's a path between two nodes
    */
-  static hasPath(service: GraphDataService, fromId: string, toId: string): boolean {
+  static hasPath(
+    service: GraphDataService,
+    fromId: string,
+    toId: string,
+  ): boolean {
     const visited = new Set<string>();
     const queue = [fromId];
 

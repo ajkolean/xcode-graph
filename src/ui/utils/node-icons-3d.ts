@@ -12,7 +12,7 @@
  */
 export function getAppIconPath3D(platform: string): string {
   switch (platform) {
-    case 'iOS':
+    case "iOS":
       // 3D Smartphone - isometric phone shape
       return `
         M-6,-16 L6,-16 L10,-12 L10,12 L6,16 L-6,16 L-10,12 L-10,-12 Z
@@ -21,7 +21,7 @@ export function getAppIconPath3D(platform: string): string {
         M-3,12 L3,12
       `;
 
-    case 'macOS':
+    case "macOS":
       // 3D Monitor - isometric display
       return `
         M-12,-10 L12,-10 L16,-6 L16,4 L12,8 L-12,8 L-16,4 L-16,-6 Z
@@ -31,7 +31,7 @@ export function getAppIconPath3D(platform: string): string {
         M0,8 L0,12
       `;
 
-    case 'visionOS':
+    case "visionOS":
       // 3D Glasses - isometric goggles
       return `
         M-12,-4 L-4,-8 L4,-8 L12,-4 L12,4 L4,8 L-4,8 L-12,4 Z
@@ -40,7 +40,7 @@ export function getAppIconPath3D(platform: string): string {
         M-4,0 L4,0
       `;
 
-    case 'tvOS':
+    case "tvOS":
       // 3D TV - isometric television
       return `
         M-14,-4 L14,-4 L18,0 L18,10 L14,14 L-14,14 L-18,10 L-18,0 Z
@@ -49,7 +49,7 @@ export function getAppIconPath3D(platform: string): string {
         M-6,-14 L0,-8 L6,-14
       `;
 
-    case 'watchOS':
+    case "watchOS":
       // 3D Watch - isometric wrist device
       return `
         M-5,-14 L5,-14 L8,-11 L8,11 L5,14 L-5,14 L-8,11 L-8,-11 Z
@@ -60,7 +60,7 @@ export function getAppIconPath3D(platform: string): string {
       `;
 
     default:
-      return getAppIconPath3D('iOS');
+      return getAppIconPath3D("iOS");
   }
 }
 
@@ -69,15 +69,15 @@ export function getAppIconPath3D(platform: string): string {
  * Uses isometric projections of the 2D shapes to create depth
  */
 export function getNodeIconPath3D(type: string, platform?: string): string {
-  if (type === 'app' && platform) {
+  if (type === "app" && platform) {
     return getAppIconPath3D(platform);
   }
 
   switch (type) {
-    case 'app':
-      return getAppIconPath3D('iOS');
+    case "app":
+      return getAppIconPath3D("iOS");
 
-    case 'framework':
+    case "framework":
       // Triangular Prism - 3D triangle with depth
       // Front face + back face + connecting edges
       return `
@@ -89,7 +89,7 @@ export function getNodeIconPath3D(type: string, platform?: string): string {
         M4,-8 L14,6 L-6,14 Z
       `;
 
-    case 'library':
+    case "library":
       // Pentagonal Prism - 3D pentagon with depth
       return `
         M0,-12 L11,-3 L7,11 L-7,11 L-11,-3 Z
@@ -101,7 +101,7 @@ export function getNodeIconPath3D(type: string, platform?: string): string {
         M-11,-3 L-7,0
       `;
 
-    case 'test-unit':
+    case "test-unit":
       // 3D Flask - isometric lab flask
       return `
         M-5,-12 L-5,-4 L-9,6 L-9,10 L9,10 L9,6 L5,-4 L5,-12
@@ -110,7 +110,7 @@ export function getNodeIconPath3D(type: string, platform?: string): string {
         M-7,6 L7,6
       `;
 
-    case 'test-ui':
+    case "test-ui":
       // 3D Microscope - isometric lab instrument
       return `
         M-10,12 L10,12 L14,16 L-6,16 Z
@@ -119,7 +119,7 @@ export function getNodeIconPath3D(type: string, platform?: string): string {
         M-5,6 A3,3 0 0,1 -3,9 A3,3 0 0,1 -7,9 A3,3 0 0,1 -5,6
       `;
 
-    case 'cli':
+    case "cli":
       // 3D Terminal - isometric command box
       return `
         M-12,-10 L12,-10 L16,-6 L16,8 L12,12 L-12,12 L-16,8 L-16,-6 Z
@@ -129,7 +129,7 @@ export function getNodeIconPath3D(type: string, platform?: string): string {
         M1,5 L7,5
       `;
 
-    case 'package':
+    case "package":
       // 3D Package Box - isometric cube with tape
       return `
         M-10,-8 L0,-14 L10,-8 L10,6 L0,12 L-10,6 Z

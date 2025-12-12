@@ -6,8 +6,8 @@
  * to avoid repeated DFS traversals on the same graph structure.
  */
 
-import type { ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { ViewMode } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
 
 export interface TransitiveResult {
   nodes: Set<string>;
@@ -20,7 +20,7 @@ export interface TransitiveResult {
 
 interface CacheKey {
   nodeId: string;
-  direction: 'dependencies' | 'dependents';
+  direction: "dependencies" | "dependents";
   edgesHash: string;
 }
 
@@ -33,16 +33,16 @@ class TransitiveCache {
   private cache = new Map<string, CacheEntry>();
   private maxSize = 100; // LRU cache size
   private edgesReference: GraphEdge[] | null = null;
-  private edgesHash = '';
+  private edgesHash = "";
 
   /**
    * Generate a simple hash from edges array
    * Uses length and first/last edges as a quick fingerprint
    */
   private hashEdges(edges: GraphEdge[]): string {
-    if (edges.length === 0) return 'empty';
+    if (edges.length === 0) return "empty";
     if (edges.length <= 2) {
-      return edges.map((e) => `${e.source}→${e.target}`).join('|');
+      return edges.map((e) => `${e.source}→${e.target}`).join("|");
     }
     // Use length + first + last edges as fingerprint
     const first = edges[0];
@@ -65,7 +65,10 @@ class TransitiveCache {
   /**
    * Get cached result if available
    */
-  get(nodeId: string, direction: 'dependencies' | 'dependents'): TransitiveResult | null {
+  get(
+    nodeId: string,
+    direction: "dependencies" | "dependents",
+  ): TransitiveResult | null {
     const key = `${nodeId}:${direction}:${this.edgesHash}`;
     const entry = this.cache.get(key);
     if (!entry) return null;
@@ -78,7 +81,11 @@ class TransitiveCache {
   /**
    * Store result in cache with LRU eviction
    */
-  set(nodeId: string, direction: 'dependencies' | 'dependents', result: TransitiveResult): void {
+  set(
+    nodeId: string,
+    direction: "dependencies" | "dependents",
+    result: TransitiveResult,
+  ): void {
     const key = `${nodeId}:${direction}:${this.edgesHash}`;
 
     // LRU eviction if cache is full
@@ -149,7 +156,9 @@ function traverseGraph(
   const edgeDepths = new Map<string, number>();
   let maxDepth = 0;
 
-  const stack: Array<{ id: string; depth: number }> = [{ id: startId, depth: 0 }];
+  const stack: Array<{ id: string; depth: number }> = [
+    { id: startId, depth: 0 },
+  ];
 
   while (stack.length > 0) {
     const { id, depth } = stack.pop()!;
@@ -182,7 +191,10 @@ export function computeTransitiveDependencies(
   viewMode: ViewMode,
   selectedNode: GraphNode | null,
   edges: GraphEdge[],
-): { transitiveDeps: TransitiveResult; transitiveDependents: TransitiveResult } {
+): {
+  transitiveDeps: TransitiveResult;
+  transitiveDependents: TransitiveResult;
+} {
   // Invalidate cache if edges changed
   transitiveCache.invalidateIfEdgesChanged(edges);
 
@@ -203,8 +215,8 @@ export function computeTransitiveDependencies(
 
   // Dependencies (outgoing edges) - with caching
   let transitiveDeps: TransitiveResult = EMPTY_RESULT;
-  if ((viewMode === 'focused' || viewMode === 'both') && selectedNode) {
-    const cached = transitiveCache.get(selectedNode.id, 'dependencies');
+  if ((viewMode === "focused" || viewMode === "both") && selectedNode) {
+    const cached = transitiveCache.get(selectedNode.id, "dependencies");
     if (cached) {
       transitiveDeps = cached;
     } else {
@@ -214,14 +226,14 @@ export function computeTransitiveDependencies(
         (id) => out.get(id) ?? [],
         (current, neighbor) => `${current}->${neighbor}`,
       );
-      transitiveCache.set(selectedNode.id, 'dependencies', transitiveDeps);
+      transitiveCache.set(selectedNode.id, "dependencies", transitiveDeps);
     }
   }
 
   // Dependents (incoming edges) - with caching
   let transitiveDependents: TransitiveResult = EMPTY_RESULT;
-  if (['dependents', 'both', 'impact'].includes(viewMode) && selectedNode) {
-    const cached = transitiveCache.get(selectedNode.id, 'dependents');
+  if (["dependents", "both", "impact"].includes(viewMode) && selectedNode) {
+    const cached = transitiveCache.get(selectedNode.id, "dependents");
     if (cached) {
       transitiveDependents = cached;
     } else {
@@ -231,7 +243,7 @@ export function computeTransitiveDependencies(
         (id) => inc.get(id) ?? [],
         (current, neighbor) => `${neighbor}->${current}`,
       );
-      transitiveCache.set(selectedNode.id, 'dependents', transitiveDependents);
+      transitiveCache.set(selectedNode.id, "dependents", transitiveDependents);
     }
   }
 

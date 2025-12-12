@@ -11,15 +11,15 @@
  * - Priority-based loading (visible clusters first)
  */
 
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { Cluster } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
 
 /**
  * Progress update during graph loading
  */
 export interface LoadProgress {
   /** Whether this is a chunk update or completion */
-  type: 'chunk' | 'complete';
+  type: "chunk" | "complete";
   /** Number of nodes loaded so far */
   loadedNodes: number;
   /** Total nodes to load */
@@ -62,8 +62,8 @@ export class GraphLoader {
     library: 3,
     cli: 4,
     package: 5,
-    'test-unit': 6,
-    'test-ui': 7,
+    "test-unit": 6,
+    "test-ui": 7,
   };
 
   constructor(config: ProgressiveLoadConfig = {}) {
@@ -84,7 +84,7 @@ export class GraphLoader {
   ): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }> {
     if (nodes.length === 0) {
       onProgress({
-        type: 'complete',
+        type: "complete",
         loadedNodes: 0,
         totalNodes: 0,
         loadedEdges: 0,
@@ -111,12 +111,13 @@ export class GraphLoader {
 
       // Find edges for this chunk
       const chunkEdges = edges.filter(
-        (edge) => loadedNodeIds.has(edge.source) && loadedNodeIds.has(edge.target),
+        (edge) =>
+          loadedNodeIds.has(edge.source) && loadedNodeIds.has(edge.target),
       );
 
       // Send progress update
       onProgress({
-        type: 'chunk',
+        type: "chunk",
         loadedNodes: loadedNodes.length,
         totalNodes: nodes.length,
         loadedEdges: chunkEdges.length,
@@ -136,7 +137,7 @@ export class GraphLoader {
 
     // Final complete message
     onProgress({
-      type: 'complete',
+      type: "complete",
       loadedNodes: nodes.length,
       totalNodes: nodes.length,
       loadedEdges: edges.length,
@@ -157,8 +158,12 @@ export class GraphLoader {
     edges: GraphEdge[],
     onProgress: (progress: LoadProgress) => void,
   ): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }> {
-    const priorityClusters = clusters.filter((c) => this.config.priorityClusterIds.includes(c.id));
-    const otherClusters = clusters.filter((c) => !this.config.priorityClusterIds.includes(c.id));
+    const priorityClusters = clusters.filter((c) =>
+      this.config.priorityClusterIds.includes(c.id),
+    );
+    const otherClusters = clusters.filter(
+      (c) => !this.config.priorityClusterIds.includes(c.id),
+    );
 
     const orderedClusters = [...priorityClusters, ...otherClusters];
 
@@ -177,11 +182,12 @@ export class GraphLoader {
 
       // Find edges for loaded nodes so far
       const currentEdges = edges.filter(
-        (edge) => loadedNodeIds.has(edge.source) && loadedNodeIds.has(edge.target),
+        (edge) =>
+          loadedNodeIds.has(edge.source) && loadedNodeIds.has(edge.target),
       );
 
       onProgress({
-        type: 'chunk',
+        type: "chunk",
         loadedNodes: loadedNodes.length,
         totalNodes: nodes.length,
         loadedEdges: currentEdges.length,
@@ -200,7 +206,7 @@ export class GraphLoader {
     }
 
     onProgress({
-      type: 'complete',
+      type: "complete",
       loadedNodes: nodes.length,
       totalNodes: nodes.length,
       loadedEdges: edges.length,
@@ -217,18 +223,18 @@ export class GraphLoader {
   estimateLoadTime(nodeCount: number): {
     chunks: number;
     estimatedMs: number;
-    recommendation: 'instant' | 'fast' | 'progressive';
+    recommendation: "instant" | "fast" | "progressive";
   } {
     const chunks = Math.ceil(nodeCount / this.config.chunkSize);
     const estimatedMs = chunks * this.config.delayBetweenChunks;
 
-    let recommendation: 'instant' | 'fast' | 'progressive';
+    let recommendation: "instant" | "fast" | "progressive";
     if (nodeCount < 100) {
-      recommendation = 'instant';
+      recommendation = "instant";
     } else if (nodeCount < 500) {
-      recommendation = 'fast';
+      recommendation = "fast";
     } else {
-      recommendation = 'progressive';
+      recommendation = "progressive";
     }
 
     return { chunks, estimatedMs, recommendation };
@@ -246,8 +252,12 @@ export class GraphLoader {
 
     return nodes.slice().sort((a, b) => {
       // Priority clusters
-      const aIsPriority = this.config.priorityClusterIds.includes(a.project || '');
-      const bIsPriority = this.config.priorityClusterIds.includes(b.project || '');
+      const aIsPriority = this.config.priorityClusterIds.includes(
+        a.project || "",
+      );
+      const bIsPriority = this.config.priorityClusterIds.includes(
+        b.project || "",
+      );
 
       if (aIsPriority && !bIsPriority) return -1;
       if (!aIsPriority && bIsPriority) return 1;

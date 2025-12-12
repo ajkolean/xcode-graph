@@ -35,7 +35,10 @@ interface TarjanState {
  * Tarjan's algorithm for finding Strongly Connected Components
  * Returns SCCs in reverse topological order (sinks first)
  */
-function tarjanSCC(nodes: string[], adjacency: Map<string, string[]>): string[][] {
+function tarjanSCC(
+  nodes: string[],
+  adjacency: Map<string, string[]>,
+): string[][] {
   const state: TarjanState = {
     index: 0,
     stack: [],
@@ -57,10 +60,16 @@ function tarjanSCC(nodes: string[], adjacency: Map<string, string[]>): string[][
       if (!state.indices.has(w)) {
         // w has not been visited; recurse
         strongConnect(w);
-        state.lowLinks.set(v, Math.min(state.lowLinks.get(v)!, state.lowLinks.get(w)!));
+        state.lowLinks.set(
+          v,
+          Math.min(state.lowLinks.get(v)!, state.lowLinks.get(w)!),
+        );
       } else if (state.onStack.has(w)) {
         // w is on the stack, so it's in the current SCC
-        state.lowLinks.set(v, Math.min(state.lowLinks.get(v)!, state.indices.get(w)!));
+        state.lowLinks.set(
+          v,
+          Math.min(state.lowLinks.get(v)!, state.indices.get(w)!),
+        );
       }
     }
 

@@ -2,7 +2,7 @@
  * Type definitions for d3-force-clustering
  */
 
-declare module 'd3-force-clustering' {
+declare module "d3-force-clustering" {
   export interface ClusteringForce {
     strength(strength?: number): this;
     distanceMin(distance?: number): this;

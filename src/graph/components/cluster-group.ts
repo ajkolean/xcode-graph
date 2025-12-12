@@ -22,18 +22,26 @@
  * @fires cluster-mouseenter, cluster-mouseleave, cluster-click
  */
 
-import type { TransitiveResult } from '@graph/utils';
-import { getConnectedNodes } from '@graph/utils/connections';
-import type { Cluster, ClusterPosition, NodePosition, ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/graph.schema';
-import type { PreviewFilter } from '@shared/signals';
-import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { getNodeSize } from '@ui/utils/sizing';
-import { html, LitElement, type PropertyValues } from 'lit';
-import { trackLitPerformance } from '@/utils/lit-performance-tracker';
-import './cluster-card';
-import './graph-edges';
-import './graph-node';
+import type { TransitiveResult } from "@graph/utils";
+import { getConnectedNodes } from "@graph/utils/connections";
+import type {
+  Cluster,
+  ClusterPosition,
+  NodePosition,
+  ViewMode,
+} from "@shared/schemas";
+import type {
+  GraphEdge,
+  GraphNode as GraphNodeType,
+} from "@shared/schemas/graph.schema";
+import type { PreviewFilter } from "@shared/signals";
+import { getNodeTypeColor } from "@ui/utils/node-colors";
+import { getNodeSize } from "@ui/utils/sizing";
+import { html, LitElement, type PropertyValues } from "lit";
+import { trackLitPerformance } from "@/utils/lit-performance-tracker";
+import "./cluster-card";
+import "./graph-edges";
+import "./graph-node";
 
 export class GraphClusterGroup extends LitElement {
   static override readonly properties = {
@@ -45,12 +53,12 @@ export class GraphClusterGroup extends LitElement {
     selectedNode: { attribute: false },
     hoveredNode: { attribute: false },
     hoveredClusterId: { attribute: false },
-    searchQuery: { type: String, attribute: 'search-query' },
+    searchQuery: { type: String, attribute: "search-query" },
     zoom: { type: Number },
-    viewMode: { type: String, attribute: 'view-mode' },
+    viewMode: { type: String, attribute: "view-mode" },
     transitiveDeps: { attribute: false },
     transitiveDependents: { attribute: false },
-    isSelected: { type: Boolean, attribute: 'is-selected' },
+    isSelected: { type: Boolean, attribute: "is-selected" },
     previewFilter: { attribute: false },
     isClusterHovered: { state: true },
   };
@@ -79,7 +87,7 @@ export class GraphClusterGroup extends LitElement {
   declare transitiveDependents: TransitiveResult | undefined;
   declare isSelected: boolean | undefined;
   declare previewFilter: PreviewFilter | undefined;
-  private declare isClusterHovered: boolean | undefined;
+  declare private isClusterHovered: boolean | undefined;
 
   // Hover throttling
   private hoverUpdatePending = false;
@@ -106,20 +114,26 @@ export class GraphClusterGroup extends LitElement {
 
   private handleClusterMouseEnter() {
     this.scheduleHoverUpdate(true);
-    this.dispatchEvent(new CustomEvent('cluster-mouseenter', { bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent("cluster-mouseenter", { bubbles: true, composed: true }),
+    );
   }
 
   private handleClusterMouseLeave() {
     this.scheduleHoverUpdate(false);
-    this.dispatchEvent(new CustomEvent('cluster-mouseleave', { bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent("cluster-mouseleave", { bubbles: true, composed: true }),
+    );
   }
 
   private handleClusterClick() {
-    this.dispatchEvent(new CustomEvent('cluster-click', { bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent("cluster-click", { bubbles: true, composed: true }),
+    );
   }
 
   private handleClusterKeyDown(e: KeyboardEvent) {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       this.handleClusterClick();
     }
@@ -129,24 +143,28 @@ export class GraphClusterGroup extends LitElement {
   // Lifecycle
   // ========================================
 
-  private hasSignificantZoomChange(changedProps: Map<PropertyKey, unknown>): boolean {
-    if (!changedProps.has('zoom')) return false;
-    const oldZoom = (changedProps.get('zoom') as number) ?? 1;
+  private hasSignificantZoomChange(
+    changedProps: Map<PropertyKey, unknown>,
+  ): boolean {
+    if (!changedProps.has("zoom")) return false;
+    const oldZoom = (changedProps.get("zoom") as number) ?? 1;
     const newZoom = this.zoom ?? 1;
     return Math.abs(newZoom - oldZoom) > 0.01;
   }
 
-  private hasHoverStateChange(changedProps: Map<PropertyKey, unknown>): boolean {
-    if (changedProps.has('hoveredNode')) {
-      const oldHover = changedProps.get('hoveredNode');
+  private hasHoverStateChange(
+    changedProps: Map<PropertyKey, unknown>,
+  ): boolean {
+    if (changedProps.has("hoveredNode")) {
+      const oldHover = changedProps.get("hoveredNode");
       if (oldHover !== this.hoveredNode) return true;
     }
-    if (changedProps.has('hoveredClusterId')) {
-      const oldHover = changedProps.get('hoveredClusterId');
+    if (changedProps.has("hoveredClusterId")) {
+      const oldHover = changedProps.get("hoveredClusterId");
       if (oldHover !== this.hoveredClusterId) return true;
     }
-    if (changedProps.has('isClusterHovered')) {
-      const oldHover = changedProps.get('isClusterHovered');
+    if (changedProps.has("isClusterHovered")) {
+      const oldHover = changedProps.get("isClusterHovered");
       if (oldHover !== this.isClusterHovered) return true;
     }
     return false;
@@ -156,18 +174,18 @@ export class GraphClusterGroup extends LitElement {
     if (!changedProps.size) return true;
 
     return (
-      changedProps.has('cluster') ||
-      changedProps.has('clusterPosition') ||
-      changedProps.has('nodes') ||
-      changedProps.has('edges') ||
-      changedProps.has('finalNodePositions') ||
-      changedProps.has('selectedNode') ||
-      changedProps.has('isSelected') ||
-      changedProps.has('viewMode') ||
-      changedProps.has('transitiveDeps') ||
-      changedProps.has('transitiveDependents') ||
-      changedProps.has('previewFilter') ||
-      changedProps.has('searchQuery') ||
+      changedProps.has("cluster") ||
+      changedProps.has("clusterPosition") ||
+      changedProps.has("nodes") ||
+      changedProps.has("edges") ||
+      changedProps.has("finalNodePositions") ||
+      changedProps.has("selectedNode") ||
+      changedProps.has("isSelected") ||
+      changedProps.has("viewMode") ||
+      changedProps.has("transitiveDeps") ||
+      changedProps.has("transitiveDependents") ||
+      changedProps.has("previewFilter") ||
+      changedProps.has("searchQuery") ||
       this.hasSignificantZoomChange(changedProps) ||
       this.hasHoverStateChange(changedProps)
     );
@@ -178,7 +196,9 @@ export class GraphClusterGroup extends LitElement {
   // ========================================
 
   private get connectedNodes(): Set<string> {
-    return this.selectedNode ? getConnectedNodes(this.selectedNode.id, this.edges) : new Set();
+    return this.selectedNode
+      ? getConnectedNodes(this.selectedNode.id, this.edges)
+      : new Set();
   }
 
   private get clusterNodes(): GraphNodeType[] {
@@ -197,18 +217,22 @@ export class GraphClusterGroup extends LitElement {
   override render() {
     if (!this.cluster || !this.clusterPosition) return html``;
 
-    const clusterPositionsMap = new Map([[this.cluster.id, this.clusterPosition]]);
+    const clusterPositionsMap = new Map([
+      [this.cluster.id, this.clusterPosition],
+    ]);
     const zoom = this.zoom ?? 1;
-    const viewMode = this.viewMode ?? 'full';
-    const searchQuery = this.searchQuery ?? '';
+    const viewMode = this.viewMode ?? "full";
+    const searchQuery = this.searchQuery ?? "";
     const isSelected = this.isSelected ?? false;
-    const finalNodePositions = this.finalNodePositions ?? new Map<string, NodePosition>();
+    const finalNodePositions =
+      this.finalNodePositions ?? new Map<string, NodePosition>();
     const edges = this.edges ?? [];
 
     return html`
       <g
         role="button"
-        aria-label="${this.cluster.name} cluster, ${this.cluster.nodes.length} targets"
+        aria-label="${this.cluster.name} cluster, ${this.cluster.nodes
+          .length} targets"
         tabindex="0"
         @mouseenter=${this.handleClusterMouseEnter}
         @mouseleave=${this.handleClusterMouseLeave}
@@ -254,20 +278,24 @@ export class GraphClusterGroup extends LitElement {
 
             const isSelectedNode = this.selectedNode?.id === node.id;
             const isHovered = this.hoveredNode === node.id;
-            const isConnected = this.selectedNode && this.connectedNodes.has(node.id);
+            const isConnected =
+              this.selectedNode && this.connectedNodes.has(node.id);
             const isSearchMatch =
-              searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
+              searchQuery &&
+              node.name.toLowerCase().includes(searchQuery.toLowerCase());
 
             const matchesPreview =
               !this.previewFilter ||
-              (this.previewFilter.type === 'nodeType' && node.type === this.previewFilter.value) ||
-              (this.previewFilter.type === 'platform' &&
+              (this.previewFilter.type === "nodeType" &&
+                node.type === this.previewFilter.value) ||
+              (this.previewFilter.type === "platform" &&
                 node.platform === this.previewFilter.value) ||
-              (this.previewFilter.type === 'origin' && node.origin === this.previewFilter.value) ||
-              (this.previewFilter.type === 'project' &&
+              (this.previewFilter.type === "origin" &&
+                node.origin === this.previewFilter.value) ||
+              (this.previewFilter.type === "project" &&
                 node.project === this.previewFilter.value) ||
-              (this.previewFilter.type === 'package' &&
-                node.type === 'package' &&
+              (this.previewFilter.type === "package" &&
+                node.type === "package" &&
                 node.name === this.previewFilter.value);
 
             const isDimmed =
@@ -293,7 +321,7 @@ export class GraphClusterGroup extends LitElement {
                 .zoom=${zoom}
                 @node-mouseenter=${() =>
                   this.dispatchEvent(
-                    new CustomEvent('node-mouseenter', {
+                    new CustomEvent("node-mouseenter", {
                       detail: { nodeId: node.id },
                       bubbles: true,
                       composed: true,
@@ -301,19 +329,25 @@ export class GraphClusterGroup extends LitElement {
                   )}
                 @node-mouseleave=${() =>
                   this.dispatchEvent(
-                    new CustomEvent('node-mouseleave', { bubbles: true, composed: true }),
+                    new CustomEvent("node-mouseleave", {
+                      bubbles: true,
+                      composed: true,
+                    }),
                   )}
                 @node-mousedown=${(e: CustomEvent) =>
                   this.dispatchEvent(
-                    new CustomEvent('node-mousedown', {
-                      detail: { nodeId: node.id, originalEvent: e.detail.originalEvent },
+                    new CustomEvent("node-mousedown", {
+                      detail: {
+                        nodeId: node.id,
+                        originalEvent: e.detail.originalEvent,
+                      },
                       bubbles: true,
                       composed: true,
                     }),
                   )}
                 @node-click=${(e: CustomEvent) =>
                   this.dispatchEvent(
-                    new CustomEvent('node-click', {
+                    new CustomEvent("node-click", {
                       detail: { node, originalEvent: e.detail.originalEvent },
                       bubbles: true,
                       composed: true,
@@ -331,11 +365,11 @@ export class GraphClusterGroup extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-group': GraphClusterGroup;
+    "graph-cluster-group": GraphClusterGroup;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-group')) {
-  customElements.define('graph-cluster-group', GraphClusterGroup);
+if (!customElements.get("graph-cluster-group")) {
+  customElements.define("graph-cluster-group", GraphClusterGroup);
 }

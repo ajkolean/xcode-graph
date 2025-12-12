@@ -7,8 +7,12 @@
  * @module signals/error.actions
  */
 
-import type { AppError, ErrorCategory, ErrorSeverity } from '@shared/schemas/error.schema';
-import { errors, maxVisibleToasts } from './error.signals';
+import type {
+  AppError,
+  ErrorCategory,
+  ErrorSeverity,
+} from "@shared/schemas/error.schema";
+import { errors, maxVisibleToasts } from "./error.signals";
 
 // ==================== Error Management Actions ====================
 
@@ -37,7 +41,9 @@ export function removeError(id: string): void {
 export function dismissError(id: string): void {
   const currentErrors = errors.get();
   errors.set(
-    currentErrors.map((error) => (error.id === id ? { ...error, dismissed: true } : error)),
+    currentErrors.map((error) =>
+      error.id === id ? { ...error, dismissed: true } : error,
+    ),
   );
 }
 

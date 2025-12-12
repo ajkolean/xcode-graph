@@ -29,13 +29,21 @@
  * ```
  */
 
-import type { AppError, ErrorCategory, ErrorSeverity } from '@shared/schemas/error.schema';
+import type {
+  AppError,
+  ErrorCategory,
+  ErrorSeverity,
+} from "@shared/schemas/error.schema";
 import {
   DEFAULT_TOAST_DURATION,
   ErrorCategory as ErrorCategoryEnum,
   ErrorSeverity as ErrorSeverityEnum,
-} from '@shared/schemas/error.schema';
-import { addError, dismissError, removeError } from '@shared/signals/error.actions';
+} from "@shared/schemas/error.schema";
+import {
+  addError,
+  dismissError,
+  removeError,
+} from "@shared/signals/error.actions";
 
 // ==================== Type Definitions ====================
 
@@ -68,7 +76,7 @@ export type ErrorActionHandler = (error: AppError) => void | Promise<void>;
 
 // ==================== Constants ====================
 
-const DEFAULT_USER_MESSAGE = 'An unexpected error occurred';
+const DEFAULT_USER_MESSAGE = "An unexpected error occurred";
 
 // ==================== Service Class ====================
 
@@ -119,7 +127,10 @@ export class ErrorService {
    * @param options - Configuration options
    * @returns The created AppError
    */
-  public handleError(error: unknown, options: ErrorHandlingOptions = {}): AppError {
+  public handleError(
+    error: unknown,
+    options: ErrorHandlingOptions = {},
+  ): AppError {
     const {
       category = ErrorCategoryEnum.Unknown,
       severity = ErrorSeverityEnum.Error,
@@ -207,7 +218,10 @@ export class ErrorService {
    * @param actionType - The action type identifier
    * @param handler - The handler function
    */
-  public registerActionHandler(actionType: string, handler: ErrorActionHandler): void {
+  public registerActionHandler(
+    actionType: string,
+    handler: ErrorActionHandler,
+  ): void {
     this.actionHandlers.set(actionType, handler);
   }
 
@@ -232,17 +246,19 @@ export class ErrorService {
 
     const handler = this.actionHandlers.get(error.actionType);
     if (!handler) {
-      console.warn(`[ErrorService] No handler registered for action type: ${error.actionType}`);
+      console.warn(
+        `[ErrorService] No handler registered for action type: ${error.actionType}`,
+      );
       return;
     }
 
     try {
       await handler(error);
     } catch (actionError) {
-      console.error('[ErrorService] Error executing action:', actionError);
+      console.error("[ErrorService] Error executing action:", actionError);
       this.handleError(actionError, {
         category: ErrorCategoryEnum.Unknown,
-        userMessage: 'Failed to execute error action',
+        userMessage: "Failed to execute error action",
       });
     }
   }
@@ -287,13 +303,13 @@ export class ErrorService {
     if (error instanceof Error) {
       return error.message;
     }
-    if (typeof error === 'string') {
+    if (typeof error === "string") {
       return error;
     }
-    if (error && typeof error === 'object' && 'message' in error) {
+    if (error && typeof error === "object" && "message" in error) {
       return String(error.message);
     }
-    return 'Unknown error';
+    return "Unknown error";
   }
 
   /**
@@ -303,7 +319,7 @@ export class ErrorService {
     if (error instanceof Error) {
       return error.stack;
     }
-    if (error && typeof error === 'object') {
+    if (error && typeof error === "object") {
       try {
         return JSON.stringify(error, null, 2);
       } catch {

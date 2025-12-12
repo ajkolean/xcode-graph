@@ -5,10 +5,10 @@
  * used for testing and development. Matches the fixture used in Swift tests.
  */
 
-import type { Graph } from '@/services/tuist-graph.schema.generated';
-import { transformTuistGraph } from '@/services/tuist-graph.service';
-import type { GraphData } from '@/shared/schemas/graph.schema';
-import graphJson from './tuist-graph.json';
+import type { Graph } from "@/services/tuist-graph.schema.generated";
+import { transformTuistGraph } from "@/services/tuist-graph.service";
+import type { GraphData } from "@/shared/schemas/graph.schema";
+import graphJson from "./tuist-graph.json";
 
 /** Raw Tuist graph JSON (real data from tuist CLI) */
 export const rawTuistGraph = graphJson as Graph;

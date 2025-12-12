@@ -16,8 +16,8 @@
  * ```
  */
 
-import { getNodeIconPath } from '@ui/utils/node-icons';
-import { LitElement, svg } from 'lit';
+import { getNodeIconPath } from "@ui/utils/node-icons";
+import { LitElement, svg } from "lit";
 
 export class GraphSVGDefs extends LitElement {
   // No Shadow DOM for SVG defs - they need to be in the same SVG context
@@ -28,15 +28,15 @@ export class GraphSVGDefs extends LitElement {
   override render() {
     // Generate reusable node shapes for all type/platform combinations
     const nodeTypes = [
-      'app',
-      'framework',
-      'library',
-      'package',
-      'testUnit',
-      'testUi',
-      'cli',
+      "app",
+      "framework",
+      "library",
+      "package",
+      "testUnit",
+      "testUi",
+      "cli",
     ] as const;
-    const platforms = ['iOS', 'macOS', 'tvOS', 'watchOS', 'visionOS'] as const;
+    const platforms = ["iOS", "macOS", "tvOS", "watchOS", "visionOS"] as const;
 
     return svg`
       <defs>
@@ -98,11 +98,11 @@ export class GraphSVGDefs extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-svg-defs': GraphSVGDefs;
+    "graph-svg-defs": GraphSVGDefs;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-svg-defs')) {
-  customElements.define('graph-svg-defs', GraphSVGDefs);
+if (!customElements.get("graph-svg-defs")) {
+  customElements.define("graph-svg-defs", GraphSVGDefs);
 }

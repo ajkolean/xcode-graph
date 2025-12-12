@@ -15,10 +15,10 @@
  * ```
  */
 
-import { icons } from '@shared/controllers/icon.adapter';
-import { css, html, LitElement, svg } from 'lit';
-import { property } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { icons } from "@shared/controllers/icon.adapter";
+import { css, html, LitElement, svg } from "lit";
+import { property } from "lit/decorators.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 // ========================================
 // GraphBackground
@@ -57,17 +57,17 @@ export class GraphControls extends LitElement {
   @property({ type: Number })
   declare zoom: number;
 
-  @property({ type: Number, attribute: 'node-count' })
+  @property({ type: Number, attribute: "node-count" })
   declare nodeCount: number;
 
-  @property({ type: Number, attribute: 'edge-count' })
+  @property({ type: Number, attribute: "edge-count" })
   declare edgeCount: number;
 
-  @property({ type: Boolean, attribute: 'enable-animation' })
+  @property({ type: Boolean, attribute: "enable-animation" })
   declare enableAnimation: boolean;
 
-  @property({ type: String, attribute: 'layout-dimension' })
-  declare layoutDimension: '2d' | '3d';
+  @property({ type: String, attribute: "layout-dimension" })
+  declare layoutDimension: "2d" | "3d";
 
   static override readonly styles = css`
     :host {
@@ -84,7 +84,8 @@ export class GraphControls extends LitElement {
       gap: var(--spacing-3);
       padding: var(--spacing-2) var(--spacing-3);
       background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
-      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 30%, transparent);
+      border: var(--border-widths-thin) solid
+        color-mix(in srgb, var(--colors-primary) 30%, transparent);
       border-radius: var(--radii-md);
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);
@@ -94,7 +95,11 @@ export class GraphControls extends LitElement {
     .divider {
       width: var(--border-widths-thin);
       height: var(--spacing-4);
-      background-color: color-mix(in srgb, var(--colors-primary) 30%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--colors-primary) 30%,
+        transparent
+      );
     }
 
     .zoom-buttons {
@@ -107,7 +112,8 @@ export class GraphControls extends LitElement {
       padding: var(--spacing-1);
       border-radius: var(--radii-md);
       transition: background-color var(--durations-normal);
-      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border: var(--border-widths-thin) solid
+        color-mix(in srgb, var(--colors-primary) 20%, transparent);
       background: none;
       color: var(--colors-muted-foreground);
       cursor: pointer;
@@ -138,7 +144,11 @@ export class GraphControls extends LitElement {
 
     .animation-button.active {
       border-color: color-mix(in srgb, var(--colors-primary) 50%, transparent);
-      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--colors-primary) 10%,
+        transparent
+      );
       color: var(--colors-primary);
     }
 
@@ -168,7 +178,8 @@ export class GraphControls extends LitElement {
       padding: var(--spacing-1) var(--spacing-2);
       border-radius: var(--radii-md);
       transition: all var(--durations-normal);
-      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border: var(--border-widths-thin) solid
+        color-mix(in srgb, var(--colors-primary) 20%, transparent);
       background: none;
       cursor: pointer;
       font-family: var(--fonts-body);
@@ -185,27 +196,37 @@ export class GraphControls extends LitElement {
 
     .dimension-toggle.active-3d {
       border-color: color-mix(in srgb, var(--colors-primary) 50%, transparent);
-      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--colors-primary) 10%,
+        transparent
+      );
       color: var(--colors-primary);
     }
   `;
 
   private handleZoomIn() {
-    this.dispatchEvent(new CustomEvent('zoom-in', { bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent("zoom-in", { bubbles: true, composed: true }),
+    );
   }
 
   private handleZoomOut() {
-    this.dispatchEvent(new CustomEvent('zoom-out', { bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent("zoom-out", { bubbles: true, composed: true }),
+    );
   }
 
   private handleZoomReset() {
-    this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent("zoom-reset", { bubbles: true, composed: true }),
+    );
   }
 
   private handleToggleDimension() {
     this.dispatchEvent(
-      new CustomEvent('toggle-dimension', {
-        detail: { dimension: this.layoutDimension === '2d' ? '3d' : '2d' },
+      new CustomEvent("toggle-dimension", {
+        detail: { dimension: this.layoutDimension === "2d" ? "3d" : "2d" },
         bubbles: true,
         composed: true,
       }),
@@ -224,18 +245,34 @@ export class GraphControls extends LitElement {
 
   override render() {
     return html`
-      <div class="container" @wheel=${this.handleWheel} @mousedown=${this.handleMouseDown}>
+      <div
+        class="container"
+        @wheel=${this.handleWheel}
+        @mousedown=${this.handleMouseDown}
+      >
         <span>${Math.round(this.zoom * 100)}%</span>
         <div class="divider"></div>
 
         <div class="zoom-buttons">
-          <button class="zoom-button" @click=${this.handleZoomIn} title="Zoom in">
+          <button
+            class="zoom-button"
+            @click=${this.handleZoomIn}
+            title="Zoom in"
+          >
             ${unsafeHTML(icons.ZoomIn)}
           </button>
-          <button class="zoom-button" @click=${this.handleZoomOut} title="Zoom out">
+          <button
+            class="zoom-button"
+            @click=${this.handleZoomOut}
+            title="Zoom out"
+          >
             ${unsafeHTML(icons.ZoomOut)}
           </button>
-          <button class="zoom-button" @click=${this.handleZoomReset} title="Reset zoom">
+          <button
+            class="zoom-button"
+            @click=${this.handleZoomReset}
+            title="Reset zoom"
+          >
             ${unsafeHTML(icons.Maximize2)}
           </button>
         </div>
@@ -243,11 +280,15 @@ export class GraphControls extends LitElement {
         <div class="divider"></div>
 
         <button
-          class="dimension-toggle ${this.layoutDimension === '3d' ? 'active-3d' : ''}"
+          class="dimension-toggle ${this.layoutDimension === "3d"
+            ? "active-3d"
+            : ""}"
           @click=${this.handleToggleDimension}
-          title="${this.layoutDimension === '2d' ? 'Switch to 3D layout' : 'Switch to 2D layout'}"
+          title="${this.layoutDimension === "2d"
+            ? "Switch to 3D layout"
+            : "Switch to 2D layout"}"
         >
-          ${this.layoutDimension === '2d' ? '2D' : '3D'}
+          ${this.layoutDimension === "2d" ? "2D" : "3D"}
         </button>
       </div>
     `;
@@ -322,7 +363,8 @@ export class GraphInstructions extends LitElement {
     .container {
       padding: var(--spacing-2) var(--spacing-3);
       background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
-      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border: var(--border-widths-thin) solid
+        color-mix(in srgb, var(--colors-primary) 20%, transparent);
       border-radius: var(--radii-md);
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);
@@ -342,27 +384,30 @@ export class GraphInstructions extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-background': GraphBackground;
-    'graph-controls': GraphControls;
-    'graph-visualization-empty-state': GraphEmptyStateOverlay;
-    'graph-instructions': GraphInstructions;
+    "graph-background": GraphBackground;
+    "graph-controls": GraphControls;
+    "graph-visualization-empty-state": GraphEmptyStateOverlay;
+    "graph-instructions": GraphInstructions;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-background')) {
-  customElements.define('graph-background', GraphBackground);
+if (!customElements.get("graph-background")) {
+  customElements.define("graph-background", GraphBackground);
 }
 
-if (!customElements.get('graph-controls')) {
-  customElements.define('graph-controls', GraphControls);
+if (!customElements.get("graph-controls")) {
+  customElements.define("graph-controls", GraphControls);
 }
 
 // Use a unique tag to avoid clashing with the sidebar empty state component
-if (!customElements.get('graph-visualization-empty-state')) {
-  customElements.define('graph-visualization-empty-state', GraphEmptyStateOverlay);
+if (!customElements.get("graph-visualization-empty-state")) {
+  customElements.define(
+    "graph-visualization-empty-state",
+    GraphEmptyStateOverlay,
+  );
 }
 
-if (!customElements.get('graph-instructions')) {
-  customElements.define('graph-instructions', GraphInstructions);
+if (!customElements.get("graph-instructions")) {
+  customElements.define("graph-instructions", GraphInstructions);
 }

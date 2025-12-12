@@ -18,18 +18,18 @@
  * ```
  */
 
-import { SignalWatcher } from '@lit-labs/signals';
-import type { ActiveTab } from '@shared/schemas';
-import { css, html, LitElement } from 'lit';
-import { tuistGraphData } from '@/fixtures/tuist-graph-data';
-import { GraphAnalysisService } from '@/services/graphAnalysisService';
-import { GraphDataService } from '@/services/graphDataService';
-import '@ui/layout/graph-tab';
-import '@ui/layout/header';
-import '@ui/layout/placeholder-tab';
-import '@ui/layout/sidebar';
-import '@ui/components/cycle-warning';
-import '@ui/components/error-notification-container';
+import { SignalWatcher } from "@lit-labs/signals";
+import type { ActiveTab } from "@shared/schemas";
+import { css, html, LitElement } from "lit";
+import { tuistGraphData } from "@/fixtures/tuist-graph-data";
+import { GraphAnalysisService } from "@/services/graphAnalysisService";
+import { GraphDataService } from "@/services/graphDataService";
+import "@ui/layout/graph-tab";
+import "@ui/layout/header";
+import "@ui/layout/placeholder-tab";
+import "@ui/layout/sidebar";
+import "@ui/components/cycle-warning";
+import "@ui/components/error-notification-container";
 
 // Import signals and actions from graph module
 import {
@@ -41,21 +41,25 @@ import {
   resetView,
   setCircularDependencies,
   setGraphData,
-} from '@graph/signals/index';
+} from "@graph/signals/index";
 
 // Import signals and actions from shared module
-import { activeTab, initializeFromData, setActiveTab } from '@shared/signals/index';
+import {
+  activeTab,
+  initializeFromData,
+  setActiveTab,
+} from "@shared/signals/index";
 
 const TAB_LABELS: Record<ActiveTab, string> = {
-  overview: 'Overview',
-  builds: 'Builds',
-  'test-runs': 'Test Runs',
-  'module-cache': 'Module Cache',
-  'xcode-cache': 'Xcode Cache',
-  previews: 'Previews',
-  qa: 'QA',
-  bundles: 'Bundles',
-  graph: 'Graph',
+  overview: "Overview",
+  builds: "Builds",
+  "test-runs": "Test Runs",
+  "module-cache": "Module Cache",
+  "xcode-cache": "Xcode Cache",
+  previews: "Previews",
+  qa: "QA",
+  bundles: "Bundles",
+  graph: "Graph",
 };
 
 export class GraphApp extends SignalWatcher(LitElement) {
@@ -66,8 +70,11 @@ export class GraphApp extends SignalWatcher(LitElement) {
   private dataFingerprint: string | null = null;
   private filtersInitialized = false;
 
-  private refreshGraphData(nodes: typeof tuistGraphData.nodes, edges: typeof tuistGraphData.edges) {
-    const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((n) => n.id).join(',')}-${edges.map((e) => `${e.source}->${e.target}`).join(',')}`;
+  private refreshGraphData(
+    nodes: typeof tuistGraphData.nodes,
+    edges: typeof tuistGraphData.edges,
+  ) {
+    const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((n) => n.id).join(",")}-${edges.map((e) => `${e.source}->${e.target}`).join(",")}`;
     if (fingerprint === this.dataFingerprint) return;
     this.dataFingerprint = fingerprint;
 
@@ -82,12 +89,14 @@ export class GraphApp extends SignalWatcher(LitElement) {
       this.filtersInitialized = true;
     }
 
-    const cycles = GraphAnalysisService.findCircularDependencies(this.graphDataService);
+    const cycles = GraphAnalysisService.findCircularDependencies(
+      this.graphDataService,
+    );
     setCircularDependencies(cycles);
 
     if (cycles.length > 0) {
       console.warn(
-        `[GraphApp] Detected ${cycles.length} circular ${cycles.length === 1 ? 'dependency' : 'dependencies'}:`,
+        `[GraphApp] Detected ${cycles.length} circular ${cycles.length === 1 ? "dependency" : "dependencies"}:`,
         cycles,
       );
     }
@@ -165,11 +174,9 @@ export class GraphApp extends SignalWatcher(LitElement) {
     return html`
       <graph-header></graph-header>
 
-      ${
-        cycles.length > 0
-          ? html`<graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>`
-          : null
-      }
+      ${cycles.length > 0
+        ? html`<graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>`
+        : null}
 
       <div class="main-layout">
         <graph-sidebar
@@ -179,9 +186,8 @@ export class GraphApp extends SignalWatcher(LitElement) {
         ></graph-sidebar>
 
         <div class="content-area">
-          ${
-            currentTab === 'graph'
-              ? html`
+          ${currentTab === "graph"
+            ? html`
                 <graph-tab
                   .displayNodes=${display.filteredNodes}
                   .displayEdges=${display.filteredEdges}
@@ -193,10 +199,11 @@ export class GraphApp extends SignalWatcher(LitElement) {
                   .transitiveDependents=${display.transitiveDependents}
                 ></graph-tab>
               `
-              : html`
-                <graph-placeholder-tab title=${TAB_LABELS[currentTab]}></graph-placeholder-tab>
-              `
-          }
+            : html`
+                <graph-placeholder-tab
+                  title=${TAB_LABELS[currentTab]}
+                ></graph-placeholder-tab>
+              `}
         </div>
       </div>
 
@@ -206,12 +213,12 @@ export class GraphApp extends SignalWatcher(LitElement) {
 }
 
 // Register custom element
-if (!customElements.get('graph-app')) {
-  customElements.define('graph-app', GraphApp);
+if (!customElements.get("graph-app")) {
+  customElements.define("graph-app", GraphApp);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-app': GraphApp;
+    "graph-app": GraphApp;
   }
 }

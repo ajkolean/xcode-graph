@@ -2,7 +2,7 @@
  * Controller Test Helpers - Common utilities for testing Lit controllers
  */
 
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
+import type { ReactiveController, ReactiveControllerHost } from "lit";
 
 /**
  * Mock Reactive Controller Host for testing
@@ -89,7 +89,7 @@ export async function waitFor(
       if (condition()) {
         resolve();
       } else if (Date.now() - startTime > timeout) {
-        reject(new Error('waitFor timeout'));
+        reject(new Error("waitFor timeout"));
       } else {
         setTimeout(check, interval);
       }
@@ -101,7 +101,11 @@ export async function waitFor(
 /**
  * Wait for specific number of updates
  */
-export async function waitForUpdates(host: MockHost, count: number, timeout = 1000): Promise<void> {
+export async function waitForUpdates(
+  host: MockHost,
+  count: number,
+  timeout = 1000,
+): Promise<void> {
   const initialCount = host.updateCount;
   return waitFor(() => host.updateCount >= initialCount + count, { timeout });
 }
@@ -109,6 +113,9 @@ export async function waitForUpdates(host: MockHost, count: number, timeout = 10
 /**
  * Wait for next update
  */
-export async function waitForNextUpdate(host: MockHost, timeout = 1000): Promise<void> {
+export async function waitForNextUpdate(
+  host: MockHost,
+  timeout = 1000,
+): Promise<void> {
   return waitForUpdates(host, 1, timeout);
 }

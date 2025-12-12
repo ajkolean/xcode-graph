@@ -13,11 +13,15 @@
  * ```
  */
 
-import { FILTER_ICON_COLOR } from '@ui/utils/colors';
-import { css, LitElement, svg } from 'lit';
-import { property } from 'lit/decorators.js';
+import { FILTER_ICON_COLOR } from "@ui/utils/colors";
+import { css, LitElement, svg } from "lit";
+import { property } from "lit/decorators.js";
 
-export type FilterIconName = 'product-types' | 'platforms' | 'projects' | 'packages';
+export type FilterIconName =
+  | "product-types"
+  | "platforms"
+  | "projects"
+  | "packages";
 
 export class GraphFilterIcon extends LitElement {
   // ========================================
@@ -38,7 +42,7 @@ export class GraphFilterIcon extends LitElement {
 
   constructor() {
     super();
-    this.name = 'product-types';
+    this.name = "product-types";
     this.size = 18;
   }
 
@@ -145,13 +149,13 @@ export class GraphFilterIcon extends LitElement {
 
   override render() {
     switch (this.name) {
-      case 'product-types':
+      case "product-types":
         return this.renderProductTypes();
-      case 'platforms':
+      case "platforms":
         return this.renderPlatforms();
-      case 'projects':
+      case "projects":
         return this.renderProjects();
-      case 'packages':
+      case "packages":
         return this.renderPackages();
       default:
         return this.renderProductTypes();
@@ -162,11 +166,11 @@ export class GraphFilterIcon extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-filter-icon': GraphFilterIcon;
+    "graph-filter-icon": GraphFilterIcon;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-filter-icon')) {
-  customElements.define('graph-filter-icon', GraphFilterIcon);
+if (!customElements.get("graph-filter-icon")) {
+  customElements.define("graph-filter-icon", GraphFilterIcon);
 }

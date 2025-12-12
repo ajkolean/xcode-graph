@@ -7,7 +7,7 @@
  * @module schemas/error
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ==================== Native Enums ====================
 
@@ -20,10 +20,10 @@ import { z } from 'zod';
  * - Critical: Critical errors requiring immediate attention
  */
 export enum ErrorSeverity {
-  Info = 'info',
-  Warning = 'warning',
-  Error = 'error',
-  Critical = 'critical',
+  Info = "info",
+  Warning = "warning",
+  Error = "error",
+  Critical = "critical",
 }
 
 /**
@@ -38,13 +38,13 @@ export enum ErrorSeverity {
  * - Unknown: Uncategorized errors
  */
 export enum ErrorCategory {
-  Network = 'network',
-  Layout = 'layout',
-  Rendering = 'rendering',
-  Data = 'data',
-  Worker = 'worker',
-  State = 'state',
-  Unknown = 'unknown',
+  Network = "network",
+  Layout = "layout",
+  Rendering = "rendering",
+  Data = "data",
+  Worker = "worker",
+  State = "state",
+  Unknown = "unknown",
 }
 
 // ==================== Type Definitions ====================
@@ -87,8 +87,10 @@ export interface ErrorNotificationState {
 
 // ==================== Enum Schemas ====================
 
-export const ErrorSeveritySchema: z.ZodType<ErrorSeverity> = z.nativeEnum(ErrorSeverity);
-export const ErrorCategorySchema: z.ZodType<ErrorCategory> = z.nativeEnum(ErrorCategory);
+export const ErrorSeveritySchema: z.ZodType<ErrorSeverity> =
+  z.nativeEnum(ErrorSeverity);
+export const ErrorCategorySchema: z.ZodType<ErrorCategory> =
+  z.nativeEnum(ErrorCategory);
 
 // ==================== Error Schemas ====================
 
@@ -111,17 +113,20 @@ export const AppErrorSchema: z.ZodType<AppError> = z.object({
 /**
  * Error notification state schema
  */
-export const ErrorNotificationStateSchema: z.ZodType<ErrorNotificationState> = z.object({
-  errors: z.array(AppErrorSchema),
-  maxVisible: z.number().min(1).max(10),
-});
+export const ErrorNotificationStateSchema: z.ZodType<ErrorNotificationState> =
+  z.object({
+    errors: z.array(AppErrorSchema),
+    maxVisible: z.number().min(1).max(10),
+  });
 
 // ==================== Value Arrays ====================
 
 /** All error severity values for iteration */
-export const ERROR_SEVERITY_VALUES: ErrorSeverity[] = Object.values(ErrorSeverity);
+export const ERROR_SEVERITY_VALUES: ErrorSeverity[] =
+  Object.values(ErrorSeverity);
 /** All error category values for iteration */
-export const ERROR_CATEGORY_VALUES: ErrorCategory[] = Object.values(ErrorCategory);
+export const ERROR_CATEGORY_VALUES: ErrorCategory[] =
+  Object.values(ErrorCategory);
 
 // ==================== Defaults ====================
 

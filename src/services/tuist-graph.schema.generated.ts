@@ -30,15 +30,28 @@ export type GraphDependency =
     }
   | { macro: { path: string } }
   | { bundle: { path: string } }
-  | { packageProduct: { path: string; product: string; type: GraphDependency_PackageProductType } }
+  | {
+      packageProduct: {
+        path: string;
+        product: string;
+        type: GraphDependency_PackageProductType;
+      };
+    }
   | { target: { name: string; path: string; status: LinkingStatus } }
-  | { sdk: { name: string; path: string; status: LinkingStatus; source: SDKSource } };
+  | {
+      sdk: {
+        name: string;
+        path: string;
+        status: LinkingStatus;
+        source: SDKSource;
+      };
+    };
 
 export enum GraphDependency_PackageProductType {
-  Runtime = 'runtime',
-  RuntimeEmbedded = 'runtimeEmbedded',
-  Plugin = 'plugin',
-  Macro = 'macro',
+  Runtime = "runtime",
+  RuntimeEmbedded = "runtimeEmbedded",
+  Plugin = "plugin",
+  Macro = "macro",
 }
 
 export type AutogenerationOptions =
@@ -46,127 +59,127 @@ export type AutogenerationOptions =
   | { enabled: { _0: TestingOptions } };
 
 export enum BinaryArchitecture {
-  X8664 = 'x8664',
-  I386 = 'i386',
-  Armv7 = 'armv7',
-  Armv7s = 'armv7s',
-  Arm64 = 'arm64',
-  Armv7k = 'armv7k',
-  Arm6432 = 'arm6432',
-  Arm64e = 'arm64e',
+  X8664 = "x8664",
+  I386 = "i386",
+  Armv7 = "armv7",
+  Armv7s = "armv7s",
+  Arm64 = "arm64",
+  Armv7k = "armv7k",
+  Arm6432 = "arm6432",
+  Arm64e = "arm64e",
 }
 
 export enum BinaryLinking {
-  Static = 'static',
-  Dynamic = 'dynamic',
+  Static = "static",
+  Dynamic = "dynamic",
 }
 
 export enum BuildConfiguration_Variant {
-  Debug = 'debug',
-  Release = 'release',
+  Debug = "debug",
+  Release = "release",
 }
 
 export enum CompilerSpec {
-  AppIntentsMetadataExtractor = 'appIntentsMetadataExtractor',
-  AppShortcutStringsMetadataExtractor = 'appShortcutStringsMetadataExtractor',
-  AppleClang = 'appleClang',
-  AssetCatalogCompiler = 'assetCatalogCompiler',
-  CodeSign = 'codeSign',
-  CompileRealityComposerProject = 'compileRealityComposerProject',
-  CompileSceneKitShaders = 'compileSceneKitShaders',
-  CompileSkybox = 'compileSkybox',
-  CompileUSDZ = 'compileUSDZ',
-  CompressPNG = 'compressPNG',
-  CopyPlistFile = 'copyPlistFile',
-  CopySceneKitAssets = 'copySceneKitAssets',
-  CopyStringsFile = 'copyStringsFile',
-  CopyTiffFile = 'copyTiffFile',
-  CoreDataMappingModelCompiler = 'coreDataMappingModelCompiler',
-  CoreMLModelCompiler = 'coreMLModelCompiler',
-  DataModelCompiler = 'dataModelCompiler',
-  DefaultCompiler = 'defaultCompiler',
-  DocumentationCompiler = 'documentationCompiler',
-  DTrace = 'dTrace',
-  GenerateSpriteKitTextureAtlas = 'generateSpriteKitTextureAtlas',
-  Iconutil = 'iconutil',
-  InstrumetsPackageBuilder = 'instrumetsPackageBuilder',
-  IntentDefinitionCompiler = 'intentDefinitionCompiler',
-  InterfaceBuilderNIBPostprocessor = 'interfaceBuilderNIBPostprocessor',
-  InterfaceBuilderStoryboardCompiler = 'interfaceBuilderStoryboardCompiler',
-  InterfaceBuilderStoryboardLinker = 'interfaceBuilderStoryboardLinker',
-  InterfaceBuilderStoryboardPostprocessor = 'interfaceBuilderStoryboardPostprocessor',
-  InterfaceBuilderXIBCompiler = 'interfaceBuilderXIBCompiler',
-  IoKitInterfaceGenerator = 'ioKitInterfaceGenerator',
-  Lex = 'lex',
-  LsRegisterURL = 'lsRegisterURL',
-  MetalCompiler = 'metalCompiler',
-  MetalLinker = 'metalLinker',
-  Mig = 'mig',
-  Nasm = 'nasm',
-  Nmedit = 'nmedit',
-  OpenCL = 'openCL',
-  OsaCompile = 'osaCompile',
-  Pbxcp = 'pbxcp',
-  ProcessSceneKitDocument = 'processSceneKitDocument',
-  ProcessXCAppExtensionPoints = 'processXCAppExtensionPoints',
-  Rez = 'rez',
-  StripSymbols = 'stripSymbols',
-  SwiftCompiler = 'swiftCompiler',
-  SwiftABIBaselineGenerator = 'swiftABIBaselineGenerator',
-  SwiftFrameworkABIChecker = 'swiftFrameworkABIChecker',
-  TextBasedAPITool = 'textBasedAPITool',
-  Unifdef = 'unifdef',
-  Yacc = 'yacc',
-  CustomScript = 'customScript',
+  AppIntentsMetadataExtractor = "appIntentsMetadataExtractor",
+  AppShortcutStringsMetadataExtractor = "appShortcutStringsMetadataExtractor",
+  AppleClang = "appleClang",
+  AssetCatalogCompiler = "assetCatalogCompiler",
+  CodeSign = "codeSign",
+  CompileRealityComposerProject = "compileRealityComposerProject",
+  CompileSceneKitShaders = "compileSceneKitShaders",
+  CompileSkybox = "compileSkybox",
+  CompileUSDZ = "compileUSDZ",
+  CompressPNG = "compressPNG",
+  CopyPlistFile = "copyPlistFile",
+  CopySceneKitAssets = "copySceneKitAssets",
+  CopyStringsFile = "copyStringsFile",
+  CopyTiffFile = "copyTiffFile",
+  CoreDataMappingModelCompiler = "coreDataMappingModelCompiler",
+  CoreMLModelCompiler = "coreMLModelCompiler",
+  DataModelCompiler = "dataModelCompiler",
+  DefaultCompiler = "defaultCompiler",
+  DocumentationCompiler = "documentationCompiler",
+  DTrace = "dTrace",
+  GenerateSpriteKitTextureAtlas = "generateSpriteKitTextureAtlas",
+  Iconutil = "iconutil",
+  InstrumetsPackageBuilder = "instrumetsPackageBuilder",
+  IntentDefinitionCompiler = "intentDefinitionCompiler",
+  InterfaceBuilderNIBPostprocessor = "interfaceBuilderNIBPostprocessor",
+  InterfaceBuilderStoryboardCompiler = "interfaceBuilderStoryboardCompiler",
+  InterfaceBuilderStoryboardLinker = "interfaceBuilderStoryboardLinker",
+  InterfaceBuilderStoryboardPostprocessor = "interfaceBuilderStoryboardPostprocessor",
+  InterfaceBuilderXIBCompiler = "interfaceBuilderXIBCompiler",
+  IoKitInterfaceGenerator = "ioKitInterfaceGenerator",
+  Lex = "lex",
+  LsRegisterURL = "lsRegisterURL",
+  MetalCompiler = "metalCompiler",
+  MetalLinker = "metalLinker",
+  Mig = "mig",
+  Nasm = "nasm",
+  Nmedit = "nmedit",
+  OpenCL = "openCL",
+  OsaCompile = "osaCompile",
+  Pbxcp = "pbxcp",
+  ProcessSceneKitDocument = "processSceneKitDocument",
+  ProcessXCAppExtensionPoints = "processXCAppExtensionPoints",
+  Rez = "rez",
+  StripSymbols = "stripSymbols",
+  SwiftCompiler = "swiftCompiler",
+  SwiftABIBaselineGenerator = "swiftABIBaselineGenerator",
+  SwiftFrameworkABIChecker = "swiftFrameworkABIChecker",
+  TextBasedAPITool = "textBasedAPITool",
+  Unifdef = "unifdef",
+  Yacc = "yacc",
+  CustomScript = "customScript",
 }
 
 export enum FileType {
-  InstrumentsPackageDefinition = 'instrumentsPackageDefinition',
-  MetalAIR = 'metalAIR',
-  MachO = 'machO',
-  MachOObject = 'machOObject',
-  SiriKitIntent = 'siriKitIntent',
-  CoreMLMachineLearning = 'coreMLMachineLearning',
-  RcProjectDocument = 'rcProjectDocument',
-  SkyboxDocument = 'skyboxDocument',
-  InterfaceBuilderStoryboard = 'interfaceBuilderStoryboard',
-  InterfaceBuilder = 'interfaceBuilder',
-  DocumentationCatalog = 'documentationCatalog',
-  CoreMLMachineLearningModelPackage = 'coreMLMachineLearningModelPackage',
-  AssemblyAsm = 'assemblyAsm',
-  AssemblyAsmAsm = 'assemblyAsmAsm',
-  LlvmAssembly = 'llvmAssembly',
-  CSource = 'cSource',
-  ClipsSource = 'clipsSource',
-  CppSource = 'cppSource',
-  DtraceSource = 'dtraceSource',
-  DylanSource = 'dylanSource',
-  FortranSource = 'fortranSource',
-  GlslSource = 'glslSource',
-  IigSource = 'iigSource',
-  JavaSource = 'javaSource',
-  LexSource = 'lexSource',
-  MetalShaderSource = 'metalShaderSource',
-  MigSource = 'migSource',
-  NasmAssembly = 'nasmAssembly',
-  OpenCLSource = 'openCLSource',
-  PascalSource = 'pascalSource',
-  ProtobufSource = 'protobufSource',
-  RezSource = 'rezSource',
-  SwiftSource = 'swiftSource',
-  YaccSource = 'yaccSource',
-  LocalizationString = 'localizationString',
-  LocalizationStringDictionary = 'localizationStringDictionary',
-  XcAppExtensionPoints = 'xcAppExtensionPoints',
-  XcodeSpecificationPlist = 'xcodeSpecificationPlist',
-  Dae = 'dae',
-  Nib = 'nib',
-  InterfaceBuilderStoryboardPackage = 'interfaceBuilderStoryboardPackage',
-  ClassModel = 'classModel',
-  DataModel = 'dataModel',
-  DataModelVersion = 'dataModelVersion',
-  MappingModel = 'mappingModel',
-  SourceFilesWithNamesMatching = 'sourceFilesWithNamesMatching',
+  InstrumentsPackageDefinition = "instrumentsPackageDefinition",
+  MetalAIR = "metalAIR",
+  MachO = "machO",
+  MachOObject = "machOObject",
+  SiriKitIntent = "siriKitIntent",
+  CoreMLMachineLearning = "coreMLMachineLearning",
+  RcProjectDocument = "rcProjectDocument",
+  SkyboxDocument = "skyboxDocument",
+  InterfaceBuilderStoryboard = "interfaceBuilderStoryboard",
+  InterfaceBuilder = "interfaceBuilder",
+  DocumentationCatalog = "documentationCatalog",
+  CoreMLMachineLearningModelPackage = "coreMLMachineLearningModelPackage",
+  AssemblyAsm = "assemblyAsm",
+  AssemblyAsmAsm = "assemblyAsmAsm",
+  LlvmAssembly = "llvmAssembly",
+  CSource = "cSource",
+  ClipsSource = "clipsSource",
+  CppSource = "cppSource",
+  DtraceSource = "dtraceSource",
+  DylanSource = "dylanSource",
+  FortranSource = "fortranSource",
+  GlslSource = "glslSource",
+  IigSource = "iigSource",
+  JavaSource = "javaSource",
+  LexSource = "lexSource",
+  MetalShaderSource = "metalShaderSource",
+  MigSource = "migSource",
+  NasmAssembly = "nasmAssembly",
+  OpenCLSource = "openCLSource",
+  PascalSource = "pascalSource",
+  ProtobufSource = "protobufSource",
+  RezSource = "rezSource",
+  SwiftSource = "swiftSource",
+  YaccSource = "yaccSource",
+  LocalizationString = "localizationString",
+  LocalizationStringDictionary = "localizationStringDictionary",
+  XcAppExtensionPoints = "xcAppExtensionPoints",
+  XcodeSpecificationPlist = "xcodeSpecificationPlist",
+  Dae = "dae",
+  Nib = "nib",
+  InterfaceBuilderStoryboardPackage = "interfaceBuilderStoryboardPackage",
+  ClassModel = "classModel",
+  DataModel = "dataModel",
+  DataModelVersion = "dataModelVersion",
+  MappingModel = "mappingModel",
+  SourceFilesWithNamesMatching = "sourceFilesWithNamesMatching",
 }
 
 export type CompatibleXcodeVersions =
@@ -177,47 +190,61 @@ export type CompatibleXcodeVersions =
   | { list: { _0: CompatibleXcodeVersions[] } };
 
 export type CopyFileElement =
-  | { file: { path: string; condition?: PlatformCondition; codeSignOnCopy: boolean } }
-  | { folderReference: { path: string; condition?: PlatformCondition; codeSignOnCopy: boolean } };
+  | {
+      file: {
+        path: string;
+        condition?: PlatformCondition;
+        codeSignOnCopy: boolean;
+      };
+    }
+  | {
+      folderReference: {
+        path: string;
+        condition?: PlatformCondition;
+        codeSignOnCopy: boolean;
+      };
+    };
 
 export enum CopyFilesAction_Destination {
-  AbsolutePath = 'absolutePath',
-  ProductsDirectory = 'productsDirectory',
-  Wrapper = 'wrapper',
-  Executables = 'executables',
-  Resources = 'resources',
-  JavaResources = 'javaResources',
-  Frameworks = 'frameworks',
-  SharedFrameworks = 'sharedFrameworks',
-  SharedSupport = 'sharedSupport',
-  Plugins = 'plugins',
-  Other = 'other',
+  AbsolutePath = "absolutePath",
+  ProductsDirectory = "productsDirectory",
+  Wrapper = "wrapper",
+  Executables = "executables",
+  Resources = "resources",
+  JavaResources = "javaResources",
+  Frameworks = "frameworks",
+  SharedFrameworks = "sharedFrameworks",
+  SharedSupport = "sharedSupport",
+  Plugins = "plugins",
+  Other = "other",
 }
 
 export enum Destination {
-  IPhone = 'iPhone',
-  IPad = 'iPad',
-  Mac = 'mac',
-  MacWithiPadDesign = 'macWithiPadDesign',
-  MacCatalyst = 'macCatalyst',
-  AppleWatch = 'appleWatch',
-  AppleTv = 'appleTv',
-  AppleVision = 'appleVision',
-  AppleVisionWithiPadDesign = 'appleVisionWithiPadDesign',
+  IPhone = "iPhone",
+  IPad = "iPad",
+  Mac = "mac",
+  MacWithiPadDesign = "macWithiPadDesign",
+  MacCatalyst = "macCatalyst",
+  AppleWatch = "appleWatch",
+  AppleTv = "appleTv",
+  AppleVision = "appleVision",
+  AppleVisionWithiPadDesign = "appleVisionWithiPadDesign",
 }
 
 export enum FileCodeGen {
-  Public = 'public',
-  Private = 'private',
-  Project = 'project',
-  Disabled = 'disabled',
+  Public = "public",
+  Private = "private",
+  Project = "project",
+  Disabled = "disabled",
 }
 
-export type FileElement = { file: { path: string } } | { folderReference: { path: string } };
+export type FileElement =
+  | { file: { path: string } }
+  | { folderReference: { path: string } };
 
 export enum LaunchStyle {
-  Automatically = 'automatically',
-  WaitForExecutableToBeLaunched = 'waitForExecutableToBeLaunched',
+  Automatically = "automatically",
+  WaitForExecutableToBeLaunched = "waitForExecutableToBeLaunched",
 }
 
 export type MergedBinaryType =
@@ -230,20 +257,20 @@ export type Package =
   | { local: { path: string } };
 
 export enum Platform {
-  IOS = 'iOS',
-  MacOS = 'macOS',
-  TvOS = 'tvOS',
-  WatchOS = 'watchOS',
-  VisionOS = 'visionOS',
+  IOS = "iOS",
+  MacOS = "macOS",
+  TvOS = "tvOS",
+  WatchOS = "watchOS",
+  VisionOS = "visionOS",
 }
 
 export enum PackagePlatform {
-  IOS = 'iOS',
-  MacCatalyst = 'macCatalyst',
-  MacOS = 'macOS',
-  TvOS = 'tvOS',
-  WatchOS = 'watchOS',
-  VisionOS = 'visionOS',
+  IOS = "iOS",
+  MacCatalyst = "macCatalyst",
+  MacOS = "macOS",
+  TvOS = "tvOS",
+  WatchOS = "watchOS",
+  VisionOS = "visionOS",
 }
 
 export type PlatformCondition_CombinationResult =
@@ -251,16 +278,18 @@ export type PlatformCondition_CombinationResult =
   | { condition: { _0: PlatformCondition } };
 
 export enum PlatformFilter {
-  Ios = 'ios',
-  Macos = 'macos',
-  Tvos = 'tvos',
-  Catalyst = 'catalyst',
-  Driverkit = 'driverkit',
-  Watchos = 'watchos',
-  Visionos = 'visionos',
+  Ios = "ios",
+  Macos = "macos",
+  Tvos = "tvos",
+  Catalyst = "catalyst",
+  Driverkit = "driverkit",
+  Watchos = "watchos",
+  Visionos = "visionos",
 }
 
-export type Plist = { infoPlist: { _0: InfoPlist } } | { entitlements: { _0: Entitlements } };
+export type Plist =
+  | { infoPlist: { _0: InfoPlist } }
+  | { entitlements: { _0: Entitlements } };
 
 export type Plist_Value =
   | { string: { _0: string } }
@@ -272,8 +301,19 @@ export type Plist_Value =
 
 export type InfoPlist =
   | { file: { path: string; configuration?: BuildConfiguration } }
-  | { generatedFile: { path: string; data: string; configuration?: BuildConfiguration } }
-  | { dictionary: { _0: { [key: string]: Plist_Value }; configuration?: BuildConfiguration } }
+  | {
+      generatedFile: {
+        path: string;
+        data: string;
+        configuration?: BuildConfiguration;
+      };
+    }
+  | {
+      dictionary: {
+        _0: { [key: string]: Plist_Value };
+        configuration?: BuildConfiguration;
+      };
+    }
   | { variable: { _0: string; configuration?: BuildConfiguration } }
   | {
       extendingDefault: {
@@ -284,34 +324,47 @@ export type InfoPlist =
 
 export type Entitlements =
   | { file: { path: string; configuration?: BuildConfiguration } }
-  | { generatedFile: { path: string; data: string; configuration?: BuildConfiguration } }
-  | { dictionary: { _0: { [key: string]: Plist_Value }; configuration?: BuildConfiguration } }
+  | {
+      generatedFile: {
+        path: string;
+        data: string;
+        configuration?: BuildConfiguration;
+      };
+    }
+  | {
+      dictionary: {
+        _0: { [key: string]: Plist_Value };
+        configuration?: BuildConfiguration;
+      };
+    }
   | { variable: { _0: string; configuration?: BuildConfiguration } };
 
 export enum Product {
-  App = 'app',
-  StaticLibrary = 'staticLibrary',
-  DynamicLibrary = 'dynamicLibrary',
-  Framework = 'framework',
-  StaticFramework = 'staticFramework',
-  UnitTests = 'unit_tests',
-  UiTests = 'ui_tests',
-  Bundle = 'bundle',
-  CommandLineTool = 'commandLineTool',
-  AppExtension = 'appExtension',
-  Watch2App = 'watch2App',
-  Watch2Extension = 'watch2Extension',
-  TvTopShelfExtension = 'tvTopShelfExtension',
-  MessagesExtension = 'messagesExtension',
-  StickerPackExtension = 'stickerPackExtension',
-  AppClip = 'appClip',
-  Xpc = 'xpc',
-  SystemExtension = 'systemExtension',
-  ExtensionKitExtension = 'extensionKitExtension',
-  Macro = 'macro',
+  App = "app",
+  StaticLibrary = "staticLibrary",
+  DynamicLibrary = "dynamicLibrary",
+  Framework = "framework",
+  StaticFramework = "staticFramework",
+  UnitTests = "unit_tests",
+  UiTests = "ui_tests",
+  Bundle = "bundle",
+  CommandLineTool = "commandLineTool",
+  AppExtension = "appExtension",
+  Watch2App = "watch2App",
+  Watch2Extension = "watch2Extension",
+  TvTopShelfExtension = "tvTopShelfExtension",
+  MessagesExtension = "messagesExtension",
+  StickerPackExtension = "stickerPackExtension",
+  AppClip = "appClip",
+  Xpc = "xpc",
+  SystemExtension = "systemExtension",
+  ExtensionKitExtension = "extensionKitExtension",
+  Macro = "macro",
 }
 
-export type ProjectType = { local: Record<string, never> } | { external: { hash?: string } };
+export type ProjectType =
+  | { local: Record<string, never> }
+  | { external: { hash?: string } };
 
 export type ProjectGroup = { group: { name: string } };
 
@@ -344,62 +397,78 @@ export type Requirement =
   | { revision: { _0: string } };
 
 export type ResourceFileElement =
-  | { file: { path: string; tags: string[]; inclusionCondition?: PlatformCondition } }
-  | { folderReference: { path: string; tags: string[]; inclusionCondition?: PlatformCondition } };
+  | {
+      file: {
+        path: string;
+        tags: string[];
+        inclusionCondition?: PlatformCondition;
+      };
+    }
+  | {
+      folderReference: {
+        path: string;
+        tags: string[];
+        inclusionCondition?: PlatformCondition;
+      };
+    };
 
 export type ResourceSynthesizer_Template =
   | { file: { _0: string } }
   | { defaultTemplate: { _0: string } };
 
 export enum ResourceSynthesizer_Parser {
-  Strings = 'strings',
-  StringsCatalog = 'stringsCatalog',
-  Assets = 'assets',
-  Plists = 'plists',
-  Fonts = 'fonts',
-  CoreData = 'coreData',
-  InterfaceBuilder = 'interfaceBuilder',
-  Json = 'json',
-  Yaml = 'yaml',
-  Files = 'files',
+  Strings = "strings",
+  StringsCatalog = "stringsCatalog",
+  Assets = "assets",
+  Plists = "plists",
+  Fonts = "fonts",
+  CoreData = "coreData",
+  InterfaceBuilder = "interfaceBuilder",
+  Json = "json",
+  Yaml = "yaml",
+  Files = "files",
 }
 
 export enum RunActionOptions_GPUFrameCaptureMode {
-  AutoEnabled = 'autoEnabled',
-  Metal = 'metal',
-  OpenGL = 'openGL',
-  Disabled = 'disabled',
+  AutoEnabled = "autoEnabled",
+  Metal = "metal",
+  OpenGL = "openGL",
+  Disabled = "disabled",
 }
 
 export enum SDKSource {
-  Developer = 'developer',
-  System = 'system',
+  Developer = "developer",
+  System = "system",
 }
 
 export enum SDKType {
-  Framework = 'framework',
-  Library = 'library',
-  SwiftLibrary = 'swiftLibrary',
+  Framework = "framework",
+  Library = "library",
+  SwiftLibrary = "swiftLibrary",
 }
 
 export enum ScreenCaptureFormat {
-  Screenshots = 'screenshots',
-  ScreenRecording = 'screenRecording',
+  Screenshots = "screenshots",
+  ScreenRecording = "screenRecording",
 }
 
-export type SettingValue = { string: { _0: string } } | { array: { _0: string[] } };
+export type SettingValue =
+  | { string: { _0: string } }
+  | { array: { _0: string[] } };
 
 export type DefaultSettings =
   | { recommended: { excluding: string[] } }
   | { essential: { excluding: string[] } }
   | { none: Record<string, never> };
 
-export type SimulatedLocation = { gpxFile: { _0: string } } | { reference: { _0: string } };
+export type SimulatedLocation =
+  | { gpxFile: { _0: string } }
+  | { reference: { _0: string } };
 
 export enum LinkingStatus {
-  Required = 'required',
-  Optional = 'optional',
-  None = 'none',
+  Required = "required",
+  Optional = "optional",
+  None = "none",
 }
 
 export type XCFrameworkSignature =
@@ -408,7 +477,13 @@ export type XCFrameworkSignature =
   | { selfSigned: { fingerprint: string } };
 
 export type TargetDependency =
-  | { target: { name: string; status: LinkingStatus; condition?: PlatformCondition } }
+  | {
+      target: {
+        name: string;
+        status: LinkingStatus;
+        condition?: PlatformCondition;
+      };
+    }
   | {
       project: {
         target: string;
@@ -417,7 +492,13 @@ export type TargetDependency =
         condition?: PlatformCondition;
       };
     }
-  | { framework: { path: string; status: LinkingStatus; condition?: PlatformCondition } }
+  | {
+      framework: {
+        path: string;
+        status: LinkingStatus;
+        condition?: PlatformCondition;
+      };
+    }
   | {
       xcframework: {
         path: string;
@@ -441,19 +522,25 @@ export type TargetDependency =
         condition?: PlatformCondition;
       };
     }
-  | { sdk: { name: string; status: LinkingStatus; condition?: PlatformCondition } }
+  | {
+      sdk: {
+        name: string;
+        status: LinkingStatus;
+        condition?: PlatformCondition;
+      };
+    }
   | { xctest: Record<string, never> };
 
 export enum TargetDependency_PackageType {
-  Runtime = 'runtime',
-  RuntimeEmbedded = 'runtimeEmbedded',
-  Plugin = 'plugin',
-  Macro = 'macro',
+  Runtime = "runtime",
+  RuntimeEmbedded = "runtimeEmbedded",
+  Plugin = "plugin",
+  Macro = "macro",
 }
 
 export enum TargetScript_Order {
-  Pre = 'pre',
-  Post = 'post',
+  Pre = "pre",
+  Post = "post",
 }
 
 export type TargetScript_Script =
@@ -462,14 +549,14 @@ export type TargetScript_Script =
   | { embedded: { _0: string } };
 
 export enum TargetType {
-  Local = 'local',
-  Remote = 'remote',
+  Local = "local",
+  Remote = "remote",
 }
 
 export enum TestableTarget_Parallelization {
-  None = 'none',
-  SwiftTestingOnly = 'swiftTestingOnly',
-  All = 'all',
+  None = "none",
+  SwiftTestingOnly = "swiftTestingOnly",
+  All = "all",
 }
 
 export type Workspace_GenerationOptions_AutogeneratedWorkspaceSchemes =
@@ -485,17 +572,18 @@ export type Workspace_GenerationOptions_AutogeneratedWorkspaceSchemes =
     };
 
 export type Workspace_GenerationOptions_AutogeneratedWorkspaceSchemes_CodeCoverageMode =
-  | { all: Record<string, never> }
-  | { relevant: Record<string, never> }
-  | { targets: { _0: TargetReference[] } }
-  | { disabled: Record<string, never> };
+
+    | { all: Record<string, never> }
+    | { relevant: Record<string, never> }
+    | { targets: { _0: TargetReference[] } }
+    | { disabled: Record<string, never> };
 
 export enum XCFrameworkInfoPlist_Library_Platform {
-  IOS = 'iOS',
-  MacOS = 'macOS',
-  TvOS = 'tvOS',
-  WatchOS = 'watchOS',
-  VisionOS = 'visionOS',
+  IOS = "iOS",
+  MacOS = "macOS",
+  TvOS = "tvOS",
+  WatchOS = "watchOS",
+  VisionOS = "visionOS",
 }
 
 export type PackageInfo_Dependency_Kind =
@@ -510,13 +598,18 @@ export type PackageInfo_Product_ProductType =
   | { test: Record<string, never> };
 
 export enum PackageInfo_Product_ProductType_LibraryType {
-  Static = 'static',
-  Dynamic = 'dynamic',
-  Automatic = 'automatic',
+  Static = "static",
+  Dynamic = "dynamic",
+  Automatic = "automatic",
 }
 
 export type PackageInfo_Target_Dependency =
-  | { target: { name: string; condition?: PackageInfo_PackageConditionDescription } }
+  | {
+      target: {
+        name: string;
+        condition?: PackageInfo_PackageConditionDescription;
+      };
+    }
   | {
       product: {
         name: string;
@@ -525,50 +618,55 @@ export type PackageInfo_Target_Dependency =
         condition?: PackageInfo_PackageConditionDescription;
       };
     }
-  | { byName: { name: string; condition?: PackageInfo_PackageConditionDescription } };
+  | {
+      byName: {
+        name: string;
+        condition?: PackageInfo_PackageConditionDescription;
+      };
+    };
 
 export enum PackageInfo_Target_Resource_Rule {
-  Process = 'process',
-  Copy = 'copy',
+  Process = "process",
+  Copy = "copy",
 }
 
 export enum PackageInfo_Target_Resource_Localization {
-  Default = 'default',
-  Base = 'base',
+  Default = "default",
+  Base = "base",
 }
 
 export enum PackageInfo_Target_TargetType {
-  Regular = 'regular',
-  Executable = 'executable',
-  Test = 'test',
-  System = 'system',
-  Binary = 'binary',
-  Plugin = 'plugin',
-  Macro = 'macro',
+  Regular = "regular",
+  Executable = "executable",
+  Test = "test",
+  System = "system",
+  Binary = "binary",
+  Plugin = "plugin",
+  Macro = "macro",
 }
 
 export enum PackageInfo_Target_TargetBuildSettingDescription {}
 
 export enum PackageInfo_Target_TargetBuildSettingDescription_Tool {
-  C = 'c',
-  Cxx = 'cxx',
-  Swift = 'swift',
-  Linker = 'linker',
+  C = "c",
+  Cxx = "cxx",
+  Swift = "swift",
+  Linker = "linker",
 }
 
 export enum PackageInfo_Target_TargetBuildSettingDescription_SettingName {
-  SwiftLanguageMode = 'swiftLanguageMode',
-  HeaderSearchPath = 'headerSearchPath',
-  Define = 'define',
-  LinkedLibrary = 'linkedLibrary',
-  LinkedFramework = 'linkedFramework',
-  UnsafeFlags = 'unsafeFlags',
-  EnableUpcomingFeature = 'enableUpcomingFeature',
-  EnableExperimentalFeature = 'enableExperimentalFeature',
-  InteroperabilityMode = 'interoperabilityMode',
-  DefaultIsolation = 'defaultIsolation',
-  StrictMemorySafety = 'strictMemorySafety',
-  DisableWarning = 'disableWarning',
+  SwiftLanguageMode = "swiftLanguageMode",
+  HeaderSearchPath = "headerSearchPath",
+  Define = "define",
+  LinkedLibrary = "linkedLibrary",
+  LinkedFramework = "linkedFramework",
+  UnsafeFlags = "unsafeFlags",
+  EnableUpcomingFeature = "enableUpcomingFeature",
+  EnableExperimentalFeature = "enableExperimentalFeature",
+  InteroperabilityMode = "interoperabilityMode",
+  DefaultIsolation = "defaultIsolation",
+  StrictMemorySafety = "strictMemorySafety",
+  DisableWarning = "disableWarning",
 }
 
 export interface DependenciesGraph {

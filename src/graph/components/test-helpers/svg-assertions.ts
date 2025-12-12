@@ -5,7 +5,7 @@
  * Provides type-safe selectors and assertion helpers for SVG DOM.
  */
 
-import { expect } from '@open-wc/testing';
+import { expect } from "@open-wc/testing";
 
 /**
  * Query an SVG element from a parent element
@@ -80,7 +80,9 @@ export function assertSvgElementCount(
   expectedCount: number,
   message?: string,
 ): void {
-  const actualCount = Array.isArray(elements) ? elements.length : elements.length;
+  const actualCount = Array.isArray(elements)
+    ? elements.length
+    : elements.length;
   expect(actualCount).to.equal(
     expectedCount,
     message || `Expected ${expectedCount} elements, found ${actualCount}`,
@@ -90,9 +92,12 @@ export function assertSvgElementCount(
 /**
  * Assert that an SVG path has a specific d attribute (useful for edge testing)
  */
-export function assertSvgPath(pathElement: SVGPathElement | null, expectedD: string): void {
+export function assertSvgPath(
+  pathElement: SVGPathElement | null,
+  expectedD: string,
+): void {
   assertSvgElementExists(pathElement);
-  assertSvgAttribute(pathElement, 'd', expectedD);
+  assertSvgAttribute(pathElement, "d", expectedD);
 }
 
 /**
@@ -103,9 +108,9 @@ export function assertSvgTransform(
   expectedTransform: string | RegExp,
 ): void {
   assertSvgElementExists(element);
-  const transform = element.getAttribute('transform');
+  const transform = element.getAttribute("transform");
 
-  if (typeof expectedTransform === 'string') {
+  if (typeof expectedTransform === "string") {
     expect(transform).to.equal(expectedTransform);
   } else {
     expect(transform).to.match(expectedTransform);
@@ -122,9 +127,9 @@ export function assertSvgCircle(
   expectedR: number,
 ): void {
   assertSvgElementExists(circleElement);
-  assertSvgAttribute(circleElement, 'cx', expectedCx);
-  assertSvgAttribute(circleElement, 'cy', expectedCy);
-  assertSvgAttribute(circleElement, 'r', expectedR);
+  assertSvgAttribute(circleElement, "cx", expectedCx);
+  assertSvgAttribute(circleElement, "cy", expectedCy);
+  assertSvgAttribute(circleElement, "r", expectedR);
 }
 
 /**
@@ -138,10 +143,10 @@ export function assertSvgLine(
   y2: number,
 ): void {
   assertSvgElementExists(lineElement);
-  assertSvgAttribute(lineElement, 'x1', x1);
-  assertSvgAttribute(lineElement, 'y1', y1);
-  assertSvgAttribute(lineElement, 'x2', x2);
-  assertSvgAttribute(lineElement, 'y2', y2);
+  assertSvgAttribute(lineElement, "x1", x1);
+  assertSvgAttribute(lineElement, "y1", y1);
+  assertSvgAttribute(lineElement, "x2", x2);
+  assertSvgAttribute(lineElement, "y2", y2);
 }
 
 /**
@@ -167,14 +172,17 @@ export function assertSvgViewBox(
   height: number,
 ): void {
   assertSvgElementExists(svgElement);
-  const viewBox = svgElement.getAttribute('viewBox');
+  const viewBox = svgElement.getAttribute("viewBox");
   expect(viewBox).to.equal(`${minX} ${minY} ${width} ${height}`);
 }
 
 /**
  * Assert that an SVG element has a class
  */
-export function assertSvgHasClass(element: SVGElement | null, className: string): void {
+export function assertSvgHasClass(
+  element: SVGElement | null,
+  className: string,
+): void {
   assertSvgElementExists(element);
   expect(element.classList.contains(className)).to.be.true;
 }
@@ -188,13 +196,16 @@ export function assertSvgOpacity(
   tolerance = 0.01,
 ): void {
   assertSvgElementExists(element);
-  const opacity = Number(element.getAttribute('opacity')) || 1;
+  const opacity = Number(element.getAttribute("opacity")) || 1;
   expect(opacity).to.be.closeTo(expectedOpacity, tolerance);
 }
 
 /**
  * Count SVG elements matching a selector
  */
-export function countSvgElements(parent: Element | DocumentFragment, selector: string): number {
+export function countSvgElements(
+  parent: Element | DocumentFragment,
+  selector: string,
+): number {
   return querySvgElements(parent, selector).length;
 }
