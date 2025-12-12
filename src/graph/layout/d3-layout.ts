@@ -74,23 +74,23 @@ export interface HierarchicalLayoutResult {
 const CONFIG = {
   // Node-level forces
   nodeRadius: 6,
-  nodeCollisionPadding: 16,
-  linkDistance: 55,
-  linkStrength: 0.30,
-  nodeCharge: -60, // Reduced from -120 (less soup)
+  nodeCollisionPadding: 12, // Reduced from 16 - tighter node packing
+  linkDistance: 45, // Reduced from 55 - tighter links
+  linkStrength: 0.35, // Increased from 0.30 - stronger links to keep clusters together
+  nodeCharge: -35, // Reduced from -60 - much less repulsion between nodes
 
   // Cross-cluster link handling
   crossClusterDistanceMul: 3.5,
   crossClusterStrengthMul: 0.02, // Very weak cross-cluster links
 
   // Cluster forces
-  clusterStrength: 0.25,
+  clusterStrength: 0.30, // Increased from 0.25 - stronger cluster cohesion
   clusterDistanceMin: 20,
-  clusterRepulsionStrength: 25000,
-  clusterPadding: 160,
-  clusterAttractionStrength: 0.8, // Neighborhood formation
-  clusterAttractionActivationDist: 300, // Only attract when far apart
-  clusterRepulsionYScale: 0.25, // Anisotropic: let strata dominate Y
+  clusterRepulsionStrength: 8000, // Reduced from 15000 - much less horizontal push
+  clusterPadding: 120, // Reduced from 180 - much tighter packing
+  clusterAttractionStrength: 0.20, // Increased from 0.15 - stronger attraction
+  clusterAttractionActivationDist: 500, // Reduced from 600
+  clusterRepulsionYScale: 0.2, // Reduced from 0.3 - prefer Y-axis spread more
 
   // Stratum configuration (the key to atlas layout)
   layerSpacing: 120, // Up from 50
@@ -104,7 +104,7 @@ const CONFIG = {
   radialStrength: 0.25,
 
   // Simulation
-  iterations: 320, // Up from 300
+  iterations: 300, // Reduced from 450 - less time for forces to spread layout
 
   // 3D-specific
   initialZSpread: 400,
@@ -113,8 +113,8 @@ const CONFIG = {
   zFanInStrength: 0.16,
 
   // Cluster sizing
-  minClusterSize: 80,
-  clusterNodeSpacing: 16,
+  minClusterSize: 60, // Reduced from 80 - smaller clusters
+  clusterNodeSpacing: 12, // Reduced from 16 - tighter node spacing in clusters
 
   // Edge bundling
   bundlingCycles: 5,
@@ -123,15 +123,16 @@ const CONFIG = {
   bundlingBudget: 40000, // Total edge-iterations budget for dynamic scaling
 
   // Cluster strata configuration (Phase 2: geological strata)
-  clusterStrataSpacing: 400, // Vertical spacing between cluster strata layers
-  clusterHorizontalSpacing: 350, // Horizontal spacing within a stratum layer
-  clusterStrataAnchorStrength: 0.15, // Soft anchor force to keep clusters near grid positions
+  clusterStrataSpacing: 800, // Increased from 600 - much more vertical spread between strata
+  clusterHorizontalSpacing: 120, // Reduced from 150 - even tighter horizontal packing
+  clusterMaxRowWidth: 900, // Reduced from 1200 - force even more rows per stratum
+  clusterStrataAnchorStrength: 0.80, // Increased from 0.70 - very strong anchor to grid
 
   // Drift prevention (Phase 4)
-  clusterCenteringStrength: 0.02, // Weak global X-centering
-  clusterBoundingRadius: 2000, // Max distance from origin
-  clusterBoundingStrength: 0.1, // Force strength when outside boundary
-  clusterStrataAlignmentStrength: 0.08, // Keep same-stratum clusters aligned
+  clusterCenteringStrength: 0.75, // Increased from 0.6 - very strong X-centering
+  clusterBoundingRadius: 1200, // Reduced from 1800 - much tighter boundary
+  clusterBoundingStrength: 0.5, // Increased from 0.35 - strong boundary enforcement
+  clusterStrataAlignmentStrength: 0.45, // Increased from 0.35 - strong Y alignment
 
   // 3D Z-axis role-based refinement (Phase 5)
   zRoleStrength: 0.12, // How strongly role affects Z
@@ -380,6 +381,7 @@ export function computeHierarchicalLayout(
     {
       strataSpacing: CONFIG.clusterStrataSpacing,
       horizontalSpacing: CONFIG.clusterHorizontalSpacing,
+      maxRowWidth: CONFIG.clusterMaxRowWidth,
     },
   );
 
@@ -449,22 +451,32 @@ export function computeHierarchicalLayout(
 
   // Update cluster centers based on node positions
   function updateClusterCenters() {
-    for (const [clusterId, center] of clusterCenterMap) {
-      let sumX = 0;
-      let sumY = 0;
-      let count = 0;
+    // Reset accumulators
+    const sums = new Map<string, { sumX: number; sumY: number; count: number }>();
+    
+    // Initialize for all known clusters to ensure coverage
+    for (const id of clusterCenterMap.keys()) {
+      sums.set(id, { sumX: 0, sumY: 0, count: 0 });
+    }
 
-      for (const node of simNodes) {
-        if (node.clusterId === clusterId) {
-          sumX += node.x;
-          sumY += node.y;
-          count++;
-        }
+    // Single pass over nodes to accumulate positions
+    for (const node of simNodes) {
+      if (!node.clusterId) continue;
+      
+      const acc = sums.get(node.clusterId);
+      if (acc) {
+        acc.sumX += node.x;
+        acc.sumY += node.y;
+        acc.count++;
       }
+    }
 
-      if (count > 0) {
-        center.cx = sumX / count;
-        center.cy = sumY / count;
+    // Update center positions
+    for (const [clusterId, center] of clusterCenterMap) {
+      const acc = sums.get(clusterId);
+      if (acc && acc.count > 0) {
+        center.cx = acc.sumX / acc.count;
+        center.cy = acc.sumY / acc.count;
       }
     }
   }
@@ -660,18 +672,27 @@ export function computeHierarchicalLayout(
     clusterBoundingForce(simulation.alpha());
     clusterXCenteringForce(simulation.alpha());
 
-    // Move nodes with their cluster centers
+    // Calculate cluster movement deltas
+    const clusterDeltas = new Map<string, { dx: number; dy: number }>();
     for (const [clusterId, center] of clusterCenterMap) {
       const prev = previousCenters.get(clusterId);
       if (!prev) continue;
 
       const dx = center.cx - prev.cx;
       const dy = center.cy - prev.cy;
+      
+      if (dx !== 0 || dy !== 0) {
+        clusterDeltas.set(clusterId, { dx, dy });
+      }
+    }
 
-      for (const node of simNodes) {
-        if (node.clusterId === clusterId) {
-          node.x += dx;
-          node.y += dy;
+    // Move nodes with their cluster centers (Single pass O(N))
+    for (const node of simNodes) {
+      if (node.clusterId) {
+        const delta = clusterDeltas.get(node.clusterId);
+        if (delta) {
+          node.x += delta.dx;
+          node.y += delta.dy;
         }
       }
     }
