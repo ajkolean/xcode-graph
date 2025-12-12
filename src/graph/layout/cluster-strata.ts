@@ -13,7 +13,7 @@
  * Higher stratum = deeper in dependency tree
  */
 
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from "@shared/schemas/graph.schema";
 
 export interface ClusterStrataResult {
   /** Stratum for each cluster (0 = top-level, higher = deeper dependency) */

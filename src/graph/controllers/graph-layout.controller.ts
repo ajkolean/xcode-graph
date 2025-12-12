@@ -34,10 +34,10 @@
  * @see {@link LayoutWorkerController} - Alternative for large graphs (1000+ nodes)
  */
 
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import { LayoutController } from './layout.controller';
+import type { Cluster, ClusterPosition, NodePosition } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import type { ReactiveController, ReactiveControllerHost } from "lit";
+import { LayoutController } from "./layout.controller";
 
 // ==================== Type Definitions ====================
 

@@ -6,15 +6,15 @@ export {
   computeNodeTargetRadius,
   createClusterBoundaryForce,
   createClusterRadialForce,
-} from './cluster-boundary';
+} from "./cluster-boundary";
 export {
   forceClusterAttraction,
   forceClusterRepulsion,
-} from './cluster-repulsion';
+} from "./cluster-repulsion";
 export {
   forceClusterBoundingRadius,
   forceClusterStrataAlignment,
   forceClusterStrataAnchor,
   forceClusterXCentering,
-} from './cluster-strata-force';
-export { type Vec2, vec2 } from './vector';
+} from "./cluster-strata-force";
+export { type Vec2, vec2 } from "./vector";
