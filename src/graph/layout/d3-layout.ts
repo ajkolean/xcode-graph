@@ -327,7 +327,11 @@ export function computeHierarchicalLayout(
   // Compute fan-in for 3D z-positioning
   const fanIn = computeFanIn(nodes, edges);
 
-  // Compute cluster-level strata (Phase 2: geological strata)
+  // ========================================================================
+  // Phase 2: Initialize Simulation
+  // ========================================================================
+
+  // Pre-compute cluster strata positions FIRST (needed for node seeding)
   const clusterDag = buildClusterDag(edges, nodeToCluster);
   const clusterStrataResult = computeClusterStrata(
     clusters.map((c) => c.id),
@@ -361,27 +365,40 @@ export function computeHierarchicalLayout(
     }
   }
 
-  // Pre-calculate cluster sizes
+  // Pre-calculate cluster sizes (needed for strata seeding)
   const clusterSizes = new Map<string, number>();
   for (const cluster of clusters) {
     const size = CONFIG.minClusterSize + cluster.nodes.length * CONFIG.clusterNodeSpacing;
     clusterSizes.set(cluster.id, size);
   }
 
-  // ========================================================================
-  // Phase 2: Initialize Simulation
-  // ========================================================================
+  // Seed clusters by their strata for deterministic layered positioning
+  const strataPositions = seedClustersByStrata(
+    clusters,
+    clusterStrataResult,
+    clusterSizes,
+    {
+      strataSpacing: CONFIG.clusterStrataSpacing,
+      horizontalSpacing: CONFIG.clusterHorizontalSpacing,
+    },
+  );
 
-  // Create simulation nodes with deterministic initial positions
+  // Create simulation nodes with positions relative to their cluster's strata position
   const simNodes = nodes.map((n): SimNode => {
     const hash = hashString(n.id);
-    const clusterHash = hashString(nodeToCluster.get(n.id) ?? '');
+    const clusterId = nodeToCluster.get(n.id);
+    const clusterPos = clusterId ? strataPositions.get(clusterId) : null;
+
+    // Position nodes around their cluster's strata position with small random offset
+    // This ensures nodes start near their cluster's correct Y layer
+    const baseX = clusterPos?.x ?? 0;
+    const baseY = clusterPos?.y ?? 0;
 
     return {
       id: n.id,
-      clusterId: nodeToCluster.get(n.id),
-      x: seededRandom(hash) * 100 - 50 + seededRandom(clusterHash) * 200,
-      y: seededRandom(hash + 1) * 100 - 50,
+      clusterId,
+      x: baseX + (seededRandom(hash) - 0.5) * 60,
+      y: baseY + (seededRandom(hash + 1) - 0.5) * 60,
       z: dimension === '3d' ? (seededRandom(hash + 2) - 0.5) * CONFIG.initialZSpread : 0,
       vx: 0,
       vy: 0,
@@ -411,18 +428,7 @@ export function computeHierarchicalLayout(
   // Create cluster centers with strata-based grid positioning (Phase 2)
   const clusterCenterMap = new Map<string, ClusterCenter>();
 
-  // Seed clusters by their strata for deterministic layered positioning
-  const strataPositions = seedClustersByStrata(
-    clusters,
-    clusterStrataResult,
-    clusterSizes,
-    {
-      strataSpacing: CONFIG.clusterStrataSpacing,
-      horizontalSpacing: CONFIG.clusterHorizontalSpacing,
-    },
-  );
-
-  // Store target positions for anchor force (Phase 4)
+  // Store target positions for anchor force (Phase 4) - strataPositions already computed above
   const clusterTargetPositions = new Map(strataPositions);
 
   for (const cluster of clusters) {
