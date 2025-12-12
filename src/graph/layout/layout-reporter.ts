@@ -5,9 +5,9 @@
  * for layout review and optimization.
  */
 
-import type { ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import type { HierarchicalLayoutResult } from './d3-layout';
+import type { ClusterPosition, NodePosition } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import type { HierarchicalLayoutResult } from "./d3-layout";
 
 // ============================================================================
 // Report Interfaces
@@ -35,7 +35,14 @@ export interface NodeReport {
 export interface LayoutSummary {
   totalClusters: number;
   totalNodes: number;
-  boundingBox: { width: number; height: number; xMin: number; xMax: number; yMin: number; yMax: number };
+  boundingBox: {
+    width: number;
+    height: number;
+    xMin: number;
+    xMax: number;
+    yMin: number;
+    yMax: number;
+  };
   aspectRatio: number;
   strataCount: number;
 }
@@ -140,7 +147,10 @@ function computeBoundingBox(clusters: ClusterPosition[]) {
 /**
  * Print formatted cluster position table
  */
-export function printClusterTable(result: HierarchicalLayoutResult, strataSpacing = 800): void {
+export function printClusterTable(
+  result: HierarchicalLayoutResult,
+  strataSpacing = 800,
+): void {
   const clusters = Array.from(result.clusterPositions.entries())
     .map(([id, pos]) => ({
       id,
@@ -149,42 +159,42 @@ export function printClusterTable(result: HierarchicalLayoutResult, strataSpacin
     }))
     .sort((a, b) => a.y - b.y || a.x - b.x);
 
-  console.log('\n┌' + '─'.repeat(90) + '┐');
-  console.log('│ CLUSTER POSITIONS' + ' '.repeat(72) + '│');
-  console.log('├' + '─'.repeat(90) + '┤');
+  console.log("\n┌" + "─".repeat(90) + "┐");
+  console.log("│ CLUSTER POSITIONS" + " ".repeat(72) + "│");
+  console.log("├" + "─".repeat(90) + "┤");
   console.log(
-    '│ ' +
-      'ID'.padEnd(30) +
-      '│ Stratum │' +
-      '    X │' +
-      '    Y │' +
-      ' Width │' +
-      'Height │' +
-      'Nodes │',
+    "│ " +
+      "ID".padEnd(30) +
+      "│ Stratum │" +
+      "    X │" +
+      "    Y │" +
+      " Width │" +
+      "Height │" +
+      "Nodes │",
   );
-  console.log('├' + '─'.repeat(90) + '┤');
+  console.log("├" + "─".repeat(90) + "┤");
 
   for (const c of clusters) {
     console.log(
-      '│ ' +
+      "│ " +
         c.id.substring(0, 29).padEnd(30) +
-        '│' +
+        "│" +
         String(c.stratum).padStart(7) +
-        ' │' +
+        " │" +
         c.x.toFixed(0).padStart(5) +
-        ' │' +
+        " │" +
         c.y.toFixed(0).padStart(5) +
-        ' │' +
+        " │" +
         c.width.toFixed(0).padStart(6) +
-        ' │' +
+        " │" +
         c.height.toFixed(0).padStart(6) +
-        ' │' +
+        " │" +
         String(c.nodeCount).padStart(5) +
-        ' │',
+        " │",
     );
   }
 
-  console.log('└' + '─'.repeat(90) + '┘');
+  console.log("└" + "─".repeat(90) + "┘");
 }
 
 /**
@@ -194,7 +204,7 @@ export function printNodesByCluster(
   result: HierarchicalLayoutResult,
   maxNodesPerCluster = 10,
 ): void {
-  console.log('\n═══ NODES BY CLUSTER ═══\n');
+  console.log("\n═══ NODES BY CLUSTER ═══\n");
 
   for (const cluster of result.clusters) {
     const clusterPos = result.clusterPositions.get(cluster.id);
@@ -215,10 +225,12 @@ export function printNodesByCluster(
     }
 
     if (cluster.nodes.length > maxNodesPerCluster) {
-      console.log(`   └─ ... and ${cluster.nodes.length - maxNodesPerCluster} more nodes`);
+      console.log(
+        `   └─ ... and ${cluster.nodes.length - maxNodesPerCluster} more nodes`,
+      );
     }
 
-    console.log('');
+    console.log("");
   }
 }
 
@@ -230,7 +242,10 @@ export function printStrataVisualization(
   strataSpacing = 800,
 ): void {
   // Group clusters by stratum
-  const strata = new Map<number, Array<{ id: string; x: number; width: number }>>();
+  const strata = new Map<
+    number,
+    Array<{ id: string; x: number; width: number }>
+  >();
 
   for (const [id, pos] of result.clusterPositions) {
     const stratum = Math.floor(pos.y / strataSpacing);
@@ -238,17 +253,17 @@ export function printStrataVisualization(
     strata.get(stratum)!.push({ id, x: pos.x, width: pos.width });
   }
 
-  console.log('\n═══ STRATA VISUALIZATION ═══\n');
+  console.log("\n═══ STRATA VISUALIZATION ═══\n");
 
   const sortedStrata = [...strata.entries()].sort((a, b) => a[0] - b[0]);
 
   for (const [stratum, clusters] of sortedStrata) {
     const sorted = clusters.sort((a, b) => a.x - b.x);
-    const labels = sorted.map((c) => `[${c.id.substring(0, 12)}]`).join(' ');
+    const labels = sorted.map((c) => `[${c.id.substring(0, 12)}]`).join(" ");
     console.log(`Stratum ${String(stratum).padStart(2)}: ${labels}`);
   }
 
-  console.log('');
+  console.log("");
 }
 
 /**
@@ -257,7 +272,7 @@ export function printStrataVisualization(
 export function printLayoutSummary(report: PositionReport): void {
   const { summary } = report;
 
-  console.log('\n═══ LAYOUT SUMMARY ═══\n');
+  console.log("\n═══ LAYOUT SUMMARY ═══\n");
   console.log(`   Total Clusters: ${summary.totalClusters}`);
   console.log(`   Total Nodes:    ${summary.totalNodes}`);
   console.log(
@@ -271,7 +286,7 @@ export function printLayoutSummary(report: PositionReport): void {
   );
   console.log(`   Aspect Ratio:   ${summary.aspectRatio.toFixed(2)}`);
   console.log(`   Strata Count:   ${summary.strataCount}`);
-  console.log('');
+  console.log("");
 }
 
 // ============================================================================
@@ -289,23 +304,24 @@ export function exportToJSON(report: PositionReport): string {
  * Export cluster positions to CSV string
  */
 export function exportClustersToCSV(report: PositionReport): string {
-  const headers = 'id,stratum,x,y,width,height,nodeCount';
+  const headers = "id,stratum,x,y,width,height,nodeCount";
   const rows = report.clusters.map(
-    (c) => `${c.id},${c.stratum},${c.x},${c.y},${c.width},${c.height},${c.nodeCount}`,
+    (c) =>
+      `${c.id},${c.stratum},${c.x},${c.y},${c.width},${c.height},${c.nodeCount}`,
   );
-  return [headers, ...rows].join('\n');
+  return [headers, ...rows].join("\n");
 }
 
 /**
  * Export node positions to CSV string
  */
 export function exportNodesToCSV(report: PositionReport): string {
-  const headers = 'id,clusterId,relativeX,relativeY,absoluteX,absoluteY';
+  const headers = "id,clusterId,relativeX,relativeY,absoluteX,absoluteY";
   const rows = report.nodes.map(
     (n) =>
       `${n.id},${n.clusterId},${n.relativeX},${n.relativeY},${n.absoluteX},${n.absoluteY}`,
   );
-  return [headers, ...rows].join('\n');
+  return [headers, ...rows].join("\n");
 }
 
 // ============================================================================
@@ -320,7 +336,11 @@ export function findHubClusters(
   edges: GraphEdge[],
   nodeToCluster: Map<string, string>,
   strataSpacing = 800,
-): Array<{ clusterId: string; crossStrataEdges: number; connectedStrata: number }> {
+): Array<{
+  clusterId: string;
+  crossStrataEdges: number;
+  connectedStrata: number;
+}> {
   const clusterCrossEdges = new Map<string, Set<number>>();
 
   // Initialize
@@ -352,8 +372,11 @@ export function findHubClusters(
   }
 
   // Build results
-  const results: Array<{ clusterId: string; crossStrataEdges: number; connectedStrata: number }> =
-    [];
+  const results: Array<{
+    clusterId: string;
+    crossStrataEdges: number;
+    connectedStrata: number;
+  }> = [];
 
   for (const [clusterId, connectedStrata] of clusterCrossEdges) {
     if (connectedStrata.size > 0) {

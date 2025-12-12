@@ -16,13 +16,16 @@
  * 8. Neighborhood Coherence - Connected clusters should be closer
  */
 
-import { describe, it, expect } from 'vitest';
-import { computeHierarchicalLayout, type HierarchicalLayoutResult } from './d3-layout';
-import { groupIntoClusters } from './cluster-grouping';
-import { analyzeCluster } from './cluster-analysis';
-import type { GraphNode, GraphEdge } from '@shared/schemas/graph.schema';
-import type { ClusterPosition } from '@shared/schemas';
-import { tuistGraphData } from '../../fixtures/tuist-graph-data';
+import { describe, it, expect } from "vitest";
+import {
+  computeHierarchicalLayout,
+  type HierarchicalLayoutResult,
+} from "./d3-layout";
+import { groupIntoClusters } from "./cluster-grouping";
+import { analyzeCluster } from "./cluster-analysis";
+import type { GraphNode, GraphEdge } from "@shared/schemas/graph.schema";
+import type { ClusterPosition } from "@shared/schemas";
+import { tuistGraphData } from "../../fixtures/tuist-graph-data";
 
 // ============================================================================
 // Quality Metric Interfaces
@@ -104,7 +107,11 @@ function computeLayoutQuality(
   );
 
   // 4. Strata Ordering Metrics
-  const { violations, spread } = computeStrataOrdering(result, edges, nodeToCluster);
+  const { violations, spread } = computeStrataOrdering(
+    result,
+    edges,
+    nodeToCluster,
+  );
 
   // 5. Edge Length Metrics
   const { avgLength, maxLength } = computeCrossClusterEdgeLengths(
@@ -213,7 +220,9 @@ function computeNodeContainment(
   for (const node of nodes) {
     const nodePos = result.nodePositions.get(node.id);
     const clusterId = nodeToCluster.get(node.id);
-    const clusterPos = clusterId ? result.clusterPositions.get(clusterId) : null;
+    const clusterPos = clusterId
+      ? result.clusterPositions.get(clusterId)
+      : null;
 
     if (!nodePos || !clusterPos) continue;
 
@@ -264,7 +273,9 @@ function computeStrataOrdering(
   }
 
   // Count distinct Y bands (strata spread)
-  const yPositions = Array.from(result.clusterPositions.values()).map((c) => c.y);
+  const yPositions = Array.from(result.clusterPositions.values()).map(
+    (c) => c.y,
+  );
   const bandSize = 100; // Group positions within 100px into same band
   const bands = new Set(yPositions.map((y) => Math.floor(y / bandSize)));
 
@@ -294,12 +305,18 @@ function computeCrossClusterEdgeLengths(
 
     if (!sourcePos || !targetPos) continue;
 
-    const length = Math.hypot(sourcePos.x - targetPos.x, sourcePos.y - targetPos.y);
+    const length = Math.hypot(
+      sourcePos.x - targetPos.x,
+      sourcePos.y - targetPos.y,
+    );
     lengths.push(length);
   }
 
   return {
-    avgLength: lengths.length > 0 ? lengths.reduce((a, b) => a + b, 0) / lengths.length : 0,
+    avgLength:
+      lengths.length > 0
+        ? lengths.reduce((a, b) => a + b, 0) / lengths.length
+        : 0,
     maxLength: lengths.length > 0 ? Math.max(...lengths) : 0,
   };
 }
@@ -363,7 +380,7 @@ function buildNodeToClusterMap(
 // Test Suite
 // ============================================================================
 
-describe('Layout Quality Metrics', () => {
+describe("Layout Quality Metrics", () => {
   // Compute layout once for all tests
   let result: HierarchicalLayoutResult;
   let metrics: LayoutQualityMetrics;
@@ -379,91 +396,124 @@ describe('Layout Quality Metrics', () => {
     metrics = computeLayoutQuality(result, nodes, edges, nodeToCluster);
   });
 
-  describe('Metric Reporting', () => {
-    it('should report all quality metrics', () => {
-      console.log('\n' + '═'.repeat(60));
-      console.log('LAYOUT QUALITY METRICS REPORT');
-      console.log('═'.repeat(60));
+  describe("Metric Reporting", () => {
+    it("should report all quality metrics", () => {
+      console.log("\n" + "═".repeat(60));
+      console.log("LAYOUT QUALITY METRICS REPORT");
+      console.log("═".repeat(60));
 
-      console.log('\n📐 GEOMETRIC METRICS:');
-      console.log(`   Aspect Ratio:     ${metrics.aspectRatio.toFixed(2)} ${metrics.aspectRatio <= 3 ? '✅' : '⚠️'}`);
-      console.log(`   Bounding Box:     ${Math.sqrt(metrics.boundingBoxArea).toFixed(0)}px² area`);
-      console.log(`   Compactness:      ${(metrics.compactness * 100).toFixed(1)}%`);
+      console.log("\n📐 GEOMETRIC METRICS:");
+      console.log(
+        `   Aspect Ratio:     ${metrics.aspectRatio.toFixed(2)} ${metrics.aspectRatio <= 3 ? "✅" : "⚠️"}`,
+      );
+      console.log(
+        `   Bounding Box:     ${Math.sqrt(metrics.boundingBoxArea).toFixed(0)}px² area`,
+      );
+      console.log(
+        `   Compactness:      ${(metrics.compactness * 100).toFixed(1)}%`,
+      );
 
-      console.log('\n🔵 CLUSTER METRICS:');
-      console.log(`   Overlap Count:    ${metrics.clusterOverlapCount} pairs ${metrics.clusterOverlapCount === 0 ? '✅' : '⚠️'}`);
-      console.log(`   Max Overlap:      ${metrics.maxClusterOverlap.toFixed(0)}px`);
-      console.log(`   Avg Separation:   ${metrics.avgClusterSeparation.toFixed(0)}px`);
-      console.log(`   Min Separation:   ${metrics.minClusterSeparation.toFixed(0)}px`);
+      console.log("\n🔵 CLUSTER METRICS:");
+      console.log(
+        `   Overlap Count:    ${metrics.clusterOverlapCount} pairs ${metrics.clusterOverlapCount === 0 ? "✅" : "⚠️"}`,
+      );
+      console.log(
+        `   Max Overlap:      ${metrics.maxClusterOverlap.toFixed(0)}px`,
+      );
+      console.log(
+        `   Avg Separation:   ${metrics.avgClusterSeparation.toFixed(0)}px`,
+      );
+      console.log(
+        `   Min Separation:   ${metrics.minClusterSeparation.toFixed(0)}px`,
+      );
 
-      console.log('\n🟢 NODE METRICS:');
-      console.log(`   Containment Rate: ${(metrics.nodeContainmentRate * 100).toFixed(1)}% ${metrics.nodeContainmentRate >= 0.95 ? '✅' : '⚠️'}`);
-      console.log(`   Avg Dist to Center: ${metrics.avgNodeDistFromClusterCenter.toFixed(0)}px`);
+      console.log("\n🟢 NODE METRICS:");
+      console.log(
+        `   Containment Rate: ${(metrics.nodeContainmentRate * 100).toFixed(1)}% ${metrics.nodeContainmentRate >= 0.95 ? "✅" : "⚠️"}`,
+      );
+      console.log(
+        `   Avg Dist to Center: ${metrics.avgNodeDistFromClusterCenter.toFixed(0)}px`,
+      );
 
-      console.log('\n📊 STRATA METRICS:');
-      console.log(`   Order Violations: ${metrics.strataOrderingViolations} edges ${metrics.strataOrderingViolations <= 5 ? '✅' : '⚠️'}`);
-      console.log(`   Y-Band Spread:    ${metrics.strataSpread} bands ${metrics.strataSpread >= 5 ? '✅' : '⚠️'}`);
+      console.log("\n📊 STRATA METRICS:");
+      console.log(
+        `   Order Violations: ${metrics.strataOrderingViolations} edges ${metrics.strataOrderingViolations <= 5 ? "✅" : "⚠️"}`,
+      );
+      console.log(
+        `   Y-Band Spread:    ${metrics.strataSpread} bands ${metrics.strataSpread >= 5 ? "✅" : "⚠️"}`,
+      );
 
-      console.log('\n🔗 EDGE METRICS:');
-      console.log(`   Avg Cross-Edge:   ${metrics.avgCrossClusterEdgeLength.toFixed(0)}px`);
-      console.log(`   Max Cross-Edge:   ${metrics.maxCrossClusterEdgeLength.toFixed(0)}px`);
+      console.log("\n🔗 EDGE METRICS:");
+      console.log(
+        `   Avg Cross-Edge:   ${metrics.avgCrossClusterEdgeLength.toFixed(0)}px`,
+      );
+      console.log(
+        `   Max Cross-Edge:   ${metrics.maxCrossClusterEdgeLength.toFixed(0)}px`,
+      );
 
-      console.log('\n⚖️ BALANCE METRICS:');
-      console.log(`   Center Offset:    ${metrics.centerOfMassOffset.toFixed(0)}px ${metrics.centerOfMassOffset <= 200 ? '✅' : '⚠️'}`);
-      console.log(`   H-Spread (σ):     ${metrics.horizontalBalance.toFixed(0)}px`);
-      console.log(`   V-Spread (σ):     ${metrics.verticalBalance.toFixed(0)}px`);
+      console.log("\n⚖️ BALANCE METRICS:");
+      console.log(
+        `   Center Offset:    ${metrics.centerOfMassOffset.toFixed(0)}px ${metrics.centerOfMassOffset <= 200 ? "✅" : "⚠️"}`,
+      );
+      console.log(
+        `   H-Spread (σ):     ${metrics.horizontalBalance.toFixed(0)}px`,
+      );
+      console.log(
+        `   V-Spread (σ):     ${metrics.verticalBalance.toFixed(0)}px`,
+      );
 
-      console.log('\n' + '═'.repeat(60));
+      console.log("\n" + "═".repeat(60));
 
       expect(true).toBe(true); // Report test always passes
     });
   });
 
-  describe('Geometric Quality', () => {
-    it('should have reasonable aspect ratio (width/height <= 3)', () => {
+  describe("Geometric Quality", () => {
+    it("should have reasonable aspect ratio (width/height <= 3)", () => {
       expect(metrics.aspectRatio).toBeLessThanOrEqual(3);
     });
 
-    it('should have aspect ratio > 0.5 (not too tall)', () => {
+    it("should have aspect ratio > 0.5 (not too tall)", () => {
       expect(metrics.aspectRatio).toBeGreaterThan(0.5);
     });
 
-    it('should have non-zero compactness', () => {
+    it("should have non-zero compactness", () => {
       expect(metrics.compactness).toBeGreaterThan(0);
     });
   });
 
-  describe('Cluster Quality', () => {
-    it('should have minimal cluster overlaps (< 15% of pairs)', () => {
-      const totalPairs = (result.clusterPositions.size * (result.clusterPositions.size - 1)) / 2;
+  describe("Cluster Quality", () => {
+    it("should have minimal cluster overlaps (< 15% of pairs)", () => {
+      const totalPairs =
+        (result.clusterPositions.size * (result.clusterPositions.size - 1)) / 2;
       const overlapRate = metrics.clusterOverlapCount / Math.max(1, totalPairs);
       expect(overlapRate).toBeLessThan(0.15);
     });
 
-    it('should have max overlap < 350px', () => {
+    it("should have max overlap < 350px", () => {
       // Some overlap is acceptable in dense force-directed layouts
       expect(metrics.maxClusterOverlap).toBeLessThan(350);
     });
 
-    it('should have positive average separation', () => {
+    it("should have positive average separation", () => {
       expect(metrics.avgClusterSeparation).toBeGreaterThan(0);
     });
   });
 
-  describe('Node Quality', () => {
-    it('should have > 75% node containment rate', () => {
+  describe("Node Quality", () => {
+    it("should have > 75% node containment rate", () => {
       // Force layouts may push some nodes outside cluster bounds
       expect(metrics.nodeContainmentRate).toBeGreaterThan(0.75);
     });
 
-    it('should have reasonable avg distance from cluster center', () => {
+    it("should have reasonable avg distance from cluster center", () => {
       // Avg distance should be less than typical cluster radius
       expect(metrics.avgNodeDistFromClusterCenter).toBeLessThan(200);
     });
   });
 
-  describe('Strata Quality', () => {
-    it('should have minimal strata ordering violations (< 15% of cross-edges)', () => {
+  describe("Strata Quality", () => {
+    it("should have minimal strata ordering violations (< 15% of cross-edges)", () => {
       const { edges } = tuistGraphData;
       const crossEdgeCount = edges.filter((e) => {
         const sc = nodeToCluster.get(e.source);
@@ -472,85 +522,90 @@ describe('Layout Quality Metrics', () => {
       }).length;
 
       // Some violations occur due to cycles and force equilibrium
-      const violationRate = metrics.strataOrderingViolations / Math.max(1, crossEdgeCount);
+      const violationRate =
+        metrics.strataOrderingViolations / Math.max(1, crossEdgeCount);
       expect(violationRate).toBeLessThan(0.15);
     });
 
-    it('should have at least 5 distinct Y-bands', () => {
+    it("should have at least 5 distinct Y-bands", () => {
       expect(metrics.strataSpread).toBeGreaterThanOrEqual(5);
     });
   });
 
-  describe('Edge Quality', () => {
-    it('should have reasonable avg cross-cluster edge length (< 2000px)', () => {
+  describe("Edge Quality", () => {
+    it("should have reasonable avg cross-cluster edge length (< 2000px)", () => {
       expect(metrics.avgCrossClusterEdgeLength).toBeLessThan(2000);
     });
 
-    it('should have max edge length < 4000px', () => {
+    it("should have max edge length < 4000px", () => {
       expect(metrics.maxCrossClusterEdgeLength).toBeLessThan(4000);
     });
   });
 
-  describe('Balance Quality', () => {
-    it('should have center of mass near origin (< 300px offset)', () => {
+  describe("Balance Quality", () => {
+    it("should have center of mass near origin (< 300px offset)", () => {
       expect(metrics.centerOfMassOffset).toBeLessThan(300);
     });
 
-    it('should have meaningful horizontal spread', () => {
+    it("should have meaningful horizontal spread", () => {
       expect(metrics.horizontalBalance).toBeGreaterThan(100);
     });
 
-    it('should have meaningful vertical spread', () => {
+    it("should have meaningful vertical spread", () => {
       expect(metrics.verticalBalance).toBeGreaterThan(100);
     });
   });
 
-  describe('Regression Guards', () => {
+  describe("Regression Guards", () => {
     // These tests capture current baseline values and alert if they regress significantly
     // Update these thresholds as layout quality improves
 
-    it('should not regress aspect ratio beyond 3.5', () => {
+    it("should not regress aspect ratio beyond 3.5", () => {
       // Current baseline: ~2.2, threshold allows ~60% regression
       expect(metrics.aspectRatio).toBeLessThanOrEqual(3.5);
     });
 
-    it('should not regress cluster overlap count beyond 25', () => {
+    it("should not regress cluster overlap count beyond 25", () => {
       // Current baseline: ~16, threshold allows some regression
       expect(metrics.clusterOverlapCount).toBeLessThanOrEqual(25);
     });
 
-    it('should not regress node containment below 75%', () => {
+    it("should not regress node containment below 75%", () => {
       // Current baseline: ~80%, threshold is 75%
       expect(metrics.nodeContainmentRate).toBeGreaterThanOrEqual(0.75);
     });
 
-    it('should not regress strata spread below 10 bands', () => {
+    it("should not regress strata spread below 10 bands", () => {
       // Current baseline: ~17 bands
       expect(metrics.strataSpread).toBeGreaterThanOrEqual(10);
     });
   });
 });
 
-describe('Layout Quality Comparison', () => {
-  it('should produce consistent quality across runs', { timeout: 30000 }, () => {
-    const { nodes, edges } = tuistGraphData;
-    const clusters = groupIntoClusters(nodes, edges);
-    clusters.forEach((cluster) => analyzeCluster(cluster, edges));
+describe("Layout Quality Comparison", () => {
+  it(
+    "should produce consistent quality across runs",
+    { timeout: 30000 },
+    () => {
+      const { nodes, edges } = tuistGraphData;
+      const clusters = groupIntoClusters(nodes, edges);
+      clusters.forEach((cluster) => analyzeCluster(cluster, edges));
 
-    // Run twice (not three times to reduce test duration)
-    const result1 = computeHierarchicalLayout(nodes, edges, clusters);
-    const result2 = computeHierarchicalLayout(nodes, edges, clusters);
+      // Run twice (not three times to reduce test duration)
+      const result1 = computeHierarchicalLayout(nodes, edges, clusters);
+      const result2 = computeHierarchicalLayout(nodes, edges, clusters);
 
-    const getAspectRatio = (r: HierarchicalLayoutResult) => {
-      const positions = Array.from(r.clusterPositions.values());
-      const xs = positions.map((p) => p.x);
-      const ys = positions.map((p) => p.y);
-      const width = Math.max(...xs) - Math.min(...xs);
-      const height = Math.max(...ys) - Math.min(...ys);
-      return width / Math.max(1, height);
-    };
+      const getAspectRatio = (r: HierarchicalLayoutResult) => {
+        const positions = Array.from(r.clusterPositions.values());
+        const xs = positions.map((p) => p.x);
+        const ys = positions.map((p) => p.y);
+        const width = Math.max(...xs) - Math.min(...xs);
+        const height = Math.max(...ys) - Math.min(...ys);
+        return width / Math.max(1, height);
+      };
 
-    // Both runs should produce same aspect ratio (deterministic)
-    expect(getAspectRatio(result1)).toBeCloseTo(getAspectRatio(result2), 2);
-  });
+      // Both runs should produce same aspect ratio (deterministic)
+      expect(getAspectRatio(result1)).toBeCloseTo(getAspectRatio(result2), 2);
+    },
+  );
 });

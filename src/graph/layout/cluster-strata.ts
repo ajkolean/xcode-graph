@@ -13,7 +13,7 @@
  * Higher stratum = deeper in dependency tree
  */
 
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from "@shared/schemas/graph.schema";
 
 export interface ClusterStrataResult {
   /** Stratum for each cluster (0 = top-level, higher = deeper dependency) */
@@ -289,9 +289,13 @@ export function seedClustersByStrata(
       maxClusterHeight = Math.max(maxClusterHeight, size);
 
       // Check if adding this cluster would exceed max row width
-      const additionalWidth = currentRowWidth > 0 ? size + config.horizontalSpacing : size;
+      const additionalWidth =
+        currentRowWidth > 0 ? size + config.horizontalSpacing : size;
 
-      if (currentRowWidth + additionalWidth > maxRowWidth && currentRow.length > 0) {
+      if (
+        currentRowWidth + additionalWidth > maxRowWidth &&
+        currentRow.length > 0
+      ) {
         // Start a new row
         rows.push(currentRow);
         currentRow = [clusterId];
@@ -334,7 +338,8 @@ export function seedClustersByStrata(
     }
 
     // Update base Y for next stratum
-    currentBaseY += rows.length * rowSpacing + config.strataSpacing - rowSpacing;
+    currentBaseY +=
+      rows.length * rowSpacing + config.strataSpacing - rowSpacing;
   }
 
   return positions;

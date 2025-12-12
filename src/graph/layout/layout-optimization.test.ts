@@ -9,18 +9,18 @@
  * - Strata visualization
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from "vitest";
 import {
   computeHierarchicalLayout,
   DEFAULT_CONFIG,
   type HierarchicalLayoutResult,
   type LayoutConfig,
-} from './d3-layout';
-import { groupIntoClusters } from './cluster-grouping';
-import { analyzeCluster } from './cluster-analysis';
-import type { GraphNode, GraphEdge } from '@shared/schemas/graph.schema';
-import type { Cluster } from '@shared/schemas';
-import { tuistGraphData } from '../../fixtures/tuist-graph-data';
+} from "./d3-layout";
+import { groupIntoClusters } from "./cluster-grouping";
+import { analyzeCluster } from "./cluster-analysis";
+import type { GraphNode, GraphEdge } from "@shared/schemas/graph.schema";
+import type { Cluster } from "@shared/schemas";
+import { tuistGraphData } from "../../fixtures/tuist-graph-data";
 import {
   generatePositionReport,
   printClusterTable,
@@ -31,7 +31,7 @@ import {
   exportClustersToCSV,
   findHubClusters,
   findIsolatedClusters,
-} from './layout-reporter';
+} from "./layout-reporter";
 
 // ============================================================================
 // Test Helpers
@@ -122,7 +122,9 @@ function computeMetrics(
     }
   }
   const avgEdgeLength =
-    edgeLengths.length > 0 ? edgeLengths.reduce((a, b) => a + b, 0) / edgeLengths.length : 0;
+    edgeLengths.length > 0
+      ? edgeLengths.reduce((a, b) => a + b, 0) / edgeLengths.length
+      : 0;
 
   // Node containment rate
   let contained = 0;
@@ -138,11 +140,16 @@ function computeMetrics(
       }
     }
   }
-  const totalNodes = result.clusters.reduce((sum, c) => sum + c.nodes.length, 0);
+  const totalNodes = result.clusters.reduce(
+    (sum, c) => sum + c.nodes.length,
+    0,
+  );
   const containmentRate = totalNodes > 0 ? contained / totalNodes : 1;
 
   // Strata count
-  const strataSet = new Set(clusterPositions.map((c) => Math.floor(c.y / strataSpacing)));
+  const strataSet = new Set(
+    clusterPositions.map((c) => Math.floor(c.y / strataSpacing)),
+  );
 
   return {
     aspectRatio,
@@ -186,14 +193,14 @@ function runParameterSweep(
  * Print parameter sweep results
  */
 function printSweepResults(paramName: string, results: SweepResult[]): void {
-  console.log(`\n${'═'.repeat(70)}`);
+  console.log(`\n${"═".repeat(70)}`);
   console.log(`PARAMETER SWEEP: ${paramName}`);
-  console.log(`${'═'.repeat(70)}\n`);
+  console.log(`${"═".repeat(70)}\n`);
   console.log(
-    'Value'.padStart(10) +
-      ' │ Aspect │ Overlaps │ Avg Edge │ Contain% │ Strata',
+    "Value".padStart(10) +
+      " │ Aspect │ Overlaps │ Avg Edge │ Contain% │ Strata",
   );
-  console.log('─'.repeat(70));
+  console.log("─".repeat(70));
 
   for (const r of results) {
     console.log(
@@ -205,14 +212,14 @@ function printSweepResults(paramName: string, results: SweepResult[]): void {
         `${String(r.strataCount).padStart(6)}`,
     );
   }
-  console.log('');
+  console.log("");
 }
 
 // ============================================================================
 // Test Suite
 // ============================================================================
 
-describe('Layout Position Review', () => {
+describe("Layout Position Review", () => {
   let nodes: GraphNode[];
   let edges: GraphEdge[];
   let clusters: Cluster[];
@@ -228,13 +235,13 @@ describe('Layout Position Review', () => {
     nodeToCluster = buildNodeToClusterMap(clusters);
   });
 
-  describe('Full Position Dump', () => {
-    it('prints all cluster positions sorted by stratum', () => {
+  describe("Full Position Dump", () => {
+    it("prints all cluster positions sorted by stratum", () => {
       printClusterTable(result, DEFAULT_CONFIG.clusterStrataSpacing);
       expect(result.clusterPositions.size).toBeGreaterThan(0);
     });
 
-    it('prints nodes grouped by cluster (first 5 clusters)', () => {
+    it("prints nodes grouped by cluster (first 5 clusters)", () => {
       // Only print first 5 clusters with max 5 nodes each to keep output readable
       const limitedResult = {
         ...result,
@@ -244,62 +251,80 @@ describe('Layout Position Review', () => {
       expect(result.nodePositions.size).toBeGreaterThan(0);
     });
 
-    it('prints strata visualization', () => {
+    it("prints strata visualization", () => {
       printStrataVisualization(result, DEFAULT_CONFIG.clusterStrataSpacing);
       expect(result.clusterPositions.size).toBeGreaterThan(0);
     });
 
-    it('prints layout summary', () => {
-      const report = generatePositionReport(result, DEFAULT_CONFIG.clusterStrataSpacing);
+    it("prints layout summary", () => {
+      const report = generatePositionReport(
+        result,
+        DEFAULT_CONFIG.clusterStrataSpacing,
+      );
       printLayoutSummary(report);
       expect(report.summary.totalClusters).toBeGreaterThan(0);
     });
 
-    it('exports positions to JSON', () => {
-      const report = generatePositionReport(result, DEFAULT_CONFIG.clusterStrataSpacing);
+    it("exports positions to JSON", () => {
+      const report = generatePositionReport(
+        result,
+        DEFAULT_CONFIG.clusterStrataSpacing,
+      );
       const json = exportToJSON(report);
       const parsed = JSON.parse(json);
 
-      console.log('\n═══ JSON EXPORT SAMPLE ═══\n');
-      console.log('First 3 clusters:');
+      console.log("\n═══ JSON EXPORT SAMPLE ═══\n");
+      console.log("First 3 clusters:");
       console.log(JSON.stringify(parsed.clusters.slice(0, 3), null, 2));
-      console.log('\nSummary:');
+      console.log("\nSummary:");
       console.log(JSON.stringify(parsed.summary, null, 2));
 
       expect(parsed.clusters.length).toBeGreaterThan(0);
       expect(parsed.summary.totalClusters).toBe(result.clusterPositions.size);
     });
 
-    it('exports clusters to CSV', () => {
-      const report = generatePositionReport(result, DEFAULT_CONFIG.clusterStrataSpacing);
+    it("exports clusters to CSV", () => {
+      const report = generatePositionReport(
+        result,
+        DEFAULT_CONFIG.clusterStrataSpacing,
+      );
       const csv = exportClustersToCSV(report);
 
-      console.log('\n═══ CSV EXPORT SAMPLE ═══\n');
-      const lines = csv.split('\n');
-      console.log(lines.slice(0, 6).join('\n'));
+      console.log("\n═══ CSV EXPORT SAMPLE ═══\n");
+      const lines = csv.split("\n");
+      console.log(lines.slice(0, 6).join("\n"));
       console.log(`... and ${lines.length - 6} more rows`);
 
       expect(lines.length).toBeGreaterThan(1);
     });
   });
 
-  describe('Cluster Analysis', () => {
-    it('identifies hub clusters (most cross-stratum connections)', () => {
-      const hubs = findHubClusters(result, edges, nodeToCluster, DEFAULT_CONFIG.clusterStrataSpacing);
+  describe("Cluster Analysis", () => {
+    it("identifies hub clusters (most cross-stratum connections)", () => {
+      const hubs = findHubClusters(
+        result,
+        edges,
+        nodeToCluster,
+        DEFAULT_CONFIG.clusterStrataSpacing,
+      );
 
-      console.log('\n═══ HUB CLUSTERS (Most Cross-Stratum Connections) ═══\n');
+      console.log("\n═══ HUB CLUSTERS (Most Cross-Stratum Connections) ═══\n");
       const topHubs = hubs.slice(0, 10);
       for (const hub of topHubs) {
-        console.log(`   ${hub.clusterId.padEnd(35)} → ${hub.connectedStrata} strata`);
+        console.log(
+          `   ${hub.clusterId.padEnd(35)} → ${hub.connectedStrata} strata`,
+        );
       }
 
       expect(hubs.length).toBeGreaterThan(0);
     });
 
-    it('identifies isolated clusters (fewest connections)', () => {
+    it("identifies isolated clusters (fewest connections)", () => {
       const isolated = findIsolatedClusters(result, edges, nodeToCluster);
 
-      console.log('\n═══ ISOLATED CLUSTERS (Fewest Cross-Cluster Connections) ═══\n');
+      console.log(
+        "\n═══ ISOLATED CLUSTERS (Fewest Cross-Cluster Connections) ═══\n",
+      );
       const mostIsolated = isolated.slice(0, 10);
       for (const cluster of mostIsolated) {
         console.log(
@@ -312,7 +337,7 @@ describe('Layout Position Review', () => {
   });
 });
 
-describe('Parameter Sensitivity Analysis', { timeout: 120000 }, () => {
+describe("Parameter Sensitivity Analysis", { timeout: 120000 }, () => {
   let nodes: GraphNode[];
   let edges: GraphEdge[];
   let clusters: Cluster[];
@@ -326,10 +351,17 @@ describe('Parameter Sensitivity Analysis', { timeout: 120000 }, () => {
     nodeToCluster = buildNodeToClusterMap(clusters);
   });
 
-  it('measures impact of nodeCharge variations', () => {
+  it("measures impact of nodeCharge variations", () => {
     const values = [-20, -35, -50, -70, -100];
-    const results = runParameterSweep('nodeCharge', values, nodes, edges, clusters, nodeToCluster);
-    printSweepResults('nodeCharge', results);
+    const results = runParameterSweep(
+      "nodeCharge",
+      values,
+      nodes,
+      edges,
+      clusters,
+      nodeToCluster,
+    );
+    printSweepResults("nodeCharge", results);
 
     // Validate results structure
     expect(results.length).toBe(values.length);
@@ -338,76 +370,83 @@ describe('Parameter Sensitivity Analysis', { timeout: 120000 }, () => {
     }
   });
 
-  it('measures impact of clusterRepulsionStrength variations', () => {
+  it("measures impact of clusterRepulsionStrength variations", () => {
     const values = [4000, 8000, 12000, 20000, 35000];
     const results = runParameterSweep(
-      'clusterRepulsionStrength',
+      "clusterRepulsionStrength",
       values,
       nodes,
       edges,
       clusters,
       nodeToCluster,
     );
-    printSweepResults('clusterRepulsionStrength', results);
+    printSweepResults("clusterRepulsionStrength", results);
 
     expect(results.length).toBe(values.length);
   });
 
-  it('measures impact of clusterStrataSpacing variations', () => {
+  it("measures impact of clusterStrataSpacing variations", () => {
     const values = [400, 600, 800, 1000, 1200];
     const results = runParameterSweep(
-      'clusterStrataSpacing',
+      "clusterStrataSpacing",
       values,
       nodes,
       edges,
       clusters,
       nodeToCluster,
     );
-    printSweepResults('clusterStrataSpacing', results);
+    printSweepResults("clusterStrataSpacing", results);
 
     expect(results.length).toBe(values.length);
   });
 
-  it('measures impact of clusterMaxRowWidth variations', () => {
+  it("measures impact of clusterMaxRowWidth variations", () => {
     const values = [600, 900, 1200, 1500, 2000];
     const results = runParameterSweep(
-      'clusterMaxRowWidth',
+      "clusterMaxRowWidth",
       values,
       nodes,
       edges,
       clusters,
       nodeToCluster,
     );
-    printSweepResults('clusterMaxRowWidth', results);
+    printSweepResults("clusterMaxRowWidth", results);
 
     expect(results.length).toBe(values.length);
   });
 
-  it('measures impact of clusterPadding variations', () => {
+  it("measures impact of clusterPadding variations", () => {
     const values = [60, 90, 120, 150, 200];
     const results = runParameterSweep(
-      'clusterPadding',
+      "clusterPadding",
       values,
       nodes,
       edges,
       clusters,
       nodeToCluster,
     );
-    printSweepResults('clusterPadding', results);
+    printSweepResults("clusterPadding", results);
 
     expect(results.length).toBe(values.length);
   });
 
-  it('measures impact of iterations variations', () => {
+  it("measures impact of iterations variations", () => {
     const values = [100, 200, 300, 400, 500];
-    const results = runParameterSweep('iterations', values, nodes, edges, clusters, nodeToCluster);
-    printSweepResults('iterations', results);
+    const results = runParameterSweep(
+      "iterations",
+      values,
+      nodes,
+      edges,
+      clusters,
+      nodeToCluster,
+    );
+    printSweepResults("iterations", results);
 
     expect(results.length).toBe(values.length);
   });
 });
 
-describe('Multi-Parameter Optimization', { timeout: 180000 }, () => {
+describe("Multi-Parameter Optimization", { timeout: 180000 }, () => {
   let nodes: GraphNode[];
   let edges: GraphEdge[];
   let clusters: Cluster[];
@@ -421,7 +460,7 @@ describe('Multi-Parameter Optimization', { timeout: 180000 }, () => {
     nodeToCluster = buildNodeToClusterMap(clusters);
   });
 
-  it('finds optimal parameters for target aspect ratio ~1.5', () => {
+  it("finds optimal parameters for target aspect ratio ~1.5", () => {
     // Grid search over key parameters
     const nodeChargeValues = [-25, -35, -50];
     const repulsionValues = [6000, 8000, 12000];
@@ -464,11 +503,11 @@ describe('Multi-Parameter Optimization', { timeout: 180000 }, () => {
     // Sort by score (higher is better)
     results.sort((a, b) => b.score - a.score);
 
-    console.log('\n' + '═'.repeat(70));
-    console.log('OPTIMIZATION: Target Aspect Ratio ~1.5');
-    console.log('═'.repeat(70) + '\n');
-    console.log('Charge  │ Repulsion │ Aspect │ Overlaps │ Score');
-    console.log('─'.repeat(55));
+    console.log("\n" + "═".repeat(70));
+    console.log("OPTIMIZATION: Target Aspect Ratio ~1.5");
+    console.log("═".repeat(70) + "\n");
+    console.log("Charge  │ Repulsion │ Aspect │ Overlaps │ Score");
+    console.log("─".repeat(55));
 
     for (const r of results.slice(0, 9)) {
       console.log(
@@ -480,15 +519,20 @@ describe('Multi-Parameter Optimization', { timeout: 180000 }, () => {
       );
     }
 
-    console.log('\n✓ Best: nodeCharge=' + results[0]!.nodeCharge +
-      ', repulsion=' + results[0]!.repulsion +
-      ' → aspect=' + results[0]!.aspectRatio.toFixed(2));
+    console.log(
+      "\n✓ Best: nodeCharge=" +
+        results[0]!.nodeCharge +
+        ", repulsion=" +
+        results[0]!.repulsion +
+        " → aspect=" +
+        results[0]!.aspectRatio.toFixed(2),
+    );
 
     expect(results.length).toBe(9);
     expect(results[0]!.aspectRatio).toBeGreaterThan(0);
   });
 
-  it('finds optimal parameters for minimal overlap', () => {
+  it("finds optimal parameters for minimal overlap", () => {
     // Grid search for minimal overlap
     const paddingValues = [100, 120, 150];
     const repulsionValues = [8000, 12000, 16000];
@@ -528,11 +572,11 @@ describe('Multi-Parameter Optimization', { timeout: 180000 }, () => {
     // Sort by overlap count (lower is better)
     results.sort((a, b) => a.overlapCount - b.overlapCount);
 
-    console.log('\n' + '═'.repeat(70));
-    console.log('OPTIMIZATION: Minimal Overlap (aspect <= 3)');
-    console.log('═'.repeat(70) + '\n');
-    console.log('Padding │ Repulsion │ Aspect │ Overlaps');
-    console.log('─'.repeat(45));
+    console.log("\n" + "═".repeat(70));
+    console.log("OPTIMIZATION: Minimal Overlap (aspect <= 3)");
+    console.log("═".repeat(70) + "\n");
+    console.log("Padding │ Repulsion │ Aspect │ Overlaps");
+    console.log("─".repeat(45));
 
     for (const r of results.slice(0, 9)) {
       console.log(
@@ -544,17 +588,22 @@ describe('Multi-Parameter Optimization', { timeout: 180000 }, () => {
     }
 
     if (results.length > 0) {
-      console.log('\n✓ Best: padding=' + results[0]!.padding +
-        ', repulsion=' + results[0]!.repulsion +
-        ' → overlaps=' + results[0]!.overlapCount);
+      console.log(
+        "\n✓ Best: padding=" +
+          results[0]!.padding +
+          ", repulsion=" +
+          results[0]!.repulsion +
+          " → overlaps=" +
+          results[0]!.overlapCount,
+      );
     }
 
     expect(results.length).toBeGreaterThan(0);
   });
 });
 
-describe('Current Configuration Baseline', () => {
-  it('reports metrics with current DEFAULT_CONFIG', () => {
+describe("Current Configuration Baseline", () => {
+  it("reports metrics with current DEFAULT_CONFIG", () => {
     const nodes = tuistGraphData.nodes;
     const edges = tuistGraphData.edges;
     const clusters = groupIntoClusters(nodes, edges);
@@ -564,26 +613,34 @@ describe('Current Configuration Baseline', () => {
     const nodeToCluster = buildNodeToClusterMap(clusters);
     const metrics = computeMetrics(result, edges, nodeToCluster);
 
-    console.log('\n' + '═'.repeat(60));
-    console.log('CURRENT BASELINE (DEFAULT_CONFIG)');
-    console.log('═'.repeat(60) + '\n');
+    console.log("\n" + "═".repeat(60));
+    console.log("CURRENT BASELINE (DEFAULT_CONFIG)");
+    console.log("═".repeat(60) + "\n");
     console.log(`   Clusters:         ${result.clusterPositions.size}`);
     console.log(`   Nodes:            ${result.nodePositions.size}`);
     console.log(`   Aspect Ratio:     ${metrics.aspectRatio.toFixed(2)}`);
     console.log(`   Overlap Count:    ${metrics.overlapCount}`);
     console.log(`   Avg Edge Length:  ${metrics.avgEdgeLength.toFixed(0)}px`);
-    console.log(`   Containment Rate: ${(metrics.containmentRate * 100).toFixed(1)}%`);
+    console.log(
+      `   Containment Rate: ${(metrics.containmentRate * 100).toFixed(1)}%`,
+    );
     console.log(`   Strata Count:     ${metrics.strataCount}`);
-    console.log('');
+    console.log("");
 
-    console.log('Key CONFIG values:');
+    console.log("Key CONFIG values:");
     console.log(`   nodeCharge:              ${DEFAULT_CONFIG.nodeCharge}`);
-    console.log(`   clusterRepulsionStrength: ${DEFAULT_CONFIG.clusterRepulsionStrength}`);
-    console.log(`   clusterStrataSpacing:    ${DEFAULT_CONFIG.clusterStrataSpacing}`);
-    console.log(`   clusterMaxRowWidth:      ${DEFAULT_CONFIG.clusterMaxRowWidth}`);
+    console.log(
+      `   clusterRepulsionStrength: ${DEFAULT_CONFIG.clusterRepulsionStrength}`,
+    );
+    console.log(
+      `   clusterStrataSpacing:    ${DEFAULT_CONFIG.clusterStrataSpacing}`,
+    );
+    console.log(
+      `   clusterMaxRowWidth:      ${DEFAULT_CONFIG.clusterMaxRowWidth}`,
+    );
     console.log(`   clusterPadding:          ${DEFAULT_CONFIG.clusterPadding}`);
     console.log(`   iterations:              ${DEFAULT_CONFIG.iterations}`);
-    console.log('');
+    console.log("");
 
     expect(metrics.aspectRatio).toBeLessThan(5);
     expect(metrics.overlapCount).toBeLessThan(50);

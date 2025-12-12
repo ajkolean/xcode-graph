@@ -3,18 +3,18 @@
  * Verifies strata positioning and cluster layout behavior
  */
 
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { describe, expect, it } from 'vitest';
+import type { Cluster } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { describe, expect, it } from "vitest";
 import {
   createLayeredGraph,
   createMultiClusterGraph,
   createProjectGraph,
-} from '../../fixtures/graphs';
-import { tuistGraphData } from '../../fixtures/tuist-graph-data';
-import { groupIntoClusters } from './cluster-grouping';
-import { analyzeCluster } from './cluster-analysis';
-import { computeHierarchicalLayout } from './d3-layout';
+} from "../../fixtures/graphs";
+import { tuistGraphData } from "../../fixtures/tuist-graph-data";
+import { groupIntoClusters } from "./cluster-grouping";
+import { analyzeCluster } from "./cluster-analysis";
+import { computeHierarchicalLayout } from "./d3-layout";
 
 /**
  * Helper to create clusters from nodes based on their project property
@@ -26,7 +26,7 @@ function createClustersFromGraph(
   const projectNodes = new Map<string, GraphNode[]>();
 
   for (const node of nodes) {
-    const project = node.project ?? 'default';
+    const project = node.project ?? "default";
     if (!projectNodes.has(project)) {
       projectNodes.set(project, []);
     }
@@ -45,9 +45,9 @@ function createClustersFromGraph(
   }));
 }
 
-describe('computeHierarchicalLayout', () => {
-  describe('Cluster Strata Positioning', () => {
-    it('should position clusters at different Y levels based on strata', () => {
+describe("computeHierarchicalLayout", () => {
+  describe("Cluster Strata Positioning", () => {
+    it("should position clusters at different Y levels based on strata", () => {
       // Create a layered graph with 4 layers, 3 nodes per layer
       const { nodes, edges } = createLayeredGraph(4, 3);
       const clusters = createClustersFromGraph(nodes, edges);
@@ -55,10 +55,10 @@ describe('computeHierarchicalLayout', () => {
       const result = computeHierarchicalLayout(nodes, edges, clusters);
 
       // Get cluster Y positions grouped by layer
-      const layer0Y = result.clusterPositions.get('Layer0')?.y ?? 0;
-      const layer1Y = result.clusterPositions.get('Layer1')?.y ?? 0;
-      const layer2Y = result.clusterPositions.get('Layer2')?.y ?? 0;
-      const layer3Y = result.clusterPositions.get('Layer3')?.y ?? 0;
+      const layer0Y = result.clusterPositions.get("Layer0")?.y ?? 0;
+      const layer1Y = result.clusterPositions.get("Layer1")?.y ?? 0;
+      const layer2Y = result.clusterPositions.get("Layer2")?.y ?? 0;
+      const layer3Y = result.clusterPositions.get("Layer3")?.y ?? 0;
 
       // Verify that Y increases with layer depth (strata)
       // Layer0 depends on Layer1, Layer1 depends on Layer2, etc.
@@ -68,15 +68,15 @@ describe('computeHierarchicalLayout', () => {
       expect(layer2Y).toBeLessThan(layer3Y);
     });
 
-    it('should maintain significant Y spacing between strata', () => {
+    it("should maintain significant Y spacing between strata", () => {
       const { nodes, edges } = createLayeredGraph(3, 2);
       const clusters = createClustersFromGraph(nodes, edges);
 
       const result = computeHierarchicalLayout(nodes, edges, clusters);
 
-      const layer0Y = result.clusterPositions.get('Layer0')?.y ?? 0;
-      const layer1Y = result.clusterPositions.get('Layer1')?.y ?? 0;
-      const layer2Y = result.clusterPositions.get('Layer2')?.y ?? 0;
+      const layer0Y = result.clusterPositions.get("Layer0")?.y ?? 0;
+      const layer1Y = result.clusterPositions.get("Layer1")?.y ?? 0;
+      const layer2Y = result.clusterPositions.get("Layer2")?.y ?? 0;
 
       // Each layer should have noticeable spacing (soft anchor forces allow some convergence)
       // The actual spacing depends on force balance; minimum 50px is a reasonable lower bound
@@ -84,7 +84,7 @@ describe('computeHierarchicalLayout', () => {
       expect(layer2Y - layer1Y).toBeGreaterThan(50);
     });
 
-    it('should produce deterministic layout results', () => {
+    it("should produce deterministic layout results", () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -109,17 +109,17 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Project Graph Layout', () => {
-    it('should stratify project graph correctly', () => {
+  describe("Project Graph Layout", () => {
+    it("should stratify project graph correctly", () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
       const result = computeHierarchicalLayout(nodes, edges, clusters);
 
       // Get cluster Y positions
-      const appY = result.clusterPositions.get('App')?.y ?? 0;
-      const featuresY = result.clusterPositions.get('Features')?.y ?? 0;
-      const coreY = result.clusterPositions.get('Core')?.y ?? 0;
+      const appY = result.clusterPositions.get("App")?.y ?? 0;
+      const featuresY = result.clusterPositions.get("Features")?.y ?? 0;
+      const coreY = result.clusterPositions.get("Core")?.y ?? 0;
 
       // App depends on Features, Features depends on Core
       // So App should be above Features, Features above Core
@@ -128,7 +128,7 @@ describe('computeHierarchicalLayout', () => {
       expect(featuresY).toBeLessThan(coreY);
     });
 
-    it('should have reasonable cluster width and height', () => {
+    it("should have reasonable cluster width and height", () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -144,18 +144,18 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Multi-Cluster Graph Layout', () => {
-    it('should position clusters in a linear chain vertically', () => {
+  describe("Multi-Cluster Graph Layout", () => {
+    it("should position clusters in a linear chain vertically", () => {
       // Multi-cluster graph has C0 -> C1 -> C2 -> C3 dependency chain
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
       const result = computeHierarchicalLayout(nodes, edges, clusters);
 
-      const c0Y = result.clusterPositions.get('Cluster0')?.y ?? 0;
-      const c1Y = result.clusterPositions.get('Cluster1')?.y ?? 0;
-      const c2Y = result.clusterPositions.get('Cluster2')?.y ?? 0;
-      const c3Y = result.clusterPositions.get('Cluster3')?.y ?? 0;
+      const c0Y = result.clusterPositions.get("Cluster0")?.y ?? 0;
+      const c1Y = result.clusterPositions.get("Cluster1")?.y ?? 0;
+      const c2Y = result.clusterPositions.get("Cluster2")?.y ?? 0;
+      const c3Y = result.clusterPositions.get("Cluster3")?.y ?? 0;
 
       // Cluster0 depends on Cluster1, etc.
       // So Cluster0 should be at top, Cluster3 at bottom
@@ -164,7 +164,7 @@ describe('computeHierarchicalLayout', () => {
       expect(c2Y).toBeLessThan(c3Y);
     });
 
-    it('should compute maxClusterStratum correctly', () => {
+    it("should compute maxClusterStratum correctly", () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -177,8 +177,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Node Positioning Within Clusters', () => {
-    it('should position nodes within their cluster boundaries', () => {
+  describe("Node Positioning Within Clusters", () => {
+    it("should position nodes within their cluster boundaries", () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -195,9 +195,7 @@ describe('computeHierarchicalLayout', () => {
           if (!nodePos) continue;
 
           // Node position is relative to cluster center
-          const distFromCenter = Math.sqrt(
-            nodePos.x ** 2 + nodePos.y ** 2,
-          );
+          const distFromCenter = Math.sqrt(nodePos.x ** 2 + nodePos.y ** 2);
 
           // Nodes should be within cluster radius (with some tolerance)
           expect(distFromCenter).toBeLessThan(radius + 50);
@@ -206,8 +204,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Empty and Edge Cases', () => {
-    it('should handle empty graph', () => {
+  describe("Empty and Edge Cases", () => {
+    it("should handle empty graph", () => {
       const result = computeHierarchicalLayout([], [], []);
 
       expect(result.nodePositions.size).toBe(0);
@@ -215,10 +213,12 @@ describe('computeHierarchicalLayout', () => {
       expect(result.clusters).toEqual([]);
     });
 
-    it('should handle single node', () => {
-      const nodes: GraphNode[] = [{ id: 'single', name: 'Single' }];
+    it("should handle single node", () => {
+      const nodes: GraphNode[] = [{ id: "single", name: "Single" }];
       const edges: GraphEdge[] = [];
-      const clusters: Cluster[] = [{ id: 'c0', label: 'C0', nodes, internalEdges: [] }];
+      const clusters: Cluster[] = [
+        { id: "c0", label: "C0", nodes, internalEdges: [] },
+      ];
 
       const result = computeHierarchicalLayout(nodes, edges, clusters);
 
@@ -227,8 +227,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Position and Bounds Assertions', () => {
-    it('should assign valid positions to all nodes', () => {
+  describe("Position and Bounds Assertions", () => {
+    it("should assign valid positions to all nodes", () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -240,8 +240,8 @@ describe('computeHierarchicalLayout', () => {
       for (const node of nodes) {
         const pos = result.nodePositions.get(node.id);
         expect(pos, `Node ${node.id} should have a position`).toBeDefined();
-        expect(typeof pos!.x).toBe('number');
-        expect(typeof pos!.y).toBe('number');
+        expect(typeof pos!.x).toBe("number");
+        expect(typeof pos!.y).toBe("number");
         expect(Number.isFinite(pos!.x)).toBe(true);
         expect(Number.isFinite(pos!.y)).toBe(true);
         // Node positions are relative to cluster center, should be bounded
@@ -250,7 +250,7 @@ describe('computeHierarchicalLayout', () => {
       }
     });
 
-    it('should assign valid bounds to all clusters', () => {
+    it("should assign valid bounds to all clusters", () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -261,11 +261,14 @@ describe('computeHierarchicalLayout', () => {
 
       for (const cluster of clusters) {
         const pos = result.clusterPositions.get(cluster.id);
-        expect(pos, `Cluster ${cluster.id} should have a position`).toBeDefined();
+        expect(
+          pos,
+          `Cluster ${cluster.id} should have a position`,
+        ).toBeDefined();
 
         // Position should be valid numbers
-        expect(typeof pos!.x).toBe('number');
-        expect(typeof pos!.y).toBe('number');
+        expect(typeof pos!.x).toBe("number");
+        expect(typeof pos!.y).toBe("number");
         expect(Number.isFinite(pos!.x)).toBe(true);
         expect(Number.isFinite(pos!.y)).toBe(true);
 
@@ -282,7 +285,7 @@ describe('computeHierarchicalLayout', () => {
       }
     });
 
-    it('should have cluster bounds that contain all nodes', () => {
+    it("should have cluster bounds that contain all nodes", () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -312,7 +315,7 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Cluster Non-Overlap', () => {
+  describe("Cluster Non-Overlap", () => {
     /**
      * Helper to check if two circular clusters overlap
      */
@@ -327,7 +330,7 @@ describe('computeHierarchicalLayout', () => {
       return dist < r1 + r2 - padding;
     }
 
-    it('should not have significantly overlapping clusters', () => {
+    it("should not have significantly overlapping clusters", () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -353,21 +356,27 @@ describe('computeHierarchicalLayout', () => {
       }
     });
 
-    it('should maintain minimum separation between clusters in different strata', () => {
+    it("should maintain minimum separation between clusters in different strata", () => {
       const { nodes, edges } = createLayeredGraph(4, 3);
       const clusters = createClustersFromGraph(nodes, edges);
 
       const result = computeHierarchicalLayout(nodes, edges, clusters);
 
-      const layer0 = result.clusterPositions.get('Layer0')!;
-      const layer1 = result.clusterPositions.get('Layer1')!;
-      const layer2 = result.clusterPositions.get('Layer2')!;
-      const layer3 = result.clusterPositions.get('Layer3')!;
+      const layer0 = result.clusterPositions.get("Layer0")!;
+      const layer1 = result.clusterPositions.get("Layer1")!;
+      const layer2 = result.clusterPositions.get("Layer2")!;
+      const layer3 = result.clusterPositions.get("Layer3")!;
 
       // Calculate center-to-center distances
-      const dist01 = Math.sqrt((layer0.x - layer1.x) ** 2 + (layer0.y - layer1.y) ** 2);
-      const dist12 = Math.sqrt((layer1.x - layer2.x) ** 2 + (layer1.y - layer2.y) ** 2);
-      const dist23 = Math.sqrt((layer2.x - layer3.x) ** 2 + (layer2.y - layer3.y) ** 2);
+      const dist01 = Math.sqrt(
+        (layer0.x - layer1.x) ** 2 + (layer0.y - layer1.y) ** 2,
+      );
+      const dist12 = Math.sqrt(
+        (layer1.x - layer2.x) ** 2 + (layer1.y - layer2.y) ** 2,
+      );
+      const dist23 = Math.sqrt(
+        (layer2.x - layer3.x) ** 2 + (layer2.y - layer3.y) ** 2,
+      );
 
       // Minimum radii sum (clusters should not overlap)
       const minDist01 = (layer0.width + layer1.width) / 4; // Using half-radii as generous bound
@@ -379,7 +388,7 @@ describe('computeHierarchicalLayout', () => {
       expect(dist23).toBeGreaterThan(minDist23);
     });
 
-    it('should not have overlapping nodes within a cluster', () => {
+    it("should not have overlapping nodes within a cluster", () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -411,8 +420,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Layout Bounds and Spread', () => {
-    it('should keep layout within reasonable global bounds', () => {
+  describe("Layout Bounds and Spread", () => {
+    it("should keep layout within reasonable global bounds", () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -448,7 +457,7 @@ describe('computeHierarchicalLayout', () => {
       expect(aspectRatio).toBeLessThan(15); // Allow wider layouts for multi-cluster graphs
     });
 
-    it('should have vertical spread for strata layouts', () => {
+    it("should have vertical spread for strata layouts", () => {
       const { nodes, edges } = createLayeredGraph(4, 3);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -471,8 +480,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Snapshot Assertions', () => {
-    it('should produce consistent cluster layout snapshot', () => {
+  describe("Snapshot Assertions", () => {
+    it("should produce consistent cluster layout snapshot", () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -496,15 +505,15 @@ describe('computeHierarchicalLayout', () => {
       // Verify each cluster has expected properties
       for (const item of snapshot) {
         expect(item.id).toBeTruthy();
-        expect(typeof item.x).toBe('number');
-        expect(typeof item.y).toBe('number');
+        expect(typeof item.x).toBe("number");
+        expect(typeof item.y).toBe("number");
         expect(item.width).toBeGreaterThan(0);
         expect(item.height).toBeGreaterThan(0);
         expect(item.nodeCount).toBeGreaterThan(0);
       }
     });
 
-    it('should produce consistent node layout snapshot', () => {
+    it("should produce consistent node layout snapshot", () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -527,14 +536,14 @@ describe('computeHierarchicalLayout', () => {
       // Verify each node has expected properties
       for (const item of snapshot) {
         expect(item.id).toBeTruthy();
-        expect(typeof item.x).toBe('number');
-        expect(typeof item.y).toBe('number');
+        expect(typeof item.x).toBe("number");
+        expect(typeof item.y).toBe("number");
         expect(item.clusterId).toBeTruthy();
         expect(item.radius).toBeGreaterThan(0);
       }
     });
 
-    it('should maintain relative ordering across runs', () => {
+    it("should maintain relative ordering across runs", () => {
       const { nodes, edges } = createLayeredGraph(3, 2);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -557,8 +566,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Coordinate Analysis (Debug Horizontal Spread)', () => {
-    it('should output cluster coordinates for analysis', () => {
+  describe("Coordinate Analysis (Debug Horizontal Spread)", () => {
+    it("should output cluster coordinates for analysis", () => {
       const { nodes, edges } = tuistGraphData;
       const clusters = groupIntoClusters(nodes, edges);
       clusters.forEach((cluster) => {
@@ -569,7 +578,13 @@ describe('computeHierarchicalLayout', () => {
 
       // Collect all cluster positions
       const positions = Array.from(result.clusterPositions.entries())
-        .map(([id, pos]) => ({ id, x: pos.x, y: pos.y, width: pos.width, nodes: pos.nodeCount }))
+        .map(([id, pos]) => ({
+          id,
+          x: pos.x,
+          y: pos.y,
+          width: pos.width,
+          nodes: pos.nodeCount,
+        }))
         .sort((a, b) => a.y - b.y); // Sort by Y (top to bottom)
 
       // Calculate bounding box
@@ -583,15 +598,17 @@ describe('computeHierarchicalLayout', () => {
       const height = yMax - yMin;
       const aspectRatio = height > 0 ? width / height : 1;
 
-      console.log('\n' + '='.repeat(60));
-      console.log('CLUSTER COORDINATE ANALYSIS');
-      console.log('='.repeat(60));
+      console.log("\n" + "=".repeat(60));
+      console.log("CLUSTER COORDINATE ANALYSIS");
+      console.log("=".repeat(60));
       console.log(`Total clusters: ${positions.length}`);
       console.log(`Bounding box: ${width.toFixed(0)}w x ${height.toFixed(0)}h`);
       console.log(`X range: [${xMin.toFixed(0)}, ${xMax.toFixed(0)}]`);
       console.log(`Y range: [${yMin.toFixed(0)}, ${yMax.toFixed(0)}]`);
-      console.log(`Aspect ratio (w/h): ${aspectRatio.toFixed(2)} ${aspectRatio > 2 ? '⚠️ TOO WIDE' : '✓'}`);
-      console.log('');
+      console.log(
+        `Aspect ratio (w/h): ${aspectRatio.toFixed(2)} ${aspectRatio > 2 ? "⚠️ TOO WIDE" : "✓"}`,
+      );
+      console.log("");
 
       // Group by approximate Y stratum
       const strataSpacing = 450; // CONFIG.clusterStrataSpacing
@@ -602,8 +619,8 @@ describe('computeHierarchicalLayout', () => {
         strataGroups.get(stratum)!.push(pos);
       }
 
-      console.log('CLUSTERS BY STRATUM (Y layer):');
-      console.log('-'.repeat(60));
+      console.log("CLUSTERS BY STRATUM (Y layer):");
+      console.log("-".repeat(60));
       const sortedStrata = [...strataGroups.keys()].sort((a, b) => a - b);
       for (const stratum of sortedStrata) {
         const clustersInStratum = strataGroups.get(stratum)!;
@@ -612,20 +629,24 @@ describe('computeHierarchicalLayout', () => {
         const stratumXMax = Math.max(...xValues);
         const stratumWidth = stratumXMax - stratumXMin;
 
-        console.log(`\nStratum ${stratum} (${clustersInStratum.length} clusters, X spread: ${stratumWidth.toFixed(0)})`);
+        console.log(
+          `\nStratum ${stratum} (${clustersInStratum.length} clusters, X spread: ${stratumWidth.toFixed(0)})`,
+        );
         for (const c of clustersInStratum.sort((a, b) => a.x - b.x)) {
-          console.log(`  ${c.id.padEnd(30)} x=${c.x.toFixed(0).padStart(6)}, y=${c.y.toFixed(0).padStart(6)}, size=${c.width.toFixed(0)}, nodes=${c.nodes}`);
+          console.log(
+            `  ${c.id.padEnd(30)} x=${c.x.toFixed(0).padStart(6)}, y=${c.y.toFixed(0).padStart(6)}, size=${c.width.toFixed(0)}, nodes=${c.nodes}`,
+          );
         }
       }
 
-      console.log('\n' + '='.repeat(60));
+      console.log("\n" + "=".repeat(60));
 
       // This test always passes - it's for debugging output
       expect(true).toBe(true);
     });
   });
 
-  describe('Real Tuist Graph Data', () => {
+  describe("Real Tuist Graph Data", () => {
     /**
      * Helper to check if two circular clusters overlap significantly
      */
@@ -640,7 +661,7 @@ describe('computeHierarchicalLayout', () => {
       return Math.max(0, overlap);
     }
 
-    it('should compute layout for real Tuist graph', () => {
+    it("should compute layout for real Tuist graph", () => {
       const { nodes, edges } = tuistGraphData;
 
       // Create clusters using the real grouping logic
@@ -657,7 +678,9 @@ describe('computeHierarchicalLayout', () => {
       // Should have positions for all clusters
       expect(result.clusterPositions.size).toBe(clusters.length);
 
-      console.log(`\nReal Tuist Graph: ${nodes.length} nodes, ${edges.length} edges, ${clusters.length} clusters`);
+      console.log(
+        `\nReal Tuist Graph: ${nodes.length} nodes, ${edges.length} edges, ${clusters.length} clusters`,
+      );
 
       // Log strata distribution (estimate stratum from Y position)
       const strataGroups = new Map<number, string[]>();
@@ -677,7 +700,7 @@ describe('computeHierarchicalLayout', () => {
       }
     });
 
-    it('should not have deeply overlapping clusters in real graph', () => {
+    it("should not have deeply overlapping clusters in real graph", () => {
       const { nodes, edges } = tuistGraphData;
       const clusters = groupIntoClusters(nodes, edges);
       clusters.forEach((cluster) => {
@@ -724,7 +747,7 @@ describe('computeHierarchicalLayout', () => {
       ).toBeLessThanOrEqual(maxAllowedOverlaps);
     });
 
-    it('should have reasonable aspect ratio for real graph', () => {
+    it("should have reasonable aspect ratio for real graph", () => {
       const { nodes, edges } = tuistGraphData;
       const clusters = groupIntoClusters(nodes, edges);
       clusters.forEach((cluster) => {
@@ -753,7 +776,9 @@ describe('computeHierarchicalLayout', () => {
       const aspectRatio = totalWidth / totalHeight;
 
       console.log(`\nReal Graph Layout Bounds:`);
-      console.log(`  Width: ${totalWidth.toFixed(0)}px, Height: ${totalHeight.toFixed(0)}px`);
+      console.log(
+        `  Width: ${totalWidth.toFixed(0)}px, Height: ${totalHeight.toFixed(0)}px`,
+      );
       console.log(`  Aspect Ratio: ${aspectRatio.toFixed(2)}`);
 
       // For strata layout, we want more vertical than horizontal
@@ -765,7 +790,7 @@ describe('computeHierarchicalLayout', () => {
       ).toBeLessThan(6);
     });
 
-    it('should have visible vertical stratification', () => {
+    it("should have visible vertical stratification", () => {
       const { nodes, edges } = tuistGraphData;
       const clusters = groupIntoClusters(nodes, edges);
       clusters.forEach((cluster) => {
@@ -775,7 +800,9 @@ describe('computeHierarchicalLayout', () => {
       const result = computeHierarchicalLayout(nodes, edges, clusters);
 
       // Group clusters by stratum-like Y bands
-      const yPositions = Array.from(result.clusterPositions.values()).map((p) => p.y);
+      const yPositions = Array.from(result.clusterPositions.values()).map(
+        (p) => p.y,
+      );
       const minY = Math.min(...yPositions);
       const maxY = Math.max(...yPositions);
       const ySpread = maxY - minY;
@@ -793,7 +820,7 @@ describe('computeHierarchicalLayout', () => {
       console.log(`\nVertical Distribution (${bandCount} bands):`);
       for (let i = 0; i < bandCount; i++) {
         const count = bands.get(i) ?? 0;
-        const bar = '█'.repeat(Math.ceil(count / 2));
+        const bar = "█".repeat(Math.ceil(count / 2));
         console.log(`  Band ${i}: ${bar} (${count})`);
       }
 
@@ -805,7 +832,7 @@ describe('computeHierarchicalLayout', () => {
       ).toBeGreaterThanOrEqual(3);
 
       // Assert: Y spread should be significant
-      expect(ySpread, 'Y spread should be at least 500px').toBeGreaterThan(500);
+      expect(ySpread, "Y spread should be at least 500px").toBeGreaterThan(500);
     });
   });
 });
