@@ -71,7 +71,11 @@ export interface HierarchicalLayoutResult {
 // Atlas Layout Configuration
 // ============================================================================
 
-const CONFIG = {
+/**
+ * Default layout configuration
+ * Exported for parameter sweep testing
+ */
+export const DEFAULT_CONFIG = {
   // Node-level forces
   nodeRadius: 6,
   nodeCollisionPadding: 12, // Reduced from 16 - tighter node packing
@@ -139,6 +143,12 @@ const CONFIG = {
   zClampMin: -300, // Minimum Z value
   zClampMax: 300, // Maximum Z value
 } as const;
+
+/** Type for layout configuration */
+export type LayoutConfig = typeof DEFAULT_CONFIG;
+
+// Internal reference to config (allows tests to override)
+const CONFIG = DEFAULT_CONFIG;
 
 /**
  * Role-based Z-axis offsets (solar system depth model)
@@ -289,6 +299,8 @@ function forceDependencyHang(
 export interface LayoutOptions {
   /** Layout dimension: 2D or 3D (default: '2d') */
   dimension?: LayoutDimension;
+  /** Override specific config values (for parameter sweep testing) */
+  configOverrides?: Partial<LayoutConfig>;
 }
 
 // ============================================================================
@@ -306,6 +318,11 @@ export function computeHierarchicalLayout(
 ): HierarchicalLayoutResult {
   const dimension: LayoutDimension = opts.dimension ?? '2d';
   const d3 = getD3(dimension);
+
+  // Merge config overrides (for parameter sweep testing)
+  const config = opts.configOverrides
+    ? { ...DEFAULT_CONFIG, ...opts.configOverrides }
+    : CONFIG;
 
   if (nodes.length === 0) {
     return {
@@ -369,7 +386,7 @@ export function computeHierarchicalLayout(
   // Pre-calculate cluster sizes (needed for strata seeding)
   const clusterSizes = new Map<string, number>();
   for (const cluster of clusters) {
-    const size = CONFIG.minClusterSize + cluster.nodes.length * CONFIG.clusterNodeSpacing;
+    const size = config.minClusterSize + cluster.nodes.length * config.clusterNodeSpacing;
     clusterSizes.set(cluster.id, size);
   }
 
@@ -379,9 +396,9 @@ export function computeHierarchicalLayout(
     clusterStrataResult,
     clusterSizes,
     {
-      strataSpacing: CONFIG.clusterStrataSpacing,
-      horizontalSpacing: CONFIG.clusterHorizontalSpacing,
-      maxRowWidth: CONFIG.clusterMaxRowWidth,
+      strataSpacing: config.clusterStrataSpacing,
+      horizontalSpacing: config.clusterHorizontalSpacing,
+      maxRowWidth: config.clusterMaxRowWidth,
     },
   );
 
@@ -401,7 +418,7 @@ export function computeHierarchicalLayout(
       clusterId,
       x: baseX + (seededRandom(hash) - 0.5) * 60,
       y: baseY + (seededRandom(hash + 1) - 0.5) * 60,
-      z: dimension === '3d' ? (seededRandom(hash + 2) - 0.5) * CONFIG.initialZSpread : 0,
+      z: dimension === '3d' ? (seededRandom(hash + 2) - 0.5) * config.initialZSpread : 0,
       vx: 0,
       vy: 0,
       vz: 0,
@@ -434,7 +451,7 @@ export function computeHierarchicalLayout(
   const clusterTargetPositions = new Map(strataPositions);
 
   for (const cluster of clusters) {
-    const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
+    const size = clusterSizes.get(cluster.id) ?? config.minClusterSize;
     const pos = strataPositions.get(cluster.id) ?? { x: 0, y: 0 };
 
     clusterCenterMap.set(cluster.id, {
@@ -483,42 +500,42 @@ export function computeHierarchicalLayout(
 
   // Cluster repulsion with weights and anisotropic behavior
   const clusterRepelForce = forceClusterRepulsion(
-    CONFIG.clusterRepulsionStrength,
-    CONFIG.clusterPadding,
+    config.clusterRepulsionStrength,
+    config.clusterPadding,
     crossClusterWeights,
-    CONFIG.clusterRepulsionYScale,
+    config.clusterRepulsionYScale,
   );
   clusterRepelForce.initialize(Array.from(clusterCenterMap.values()));
 
   // Cluster attraction for neighborhood formation
   const clusterAttractForce = forceClusterAttraction(
-    CONFIG.clusterAttractionStrength,
+    config.clusterAttractionStrength,
     crossClusterWeights,
-    CONFIG.clusterAttractionActivationDist,
+    config.clusterAttractionActivationDist,
   );
   clusterAttractForce.initialize(Array.from(clusterCenterMap.values()));
 
   // Cluster strata forces (Phase 2 & 4)
   const clusterStrataAnchorForce = forceClusterStrataAnchor(
     clusterTargetPositions,
-    CONFIG.clusterStrataAnchorStrength,
+    config.clusterStrataAnchorStrength,
   );
   clusterStrataAnchorForce.initialize(Array.from(clusterCenterMap.values()));
 
   const clusterBoundingForce = forceClusterBoundingRadius(
-    CONFIG.clusterBoundingRadius,
-    CONFIG.clusterBoundingStrength,
+    config.clusterBoundingRadius,
+    config.clusterBoundingStrength,
   );
   clusterBoundingForce.initialize(Array.from(clusterCenterMap.values()));
 
   const clusterAlignmentForce = forceClusterStrataAlignment(
     clusterStrataResult.clusterStratum,
-    CONFIG.clusterStrataSpacing,
-    CONFIG.clusterStrataAlignmentStrength,
+    config.clusterStrataSpacing,
+    config.clusterStrataAlignmentStrength,
   );
   clusterAlignmentForce.initialize(Array.from(clusterCenterMap.values()));
 
-  const clusterXCenteringForce = forceClusterXCentering(CONFIG.clusterCenteringStrength);
+  const clusterXCenteringForce = forceClusterXCentering(config.clusterCenteringStrength);
   clusterXCenteringForce.initialize(Array.from(clusterCenterMap.values()));
 
   // Per-cluster circular boundary forces
@@ -528,8 +545,8 @@ export function computeHierarchicalLayout(
   }> = [];
 
   for (const cluster of clusters) {
-    const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
-    const maxRadius = size / 2 - CONFIG.nodeRadius - 10;
+    const size = clusterSizes.get(cluster.id) ?? config.minClusterSize;
+    const maxRadius = size / 2 - config.nodeRadius - 10;
     const clusterNodes = simNodes.filter((n) => n.clusterId === cluster.id);
 
     if (clusterNodes.length === 0) continue;
@@ -555,8 +572,8 @@ export function computeHierarchicalLayout(
     const clusterId = nodeToCluster.get(nodeId);
     if (!clusterId) return 50;
 
-    const clusterSize = clusterSizes.get(clusterId) ?? CONFIG.minClusterSize;
-    const clusterRadius = clusterSize / 2 - CONFIG.nodeRadius - 10;
+    const clusterSize = clusterSizes.get(clusterId) ?? config.minClusterSize;
+    const clusterRadius = clusterSize / 2 - config.nodeRadius - 10;
     const metadata = nodeMetadata.get(nodeId) ?? null;
 
     return computeNodeTargetRadius(metadata, clusterRadius);
@@ -565,12 +582,12 @@ export function computeHierarchicalLayout(
   const radialForce = createClusterRadialForce(
     clusterCenterMap,
     radiusForNode,
-    CONFIG.radialStrength,
+    config.radialStrength,
   );
   radialForce.initialize(simNodes);
 
   // Dependency hang force
-  const hangForce = forceDependencyHang(simLinks, CONFIG.hangGap, CONFIG.hangStrength);
+  const hangForce = forceDependencyHang(simLinks, config.hangGap, config.hangStrength);
   hangForce.initialize(simNodes);
 
   // ========================================================================
@@ -585,19 +602,19 @@ export function computeHierarchicalLayout(
         .forceLink(simLinks)
         .id((d: any) => d.id)
         .distance((l: any) =>
-          l.sameCluster ? CONFIG.linkDistance : CONFIG.linkDistance * CONFIG.crossClusterDistanceMul,
+          l.sameCluster ? config.linkDistance : config.linkDistance * config.crossClusterDistanceMul,
         )
         .strength((l: any) =>
-          l.sameCluster ? CONFIG.linkStrength : CONFIG.linkStrength * CONFIG.crossClusterStrengthMul,
+          l.sameCluster ? config.linkStrength : config.linkStrength * config.crossClusterStrengthMul,
         ),
     )
-    .force('charge', d3.forceManyBody().strength(CONFIG.nodeCharge))
-    .force('collision', d3.forceCollide().radius(CONFIG.nodeRadius + CONFIG.nodeCollisionPadding))
+    .force('charge', d3.forceManyBody().strength(config.nodeCharge))
+    .force('collision', d3.forceCollide().radius(config.nodeRadius + config.nodeCollisionPadding))
     .force(
       'cluster',
       forceClustering()
-        .strength(CONFIG.clusterStrength)
-        .distanceMin(CONFIG.clusterDistanceMin)
+        .strength(config.clusterStrength)
+        .distanceMin(config.clusterDistanceMin)
         .clusterId((d: any) => d.clusterId),
     )
     .force('boundaries', applyAllClusterBoundaries)
@@ -609,9 +626,9 @@ export function computeHierarchicalLayout(
       d3
         .forceY((d: any) => {
           const stratum = nodeStratum.get(d.id) ?? 0;
-          return stratum * CONFIG.layerSpacing;
+          return stratum * config.layerSpacing;
         })
-        .strength(CONFIG.layerStrength),
+        .strength(config.layerStrength),
     )
     .force('hang', hangForce)
     .stop();
@@ -636,15 +653,15 @@ export function computeHierarchicalLayout(
             // Higher fan-in = closer (positive Z)
             // Higher stratum = further back (negative Z)
             // Role-based offset for architectural prominence
-            return Math.log2(fi + 1) * 80 - stratum * 25 + roleOffset * CONFIG.zRoleStrength;
+            return Math.log2(fi + 1) * 80 - stratum * 25 + roleOffset * config.zRoleStrength;
           })
-          .strength(CONFIG.zStratumStrength),
+          .strength(config.zStratumStrength),
       );
 
       // Weak z-centering to prevent drift
       (simulation as any).force(
         'zCenter',
-        (d3 as any).forceZ(0).strength(CONFIG.zCenterStrength),
+        (d3 as any).forceZ(0).strength(config.zCenterStrength),
       );
     }
   }
@@ -653,7 +670,7 @@ export function computeHierarchicalLayout(
   // Phase 5: Run Simulation
   // ========================================================================
 
-  for (let i = 0; i < CONFIG.iterations; i++) {
+  for (let i = 0; i < config.iterations; i++) {
     // Track cluster centers before forces
     const previousCenters = new Map<string, { cx: number; cy: number }>();
     for (const [id, center] of clusterCenterMap) {
@@ -704,7 +721,7 @@ export function computeHierarchicalLayout(
   if (dimension === '3d') {
     for (const node of simNodes) {
       if (node.z !== undefined) {
-        node.z = Math.max(CONFIG.zClampMin, Math.min(CONFIG.zClampMax, node.z));
+        node.z = Math.max(config.zClampMin, Math.min(config.zClampMax, node.z));
       }
     }
   }
@@ -725,7 +742,7 @@ export function computeHierarchicalLayout(
       vy: 0,
       ...(dimension === '3d' ? { vz: 0 } : {}),
       clusterId: node.clusterId ?? '',
-      radius: CONFIG.nodeRadius,
+      radius: config.nodeRadius,
     });
   }
 
@@ -746,15 +763,15 @@ export function computeHierarchicalLayout(
   // Instead of a hard edge count cutoff, use a dynamic budget that scales
   // iterations based on edge count to maintain reasonable performance
   if (crossClusterEdges.length > 0) {
-    const budget = CONFIG.bundlingBudget;
+    const budget = config.bundlingBudget;
     const dynamicIterations = Math.max(10, Math.floor(budget / crossClusterEdges.length));
-    const dynamicCycles = Math.min(CONFIG.bundlingCycles, Math.ceil(dynamicIterations / 15));
+    const dynamicCycles = Math.min(config.bundlingCycles, Math.ceil(dynamicIterations / 15));
 
     bundledEdges = forceEdgeBundling(nodeMap, crossClusterEdges, {
       K: 0.1,
       C: dynamicCycles,
-      I_initial: Math.min(CONFIG.bundlingIterations, dynamicIterations),
-      compatibility_threshold: CONFIG.compatibilityThreshold,
+      I_initial: Math.min(config.bundlingIterations, dynamicIterations),
+      compatibility_threshold: config.compatibilityThreshold,
     });
   }
 
@@ -773,8 +790,8 @@ export function computeHierarchicalLayout(
         id: cluster.id,
         x: 0,
         y: 0,
-        width: CONFIG.minClusterSize,
-        height: CONFIG.minClusterSize,
+        width: config.minClusterSize,
+        height: config.minClusterSize,
         vx: 0,
         vy: 0,
         nodeCount: 0,
@@ -785,7 +802,7 @@ export function computeHierarchicalLayout(
     const center = clusterCenterMap.get(cluster.id);
     if (!center) continue;
 
-    const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
+    const size = clusterSizes.get(cluster.id) ?? config.minClusterSize;
 
     // Calculate 3D cluster z-center and depth
     const clusterZ = dimension === '3d' ? computeClusterZCenter(clusterSimNodes) : undefined;
