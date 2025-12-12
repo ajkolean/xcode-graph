@@ -957,6 +957,21 @@ export class GraphCanvas extends LitElement {
 
       this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * depthOpacity;
 
+      // Cycle node glow effect (Phase 6: cycle highlighting)
+      const isCycleNode = this.layout.cycleNodes?.has(node.id) ?? false;
+      if (isCycleNode && !isDimmed) {
+        const pulse = (Math.sin(this.time / 300) + 1) / 2;
+        const glowRadius = size + 6 + pulse * 3;
+
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+        this.ctx.strokeStyle = 'rgba(255, 100, 50, 0.6)';
+        this.ctx.lineWidth = 2;
+        this.ctx.globalAlpha = (0.4 + pulse * 0.3) * depthOpacity;
+        this.ctx.stroke();
+        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * depthOpacity;
+      }
+
       if (isSelected) {
         const pulse = (Math.sin(this.time / 200) + 1) / 2;
         this.ctx.beginPath();
@@ -1125,20 +1140,40 @@ export class GraphCanvas extends LitElement {
         sourceClusterId !== this.selectedCluster &&
         targetClusterId !== this.selectedCluster;
 
+      // Cycle edge detection (Phase 6: cycle highlighting)
+      // An edge is a cycle edge if both nodes are in the same SCC with size > 1
+      const sourceScc = this.layout.nodeSccId?.get(edge.source);
+      const targetScc = this.layout.nodeSccId?.get(edge.target);
+      const isCycleEdge =
+        sourceScc !== undefined &&
+        targetScc !== undefined &&
+        sourceScc === targetScc &&
+        (this.layout.sccSizes?.get(sourceScc) ?? 0) > 1;
+
       let color = getNodeTypeColor(targetNode.type);
       color = adjustColorForZoom(color, this.zoom);
+
+      // Cycle edges get a distinctive orange/red color
+      if (isCycleEdge) {
+        color = 'rgba(255, 100, 50, 0.8)';
+      }
       this.ctx.strokeStyle = color;
 
       const baseOpacity = adjustOpacityForZoom(isHighlighted ? 0.8 : 0.3, this.zoom);
       let opacity = baseOpacity * this.getEdgeOpacity(edge);
       if (shouldDim) opacity *= 0.25;
       if (selectedClusterDim) opacity *= 0.25;
+      // Cycle edges are more visible
+      if (isCycleEdge && !shouldDim && !selectedClusterDim) {
+        opacity = Math.max(opacity, 0.6);
+      }
       this.ctx.globalAlpha = Math.min(1, opacity);
-      this.ctx.lineWidth = isHighlighted ? 2 : 1;
+      this.ctx.lineWidth = isHighlighted ? 2 : isCycleEdge ? 2 : 1;
 
       const distance = Math.hypot(x2 - x1, y2 - y1);
       const useBezier = distance > 150;
-      const dashPattern = isDependent ? [8, 4] : [4, 2];
+      // Cycle edges use a distinct dash pattern
+      const dashPattern = isCycleEdge ? [4, 4] : isDependent ? [8, 4] : [4, 2];
       this.ctx.setLineDash(dashPattern);
       this.ctx.lineDashOffset = isHighlighted ? -this.time / 20 : 0;
 

@@ -2,8 +2,29 @@
  * Cluster boundary and radial interior forces
  *
  * - Circular boundary: Hard constraint keeping nodes inside cluster circle
- * - Radial interior: Soft constraint positioning nodes based on connectivity
+ * - Radial interior: Soft constraint positioning nodes based on NodeRole (solar system model)
  */
+
+import { NodeRole } from '@shared/schemas/cluster.schema';
+
+/**
+ * Role-based radius mapping (solar system model)
+ * Values are fractions of clusterRadius (0.0 = center, 1.0 = edge)
+ *
+ * - Entry: Sun position at center
+ * - InternalFramework: Inner planets (heavily depended upon)
+ * - InternalLib: Middle planets (moderate dependencies)
+ * - Utility: Outer planets (few dependencies)
+ * - Test/Tool: Asteroid belt (outer ring)
+ */
+const ROLE_RADIUS_MAP: Record<NodeRole, number> = {
+  [NodeRole.Entry]: 0.15, // Sun - center
+  [NodeRole.InternalFramework]: 0.25, // Inner planets
+  [NodeRole.InternalLib]: 0.45, // Middle planets
+  [NodeRole.Utility]: 0.7, // Outer planets
+  [NodeRole.Test]: 0.9, // Asteroid belt
+  [NodeRole.Tool]: 0.9, // Also outer ring
+};
 
 /**
  * Create a circular cluster boundary force
@@ -85,17 +106,22 @@ export function createClusterRadialForce(
 /**
  * Compute target radius for a node within its cluster
  *
- * Based on:
- * - isAnchor: anchors go to center
- * - fanIn + fanOut: higher connectivity = smaller radius
+ * Uses the "solar system" model based on NodeRole:
+ * - Entry nodes at center (the sun)
+ * - Framework nodes in inner orbit
+ * - Library nodes in middle orbit
+ * - Utility nodes in outer orbit
+ * - Test/Tool nodes in asteroid belt
  *
- * @param nodeId Node ID
+ * Falls back to degree-based positioning if role is not available.
+ *
  * @param metadata Cluster metadata for this node
  * @param clusterRadius Maximum cluster radius
  */
 export function computeNodeTargetRadius(
   metadata: {
     isAnchor?: boolean;
+    role?: NodeRole;
     dependencyCount?: number;
     dependsOnCount?: number;
   } | null,
@@ -106,12 +132,18 @@ export function computeNodeTargetRadius(
     return clusterRadius * 0.5;
   }
 
-  // Anchors go to center
+  // Anchors always go to center (sun position)
   if (metadata.isAnchor) {
     return clusterRadius * 0.15;
   }
 
-  // Calculate total degree
+  // Use role-based positioning (solar system model)
+  if (metadata.role) {
+    const fraction = ROLE_RADIUS_MAP[metadata.role] ?? 0.5;
+    return clusterRadius * fraction;
+  }
+
+  // Fallback: degree-based positioning (for backwards compatibility)
   const degree = (metadata.dependencyCount ?? 0) + (metadata.dependsOnCount ?? 0);
 
   // High degree nodes closer to center

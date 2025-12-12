@@ -80,9 +80,27 @@ export class GraphLayoutController implements ReactiveController {
     return false; // No animation - D3 runs to completion
   }
 
+  /** Nodes that are part of cycles (SCC size > 1) */
+  get cycleNodes(): Set<string> | undefined {
+    return this._cycleNodes;
+  }
+
+  /** SCC ID for each node - nodes in same SCC share an ID */
+  get nodeSccId(): Map<string, number> | undefined {
+    return this._nodeSccId;
+  }
+
+  /** Size of each SCC (size > 1 indicates a cycle) */
+  get sccSizes(): Map<number, number> | undefined {
+    return this._sccSizes;
+  }
+
   private _nodePositions = new Map<string, NodePosition>();
   private _clusterPositions = new Map<string, ClusterPosition>();
   private _clusters: Cluster[] = [];
+  private _cycleNodes: Set<string> | undefined;
+  private _nodeSccId: Map<string, number> | undefined;
+  private _sccSizes: Map<number, number> | undefined;
 
   constructor(host: ReactiveControllerHost, config: GraphLayoutConfig = {}) {
     this.host = host;
@@ -105,6 +123,9 @@ export class GraphLayoutController implements ReactiveController {
       this._nodePositions = new Map();
       this._clusterPositions = new Map();
       this._clusters = [];
+      this._cycleNodes = undefined;
+      this._nodeSccId = undefined;
+      this._sccSizes = undefined;
       return;
     }
 
@@ -114,6 +135,9 @@ export class GraphLayoutController implements ReactiveController {
     this._clusters = layout.clusters;
     this._nodePositions = layout.nodePositions;
     this._clusterPositions = layout.clusterPositions;
+    this._cycleNodes = layout.cycleNodes;
+    this._nodeSccId = layout.nodeSccId;
+    this._sccSizes = layout.sccSizes;
 
     // No requestUpdate() needed - we're already in an update cycle
   }
