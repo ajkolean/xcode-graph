@@ -9,17 +9,27 @@
  */
 
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
+import { NodeRole } from '@shared/schemas/cluster.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import * as d3Force2D from 'd3-force';
 import * as d3Force3D from 'd3-force-3d';
 import forceClustering from 'd3-force-clustering';
 import { forceEdgeBundling } from './edge-bundling';
 import {
+  buildClusterDag,
+  computeClusterStrata,
+  seedClustersByStrata,
+} from './cluster-strata';
+import {
   computeNodeTargetRadius,
   createClusterBoundaryForce,
   createClusterRadialForce,
   forceClusterAttraction,
+  forceClusterBoundingRadius,
   forceClusterRepulsion,
+  forceClusterStrataAlignment,
+  forceClusterStrataAnchor,
+  forceClusterXCentering,
 } from './forces';
 import {
   computeCrossClusterWeights,
@@ -47,8 +57,14 @@ export interface HierarchicalLayoutResult {
   bundledEdges?: Array<Array<{ x: number; y: number }>> | undefined;
   /** Nodes that are part of cycles (SCC size > 1) */
   cycleNodes?: Set<string>;
+  /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */
+  nodeSccId?: Map<string, number>;
+  /** Size of each SCC (size > 1 indicates a cycle) */
+  sccSizes?: Map<number, number>;
   /** Maximum stratum value (for rendering stratum bands) */
   maxStratum?: number;
+  /** Maximum cluster stratum value */
+  maxClusterStratum?: number;
 }
 
 // ============================================================================
@@ -104,7 +120,40 @@ const CONFIG = {
   bundlingCycles: 5,
   bundlingIterations: 80,
   compatibilityThreshold: 0.65, // Down from 0.8 (more bundling)
+  bundlingBudget: 40000, // Total edge-iterations budget for dynamic scaling
+
+  // Cluster strata configuration (Phase 2: geological strata)
+  clusterStrataSpacing: 400, // Vertical spacing between cluster strata layers
+  clusterHorizontalSpacing: 350, // Horizontal spacing within a stratum layer
+  clusterStrataAnchorStrength: 0.15, // Soft anchor force to keep clusters near grid positions
+
+  // Drift prevention (Phase 4)
+  clusterCenteringStrength: 0.02, // Weak global X-centering
+  clusterBoundingRadius: 2000, // Max distance from origin
+  clusterBoundingStrength: 0.1, // Force strength when outside boundary
+  clusterStrataAlignmentStrength: 0.08, // Keep same-stratum clusters aligned
+
+  // 3D Z-axis role-based refinement (Phase 5)
+  zRoleStrength: 0.12, // How strongly role affects Z
+  zClampMin: -300, // Minimum Z value
+  zClampMax: 300, // Maximum Z value
 } as const;
+
+/**
+ * Role-based Z-axis offsets (solar system depth model)
+ *
+ * Positions nodes in 3D based on their architectural role:
+ * - Entry/Test/Tool nodes pushed back (less prominent visually)
+ * - Framework nodes pulled forward (more prominent)
+ */
+const ROLE_Z_OFFSET: Record<NodeRole, number> = {
+  [NodeRole.Entry]: -100, // Push back (background "sun")
+  [NodeRole.InternalFramework]: +50, // Pull forward (prominent)
+  [NodeRole.InternalLib]: +20, // Slightly forward
+  [NodeRole.Utility]: 0, // Neutral
+  [NodeRole.Test]: -100, // Push back (supporting)
+  [NodeRole.Tool]: -100, // Push back (supporting)
+};
 
 // ============================================================================
 // Simulation Types
@@ -273,18 +322,30 @@ export function computeHierarchicalLayout(
 
   // Compute global strata using SCC-based analysis
   const strataResult = computeNodeStrata(nodes, edges);
-  const { nodeStratum, cycleNodes, maxStratum } = strataResult;
+  const { nodeStratum, cycleNodes, nodeSccId, sccSizes, maxStratum } = strataResult;
 
   // Compute fan-in for 3D z-positioning
   const fanIn = computeFanIn(nodes, edges);
 
+  // Compute cluster-level strata (Phase 2: geological strata)
+  const clusterDag = buildClusterDag(edges, nodeToCluster);
+  const clusterStrataResult = computeClusterStrata(
+    clusters.map((c) => c.id),
+    clusterDag,
+  );
+
   // Compute cross-cluster edge weights for neighborhood formation
   const crossClusterWeights = computeCrossClusterWeights(edges, nodeToCluster);
 
-  // Build node metadata lookup for radial positioning
+  // Build node metadata lookup for radial positioning (solar system model)
   const nodeMetadata = new Map<
     string,
-    { isAnchor?: boolean; dependencyCount?: number; dependsOnCount?: number }
+    {
+      isAnchor?: boolean;
+      role?: NodeRole;
+      dependencyCount?: number;
+      dependsOnCount?: number;
+    }
   >();
   for (const cluster of clusters) {
     for (const node of cluster.nodes) {
@@ -292,6 +353,7 @@ export function computeHierarchicalLayout(
       if (metadata) {
         nodeMetadata.set(node.id, {
           isAnchor: metadata.isAnchor,
+          role: metadata.role,
           dependencyCount: metadata.dependencyCount,
           dependsOnCount: metadata.dependsOnCount,
         });
@@ -346,24 +408,34 @@ export function computeHierarchicalLayout(
       };
     });
 
-  // Create cluster centers with spiral-based initial positioning
+  // Create cluster centers with strata-based grid positioning (Phase 2)
   const clusterCenterMap = new Map<string, ClusterCenter>();
-  const initialSpacing = 350;
 
-  clusters.forEach((cluster, i) => {
+  // Seed clusters by their strata for deterministic layered positioning
+  const strataPositions = seedClustersByStrata(
+    clusters,
+    clusterStrataResult,
+    clusterSizes,
+    {
+      strataSpacing: CONFIG.clusterStrataSpacing,
+      horizontalSpacing: CONFIG.clusterHorizontalSpacing,
+    },
+  );
+
+  // Store target positions for anchor force (Phase 4)
+  const clusterTargetPositions = new Map(strataPositions);
+
+  for (const cluster of clusters) {
     const size = clusterSizes.get(cluster.id) ?? CONFIG.minClusterSize;
-
-    // Spiral positioning with golden angle
-    const angle = i * 2.4;
-    const radius = Math.sqrt(i + 1) * initialSpacing * 0.5;
+    const pos = strataPositions.get(cluster.id) ?? { x: 0, y: 0 };
 
     clusterCenterMap.set(cluster.id, {
       id: cluster.id,
-      cx: Math.cos(angle) * radius,
-      cy: Math.sin(angle) * radius,
+      cx: pos.x,
+      cy: pos.y,
       radius: size / 2,
     });
-  });
+  }
 
   // ========================================================================
   // Phase 3: Create Forces
@@ -407,6 +479,29 @@ export function computeHierarchicalLayout(
     CONFIG.clusterAttractionActivationDist,
   );
   clusterAttractForce.initialize(Array.from(clusterCenterMap.values()));
+
+  // Cluster strata forces (Phase 2 & 4)
+  const clusterStrataAnchorForce = forceClusterStrataAnchor(
+    clusterTargetPositions,
+    CONFIG.clusterStrataAnchorStrength,
+  );
+  clusterStrataAnchorForce.initialize(Array.from(clusterCenterMap.values()));
+
+  const clusterBoundingForce = forceClusterBoundingRadius(
+    CONFIG.clusterBoundingRadius,
+    CONFIG.clusterBoundingStrength,
+  );
+  clusterBoundingForce.initialize(Array.from(clusterCenterMap.values()));
+
+  const clusterAlignmentForce = forceClusterStrataAlignment(
+    clusterStrataResult.clusterStratum,
+    CONFIG.clusterStrataSpacing,
+    CONFIG.clusterStrataAlignmentStrength,
+  );
+  clusterAlignmentForce.initialize(Array.from(clusterCenterMap.values()));
+
+  const clusterXCenteringForce = forceClusterXCentering(CONFIG.clusterCenteringStrength);
+  clusterXCenteringForce.initialize(Array.from(clusterCenterMap.values()));
 
   // Per-cluster circular boundary forces
   const boundaryForceData: Array<{
@@ -510,16 +605,20 @@ export function computeHierarchicalLayout(
     }
 
     if ('forceZ' in d3) {
-      // Meaningful Z: fan-in gravity forward, stratum recedes
+      // Meaningful Z: combines fan-in, stratum, and role-based positioning
       (simulation as any).force(
         'meaningfulZ',
         (d3 as any)
           .forceZ((d: any) => {
             const fi = fanIn.get(d.id) ?? 0;
             const stratum = nodeStratum.get(d.id) ?? 0;
+            const meta = nodeMetadata.get(d.id);
+            const roleOffset = meta?.role ? ROLE_Z_OFFSET[meta.role] : 0;
+
             // Higher fan-in = closer (positive Z)
             // Higher stratum = further back (negative Z)
-            return Math.log2(fi + 1) * 80 - stratum * 25;
+            // Role-based offset for architectural prominence
+            return Math.log2(fi + 1) * 80 - stratum * 25 + roleOffset * CONFIG.zRoleStrength;
           })
           .strength(CONFIG.zStratumStrength),
       );
@@ -549,6 +648,12 @@ export function computeHierarchicalLayout(
     clusterRepelForce(simulation.alpha());
     clusterAttractForce(simulation.alpha());
 
+    // Apply cluster strata forces (Phase 2 & 4)
+    clusterStrataAnchorForce(simulation.alpha());
+    clusterAlignmentForce(simulation.alpha());
+    clusterBoundingForce(simulation.alpha());
+    clusterXCenteringForce(simulation.alpha());
+
     // Move nodes with their cluster centers
     for (const [clusterId, center] of clusterCenterMap) {
       const prev = previousCenters.get(clusterId);
@@ -566,6 +671,15 @@ export function computeHierarchicalLayout(
     }
 
     simulation.tick();
+  }
+
+  // Apply Z clamping to prevent extreme depth values (Phase 5)
+  if (dimension === '3d') {
+    for (const node of simNodes) {
+      if (node.z !== undefined) {
+        node.z = Math.max(CONFIG.zClampMin, Math.min(CONFIG.zClampMax, node.z));
+      }
+    }
   }
 
   // ========================================================================
@@ -601,11 +715,18 @@ export function computeHierarchicalLayout(
 
   let bundledEdges: Array<Array<{ x: number; y: number }>> | undefined;
 
-  if (crossClusterEdges.length > 0 && crossClusterEdges.length < 500) {
+  // Phase 7: Scalable edge bundling with dynamic budget
+  // Instead of a hard edge count cutoff, use a dynamic budget that scales
+  // iterations based on edge count to maintain reasonable performance
+  if (crossClusterEdges.length > 0) {
+    const budget = CONFIG.bundlingBudget;
+    const dynamicIterations = Math.max(10, Math.floor(budget / crossClusterEdges.length));
+    const dynamicCycles = Math.min(CONFIG.bundlingCycles, Math.ceil(dynamicIterations / 15));
+
     bundledEdges = forceEdgeBundling(nodeMap, crossClusterEdges, {
       K: 0.1,
-      C: CONFIG.bundlingCycles,
-      I_initial: CONFIG.bundlingIterations,
+      C: dynamicCycles,
+      I_initial: Math.min(CONFIG.bundlingIterations, dynamicIterations),
       compatibility_threshold: CONFIG.compatibilityThreshold,
     });
   }
@@ -673,6 +794,9 @@ export function computeHierarchicalLayout(
     clusters,
     bundledEdges,
     cycleNodes,
+    nodeSccId,
+    sccSizes,
     maxStratum,
+    maxClusterStratum: clusterStrataResult.maxClusterStratum,
   };
 }

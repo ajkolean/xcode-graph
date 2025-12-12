@@ -163,3 +163,156 @@ export function createSingleNodeGraph(): { nodes: GraphNode[]; edges: GraphEdge[
     edges: [],
   };
 }
+
+/**
+ * Create a graph with multiple SCCs (Strongly Connected Components)
+ * Useful for testing cycle detection and highlighting
+ *
+ * Structure:
+ * - Cycle 1: A -> B -> C -> A (3-node cycle)
+ * - Cycle 2: D -> E -> D (2-node cycle)
+ * - Linear: F -> G -> H (no cycle)
+ * - Cross-component edges connecting them
+ */
+export function createMultiCycleGraph(): { nodes: GraphNode[]; edges: GraphEdge[] } {
+  const nodes: GraphNode[] = [
+    // Cycle 1
+    createNode({ id: 'A', name: 'CycleA1', project: 'Cycle1' }),
+    createNode({ id: 'B', name: 'CycleA2', project: 'Cycle1' }),
+    createNode({ id: 'C', name: 'CycleA3', project: 'Cycle1' }),
+    // Cycle 2
+    createNode({ id: 'D', name: 'CycleB1', project: 'Cycle2' }),
+    createNode({ id: 'E', name: 'CycleB2', project: 'Cycle2' }),
+    // Linear (no cycle)
+    createNode({ id: 'F', name: 'Linear1', project: 'Linear' }),
+    createNode({ id: 'G', name: 'Linear2', project: 'Linear' }),
+    createNode({ id: 'H', name: 'Linear3', project: 'Linear' }),
+  ];
+
+  const edges: GraphEdge[] = [
+    // Cycle 1: A -> B -> C -> A
+    { source: 'A', target: 'B' },
+    { source: 'B', target: 'C' },
+    { source: 'C', target: 'A' },
+    // Cycle 2: D -> E -> D
+    { source: 'D', target: 'E' },
+    { source: 'E', target: 'D' },
+    // Linear: F -> G -> H
+    { source: 'F', target: 'G' },
+    { source: 'G', target: 'H' },
+    // Cross-component edges
+    { source: 'A', target: 'D' }, // Cycle1 -> Cycle2
+    { source: 'D', target: 'F' }, // Cycle2 -> Linear
+  ];
+
+  return { nodes, edges };
+}
+
+/**
+ * Create a layered graph with clear strata structure
+ * Each layer depends on the next, creating a clean hierarchical layout
+ *
+ * @param layers Number of horizontal layers
+ * @param nodesPerLayer Number of nodes in each layer
+ */
+export function createLayeredGraph(
+  layers: number = 4,
+  nodesPerLayer: number = 3,
+): { nodes: GraphNode[]; edges: GraphEdge[] } {
+  const nodes: GraphNode[] = [];
+  const edges: GraphEdge[] = [];
+
+  for (let layer = 0; layer < layers; layer++) {
+    const projectName = `Layer${layer}`;
+    for (let i = 0; i < nodesPerLayer; i++) {
+      const id = `L${layer}N${i}`;
+      nodes.push(
+        createNode({
+          id,
+          name: `Layer${layer}Node${i}`,
+          project: projectName,
+        }),
+      );
+
+      // Connect to nodes in next layer
+      if (layer < layers - 1) {
+        // Each node connects to 1-2 nodes in the next layer
+        const nextLayerStart = (layer + 1) * nodesPerLayer;
+        const targetIndex = i % nodesPerLayer;
+        edges.push({
+          source: id,
+          target: `L${layer + 1}N${targetIndex}`,
+        });
+
+        // Add a second connection for some nodes to create more interesting structure
+        if (i > 0) {
+          edges.push({
+            source: id,
+            target: `L${layer + 1}N${(targetIndex + 1) % nodesPerLayer}`,
+          });
+        }
+      }
+    }
+  }
+
+  return { nodes, edges };
+}
+
+/**
+ * Create a multi-cluster graph with cross-cluster dependencies
+ * Useful for testing cluster layout and edge bundling
+ *
+ * @param clusterCount Number of clusters to create
+ * @param nodesPerCluster Number of nodes in each cluster
+ */
+export function createMultiClusterGraph(
+  clusterCount: number = 4,
+  nodesPerCluster: number = 5,
+): { nodes: GraphNode[]; edges: GraphEdge[] } {
+  const nodes: GraphNode[] = [];
+  const edges: GraphEdge[] = [];
+
+  for (let c = 0; c < clusterCount; c++) {
+    const projectName = `Cluster${c}`;
+
+    // Create nodes for this cluster
+    for (let i = 0; i < nodesPerCluster; i++) {
+      const id = `C${c}N${i}`;
+      const isEntry = i === 0;
+      nodes.push(
+        createNode({
+          id,
+          name: `${projectName}Node${i}`,
+          project: projectName,
+          type: isEntry ? NodeType.App : NodeType.Framework,
+        }),
+      );
+
+      // Intra-cluster edges (linear chain within cluster)
+      if (i > 0) {
+        edges.push({
+          source: `C${c}N${i - 1}`,
+          target: id,
+        });
+      }
+    }
+
+    // Cross-cluster edges (entry node of each cluster depends on entry of next)
+    if (c < clusterCount - 1) {
+      edges.push({
+        source: `C${c}N0`,
+        target: `C${c + 1}N0`,
+      });
+
+      // Add some additional cross-cluster edges for variety
+      if (nodesPerCluster > 2) {
+        edges.push({
+          source: `C${c}N1`,
+          target: `C${c + 1}N${Math.floor(nodesPerCluster / 2)}`,
+        });
+      }
+    }
+  }
+
+  return { nodes, edges };
+}

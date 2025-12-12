@@ -14,7 +14,10 @@ export {
   createCyclicGraph,
   createDiamondGraph,
   createEmptyGraph,
+  createLayeredGraph,
   createLinearChain,
+  createMultiClusterGraph,
+  createMultiCycleGraph,
   createProjectGraph,
   createSingleNodeGraph,
 } from './graphs';

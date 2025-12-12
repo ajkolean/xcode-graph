@@ -33,6 +33,12 @@ export interface LayoutResult {
   nodePositions: Map<string, NodePosition>;
   clusterPositions: Map<string, ClusterPosition>;
   clusters: Cluster[];
+  /** Nodes that are part of cycles (SCC size > 1) */
+  cycleNodes?: Set<string>;
+  /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */
+  nodeSccId?: Map<string, number>;
+  /** Size of each SCC (size > 1 indicates a cycle) */
+  sccSizes?: Map<number, number>;
 }
 
 // ==================== Controller Class ====================
@@ -101,6 +107,9 @@ export class LayoutController implements ReactiveController {
       clusterPositions: initialClusterPos,
       nodePositions: initialNodePos,
       clusters: layoutClusters,
+      cycleNodes,
+      nodeSccId,
+      sccSizes,
     } = computeHierarchicalLayout(nodes, edges, analyzedClusters, {
       dimension: layoutDimension.get(),
     });
@@ -120,6 +129,9 @@ export class LayoutController implements ReactiveController {
       nodePositions,
       clusterPositions,
       clusters: layoutClusters,
+      cycleNodes,
+      nodeSccId,
+      sccSizes,
     };
 
     this.cacheResult(result, nodes, edges);
