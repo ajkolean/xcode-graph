@@ -164,7 +164,8 @@ export function computeClusterStrata(
  * Compute grid positions for clusters based on their strata
  *
  * Places clusters in horizontal bands (strata) with barycentric ordering
- * to minimize edge crossings.
+ * to minimize edge crossings. When there are too many clusters in a stratum,
+ * splits into multiple rows to prevent excessive horizontal spread.
  *
  * @param clusters - Array of cluster objects with id
  * @param clusterStrataResult - Result from computeClusterStrata
@@ -179,11 +180,15 @@ export function seedClustersByStrata(
   config: {
     strataSpacing: number;
     horizontalSpacing: number;
+    maxRowWidth?: number; // Maximum width before wrapping to new row
   },
 ): Map<string, { x: number; y: number }> {
   const { clusterStratum, maxClusterStratum, clusterDag, clusterReverseDag } =
     clusterStrataResult;
   const positions = new Map<string, { x: number; y: number }>();
+
+  // Default max row width (adjustable based on desired compactness)
+  const maxRowWidth = config.maxRowWidth ?? 3500;
 
   // Group clusters by stratum
   const strataGroups = new Map<number, string[]>();
@@ -258,6 +263,9 @@ export function seedClustersByStrata(
     }
   }
 
+  // Track total Y offset for multi-row strata
+  let currentBaseY = 0;
+
   // Convert order to actual positions
   for (let stratum = 0; stratum <= maxClusterStratum; stratum++) {
     const clustersInStratum = strataGroups.get(stratum) ?? [];
@@ -265,31 +273,68 @@ export function seedClustersByStrata(
 
     if (n === 0) continue;
 
-    // Y position based on stratum (higher stratum = lower Y = further down)
-    const y = stratum * config.strataSpacing;
-
     // Sort clusters by their computed order
     const sortedClusters = [...clustersInStratum].sort((a, b) => {
       return (clusterOrder.get(a) ?? 0) - (clusterOrder.get(b) ?? 0);
     });
 
-    // Calculate total width needed for this stratum
-    let totalWidth = 0;
-    for (const clusterId of sortedClusters) {
-      const size = clusterSizes.get(clusterId) ?? 100;
-      totalWidth += size + config.horizontalSpacing;
-    }
-    totalWidth -= config.horizontalSpacing; // Remove last spacing
-
-    // Center the stratum around x = 0
-    let currentX = -totalWidth / 2;
+    // Split into rows if stratum exceeds max width
+    const rows: string[][] = [];
+    let currentRow: string[] = [];
+    let currentRowWidth = 0;
+    let maxClusterHeight = 0;
 
     for (const clusterId of sortedClusters) {
       const size = clusterSizes.get(clusterId) ?? 100;
-      const x = currentX + size / 2; // Center of cluster
-      positions.set(clusterId, { x, y });
-      currentX += size + config.horizontalSpacing;
+      maxClusterHeight = Math.max(maxClusterHeight, size);
+
+      // Check if adding this cluster would exceed max row width
+      const additionalWidth = currentRowWidth > 0 ? size + config.horizontalSpacing : size;
+
+      if (currentRowWidth + additionalWidth > maxRowWidth && currentRow.length > 0) {
+        // Start a new row
+        rows.push(currentRow);
+        currentRow = [clusterId];
+        currentRowWidth = size;
+      } else {
+        currentRow.push(clusterId);
+        currentRowWidth += additionalWidth;
+      }
     }
+
+    // Don't forget the last row
+    if (currentRow.length > 0) {
+      rows.push(currentRow);
+    }
+
+    // Position each row
+    const rowSpacing = maxClusterHeight + config.horizontalSpacing; // Vertical spacing between sub-rows
+
+    for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+      const row = rows[rowIdx]!;
+      const y = currentBaseY + rowIdx * rowSpacing;
+
+      // Calculate width of this specific row
+      let rowWidth = 0;
+      for (const clusterId of row) {
+        const size = clusterSizes.get(clusterId) ?? 100;
+        rowWidth += size + config.horizontalSpacing;
+      }
+      rowWidth -= config.horizontalSpacing;
+
+      // Center the row around x = 0
+      let currentX = -rowWidth / 2;
+
+      for (const clusterId of row) {
+        const size = clusterSizes.get(clusterId) ?? 100;
+        const x = currentX + size / 2; // Center of cluster
+        positions.set(clusterId, { x, y });
+        currentX += size + config.horizontalSpacing;
+      }
+    }
+
+    // Update base Y for next stratum
+    currentBaseY += rows.length * rowSpacing + config.strataSpacing - rowSpacing;
   }
 
   return positions;
