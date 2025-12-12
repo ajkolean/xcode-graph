@@ -204,13 +204,14 @@ function createNodeFromTarget(
 }
 
 /** Create a basic GraphNode from dependency info */
-function createNodeFromDependency(dep: GraphDependency): GraphNode {
+function createNodeFromDependency(dep: GraphDependency, project?: string): GraphNode {
   return {
     id: getDependencyKey(dep),
     name: getDependencyName(dep),
     type: getNodeTypeForDependency(dep),
     platform: Platform.macOS,
     origin: getOriginForDependency(dep),
+    project,
   };
 }
 
@@ -258,10 +259,11 @@ function processDependencies(
     const targetDeps = dependencies[i + 1] as GraphDependency[];
 
     const sourceKey = getDependencyKey(sourceDep);
+    const sourceProject = lookup.get(sourceKey)?.projectName ?? nodes.get(sourceKey)?.project;
 
     // Create source node if missing
     if (!nodes.has(sourceKey)) {
-      nodes.set(sourceKey, createNodeFromDependency(sourceDep));
+      nodes.set(sourceKey, createNodeFromDependency(sourceDep, sourceProject));
     }
 
     // Process target dependencies
@@ -278,7 +280,8 @@ function processDependencies(
             createNodeFromTarget(targetKey, target, projectName, projectPath, origin),
           );
         } else {
-          nodes.set(targetKey, createNodeFromDependency(targetDep));
+          // Attach external dependencies to the same project as the source when possible
+          nodes.set(targetKey, createNodeFromDependency(targetDep, sourceProject));
         }
       }
 
