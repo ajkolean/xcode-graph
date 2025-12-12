@@ -237,7 +237,6 @@ export function createLayeredGraph(
       // Connect to nodes in next layer
       if (layer < layers - 1) {
         // Each node connects to 1-2 nodes in the next layer
-        const nextLayerStart = (layer + 1) * nodesPerLayer;
         const targetIndex = i % nodesPerLayer;
         edges.push({
           source: id,

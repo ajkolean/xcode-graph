@@ -3,8 +3,8 @@
  * Validates cluster DAG construction and strata computation
  */
 
-import { describe, expect, it } from 'vitest';
 import type { GraphEdge } from '@shared/schemas/graph.schema';
+import { describe, expect, it } from 'vitest';
 import { buildClusterDag, computeClusterStrata, seedClustersByStrata } from './cluster-strata';
 
 describe('buildClusterDag', () => {
