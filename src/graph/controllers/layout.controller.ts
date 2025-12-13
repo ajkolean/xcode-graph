@@ -6,7 +6,7 @@
  *
  * **Responsibilities:**
  * - Cluster grouping and analysis
- * - Deterministic position calculation
+ * - Deterministic position calculation (via ELK)
  * - Initial layout state preparation
  *
  * **Architecture:**
@@ -33,6 +33,8 @@ export interface LayoutResult {
   nodePositions: Map<string, NodePosition>;
   clusterPositions: Map<string, ClusterPosition>;
   clusters: Cluster[];
+  /** Aggregated edges between clusters (Arteries) */
+  clusterEdges?: { source: string; target: string; weight: number }[];
   /** Nodes that are part of cycles (SCC size > 1) */
   cycleNodes?: Set<string>;
   /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */
@@ -58,6 +60,9 @@ export class LayoutController implements ReactiveController {
   private cachedEdges: GraphEdge[] = [];
   private cachedDimension: '2d' | '3d' = '2d';
 
+  // Loading state
+  public isComputing = false;
+
   constructor(host: ReactiveControllerHost) {
     this.host = host;
     host.addController(this);
@@ -68,15 +73,15 @@ export class LayoutController implements ReactiveController {
   // ========================================
 
   /**
-   * Compute deterministic layout positions
+   * Compute deterministic layout positions (Async)
    * Returns positions with velocities initialized to 0
    *
    * @param nodes - All graph nodes
    * @param edges - All graph edges
    * @param forceRecompute - Force recomputation even if cached
-   * @returns Layout result with positions and clusters
+   * @returns Promise resolving to Layout result with positions and clusters
    */
-  computeLayout(nodes: GraphNode[], edges: GraphEdge[], forceRecompute = false): LayoutResult {
+  async computeLayout(nodes: GraphNode[], edges: GraphEdge[], forceRecompute = false): Promise<LayoutResult> {
     // Return cached result if inputs haven't changed
     if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
       return this.cachedResult;
@@ -93,49 +98,59 @@ export class LayoutController implements ReactiveController {
       return emptyResult;
     }
 
-    // Step 1: Group nodes into clusters
-    const analyzedClusters = groupIntoClusters(nodes, edges);
+    this.isComputing = true;
+    this.host.requestUpdate();
 
-    // Step 2: Analyze each cluster for metadata
-    analyzedClusters.forEach((cluster) => {
-      analyzeCluster(cluster, edges);
-    });
+    try {
+      // Step 1: Group nodes into clusters
+      const analyzedClusters = groupIntoClusters(nodes, edges);
 
-    // Step 3: Compute hierarchical layout positions using d3-force
-    // Pass the current dimension from the signal for 2D/3D layout
-    const {
-      clusterPositions: initialClusterPos,
-      nodePositions: initialNodePos,
-      clusters: layoutClusters,
-      cycleNodes,
-      nodeSccId,
-      sccSizes,
-    } = computeHierarchicalLayout(nodes, edges, analyzedClusters, {
-      dimension: layoutDimension.get(),
-    });
+      // Step 2: Analyze each cluster for metadata
+      analyzedClusters.forEach((cluster) => {
+        analyzeCluster(cluster, edges);
+      });
 
-    // Step 4: Add velocity properties for physics simulation
-    const nodePositions = new Map<string, NodePosition>();
-    initialNodePos.forEach((pos, id) => {
-      nodePositions.set(id, { ...pos, vx: 0, vy: 0 });
-    });
+      // Step 3: Compute hierarchical layout positions using ELK (Async)
+      // Pass the current dimension from the signal for 2D/3D layout
+      const {
+        clusterPositions: initialClusterPos,
+        nodePositions: initialNodePos,
+        clusters: layoutClusters,
+        cycleNodes,
+        nodeSccId,
+        sccSizes,
+        clusterEdges,
+      } = await computeHierarchicalLayout(nodes, edges, analyzedClusters, {
+        dimension: layoutDimension.get(),
+      });
 
-    const clusterPositions = new Map<string, ClusterPosition>();
-    initialClusterPos.forEach((pos, id) => {
-      clusterPositions.set(id, { ...pos, vx: 0, vy: 0 });
-    });
+      // Step 4: Add velocity properties for physics simulation
+      const nodePositions = new Map<string, NodePosition>();
+      initialNodePos.forEach((pos, id) => {
+        nodePositions.set(id, { ...pos, vx: 0, vy: 0 });
+      });
 
-    const result: LayoutResult = {
-      nodePositions,
-      clusterPositions,
-      clusters: layoutClusters,
-      cycleNodes,
-      nodeSccId,
-      sccSizes,
-    };
+      const clusterPositions = new Map<string, ClusterPosition>();
+      initialClusterPos.forEach((pos, id) => {
+        clusterPositions.set(id, { ...pos, vx: 0, vy: 0 });
+      });
 
-    this.cacheResult(result, nodes, edges);
-    return result;
+      const result: LayoutResult = {
+        nodePositions,
+        clusterPositions,
+        clusters: layoutClusters,
+        cycleNodes,
+        nodeSccId,
+        sccSizes,
+        clusterEdges,
+      };
+
+      this.cacheResult(result, nodes, edges);
+      return result;
+    } finally {
+      this.isComputing = false;
+      this.host.requestUpdate();
+    }
   }
 
   /**

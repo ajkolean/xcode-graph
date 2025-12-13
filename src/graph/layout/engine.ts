@@ -1,25 +1,25 @@
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import type { Cluster } from '@shared/schemas';
+import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import { DEFAULT_CONFIG, type LayoutOptions } from './config';
 import type { HierarchicalLayoutResult } from './types';
-import { prepareLayout } from './phases/preparation';
-import { runSimulation } from './phases/simulation';
-import { processResults } from './phases/post-processing';
+import { buildClusterGraph } from './cluster-graph';
+import { computeClusterInterior } from './phases/micro-layout';
+import { computeMacroLayout } from './phases/macro-layout';
 
 /**
- * Main layout computation - "Dependency Atlas" style
+ * Main layout computation - Hybrid ELK + D3 "Macro/Micro" Layout
  * 
- * Orchestrates the layout process in 3 phases:
- * 1. Preparation: Data analysis, strata computation, initial positioning
- * 2. Simulation: Physics execution (now purely D3-driven)
- * 3. Post-processing: Edge bundling, relative coordinate conversion
+ * Orchestrates:
+ * 1. Micro-Layout: Computes internal "Solar System" layout for each cluster (D3)
+ * 2. Macro-Layout: Computes "Tectonic Plate" layout for clusters (ELK Layered)
+ * 3. Composition: Combines results
  */
-export function computeHierarchicalLayout(
+export async function computeHierarchicalLayout(
   nodes: GraphNode[],
   edges: GraphEdge[],
   clusters: Cluster[],
   opts: LayoutOptions = {},
-): HierarchicalLayoutResult {
+): Promise<HierarchicalLayoutResult> {
   if (nodes.length === 0) {
     return {
       nodePositions: new Map(),
@@ -28,17 +28,65 @@ export function computeHierarchicalLayout(
     };
   }
 
-  // Merge config
   const config = opts.configOverrides
     ? { ...DEFAULT_CONFIG, ...opts.configOverrides }
     : DEFAULT_CONFIG;
 
-  // Phase 1: Preparation
-  const prepData = prepareLayout(nodes, edges, clusters, config, opts.dimension);
+  // 1. Build Cluster Graph (Meta-Graph)
+  const clusterGraph = buildClusterGraph(nodes, edges, clusters);
 
-  // Phase 2: Simulation
-  runSimulation(prepData, config, opts);
+  // 2. Micro-Layout: Compute dimensions and internal positions for each cluster
+  // (Can run in parallel)
+  const microLayouts = new Map(
+    clusters.map(cluster => [
+      cluster.id,
+      computeClusterInterior(cluster, config)
+    ])
+  );
 
-  // Phase 3: Post-processing
-  return processResults(prepData, nodes, edges, clusters, config, opts);
+  // 3. Macro-Layout: Compute cluster world positions using ELK
+  const clusterPositions = await computeMacroLayout(clusterGraph, microLayouts, config);
+
+  // 4. Composition: Calculate final world positions for nodes
+  const nodePositions = new Map<string, NodePosition>();
+
+  for (const cluster of clusters) {
+    const clusterPos = clusterPositions.get(cluster.id);
+    const micro = microLayouts.get(cluster.id);
+
+    if (!clusterPos || !micro) continue;
+
+    for (const [nodeId, relPos] of micro.relativePositions) {
+      // Composition: Cluster World Center + Node Relative Offset
+      // (Micro layout is already centered at 0,0)
+      nodePositions.set(nodeId, {
+        ...relPos,
+        x: relPos.x, // Store relative for rendering if needed, or absolute?
+                     // Existing renderer expects RELATIVE to cluster in `x`/`y` if `clusterPositions` is used.
+                     // Let's verify `GraphCanvas`.
+                     // GraphCanvas: `worldX = clusterPos.x + nodePos.x`
+                     // So we just store relative x/y.
+        clusterId: cluster.id,
+        z: opts.getNodeZOffset ? opts.getNodeZOffset(nodeId) : 0,
+      });
+    }
+    
+    // Update node count in position
+    clusterPos.nodeCount = cluster.nodes.length;
+  }
+
+  return {
+    nodePositions,
+    clusterPositions,
+    clusters,
+    clusterEdges: clusterGraph.edges.map(e => ({
+      source: e.source,
+      target: e.target,
+      weight: e.weight
+    })),
+    // Cycle data omitted for now (ELK handles topology)
+    cycleNodes: new Set(),
+    nodeSccId: new Map(),
+    sccSizes: new Map(),
+  };
 }

@@ -38,8 +38,10 @@ const ROLE_Z_OFFSET: Record<NodeRole, number> = {
 /**
  * Main layout computation function.
  * Wraps the core engine with default Role-based Z-offset logic.
+ * 
+ * NOTE: This is now ASYNCHRONOUS as it uses ELK.
  */
-export function computeHierarchicalLayout(
+export async function computeHierarchicalLayout(
   nodes: GraphNode[],
   edges: GraphEdge[],
   clusters: Cluster[],

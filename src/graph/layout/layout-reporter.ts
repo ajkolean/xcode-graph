@@ -7,7 +7,7 @@
 
 import type { ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import type { HierarchicalLayoutResult } from './d3-layout';
+import type { HierarchicalLayoutResult } from './types';
 
 // ============================================================================
 // Report Interfaces

@@ -46,6 +46,7 @@ import {
   toggleAnimation,
   toggleLayoutDimension,
   zoom,
+  baseZoom,
   zoomIn,
   zoomOut,
 } from '@shared/signals/index';
@@ -200,6 +201,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
             
             <graph-controls
               .zoom=${zoom.get()}
+              .baseZoom=${baseZoom.get()}
               .nodeCount=${this.displayNodes.length}
               .edgeCount=${this.displayEdges.length}
               ?enable-animation=${enableAnimation.get()}

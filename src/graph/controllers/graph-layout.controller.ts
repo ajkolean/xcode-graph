@@ -77,7 +77,7 @@ export class GraphLayoutController implements ReactiveController {
   }
 
   get isSettling(): boolean {
-    return false; // No animation - D3 runs to completion
+    return this.layoutController.isComputing;
   }
 
   /** Nodes that are part of cycles (SCC size > 1) */
@@ -95,12 +95,18 @@ export class GraphLayoutController implements ReactiveController {
     return this._sccSizes;
   }
 
+  /** Aggregated edges between clusters (Arteries) */
+  get clusterEdges(): { source: string; target: string; weight: number }[] | undefined {
+    return this._clusterEdges;
+  }
+
   private _nodePositions = new Map<string, NodePosition>();
   private _clusterPositions = new Map<string, ClusterPosition>();
   private _clusters: Cluster[] = [];
   private _cycleNodes: Set<string> | undefined;
   private _nodeSccId: Map<string, number> | undefined;
   private _sccSizes: Map<number, number> | undefined;
+  private _clusterEdges: { source: string; target: string; weight: number }[] | undefined;
 
   constructor(host: ReactiveControllerHost, config: GraphLayoutConfig = {}) {
     this.host = host;
@@ -116,9 +122,9 @@ export class GraphLayoutController implements ReactiveController {
   // ========================================
 
   /**
-   * Compute layout - D3 runs synchronously to completion
+   * Compute layout - ELK runs asynchronously
    */
-  computeLayout(nodes: GraphNode[], edges: GraphEdge[]): void {
+  async computeLayout(nodes: GraphNode[], edges: GraphEdge[]): Promise<void> {
     if (nodes.length === 0) {
       this._nodePositions = new Map();
       this._clusterPositions = new Map();
@@ -126,11 +132,12 @@ export class GraphLayoutController implements ReactiveController {
       this._cycleNodes = undefined;
       this._nodeSccId = undefined;
       this._sccSizes = undefined;
+      this._clusterEdges = undefined;
       return;
     }
 
-    // D3 layout runs synchronously to completion
-    const layout = this.layoutController.computeLayout(nodes, edges);
+    // ELK layout runs asynchronously
+    const layout = await this.layoutController.computeLayout(nodes, edges);
 
     this._clusters = layout.clusters;
     this._nodePositions = layout.nodePositions;
@@ -138,8 +145,9 @@ export class GraphLayoutController implements ReactiveController {
     this._cycleNodes = layout.cycleNodes;
     this._nodeSccId = layout.nodeSccId;
     this._sccSizes = layout.sccSizes;
+    this._clusterEdges = layout.clusterEdges;
 
-    // No requestUpdate() needed - we're already in an update cycle
+    this.host.requestUpdate();
   }
 
   /**

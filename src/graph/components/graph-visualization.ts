@@ -236,7 +236,8 @@ export class GraphVisualization extends LitElement {
       }
 
       this.layout.enableAnimation = this.enableAnimation ?? false;
-      this.layout.computeLayout(this.nodes ?? [], this.edges ?? []);
+      // ELK layout is asynchronous
+      this.layout.computeLayout(this.nodes ?? [], this.edges ?? []).catch(console.error);
 
       // Keep interaction controller in sync with fresh layout positions
       this.interaction.updateConfig({
@@ -254,7 +255,7 @@ export class GraphVisualization extends LitElement {
       if (!enableAnimation) {
         this.layout.stopAnimation();
       } else if (this.nodes && this.edges) {
-        this.layout.computeLayout(this.nodes, this.edges);
+        this.layout.computeLayout(this.nodes, this.edges).catch(console.error);
       }
     }
 

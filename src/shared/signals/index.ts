@@ -35,6 +35,7 @@ export {
 export {
   resetZoom,
   setActiveTab,
+  setBaseZoom,
   setEnableAnimation,
   setLayoutDimension,
   setPreviewFilter,
@@ -46,6 +47,7 @@ export {
 } from './ui.actions';
 export {
   activeTab,
+  baseZoom,
   enableAnimation,
   layoutDimension,
   type PreviewFilter,
