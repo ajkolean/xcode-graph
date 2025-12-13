@@ -99,6 +99,9 @@ export class GraphCanvas extends LitElement {
   // Hover State
   private hoveredCluster: string | null = null;
 
+  // Track if mousedown was on empty space (for deselection on mouseup)
+  private clickedEmptySpace = false;
+
   // Animation State
   private animationFrameId: number | null = null;
   private time = 0;
@@ -321,6 +324,7 @@ export class GraphCanvas extends LitElement {
   private handleCanvasMouseDown = (e: MouseEvent) => {
     this.isDragging = true;
     this.hasMoved = false;
+    this.clickedEmptySpace = false;
     this.lastMousePos = { x: e.clientX, y: e.clientY };
 
     const { x, y } = this.getMousePos(e);
@@ -387,8 +391,14 @@ export class GraphCanvas extends LitElement {
 
         if (dx * dx + dy * dy <= size * size) {
           this.draggedNodeId = node.id;
+          // Toggle: clicking already-selected node unselects it
+          const newSelection = this.selectedNode?.id === node.id ? null : node;
           this.dispatchEvent(
-            new CustomEvent('node-select', { detail: { node }, bubbles: true, composed: true }),
+            new CustomEvent('node-select', {
+              detail: { node: newSelection },
+              bubbles: true,
+              composed: true,
+            }),
           );
           this.isDragging = false; // Don't pan if dragging node
           return;
@@ -421,16 +431,8 @@ export class GraphCanvas extends LitElement {
       }
     }
 
-    this.dispatchEvent(
-      new CustomEvent('node-select', { detail: { node: null }, bubbles: true, composed: true }),
-    );
-    this.dispatchEvent(
-      new CustomEvent('cluster-select', {
-        detail: { clusterId: null },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    // Mark that we clicked on empty space - deselection happens in mouseup if we didn't drag
+    this.clickedEmptySpace = true;
   };
 
   private handleCanvasMouseMove = (e: MouseEvent) => {
@@ -556,7 +558,22 @@ export class GraphCanvas extends LitElement {
   };
 
   private handleCanvasMouseUp = (e?: MouseEvent) => {
+    // Deselect only if we clicked on empty space and didn't drag
+    if (this.clickedEmptySpace && !this.hasMoved) {
+      this.dispatchEvent(
+        new CustomEvent('node-select', { detail: { node: null }, bubbles: true, composed: true }),
+      );
+      this.dispatchEvent(
+        new CustomEvent('cluster-select', {
+          detail: { clusterId: null },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
+
     this.isDragging = false;
+    this.clickedEmptySpace = false;
     if (this.isRotating) {
       this.isRotating = false;
       this.removeAttribute('rotating');
