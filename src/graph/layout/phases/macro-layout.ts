@@ -36,8 +36,9 @@ export async function computeMacroLayout(
     sources: [e.source],
     targets: [e.target],
     layoutOptions: {
-      // Prioritize high-weight edges
-      'elk.priority': String(Math.min(10, 1 + Math.log2(e.weight ?? 1))),
+      // Prioritize high-weight edges for direction (cycle breaking) and shortness (layering)
+      'elk.layered.priority.direction': String(Math.min(10, 1 + Math.log2(e.weight ?? 1))),
+      'elk.layered.priority.shortness': String(Math.min(10, 1 + Math.log2(e.weight ?? 1))),
       'elk.edge.thickness': String(1 + Math.log2(e.weight ?? 1)),
     },
   }));
@@ -45,13 +46,13 @@ export async function computeMacroLayout(
   // Dynamically calculate width based on AREA heuristic (more stable than sum widths)
   // Packing efficiency ~60%
   const totalArea = children.reduce((sum, c) => sum + (c.width ?? 0) * (c.height ?? 0), 0);
-  const targetAspect = 1.6;
-  const areaWidth = Math.sqrt(totalArea * targetAspect / 0.6) + 1000;
-  const elkWidthHint = Math.max(config.elkMaxWidth, areaWidth);
+  // Fixed large width to ensure ELK doesn't constrain itself unnecessarily
+  const elkWidthHint = 10000; 
 
-  // Decoupled packing width: ELK gets freedom, but we force structure
-  const packMaxWidth = 2500; 
-
+  // Decoupled packing width: Use a dynamic width for manual packing
+  // This allows the compaction to grow horizontally with the ELK hint
+  const packMaxWidth = elkWidthHint; // Match ELK's hint for compaction
+  
   const root: ElkNode = {
     id: 'root',
     width: elkWidthHint, // Hint to ELK
@@ -70,6 +71,13 @@ export async function computeMacroLayout(
       'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
       'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
       'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
+      
+      // Force ELK to try to keep layers narrow to aid aspect ratio
+      'elk.layered.layering.strategy': 'MIN_WIDTH', 
+      'elk.layered.layering.minWidth.upperBoundOnWidth': String(elkWidthHint),
+      
+      // Generate explicit layer IDs for stable post-processing
+      'org.eclipse.elk.layered.generatePositionAndLayerIds': 'true',
     },
   };
 
@@ -78,27 +86,48 @@ export async function computeMacroLayout(
 
   // 3. Post-Compaction & Centering
   if (layout.children) {
-    // Group by Y-band using layer spacing as quantization
+    // Group by Layer ID (from ELK) or Y-band (fallback)
     const bands = new Map<number, ElkNode[]>();
     const ySnap = config.elkLayerSpacing; 
     
     for (const node of layout.children) {
-      const cy = (node.y ?? 0) + (node.height ?? 0) / 2;
-      // Quantize to nearest layer grid (Floor ensures gravity down)
-      const bandY = Math.floor(cy / ySnap) * ySnap;
-      if (!bands.has(bandY)) bands.set(bandY, []);
-      bands.get(bandY)!.push(node);
+      // Try to read explicit layer ID first
+      let bandIndex = (node as any)['org.eclipse.elk.layered.layering.layerId'];
+      
+      if (typeof bandIndex !== 'number') {
+        // Fallback to Y quantization
+        const cy = (node.y ?? 0) + (node.height ?? 0) / 2;
+        bandIndex = Math.floor(cy / ySnap);
+      }
+      
+      if (!bands.has(bandIndex)) bands.set(bandIndex, []);
+      bands.get(bandIndex)!.push(node);
     }
 
-    // Sort bands by Y to place them sequentially (preventing overlap)
+    // Sort bands by Index to place them sequentially
     const sortedBands = Array.from(bands.entries()).sort((a, b) => a[0] - b[0]);
     
     // Start cursor at the first band's original Y (or 0)
-    let yCursor = sortedBands.length > 0 ? sortedBands[0]![0] : 0;
+    let yCursor = 0;
+    if (sortedBands.length > 0) {
+       // If using Y-fallback, use original Y. If using IDs, use 0 or previous.
+       // Let's reset to 0 to ensure clean stacking, or keep original Y offset?
+       // Safest: Use layout children[0].y as starting point?
+       // Or just 0. ELK gives relative coords.
+       // Let's use 0 to pack tightly from top.
+       yCursor = 0; 
+    }
 
     for (const [_, nodes] of sortedBands) {
-      // Preserve ELK's X-order
-      nodes.sort((a, b) => (a.x ?? 0) - (b.x ?? 0));
+      // Preserve ELK's X-order (or use positionId if available)
+      nodes.sort((a, b) => {
+        const posA = (a as any)['org.eclipse.elk.layered.crossingMinimization.positionId'];
+        const posB = (b as any)['org.eclipse.elk.layered.crossingMinimization.positionId'];
+        if (typeof posA === 'number' && typeof posB === 'number') {
+            return posA - posB;
+        }
+        return (a.x ?? 0) - (b.x ?? 0);
+      });
 
       const spacing = config.elkNodeSpacing;
       // Use stable packing width to prevent drift
@@ -109,15 +138,18 @@ export async function computeMacroLayout(
       let currentRowWidth = 0;
       
       for (const node of nodes) {
-        const w = node.width ?? 100;
-        // Accurate wrapping check
+        // Use Effective Diameter for consistent wrapping/packing logic
+        // Visual diameter = max(w,h) + buffer(60)
+        const wEff = Math.max(node.width ?? 100, node.height ?? 100) + 60;
+        
+        // Accurate wrapping check using wEff
         const nextWidth = rows[rows.length - 1]!.length === 0 
-          ? w 
-          : currentRowWidth + spacing + w;
+          ? wEff 
+          : currentRowWidth + spacing + wEff;
 
         if (nextWidth > maxWidth && rows[rows.length - 1]!.length > 0) {
           rows.push([]);
-          currentRowWidth = w;
+          currentRowWidth = wEff;
         } else {
           currentRowWidth = nextWidth;
         }
@@ -138,8 +170,8 @@ export async function computeMacroLayout(
         // Compute layout using circular bounds for safety
         const rowItems = row.map(n => ({ 
           node: n, 
-          // Visual radius (approx half max dim) + Label/Border Buffer (30px)
-          r: Math.max(n.width ?? 0, n.height ?? 0) / 2 + 30
+          // Use same wEff radius logic
+          r: (Math.max(n.width ?? 0, n.height ?? 0) + 60) / 2
         }));
 
         const totalWidth = rowItems.reduce((sum, item, i) => {
@@ -165,10 +197,8 @@ export async function computeMacroLayout(
         currentY += maxRowH + rowGap;
       }
       
-      // Advance cursor for next BAND: Current Y points to start of next row.
-      // Add extra padding to separate from next stratum.
-      // But currentY already includes rowGap. 
-      // Let's ensure minimum band gap.
+      // Advance cursor for next BAND
+      // Use bandGap to separate strata
       yCursor = currentY + (config.elkLayerSpacing - 100); 
     }
   }
