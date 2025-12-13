@@ -5,6 +5,7 @@ import type { HierarchicalLayoutResult } from './types';
 import { buildClusterGraph } from './cluster-graph';
 import { computeClusterInterior } from './phases/micro-layout';
 import { computeMacroLayout } from './phases/macro-layout';
+import { applyForceMassage } from './phases/force-massage';
 
 /**
  * Main layout computation - Hybrid ELK + D3 "Macro/Micro" Layout
@@ -45,7 +46,10 @@ export async function computeHierarchicalLayout(
   );
 
   // 3. Macro-Layout: Compute cluster world positions using ELK
-  const clusterPositions = await computeMacroLayout(clusterGraph, microLayouts, config);
+  let clusterPositions = await computeMacroLayout(clusterGraph, microLayouts, config);
+
+  // 3b. Force-Directed Massage: Relax cluster positions to reduce overlaps/gaps
+  clusterPositions = applyForceMassage(clusterPositions, clusterGraph, config);
 
   // 4. Composition: Calculate final world positions for nodes
   const nodePositions = new Map<string, NodePosition>();
