@@ -34,6 +34,7 @@
  * @see {@link LayoutWorkerController} - Alternative for large graphs (1000+ nodes)
  */
 
+import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
@@ -100,6 +101,11 @@ export class GraphLayoutController implements ReactiveController {
     return this._clusterEdges;
   }
 
+  /** Port-routed edges for cross-cluster connections */
+  get routedEdges(): RoutedEdge[] | undefined {
+    return this._routedEdges;
+  }
+
   private _nodePositions = new Map<string, NodePosition>();
   private _clusterPositions = new Map<string, ClusterPosition>();
   private _clusters: Cluster[] = [];
@@ -107,6 +113,7 @@ export class GraphLayoutController implements ReactiveController {
   private _nodeSccId: Map<string, number> | undefined;
   private _sccSizes: Map<number, number> | undefined;
   private _clusterEdges: { source: string; target: string; weight: number }[] | undefined;
+  private _routedEdges: RoutedEdge[] | undefined;
 
   constructor(host: ReactiveControllerHost, config: GraphLayoutConfig = {}) {
     this.host = host;
@@ -133,6 +140,7 @@ export class GraphLayoutController implements ReactiveController {
       this._nodeSccId = undefined;
       this._sccSizes = undefined;
       this._clusterEdges = undefined;
+      this._routedEdges = undefined;
       return;
     }
 
@@ -146,6 +154,7 @@ export class GraphLayoutController implements ReactiveController {
     this._nodeSccId = layout.nodeSccId;
     this._sccSizes = layout.sccSizes;
     this._clusterEdges = layout.clusterEdges;
+    this._routedEdges = layout.routedEdges;
 
     this.host.requestUpdate();
   }

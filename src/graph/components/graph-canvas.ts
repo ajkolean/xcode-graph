@@ -1,4 +1,5 @@
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
+import type { RoutedEdge } from '@graph/layout/types';
 import type { TransitiveResult } from '@graph/utils';
 import { getConnectedNodes } from '@graph/utils/connections';
 import { ViewMode } from '@shared/schemas';
@@ -10,7 +11,7 @@ import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { getNodeIconPath3D } from '@ui/utils/node-icons-3d';
-import { generateBezierPath } from '@ui/utils/paths';
+import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { getNodeSize } from '@ui/utils/sizing';
 import {
   calculateViewportBounds,
@@ -1085,6 +1086,14 @@ export class GraphCanvas extends LitElement {
   private renderEdges(viewport: ViewportBounds) {
     const selectedNodeId = this.selectedNode?.id;
 
+    // Build routed edge lookup map for cross-cluster edges
+    const routedEdgeMap = new Map<string, RoutedEdge>();
+    if (this.layout.routedEdges) {
+      for (const re of this.layout.routedEdges) {
+        routedEdgeMap.set(`${re.sourceNodeId}->${re.targetNodeId}`, re);
+      }
+    }
+
     // LOD: If zoomed out, show arteries (cluster-to-cluster edges)
     // Threshold: 0.8 scale (show arteries longer)
     const showArteries = this.zoom < 0.8;
@@ -1097,7 +1106,7 @@ export class GraphCanvas extends LitElement {
         for (const edge of this.edges) {
           if (edge.source === selectedNodeId || edge.target === selectedNodeId) {
             // Force highlight by passing true
-            this.renderSingleNodeEdge(edge, viewport, true);
+            this.renderSingleNodeEdge(edge, viewport, true, routedEdgeMap);
           }
         }
       }
@@ -1109,11 +1118,16 @@ export class GraphCanvas extends LitElement {
     for (const edge of this.edges) {
       const isConnectedToSelected =
         edge.source === selectedNodeId || edge.target === selectedNodeId;
-      this.renderSingleNodeEdge(edge, viewport, isConnectedToSelected);
+      this.renderSingleNodeEdge(edge, viewport, isConnectedToSelected, routedEdgeMap);
     }
   }
 
-  private renderSingleNodeEdge(edge: GraphEdge, viewport: ViewportBounds, isHighlighted: boolean) {
+  private renderSingleNodeEdge(
+    edge: GraphEdge,
+    viewport: ViewportBounds,
+    isHighlighted: boolean,
+    routedEdgeMap?: Map<string, RoutedEdge>,
+  ) {
     const sourceNode = this.nodes.find((n) => n.id === edge.source);
     const targetNode = this.nodes.find((n) => n.id === edge.target);
     if (!sourceNode || !targetNode) return;
@@ -1206,25 +1220,43 @@ export class GraphCanvas extends LitElement {
     const baseWidth = isHighlighted ? 2.5 : isCycleEdge ? 2 : 1;
     this.ctx.lineWidth = baseWidth / this.zoom;
 
-    const distance = Math.hypot(x2 - x1, y2 - y1);
-    const useBezier = distance > 150;
-    const dashPattern = isCycleEdge
-      ? [4, 4]
-      : sourceClusterId !== targetClusterId
-        ? [8, 4]
-        : [4, 2];
+    const isCrossCluster = sourceClusterId !== targetClusterId;
+    const dashPattern = isCycleEdge ? [4, 4] : isCrossCluster ? [10, 5] : [4, 2];
     this.ctx.setLineDash(dashPattern);
     this.ctx.lineDashOffset = isHighlighted ? -this.time / 20 : 0;
 
-    if (useBezier) {
-      const pathString = generateBezierPath(x1, y1, x2, y2);
+    // Check for port-routed path for cross-cluster edges
+    const edgeKey = `${edge.source}->${edge.target}`;
+    const routedEdge = isCrossCluster ? routedEdgeMap?.get(edgeKey) : undefined;
+
+    if (routedEdge && layoutDimension.get() === '2d') {
+      // Use port-routed path for cross-cluster edges (2D only for now)
+      const pathString = generatePortRoutedPath(
+        { x: sourceLayout.x, y: sourceLayout.y },
+        { x: routedEdge.sourcePort.x, y: routedEdge.sourcePort.y },
+        { x: routedEdge.targetPort.x, y: routedEdge.targetPort.y },
+        { x: targetLayout.x, y: targetLayout.y },
+        routedEdge.waypoints,
+        { x: sClusterX, y: sClusterY },
+        { x: tClusterX, y: tClusterY },
+      );
       const path = new Path2D(pathString);
       this.ctx.stroke(path);
     } else {
-      this.ctx.beginPath();
-      this.ctx.moveTo(x1, y1);
-      this.ctx.lineTo(x2, y2);
-      this.ctx.stroke();
+      // Fall back to direct bezier
+      const distance = Math.hypot(x2 - x1, y2 - y1);
+      const useBezier = distance > 150;
+
+      if (useBezier) {
+        const pathString = generateBezierPath(x1, y1, x2, y2);
+        const path = new Path2D(pathString);
+        this.ctx.stroke(path);
+      } else {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x1, y1);
+        this.ctx.lineTo(x2, y2);
+        this.ctx.stroke();
+      }
     }
 
     this.ctx.setLineDash([]);

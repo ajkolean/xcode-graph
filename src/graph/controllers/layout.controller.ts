@@ -36,6 +36,8 @@ export interface LayoutResult {
   clusters: Cluster[];
   /** Aggregated edges between clusters (Arteries) */
   clusterEdges?: { source: string; target: string; weight: number }[];
+  /** Port-routed edges for cross-cluster connections */
+  routedEdges?: RoutedEdge[];
   /** Nodes that are part of cycles (SCC size > 1) */
   cycleNodes?: Set<string>;
   /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */
@@ -125,6 +127,7 @@ export class LayoutController implements ReactiveController {
         nodeSccId,
         sccSizes,
         clusterEdges,
+        routedEdges,
       } = await computeHierarchicalLayout(nodes, edges, analyzedClusters, {
         dimension: layoutDimension.get(),
       });
@@ -148,6 +151,7 @@ export class LayoutController implements ReactiveController {
         nodeSccId,
         sccSizes,
         clusterEdges,
+        routedEdges,
       };
 
       this.cacheResult(result, nodes, edges);
