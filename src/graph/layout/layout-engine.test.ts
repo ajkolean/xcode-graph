@@ -12,17 +12,14 @@ import {
   createProjectGraph,
 } from '../../fixtures/graphs';
 import { tuistGraphData } from '../../fixtures/tuist-graph-data';
-import { groupIntoClusters } from './cluster-grouping';
 import { analyzeCluster } from './cluster-analysis';
+import { groupIntoClusters } from './cluster-grouping';
 import { computeHierarchicalLayout } from './index';
 
 /**
  * Helper to create clusters from nodes based on their project property
  */
-function createClustersFromGraph(
-  nodes: GraphNode[],
-  edges: GraphEdge[],
-): Cluster[] {
+function createClustersFromGraph(nodes: GraphNode[], edges: GraphEdge[]): Cluster[] {
   const projectNodes = new Map<string, GraphNode[]>();
 
   for (const node of nodes) {
@@ -39,8 +36,7 @@ function createClustersFromGraph(
     nodes: clusterNodes,
     internalEdges: edges.filter(
       (e) =>
-        clusterNodes.some((n) => n.id === e.source) &&
-        clusterNodes.some((n) => n.id === e.target),
+        clusterNodes.some((n) => n.id === e.source) && clusterNodes.some((n) => n.id === e.target),
     ),
   }));
 }
@@ -178,9 +174,7 @@ describe('computeHierarchicalLayout', () => {
           if (!nodePos) continue;
 
           // Node position is relative to cluster center
-          const distFromCenter = Math.sqrt(
-            nodePos.x ** 2 + nodePos.y ** 2,
-          );
+          const distFromCenter = Math.sqrt(nodePos.x ** 2 + nodePos.y ** 2);
 
           // Nodes should be within cluster radius (with some tolerance)
           // ELK rectangles vs circular approximation - tolerance increased

@@ -36,7 +36,6 @@ const config: StorybookConfig = {
       '@graph': path.resolve(__dirname, '../src/graph'),
       '@ui': path.resolve(__dirname, '../src/ui'),
       '@shared': path.resolve(__dirname, '../src/shared'),
-      'styled-system': path.resolve(__dirname, '../styled-system'),
     };
 
     // Set esbuild target for Lit decorators

@@ -19,11 +19,11 @@ export const DEFAULT_CONFIG = {
   crossClusterStrengthMul: 0.02,
 
   // Cluster forces (D3 Legacy)
-  clusterStrength: 0.30,
+  clusterStrength: 0.3,
   clusterDistanceMin: 20,
   clusterRepulsionStrength: 8000,
   clusterPadding: 120,
-  clusterAttractionStrength: 0.20,
+  clusterAttractionStrength: 0.2,
   clusterAttractionActivationDist: 500,
   clusterRepulsionYScale: 0.2,
 
@@ -61,7 +61,7 @@ export const DEFAULT_CONFIG = {
   clusterStrataSpacing: 800,
   clusterHorizontalSpacing: 120,
   clusterMaxRowWidth: 900,
-  clusterStrataAnchorStrength: 0.80,
+  clusterStrataAnchorStrength: 0.8,
 
   // Drift prevention (D3 Legacy)
   clusterCenteringStrength: 0.75,
@@ -77,22 +77,22 @@ export const DEFAULT_CONFIG = {
   // ==========================================================================
   // ELK Layout Configuration
   // ==========================================================================
-  
+
   /** Direction of flow: 'RIGHT' (left->right) or 'DOWN' (top->bottom) */
-  elkDirection: 'DOWN', 
-  
+  elkDirection: 'DOWN',
+
   /** Main algorithm: 'layered' is best for dependencies */
   elkAlgorithm: 'layered',
-  
+
   /** Edge routing style: 'ORTHOGONAL' (rectilinear) or 'SPLINES' (curved) */
   elkEdgeRouting: 'ORTHOGONAL',
-  
+
   /** Spacing between nodes in the same layer */
   elkNodeSpacing: 200,
-  
+
   /** Spacing between layers (ranks) */
   elkLayerSpacing: 300,
-  
+
   /** Padding around clusters */
   elkPadding: 100,
 
@@ -101,7 +101,7 @@ export const DEFAULT_CONFIG = {
 
   /** Maximum width target for wrapping */
   elkMaxWidth: 2000,
-  
+
   /** Maximum height target for wrapping */
   elkMaxHeight: 2000,
 } as const;
@@ -115,11 +115,11 @@ export type LayoutConfig = typeof DEFAULT_CONFIG;
 export interface LayoutOptions {
   /** Layout dimension: 2D or 3D (default: '2d') */
   dimension?: '2d' | '3d';
-  
+
   /** Override specific config values */
   configOverrides?: Partial<LayoutConfig>;
 
-  /** 
+  /**
    * Callback to resolve Z-offset for a node.
    * Decouples domain-specific "Roles" from the layout engine.
    * Returns a number (e.g., -100 to +100) or 0.

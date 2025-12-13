@@ -35,7 +35,14 @@ export interface NodeReport {
 export interface LayoutSummary {
   totalClusters: number;
   totalNodes: number;
-  boundingBox: { width: number; height: number; xMin: number; xMax: number; yMin: number; yMax: number };
+  boundingBox: {
+    width: number;
+    height: number;
+    xMin: number;
+    xMax: number;
+    yMin: number;
+    yMax: number;
+  };
   aspectRatio: number;
   strataCount: number;
 }
@@ -260,15 +267,9 @@ export function printLayoutSummary(report: PositionReport): void {
   console.log('\n═══ LAYOUT SUMMARY ═══\n');
   console.log(`   Total Clusters: ${summary.totalClusters}`);
   console.log(`   Total Nodes:    ${summary.totalNodes}`);
-  console.log(
-    `   Bounding Box:   ${summary.boundingBox.width}w × ${summary.boundingBox.height}h`,
-  );
-  console.log(
-    `   X Range:        [${summary.boundingBox.xMin}, ${summary.boundingBox.xMax}]`,
-  );
-  console.log(
-    `   Y Range:        [${summary.boundingBox.yMin}, ${summary.boundingBox.yMax}]`,
-  );
+  console.log(`   Bounding Box:   ${summary.boundingBox.width}w × ${summary.boundingBox.height}h`);
+  console.log(`   X Range:        [${summary.boundingBox.xMin}, ${summary.boundingBox.xMax}]`);
+  console.log(`   Y Range:        [${summary.boundingBox.yMin}, ${summary.boundingBox.yMax}]`);
   console.log(`   Aspect Ratio:   ${summary.aspectRatio.toFixed(2)}`);
   console.log(`   Strata Count:   ${summary.strataCount}`);
   console.log('');
@@ -302,8 +303,7 @@ export function exportClustersToCSV(report: PositionReport): string {
 export function exportNodesToCSV(report: PositionReport): string {
   const headers = 'id,clusterId,relativeX,relativeY,absoluteX,absoluteY';
   const rows = report.nodes.map(
-    (n) =>
-      `${n.id},${n.clusterId},${n.relativeX},${n.relativeY},${n.absoluteX},${n.absoluteY}`,
+    (n) => `${n.id},${n.clusterId},${n.relativeX},${n.relativeY},${n.absoluteX},${n.absoluteY}`,
   );
   return [headers, ...rows].join('\n');
 }

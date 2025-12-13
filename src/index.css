@@ -1095,8 +1095,8 @@
 }
 
 /**
- * Legacy tokens for React components
- * TODO: Migrate React components to use new --colors-* tokens from tokens.css
+ * Legacy token aliases
+ * These map old variable names to the new --colors-* token system
  */
 :root {
   --font-size: 16px;

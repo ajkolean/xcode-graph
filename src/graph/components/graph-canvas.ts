@@ -591,7 +591,10 @@ export class GraphCanvas extends LitElement {
 
     const zoomSensitivity = 0.001;
     const delta = -e.deltaY * zoomSensitivity;
-    const newZoom = Math.min(Math.max(ZOOM_CONFIG.MIN_ZOOM, this.zoom + delta), ZOOM_CONFIG.MAX_ZOOM);
+    const newZoom = Math.min(
+      Math.max(ZOOM_CONFIG.MIN_ZOOM, this.zoom + delta),
+      ZOOM_CONFIG.MAX_ZOOM,
+    );
 
     if (newZoom !== this.zoom) {
       const { x, y } = this.getMousePos(e);
@@ -811,7 +814,8 @@ export class GraphCanvas extends LitElement {
       // Draw cluster border
       this.ctx.lineWidth = isActive ? 2.5 : 2;
       this.ctx.strokeStyle = clusterColor;
-      this.ctx.globalAlpha = (isActive ? 0.9 : borderOpacity) * (shouldDim ? 0.3 : 1.0) * depthOpacity;
+      this.ctx.globalAlpha =
+        (isActive ? 0.9 : borderOpacity) * (shouldDim ? 0.3 : 1.0) * depthOpacity;
 
       if (is3D) {
         // 3D mode: solid border for sphere look
@@ -1079,10 +1083,10 @@ export class GraphCanvas extends LitElement {
     // LOD: If zoomed out, show arteries (cluster-to-cluster edges)
     // Threshold: 0.8 scale (show arteries longer)
     const showArteries = this.zoom < 0.8;
-    
+
     if (showArteries) {
       this.renderArteries(viewport);
-      
+
       // If a node is selected, render its edges immediately on top of arteries
       if (selectedNodeId) {
         for (const edge of this.edges) {
@@ -1098,7 +1102,8 @@ export class GraphCanvas extends LitElement {
     this.ctx.lineWidth = 1;
 
     for (const edge of this.edges) {
-      const isConnectedToSelected = (edge.source === selectedNodeId || edge.target === selectedNodeId);
+      const isConnectedToSelected =
+        edge.source === selectedNodeId || edge.target === selectedNodeId;
       this.renderSingleNodeEdge(edge, viewport, isConnectedToSelected);
     }
   }
@@ -1120,7 +1125,12 @@ export class GraphCanvas extends LitElement {
     const targetClusterId = targetNode.project || 'External';
 
     // LOD: Hide intra-cluster edges when zoomed out (unless hovering that cluster or explicitly highlighted)
-    if (sourceClusterId === targetClusterId && this.zoom < 0.6 && this.hoveredCluster !== sourceClusterId && !isHighlighted) {
+    if (
+      sourceClusterId === targetClusterId &&
+      this.zoom < 0.6 &&
+      this.hoveredCluster !== sourceClusterId &&
+      !isHighlighted
+    ) {
       return;
     }
 
@@ -1166,7 +1176,7 @@ export class GraphCanvas extends LitElement {
       (this.layout.sccSizes?.get(sourceScc) ?? 0) > 1;
 
     let color = getNodeTypeColor(targetNode.type);
-    
+
     // Bypass adjustColorForZoom if highlighted to ensure visibility
     if (!isHighlighted) {
       color = adjustColorForZoom(color, this.zoom);
@@ -1182,18 +1192,22 @@ export class GraphCanvas extends LitElement {
     if (isCycleEdge) {
       opacity = Math.max(opacity, 0.8);
     }
-    
+
     opacity *= this.getEdgeOpacity(edge);
-    
+
     this.ctx.globalAlpha = Math.min(1, opacity);
-    
+
     // Scale line width by inverse zoom to maintain screen pixel width
     const baseWidth = isHighlighted ? 2.5 : isCycleEdge ? 2 : 1;
     this.ctx.lineWidth = baseWidth / this.zoom;
 
     const distance = Math.hypot(x2 - x1, y2 - y1);
     const useBezier = distance > 150;
-    const dashPattern = isCycleEdge ? [4, 4] : (sourceClusterId !== targetClusterId) ? [8, 4] : [4, 2];
+    const dashPattern = isCycleEdge
+      ? [4, 4]
+      : sourceClusterId !== targetClusterId
+        ? [8, 4]
+        : [4, 2];
     this.ctx.setLineDash(dashPattern);
     this.ctx.lineDashOffset = isHighlighted ? -this.time / 20 : 0;
 
@@ -1219,13 +1233,13 @@ export class GraphCanvas extends LitElement {
     for (const edge of clusterEdges) {
       const sPos = this.layout.clusterPositions.get(edge.source);
       const tPos = this.layout.clusterPositions.get(edge.target);
-      
+
       if (!sPos || !tPos) continue;
 
       // Use manual positions if dragged
       const sManual = this.manualClusterPositions.get(edge.source);
       const tManual = this.manualClusterPositions.get(edge.target);
-      
+
       const x1 = sManual?.x ?? sPos.x;
       const y1 = sManual?.y ?? sPos.y;
       const x2 = tManual?.x ?? tPos.x;
@@ -1240,12 +1254,12 @@ export class GraphCanvas extends LitElement {
       if (!isLineInViewport({ x: p1.x, y: p1.y }, { x: p2.x, y: p2.y }, viewport)) continue;
 
       // Thickness proportional to weight (log scale)
-      // weight is count of edges. 
+      // weight is count of edges.
       const thickness = Math.max(2, Math.min(12, Math.log2(edge.weight + 1) * 2));
-      
+
       this.ctx.lineWidth = thickness * this.zoom;
       this.ctx.strokeStyle = 'rgba(150, 150, 160, 0.4)'; // Muted gray/blue
-      
+
       const pathString = generateBezierPath(p1.x, p1.y, p2.x, p2.y);
       const path = new Path2D(pathString);
       this.ctx.stroke(path);
@@ -1276,11 +1290,7 @@ export class GraphCanvas extends LitElement {
    * Uses simple rotation matrices for pitch (X-axis) and yaw (Y-axis).
    * Returns the projected 2D coordinates and the projected z for depth sorting.
    */
-  private project3D(
-    x: number,
-    y: number,
-    z: number,
-  ): { x: number; y: number; z: number } {
+  private project3D(x: number, y: number, z: number): { x: number; y: number; z: number } {
     const is3D = layoutDimension.get() === '3d';
     if (!is3D || (this.cameraRotation.pitch === 0 && this.cameraRotation.yaw === 0)) {
       return { x, y, z };

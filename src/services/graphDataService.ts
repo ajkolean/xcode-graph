@@ -3,6 +3,7 @@
  * Provides single source of truth for all graph data operations
  */
 
+import { addToMultiMap } from '@shared/collections';
 import type { Cluster } from '@shared/schemas';
 import {
   type GraphEdge,
@@ -10,7 +11,6 @@ import {
   NodeType,
   type Origin,
 } from '@shared/schemas/graph.schema';
-import { addToMultiMap } from '@shared/utils/collections';
 
 export class GraphDataService {
   private readonly nodes: GraphNode[];

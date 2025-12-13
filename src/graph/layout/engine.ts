@@ -1,16 +1,16 @@
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import { DEFAULT_CONFIG, type LayoutOptions } from './config';
-import type { HierarchicalLayoutResult } from './types';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { buildClusterGraph } from './cluster-graph';
-import { computeClusterInterior } from './phases/micro-layout';
-import { computeMacroLayout } from './phases/macro-layout';
+import { DEFAULT_CONFIG, type LayoutOptions } from './config';
 import { applyForceMassage } from './phases/force-massage';
+import { computeMacroLayout } from './phases/macro-layout';
+import { computeClusterInterior } from './phases/micro-layout';
 import { applyNodeMassage } from './phases/node-massage';
+import type { HierarchicalLayoutResult } from './types';
 
 /**
  * Main layout computation - Hybrid ELK + D3 "Macro/Micro" Layout
- * 
+ *
  * Orchestrates:
  * 1. Micro-Layout: Computes internal "Solar System" layout for each cluster (D3)
  * 2. Macro-Layout: Computes "Tectonic Plate" layout for clusters (ELK Layered)
@@ -40,12 +40,12 @@ export async function computeHierarchicalLayout(
   // 2. Micro-Layout: Compute dimensions and internal positions for each cluster
   // (Can run in parallel)
   const microLayouts = new Map(
-    clusters.map(cluster => {
+    clusters.map((cluster) => {
       let micro = computeClusterInterior(cluster, config);
       // 2b. Node Massage: Gently space out nodes within the cluster
       micro = applyNodeMassage(micro, config);
       return [cluster.id, micro];
-    })
+    }),
   );
 
   // 3. Macro-Layout: Compute cluster world positions using ELK
@@ -69,15 +69,15 @@ export async function computeHierarchicalLayout(
       nodePositions.set(nodeId, {
         ...relPos,
         x: relPos.x, // Store relative for rendering if needed, or absolute?
-                     // Existing renderer expects RELATIVE to cluster in `x`/`y` if `clusterPositions` is used.
-                     // Let's verify `GraphCanvas`.
-                     // GraphCanvas: `worldX = clusterPos.x + nodePos.x`
-                     // So we just store relative x/y.
+        // Existing renderer expects RELATIVE to cluster in `x`/`y` if `clusterPositions` is used.
+        // Let's verify `GraphCanvas`.
+        // GraphCanvas: `worldX = clusterPos.x + nodePos.x`
+        // So we just store relative x/y.
         clusterId: cluster.id,
         z: opts.getNodeZOffset ? opts.getNodeZOffset(nodeId) : 0,
       });
     }
-    
+
     // Update node count in position
     clusterPos.nodeCount = cluster.nodes.length;
   }
@@ -86,10 +86,10 @@ export async function computeHierarchicalLayout(
     nodePositions,
     clusterPositions,
     clusters,
-    clusterEdges: clusterGraph.edges.map(e => ({
+    clusterEdges: clusterGraph.edges.map((e) => ({
       source: e.source,
       target: e.target,
-      weight: e.weight
+      weight: e.weight,
     })),
     // Cycle data omitted for now (ELK handles topology)
     cycleNodes: new Set(),

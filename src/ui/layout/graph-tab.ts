@@ -38,6 +38,7 @@ import {
   viewMode,
 } from '@graph/signals/index';
 import {
+  baseZoom,
   enableAnimation,
   layoutDimension,
   previewFilter,
@@ -46,7 +47,6 @@ import {
   toggleAnimation,
   toggleLayoutDimension,
   zoom,
-  baseZoom,
   zoomIn,
   zoomOut,
 } from '@shared/signals/index';

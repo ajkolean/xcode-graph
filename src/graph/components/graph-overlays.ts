@@ -226,9 +226,10 @@ export class GraphControls extends LitElement {
   }
 
   override render() {
-    const percentage = this.baseZoom > 0 
-      ? Math.round((this.zoom / this.baseZoom) * 100) 
-      : Math.round(this.zoom * 100);
+    const percentage =
+      this.baseZoom > 0
+        ? Math.round((this.zoom / this.baseZoom) * 100)
+        : Math.round(this.zoom * 100);
 
     return html`
       <div class="container" @wheel=${this.handleWheel} @mousedown=${this.handleMouseDown}>

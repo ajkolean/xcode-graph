@@ -29,8 +29,7 @@ import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/grap
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
-import { html, LitElement, type PropertyValues } from 'lit';
-import { trackLitPerformance } from '@/utils/lit-performance-tracker';
+import { html, LitElement } from 'lit';
 import './cluster-card';
 import './graph-edges';
 import './graph-node';
@@ -188,11 +187,6 @@ export class GraphClusterGroup extends LitElement {
   // ========================================
   // Render
   // ========================================
-
-  override updated(changed: PropertyValues) {
-    super.updated(changed);
-    trackLitPerformance(this, changed);
-  }
 
   override render() {
     if (!this.cluster || !this.clusterPosition) return html``;

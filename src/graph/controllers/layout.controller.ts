@@ -22,7 +22,7 @@ import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { layoutDimension } from '@shared/signals/index';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import { computeHierarchicalLayout } from "@/graph/layout";
+import { computeHierarchicalLayout } from '@/graph/layout';
 
 // ==================== Type Definitions ====================
 
@@ -81,7 +81,11 @@ export class LayoutController implements ReactiveController {
    * @param forceRecompute - Force recomputation even if cached
    * @returns Promise resolving to Layout result with positions and clusters
    */
-  async computeLayout(nodes: GraphNode[], edges: GraphEdge[], forceRecompute = false): Promise<LayoutResult> {
+  async computeLayout(
+    nodes: GraphNode[],
+    edges: GraphEdge[],
+    forceRecompute = false,
+  ): Promise<LayoutResult> {
     // Return cached result if inputs haven't changed
     if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
       return this.cachedResult;

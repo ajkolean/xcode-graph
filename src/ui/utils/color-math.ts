@@ -1,0 +1,141 @@
+/**
+ * Shared color math utilities for RGB/HSL conversions
+ * Consolidates duplicate logic from color-generator.ts and zoom-colors.ts
+ */
+
+/**
+ * HSL color representation with normalized values (0-1)
+ */
+export interface HSLNormalized {
+  h: number; // 0-1
+  s: number; // 0-1
+  l: number; // 0-1
+}
+
+/**
+ * HSL color representation with degrees/percentage (h: 0-360, s/l: 0-100)
+ */
+export interface HSLDegrees {
+  h: number; // 0-360
+  s: number; // 0-100
+  l: number; // 0-100
+}
+
+/**
+ * RGB color representation (0-1 normalized)
+ */
+export interface RGBNormalized {
+  r: number;
+  g: number;
+  b: number;
+}
+
+/**
+ * Convert hue component to RGB value
+ * Shared helper for HSL to RGB conversion
+ */
+export function hue2rgb(p: number, q: number, t: number): number {
+  let adjustedT = t;
+  if (adjustedT < 0) adjustedT += 1;
+  if (adjustedT > 1) adjustedT -= 1;
+  if (adjustedT < 1 / 6) return p + (q - p) * 6 * adjustedT;
+  if (adjustedT < 1 / 2) return q;
+  if (adjustedT < 2 / 3) return p + (q - p) * (2 / 3 - adjustedT) * 6;
+  return p;
+}
+
+/**
+ * Convert number (0-1) to hex string
+ */
+export function toHex(n: number): string {
+  const hex = Math.round(n * 255).toString(16);
+  return hex.length === 1 ? `0${hex}` : hex;
+}
+
+/**
+ * Convert RGB (0-1 normalized) to HSL (0-1 normalized)
+ */
+export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        break;
+      case g:
+        h = ((b - r) / d + 2) / 6;
+        break;
+      case b:
+        h = ((r - g) / d + 4) / 6;
+        break;
+    }
+  }
+
+  return { h, s, l };
+}
+
+/**
+ * Convert HSL (0-1 normalized) to RGB (0-1 normalized)
+ */
+export function hslToRgb(h: number, s: number, l: number): RGBNormalized {
+  if (s === 0) {
+    return { r: l, g: l, b: l };
+  }
+
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  return {
+    r: hue2rgb(p, q, h + 1 / 3),
+    g: hue2rgb(p, q, h),
+    b: hue2rgb(p, q, h - 1 / 3),
+  };
+}
+
+/**
+ * Convert hex color to HSL (degrees/percentage format)
+ * @param hex - Hex color string (with or without #)
+ * @returns HSL with h: 0-360, s: 0-100, l: 0-100
+ */
+export function hexToHSL(hex: string): HSLDegrees {
+  // Remove # if present
+  const cleanHex = hex.replace('#', '');
+
+  // Parse hex values
+  const r = Number.parseInt(cleanHex.substring(0, 2), 16) / 255;
+  const g = Number.parseInt(cleanHex.substring(2, 4), 16) / 255;
+  const b = Number.parseInt(cleanHex.substring(4, 6), 16) / 255;
+
+  const normalized = rgbToHsl(r, g, b);
+
+  return {
+    h: normalized.h * 360,
+    s: normalized.s * 100,
+    l: normalized.l * 100,
+  };
+}
+
+/**
+ * Convert HSL (degrees/percentage format) to hex color
+ * @param h - Hue (0-360)
+ * @param s - Saturation (0-100)
+ * @param l - Lightness (0-100)
+ * @returns Hex color string with #
+ */
+export function hslToHex(h: number, s: number, l: number): string {
+  // Normalize to 0-1 range
+  const hNorm = h / 360;
+  const sNorm = s / 100;
+  const lNorm = l / 100;
+
+  const rgb = hslToRgb(hNorm, sNorm, lNorm);
+
+  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+}

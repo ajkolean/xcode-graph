@@ -53,9 +53,6 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      'class-variance-authority@0.7.1': 'class-variance-authority',
-      '@radix-ui/react-slot@1.1.2': '@radix-ui/react-slot',
-      '@radix-ui/react-separator@1.1.2': '@radix-ui/react-separator',
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
       '@graph': path.resolve(__dirname, './src/graph'),

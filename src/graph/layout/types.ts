@@ -1,7 +1,7 @@
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import * as d3Force2D from 'd3-force';
-import * as d3Force3D from 'd3-force-3d';
+import type * as d3Force2D from 'd3-force';
+import type * as d3Force3D from 'd3-force-3d';
 
 // ============================================================================
 // Core Layout Types

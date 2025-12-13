@@ -19,8 +19,7 @@
 import { type ClusterPosition, type NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { html, LitElement, type PropertyValues } from 'lit';
-import { trackLitPerformance } from '@/utils/lit-performance-tracker';
+import { html, LitElement } from 'lit';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {
@@ -198,11 +197,6 @@ export class GraphEdges extends LitElement {
     }
 
     return false;
-  }
-
-  override updated(changed: PropertyValues) {
-    super.updated(changed);
-    trackLitPerformance(this, changed);
   }
 
   // ========================================

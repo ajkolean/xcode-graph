@@ -1,5 +1,5 @@
-import { forceSimulation, forceLink, forceCollide, forceX, forceY } from 'd3-force';
 import type { ClusterPosition } from '@shared/schemas';
+import { forceCollide, forceLink, forceSimulation, forceX, forceY } from 'd3-force';
 import type { ClusterGraph } from '../cluster-graph';
 import type { LayoutConfig } from '../config';
 
@@ -11,12 +11,12 @@ import type { LayoutConfig } from '../config';
 export function applyForceMassage(
   clusterPositions: Map<string, ClusterPosition>,
   clusterGraph: ClusterGraph,
-  config: LayoutConfig
+  config: LayoutConfig,
 ): Map<string, ClusterPosition> {
   // 1. Prepare simulation nodes
   // d3-force modifies nodes in place, so we create a working copy
   // We need to store width/height for collision radius
-  const nodes = Array.from(clusterPositions.values()).map(pos => ({
+  const nodes = Array.from(clusterPositions.values()).map((pos) => ({
     id: pos.id,
     x: pos.x,
     y: pos.y,
@@ -24,44 +24,48 @@ export function applyForceMassage(
     height: pos.height,
     // Store original position to keep them somewhat tethered?
     ox: pos.x,
-    oy: pos.y
+    oy: pos.y,
   }));
 
-  const nodeMap = new Map(nodes.map(n => [n.id, n]));
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
 
   // 2. Prepare links
   const links = clusterGraph.edges
-    .map(e => ({
+    .map((e) => ({
       source: nodeMap.get(e.source),
       target: nodeMap.get(e.target),
-      strength: e.tieStrength
+      strength: e.tieStrength,
     }))
-    .filter(l => l.source && l.target); // Filter broken links
+    .filter((l) => l.source && l.target); // Filter broken links
 
   // 3. Configure Simulation
   const simulation = forceSimulation(nodes as any)
     // Link force to keep related clusters together
-    .force('link', forceLink(links as any)
-      .id((d: any) => d.id)
-      .distance((d: any) => {
-        // Ideal distance based on size of connected nodes
-        // r1 + r2 + buffer
-        const s = d.source;
-        const t = d.target;
-        const r1 = Math.max(s.width, s.height) / 2;
-        const r2 = Math.max(t.width, t.height) / 2;
-        return r1 + r2 + config.elkLayerSpacing; 
-      })
-      .strength(0.1) // Gentle pull
+    .force(
+      'link',
+      forceLink(links as any)
+        .id((d: any) => d.id)
+        .distance((d: any) => {
+          // Ideal distance based on size of connected nodes
+          // r1 + r2 + buffer
+          const s = d.source;
+          const t = d.target;
+          const r1 = Math.max(s.width, s.height) / 2;
+          const r2 = Math.max(t.width, t.height) / 2;
+          return r1 + r2 + config.elkLayerSpacing;
+        })
+        .strength(0.1), // Gentle pull
     )
     // Collision force to prevent overlap
-    .force('collide', forceCollide()
-      .radius((d: any) => {
-        // Use circumscribed circle or slightly larger
-        return Math.max(d.width, d.height) / 2 + config.elkNodeSpacing / 2;
-      })
-      .strength(1) // Hard collision
-      .iterations(2)
+    .force(
+      'collide',
+      forceCollide()
+        .radius((d: any) => {
+          // Use circumscribed circle or slightly larger
+          return Math.max(d.width, d.height) / 2 + config.elkNodeSpacing / 2;
+        })
+        .strength(1) // Hard collision
+        .iterations(2),
     )
     // Tether to initial positions (to preserve ELK's general structure)
     // This acts like "gravity" keeping them near where ELK put them,
@@ -85,7 +89,7 @@ export function applyForceMassage(
       x: node.x,
       y: node.y,
       vx: node.vx, // Save velocity if we ever want to animate continued settling
-      vy: node.vy
+      vy: node.vy,
     });
   }
 
