@@ -1211,6 +1211,15 @@ export class GraphCanvas extends LitElement {
     const routedEdge = isCrossCluster ? routedEdgeMap?.get(edgeKey) : undefined;
 
     if (routedEdge && layoutDimension.get() === '2d') {
+      // Use opaque color instead of alpha to prevent stacking
+      // (multiple edges share the same port-to-port highway, causing overlap)
+      // Use a gray that looks like white at the target opacity on black background
+      const baseOpacity = isHighlighted ? 0.5 : 0.15;
+      const targetOpacity = adjustOpacityForZoom(baseOpacity, this.zoom);
+      const gray = Math.round(255 * targetOpacity);
+      this.ctx.strokeStyle = `rgb(${gray}, ${gray}, ${gray})`;
+      this.ctx.globalAlpha = 1.0;
+
       // Use port-routed path for cross-cluster edges (2D only for now)
       const pathString = generatePortRoutedPath(
         { x: sourceLayout.x, y: sourceLayout.y },
@@ -1223,7 +1232,9 @@ export class GraphCanvas extends LitElement {
       );
       const path = new Path2D(pathString);
       this.ctx.stroke(path);
-    } else {
+    } else if (!isCrossCluster) {
+      // Only render intra-cluster edges with direct bezier
+      // Skip cross-cluster edges without routing data (they'll be shown via port routing)
       // Fall back to direct bezier
       const distance = Math.hypot(x2 - x1, y2 - y1);
       const useBezier = distance > 150;
