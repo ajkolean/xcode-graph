@@ -25,9 +25,16 @@ export async function computeMacroLayout(
       // Dimensions fixed by Micro Layout
       width: micro?.width ?? config.minClusterSize,
       height: micro?.height ?? config.minClusterSize,
+      // Add label for ELK to manage spacing
+      labels: [{ 
+        text: cluster.name || cluster.id,
+        width: 100, // Estimate
+        height: 20 
+      }],
       // ELK options for cluster placement
       layoutOptions: {
         'elk.portConstraints': 'FIXED_SIDE', // Ports on sides
+        'org.eclipse.elk.nodeLabels.placement': 'OUTSIDE V_TOP H_CENTER',
       },
     });
   }
