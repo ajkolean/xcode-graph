@@ -7,18 +7,18 @@
  * Exported for parameter sweep testing
  */
 export const DEFAULT_CONFIG = {
-  // Node-level forces
+  // Node-level forces (D3 Legacy)
   nodeRadius: 6,
   nodeCollisionPadding: 12,
   linkDistance: 45,
   linkStrength: 0.35,
   nodeCharge: -35,
 
-  // Cross-cluster link handling
+  // Cross-cluster link handling (D3 Legacy)
   crossClusterDistanceMul: 3.5,
   crossClusterStrengthMul: 0.02,
 
-  // Cluster forces
+  // Cluster forces (D3 Legacy)
   clusterStrength: 0.30,
   clusterDistanceMin: 20,
   clusterRepulsionStrength: 8000,
@@ -31,11 +31,11 @@ export const DEFAULT_CONFIG = {
   layerSpacing: 120,
   layerStrength: 0.35,
 
-  // Dependency hang force
+  // Dependency hang force (D3 Legacy)
   hangGap: 72,
   hangStrength: 0.08,
 
-  // Radial interior force
+  // Radial interior force (D3 Legacy)
   radialStrength: 0.25,
 
   // Simulation
@@ -57,13 +57,13 @@ export const DEFAULT_CONFIG = {
   compatibilityThreshold: 0.65,
   bundlingBudget: 40000,
 
-  // Cluster strata configuration
+  // Cluster strata configuration (D3 Legacy)
   clusterStrataSpacing: 800,
   clusterHorizontalSpacing: 120,
   clusterMaxRowWidth: 900,
   clusterStrataAnchorStrength: 0.80,
 
-  // Drift prevention
+  // Drift prevention (D3 Legacy)
   clusterCenteringStrength: 0.75,
   clusterBoundingRadius: 1200,
   clusterBoundingStrength: 0.5,
@@ -73,6 +73,31 @@ export const DEFAULT_CONFIG = {
   zRoleStrength: 0.12,
   zClampMin: -300,
   zClampMax: 300,
+
+  // ==========================================================================
+  // ELK Layout Configuration
+  // ==========================================================================
+  
+  /** Direction of flow: 'RIGHT' (left->right) or 'DOWN' (top->bottom) */
+  elkDirection: 'DOWN', 
+  
+  /** Main algorithm: 'layered' is best for dependencies */
+  elkAlgorithm: 'layered',
+  
+  /** Edge routing style: 'ORTHOGONAL' (rectilinear) or 'SPLINES' (curved) */
+  elkEdgeRouting: 'ORTHOGONAL',
+  
+  /** Spacing between nodes in the same layer */
+  elkNodeSpacing: 60,
+  
+  /** Spacing between layers (ranks) */
+  elkLayerSpacing: 100,
+  
+  /** Padding around clusters */
+  elkPadding: 60,
+
+  /** Whether to simplify edge routing by merging ports */
+  elkMergeEdges: true,
 } as const;
 
 /** Type for layout configuration */

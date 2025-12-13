@@ -8,9 +8,11 @@
  */
 
 import type { ActiveTab } from '@shared/schemas';
-import type { LayoutDimension } from '@/graph/layout/d3-layout';
+import type { LayoutDimension } from '@/graph/layout/types';
+import { ZOOM_CONFIG } from '@/ui/utils/zoom-constants';
 import {
   activeTab,
+  baseZoom,
   enableAnimation,
   layoutDimension,
   type PreviewFilter,
@@ -35,21 +37,21 @@ export function setActiveTab(tab: ActiveTab): void {
  * @param value - The new zoom level
  */
 export function setZoom(value: number): void {
-  zoom.set(Math.max(0.1, Math.min(5, value)));
+  zoom.set(Math.max(ZOOM_CONFIG.MIN_ZOOM, Math.min(ZOOM_CONFIG.MAX_ZOOM, value)));
 }
 
 /**
  * Increase zoom by 0.1
  */
 export function zoomIn(): void {
-  zoom.set(Math.min(2, zoom.get() + 0.1));
+  zoom.set(Math.min(ZOOM_CONFIG.MAX_ZOOM, zoom.get() + 0.1));
 }
 
 /**
  * Decrease zoom by 0.1
  */
 export function zoomOut(): void {
-  zoom.set(Math.max(0.2, zoom.get() - 0.1));
+  zoom.set(Math.max(ZOOM_CONFIG.MIN_ZOOM, zoom.get() - 0.1));
 }
 
 /**
@@ -57,6 +59,14 @@ export function zoomOut(): void {
  */
 export function resetZoom(): void {
   zoom.set(1);
+}
+
+/**
+ * Set base zoom level (fit scale)
+ * @param value - The base scale factor
+ */
+export function setBaseZoom(value: number): void {
+  baseZoom.set(value);
 }
 
 // ==================== Animation Actions ====================

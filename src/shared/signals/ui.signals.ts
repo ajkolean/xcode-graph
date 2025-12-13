@@ -9,7 +9,7 @@
 
 import { signal } from '@lit-labs/signals';
 import { type ActiveTab, DEFAULT_ACTIVE_TAB } from '@shared/schemas';
-import type { LayoutDimension } from '@/graph/layout/d3-layout';
+import type { LayoutDimension } from '@/graph/layout/types';
 
 // ==================== Types ====================
 
@@ -33,6 +33,9 @@ export const activeTab = signal<ActiveTab>(DEFAULT_ACTIVE_TAB);
 /** Current zoom level (0.2 - 2.0) */
 export const zoom = signal<number>(1);
 
+/** Base zoom level (scale factor that fits the graph) */
+export const baseZoom = signal<number>(1);
+
 /** Whether layout animation is enabled */
 export const enableAnimation = signal<boolean>(false);
 
@@ -51,6 +54,7 @@ export const layoutDimension = signal<LayoutDimension>('2d');
 export function resetUISignals(): void {
   activeTab.set(DEFAULT_ACTIVE_TAB);
   zoom.set(1);
+  baseZoom.set(1);
   enableAnimation.set(false);
   previewFilter.set(null);
   layoutDimension.set('2d');

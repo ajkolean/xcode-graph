@@ -5,7 +5,7 @@ import { ViewMode } from '@shared/schemas';
 import type { Cluster } from '@shared/schemas/cluster.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
-import { layoutDimension } from '@shared/signals/index';
+import { layoutDimension, setBaseZoom } from '@shared/signals/index';
 import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
@@ -19,6 +19,7 @@ import {
   type ViewportBounds,
 } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
+import { ZOOM_CONFIG } from '@ui/utils/zoom-constants';
 import { css, html, LitElement, type PropertyValues } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { Starfield } from './starfield';
@@ -176,8 +177,10 @@ export class GraphCanvas extends LitElement {
   override willUpdate(changedProps: PropertyValues<this>) {
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       this.layout.enableAnimation = this.enableAnimation;
-      // D3 layout is synchronous - runs to completion immediately
-      this.layout.computeLayout(this.nodes, this.edges);
+      // ELK layout is asynchronous
+      this.layout.computeLayout(this.nodes, this.edges).catch((err) => {
+        console.error('Layout computation failed', err);
+      });
       this.manualNodePositions.clear();
       this.manualClusterPositions.clear(); // Clear manual cluster positions on new data
       this.updatePathCache();
@@ -189,7 +192,7 @@ export class GraphCanvas extends LitElement {
       if (!this.enableAnimation) {
         this.layout.stopAnimation();
       } else if (this.nodes.length > 0) {
-        this.layout.computeLayout(this.nodes, this.edges);
+        this.layout.computeLayout(this.nodes, this.edges).catch(console.error);
       }
     }
   }
@@ -198,11 +201,9 @@ export class GraphCanvas extends LitElement {
     super.updated(changedProps);
 
     // Fit viewport once after layout completes (not during render)
-    if ((changedProps.has('nodes') || changedProps.has('edges')) && !this.didInitialFit) {
-      if (this.layout.clusterPositions.size > 0) {
-        this.fitToViewport();
-        this.didInitialFit = true;
-      }
+    if (!this.didInitialFit && this.layout.clusterPositions.size > 0) {
+      this.fitToViewport();
+      this.didInitialFit = true;
     }
   }
 
@@ -234,7 +235,7 @@ export class GraphCanvas extends LitElement {
   recomputeLayout() {
     if (this.nodes.length === 0) return;
     this.layout.enableAnimation = this.enableAnimation;
-    this.layout.computeLayout(this.nodes, this.edges);
+    this.layout.computeLayout(this.nodes, this.edges).catch(console.error);
     this.manualNodePositions.clear();
     this.manualClusterPositions.clear();
     this.updatePathCache();
@@ -267,9 +268,10 @@ export class GraphCanvas extends LitElement {
     const padding = 40;
     const scaleX = (rect.width - padding * 2) / graphWidth;
     const scaleY = (rect.height - padding * 2) / graphHeight;
-    const fitZoom = Math.max(0.1, Math.min(1.5, Math.min(scaleX, scaleY)));
+    const fitZoom = Math.max(ZOOM_CONFIG.MIN_ZOOM, Math.min(1.5, Math.min(scaleX, scaleY)));
 
     this.zoom = fitZoom;
+    setBaseZoom(fitZoom);
     const centerX = (minX + maxX) / 2;
     const centerY = (minY + maxY) / 2;
     this.pan = {
@@ -589,7 +591,7 @@ export class GraphCanvas extends LitElement {
 
     const zoomSensitivity = 0.001;
     const delta = -e.deltaY * zoomSensitivity;
-    const newZoom = Math.min(Math.max(0.1, this.zoom + delta), 5);
+    const newZoom = Math.min(Math.max(ZOOM_CONFIG.MIN_ZOOM, this.zoom + delta), ZOOM_CONFIG.MAX_ZOOM);
 
     if (newZoom !== this.zoom) {
       const { x, y } = this.getMousePos(e);
@@ -1072,6 +1074,17 @@ export class GraphCanvas extends LitElement {
   }
 
   private renderEdges(viewport: ViewportBounds) {
+    // LOD: If zoomed out, show arteries (cluster-to-cluster edges)
+    // Threshold: 0.4 (40%) scale
+    const showArteries = this.zoom < 0.4;
+    
+    if (showArteries) {
+      this.renderArteries(viewport);
+      // Optional: Don't render individual edges at all, or render them very faintly
+      // Returning here for "Architecture Mode" clarity
+      return;
+    }
+
     this.ctx.lineWidth = 1;
 
     for (const edge of this.edges) {
@@ -1192,6 +1205,59 @@ export class GraphCanvas extends LitElement {
       this.ctx.lineDashOffset = 0;
     }
     this.ctx.globalAlpha = 1.0;
+  }
+
+  private renderArteries(viewport: ViewportBounds) {
+    const clusterEdges = this.layout.clusterEdges;
+    if (!clusterEdges) return;
+
+    for (const edge of clusterEdges) {
+      const sPos = this.layout.clusterPositions.get(edge.source);
+      const tPos = this.layout.clusterPositions.get(edge.target);
+      
+      if (!sPos || !tPos) continue;
+
+      // Use manual positions if dragged
+      const sManual = this.manualClusterPositions.get(edge.source);
+      const tManual = this.manualClusterPositions.get(edge.target);
+      
+      const x1 = sManual?.x ?? sPos.x;
+      const y1 = sManual?.y ?? sPos.y;
+      const x2 = tManual?.x ?? tPos.x;
+      const y2 = tManual?.y ?? tPos.y;
+
+      // 3D projection
+      const z1 = sPos.z ?? 0;
+      const z2 = tPos.z ?? 0;
+      const p1 = this.project3D(x1, y1, z1);
+      const p2 = this.project3D(x2, y2, z2);
+
+      if (!isLineInViewport({ x: p1.x, y: p1.y }, { x: p2.x, y: p2.y }, viewport)) continue;
+
+      // Thickness proportional to weight (log scale)
+      // weight is count of edges. 
+      const thickness = Math.max(2, Math.min(12, Math.log2(edge.weight + 1) * 2));
+      
+      this.ctx.lineWidth = thickness * this.zoom; // Scale with zoom? Or keep screen constant?
+                                                  // Arteries should probably be constant screen width or slightly scaling.
+                                                  // Let's scale slightly: thickness * Math.max(0.5, this.zoom)
+      
+      this.ctx.beginPath();
+      this.ctx.moveTo(p1.x, p1.y);
+      this.ctx.lineTo(p2.x, p2.y);
+      
+      this.ctx.strokeStyle = 'rgba(150, 150, 160, 0.4)'; // Muted gray/blue
+      // Highlight if connected cluster is hovered
+      if (this.hoveredCluster === edge.source || this.hoveredCluster === edge.target) {
+        this.ctx.strokeStyle = 'rgba(100, 180, 255, 0.8)';
+        this.ctx.globalAlpha = 1.0;
+      } else {
+        this.ctx.globalAlpha = 0.6;
+      }
+      
+      this.ctx.stroke();
+      this.ctx.globalAlpha = 1.0;
+    }
   }
 
   // ========================================

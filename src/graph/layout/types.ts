@@ -40,6 +40,13 @@ export interface ClusterCenter {
   radius: number;
 }
 
+/** Aggregated edge between clusters for macro-level rendering */
+export interface ClusterEdgeResult {
+  source: string;
+  target: string;
+  weight: number;
+}
+
 /**
  * Result of the hierarchical layout computation
  */
@@ -48,6 +55,8 @@ export interface HierarchicalLayoutResult {
   nodePositions: Map<string, NodePosition>;
   clusters: Cluster[];
   bundledEdges?: Array<Array<{ x: number; y: number }>> | undefined;
+  /** Aggregated edges between clusters (Arteries) */
+  clusterEdges?: ClusterEdgeResult[];
   /** Nodes that are part of cycles (SCC size > 1) */
   cycleNodes?: Set<string>;
   /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */

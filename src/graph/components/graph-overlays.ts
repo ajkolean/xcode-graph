@@ -57,6 +57,9 @@ export class GraphControls extends LitElement {
   @property({ type: Number })
   declare zoom: number;
 
+  @property({ type: Number, attribute: 'base-zoom' })
+  declare baseZoom: number;
+
   @property({ type: Number, attribute: 'node-count' })
   declare nodeCount: number;
 
@@ -223,9 +226,13 @@ export class GraphControls extends LitElement {
   }
 
   override render() {
+    const percentage = this.baseZoom > 0 
+      ? Math.round((this.zoom / this.baseZoom) * 100) 
+      : Math.round(this.zoom * 100);
+
     return html`
       <div class="container" @wheel=${this.handleWheel} @mousedown=${this.handleMouseDown}>
-        <span>${Math.round(this.zoom * 100)}%</span>
+        <span>${percentage}%</span>
         <div class="divider"></div>
 
         <div class="zoom-buttons">

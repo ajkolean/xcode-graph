@@ -7,10 +7,10 @@
  * Zoom level configuration
  */
 export const ZOOM_CONFIG = {
-  /** Minimum zoom level (zoomed out) */
-  MIN_ZOOM: 0.5,
-  /** Maximum zoom level (zoomed in) */
-  MAX_ZOOM: 2,
+  /** Minimum zoom level (zoomed out) - allowing 1% for massive graphs */
+  MIN_ZOOM: 0.01,
+  /** Maximum zoom level (zoomed in) - allowing 500% for detailed inspection */
+  MAX_ZOOM: 5.0,
 } as const;
 
 /**
