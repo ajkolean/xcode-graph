@@ -1244,12 +1244,11 @@ export class GraphCanvas extends LitElement {
       const thickness = Math.max(2, Math.min(12, Math.log2(edge.weight + 1) * 2));
       
       this.ctx.lineWidth = thickness * this.zoom;
+      this.ctx.strokeStyle = 'rgba(150, 150, 160, 0.4)'; // Muted gray/blue
       
       const pathString = generateBezierPath(p1.x, p1.y, p2.x, p2.y);
       const path = new Path2D(pathString);
       this.ctx.stroke(path);
-      
-      this.ctx.strokeStyle = 'rgba(150, 150, 160, 0.4)'; // Muted gray/blue
     }
   }
 
