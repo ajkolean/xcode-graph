@@ -18,6 +18,7 @@
 
 import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
+import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { layoutDimension } from '@shared/signals/index';

@@ -21,10 +21,11 @@ import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
-import { css, html, LitElement, svg } from 'lit';
+import { css, html, LitElement, nothing, svg } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
 import './panel-header.js';
+import './tag-badge.js';
 
 export class GraphNodeHeader extends LitElement {
   // ========================================
@@ -56,6 +57,14 @@ export class GraphNodeHeader extends LitElement {
 
     graph-panel-header {
       --panel-header-padding: var(--spacing-md);
+    }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-1);
+      margin-top: var(--spacing-2);
+      padding: 0 var(--spacing-md);
     }
   `;
 
@@ -119,6 +128,8 @@ export class GraphNodeHeader extends LitElement {
     const subtitle = getSubtitle();
     const clusterBadgeLabel = this.node.type === 'package' ? 'Package' : 'Project';
 
+    const hasTags = this.node.tags && this.node.tags.length > 0;
+
     return html`
       <graph-panel-header
         title=${this.node.name}
@@ -158,7 +169,29 @@ export class GraphNodeHeader extends LitElement {
           label=${getNodeTypeLabel(this.node.type)}
           color=${nodeDisplayColor}
         ></graph-badge>
+        ${
+          this.node.isRemote
+            ? html`
+              <graph-badge
+                slot="badges"
+                label="Remote"
+                color="#F59E0B"
+              ></graph-badge>
+            `
+            : ''
+        }
       </graph-panel-header>
+
+      <!-- Architecture Tags -->
+      ${
+        hasTags
+          ? html`
+            <div class="tags-container">
+              ${this.node.tags!.map((tag) => html`<graph-tag-badge tag=${tag}></graph-tag-badge>`)}
+            </div>
+          `
+          : nothing
+      }
     `;
   }
 }

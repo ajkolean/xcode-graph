@@ -88,6 +88,8 @@ export interface Cluster {
   type: ClusterType;
   /** Local or external origin */
   origin: Origin;
+  /** Path to the project/package directory */
+  path?: string;
   /** Nodes belonging to this cluster */
   nodes: GraphNode[];
   /** IDs of anchor/entry nodes */
@@ -208,6 +210,7 @@ export const ClusterSchema: z.ZodType<ClusterSerialized> = z.object({
   name: z.string(),
   type: ClusterTypeSchema,
   origin: OriginSchema,
+  path: z.string().optional(),
   nodes: z.array(GraphNodeSchema),
   anchors: z.array(z.string()),
   metadata: z.array(ClusterNodeMetadataSchema),

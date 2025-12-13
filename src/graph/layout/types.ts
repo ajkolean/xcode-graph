@@ -66,4 +66,55 @@ export interface HierarchicalLayoutResult {
   maxStratum?: number;
   /** Maximum cluster stratum value */
   maxClusterStratum?: number;
+  /** Routed cross-cluster edges with port assignments */
+  routedEdges?: RoutedEdge[];
+}
+
+// ============================================================================
+// Port-Based Edge Routing Types
+// ============================================================================
+
+/** Cardinal direction for port placement on cluster boundary */
+export type PortSide = 'NORTH' | 'SOUTH' | 'EAST' | 'WEST';
+
+/** A port on a cluster boundary where edges can exit/enter */
+export interface ClusterPort {
+  /** Unique port identifier (e.g., "cluster-A_EAST_0") */
+  id: string;
+  /** Parent cluster ID */
+  clusterId: string;
+  /** Which boundary side the port is on */
+  side: PortSide;
+  /** World X coordinate of the port */
+  x: number;
+  /** World Y coordinate of the port */
+  y: number;
+  /** Order index on this side (0 = first) */
+  index: number;
+}
+
+/** An edge routed through cluster boundary ports */
+export interface RoutedEdge {
+  /** Source node ID */
+  sourceNodeId: string;
+  /** Target node ID */
+  targetNodeId: string;
+  /** Source cluster ID */
+  sourceClusterId: string;
+  /** Target cluster ID */
+  targetClusterId: string;
+  /** Exit port on source cluster */
+  sourcePort: ClusterPort;
+  /** Entry port on target cluster */
+  targetPort: ClusterPort;
+  /** Intermediate bend points between ports */
+  waypoints: Array<{ x: number; y: number }>;
+  /** Edge weight (for rendering thickness) */
+  weight: number;
+}
+
+/** Extended cluster position with port information */
+export interface ClusterPositionWithPorts extends ClusterPosition {
+  /** Ports on this cluster's boundary */
+  ports: ClusterPort[];
 }

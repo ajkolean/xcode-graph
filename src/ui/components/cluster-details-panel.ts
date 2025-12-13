@@ -20,6 +20,7 @@ import { generateColor } from '@ui/utils/color-generator';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
+import './cluster-composition.js';
 import './cluster-header';
 import './cluster-type-badge';
 import './cluster-stats';
@@ -77,6 +78,14 @@ export class GraphClusterDetailsPanel extends LitElement {
     return adjustColorForZoom(generateColor(this.cluster.name, this.cluster.type), this.zoom);
   }
 
+  private get targetBreakdown(): Record<string, number> {
+    const breakdown: Record<string, number> = {};
+    for (const node of this.clusterNodes) {
+      breakdown[node.type] = (breakdown[node.type] || 0) + 1;
+    }
+    return breakdown;
+  }
+
   // ========================================
   // Event Handlers
   // ========================================
@@ -105,6 +114,7 @@ export class GraphClusterDetailsPanel extends LitElement {
         cluster-name=${this.cluster.name}
         cluster-type=${this.cluster.type}
         cluster-color=${this.clusterColor}
+        cluster-path=${this.cluster.path || ''}
         ?is-external=${isExternal}
         @back=${() => this.bubbleEvent('close')}
       ></graph-cluster-header>
@@ -121,7 +131,12 @@ export class GraphClusterDetailsPanel extends LitElement {
           filtered-dependents=${this.stats.filteredDependents}
           total-dependents=${this.stats.totalDependents}
           .platforms=${this.stats.platforms}
+          .targetBreakdown=${this.targetBreakdown}
         ></graph-cluster-stats>
+
+        <graph-cluster-composition
+          .nodes=${this.clusterNodes}
+        ></graph-cluster-composition>
 
         <graph-cluster-targets-list
           .clusterNodes=${this.clusterNodes}

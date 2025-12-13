@@ -6,22 +6,25 @@
  */
 
 import type {
+  BuildSettings,
   DeploymentTargets,
   Destination,
   GraphData,
   GraphEdge,
   GraphNode,
 } from '@/shared/schemas/graph.schema';
-import { NodeType, Origin, Platform } from '@/shared/schemas/graph.schema';
+import { DependencyKind, NodeType, Origin, Platform } from '@/shared/schemas/graph.schema';
 import type {
   Graph,
   GraphDependency,
   Project,
   DeploymentTargets as RawDeploymentTargets,
   Product as RawProduct,
+  Settings as RawSettings,
+  ResourceFileElements,
   Target,
 } from './tuist-graph.schema.generated';
-import { Product } from './tuist-graph.schema.generated';
+import { Product, TargetType } from './tuist-graph.schema.generated';
 
 // =============================================================================
 // Type Mapping Functions
@@ -90,6 +93,89 @@ function mapDestinations(raw: unknown): Destination[] | undefined {
   return destinations.length > 0 ? destinations : undefined;
 }
 
+/** Extract curated build settings from Release config (base settings) */
+function extractBuildSettings(settings: RawSettings | undefined): BuildSettings | undefined {
+  if (!settings?.base) return undefined;
+
+  const base = settings.base;
+  const result: BuildSettings = {};
+
+  // Swift version
+  const swiftVersion = base['SWIFT_VERSION'];
+  if (swiftVersion && typeof swiftVersion === 'string') {
+    result.swiftVersion = swiftVersion;
+  }
+
+  // Compilation conditions (from SWIFT_ACTIVE_COMPILATION_CONDITIONS)
+  const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'];
+  if (conditions) {
+    if (Array.isArray(conditions)) {
+      result.compilationConditions = conditions.map(String);
+    } else if (typeof conditions === 'string') {
+      result.compilationConditions = conditions.split(' ').filter(Boolean);
+    }
+  }
+
+  // Code signing
+  const codeSign = base['CODE_SIGN_IDENTITY'];
+  if (codeSign && typeof codeSign === 'string') {
+    result.codeSignIdentity = codeSign;
+  }
+
+  // Development team
+  const devTeam = base['DEVELOPMENT_TEAM'];
+  if (devTeam && typeof devTeam === 'string') {
+    result.developmentTeam = devTeam;
+  }
+
+  // Provisioning profile
+  const profile = base['PROVISIONING_PROFILE_SPECIFIER'];
+  if (profile && typeof profile === 'string') {
+    result.provisioningProfile = profile;
+  }
+
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
+/** Notable resource file patterns */
+const NOTABLE_RESOURCE_PATTERNS = [
+  'PrivacyInfo.xcprivacy',
+  '.storyboard',
+  '.xcassets',
+  '.entitlements',
+  '.xcdatamodeld',
+  'LaunchScreen',
+];
+
+/** Extract resource metadata from target */
+function extractResourceMetadata(resources: ResourceFileElements | undefined): {
+  resourceCount: number;
+  notableResources: string[];
+} {
+  const resourceCount = resources?.resources?.length ?? 0;
+  const notableResources: string[] = [];
+
+  // Check for privacy manifest
+  if (resources?.privacyManifest) {
+    notableResources.push('PrivacyInfo.xcprivacy');
+  }
+
+  // Check resources for notable files
+  if (resources?.resources) {
+    for (const res of resources.resources) {
+      const path =
+        'file' in res ? res.file.path : 'folderReference' in res ? res.folderReference.path : '';
+      for (const pattern of NOTABLE_RESOURCE_PATTERNS) {
+        if (path.includes(pattern) && !notableResources.includes(pattern)) {
+          notableResources.push(pattern);
+        }
+      }
+    }
+  }
+
+  return { resourceCount, notableResources };
+}
+
 /** Determine origin based on project type and path */
 function getOriginFromProject(
   projectPath: string,
@@ -154,6 +240,14 @@ function getOriginForDependency(dep: GraphDependency): Origin {
   return Origin.Local;
 }
 
+function getDependencyKind(dep: GraphDependency): DependencyKind {
+  if ('target' in dep) return DependencyKind.Target;
+  if ('packageProduct' in dep) return DependencyKind.Project;
+  if ('xcframework' in dep) return DependencyKind.XCFramework;
+  if ('sdk' in dep || 'framework' in dep) return DependencyKind.Sdk;
+  return DependencyKind.Target; // default for library, bundle, macro
+}
+
 // =============================================================================
 // Node Creation Helpers
 // =============================================================================
@@ -193,11 +287,32 @@ function createNodeFromTarget(
 
   if (target.sources?.length) {
     node.sourcePaths = target.sources.map((s) => s.path);
+    node.sourceCount = target.sources.length;
   }
 
   const meta = target.metadata as { tags?: string[] } | null;
   if (meta?.tags?.length) {
     node.tags = meta.tags;
+  }
+
+  // Determine if this is a remote/external target
+  if (target.type === TargetType.Remote) {
+    node.isRemote = true;
+  }
+
+  // Extract curated build settings from Release config
+  const buildSettings = extractBuildSettings(target.settings);
+  if (buildSettings) {
+    node.buildSettings = buildSettings;
+  }
+
+  // Extract resource metadata
+  const { resourceCount, notableResources } = extractResourceMetadata(target.resources);
+  if (resourceCount > 0) {
+    node.resourceCount = resourceCount;
+  }
+  if (notableResources.length > 0) {
+    node.notableResources = notableResources;
   }
 
   return node;
@@ -285,7 +400,11 @@ function processDependencies(
         }
       }
 
-      edges.push({ source: sourceKey, target: targetKey });
+      edges.push({
+        source: sourceKey,
+        target: targetKey,
+        kind: getDependencyKind(targetDep),
+      });
     }
   }
 

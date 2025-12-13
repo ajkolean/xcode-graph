@@ -75,3 +75,163 @@ export function generateBezierPath(x1: number, y1: number, x2: number, y2: numbe
 export function clearPathCache(): void {
   pathCache.clear();
 }
+
+// ============================================================================
+// Port-Routed Path Generation
+// ============================================================================
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+/**
+ * Generate a smooth path through multiple waypoints using quadratic bezier curves.
+ *
+ * Creates smooth transitions at each waypoint by using quadratic curves
+ * that meet at the waypoints with continuous tangent direction.
+ *
+ * @param start - Starting point
+ * @param waypoints - Intermediate points to pass through
+ * @param end - Ending point
+ * @returns SVG path string
+ */
+export function generateWaypointPath(start: Point, waypoints: Point[], end: Point): string {
+  if (waypoints.length === 0) {
+    // No waypoints, use simple bezier
+    return generateBezierPath(start.x, start.y, end.x, end.y);
+  }
+
+  const parts: string[] = [`M ${start.x},${start.y}`];
+
+  // All points in sequence
+  const points = [start, ...waypoints, end];
+
+  // Use quadratic bezier curves through waypoints
+  // For smooth transitions, we use the waypoints as control points
+  // and compute midpoints as the actual curve endpoints
+
+  if (points.length === 2) {
+    // Just start and end
+    parts.push(`L ${end.x},${end.y}`);
+  } else if (points.length === 3) {
+    // One waypoint - use quadratic bezier
+    const wp = points[1]!;
+    parts.push(`Q ${wp.x},${wp.y} ${end.x},${end.y}`);
+  } else {
+    // Multiple waypoints - chain quadratic curves
+    // Use Catmull-Rom style: curve through midpoints, waypoints are control points
+
+    for (let i = 1; i < points.length - 1; i++) {
+      const prev = points[i - 1]!;
+      const curr = points[i]!;
+      const next = points[i + 1]!;
+
+      // Midpoint before current waypoint
+      const midBefore = {
+        x: (prev.x + curr.x) / 2,
+        y: (prev.y + curr.y) / 2,
+      };
+
+      // Midpoint after current waypoint
+      const midAfter = {
+        x: (curr.x + next.x) / 2,
+        y: (curr.y + next.y) / 2,
+      };
+
+      if (i === 1) {
+        // First segment: from start to first midpoint
+        parts.push(`Q ${curr.x},${curr.y} ${midAfter.x},${midAfter.y}`);
+      } else if (i === points.length - 2) {
+        // Last segment: from last midpoint to end
+        parts.push(`Q ${curr.x},${curr.y} ${end.x},${end.y}`);
+      } else {
+        // Middle segments: from midpoint to midpoint
+        parts.push(`Q ${curr.x},${curr.y} ${midAfter.x},${midAfter.y}`);
+      }
+    }
+  }
+
+  return parts.join(' ');
+}
+
+/**
+ * Generate a complete port-routed edge path.
+ *
+ * Creates a smooth path from source node through exit port,
+ * across to entry port, and into target node.
+ *
+ * Path structure:
+ * - Exit leg: sourceNode → sourcePort (smooth curve exiting cluster)
+ * - Highway: sourcePort → waypoints → targetPort (orthogonal route)
+ * - Entry leg: targetPort → targetNode (smooth curve entering cluster)
+ *
+ * @param sourceNode - Position of source node (relative to cluster center)
+ * @param sourcePort - Exit port position (world coordinates)
+ * @param targetPort - Entry port position (world coordinates)
+ * @param targetNode - Position of target node (relative to cluster center)
+ * @param waypoints - Intermediate bend points between ports
+ * @param sourceClusterCenter - Center of source cluster
+ * @param targetClusterCenter - Center of target cluster
+ * @param options - Styling options
+ * @returns SVG path string
+ */
+export function generatePortRoutedPath(
+  sourceNode: Point,
+  sourcePort: Point,
+  targetPort: Point,
+  targetNode: Point,
+  waypoints: Point[],
+  sourceClusterCenter: Point,
+  targetClusterCenter: Point,
+  options: { curvature?: number } = {},
+): string {
+  const curvature = options.curvature ?? 0.3;
+
+  // Convert relative node positions to world coordinates
+  const sourceWorld = {
+    x: sourceClusterCenter.x + sourceNode.x,
+    y: sourceClusterCenter.y + sourceNode.y,
+  };
+  const targetWorld = {
+    x: targetClusterCenter.x + targetNode.x,
+    y: targetClusterCenter.y + targetNode.y,
+  };
+
+  const parts: string[] = [];
+
+  // 1. Exit leg: Source node to source port (curved exit from cluster)
+  const exitDx = sourcePort.x - sourceWorld.x;
+  const exitDy = sourcePort.y - sourceWorld.y;
+  const exitOffset = Math.min(Math.abs(exitDx), Math.abs(exitDy)) * curvature;
+
+  parts.push(`M ${sourceWorld.x},${sourceWorld.y}`);
+  parts.push(
+    `C ${sourceWorld.x + exitOffset},${sourceWorld.y} ${sourcePort.x - exitOffset * Math.sign(exitDx)},${sourcePort.y} ${sourcePort.x},${sourcePort.y}`,
+  );
+
+  // 2. Highway: Source port through waypoints to target port
+  if (waypoints.length > 0) {
+    // Use smooth waypoint path
+    const waypointPath = generateWaypointPath(sourcePort, waypoints, targetPort);
+    // Extract everything after the M command since we already have our starting point
+    const waypointCommands = waypointPath.replace(/^M\s+[\d.,-]+\s*/, '');
+    if (waypointCommands) {
+      parts.push(waypointCommands);
+    }
+  } else {
+    // Direct line to target port
+    parts.push(`L ${targetPort.x},${targetPort.y}`);
+  }
+
+  // 3. Entry leg: Target port to target node (curved entry into cluster)
+  const entryDx = targetWorld.x - targetPort.x;
+  const entryDy = targetWorld.y - targetPort.y;
+  const entryOffset = Math.min(Math.abs(entryDx), Math.abs(entryDy)) * curvature;
+
+  parts.push(
+    `C ${targetPort.x + entryOffset * Math.sign(entryDx)},${targetPort.y} ${targetWorld.x - entryOffset},${targetWorld.y} ${targetWorld.x},${targetWorld.y}`,
+  );
+
+  return parts.join(' ');
+}

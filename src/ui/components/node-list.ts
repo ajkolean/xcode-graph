@@ -3,12 +3,13 @@
  *
  * A unified list component for displaying nodes with section header.
  * Used for dependencies, dependents, and other node list displays.
+ * Supports displaying dependency kind badges when edge information is provided.
  *
  * @example
  * ```html
  * <graph-node-list
  *   title="Dependencies"
- *   .nodes=${dependencies}
+ *   .items=${dependencies}
  *   suffix="direct"
  *   empty-message="No dependencies"
  *   zoom="1.0"
@@ -19,12 +20,22 @@
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 
-import type { GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement } from 'lit';
+import type { NodeWithEdge } from '@graph/utils/node-utils';
+import { DependencyKind, type GraphNode } from '@shared/schemas/graph.schema';
+import { css, html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { NodeListEventsMixin } from './node-list-events';
+import './badge.js';
 import './list-item-row.js';
+import { NodeListEventsMixin } from './node-list-events';
 import './section-header.js';
+
+/** Dependency kind colors and labels */
+const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> = {
+  [DependencyKind.Target]: { label: 'Target', color: '#10B981' },
+  [DependencyKind.Project]: { label: 'Project', color: '#3B82F6' },
+  [DependencyKind.Sdk]: { label: 'SDK', color: '#8B5CF6' },
+  [DependencyKind.XCFramework]: { label: 'XCF', color: '#F59E0B' },
+};
 
 export class GraphNodeList extends NodeListEventsMixin(LitElement) {
   // ========================================
@@ -38,7 +49,13 @@ export class GraphNodeList extends NodeListEventsMixin(LitElement) {
   declare title: string;
 
   /**
-   * Array of nodes to display
+   * Array of nodes with edge info to display
+   */
+  @property({ attribute: false })
+  declare items: NodeWithEdge[];
+
+  /**
+   * @deprecated Use items instead. Legacy support for plain node arrays.
    */
   @property({ attribute: false })
   declare nodes: GraphNode[];
@@ -61,12 +78,19 @@ export class GraphNodeList extends NodeListEventsMixin(LitElement) {
   @property({ type: Number })
   declare zoom: number;
 
+  /**
+   * Whether to show dependency kind badges
+   */
+  @property({ type: Boolean, attribute: 'show-kind' })
+  declare showKind: boolean;
+
   constructor() {
     super();
     this.title = '';
     this.suffix = '';
     this.emptyMessage = 'No items';
     this.zoom = 1;
+    this.showKind = true;
   }
 
   // ========================================
@@ -92,15 +116,64 @@ export class GraphNodeList extends NodeListEventsMixin(LitElement) {
       flex-direction: column;
       gap: var(--spacing-1);
     }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .kind-badge {
+      flex-shrink: 0;
+    }
   `;
 
   // ========================================
   // Helpers
   // ========================================
 
+  private get itemList(): NodeWithEdge[] {
+    // Support both new items prop and legacy nodes prop
+    if (this.items && this.items.length > 0) {
+      return this.items;
+    }
+    // Legacy: wrap plain nodes in NodeWithEdge format
+    if (this.nodes && this.nodes.length > 0) {
+      return this.nodes.map((node) => ({
+        node,
+        edge: { source: '', target: node.id },
+      }));
+    }
+    return [];
+  }
+
   private getNodeSubtitle(node: GraphNode): string {
     const typeLabel = node.type.charAt(0).toUpperCase() + node.type.slice(1);
     return node.origin === 'external' ? `External ${typeLabel}` : typeLabel;
+  }
+
+  private renderKindBadge(item: NodeWithEdge) {
+    if (!this.showKind || !item.edge.kind) return nothing;
+
+    const config = DEPENDENCY_KIND_CONFIG[item.edge.kind] || {
+      label: item.edge.kind,
+      color: '#6B7280',
+    };
+
+    return html`
+      <graph-badge
+        class="kind-badge"
+        label=${config.label}
+        color=${config.color}
+        variant="rounded"
+        size="sm"
+      ></graph-badge>
+    `;
   }
 
   // ========================================
@@ -108,7 +181,8 @@ export class GraphNodeList extends NodeListEventsMixin(LitElement) {
   // ========================================
 
   override render() {
-    const count = this.nodes?.length || 0;
+    const items = this.itemList;
+    const count = items.length;
 
     return html`
       <graph-section-header
@@ -122,16 +196,21 @@ export class GraphNodeList extends NodeListEventsMixin(LitElement) {
           ? html`<div class="empty">${this.emptyMessage}</div>`
           : html`
             <div class="list">
-              ${this.nodes.map(
-                (node) => html`
-                  <graph-list-item-row
-                    .node=${node}
-                    subtitle=${this.getNodeSubtitle(node)}
-                    .zoom=${this.zoom}
-                    @row-select=${this.handleNodeSelect}
-                    @row-hover=${this.handleNodeHover}
-                    @row-hover-end=${this.handleHoverEnd}
-                  ></graph-list-item-row>
+              ${items.map(
+                (item) => html`
+                  <div class="item-row">
+                    <div class="item-content">
+                      <graph-list-item-row
+                        .node=${item.node}
+                        subtitle=${this.getNodeSubtitle(item.node)}
+                        .zoom=${this.zoom}
+                        @row-select=${this.handleNodeSelect}
+                        @row-hover=${this.handleNodeHover}
+                        @row-hover-end=${this.handleHoverEnd}
+                      ></graph-list-item-row>
+                    </div>
+                    ${this.renderKindBadge(item)}
+                  </div>
                 `,
               )}
             </div>

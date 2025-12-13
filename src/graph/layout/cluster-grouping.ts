@@ -22,13 +22,20 @@ export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Clust
         name: clusterId,
         type: node.origin === Origin.External ? ClusterType.Package : ClusterType.Project,
         origin: node.origin,
+        path: node.path,
         nodes: [],
         metadata: new Map(),
         anchors: [],
       });
     }
 
-    clusterMap.get(clusterId)!.nodes.push(node);
+    // Update path if not set (use first available node path)
+    const cluster = clusterMap.get(clusterId)!;
+    if (!cluster.path && node.path) {
+      cluster.path = node.path;
+    }
+
+    cluster.nodes.push(node);
   });
 
   // Analyze each cluster and assign metadata

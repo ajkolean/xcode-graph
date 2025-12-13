@@ -65,6 +65,8 @@ const mockCluster: Cluster = {
   type: 'project',
   origin: 'local',
   nodes: [mockNodes[0], mockNodes[1]],
+  anchors: ['node1'],
+  metadata: new Map(),
 };
 
 // ========================================

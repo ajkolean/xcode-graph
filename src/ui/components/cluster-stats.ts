@@ -2,7 +2,7 @@
  * ClusterStats Lit Component
  *
  * Statistics section for cluster details using StatsCard components.
- * Shows dependencies, dependents, and platform badges.
+ * Shows dependencies, dependents, target breakdown, and platform badges.
  *
  * @example
  * ```html
@@ -10,14 +10,28 @@
  *   filtered-dependencies="5"
  *   total-dependencies="10"
  *   .platforms=${platformsSet}
+ *   .targetBreakdown=${{ framework: 3, library: 2, test: 1 }}
  * ></graph-cluster-stats>
  * ```
  */
 
+import { NodeType } from '@shared/schemas/graph.schema';
 import { getPlatformIconPath, PLATFORM_COLOR } from '@ui/utils/platform-icons';
-import { css, html, LitElement, svg } from 'lit';
+import { css, html, LitElement, nothing, svg } from 'lit';
 import { property } from 'lit/decorators.js';
+import './badge.js';
 import './stats-card';
+
+/** Node type colors and short labels for badges */
+const NODE_TYPE_CONFIG: Record<string, { label: string; color: string }> = {
+  [NodeType.App]: { label: 'App', color: '#10B981' },
+  [NodeType.Framework]: { label: 'Framework', color: '#3B82F6' },
+  [NodeType.Library]: { label: 'Library', color: '#8B5CF6' },
+  [NodeType.TestUnit]: { label: 'Unit Test', color: '#F59E0B' },
+  [NodeType.TestUi]: { label: 'UI Test', color: '#EC4899' },
+  [NodeType.Cli]: { label: 'CLI', color: '#6366F1' },
+  [NodeType.Package]: { label: 'Package', color: '#14B8A6' },
+};
 
 export class GraphClusterStats extends LitElement {
   // ========================================
@@ -39,6 +53,12 @@ export class GraphClusterStats extends LitElement {
   @property({ attribute: false })
   declare platforms: Set<string>;
 
+  /**
+   * Target breakdown by node type (e.g., { framework: 3, library: 2 })
+   */
+  @property({ attribute: false })
+  declare targetBreakdown: Record<string, number>;
+
   // ========================================
   // Styles
   // ========================================
@@ -56,18 +76,18 @@ export class GraphClusterStats extends LitElement {
       gap: var(--spacing-3);
     }
 
-    .platforms-section {
+    .section {
       margin-top: var(--spacing-md);
     }
 
-    .platforms-title {
+    .section-title {
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-sm);
       color: var(--colors-muted-foreground);
       margin-bottom: var(--spacing-sm);
     }
 
-    .platforms-grid {
+    .badges-grid {
       display: flex;
       flex-wrap: wrap;
       gap: var(--spacing-2);
@@ -91,11 +111,62 @@ export class GraphClusterStats extends LitElement {
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-sm);
     }
+
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-1);
+      padding: var(--spacing-1) var(--spacing-2);
+      border-radius: var(--radii-sm);
+      font-family: var(--fonts-mono);
+      font-size: var(--font-sizes-xs);
+      font-weight: var(--font-weights-medium);
+    }
+
+    .type-count {
+      opacity: 0.8;
+    }
   `;
 
   // ========================================
   // Render
   // ========================================
+
+  private renderTargetBreakdown() {
+    if (!this.targetBreakdown || Object.keys(this.targetBreakdown).length === 0) {
+      return nothing;
+    }
+
+    const entries = Object.entries(this.targetBreakdown)
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1]); // Sort by count descending
+
+    if (entries.length === 0) return nothing;
+
+    return html`
+      <div class="section">
+        <div class="section-title">Target Breakdown</div>
+        <div class="badges-grid">
+          ${entries.map(([type, count]) => {
+            const config = NODE_TYPE_CONFIG[type] || { label: type, color: '#6B7280' };
+            return html`
+              <span
+                class="type-badge"
+                style="
+                  color: ${config.color};
+                  background-color: ${config.color}15;
+                  border: var(--border-widths-thin) solid ${config.color}30;
+                "
+              >
+                <span>${config.label}</span>
+                <span class="type-count">${count}</span>
+              </span>
+            `;
+          })}
+        </div>
+      </div>
+    `;
+  }
 
   override render() {
     const platformCount = this.platforms?.size || 0;
@@ -113,12 +184,16 @@ export class GraphClusterStats extends LitElement {
         ></graph-stats-card>
       </div>
 
+      <!-- Target Breakdown by Type -->
+      ${this.renderTargetBreakdown()}
+
+      <!-- Platforms Section -->
       ${
         platformCount > 0
           ? html`
-            <div class="platforms-section">
-              <div class="platforms-title">Platforms (${platformCount})</div>
-              <div class="platforms-grid">
+            <div class="section">
+              <div class="section-title">Platforms (${platformCount})</div>
+              <div class="badges-grid">
                 ${Array.from(this.platforms).map((platform) => {
                   const color =
                     PLATFORM_COLOR[platform as keyof typeof PLATFORM_COLOR] || '#6F2CFF';
@@ -150,7 +225,7 @@ export class GraphClusterStats extends LitElement {
               </div>
             </div>
           `
-          : ''
+          : nothing
       }
     `;
   }

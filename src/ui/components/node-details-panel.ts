@@ -19,7 +19,8 @@
 
 import { computeNodeDependencies } from '@graph/utils/node-utils';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
+import './build-settings.js';
 import './node-header';
 import './node-info';
 import './node-actions';
@@ -157,25 +158,37 @@ export class GraphNodeDetailsPanel extends LitElement {
 
       <graph-node-list
         title="Dependencies"
-        .nodes=${dependencies}
+        .items=${dependencies}
         suffix="direct"
         empty-message="No dependencies"
         .zoom=${this.zoom}
+        show-kind
         @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
       ></graph-node-list>
 
       <graph-node-list
         title="Dependents"
-        .nodes=${dependents}
+        .items=${dependents}
         suffix="direct"
         empty-message="No dependents"
         .zoom=${this.zoom}
+        show-kind
         @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
       ></graph-node-list>
 
       <graph-node-info .node=${this.node}></graph-node-info>
+
+      ${
+        this.node.buildSettings
+          ? html`
+            <graph-build-settings
+              .settings=${this.node.buildSettings}
+            ></graph-build-settings>
+          `
+          : nothing
+      }
     `;
   }
 }

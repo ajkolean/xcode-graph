@@ -6,12 +6,13 @@
  * in the SVG namespace don't work as web components.
  */
 
+import type { RoutedEdge } from '@graph/layout/types';
 import { getConnectedNodes } from '@graph/utils/connections';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { generateBezierPath } from '@ui/utils/paths';
+import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { getNodeSize } from '@ui/utils/sizing';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
@@ -408,6 +409,98 @@ export function renderGraphEdge(options: GraphEdgeOptions) {
 }
 
 // ========================================
+// Routed Graph Edge Renderer (port-based routing)
+// ========================================
+
+export interface RoutedGraphEdgeOptions {
+  routedEdge: RoutedEdge;
+  sourceClusterPosition: ClusterPosition;
+  targetClusterPosition: ClusterPosition;
+  layoutNodePositions: Map<string, NodePosition>;
+  color: string;
+  isHighlighted?: boolean;
+  opacity?: number;
+  zoom?: number;
+  animated?: boolean;
+}
+
+export function renderRoutedGraphEdge(options: RoutedGraphEdgeOptions) {
+  const {
+    routedEdge,
+    sourceClusterPosition,
+    targetClusterPosition,
+    layoutNodePositions,
+    color,
+    isHighlighted = false,
+    opacity: opacityMultiplier = 1,
+    zoom = 1,
+    animated = false,
+  } = options;
+
+  // Get node positions (relative to cluster center)
+  const sourceNodePos = layoutNodePositions.get(routedEdge.sourceNodeId);
+  const targetNodePos = layoutNodePositions.get(routedEdge.targetNodeId);
+
+  if (!sourceNodePos || !targetNodePos) return nothing;
+
+  // Generate port-routed path
+  const path = generatePortRoutedPath(
+    { x: sourceNodePos.x, y: sourceNodePos.y },
+    { x: routedEdge.sourcePort.x, y: routedEdge.sourcePort.y },
+    { x: routedEdge.targetPort.x, y: routedEdge.targetPort.y },
+    { x: targetNodePos.x, y: targetNodePos.y },
+    routedEdge.waypoints,
+    { x: sourceClusterPosition.x, y: sourceClusterPosition.y },
+    { x: targetClusterPosition.x, y: targetClusterPosition.y },
+  );
+
+  // Adjust color based on zoom level
+  const zoomAdjustedColor = adjustColorForZoom(color, zoom);
+
+  // Base opacity: highlighted (0.8), normal (0.35) - slightly higher for routed edges
+  const baseOpacity = isHighlighted ? 0.8 : 0.35;
+  const zoomOpacity = adjustOpacityForZoom(baseOpacity, zoom);
+  const finalOpacity = zoomOpacity * opacityMultiplier;
+
+  // Routed edges use longer dashes to indicate highway routing
+  const dashPattern = '10,5';
+  const animationClass = animated ? 'flow-animation' : '';
+
+  return svg`
+    <g class="graph-edge routed-edge" style="transition: opacity var(--durations-slow) ease">
+      ${
+        isHighlighted
+          ? svg`
+        <path
+          d="${path}"
+          stroke="${zoomAdjustedColor}"
+          stroke-width="4"
+          fill="none"
+          opacity="${adjustOpacityForZoom(0.3, zoom) * opacityMultiplier}"
+          filter="url(#glow-strong)"
+          stroke-dasharray="${dashPattern}"
+          class="${animationClass}"
+          shape-rendering="geometricPrecision"
+        />
+      `
+          : nothing
+      }
+      <path
+        d="${path}"
+        stroke="${zoomAdjustedColor}"
+        stroke-width="${isHighlighted ? 2.5 : 1.5}"
+        fill="none"
+        opacity="${finalOpacity}"
+        stroke-dasharray="${dashPattern}"
+        class="${animated ? 'flow-animation' : ''}"
+        shape-rendering="geometricPrecision"
+        style="transition: opacity var(--durations-slow) ease, stroke-width var(--durations-normal) ease"
+      />
+    </g>
+  `;
+}
+
+// ========================================
 // Graph Edges Renderer (renders multiple edges)
 // ========================================
 
@@ -437,6 +530,7 @@ export interface GraphEdgesOptions {
   };
   zoom?: number;
   viewportBounds?: ViewportBounds; // Optional viewport culling
+  routedEdges?: RoutedEdge[]; // Port-routed edges for cross-cluster rendering
 }
 
 // Helper types for edge rendering
@@ -626,7 +720,16 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
     transitiveDependents,
     zoom = 1,
     viewportBounds,
+    routedEdges,
   } = options;
+
+  // Build a lookup map for routed edges: "sourceId->targetId" -> RoutedEdge
+  const routedEdgeMap = new Map<string, RoutedEdge>();
+  if (routedEdges) {
+    for (const re of routedEdges) {
+      routedEdgeMap.set(`${re.sourceNodeId}->${re.targetNodeId}`, re);
+    }
+  }
 
   return svg`
     ${edges.map((edge) => {
@@ -634,16 +737,6 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
       if (!endpoints) return nothing;
 
       if (!shouldRenderEdge(endpoints, clusterId ?? undefined)) return nothing;
-
-      const positions = calculateEdgePositions(
-        edge,
-        endpoints,
-        layoutNodePositions,
-        clusterPositions,
-        manualNodePositions,
-        viewportBounds,
-      );
-      if (!positions) return nothing;
 
       const visualState = getEdgeVisualState(
         edge,
@@ -656,6 +749,41 @@ export function renderGraphEdges(options: GraphEdgesOptions) {
 
       const baseOpacity = getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
       const opacity = visualState.shouldDim ? baseOpacity * 0.25 : baseOpacity;
+
+      // Check if this is a cross-cluster edge with routing data
+      const edgeKey = `${edge.source}->${edge.target}`;
+      const routedEdge = routedEdgeMap.get(edgeKey);
+
+      if (routedEdge && visualState.isCrossCluster) {
+        // Use port-routed path for cross-cluster edges
+        const sourceClusterPos = clusterPositions.get(endpoints.sourceClusterId);
+        const targetClusterPos = clusterPositions.get(endpoints.targetClusterId);
+
+        if (sourceClusterPos && targetClusterPos) {
+          return renderRoutedGraphEdge({
+            routedEdge,
+            sourceClusterPosition: sourceClusterPos,
+            targetClusterPosition: targetClusterPos,
+            layoutNodePositions,
+            color: getNodeTypeColor(endpoints.targetNode.type),
+            isHighlighted: visualState.isHighlighted || visualState.isFocused,
+            opacity,
+            zoom,
+            animated: false,
+          });
+        }
+      }
+
+      // Fall back to direct bezier for intra-cluster edges or edges without routing
+      const positions = calculateEdgePositions(
+        edge,
+        endpoints,
+        layoutNodePositions,
+        clusterPositions,
+        manualNodePositions,
+        viewportBounds,
+      );
+      if (!positions) return nothing;
 
       return renderGraphEdge({
         ...positions,

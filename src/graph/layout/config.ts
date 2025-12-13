@@ -107,6 +107,22 @@ export const DEFAULT_CONFIG = {
 
   /** Hierarchy handling strategy for ELK layout */
   elkHierarchyHandling: 'SEPARATE_CHILDREN',
+
+  // ==========================================================================
+  // Port-Based Edge Routing Configuration
+  // ==========================================================================
+
+  /** Enable port-based edge routing for cross-cluster edges */
+  portRoutingEnabled: true,
+
+  /** Minimum spacing between ports on a cluster boundary (pixels) */
+  portSpacing: 20,
+
+  /** Margin from cluster corners for port placement (pixels) */
+  portMargin: 30,
+
+  /** Maximum number of ports per side (prevents overcrowding) */
+  maxPortsPerSide: 8,
 } as const;
 
 /**

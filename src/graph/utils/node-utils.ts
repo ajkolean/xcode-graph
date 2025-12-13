@@ -13,6 +13,14 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 // ==================== Type Definitions ====================
 
 /**
+ * A node with its associated edge information
+ */
+export interface NodeWithEdge {
+  node: GraphNode;
+  edge: GraphEdge;
+}
+
+/**
  * Statistics about a cluster's connectivity
  */
 export interface ClusterStatsResult {
@@ -30,19 +38,32 @@ export interface ClusterStatsResult {
  * Compute dependencies and dependents for a node
  *
  * Analyzes both filtered and total edge counts for metrics.
+ * Returns nodes with their associated edge information for displaying dependency kinds.
  *
  * @param node - The node to analyze (or null)
  * @param allNodes - All graph nodes for lookup
  * @param edges - All graph edges
  * @param filteredEdges - Optional filtered edges for metrics
- * @returns Dependencies, dependents, and connection metrics
+ * @returns Dependencies, dependents (with edge info), and connection metrics
  */
 export function computeNodeDependencies(
   node: GraphNode | null,
   allNodes: GraphNode[],
   edges: GraphEdge[],
   filteredEdges?: GraphEdge[],
-) {
+): {
+  dependencies: NodeWithEdge[];
+  dependents: NodeWithEdge[];
+  metrics: {
+    dependencyCount: number;
+    dependentCount: number;
+    totalDependencyCount: number;
+    totalDependentCount: number;
+    isHighFanIn: boolean;
+    isHighFanOut: boolean;
+    totalConnections: number;
+  };
+} {
   if (!node) {
     return {
       dependencies: [],
@@ -60,29 +81,33 @@ export function computeNodeDependencies(
   }
 
   const edgesToUse = filteredEdges || edges;
+  const nodeMap = new Map(allNodes.map((n) => [n.id, n]));
 
-  // Dependencies (outgoing edges)
-  const dependencies = edgesToUse
+  // Dependencies (outgoing edges) - include edge info
+  const dependencies: NodeWithEdge[] = edgesToUse
     .filter((e) => e.source === node.id)
-    .map((e) => allNodes.find((n) => n.id === e.target))
-    .filter((n): n is GraphNode => n !== undefined);
+    .map((edge) => {
+      const targetNode = nodeMap.get(edge.target);
+      return targetNode ? { node: targetNode, edge } : null;
+    })
+    .filter((item): item is NodeWithEdge => item !== null);
 
-  // Dependents (incoming edges)
-  const dependents = edgesToUse
+  // Dependents (incoming edges) - include edge info
+  const dependents: NodeWithEdge[] = edgesToUse
     .filter((e) => e.target === node.id)
-    .map((e) => allNodes.find((n) => n.id === e.source))
-    .filter((n): n is GraphNode => n !== undefined);
+    .map((edge) => {
+      const sourceNode = nodeMap.get(edge.source);
+      return sourceNode ? { node: sourceNode, edge } : null;
+    })
+    .filter((item): item is NodeWithEdge => item !== null);
 
   // Total counts (unfiltered)
-  const totalDependencies = edges
-    .filter((e) => e.source === node.id)
-    .map((e) => allNodes.find((n) => n.id === e.target))
-    .filter((n): n is GraphNode => n !== undefined);
-
-  const totalDependents = edges
-    .filter((e) => e.target === node.id)
-    .map((e) => allNodes.find((n) => n.id === e.source))
-    .filter((n): n is GraphNode => n !== undefined);
+  const totalDependencyCount = edges.filter(
+    (e) => e.source === node.id && nodeMap.has(e.target),
+  ).length;
+  const totalDependentCount = edges.filter(
+    (e) => e.target === node.id && nodeMap.has(e.source),
+  ).length;
 
   const depCount = dependencies.length;
   const depsCount = dependents.length;
@@ -93,8 +118,8 @@ export function computeNodeDependencies(
     metrics: {
       dependencyCount: depCount,
       dependentCount: depsCount,
-      totalDependencyCount: totalDependencies.length,
-      totalDependentCount: totalDependents.length,
+      totalDependencyCount,
+      totalDependentCount,
       isHighFanIn: depsCount > 3,
       isHighFanOut: depCount > 3,
       totalConnections: depCount + depsCount,

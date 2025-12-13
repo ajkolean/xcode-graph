@@ -54,6 +54,34 @@ export enum Origin {
   External = 'external',
 }
 
+/**
+ * Dependency kind enum - type of dependency relationship
+ *
+ * - Target: Dependency on another target in same project
+ * - Project: Cross-project/cross-package dependency
+ * - Sdk: System SDK/framework dependency
+ * - XCFramework: Binary XCFramework dependency
+ */
+export enum DependencyKind {
+  Target = 'target',
+  Project = 'project',
+  Sdk = 'sdk',
+  XCFramework = 'xcframework',
+}
+
+/**
+ * Source type enum - where the project/package came from
+ *
+ * - Local: Local workspace project
+ * - Registry: Downloaded from Swift Package Registry
+ * - Git: Cloned from Git repository
+ */
+export enum SourceType {
+  Local = 'local',
+  Registry = 'registry',
+  Git = 'git',
+}
+
 // ==================== Type Definitions ====================
 
 /** Deployment target versions per platform */
@@ -76,6 +104,20 @@ export type Destination =
   | 'appleWatch'
   | 'appleVision'
   | 'appleVisionWithiPadDesign';
+
+/** Curated build settings extracted from target */
+export interface BuildSettings {
+  /** Swift language version */
+  swiftVersion?: string;
+  /** Active compilation conditions (DEBUG, RELEASE, etc.) */
+  compilationConditions?: string[];
+  /** Code signing identity */
+  codeSignIdentity?: string;
+  /** Development team ID */
+  developmentTeam?: string;
+  /** Provisioning profile specifier */
+  provisioningProfile?: string;
+}
 
 /** Graph node structure */
 export interface GraphNode {
@@ -107,6 +149,16 @@ export interface GraphNode {
   tags?: string[];
   /** Path to the target/project */
   path?: string;
+  /** Whether this is a remote/external target type */
+  isRemote?: boolean;
+  /** Curated build settings (from Release config) */
+  buildSettings?: BuildSettings;
+  /** Total source file count */
+  sourceCount?: number;
+  /** Total resource file count */
+  resourceCount?: number;
+  /** Notable resources (privacy manifests, storyboards, etc.) */
+  notableResources?: string[];
 }
 
 /** Graph edge structure */
@@ -115,6 +167,10 @@ export interface GraphEdge {
   source: string;
   /** ID of the target node (dependency) */
   target: string;
+  /** Type of dependency (target, project, sdk, xcframework) */
+  kind?: DependencyKind;
+  /** Platform conditions for this edge (e.g., ["iOS", "macOS"]) */
+  platformConditions?: Platform[];
 }
 
 /** Complete graph data structure */
@@ -130,8 +186,18 @@ export interface GraphData {
 export const NodeTypeSchema: z.ZodType<NodeType> = z.nativeEnum(NodeType);
 export const PlatformSchema: z.ZodType<Platform> = z.nativeEnum(Platform);
 export const OriginSchema: z.ZodType<Origin> = z.nativeEnum(Origin);
+export const DependencyKindSchema: z.ZodType<DependencyKind> = z.nativeEnum(DependencyKind);
+export const SourceTypeSchema: z.ZodType<SourceType> = z.nativeEnum(SourceType);
 
 // ==================== Entity Schemas ====================
+
+export const BuildSettingsSchema = z.object({
+  swiftVersion: z.string().optional(),
+  compilationConditions: z.array(z.string()).optional(),
+  codeSignIdentity: z.string().optional(),
+  developmentTeam: z.string().optional(),
+  provisioningProfile: z.string().optional(),
+});
 
 export const DeploymentTargetsSchema = z.object({
   iOS: z.string().optional(),
@@ -171,6 +237,11 @@ export const GraphNodeSchema: z.ZodType<GraphNode> = z.object({
   sourcePaths: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
   path: z.string().optional(),
+  isRemote: z.boolean().optional(),
+  buildSettings: BuildSettingsSchema.optional(),
+  sourceCount: z.number().int().nonnegative().optional(),
+  resourceCount: z.number().int().nonnegative().optional(),
+  notableResources: z.array(z.string()).optional(),
 });
 
 /**
@@ -179,6 +250,8 @@ export const GraphNodeSchema: z.ZodType<GraphNode> = z.object({
 export const GraphEdgeSchema: z.ZodType<GraphEdge> = z.object({
   source: z.string().min(1, 'Edge source is required'),
   target: z.string().min(1, 'Edge target is required'),
+  kind: DependencyKindSchema.optional(),
+  platformConditions: z.array(PlatformSchema).optional(),
 });
 
 /**
@@ -207,3 +280,7 @@ export const NODE_TYPE_VALUES: NodeType[] = Object.values(NodeType);
 export const PLATFORM_VALUES: Platform[] = Object.values(Platform);
 /** All origin values as array for iteration */
 export const ORIGIN_VALUES: Origin[] = Object.values(Origin);
+/** All dependency kind values as array for iteration */
+export const DEPENDENCY_KIND_VALUES: DependencyKind[] = Object.values(DependencyKind);
+/** All source type values as array for iteration */
+export const SOURCE_TYPE_VALUES: SourceType[] = Object.values(SourceType);

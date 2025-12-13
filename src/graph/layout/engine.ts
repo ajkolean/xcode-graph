@@ -6,7 +6,8 @@ import { applyForceMassage } from './phases/force-massage';
 import { computeMacroLayout } from './phases/macro-layout';
 import { computeClusterInterior } from './phases/micro-layout';
 import { applyNodeMassage } from './phases/node-massage';
-import type { HierarchicalLayoutResult } from './types';
+import { computeClusterPorts, computeRoutedEdges } from './phases/port-routing';
+import type { HierarchicalLayoutResult, RoutedEdge } from './types';
 
 /**
  * Main layout computation - Hybrid ELK + D3 "Macro/Micro" Layout
@@ -82,6 +83,23 @@ export async function computeHierarchicalLayout(
     clusterPos.nodeCount = cluster.nodes.length;
   }
 
+  // 5. Port Routing: Compute ports and routed edges for cross-cluster edges
+  // (Must be after node positions are computed)
+  let routedEdges: RoutedEdge[] = [];
+  if (config.portRoutingEnabled) {
+    const clusterPorts = computeClusterPorts(clusterPositions, clusterGraph.edges, config);
+
+    routedEdges = computeRoutedEdges(
+      edges,
+      nodePositions,
+      clusterPositions,
+      clusterPorts,
+      clusterGraph.edges,
+      clusterGraph.nodeToCluster,
+      config,
+    );
+  }
+
   return {
     nodePositions,
     clusterPositions,
@@ -91,6 +109,7 @@ export async function computeHierarchicalLayout(
       target: e.target,
       weight: e.weight,
     })),
+    routedEdges,
     // Cycle data omitted for now (ELK handles topology)
     cycleNodes: new Set(),
     nodeSccId: new Map(),
