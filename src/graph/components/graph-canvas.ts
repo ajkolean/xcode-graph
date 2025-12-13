@@ -1074,143 +1074,142 @@ export class GraphCanvas extends LitElement {
   }
 
   private renderEdges(viewport: ViewportBounds) {
+    const selectedNodeId = this.selectedNode?.id;
+
     // LOD: If zoomed out, show arteries (cluster-to-cluster edges)
-    // Threshold: 0.4 (40%) scale
-    const showArteries = this.zoom < 0.4;
+    // Threshold: 0.8 scale (show arteries longer)
+    const showArteries = this.zoom < 0.8;
     
     if (showArteries) {
       this.renderArteries(viewport);
-      // Optional: Don't render individual edges at all, or render them very faintly
-      // Returning here for "Architecture Mode" clarity
+      
+      // If a node is selected, render its edges immediately on top of arteries
+      if (selectedNodeId) {
+        for (const edge of this.edges) {
+          if (edge.source === selectedNodeId || edge.target === selectedNodeId) {
+            // Force highlight by passing true
+            this.renderSingleNodeEdge(edge, viewport, true);
+          }
+        }
+      }
       return;
     }
 
     this.ctx.lineWidth = 1;
 
     for (const edge of this.edges) {
-      const sourceNode = this.nodes.find((n) => n.id === edge.source);
-      const targetNode = this.nodes.find((n) => n.id === edge.target);
-      if (!sourceNode || !targetNode) continue;
-
-      const sourceLayout = this.layout.nodePositions.get(edge.source);
-      const targetLayout = this.layout.nodePositions.get(edge.target);
-      if (!sourceLayout || !targetLayout) continue;
-
-      const sClusterLayout = this.layout.clusterPositions.get(sourceNode.project || 'External');
-      const tClusterLayout = this.layout.clusterPositions.get(targetNode.project || 'External');
-      if (!sClusterLayout || !tClusterLayout) continue;
-
-      const sourceClusterId = sourceNode.project || 'External';
-      const targetClusterId = targetNode.project || 'External';
-
-      // LOD: Hide intra-cluster edges when zoomed out (unless hovering that cluster)
-      // This reduces visual noise ("fog") significantly
-      if (sourceClusterId === targetClusterId && this.zoom < 0.6 && this.hoveredCluster !== sourceClusterId) {
-        continue;
-      }
-
-      // Use manual cluster positions if clusters were dragged
-      const sClusterManual = this.manualClusterPositions.get(sourceClusterId);
-      const tClusterManual = this.manualClusterPositions.get(targetClusterId);
-
-      const sClusterX = sClusterManual?.x ?? sClusterLayout.x;
-      const sClusterY = sClusterManual?.y ?? sClusterLayout.y;
-      const sClusterZ = sClusterLayout.z ?? 0;
-      const tClusterX = tClusterManual?.x ?? tClusterLayout.x;
-      const tClusterY = tClusterManual?.y ?? tClusterLayout.y;
-      const tClusterZ = tClusterLayout.z ?? 0;
-
-      const sManual = this.manualNodePositions.get(edge.source);
-      const tManual = this.manualNodePositions.get(edge.target);
-
-      // Compute world positions including z
-      const worldX1 = sClusterX + (sManual?.x ?? sourceLayout.x);
-      const worldY1 = sClusterY + (sManual?.y ?? sourceLayout.y);
-      const worldZ1 = sClusterZ + (sourceLayout.z ?? 0);
-      const worldX2 = tClusterX + (tManual?.x ?? targetLayout.x);
-      const worldY2 = tClusterY + (tManual?.y ?? targetLayout.y);
-      const worldZ2 = tClusterZ + (targetLayout.z ?? 0);
-
-      // Apply 3D camera rotation
-      const p1 = this.project3D(worldX1, worldY1, worldZ1);
-      const p2 = this.project3D(worldX2, worldY2, worldZ2);
-      const x1 = p1.x;
-      const y1 = p1.y;
-      const x2 = p2.x;
-      const y2 = p2.y;
-
-      if (!isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport)) continue;
-
-      const touchesHoveredNode =
-        this.hoveredNode === edge.source || this.hoveredNode === edge.target;
-      const isHighlighted =
-        touchesHoveredNode ||
-        (this.selectedNode &&
-          (this.selectedNode.id === edge.source || this.selectedNode.id === edge.target));
-
-      const isConnectedToHoveredCluster =
-        this.hoveredCluster &&
-        (sourceClusterId === this.hoveredCluster || targetClusterId === this.hoveredCluster);
-
-      const shouldDim = !!(this.hoveredCluster && !isConnectedToHoveredCluster);
-      const isDependent = sourceClusterId !== targetClusterId;
-      const selectedClusterDim =
-        this.selectedCluster &&
-        sourceClusterId !== this.selectedCluster &&
-        targetClusterId !== this.selectedCluster;
-
-      // Cycle edge detection (Phase 6: cycle highlighting)
-      // An edge is a cycle edge if both nodes are in the same SCC with size > 1
-      const sourceScc = this.layout.nodeSccId?.get(edge.source);
-      const targetScc = this.layout.nodeSccId?.get(edge.target);
-      const isCycleEdge =
-        sourceScc !== undefined &&
-        targetScc !== undefined &&
-        sourceScc === targetScc &&
-        (this.layout.sccSizes?.get(sourceScc) ?? 0) > 1;
-
-      let color = getNodeTypeColor(targetNode.type);
-      color = adjustColorForZoom(color, this.zoom);
-
-      // Cycle edges get a distinctive orange/red color
-      if (isCycleEdge) {
-        color = 'rgba(255, 100, 50, 0.8)';
-      }
-      this.ctx.strokeStyle = color;
-
-      const baseOpacity = adjustOpacityForZoom(isHighlighted ? 0.8 : 0.3, this.zoom);
-      let opacity = baseOpacity * this.getEdgeOpacity(edge);
-      if (shouldDim) opacity *= 0.25;
-      if (selectedClusterDim) opacity *= 0.25;
-      // Cycle edges are more visible
-      if (isCycleEdge && !shouldDim && !selectedClusterDim) {
-        opacity = Math.max(opacity, 0.6);
-      }
-      this.ctx.globalAlpha = Math.min(1, opacity);
-      this.ctx.lineWidth = isHighlighted ? 2 : isCycleEdge ? 2 : 1;
-
-      const distance = Math.hypot(x2 - x1, y2 - y1);
-      const useBezier = distance > 150;
-      // Cycle edges use a distinct dash pattern
-      const dashPattern = isCycleEdge ? [4, 4] : isDependent ? [8, 4] : [4, 2];
-      this.ctx.setLineDash(dashPattern);
-      this.ctx.lineDashOffset = isHighlighted ? -this.time / 20 : 0;
-
-      if (useBezier) {
-        const pathString = generateBezierPath(x1, y1, x2, y2);
-        const path = new Path2D(pathString);
-        this.ctx.stroke(path);
-      } else {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x1, y1);
-        this.ctx.lineTo(x2, y2);
-        this.ctx.stroke();
-      }
-
-      this.ctx.setLineDash([]);
-      this.ctx.lineDashOffset = 0;
+      const isConnectedToSelected = (edge.source === selectedNodeId || edge.target === selectedNodeId);
+      this.renderSingleNodeEdge(edge, viewport, isConnectedToSelected);
     }
-    this.ctx.globalAlpha = 1.0;
+  }
+
+  private renderSingleNodeEdge(edge: GraphEdge, viewport: ViewportBounds, isHighlighted: boolean) {
+    const sourceNode = this.nodes.find((n) => n.id === edge.source);
+    const targetNode = this.nodes.find((n) => n.id === edge.target);
+    if (!sourceNode || !targetNode) return;
+
+    const sourceLayout = this.layout.nodePositions.get(edge.source);
+    const targetLayout = this.layout.nodePositions.get(edge.target);
+    if (!sourceLayout || !targetLayout) return;
+
+    const sClusterLayout = this.layout.clusterPositions.get(sourceNode.project || 'External');
+    const tClusterLayout = this.layout.clusterPositions.get(targetNode.project || 'External');
+    if (!sClusterLayout || !tClusterLayout) return;
+
+    const sourceClusterId = sourceNode.project || 'External';
+    const targetClusterId = targetNode.project || 'External';
+
+    // LOD: Hide intra-cluster edges when zoomed out (unless hovering that cluster or explicitly highlighted)
+    if (sourceClusterId === targetClusterId && this.zoom < 0.6 && this.hoveredCluster !== sourceClusterId && !isHighlighted) {
+      return;
+    }
+
+    // Use manual cluster positions if clusters were dragged
+    const sClusterManual = this.manualClusterPositions.get(sourceClusterId);
+    const tClusterManual = this.manualClusterPositions.get(targetClusterId);
+
+    const sClusterX = sClusterManual?.x ?? sClusterLayout.x;
+    const sClusterY = sClusterManual?.y ?? sClusterLayout.y;
+    const sClusterZ = sClusterLayout.z ?? 0;
+    const tClusterX = tClusterManual?.x ?? tClusterLayout.x;
+    const tClusterY = tClusterManual?.y ?? tClusterLayout.y;
+    const tClusterZ = tClusterLayout.z ?? 0;
+
+    const sManual = this.manualNodePositions.get(edge.source);
+    const tManual = this.manualNodePositions.get(edge.target);
+
+    // Compute world positions including z
+    const worldX1 = sClusterX + (sManual?.x ?? sourceLayout.x);
+    const worldY1 = sClusterY + (sManual?.y ?? sourceLayout.y);
+    const worldZ1 = sClusterZ + (sourceLayout.z ?? 0);
+    const worldX2 = tClusterX + (tManual?.x ?? targetLayout.x);
+    const worldY2 = tClusterY + (tManual?.y ?? targetLayout.y);
+    const worldZ2 = tClusterZ + (targetLayout.z ?? 0);
+
+    // Apply 3D camera rotation
+    const p1 = this.project3D(worldX1, worldY1, worldZ1);
+    const p2 = this.project3D(worldX2, worldY2, worldZ2);
+    const x1 = p1.x;
+    const y1 = p1.y;
+    const x2 = p2.x;
+    const y2 = p2.y;
+
+    if (!isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport)) return;
+
+    // Cycle edge detection
+    const sourceScc = this.layout.nodeSccId?.get(edge.source);
+    const targetScc = this.layout.nodeSccId?.get(edge.target);
+    const isCycleEdge =
+      sourceScc !== undefined &&
+      targetScc !== undefined &&
+      sourceScc === targetScc &&
+      (this.layout.sccSizes?.get(sourceScc) ?? 0) > 1;
+
+    let color = getNodeTypeColor(targetNode.type);
+    
+    // Bypass adjustColorForZoom if highlighted to ensure visibility
+    if (!isHighlighted) {
+      color = adjustColorForZoom(color, this.zoom);
+    }
+
+    if (isCycleEdge) {
+      color = 'rgba(255, 100, 50, 0.8)';
+    }
+    this.ctx.strokeStyle = color;
+
+    let opacity = isHighlighted ? 1.0 : 0.1;
+
+    if (isCycleEdge) {
+      opacity = Math.max(opacity, 0.8);
+    }
+    
+    opacity *= this.getEdgeOpacity(edge);
+    
+    this.ctx.globalAlpha = Math.min(1, opacity);
+    
+    // Scale line width by inverse zoom to maintain screen pixel width
+    const baseWidth = isHighlighted ? 2.5 : isCycleEdge ? 2 : 1;
+    this.ctx.lineWidth = baseWidth / this.zoom;
+
+    const distance = Math.hypot(x2 - x1, y2 - y1);
+    const useBezier = distance > 150;
+    const dashPattern = isCycleEdge ? [4, 4] : (sourceClusterId !== targetClusterId) ? [8, 4] : [4, 2];
+    this.ctx.setLineDash(dashPattern);
+    this.ctx.lineDashOffset = isHighlighted ? -this.time / 20 : 0;
+
+    if (useBezier) {
+      const pathString = generateBezierPath(x1, y1, x2, y2);
+      const path = new Path2D(pathString);
+      this.ctx.stroke(path);
+    } else {
+      this.ctx.beginPath();
+      this.ctx.moveTo(x1, y1);
+      this.ctx.lineTo(x2, y2);
+      this.ctx.stroke();
+    }
+
+    this.ctx.setLineDash([]);
+    this.ctx.lineDashOffset = 0;
   }
 
   private renderArteries(viewport: ViewportBounds) {

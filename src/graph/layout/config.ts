@@ -98,6 +98,12 @@ export const DEFAULT_CONFIG = {
 
   /** Whether to simplify edge routing by merging ports */
   elkMergeEdges: true,
+
+  /** Maximum width target for wrapping */
+  elkMaxWidth: 2000,
+  
+  /** Maximum height target for wrapping */
+  elkMaxHeight: 2000,
 } as const;
 
 /** Type for layout configuration */

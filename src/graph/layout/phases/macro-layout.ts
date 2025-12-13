@@ -22,50 +22,136 @@ export async function computeMacroLayout(
     const micro = microLayouts.get(cluster.id);
     children.push({
       id: cluster.id,
-      // Dimensions fixed by Micro Layout
-      width: micro?.width ?? config.minClusterSize,
-      height: micro?.height ?? config.minClusterSize,
-      // Add label for ELK to manage spacing
-      labels: [{ 
-        text: cluster.name || cluster.id,
-        width: 100, // Estimate
-        height: 20 
-      }],
-      // ELK options for cluster placement
-      layoutOptions: {
-        'elk.portConstraints': 'FIXED_SIDE', // Ports on sides
-        'org.eclipse.elk.nodeLabels.placement': 'OUTSIDE V_TOP H_CENTER',
-      },
-    });
-  }
-
+            // Dimensions fixed by Micro Layout
+            width: micro?.width ?? config.minClusterSize,
+            height: micro?.height ?? config.minClusterSize,
+            // ELK options for cluster placement
+            layoutOptions: {
+              'org.eclipse.elk.nodeLabels.placement': 'OUTSIDE V_TOP H_CENTER',
+            },
+          });
+        }
   const edges: ElkExtendedEdge[] = clusterGraph.edges.map(e => ({
     id: `e_${e.source}_${e.target}`,
     sources: [e.source],
     targets: [e.target],
-    // Pass weight to ELK? ELK Layered doesn't use edge weights for attraction directly in the same way D3 does,
-    // but it uses them for crossing minimization and layering.
-    // 'priority' might be relevant.
+    layoutOptions: {
+      // Prioritize high-weight edges
+      'org.eclipse.elk.priority': String(Math.min(10, 1 + Math.log2(e.weight ?? 1))),
+      'org.eclipse.elk.edge.thickness': String(1 + Math.log2(e.weight ?? 1)),
+    },
   }));
 
   const root: ElkNode = {
     id: 'root',
+    width: config.elkMaxWidth,
+    height: config.elkMaxHeight, // Hint for vertical space
     children,
     edges,
     layoutOptions: {
       'elk.algorithm': 'layered',
       'elk.direction': config.elkDirection, // DOWN or RIGHT
-      'elk.spacing.nodeNode': String(config.elkNodeSpacing * 3), // More spacing between clusters
-      'elk.layered.spacing.nodeNodeBetweenLayers': String(config.elkLayerSpacing * 2),
-      'elk.edgeRouting': 'ORTHOGONAL',
-      'elk.hierarchyHandling': 'INCLUDE_CHILDREN', // Though we treat them atomic here
+      'elk.spacing.nodeNode': String(config.elkNodeSpacing),
+      'elk.layered.spacing.nodeNodeBetweenLayers': String(config.elkLayerSpacing),
+      'elk.edgeRouting': 'POLYLINE', // Avoid "bus lanes"
+      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      
+      // Wrapping configuration
+      'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
+      'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+      'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
     },
   };
 
   // 2. Run Layout
   const layout = await elk.layout(root);
 
-  // 3. Extract Positions
+  // 3. Post-Compaction & Centering
+  if (layout.children) {
+    // Group by Y-band using layer spacing as quantization
+    const bands = new Map<number, ElkNode[]>();
+    const ySnap = config.elkLayerSpacing; 
+    
+    for (const node of layout.children) {
+      const cy = (node.y ?? 0) + (node.height ?? 0) / 2;
+      // Quantize to nearest layer grid
+      const bandY = Math.round(cy / ySnap) * ySnap;
+      if (!bands.has(bandY)) bands.set(bandY, []);
+      bands.get(bandY)!.push(node);
+    }
+
+    // Compact each band with wrapping
+    for (const [baseY, nodes] of bands) {
+      // Preserve ELK's X-order
+      nodes.sort((a, b) => (a.x ?? 0) - (b.x ?? 0));
+
+      const spacing = config.elkNodeSpacing;
+      const maxWidth = config.elkMaxWidth;
+      
+      // Organize into rows (wrapping)
+      const rows: ElkNode[][] = [[]];
+      let currentRowWidth = 0;
+      
+      for (const node of nodes) {
+        const w = node.width ?? 100;
+        // Accurate wrapping check
+        const nextWidth = rows[rows.length - 1]!.length === 0 
+          ? w 
+          : currentRowWidth + spacing + w;
+
+        if (nextWidth > maxWidth && rows[rows.length - 1]!.length > 0) {
+          rows.push([]);
+          currentRowWidth = w;
+        } else {
+          currentRowWidth = nextWidth;
+        }
+        rows[rows.length - 1]!.push(node);
+      }
+      
+      // Layout rows: Anchor top row at baseY, grow downward (preserve gravity)
+      const subLayerSpacing = config.elkLayerSpacing * 0.6; 
+      let currentY = baseY;
+
+      for (const row of rows) {
+        // Compute layout using circular bounds for safety
+        const rowItems = row.map(n => ({ 
+          node: n, 
+          // Visual radius (approx half max dim)
+          r: Math.max(n.width ?? 0, n.height ?? 0) / 2 
+        }));
+
+        const totalWidth = rowItems.reduce((sum, item, i) => {
+          // Diameter + Spacing (except last)
+          return sum + item.r * 2 + (i < rowItems.length - 1 ? spacing : 0);
+        }, 0);
+        
+        // Start X so the row is centered at 0
+        // Initial center is at: -totalWidth/2 + firstRadius
+        let currentCX = -totalWidth / 2 + (rowItems[0]?.r ?? 0);
+        
+        for (let i = 0; i < rowItems.length; i++) {
+          const { node, r } = rowItems[i]!;
+          
+          // ELK uses Top-Left coordinates
+          // We calculated Center X, so subtract half-width
+          node.x = currentCX - (node.width ?? 0) / 2;
+          
+          // Center vertically on the current sub-row Y
+          // (node.y is Top-Left)
+          node.y = currentY - (node.height ?? 0) / 2;
+          
+          // Advance to next center
+          if (i < rowItems.length - 1) {
+            const nextR = rowItems[i + 1]!.r;
+            currentCX += r + spacing + nextR;
+          }
+        }
+        currentY += subLayerSpacing;
+      }
+    }
+  }
+
+  // 4. Extract Positions
   const positions = new Map<string, ClusterPosition>();
   
   if (layout.children) {
