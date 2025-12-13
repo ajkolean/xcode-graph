@@ -70,6 +70,12 @@
       "formatter": {
         "enabled": false
       }
+    },
+    {
+      "includes": ["**/tuist-graph.types.ts"],
+      "linter": {
+        "enabled": false
+      }
     }
   ],
   "vcs": {

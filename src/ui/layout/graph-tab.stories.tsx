@@ -59,24 +59,39 @@ export const Default: Story = {
     </div>
   `,
   play: async ({ canvasElement, step }) => {
-    await step('Wait for graph tab to render', async () => {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-    });
+    // Helper to wait for element with polling
+    const waitForElement = async (
+      getElement: () => Element | null | undefined,
+      timeout = 2000,
+    ): Promise<Element | null> => {
+      const start = Date.now();
+      while (Date.now() - start < timeout) {
+        const element = getElement();
+        if (element) return element;
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      return getElement();
+    };
 
     await step('Verify graph tab element exists', async () => {
-      const graphTab = canvasElement.querySelector('graph-tab');
+      const graphTab = await waitForElement(() => canvasElement.querySelector('graph-tab'));
       await expect(graphTab).toBeTruthy();
     });
 
-    await step('Verify graph visualization is rendered', async () => {
+    await step('Verify graph canvas is rendered', async () => {
       const graphTab = canvasElement.querySelector('graph-tab');
-      const graphViz = graphTab?.shadowRoot?.querySelector('graph-visualization');
-      await expect(graphViz).toBeTruthy();
+      const graphCanvas = await waitForElement(
+        () => graphTab?.shadowRoot?.querySelector('graph-canvas'),
+        3000,
+      );
+      await expect(graphCanvas).toBeTruthy();
     });
 
     await step('Verify right sidebar is rendered', async () => {
       const graphTab = canvasElement.querySelector('graph-tab');
-      const sidebar = graphTab?.shadowRoot?.querySelector('graph-right-sidebar');
+      const sidebar = await waitForElement(() =>
+        graphTab?.shadowRoot?.querySelector('graph-right-sidebar'),
+      );
       await expect(sidebar).toBeTruthy();
     });
   },

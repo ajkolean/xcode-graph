@@ -65,7 +65,9 @@ describe('computeHierarchicalLayout', () => {
 
       // Verify clusters have distinct positions (not all collapsed to same point)
       const positions = Array.from(result.clusterPositions.values());
-      const uniquePositions = new Set(positions.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`));
+      const uniquePositions = new Set(
+        positions.map((p) => `${Math.round(p.x)},${Math.round(p.y)}`),
+      );
       expect(uniquePositions.size).toBeGreaterThan(1);
     });
 

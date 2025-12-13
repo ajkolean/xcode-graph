@@ -376,7 +376,8 @@ describe('ui.actions', () => {
       zoomIn();
       zoomIn();
 
-      expect(zoom.get()).toBe(5);
+      // Use toBeCloseTo for floating point precision
+      expect(zoom.get()).toBeCloseTo(5, 5);
     });
 
     it('should handle rapid zoom out beyond limit', () => {
