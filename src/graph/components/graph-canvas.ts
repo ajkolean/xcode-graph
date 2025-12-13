@@ -1021,11 +1021,14 @@ export class GraphCanvas extends LitElement {
 
       this.ctx.shadowBlur = 0;
 
-      if (this.zoom >= 0.5 || isHovered || isSelected) {
+      // Show label when: zoomed in, hovering, selected, or connected to selected node
+      if (this.zoom >= 0.5 || isHovered || isSelected || isConnected) {
         const labelText =
-          node.name.length > 20 && !isHovered ? `${node.name.substring(0, 20)}...` : node.name;
+          node.name.length > 20 && !isHovered && !isConnected
+            ? `${node.name.substring(0, 20)}...`
+            : node.name;
 
-        this.ctx.font = `${isSelected ? '600' : '400'} 12px var(--fonts-body, sans-serif)`;
+        this.ctx.font = `${isSelected ? '600' : isConnected ? '500' : '400'} 12px var(--fonts-body, sans-serif)`;
         this.ctx.textAlign = 'center';
         this.ctx.fillStyle = adjustedColor;
 
@@ -1175,7 +1178,15 @@ export class GraphCanvas extends LitElement {
       sourceScc === targetScc &&
       (this.layout.sccSizes?.get(sourceScc) ?? 0) > 1;
 
-    let color = getNodeTypeColor(targetNode.type);
+    // Use the OTHER node's color when highlighted (the one that isn't selected)
+    // This makes each edge match the icon of the node it connects to
+    const colorNode =
+      isHighlighted && this.selectedNode
+        ? sourceNode.id === this.selectedNode.id
+          ? targetNode
+          : sourceNode
+        : targetNode;
+    let color = getNodeTypeColor(colorNode.type);
 
     // Bypass adjustColorForZoom if highlighted to ensure visibility
     if (!isHighlighted) {
@@ -1204,21 +1215,30 @@ export class GraphCanvas extends LitElement {
     const isCrossCluster = sourceClusterId !== targetClusterId;
     const dashPattern = isCycleEdge ? [4, 4] : isCrossCluster ? [10, 5] : [4, 2];
     this.ctx.setLineDash(dashPattern);
-    this.ctx.lineDashOffset = isHighlighted ? -this.time / 20 : 0;
+    // Positive offset makes dashes flow FROM dependencies INTO the selected node
+    this.ctx.lineDashOffset = isHighlighted ? this.time / 20 : 0;
 
     // Check for port-routed path for cross-cluster edges
     const edgeKey = `${edge.source}->${edge.target}`;
     const routedEdge = isCrossCluster ? routedEdgeMap?.get(edgeKey) : undefined;
 
     if (routedEdge && layoutDimension.get() === '2d') {
-      // Use opaque color instead of alpha to prevent stacking
-      // (multiple edges share the same port-to-port highway, causing overlap)
-      // Use a gray that looks like white at the target opacity on black background
-      const baseOpacity = isHighlighted ? 0.5 : 0.15;
-      const targetOpacity = adjustOpacityForZoom(baseOpacity, this.zoom);
-      const gray = Math.round(255 * targetOpacity);
-      this.ctx.strokeStyle = `rgb(${gray}, ${gray}, ${gray})`;
-      this.ctx.globalAlpha = 1.0;
+      if (isHighlighted) {
+        // Use the color of the OTHER node (not the selected one)
+        // This makes each edge match the icon of the node it connects to
+        const otherNode = sourceNode.id === this.selectedNode?.id ? targetNode : sourceNode;
+        const edgeColor = getNodeTypeColor(otherNode.type);
+        this.ctx.strokeStyle = edgeColor;
+        this.ctx.globalAlpha = 0.9;
+      } else {
+        // Use opaque gray instead of alpha to prevent stacking
+        // (multiple edges share the same port-to-port highway, causing overlap)
+        const baseOpacity = 0.15;
+        const targetOpacity = adjustOpacityForZoom(baseOpacity, this.zoom);
+        const gray = Math.round(255 * targetOpacity);
+        this.ctx.strokeStyle = `rgb(${gray}, ${gray}, ${gray})`;
+        this.ctx.globalAlpha = 1.0;
+      }
 
       // Use port-routed path for cross-cluster edges (2D only for now)
       const pathString = generatePortRoutedPath(
