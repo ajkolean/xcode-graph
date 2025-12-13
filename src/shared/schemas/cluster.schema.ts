@@ -8,6 +8,7 @@
  */
 
 import { z } from 'zod';
+import type { ClusterElkOptions } from '@/graph/layout/config';
 import { type GraphNode, GraphNodeSchema, type Origin, OriginSchema } from './graph.schema';
 
 // ==================== Native Enums ====================
@@ -93,6 +94,8 @@ export interface Cluster {
   anchors: string[];
   /** Node metadata as Map for efficient lookup */
   metadata: Map<string, ClusterNodeMetadata>;
+  /** ELK layout options for this cluster (overrides global config) */
+  elkOptions?: ClusterElkOptions;
   /** Visual bounding box */
   bounds?: ClusterBounds;
 }
@@ -208,6 +211,11 @@ export const ClusterSchema: z.ZodType<ClusterSerialized> = z.object({
   nodes: z.array(GraphNodeSchema),
   anchors: z.array(z.string()),
   metadata: z.array(ClusterNodeMetadataSchema),
+  elkOptions: z
+    .object({
+      hierarchyHandling: z.enum(['INHERIT', 'INCLUDE_CHILDREN', 'SEPARATE_CHILDREN']).optional(),
+    })
+    .optional(),
   bounds: ClusterBoundsSchema.optional(),
 });
 

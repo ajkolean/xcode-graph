@@ -20,6 +20,10 @@ export async function computeMacroLayout(
 
   for (const cluster of clusterGraph.nodes) {
     const micro = microLayouts.get(cluster.id);
+
+    // Determine hierarchy handling: cluster override > global config
+    const hierarchyHandling = cluster.elkOptions?.hierarchyHandling ?? config.elkHierarchyHandling;
+
     children.push({
       id: cluster.id,
       // Dimensions fixed by Micro Layout
@@ -28,6 +32,7 @@ export async function computeMacroLayout(
       // ELK options for cluster placement
       layoutOptions: {
         'org.eclipse.elk.nodeLabels.placement': 'OUTSIDE V_TOP H_CENTER',
+        'elk.hierarchyHandling': hierarchyHandling,
       },
     });
   }
@@ -65,7 +70,7 @@ export async function computeMacroLayout(
       'elk.spacing.nodeNode': String(config.elkNodeSpacing),
       'elk.layered.spacing.nodeNodeBetweenLayers': String(config.elkLayerSpacing),
       'elk.edgeRouting': 'POLYLINE', // Avoid "bus lanes"
-      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      'elk.hierarchyHandling': config.elkHierarchyHandling,
 
       // Wrapping configuration
       'elk.layered.wrapping.strategy': 'SINGLE_EDGE',

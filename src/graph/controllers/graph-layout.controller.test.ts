@@ -59,28 +59,28 @@ describe('GraphLayoutController', () => {
   });
 
   describe('Layout Computation', () => {
-    it('should compute layout for simple graph', () => {
+    it('should compute layout for simple graph', async () => {
       const { nodes, edges } = createLinearChain(4);
 
-      controller.computeLayout(nodes, edges);
+      await controller.computeLayout(nodes, edges);
 
       expect(controller.nodePositions.size).toBe(4);
       expect(controller.clusterPositions.size).toBeGreaterThan(0);
       expect(controller.clusters.length).toBeGreaterThan(0);
     });
 
-    it('should handle empty graph', () => {
-      controller.computeLayout([], []);
+    it('should handle empty graph', async () => {
+      await controller.computeLayout([], []);
 
       expect(controller.nodePositions.size).toBe(0);
       expect(controller.clusterPositions.size).toBe(0);
       expect(controller.clusters).toHaveLength(0);
     });
 
-    it('should assign positions to all nodes', () => {
+    it('should assign positions to all nodes', async () => {
       const { nodes, edges } = createLinearChain(3);
 
-      controller.computeLayout(nodes, edges);
+      await controller.computeLayout(nodes, edges);
 
       // All nodes should have positions
       for (const node of nodes) {
@@ -91,10 +91,10 @@ describe('GraphLayoutController', () => {
       }
     });
 
-    it('should initialize velocities to zero when animation disabled', () => {
+    it('should initialize velocities to zero when animation disabled', async () => {
       const { nodes, edges } = createLinearChain(3);
 
-      controller.computeLayout(nodes, edges);
+      await controller.computeLayout(nodes, edges);
 
       for (const pos of controller.nodePositions.values()) {
         expect(pos.vx).toBe(0);
@@ -104,10 +104,10 @@ describe('GraphLayoutController', () => {
   });
 
   describe('Animation', () => {
-    it('should not animate when disabled', () => {
+    it('should not animate when disabled', async () => {
       const { nodes, edges } = createLinearChain(3);
 
-      controller.computeLayout(nodes, edges);
+      await controller.computeLayout(nodes, edges);
 
       expect(controller.isSettling).toBe(false);
     });
@@ -146,9 +146,9 @@ describe('GraphLayoutController', () => {
   });
 
   describe('Lifecycle', () => {
-    it('should cleanup on disconnect', () => {
+    it('should cleanup on disconnect', async () => {
       const { nodes, edges } = createLinearChain(3);
-      controller.computeLayout(nodes, edges);
+      await controller.computeLayout(nodes, edges);
 
       host.disconnectedCallback();
 
@@ -174,10 +174,10 @@ describe('GraphLayoutController', () => {
   });
 
   describe('Integration', () => {
-    it('should coordinate all three sub-controllers', () => {
+    it('should coordinate all three sub-controllers', async () => {
       const { nodes, edges } = createLinearChain(10);
 
-      controller.computeLayout(nodes, edges);
+      await controller.computeLayout(nodes, edges);
 
       // LayoutController should have computed positions
       expect(controller.nodePositions.size).toBe(10);

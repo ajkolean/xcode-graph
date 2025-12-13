@@ -104,7 +104,29 @@ export const DEFAULT_CONFIG = {
 
   /** Maximum height target for wrapping */
   elkMaxHeight: 2000,
+
+  /** Hierarchy handling strategy for ELK layout */
+  elkHierarchyHandling: 'SEPARATE_CHILDREN',
 } as const;
+
+/**
+ * ELK Hierarchy Handling strategy
+ * - INHERIT: Use parent's setting (root defaults to SEPARATE_CHILDREN)
+ * - INCLUDE_CHILDREN: Layout node and all descendants in single run
+ * - SEPARATE_CHILDREN: Each child triggers its own layout run
+ */
+export enum ElkHierarchyHandling {
+  Inherit = 'INHERIT',
+  IncludeChildren = 'INCLUDE_CHILDREN',
+  SeparateChildren = 'SEPARATE_CHILDREN',
+}
+
+/**
+ * ELK-specific layout options that can be set per-cluster
+ */
+export interface ClusterElkOptions {
+  hierarchyHandling?: ElkHierarchyHandling;
+}
 
 /** Type for layout configuration */
 export type LayoutConfig = typeof DEFAULT_CONFIG;
