@@ -1,23 +1,5 @@
-/**
- * Cluster-to-cluster forces
- *
- * - Weighted anisotropic repulsion: Prevents overlap, respects cross-cluster edges
- * - Cluster attraction: Pulls connected clusters together to form neighborhoods
- */
-
-interface ClusterCenter {
-  id: string;
-  cx: number;
-  cy: number;
-  radius: number;
-}
-
-/**
- * Create a pair key for two cluster IDs (alphabetically sorted for consistency)
- */
-function pairKey(a: string, b: string): string {
-  return a < b ? `${a}|${b}` : `${b}|${a}`;
-}
+import { type SimulationNodeDatum } from 'd3-force';
+import type { ClusterCenter } from '../types';
 
 /**
  * Weighted anisotropic cluster repulsion force
@@ -26,44 +8,37 @@ function pairKey(a: string, b: string): string {
  * - Y-axis force is scaled down (anisotropic) so strata can dominate vertical layout
  * - Padding is reduced for clusters that share many edges (neighborhoods form)
  * - Respects cluster radii for proper non-overlap
- *
- * @param baseStrength Base repulsion strength
- * @param basePadding Base padding between clusters
- * @param crossClusterWeights Map of "clusterA|clusterB" -> edge count
- * @param yScale Scale factor for Y-axis force (0.0-1.0, lower = more horizontal spread)
  */
-export function forceClusterRepulsion(
-  baseStrength: number,
-  basePadding: number,
-  crossClusterWeights?: Map<string, number>,
-  yScale = 0.25,
-) {
-  let clusterCenters: ClusterCenter[] = [];
-  let weights = crossClusterWeights ?? new Map<string, number>();
+export function forceClusterRepulsion() {
+  let nodes: ClusterCenter[] = [];
+  let strength = 8000;
+  let padding = 120;
+  let yScale = 0.25;
+  let weights = new Map<string, number>();
 
   function force(alpha: number) {
-    const effectiveStrength = baseStrength * alpha;
+    const effectiveStrength = strength * alpha;
 
-    for (let i = 0; i < clusterCenters.length; i++) {
-      const a = clusterCenters[i]!;
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i]!;
 
-      for (let j = i + 1; j < clusterCenters.length; j++) {
-        const b = clusterCenters[j]!;
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j]!;
 
         const dx = b.cx - a.cx;
         const dy = b.cy - a.cy;
         let dist = Math.hypot(dx, dy) || 1e-6;
 
         // Get cross-cluster edge weight
-        const key = pairKey(a.id, b.id);
+        const key = a.id < b.id ? `${a.id}|${b.id}` : `${b.id}|${a.id}`;
         const w = weights.get(key) ?? 0;
 
         // Softness: more edges = less repulsion/padding (form neighborhoods)
         const softness = 1 / (1 + Math.log2(w + 1));
-        const padding = basePadding * softness;
+        const effectivePadding = padding * softness;
 
         // Minimum distance = sum of radii + weighted padding
-        const minDist = a.radius + b.radius + padding;
+        const minDist = a.radius + b.radius + effectivePadding;
         if (dist < minDist) dist = minDist;
 
         // Inverse square repulsion
@@ -83,18 +58,30 @@ export function forceClusterRepulsion(
     }
   }
 
-  // D3 force interface
-  force.initialize = (centers: ClusterCenter[]) => {
-    clusterCenters = centers;
+  force.initialize = (n: SimulationNodeDatum[]) => {
+    // We expect the nodes passed here to be ClusterCenters
+    // In a standard D3 force, this receives the simulation nodes.
+    // However, this specific force operates on *Clusters*, not *Nodes*.
+    // The previous implementation manually passed ClusterCenters.
+    // To make this standard, we either:
+    // 1. Make the simulation run on Clusters (meta-simulation)
+    // 2. Or keep this as a manual force if it doesn't run on the main nodes.
+    
+    // DECISION: This force operates on Cluster Centers, which are distinct from SimNodes.
+    // If the main simulation is for SimNodes, this force cannot be a standard force() *of that simulation*
+    // unless we adapt it. 
+    // BUT, the architecture in d3-layout.ts suggests we are updating cluster centers *alongside* nodes.
+    // The cleanest way is to just store the reference.
+    nodes = n as unknown as ClusterCenter[]; 
   };
 
   force.strength = (s: number) => {
-    baseStrength = s;
+    strength = s;
     return force;
   };
 
   force.padding = (p: number) => {
-    basePadding = p;
+    padding = p;
     return force;
   };
 
@@ -113,49 +100,36 @@ export function forceClusterRepulsion(
 
 /**
  * Cluster attraction force
- *
  * Gently pulls connected clusters together to form neighborhoods.
- * Only activates when clusters are far apart to avoid fighting repulsion.
- *
- * @param baseStrength Base attraction strength
- * @param crossClusterWeights Map of "clusterA|clusterB" -> edge count
- * @param activationDistance Only attract when distance > this threshold
  */
-export function forceClusterAttraction(
-  baseStrength: number,
-  crossClusterWeights: Map<string, number>,
-  activationDistance = 400,
-) {
-  let clusterCenters: ClusterCenter[] = [];
-  let weights = crossClusterWeights;
+export function forceClusterAttraction() {
+  let nodes: ClusterCenter[] = [];
+  let strength = 0.20;
+  let activationDistance = 400;
+  let weights = new Map<string, number>();
 
   function force(alpha: number) {
-    const effectiveStrength = baseStrength * alpha;
+    const effectiveStrength = strength * alpha;
 
-    for (let i = 0; i < clusterCenters.length; i++) {
-      const a = clusterCenters[i]!;
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i]!;
 
-      for (let j = i + 1; j < clusterCenters.length; j++) {
-        const b = clusterCenters[j]!;
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j]!;
 
-        // Check if clusters share edges
-        const key = pairKey(a.id, b.id);
+        const key = a.id < b.id ? `${a.id}|${b.id}` : `${b.id}|${a.id}`;
         const w = weights.get(key) ?? 0;
 
-        if (w === 0) continue; // No attraction for unconnected clusters
+        if (w === 0) continue;
 
         const dx = b.cx - a.cx;
         const dy = b.cy - a.cy;
         const dist = Math.hypot(dx, dy) || 1e-6;
 
-        // Only attract when far apart (don't fight repulsion at close range)
         const minDist = a.radius + b.radius + activationDistance;
         if (dist <= minDist) continue;
 
-        // Attraction strength proportional to log of edge count
         const attractionFactor = Math.log2(w + 1) * effectiveStrength;
-
-        // Linear attraction (not inverse square) for gentle neighborhood formation
         const nx = dx / dist;
         const ny = dy / dist;
         const fx = attractionFactor * nx;
@@ -169,13 +143,12 @@ export function forceClusterAttraction(
     }
   }
 
-  // D3 force interface
-  force.initialize = (centers: ClusterCenter[]) => {
-    clusterCenters = centers;
+  force.initialize = (n: SimulationNodeDatum[]) => {
+    nodes = n as unknown as ClusterCenter[];
   };
 
   force.strength = (s: number) => {
-    baseStrength = s;
+    strength = s;
     return force;
   };
 

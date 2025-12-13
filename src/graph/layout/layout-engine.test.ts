@@ -14,7 +14,7 @@ import {
 import { tuistGraphData } from '../../fixtures/tuist-graph-data';
 import { groupIntoClusters } from './cluster-grouping';
 import { analyzeCluster } from './cluster-analysis';
-import { computeHierarchicalLayout } from './d3-layout';
+import { computeHierarchicalLayout } from './index';
 
 /**
  * Helper to create clusters from nodes based on their project property
