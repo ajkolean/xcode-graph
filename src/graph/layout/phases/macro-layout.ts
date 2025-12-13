@@ -37,8 +37,8 @@ export async function computeMacroLayout(
     targets: [e.target],
     layoutOptions: {
       // Prioritize high-weight edges
-      'org.eclipse.elk.priority': String(Math.min(10, 1 + Math.log2(e.weight ?? 1))),
-      'org.eclipse.elk.edge.thickness': String(1 + Math.log2(e.weight ?? 1)),
+      'elk.priority': String(Math.min(10, 1 + Math.log2(e.weight ?? 1))),
+      'elk.edge.thickness': String(1 + Math.log2(e.weight ?? 1)),
     },
   }));
 
@@ -74,14 +74,19 @@ export async function computeMacroLayout(
     
     for (const node of layout.children) {
       const cy = (node.y ?? 0) + (node.height ?? 0) / 2;
-      // Quantize to nearest layer grid
-      const bandY = Math.round(cy / ySnap) * ySnap;
+      // Quantize to nearest layer grid (Floor ensures gravity down)
+      const bandY = Math.floor(cy / ySnap) * ySnap;
       if (!bands.has(bandY)) bands.set(bandY, []);
       bands.get(bandY)!.push(node);
     }
 
-    // Compact each band with wrapping
-    for (const [baseY, nodes] of bands) {
+    // Sort bands by Y to place them sequentially (preventing overlap)
+    const sortedBands = Array.from(bands.entries()).sort((a, b) => a[0] - b[0]);
+    
+    // Start cursor at the first band's original Y (or 0)
+    let yCursor = sortedBands.length > 0 ? sortedBands[0]![0] : 0;
+
+    for (const [_, nodes] of sortedBands) {
       // Preserve ELK's X-order
       nodes.sort((a, b) => (a.x ?? 0) - (b.x ?? 0));
 
@@ -108,9 +113,9 @@ export async function computeMacroLayout(
         rows[rows.length - 1]!.push(node);
       }
       
-      // Layout rows: Anchor top row at baseY, grow downward (preserve gravity)
+      // Layout rows sequentially starting from yCursor
       const subLayerSpacing = config.elkLayerSpacing * 0.6; 
-      let currentY = baseY;
+      let currentY = yCursor;
 
       for (const row of rows) {
         // Compute layout using circular bounds for safety
@@ -126,21 +131,13 @@ export async function computeMacroLayout(
         }, 0);
         
         // Start X so the row is centered at 0
-        // Initial center is at: -totalWidth/2 + firstRadius
         let currentCX = -totalWidth / 2 + (rowItems[0]?.r ?? 0);
         
         for (let i = 0; i < rowItems.length; i++) {
           const { node, r } = rowItems[i]!;
-          
-          // ELK uses Top-Left coordinates
-          // We calculated Center X, so subtract half-width
           node.x = currentCX - (node.width ?? 0) / 2;
-          
-          // Center vertically on the current sub-row Y
-          // (node.y is Top-Left)
           node.y = currentY - (node.height ?? 0) / 2;
           
-          // Advance to next center
           if (i < rowItems.length - 1) {
             const nextR = rowItems[i + 1]!.r;
             currentCX += r + spacing + nextR;
@@ -148,6 +145,11 @@ export async function computeMacroLayout(
         }
         currentY += subLayerSpacing;
       }
+      
+      // Advance cursor for next band: Current Y + Padding
+      // Note: currentY is now at the *start* of the *next* sub-row (if it existed)
+      // We add a full layer spacing to separate strata
+      yCursor = currentY + (config.elkLayerSpacing - subLayerSpacing);
     }
   }
 
