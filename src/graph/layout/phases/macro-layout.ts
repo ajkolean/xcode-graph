@@ -42,9 +42,19 @@ export async function computeMacroLayout(
     },
   }));
 
+  // Dynamically calculate width based on AREA heuristic (more stable than sum widths)
+  // Packing efficiency ~60%
+  const totalArea = children.reduce((sum, c) => sum + (c.width ?? 0) * (c.height ?? 0), 0);
+  const targetAspect = 1.6;
+  const areaWidth = Math.sqrt(totalArea * targetAspect / 0.6) + 1000;
+  const elkWidthHint = Math.max(config.elkMaxWidth, areaWidth);
+
+  // Decoupled packing width: ELK gets freedom, but we force structure
+  const packMaxWidth = 2500; 
+
   const root: ElkNode = {
     id: 'root',
-    width: config.elkMaxWidth,
+    width: elkWidthHint, // Hint to ELK
     height: config.elkMaxHeight, // Hint for vertical space
     children,
     edges,
@@ -91,7 +101,8 @@ export async function computeMacroLayout(
       nodes.sort((a, b) => (a.x ?? 0) - (b.x ?? 0));
 
       const spacing = config.elkNodeSpacing;
-      const maxWidth = config.elkMaxWidth;
+      // Use stable packing width to prevent drift
+      const maxWidth = packMaxWidth;
       
       // Organize into rows (wrapping)
       const rows: ElkNode[][] = [[]];
@@ -114,15 +125,21 @@ export async function computeMacroLayout(
       }
       
       // Layout rows sequentially starting from yCursor
-      const subLayerSpacing = config.elkLayerSpacing * 0.6; 
       let currentY = yCursor;
 
       for (const row of rows) {
+        // Compute max height in this row for vertical spacing
+        const maxRowH = row.reduce((max, n) => Math.max(max, n.height ?? 100), 0);
+        
+        // Define gaps explicitly
+        const rowGap = 100; // Gap between sub-rows in same band
+        const bandGap = config.elkLayerSpacing; // Gap between strata bands
+
         // Compute layout using circular bounds for safety
         const rowItems = row.map(n => ({ 
           node: n, 
-          // Visual radius (approx half max dim)
-          r: Math.max(n.width ?? 0, n.height ?? 0) / 2 
+          // Visual radius (approx half max dim) + Label/Border Buffer (30px)
+          r: Math.max(n.width ?? 0, n.height ?? 0) / 2 + 30
         }));
 
         const totalWidth = rowItems.reduce((sum, item, i) => {
@@ -136,6 +153,7 @@ export async function computeMacroLayout(
         for (let i = 0; i < rowItems.length; i++) {
           const { node, r } = rowItems[i]!;
           node.x = currentCX - (node.width ?? 0) / 2;
+          // Center vertically on the current sub-row Y
           node.y = currentY - (node.height ?? 0) / 2;
           
           if (i < rowItems.length - 1) {
@@ -143,13 +161,15 @@ export async function computeMacroLayout(
             currentCX += r + spacing + nextR;
           }
         }
-        currentY += subLayerSpacing;
+        // Advance Y for next ROW (use smaller gap)
+        currentY += maxRowH + rowGap;
       }
       
-      // Advance cursor for next band: Current Y + Padding
-      // Note: currentY is now at the *start* of the *next* sub-row (if it existed)
-      // We add a full layer spacing to separate strata
-      yCursor = currentY + (config.elkLayerSpacing - subLayerSpacing);
+      // Advance cursor for next BAND: Current Y points to start of next row.
+      // Add extra padding to separate from next stratum.
+      // But currentY already includes rowGap. 
+      // Let's ensure minimum band gap.
+      yCursor = currentY + (config.elkLayerSpacing - 100); 
     }
   }
 

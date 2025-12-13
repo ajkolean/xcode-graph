@@ -88,13 +88,13 @@ export const DEFAULT_CONFIG = {
   elkEdgeRouting: 'ORTHOGONAL',
   
   /** Spacing between nodes in the same layer */
-  elkNodeSpacing: 100,
+  elkNodeSpacing: 200,
   
   /** Spacing between layers (ranks) */
-  elkLayerSpacing: 150,
+  elkLayerSpacing: 300,
   
   /** Padding around clusters */
-  elkPadding: 80,
+  elkPadding: 100,
 
   /** Whether to simplify edge routing by merging ports */
   elkMergeEdges: true,
