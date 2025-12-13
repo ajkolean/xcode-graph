@@ -6,6 +6,7 @@ import { buildClusterGraph } from './cluster-graph';
 import { computeClusterInterior } from './phases/micro-layout';
 import { computeMacroLayout } from './phases/macro-layout';
 import { applyForceMassage } from './phases/force-massage';
+import { applyNodeMassage } from './phases/node-massage';
 
 /**
  * Main layout computation - Hybrid ELK + D3 "Macro/Micro" Layout
@@ -39,10 +40,12 @@ export async function computeHierarchicalLayout(
   // 2. Micro-Layout: Compute dimensions and internal positions for each cluster
   // (Can run in parallel)
   const microLayouts = new Map(
-    clusters.map(cluster => [
-      cluster.id,
-      computeClusterInterior(cluster, config)
-    ])
+    clusters.map(cluster => {
+      let micro = computeClusterInterior(cluster, config);
+      // 2b. Node Massage: Gently space out nodes within the cluster
+      micro = applyNodeMassage(micro, config);
+      return [cluster.id, micro];
+    })
   );
 
   // 3. Macro-Layout: Compute cluster world positions using ELK
