@@ -9,7 +9,7 @@
 export const DEFAULT_CONFIG = {
   // Node-level forces (D3 Legacy)
   nodeRadius: 6,
-  nodeCollisionPadding: 12,
+  nodeCollisionPadding: 20,
   linkDistance: 45,
   linkStrength: 0.35,
   nodeCharge: -35,
@@ -88,13 +88,13 @@ export const DEFAULT_CONFIG = {
   elkEdgeRouting: 'ORTHOGONAL',
   
   /** Spacing between nodes in the same layer */
-  elkNodeSpacing: 60,
+  elkNodeSpacing: 100,
   
   /** Spacing between layers (ranks) */
-  elkLayerSpacing: 100,
+  elkLayerSpacing: 150,
   
   /** Padding around clusters */
-  elkPadding: 60,
+  elkPadding: 80,
 
   /** Whether to simplify edge routing by merging ports */
   elkMergeEdges: true,

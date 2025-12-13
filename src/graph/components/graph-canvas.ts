@@ -1103,6 +1103,12 @@ export class GraphCanvas extends LitElement {
       const sourceClusterId = sourceNode.project || 'External';
       const targetClusterId = targetNode.project || 'External';
 
+      // LOD: Hide intra-cluster edges when zoomed out (unless hovering that cluster)
+      // This reduces visual noise ("fog") significantly
+      if (sourceClusterId === targetClusterId && this.zoom < 0.6 && this.hoveredCluster !== sourceClusterId) {
+        continue;
+      }
+
       // Use manual cluster positions if clusters were dragged
       const sClusterManual = this.manualClusterPositions.get(sourceClusterId);
       const tClusterManual = this.manualClusterPositions.get(targetClusterId);
@@ -1238,25 +1244,13 @@ export class GraphCanvas extends LitElement {
       // weight is count of edges. 
       const thickness = Math.max(2, Math.min(12, Math.log2(edge.weight + 1) * 2));
       
-      this.ctx.lineWidth = thickness * this.zoom; // Scale with zoom? Or keep screen constant?
-                                                  // Arteries should probably be constant screen width or slightly scaling.
-                                                  // Let's scale slightly: thickness * Math.max(0.5, this.zoom)
+      this.ctx.lineWidth = thickness * this.zoom;
       
-      this.ctx.beginPath();
-      this.ctx.moveTo(p1.x, p1.y);
-      this.ctx.lineTo(p2.x, p2.y);
+      const pathString = generateBezierPath(p1.x, p1.y, p2.x, p2.y);
+      const path = new Path2D(pathString);
+      this.ctx.stroke(path);
       
       this.ctx.strokeStyle = 'rgba(150, 150, 160, 0.4)'; // Muted gray/blue
-      // Highlight if connected cluster is hovered
-      if (this.hoveredCluster === edge.source || this.hoveredCluster === edge.target) {
-        this.ctx.strokeStyle = 'rgba(100, 180, 255, 0.8)';
-        this.ctx.globalAlpha = 1.0;
-      } else {
-        this.ctx.globalAlpha = 0.6;
-      }
-      
-      this.ctx.stroke();
-      this.ctx.globalAlpha = 1.0;
     }
   }
 
