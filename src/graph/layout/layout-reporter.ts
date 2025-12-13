@@ -5,8 +5,8 @@
  * for layout review and optimization.
  */
 
-import type { ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { ClusterPosition } from '@shared/schemas';
+import type { GraphEdge } from '@shared/schemas/graph.schema';
 import type { HierarchicalLayoutResult } from './types';
 
 // ============================================================================
@@ -156,9 +156,9 @@ export function printClusterTable(result: HierarchicalLayoutResult, strataSpacin
     }))
     .sort((a, b) => a.y - b.y || a.x - b.x);
 
-  console.log('\n┌' + '─'.repeat(90) + '┐');
-  console.log('│ CLUSTER POSITIONS' + ' '.repeat(72) + '│');
-  console.log('├' + '─'.repeat(90) + '┤');
+  console.log(`\n┌${'─'.repeat(90)}┐`);
+  console.log(`│ CLUSTER POSITIONS${' '.repeat(72)}│`);
+  console.log(`├${'─'.repeat(90)}┤`);
   console.log(
     '│ ' +
       'ID'.padEnd(30) +
@@ -169,7 +169,7 @@ export function printClusterTable(result: HierarchicalLayoutResult, strataSpacin
       'Height │' +
       'Nodes │',
   );
-  console.log('├' + '─'.repeat(90) + '┤');
+  console.log(`├${'─'.repeat(90)}┤`);
 
   for (const c of clusters) {
     console.log(
@@ -191,7 +191,7 @@ export function printClusterTable(result: HierarchicalLayoutResult, strataSpacin
     );
   }
 
-  console.log('└' + '─'.repeat(90) + '┘');
+  console.log(`└${'─'.repeat(90)}┘`);
 }
 
 /**

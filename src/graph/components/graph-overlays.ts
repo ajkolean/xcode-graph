@@ -66,9 +66,6 @@ export class GraphControls extends LitElement {
   @property({ type: Number, attribute: 'edge-count' })
   declare edgeCount: number;
 
-  @property({ type: Boolean, attribute: 'enable-animation' })
-  declare enableAnimation: boolean;
-
   @property({ type: String, attribute: 'layout-dimension' })
   declare layoutDimension: '2d' | '3d';
 
@@ -125,44 +122,6 @@ export class GraphControls extends LitElement {
     .zoom-button svg {
       width: var(--sizes-icon-sm);
       height: var(--sizes-icon-sm);
-    }
-
-    .animation-button {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-1);
-      padding: var(--spacing-1) var(--spacing-2);
-      border-radius: var(--radii-md);
-      transition: all var(--durations-normal);
-      border: var(--border-widths-thin) solid transparent;
-      background: none;
-      cursor: pointer;
-    }
-
-    .animation-button.active {
-      border-color: color-mix(in srgb, var(--colors-primary) 50%, transparent);
-      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
-      color: var(--colors-primary);
-    }
-
-    .animation-button:not(.active) {
-      border-color: color-mix(in srgb, var(--colors-primary) 20%, transparent);
-      color: var(--colors-muted-foreground);
-    }
-
-    .animation-button:hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
-    }
-
-    .orbit-icon {
-      width: var(--sizes-icon-sm);
-      height: var(--sizes-icon-sm);
-    }
-
-    .orbit-icon svg {
-      width: 100%;
-      height: 100%;
-      stroke: currentColor;
     }
 
     .dimension-toggle {

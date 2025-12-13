@@ -1,6 +1,5 @@
 import type { Cluster, NodePosition } from '@shared/schemas';
 import { NodeRole } from '@shared/schemas/cluster.schema';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import * as d3 from 'd3-force';
 import type { LayoutConfig } from '../config';
 

@@ -1,4 +1,4 @@
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
+import type { Cluster, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { buildClusterGraph } from './cluster-graph';
 import { DEFAULT_CONFIG, type LayoutOptions } from './config';

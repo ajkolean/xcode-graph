@@ -15,7 +15,6 @@ import {
   createNodeOutsideViewport,
   createViewportBounds,
 } from './test-helpers/graph-fixtures';
-import { countSvgElements } from './test-helpers/svg-assertions';
 
 describe('graph-virtual-renderer', () => {
   it('should render with default properties', async () => {

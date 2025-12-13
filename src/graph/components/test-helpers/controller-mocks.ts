@@ -187,13 +187,13 @@ export class MockGraphInteractionController implements ReactiveController {
     if (config.clusterPositions) this.clusterPositions = config.clusterPositions;
   }
 
-  handleMouseDown = (e: MouseEvent): void => {
+  handleMouseDown = (_e: MouseEvent): void => {
     this.handleMouseDownCalls++;
     this.isDragging = true;
     this.hasMoved = false;
   };
 
-  handleMouseMove = (e: MouseEvent): void => {
+  handleMouseMove = (_e: MouseEvent): void => {
     this.handleMouseMoveCalls++;
     if (this.isDragging) {
       this.hasMoved = true;
@@ -206,7 +206,7 @@ export class MockGraphInteractionController implements ReactiveController {
     this.draggedNode = null;
   };
 
-  handleNodeMouseDown(nodeId: string, e: MouseEvent): void {
+  handleNodeMouseDown(nodeId: string, _e: MouseEvent): void {
     this.handleNodeMouseDownCalls.push({ nodeId });
     this.draggedNode = nodeId;
   }

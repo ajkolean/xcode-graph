@@ -10,17 +10,10 @@ import type { GraphVisualization } from './graph-visualization';
 import './graph-visualization';
 import {
   createMediumTestGraph,
-  createMockClusterPositions,
-  createMockNodePositions,
   createSmallTestGraph,
   createTestNode,
 } from './test-helpers/graph-fixtures';
-import {
-  assertSvgElementCount,
-  assertSvgElementExists,
-  countSvgElements,
-  querySvgElement,
-} from './test-helpers/svg-assertions';
+import { assertSvgElementExists, querySvgElement } from './test-helpers/svg-assertions';
 
 describe('graph-visualization', () => {
   it('should render with minimal props', async () => {

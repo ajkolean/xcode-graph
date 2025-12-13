@@ -82,7 +82,6 @@ export class GraphCanvas extends LitElement {
   // Interaction State
   private pan: { x: number; y: number };
   private isDragging = false;
-  private hasMoved = false;
   private draggedNodeId: string | null = null;
   private draggedClusterId: string | null = null;
   private lastMousePos = { x: 0, y: 0 };
@@ -261,7 +260,13 @@ export class GraphCanvas extends LitElement {
       maxY = Math.max(maxY, pos.y + halfH);
     });
 
-    if (!isFinite(minX) || !isFinite(maxX) || !isFinite(minY) || !isFinite(maxY)) return;
+    if (
+      !Number.isFinite(minX) ||
+      !Number.isFinite(maxX) ||
+      !Number.isFinite(minY) ||
+      !Number.isFinite(maxY)
+    )
+      return;
 
     const graphWidth = maxX - minX;
     const graphHeight = maxY - minY;

@@ -10,7 +10,9 @@ describe('Layout Aspect Ratio', () => {
 
     // 1. Prepare
     const clusters = groupIntoClusters(nodes, edges);
-    clusters.forEach((c) => analyzeCluster(c, edges));
+    for (const c of clusters) {
+      analyzeCluster(c, edges);
+    }
 
     // 2. Run Layout
     const result = await computeHierarchicalLayout(nodes, edges, clusters, {

@@ -16,11 +16,7 @@ import {
   createSmallTestGraph,
   createTransitiveResult,
 } from './test-helpers/graph-fixtures';
-import {
-  assertSvgElementCount,
-  countSvgElements,
-  querySvgElements,
-} from './test-helpers/svg-assertions';
+import { countSvgElements, querySvgElements } from './test-helpers/svg-assertions';
 
 describe('graph-edges', () => {
   it('should render inside SVG context', async () => {

@@ -160,7 +160,7 @@ describe('ErrorService', () => {
 
   describe('Auto-dismiss', () => {
     it('should auto-dismiss info errors after 3 seconds', () => {
-      const appError = service.handleInfo('Test info');
+      const _appError = service.handleInfo('Test info');
 
       expect(errors.get()).toHaveLength(1);
 
@@ -172,7 +172,7 @@ describe('ErrorService', () => {
     });
 
     it('should auto-dismiss warnings after 5 seconds', () => {
-      const appError = service.handleWarning('Test warning');
+      const _appError = service.handleWarning('Test warning');
 
       expect(errors.get()).toHaveLength(1);
 
@@ -184,7 +184,7 @@ describe('ErrorService', () => {
 
     it('should auto-dismiss errors after 7 seconds', () => {
       const error = new Error('Test error');
-      const appError = service.handleError(error);
+      const _appError = service.handleError(error);
 
       expect(errors.get()).toHaveLength(1);
 
@@ -195,7 +195,7 @@ describe('ErrorService', () => {
     });
 
     it('should NOT auto-dismiss critical errors', () => {
-      const appError = service.handleCriticalError(new Error('Critical'));
+      const _appError = service.handleCriticalError(new Error('Critical'));
 
       expect(errors.get()).toHaveLength(1);
 
@@ -207,7 +207,7 @@ describe('ErrorService', () => {
 
     it('should use custom auto-dismiss duration', () => {
       const error = new Error('Test');
-      const appError = service.handleError(error, {
+      const _appError = service.handleError(error, {
         autoDismissMs: 2000,
       });
 

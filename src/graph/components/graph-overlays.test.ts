@@ -118,46 +118,6 @@ describe('graph-controls', () => {
 
     expect(eventFired).to.be.true;
   });
-
-  it('should render animation toggle button', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
-
-    const animationBtn = el.shadowRoot!.querySelector('.animation-button');
-    expect(animationBtn).to.exist;
-  });
-
-  it('should show active state when animation enabled', async () => {
-    const el = await fixture<GraphControls>(
-      html`<graph-controls zoom="1" enable-animation></graph-controls>`,
-    );
-
-    const animationBtn = el.shadowRoot!.querySelector('.animation-button');
-    expect(animationBtn!.classList.contains('active')).to.be.true;
-    expect(animationBtn!.textContent).to.include('Animated');
-  });
-
-  it('should show inactive state when animation disabled', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
-
-    const animationBtn = el.shadowRoot!.querySelector('.animation-button');
-    expect(animationBtn!.classList.contains('active')).to.be.false;
-    expect(animationBtn!.textContent).to.include('Static');
-  });
-
-  it('should dispatch toggle-animation event when animation button clicked', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
-
-    let eventDetail: any = null;
-    el.addEventListener('toggle-animation', ((e: CustomEvent) => {
-      eventDetail = e.detail;
-    }) as EventListener);
-
-    const animationBtn = el.shadowRoot!.querySelector('.animation-button') as HTMLButtonElement;
-    animationBtn.click();
-
-    expect(eventDetail).to.exist;
-    expect(eventDetail.enabled).to.be.true;
-  });
 });
 
 describe('graph-visualization-empty-state', () => {

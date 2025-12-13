@@ -149,23 +149,27 @@ describe('graph.actions', () => {
   });
 
   describe('setHoveredNode', () => {
-    it('should set hovered node ID', () => {
+    it('should set hovered node ID', async () => {
       setHoveredNode('node-1');
+      await new Promise(requestAnimationFrame);
 
       expect(hoveredNode.get()).toBe('node-1');
     });
 
-    it('should allow clearing hovered node with null', () => {
+    it('should allow clearing hovered node with null', async () => {
       setHoveredNode('node-1');
+      await new Promise(requestAnimationFrame);
 
       setHoveredNode(null);
+      await new Promise(requestAnimationFrame);
 
       expect(hoveredNode.get()).toBeNull();
     });
 
-    it('should allow changing hovered node', () => {
+    it('should allow changing hovered node', async () => {
       setHoveredNode('node-1');
       setHoveredNode('node-2');
+      await new Promise(requestAnimationFrame);
 
       expect(hoveredNode.get()).toBe('node-2');
     });
@@ -509,10 +513,11 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
-    it('should maintain hover state independently of selection', () => {
+    it('should maintain hover state independently of selection', async () => {
       const node = createTestNode('node-1');
 
       setHoveredNode('node-2');
+      await new Promise(requestAnimationFrame);
       selectNode(node);
 
       expect(hoveredNode.get()).toBe('node-2');

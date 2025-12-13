@@ -11,9 +11,6 @@ import {
   createMultiClusterGraph,
   createProjectGraph,
 } from '../../fixtures/graphs';
-import { tuistGraphData } from '../../fixtures/tuist-graph-data';
-import { analyzeCluster } from './cluster-analysis';
-import { groupIntoClusters } from './cluster-grouping';
 import { computeHierarchicalLayout } from './index';
 
 /**

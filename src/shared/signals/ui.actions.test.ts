@@ -73,40 +73,40 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(1.5);
     });
 
-    it('should clamp zoom to minimum 0.2', () => {
-      setZoom(0.1);
+    it('should clamp zoom to minimum 0.01', () => {
+      setZoom(0.001);
 
-      expect(zoom.get()).toBe(0.2);
+      expect(zoom.get()).toBe(0.01);
     });
 
-    it('should clamp zoom to maximum 2.0', () => {
-      setZoom(3.0);
+    it('should clamp zoom to maximum 5.0', () => {
+      setZoom(6.0);
 
-      expect(zoom.get()).toBe(2);
+      expect(zoom.get()).toBe(5);
     });
 
     it('should allow zoom at exact minimum', () => {
-      setZoom(0.2);
+      setZoom(0.01);
 
-      expect(zoom.get()).toBe(0.2);
+      expect(zoom.get()).toBe(0.01);
     });
 
     it('should allow zoom at exact maximum', () => {
-      setZoom(2);
+      setZoom(5);
 
-      expect(zoom.get()).toBe(2);
+      expect(zoom.get()).toBe(5);
     });
 
     it('should handle negative values by clamping to minimum', () => {
       setZoom(-1);
 
-      expect(zoom.get()).toBe(0.2);
+      expect(zoom.get()).toBe(0.01);
     });
 
     it('should handle zero by clamping to minimum', () => {
       setZoom(0);
 
-      expect(zoom.get()).toBe(0.2);
+      expect(zoom.get()).toBe(0.01);
     });
   });
 
@@ -119,20 +119,20 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBe(1.1);
     });
 
-    it('should not exceed maximum zoom of 2.0', () => {
-      zoom.set(1.95);
+    it('should not exceed maximum zoom of 5.0', () => {
+      zoom.set(4.95);
 
       zoomIn();
 
-      expect(zoom.get()).toBe(2);
+      expect(zoom.get()).toBe(5);
     });
 
-    it('should clamp to maximum when zooming in from 2.0', () => {
-      zoom.set(2);
+    it('should clamp to maximum when zooming in from 5.0', () => {
+      zoom.set(5);
 
       zoomIn();
 
-      expect(zoom.get()).toBe(2);
+      expect(zoom.get()).toBe(5);
     });
 
     it('should handle multiple zoom in operations', () => {
@@ -155,20 +155,20 @@ describe('ui.actions', () => {
       expect(zoom.get()).toBeCloseTo(0.9, 1);
     });
 
-    it('should not go below minimum zoom of 0.2', () => {
-      zoom.set(0.25);
+    it('should not go below minimum zoom of 0.01', () => {
+      zoom.set(0.05);
 
       zoomOut();
 
-      expect(zoom.get()).toBe(0.2);
+      expect(zoom.get()).toBe(0.01);
     });
 
-    it('should clamp to minimum when zooming out from 0.2', () => {
-      zoom.set(0.2);
+    it('should clamp to minimum when zooming out from 0.01', () => {
+      zoom.set(0.01);
 
       zoomOut();
 
-      expect(zoom.get()).toBe(0.2);
+      expect(zoom.get()).toBe(0.01);
     });
 
     it('should handle multiple zoom out operations', () => {
@@ -357,18 +357,18 @@ describe('ui.actions', () => {
     });
 
     it('should handle zoom to limits and reset', () => {
-      setZoom(2);
-      expect(zoom.get()).toBe(2);
+      setZoom(5);
+      expect(zoom.get()).toBe(5);
 
-      setZoom(0.2);
-      expect(zoom.get()).toBe(0.2);
+      setZoom(0.01);
+      expect(zoom.get()).toBe(0.01);
 
       resetZoom();
       expect(zoom.get()).toBe(1);
     });
 
     it('should handle rapid zoom in beyond limit', () => {
-      zoom.set(1.5);
+      zoom.set(4.5);
 
       zoomIn();
       zoomIn();
@@ -376,11 +376,11 @@ describe('ui.actions', () => {
       zoomIn();
       zoomIn();
 
-      expect(zoom.get()).toBe(2);
+      expect(zoom.get()).toBe(5);
     });
 
     it('should handle rapid zoom out beyond limit', () => {
-      zoom.set(0.5);
+      zoom.set(0.3);
 
       zoomOut();
       zoomOut();
@@ -388,7 +388,7 @@ describe('ui.actions', () => {
       zoomOut();
       zoomOut();
 
-      expect(zoom.get()).toBe(0.2);
+      expect(zoom.get()).toBe(0.01);
     });
 
     it('should maintain state across multiple operations', () => {

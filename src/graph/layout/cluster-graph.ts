@@ -23,7 +23,7 @@ export interface ClusterGraph {
  * - Weights reflect the number of dependencies (strata/attraction)
  */
 export function buildClusterGraph(
-  nodes: GraphNode[],
+  _nodes: GraphNode[],
   edges: GraphEdge[],
   clusters: Cluster[],
 ): ClusterGraph {

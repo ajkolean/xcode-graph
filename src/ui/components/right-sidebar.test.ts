@@ -14,7 +14,7 @@ import './right-sidebar';
 
 // Import signals for testing
 import { selectCluster, selectedCluster, selectedNode, selectNode } from '@graph/signals/index';
-import { filters, searchQuery, setFilters, setSearchQuery } from '@shared/signals/index';
+import { setFilters, setSearchQuery } from '@shared/signals/index';
 
 // ========================================
 // Mock Data

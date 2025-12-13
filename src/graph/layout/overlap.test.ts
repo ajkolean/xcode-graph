@@ -10,7 +10,9 @@ describe('Layout Overlap', () => {
 
     // 1. Prepare Clusters (mimic LayoutController)
     const clusters = groupIntoClusters(nodes, edges);
-    clusters.forEach((c) => analyzeCluster(c, edges));
+    for (const c of clusters) {
+      analyzeCluster(c, edges);
+    }
 
     // 2. Run Layout
     // Default config uses the newly tuned spacing values
@@ -44,7 +46,7 @@ describe('Layout Overlap', () => {
           bottom: c2.y + c2.height / 2,
         };
 
-        const isRectOverlap = !(
+        const _isRectOverlap = !(
           r2.left >= r1.right ||
           r2.right <= r1.left ||
           r2.top >= r1.bottom ||
@@ -73,7 +75,9 @@ describe('Layout Overlap', () => {
 
     if (overlapCount > 0) {
       console.warn(`Found ${overlapCount} overlapping cluster pairs:`);
-      failures.slice(0, 10).forEach((f) => console.warn(f));
+      for (const f of failures.slice(0, 10)) {
+        console.warn(f);
+      }
     }
 
     expect(overlapCount).toBe(0);

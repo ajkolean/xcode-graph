@@ -79,7 +79,6 @@ export class GraphEdges extends LitElement {
   // ========================================
 
   private nodeToEdgesCache = new Map<string, Set<string>>();
-  private edgeCacheVersion = 0;
 
   private buildNodeToEdgesCache() {
     this.nodeToEdgesCache.clear();

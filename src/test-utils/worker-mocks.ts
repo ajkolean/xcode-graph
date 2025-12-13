@@ -2,7 +2,7 @@
  * Worker Mocks - Test utilities for Web Worker testing
  */
 
-import type { LayoutInput, LayoutOutput, LayoutProgress } from '@/graph/workers/layout-api';
+import type { LayoutOutput, LayoutProgress } from '@/graph/workers/layout-api';
 
 /**
  * Mock Web Worker for layout computation
@@ -19,10 +19,6 @@ export class MockLayoutWorker {
   public shouldError = false;
   public errorMessage = 'Mock worker error';
   public computeDelay = 0;
-
-  constructor() {
-    // Worker constructor
-  }
 
   /**
    * Mock postMessage
@@ -113,7 +109,7 @@ export class MockLayoutWorker {
   /**
    * Simulate successful layout computation
    */
-  private handleMessage(message: unknown): void {
+  private handleMessage(_message: unknown): void {
     // Simple mock response - return empty layout
     const mockOutput: LayoutOutput = {
       nodePositions: new Map(),
@@ -152,18 +148,6 @@ export class MockLayoutWorkerWithResults extends MockLayoutWorker {
   setMockProgress(progress: LayoutProgress[]): void {
     this.mockProgress = progress;
   }
-
-  private handleMessage(_message: unknown): void {
-    // Return mock output if set
-    if (this.mockOutput) {
-      this.triggerMessage(this.mockOutput);
-    }
-
-    // Send progress updates if configured
-    for (const progress of this.mockProgress) {
-      setTimeout(() => this.triggerMessage(progress), 10);
-    }
-  }
 }
 
 /**
@@ -173,10 +157,10 @@ export function createMockWorkerClass(): typeof Worker {
   let instance: MockLayoutWorker | null = null;
 
   // @ts-expect-error - Mocking Worker class
-  const MockWorkerClass = class implements Worker {
+  const MockWorkerClass = class extends MockLayoutWorker implements Worker {
     constructor(_scriptURL: string | URL, _options?: WorkerOptions) {
-      instance = new MockLayoutWorker();
-      return instance as unknown as Worker;
+      super();
+      instance = this;
     }
   };
 

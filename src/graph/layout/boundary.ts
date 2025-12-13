@@ -47,7 +47,7 @@ export default function forceBoundary(
   let y0Fn = typeof y0 !== 'function' ? constant(y0 == null ? -100 : +y0) : y0;
   let y1Fn = typeof y1 !== 'function' ? constant(y1 == null ? 100 : +y1) : y1;
 
-  function getVx(halfX: number, x: number, strengthX: number, border: number, alpha: number) {
+  function getVx(halfX: number, x: number, strengthX: number, _border: number, alpha: number) {
     return (halfX - x) * Math.min(2, Math.abs(halfX - x) / halfX) * strengthX * alpha;
   }
 
@@ -97,8 +97,8 @@ export default function forceBoundary(
       const y0Val = +y0Fn(node, i, nodes);
       const y1Val = +y1Fn(node, i, nodes);
 
-      strengthsX[i] = isNaN(x0Val) || isNaN(x1Val) ? 0 : +strengthFn(node, i, nodes);
-      strengthsY[i] = isNaN(y0Val) || isNaN(y1Val) ? 0 : +strengthFn(node, i, nodes);
+      strengthsX[i] = Number.isNaN(x0Val) || Number.isNaN(x1Val) ? 0 : +strengthFn(node, i, nodes);
+      strengthsY[i] = Number.isNaN(y0Val) || Number.isNaN(y1Val) ? 0 : +strengthFn(node, i, nodes);
 
       x0z[i] = x0Val;
       x1z[i] = x1Val;
