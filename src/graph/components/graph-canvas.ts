@@ -1094,25 +1094,6 @@ export class GraphCanvas extends LitElement {
       }
     }
 
-    // LOD: If zoomed out, show arteries (cluster-to-cluster edges)
-    // Threshold: 0.8 scale (show arteries longer)
-    const showArteries = this.zoom < 0.8;
-
-    if (showArteries) {
-      this.renderArteries(viewport);
-
-      // If a node is selected, render its edges immediately on top of arteries
-      if (selectedNodeId) {
-        for (const edge of this.edges) {
-          if (edge.source === selectedNodeId || edge.target === selectedNodeId) {
-            // Force highlight by passing true
-            this.renderSingleNodeEdge(edge, viewport, true, routedEdgeMap);
-          }
-        }
-      }
-      return;
-    }
-
     this.ctx.lineWidth = 1;
 
     for (const edge of this.edges) {
@@ -1261,46 +1242,6 @@ export class GraphCanvas extends LitElement {
 
     this.ctx.setLineDash([]);
     this.ctx.lineDashOffset = 0;
-  }
-
-  private renderArteries(viewport: ViewportBounds) {
-    const clusterEdges = this.layout.clusterEdges;
-    if (!clusterEdges) return;
-
-    for (const edge of clusterEdges) {
-      const sPos = this.layout.clusterPositions.get(edge.source);
-      const tPos = this.layout.clusterPositions.get(edge.target);
-
-      if (!sPos || !tPos) continue;
-
-      // Use manual positions if dragged
-      const sManual = this.manualClusterPositions.get(edge.source);
-      const tManual = this.manualClusterPositions.get(edge.target);
-
-      const x1 = sManual?.x ?? sPos.x;
-      const y1 = sManual?.y ?? sPos.y;
-      const x2 = tManual?.x ?? tPos.x;
-      const y2 = tManual?.y ?? tPos.y;
-
-      // 3D projection
-      const z1 = sPos.z ?? 0;
-      const z2 = tPos.z ?? 0;
-      const p1 = this.project3D(x1, y1, z1);
-      const p2 = this.project3D(x2, y2, z2);
-
-      if (!isLineInViewport({ x: p1.x, y: p1.y }, { x: p2.x, y: p2.y }, viewport)) continue;
-
-      // Thickness proportional to weight (log scale)
-      // weight is count of edges.
-      const thickness = Math.max(2, Math.min(12, Math.log2(edge.weight + 1) * 2));
-
-      this.ctx.lineWidth = thickness * this.zoom;
-      this.ctx.strokeStyle = 'rgba(150, 150, 160, 0.4)'; // Muted gray/blue
-
-      const pathString = generateBezierPath(p1.x, p1.y, p2.x, p2.y);
-      const path = new Path2D(pathString);
-      this.ctx.stroke(path);
-    }
   }
 
   // ========================================
