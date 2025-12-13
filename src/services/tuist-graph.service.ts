@@ -11,8 +11,8 @@ import type {
   GraphData,
   GraphEdge,
   GraphNode,
-} from '@/shared/schemas/graph.schema';
-import { NodeType, Origin, Platform } from '@/shared/schemas/graph.schema';
+} from "@/shared/schemas/graph.schema";
+import { NodeType, Origin, Platform } from "@/shared/schemas/graph.schema";
 import type {
   Graph,
   GraphDependency,
@@ -20,8 +20,8 @@ import type {
   DeploymentTargets as RawDeploymentTargets,
   Product as RawProduct,
   Target,
-} from './tuist-graph.schema.generated';
-import { Product } from './tuist-graph.schema.generated';
+} from "./tuist-graph.schema.generated";
+import { Product } from "./tuist-graph.schema.generated";
 
 // =============================================================================
 // Type Mapping Functions
@@ -56,7 +56,9 @@ function getPrimaryPlatform(deploymentTargets: RawDeploymentTargets): Platform {
 }
 
 /** Convert raw deployment targets to our format */
-function mapDeploymentTargets(raw: RawDeploymentTargets): DeploymentTargets | undefined {
+function mapDeploymentTargets(
+  raw: RawDeploymentTargets,
+): DeploymentTargets | undefined {
   const result: DeploymentTargets = {};
   if (raw.iOS) result.iOS = raw.iOS;
   if (raw.macOS) result.macOS = raw.macOS;
@@ -68,18 +70,18 @@ function mapDeploymentTargets(raw: RawDeploymentTargets): DeploymentTargets | un
 
 /** Map raw destinations to our Destination type */
 function mapDestinations(raw: unknown): Destination[] | undefined {
-  if (!raw || typeof raw !== 'object') return undefined;
+  if (!raw || typeof raw !== "object") return undefined;
 
   const destinationMap: Record<string, Destination> = {
-    iPhone: 'iPhone',
-    iPad: 'iPad',
-    mac: 'mac',
-    macCatalyst: 'macCatalyst',
-    macWithiPadDesign: 'macWithiPadDesign',
-    appleTv: 'appleTv',
-    appleWatch: 'appleWatch',
-    appleVision: 'appleVision',
-    appleVisionWithiPadDesign: 'appleVisionWithiPadDesign',
+    iPhone: "iPhone",
+    iPad: "iPad",
+    mac: "mac",
+    macCatalyst: "macCatalyst",
+    macWithiPadDesign: "macWithiPadDesign",
+    appleTv: "appleTv",
+    appleWatch: "appleWatch",
+    appleVision: "appleVision",
+    appleVisionWithiPadDesign: "appleVisionWithiPadDesign",
   };
 
   const rawObj = raw as Record<string, unknown>;
@@ -96,8 +98,9 @@ function getOriginFromProject(
   projectType: { local?: unknown; external?: unknown },
 ): Origin {
   if (projectType.external) return Origin.External;
-  const externalPaths = ['.build/checkouts/', '.build/registry/downloads/'];
-  if (externalPaths.some((p) => projectPath.includes(p))) return Origin.External;
+  const externalPaths = [".build/checkouts/", ".build/registry/downloads/"];
+  if (externalPaths.some((p) => projectPath.includes(p)))
+    return Origin.External;
   return Origin.Local;
 }
 
@@ -106,50 +109,56 @@ function getOriginFromProject(
 // =============================================================================
 
 function getDependencyKey(dep: GraphDependency): string {
-  if ('target' in dep) return `target:${dep.target.path}:${dep.target.name}`;
-  if ('packageProduct' in dep)
+  if ("target" in dep) return `target:${dep.target.path}:${dep.target.name}`;
+  if ("packageProduct" in dep)
     return `package:${dep.packageProduct.path}:${dep.packageProduct.product}`;
-  if ('xcframework' in dep) return `xcframework:${dep.xcframework._0.path}`;
-  if ('sdk' in dep) return `sdk:${dep.sdk.name}`;
-  if ('framework' in dep) return `framework:${dep.framework.path}`;
-  if ('library' in dep) return `library:${dep.library.path}`;
-  if ('bundle' in dep) return `bundle:${dep.bundle.path}`;
-  if ('macro' in dep) return `macro:${dep.macro.path}`;
+  if ("xcframework" in dep) return `xcframework:${dep.xcframework._0.path}`;
+  if ("sdk" in dep) return `sdk:${dep.sdk.name}`;
+  if ("framework" in dep) return `framework:${dep.framework.path}`;
+  if ("library" in dep) return `library:${dep.library.path}`;
+  if ("bundle" in dep) return `bundle:${dep.bundle.path}`;
+  if ("macro" in dep) return `macro:${dep.macro.path}`;
   return `unknown:${JSON.stringify(dep)}`;
 }
 
 function getNameFromPath(path: string, extensions: string[]): string {
-  const filename = path.split('/').pop() ?? 'Unknown';
+  const filename = path.split("/").pop() ?? "Unknown";
   let result = filename;
   for (const ext of extensions) {
-    result = result.replace(ext, '');
+    result = result.replace(ext, "");
   }
   return result;
 }
 
 function getDependencyName(dep: GraphDependency): string {
-  if ('target' in dep) return dep.target.name;
-  if ('packageProduct' in dep) return dep.packageProduct.product;
-  if ('xcframework' in dep) return getNameFromPath(dep.xcframework._0.path, ['.xcframework']);
-  if ('sdk' in dep) return dep.sdk.name.replace('.framework', '');
-  if ('framework' in dep) return getNameFromPath(dep.framework.path, ['.framework']);
-  if ('library' in dep) return getNameFromPath(dep.library.path, ['.a', '.dylib']);
-  if ('bundle' in dep) return getNameFromPath(dep.bundle.path, ['.bundle']);
-  if ('macro' in dep) return getNameFromPath(dep.macro.path, []);
-  return 'Unknown';
+  if ("target" in dep) return dep.target.name;
+  if ("packageProduct" in dep) return dep.packageProduct.product;
+  if ("xcframework" in dep)
+    return getNameFromPath(dep.xcframework._0.path, [".xcframework"]);
+  if ("sdk" in dep) return dep.sdk.name.replace(".framework", "");
+  if ("framework" in dep)
+    return getNameFromPath(dep.framework.path, [".framework"]);
+  if ("library" in dep)
+    return getNameFromPath(dep.library.path, [".a", ".dylib"]);
+  if ("bundle" in dep) return getNameFromPath(dep.bundle.path, [".bundle"]);
+  if ("macro" in dep) return getNameFromPath(dep.macro.path, []);
+  return "Unknown";
 }
 
 function getNodeTypeForDependency(dep: GraphDependency): NodeType {
-  if ('sdk' in dep || 'xcframework' in dep || 'framework' in dep) return NodeType.Framework;
-  if ('packageProduct' in dep) return NodeType.Package;
+  if ("sdk" in dep || "xcframework" in dep || "framework" in dep)
+    return NodeType.Framework;
+  if ("packageProduct" in dep) return NodeType.Package;
   return NodeType.Library;
 }
 
 function getOriginForDependency(dep: GraphDependency): Origin {
-  if ('sdk' in dep || 'xcframework' in dep || 'packageProduct' in dep) return Origin.External;
-  if ('target' in dep) {
-    const externalPaths = ['.build/checkouts/', '.build/registry/downloads/'];
-    if (externalPaths.some((p) => dep.target.path.includes(p))) return Origin.External;
+  if ("sdk" in dep || "xcframework" in dep || "packageProduct" in dep)
+    return Origin.External;
+  if ("target" in dep) {
+    const externalPaths = [".build/checkouts/", ".build/registry/downloads/"];
+    if (externalPaths.some((p) => dep.target.path.includes(p)))
+      return Origin.External;
   }
   return Origin.Local;
 }
@@ -204,7 +213,10 @@ function createNodeFromTarget(
 }
 
 /** Create a basic GraphNode from dependency info */
-function createNodeFromDependency(dep: GraphDependency, project?: string): GraphNode {
+function createNodeFromDependency(
+  dep: GraphDependency,
+  project?: string,
+): GraphNode {
   return {
     id: getDependencyKey(dep),
     name: getDependencyName(dep),
@@ -237,8 +249,16 @@ function extractProjectTargets(projects: (string | Project)[]): {
     // Targets is { [key: string]: Target } because key is String
     for (const [, target] of Object.entries(project.targets)) {
       const key = `target:${projectPath}:${target.name}`;
-      lookup.set(key, { target, projectName: project.name, projectPath, origin });
-      nodes.set(key, createNodeFromTarget(key, target, project.name, projectPath, origin));
+      lookup.set(key, {
+        target,
+        projectName: project.name,
+        projectPath,
+        origin,
+      });
+      nodes.set(
+        key,
+        createNodeFromTarget(key, target, project.name, projectPath, origin),
+      );
     }
   }
 
@@ -259,7 +279,8 @@ function processDependencies(
     const targetDeps = dependencies[i + 1] as GraphDependency[];
 
     const sourceKey = getDependencyKey(sourceDep);
-    const sourceProject = lookup.get(sourceKey)?.projectName ?? nodes.get(sourceKey)?.project;
+    const sourceProject =
+      lookup.get(sourceKey)?.projectName ?? nodes.get(sourceKey)?.project;
 
     // Create source node if missing
     if (!nodes.has(sourceKey)) {
@@ -277,11 +298,20 @@ function processDependencies(
           const { target, projectName, projectPath, origin } = lookupData;
           nodes.set(
             targetKey,
-            createNodeFromTarget(targetKey, target, projectName, projectPath, origin),
+            createNodeFromTarget(
+              targetKey,
+              target,
+              projectName,
+              projectPath,
+              origin,
+            ),
           );
         } else {
           // Attach external dependencies to the same project as the source when possible
-          nodes.set(targetKey, createNodeFromDependency(targetDep, sourceProject));
+          nodes.set(
+            targetKey,
+            createNodeFromDependency(targetDep, sourceProject),
+          );
         }
       }
 

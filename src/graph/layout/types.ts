@@ -1,14 +1,14 @@
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import * as d3Force2D from 'd3-force';
-import * as d3Force3D from 'd3-force-3d';
+import type { Cluster, ClusterPosition, NodePosition } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import * as d3Force2D from "d3-force";
+import * as d3Force3D from "d3-force-3d";
 
 // ============================================================================
 // Core Layout Types
 // ============================================================================
 
 /** Layout dimension: 2D or 3D */
-export type LayoutDimension = '2d' | '3d';
+export type LayoutDimension = "2d" | "3d";
 
 /** Type for selecting 2D or 3D force module */
 export type D3ForceModule = typeof d3Force2D | typeof d3Force3D;

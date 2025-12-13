@@ -1,5 +1,5 @@
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { Cluster } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
 
 export interface ClusterEdge {
   source: string;
@@ -16,7 +16,7 @@ export interface ClusterGraph {
 
 /**
  * Build the weighted Cluster Meta-Graph
- * 
+ *
  * Compresses the node graph into a cluster graph where:
  * - Nodes are Clusters
  * - Edges are aggregated dependencies between clusters
@@ -25,7 +25,7 @@ export interface ClusterGraph {
 export function buildClusterGraph(
   nodes: GraphNode[],
   edges: GraphEdge[],
-  clusters: Cluster[]
+  clusters: Cluster[],
 ): ClusterGraph {
   const nodeToCluster = new Map<string, string>();
   for (const cluster of clusters) {
@@ -35,8 +35,11 @@ export function buildClusterGraph(
   }
 
   // Map "Source|Target" -> { directed, undirected }
-  const edgeMap = new Map<string, { source: string; target: string; w: number }>();
-  
+  const edgeMap = new Map<
+    string,
+    { source: string; target: string; w: number }
+  >();
+
   for (const edge of edges) {
     const cSrc = nodeToCluster.get(edge.source);
     const cTgt = nodeToCluster.get(edge.target);
@@ -51,19 +54,19 @@ export function buildClusterGraph(
   }
 
   const clusterEdges: ClusterEdge[] = [];
-  
+
   // Calculate final edges
   // We need to compute undirected tie strength U for A<->B
   // U = W(A->B) + W(B->A)
-  
+
   // First pass: Collect all directed edges
   const directedEdges = Array.from(edgeMap.values());
-  
+
   // Second pass: Compute ties
   for (const edge of directedEdges) {
     const reverseKey = `${edge.target}->${edge.source}`;
     const reverseWeight = edgeMap.get(reverseKey)?.w ?? 0;
-    
+
     clusterEdges.push({
       source: edge.source,
       target: edge.target,

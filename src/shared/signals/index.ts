@@ -19,7 +19,7 @@ export {
   togglePackage,
   togglePlatform,
   toggleProject,
-} from './filter.actions';
+} from "./filter.actions";
 export {
   allPackages,
   allProjects,
@@ -28,7 +28,7 @@ export {
   hasActiveFilters,
   resetFilterSignals,
   searchQuery,
-} from './filter.signals';
+} from "./filter.signals";
 
 // ==================== UI Signals ====================
 
@@ -44,7 +44,7 @@ export {
   toggleLayoutDimension,
   zoomIn,
   zoomOut,
-} from './ui.actions';
+} from "./ui.actions";
 export {
   activeTab,
   baseZoom,
@@ -54,4 +54,4 @@ export {
   previewFilter,
   resetUISignals,
   zoom,
-} from './ui.signals';
+} from "./ui.signals";

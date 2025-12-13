@@ -34,10 +34,10 @@
  * @see {@link LayoutWorkerController} - Alternative for large graphs (1000+ nodes)
  */
 
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import { LayoutController } from './layout.controller';
+import type { Cluster, ClusterPosition, NodePosition } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import type { ReactiveController, ReactiveControllerHost } from "lit";
+import { LayoutController } from "./layout.controller";
 
 // ==================== Type Definitions ====================
 
@@ -96,7 +96,9 @@ export class GraphLayoutController implements ReactiveController {
   }
 
   /** Aggregated edges between clusters (Arteries) */
-  get clusterEdges(): { source: string; target: string; weight: number }[] | undefined {
+  get clusterEdges():
+    | { source: string; target: string; weight: number }[]
+    | undefined {
     return this._clusterEdges;
   }
 
@@ -106,7 +108,9 @@ export class GraphLayoutController implements ReactiveController {
   private _cycleNodes: Set<string> | undefined;
   private _nodeSccId: Map<string, number> | undefined;
   private _sccSizes: Map<number, number> | undefined;
-  private _clusterEdges: { source: string; target: string; weight: number }[] | undefined;
+  private _clusterEdges:
+    | { source: string; target: string; weight: number }[]
+    | undefined;
 
   constructor(host: ReactiveControllerHost, config: GraphLayoutConfig = {}) {
     this.host = host;

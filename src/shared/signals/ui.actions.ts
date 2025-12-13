@@ -7,9 +7,9 @@
  * @module signals/ui.actions
  */
 
-import type { ActiveTab } from '@shared/schemas';
-import type { LayoutDimension } from '@/graph/layout/types';
-import { ZOOM_CONFIG } from '@/ui/utils/zoom-constants';
+import type { ActiveTab } from "@shared/schemas";
+import type { LayoutDimension } from "@/graph/layout/types";
+import { ZOOM_CONFIG } from "@/ui/utils/zoom-constants";
 import {
   activeTab,
   baseZoom,
@@ -18,7 +18,7 @@ import {
   type PreviewFilter,
   previewFilter,
   zoom,
-} from './ui.signals';
+} from "./ui.signals";
 
 // ==================== Tab Actions ====================
 
@@ -37,7 +37,9 @@ export function setActiveTab(tab: ActiveTab): void {
  * @param value - The new zoom level
  */
 export function setZoom(value: number): void {
-  zoom.set(Math.max(ZOOM_CONFIG.MIN_ZOOM, Math.min(ZOOM_CONFIG.MAX_ZOOM, value)));
+  zoom.set(
+    Math.max(ZOOM_CONFIG.MIN_ZOOM, Math.min(ZOOM_CONFIG.MAX_ZOOM, value)),
+  );
 }
 
 /**
@@ -102,7 +104,7 @@ export function setPreviewFilter(preview: PreviewFilter): void {
  * Toggle between 2D and 3D layout
  */
 export function toggleLayoutDimension(): void {
-  layoutDimension.set(layoutDimension.get() === '2d' ? '3d' : '2d');
+  layoutDimension.set(layoutDimension.get() === "2d" ? "3d" : "2d");
 }
 
 /**

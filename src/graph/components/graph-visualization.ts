@@ -21,12 +21,15 @@
  * ```
  */
 
-import { GraphInteractionFullController } from '@graph/controllers/graph-interaction-full.controller';
-import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
-import type { TransitiveResult } from '@graph/utils';
-import type { ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/graph.schema';
-import type { PreviewFilter } from '@shared/signals';
+import { GraphInteractionFullController } from "@graph/controllers/graph-interaction-full.controller";
+import { GraphLayoutController } from "@graph/controllers/graph-layout.controller";
+import type { TransitiveResult } from "@graph/utils";
+import type { ViewMode } from "@shared/schemas";
+import type {
+  GraphEdge,
+  GraphNode as GraphNodeType,
+} from "@shared/schemas/graph.schema";
+import type { PreviewFilter } from "@shared/signals";
 import {
   type CSSResultGroup,
   css,
@@ -36,13 +39,13 @@ import {
   type PropertyValues,
   svg,
   type TemplateResult,
-} from 'lit';
-import { query, state } from 'lit/decorators.js';
-import './cluster-group';
-import './graph-edges';
-import './graph-overlays';
-import './graph-svg-defs';
-import { renderClusterGroup, renderGraphEdges } from './svg-renderers';
+} from "lit";
+import { query, state } from "lit/decorators.js";
+import "./cluster-group";
+import "./graph-edges";
+import "./graph-overlays";
+import "./graph-svg-defs";
+import { renderClusterGroup, renderGraphEdges } from "./svg-renderers";
 
 export class GraphVisualization extends LitElement {
   // ========================================
@@ -56,10 +59,10 @@ export class GraphVisualization extends LitElement {
     selectedNode: { attribute: false },
     selectedCluster: { attribute: false },
     hoveredNode: { attribute: false },
-    searchQuery: { type: String, attribute: 'search-query' },
-    viewMode: { type: String, attribute: 'view-mode' },
+    searchQuery: { type: String, attribute: "search-query" },
+    viewMode: { type: String, attribute: "view-mode" },
     zoom: { type: Number },
-    enableAnimation: { type: Boolean, attribute: 'enable-animation' },
+    enableAnimation: { type: Boolean, attribute: "enable-animation" },
     transitiveDeps: { attribute: false },
     transitiveDependents: { attribute: false },
     previewFilter: { attribute: false },
@@ -84,9 +87,9 @@ export class GraphVisualization extends LitElement {
   // ========================================
 
   @state()
-  private declare hoveredCluster: string | null;
+  declare private hoveredCluster: string | null;
 
-  @query('svg')
+  @query("svg")
   private readonly svgElement!: SVGSVGElement;
 
   // Use internal map if property is not provided
@@ -183,9 +186,11 @@ export class GraphVisualization extends LitElement {
   /**
    * Check if zoom changed significantly
    */
-  private hasSignificantZoomChange(changedProps: PropertyValues<this>): boolean {
-    if (!changedProps.has('zoom')) return false;
-    const oldZoom = changedProps.get('zoom') ?? 1;
+  private hasSignificantZoomChange(
+    changedProps: PropertyValues<this>,
+  ): boolean {
+    if (!changedProps.has("zoom")) return false;
+    const oldZoom = changedProps.get("zoom") ?? 1;
     const newZoom = this.zoom ?? 1;
     return Math.abs(newZoom - oldZoom) > 0.01;
   }
@@ -194,12 +199,12 @@ export class GraphVisualization extends LitElement {
    * Check if hover state changed
    */
   private hasHoverStateChange(changedProps: PropertyValues<this>): boolean {
-    if (changedProps.has('hoveredCluster')) {
-      const oldHover = changedProps.get('hoveredCluster');
+    if (changedProps.has("hoveredCluster")) {
+      const oldHover = changedProps.get("hoveredCluster");
       if (oldHover !== this.hoveredCluster) return true;
     }
-    if (changedProps.has('hoveredNode')) {
-      const oldHover = changedProps.get('hoveredNode');
+    if (changedProps.has("hoveredNode")) {
+      const oldHover = changedProps.get("hoveredNode");
       if (oldHover !== this.hoveredNode) return true;
     }
     return false;
@@ -212,16 +217,16 @@ export class GraphVisualization extends LitElement {
     if (!changedProps.size) return true;
 
     return (
-      changedProps.has('nodes') ||
-      changedProps.has('edges') ||
-      changedProps.has('selectedNode') ||
-      changedProps.has('selectedCluster') ||
-      changedProps.has('viewMode') ||
-      changedProps.has('enableAnimation') ||
-      changedProps.has('transitiveDeps') ||
-      changedProps.has('transitiveDependents') ||
-      changedProps.has('previewFilter') ||
-      changedProps.has('searchQuery') ||
+      changedProps.has("nodes") ||
+      changedProps.has("edges") ||
+      changedProps.has("selectedNode") ||
+      changedProps.has("selectedCluster") ||
+      changedProps.has("viewMode") ||
+      changedProps.has("enableAnimation") ||
+      changedProps.has("transitiveDeps") ||
+      changedProps.has("transitiveDependents") ||
+      changedProps.has("previewFilter") ||
+      changedProps.has("searchQuery") ||
       this.hasSignificantZoomChange(changedProps) ||
       this.hasHoverStateChange(changedProps)
     );
@@ -229,15 +234,19 @@ export class GraphVisualization extends LitElement {
 
   override willUpdate(changedProps: PropertyValues<this>): void {
     // Update layout when nodes/edges change
-    if (changedProps.has('nodes') || changedProps.has('edges')) {
+    if (changedProps.has("nodes") || changedProps.has("edges")) {
       // Optimization: Compute nodeMap for O(1) lookups ONLY if not provided via props
       if (!this.nodeMap) {
-        this.internalNodeMap = new Map((this.nodes ?? []).map((n) => [n.id, n]));
+        this.internalNodeMap = new Map(
+          (this.nodes ?? []).map((n) => [n.id, n]),
+        );
       }
 
       this.layout.enableAnimation = this.enableAnimation ?? false;
       // ELK layout is asynchronous
-      this.layout.computeLayout(this.nodes ?? [], this.edges ?? []).catch(console.error);
+      this.layout
+        .computeLayout(this.nodes ?? [], this.edges ?? [])
+        .catch(console.error);
 
       // Keep interaction controller in sync with fresh layout positions
       this.interaction.updateConfig({
@@ -247,7 +256,7 @@ export class GraphVisualization extends LitElement {
     }
 
     // Update animation when enableAnimation changes
-    if (changedProps.has('enableAnimation')) {
+    if (changedProps.has("enableAnimation")) {
       const enableAnimation = this.enableAnimation ?? false;
       this.layout.enableAnimation = enableAnimation;
 
@@ -260,7 +269,7 @@ export class GraphVisualization extends LitElement {
     }
 
     // Update interaction config when zoom changes
-    if (changedProps.has('zoom')) {
+    if (changedProps.has("zoom")) {
       this.interaction.updateConfig({
         zoom: this.zoom ?? 1,
         finalNodePositions: this.layout.nodePositions,
@@ -282,16 +291,19 @@ export class GraphVisualization extends LitElement {
 
   private handleCanvasClick(e: MouseEvent) {
     // Only deselect if we didn't drag
-    if (!this.interaction.hasMoved && (e.target as HTMLElement).tagName === 'svg') {
+    if (
+      !this.interaction.hasMoved &&
+      (e.target as HTMLElement).tagName === "svg"
+    ) {
       this.dispatchEvent(
-        new CustomEvent('node-select', {
+        new CustomEvent("node-select", {
           detail: { node: null },
           bubbles: true,
           composed: true,
         }),
       );
       this.dispatchEvent(
-        new CustomEvent('cluster-select', {
+        new CustomEvent("cluster-select", {
           detail: { clusterId: null },
           bubbles: true,
           composed: true,
@@ -308,7 +320,7 @@ export class GraphVisualization extends LitElement {
 
     e.preventDefault();
 
-    const eventName = e.deltaY < 0 ? 'zoom-in' : 'zoom-out';
+    const eventName = e.deltaY < 0 ? "zoom-in" : "zoom-out";
     this.dispatchEvent(
       new CustomEvent(eventName, {
         bubbles: true,
@@ -330,19 +342,29 @@ export class GraphVisualization extends LitElement {
         node-count=${this.nodes?.length ?? 0}
         edge-count=${this.edges?.length ?? 0}
         ?enable-animation=${this.enableAnimation}
-        @zoom-in=${() => this.dispatchEvent(new CustomEvent('zoom-in', { bubbles: true, composed: true }))}
+        @zoom-in=${() =>
+          this.dispatchEvent(
+            new CustomEvent("zoom-in", { bubbles: true, composed: true }),
+          )}
         @zoom-out=${() =>
-          this.dispatchEvent(new CustomEvent('zoom-out', { bubbles: true, composed: true }))}
+          this.dispatchEvent(
+            new CustomEvent("zoom-out", { bubbles: true, composed: true }),
+          )}
         @zoom-reset=${() =>
-          this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }))}
+          this.dispatchEvent(
+            new CustomEvent("zoom-reset", { bubbles: true, composed: true }),
+          )}
         @toggle-animation=${() =>
           this.dispatchEvent(
-            new CustomEvent('toggle-animation', { bubbles: true, composed: true }),
+            new CustomEvent("toggle-animation", {
+              bubbles: true,
+              composed: true,
+            }),
           )}
       ></graph-controls>
 
       <svg
-        class="${this.interaction.isDragging ? 'dragging' : ''}"
+        class="${this.interaction.isDragging ? "dragging" : ""}"
         @mousedown=${this.interaction.handleMouseDown}
         @mousemove=${this.interaction.handleMouseMove}
         @mouseup=${this.interaction.handleMouseUp}
@@ -352,10 +374,12 @@ export class GraphVisualization extends LitElement {
       >
         <graph-svg-defs></graph-svg-defs>
 
-        <g transform="translate(${this.interaction.pan.x}, ${this.interaction.pan.y}) scale(${this.zoom ?? 1})">
-          ${
-            this.nodes?.length
-              ? svg`
+        <g
+          transform="translate(${this.interaction.pan.x}, ${this.interaction.pan
+            .y}) scale(${this.zoom ?? 1})"
+        >
+          ${this.nodes?.length
+            ? svg`
                 <!-- Cross-cluster edges -->
                 <g class="cluster-edges">
                   ${renderGraphEdges({
@@ -368,8 +392,10 @@ export class GraphVisualization extends LitElement {
                     selectedNode: this.selectedNode ?? null,
                     hoveredNode: this.hoveredNode ?? null,
                     hoveredClusterId: this.hoveredCluster,
-                    viewMode: this.viewMode ?? 'full',
-                    ...(this.transitiveDeps ? { transitiveDeps: this.transitiveDeps } : {}),
+                    viewMode: this.viewMode ?? "full",
+                    ...(this.transitiveDeps
+                      ? { transitiveDeps: this.transitiveDeps }
+                      : {}),
                     ...(this.transitiveDependents
                       ? { transitiveDependents: this.transitiveDependents }
                       : {}),
@@ -395,12 +421,12 @@ export class GraphVisualization extends LitElement {
                     hoveredNode: this.hoveredNode ?? null,
                     isClusterHovered: this.hoveredCluster === cluster.id,
                     isClusterSelected: isSelected,
-                    searchQuery: this.searchQuery ?? '',
+                    searchQuery: this.searchQuery ?? "",
                     zoom: this.zoom ?? 1,
                     previewFilter: this.previewFilter ?? null,
                     onClusterClick: () =>
                       this.dispatchEvent(
-                        new CustomEvent('cluster-select', {
+                        new CustomEvent("cluster-select", {
                           detail: { clusterId: cluster.id },
                           bubbles: true,
                           composed: true,
@@ -414,7 +440,7 @@ export class GraphVisualization extends LitElement {
                     },
                     onNodeMouseEnter: (nodeId) =>
                       this.dispatchEvent(
-                        new CustomEvent('node-hover', {
+                        new CustomEvent("node-hover", {
                           detail: { nodeId },
                           bubbles: true,
                           composed: true,
@@ -422,17 +448,18 @@ export class GraphVisualization extends LitElement {
                       ),
                     onNodeMouseLeave: () =>
                       this.dispatchEvent(
-                        new CustomEvent('node-hover', {
+                        new CustomEvent("node-hover", {
                           detail: { nodeId: null },
                           bubbles: true,
                           composed: true,
                         }),
                       ),
-                    onNodeMouseDown: (nodeId, e) => this.interaction.handleNodeMouseDown(nodeId, e),
+                    onNodeMouseDown: (nodeId, e) =>
+                      this.interaction.handleNodeMouseDown(nodeId, e),
                     onNodeClick: (node) => {
                       if (!this.interaction.hasMoved) {
                         this.dispatchEvent(
-                          new CustomEvent('node-select', {
+                          new CustomEvent("node-select", {
                             detail: { node },
                             bubbles: true,
                             composed: true,
@@ -443,16 +470,13 @@ export class GraphVisualization extends LitElement {
                   });
                 })}
               `
-              : ''
-          }
+            : ""}
         </g>
       </svg>
 
-      ${
-        this.nodes?.length === 0
-          ? html`<graph-visualization-empty-state></graph-visualization-empty-state>`
-          : ''
-      }
+      ${this.nodes?.length === 0
+        ? html`<graph-visualization-empty-state></graph-visualization-empty-state>`
+        : ""}
     `;
   }
 }
@@ -460,11 +484,11 @@ export class GraphVisualization extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-visualization': GraphVisualization;
+    "graph-visualization": GraphVisualization;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-visualization')) {
-  customElements.define('graph-visualization', GraphVisualization);
+if (!customElements.get("graph-visualization")) {
+  customElements.define("graph-visualization", GraphVisualization);
 }

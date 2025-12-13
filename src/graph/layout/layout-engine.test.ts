@@ -3,18 +3,18 @@
  * Verifies strata positioning and cluster layout behavior
  */
 
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { describe, expect, it } from 'vitest';
+import type { Cluster } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { describe, expect, it } from "vitest";
 import {
   createLayeredGraph,
   createMultiClusterGraph,
   createProjectGraph,
-} from '../../fixtures/graphs';
-import { tuistGraphData } from '../../fixtures/tuist-graph-data';
-import { groupIntoClusters } from './cluster-grouping';
-import { analyzeCluster } from './cluster-analysis';
-import { computeHierarchicalLayout } from './index';
+} from "../../fixtures/graphs";
+import { tuistGraphData } from "../../fixtures/tuist-graph-data";
+import { groupIntoClusters } from "./cluster-grouping";
+import { analyzeCluster } from "./cluster-analysis";
+import { computeHierarchicalLayout } from "./index";
 
 /**
  * Helper to create clusters from nodes based on their project property
@@ -26,7 +26,7 @@ function createClustersFromGraph(
   const projectNodes = new Map<string, GraphNode[]>();
 
   for (const node of nodes) {
-    const project = node.project ?? 'default';
+    const project = node.project ?? "default";
     if (!projectNodes.has(project)) {
       projectNodes.set(project, []);
     }
@@ -45,9 +45,9 @@ function createClustersFromGraph(
   }));
 }
 
-describe('computeHierarchicalLayout', () => {
-  describe('Cluster Strata Positioning', () => {
-    it('should position clusters at different Y levels based on strata', async () => {
+describe("computeHierarchicalLayout", () => {
+  describe("Cluster Strata Positioning", () => {
+    it("should position clusters at different Y levels based on strata", async () => {
       // Create a layered graph with 4 layers, 3 nodes per layer
       const { nodes, edges } = createLayeredGraph(4, 3);
       const clusters = createClustersFromGraph(nodes, edges);
@@ -55,10 +55,10 @@ describe('computeHierarchicalLayout', () => {
       const result = await computeHierarchicalLayout(nodes, edges, clusters);
 
       // Get cluster Y positions grouped by layer
-      const layer0Y = result.clusterPositions.get('Layer0')?.y ?? 0;
-      const layer1Y = result.clusterPositions.get('Layer1')?.y ?? 0;
-      const layer2Y = result.clusterPositions.get('Layer2')?.y ?? 0;
-      const layer3Y = result.clusterPositions.get('Layer3')?.y ?? 0;
+      const layer0Y = result.clusterPositions.get("Layer0")?.y ?? 0;
+      const layer1Y = result.clusterPositions.get("Layer1")?.y ?? 0;
+      const layer2Y = result.clusterPositions.get("Layer2")?.y ?? 0;
+      const layer3Y = result.clusterPositions.get("Layer3")?.y ?? 0;
 
       // Verify that Y increases with layer depth (strata)
       // Layer0 depends on Layer1, Layer1 depends on Layer2, etc.
@@ -68,22 +68,22 @@ describe('computeHierarchicalLayout', () => {
       expect(layer2Y).toBeLessThan(layer3Y);
     });
 
-    it('should maintain significant Y spacing between strata', async () => {
+    it("should maintain significant Y spacing between strata", async () => {
       const { nodes, edges } = createLayeredGraph(3, 2);
       const clusters = createClustersFromGraph(nodes, edges);
 
       const result = await computeHierarchicalLayout(nodes, edges, clusters);
 
-      const layer0Y = result.clusterPositions.get('Layer0')?.y ?? 0;
-      const layer1Y = result.clusterPositions.get('Layer1')?.y ?? 0;
-      const layer2Y = result.clusterPositions.get('Layer2')?.y ?? 0;
+      const layer0Y = result.clusterPositions.get("Layer0")?.y ?? 0;
+      const layer1Y = result.clusterPositions.get("Layer1")?.y ?? 0;
+      const layer2Y = result.clusterPositions.get("Layer2")?.y ?? 0;
 
       // Each layer should have noticeable spacing
       expect(layer1Y - layer0Y).toBeGreaterThan(50);
       expect(layer2Y - layer1Y).toBeGreaterThan(50);
     });
 
-    it('should produce deterministic layout results', async () => {
+    it("should produce deterministic layout results", async () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -108,24 +108,24 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Project Graph Layout', () => {
-    it('should stratify project graph correctly', async () => {
+  describe("Project Graph Layout", () => {
+    it("should stratify project graph correctly", async () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
       const result = await computeHierarchicalLayout(nodes, edges, clusters);
 
       // Get cluster Y positions
-      const appY = result.clusterPositions.get('App')?.y ?? 0;
-      const featuresY = result.clusterPositions.get('Features')?.y ?? 0;
-      const coreY = result.clusterPositions.get('Core')?.y ?? 0;
+      const appY = result.clusterPositions.get("App")?.y ?? 0;
+      const featuresY = result.clusterPositions.get("Features")?.y ?? 0;
+      const coreY = result.clusterPositions.get("Core")?.y ?? 0;
 
       // App depends on Features, Features depends on Core
       expect(appY).toBeLessThan(featuresY);
       expect(featuresY).toBeLessThan(coreY);
     });
 
-    it('should have reasonable cluster width and height', async () => {
+    it("should have reasonable cluster width and height", async () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -141,18 +141,18 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Multi-Cluster Graph Layout', () => {
-    it('should position clusters in a linear chain vertically', async () => {
+  describe("Multi-Cluster Graph Layout", () => {
+    it("should position clusters in a linear chain vertically", async () => {
       // Multi-cluster graph has C0 -> C1 -> C2 -> C3 dependency chain
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
       const result = await computeHierarchicalLayout(nodes, edges, clusters);
 
-      const c0Y = result.clusterPositions.get('Cluster0')?.y ?? 0;
-      const c1Y = result.clusterPositions.get('Cluster1')?.y ?? 0;
-      const c2Y = result.clusterPositions.get('Cluster2')?.y ?? 0;
-      const c3Y = result.clusterPositions.get('Cluster3')?.y ?? 0;
+      const c0Y = result.clusterPositions.get("Cluster0")?.y ?? 0;
+      const c1Y = result.clusterPositions.get("Cluster1")?.y ?? 0;
+      const c2Y = result.clusterPositions.get("Cluster2")?.y ?? 0;
+      const c3Y = result.clusterPositions.get("Cluster3")?.y ?? 0;
 
       expect(c0Y).toBeLessThan(c1Y);
       expect(c1Y).toBeLessThan(c2Y);
@@ -160,8 +160,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Node Positioning Within Clusters', () => {
-    it('should position nodes within their cluster boundaries', async () => {
+  describe("Node Positioning Within Clusters", () => {
+    it("should position nodes within their cluster boundaries", async () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -178,9 +178,7 @@ describe('computeHierarchicalLayout', () => {
           if (!nodePos) continue;
 
           // Node position is relative to cluster center
-          const distFromCenter = Math.sqrt(
-            nodePos.x ** 2 + nodePos.y ** 2,
-          );
+          const distFromCenter = Math.sqrt(nodePos.x ** 2 + nodePos.y ** 2);
 
           // Nodes should be within cluster radius (with some tolerance)
           // ELK rectangles vs circular approximation - tolerance increased
@@ -190,8 +188,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Empty and Edge Cases', () => {
-    it('should handle empty graph', async () => {
+  describe("Empty and Edge Cases", () => {
+    it("should handle empty graph", async () => {
       const result = await computeHierarchicalLayout([], [], []);
 
       expect(result.nodePositions.size).toBe(0);
@@ -199,10 +197,12 @@ describe('computeHierarchicalLayout', () => {
       expect(result.clusters).toEqual([]);
     });
 
-    it('should handle single node', async () => {
-      const nodes: GraphNode[] = [{ id: 'single', name: 'Single' }];
+    it("should handle single node", async () => {
+      const nodes: GraphNode[] = [{ id: "single", name: "Single" }];
       const edges: GraphEdge[] = [];
-      const clusters: Cluster[] = [{ id: 'c0', label: 'C0', nodes, internalEdges: [] }];
+      const clusters: Cluster[] = [
+        { id: "c0", label: "C0", nodes, internalEdges: [] },
+      ];
 
       const result = await computeHierarchicalLayout(nodes, edges, clusters);
 
@@ -211,8 +211,8 @@ describe('computeHierarchicalLayout', () => {
     });
   });
 
-  describe('Position and Bounds Assertions', () => {
-    it('should assign valid positions to all nodes', async () => {
+  describe("Position and Bounds Assertions", () => {
+    it("should assign valid positions to all nodes", async () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 
@@ -228,7 +228,7 @@ describe('computeHierarchicalLayout', () => {
       }
     });
 
-    it('should assign valid bounds to all clusters', async () => {
+    it("should assign valid bounds to all clusters", async () => {
       const { nodes, edges } = createMultiClusterGraph(4, 5);
       const clusters = createClustersFromGraph(nodes, edges);
 

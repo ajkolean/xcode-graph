@@ -16,12 +16,12 @@
  * @module controllers/layout
  */
 
-import { analyzeCluster } from '@graph/layout/cluster-analysis';
-import { groupIntoClusters } from '@graph/layout/cluster-grouping';
-import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { layoutDimension } from '@shared/signals/index';
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
+import { analyzeCluster } from "@graph/layout/cluster-analysis";
+import { groupIntoClusters } from "@graph/layout/cluster-grouping";
+import type { Cluster, ClusterPosition, NodePosition } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { layoutDimension } from "@shared/signals/index";
+import type { ReactiveController, ReactiveControllerHost } from "lit";
 import { computeHierarchicalLayout } from "@/graph/layout";
 
 // ==================== Type Definitions ====================
@@ -58,7 +58,7 @@ export class LayoutController implements ReactiveController {
   private cachedResult: LayoutResult | null = null;
   private cachedNodes: GraphNode[] = [];
   private cachedEdges: GraphEdge[] = [];
-  private cachedDimension: '2d' | '3d' = '2d';
+  private cachedDimension: "2d" | "3d" = "2d";
 
   // Loading state
   public isComputing = false;
@@ -81,9 +81,17 @@ export class LayoutController implements ReactiveController {
    * @param forceRecompute - Force recomputation even if cached
    * @returns Promise resolving to Layout result with positions and clusters
    */
-  async computeLayout(nodes: GraphNode[], edges: GraphEdge[], forceRecompute = false): Promise<LayoutResult> {
+  async computeLayout(
+    nodes: GraphNode[],
+    edges: GraphEdge[],
+    forceRecompute = false,
+  ): Promise<LayoutResult> {
     // Return cached result if inputs haven't changed
-    if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
+    if (
+      !forceRecompute &&
+      this.cachedResult &&
+      this.isSameInput(nodes, edges)
+    ) {
       return this.cachedResult;
     }
 
@@ -184,7 +192,11 @@ export class LayoutController implements ReactiveController {
     );
   }
 
-  private cacheResult(result: LayoutResult, nodes: GraphNode[], edges: GraphEdge[]): void {
+  private cacheResult(
+    result: LayoutResult,
+    nodes: GraphNode[],
+    edges: GraphEdge[],
+  ): void {
     this.cachedResult = result;
     this.cachedNodes = nodes;
     this.cachedEdges = edges;

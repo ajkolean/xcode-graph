@@ -1,26 +1,26 @@
 /**
  * Layout Module
- * 
+ *
  * Exports the main layout engine and configuration.
  * Retains backward compatibility for cluster analysis tools.
  */
 
-import { NodeRole } from '@shared/schemas/cluster.schema';
-import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { computeHierarchicalLayout as computeEngine } from './engine';
-import { type LayoutOptions } from './config';
+import { NodeRole } from "@shared/schemas/cluster.schema";
+import type { Cluster } from "@shared/schemas";
+import type { GraphEdge, GraphNode } from "@shared/schemas/graph.schema";
+import { computeHierarchicalLayout as computeEngine } from "./engine";
+import { type LayoutOptions } from "./config";
 
 export {
   analyzeCluster,
   determineRole,
   identifyAnchors,
-} from './cluster-analysis';
+} from "./cluster-analysis";
 
-export { arrangeClusterGrid, groupIntoClusters } from './cluster-grouping';
+export { arrangeClusterGrid, groupIntoClusters } from "./cluster-grouping";
 
-export * from './types';
-export * from './config';
+export * from "./types";
+export * from "./config";
 
 /**
  * Role-based Z-axis offsets (solar system depth model)
@@ -38,7 +38,7 @@ const ROLE_Z_OFFSET: Record<NodeRole, number> = {
 /**
  * Main layout computation function.
  * Wraps the core engine with default Role-based Z-offset logic.
- * 
+ *
  * NOTE: This is now ASYNCHRONOUS as it uses ELK.
  */
 export async function computeHierarchicalLayout(
@@ -61,10 +61,12 @@ export async function computeHierarchicalLayout(
   // Inject default Z-offset resolver if not present
   const options: LayoutOptions = {
     ...opts,
-    getNodeZOffset: opts.getNodeZOffset ?? ((nodeId: string) => {
-      const role = nodeRoles.get(nodeId);
-      return role ? (ROLE_Z_OFFSET[role] ?? 0) : 0;
-    }),
+    getNodeZOffset:
+      opts.getNodeZOffset ??
+      ((nodeId: string) => {
+        const role = nodeRoles.get(nodeId);
+        return role ? (ROLE_Z_OFFSET[role] ?? 0) : 0;
+      }),
   };
 
   return computeEngine(nodes, edges, clusters, options);
