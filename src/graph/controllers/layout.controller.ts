@@ -22,7 +22,7 @@ import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { layoutDimension } from '@shared/signals/index';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import { computeHierarchicalLayout } from '@/graph/layout/d3-layout';
+import { computeHierarchicalLayout } from "@/graph/layout";
 
 // ==================== Type Definitions ====================
 

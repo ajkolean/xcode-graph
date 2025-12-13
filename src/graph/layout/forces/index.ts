@@ -3,9 +3,8 @@
  */
 
 export {
-  computeNodeTargetRadius,
-  createClusterBoundaryForce,
-  createClusterRadialForce,
+  forceClusterBoundary,
+  forceClusterRadial,
 } from './cluster-boundary';
 export {
   forceClusterAttraction,
@@ -17,4 +16,5 @@ export {
   forceClusterStrataAnchor,
   forceClusterXCentering,
 } from './cluster-strata-force';
-export { type Vec2, vec2 } from './vector';
+export { forceClusterGlobal } from './cluster-global';
+export { forceDependencyHang } from './dependency-hang';
