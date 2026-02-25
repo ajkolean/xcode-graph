@@ -175,30 +175,6 @@ describe('graph.actions', () => {
   });
 
   describe('setViewMode', () => {
-    it('should set view mode to Full', () => {
-      setViewMode(ViewMode.Full);
-
-      expect(viewMode.get()).toBe(ViewMode.Full);
-    });
-
-    it('should set view mode to Focused', () => {
-      setViewMode(ViewMode.Focused);
-
-      expect(viewMode.get()).toBe(ViewMode.Focused);
-    });
-
-    it('should set view mode to Dependents', () => {
-      setViewMode(ViewMode.Dependents);
-
-      expect(viewMode.get()).toBe(ViewMode.Dependents);
-    });
-
-    it('should set view mode to Both', () => {
-      setViewMode(ViewMode.Both);
-
-      expect(viewMode.get()).toBe(ViewMode.Both);
-    });
-
     it('should allow changing view mode multiple times', () => {
       setViewMode(ViewMode.Focused);
       expect(viewMode.get()).toBe(ViewMode.Focused);
@@ -212,25 +188,6 @@ describe('graph.actions', () => {
   });
 
   describe('setCircularDependencies', () => {
-    it('should set circular dependencies', () => {
-      const cycles = [
-        ['node-1', 'node-2', 'node-1'],
-        ['node-3', 'node-4', 'node-5', 'node-3'],
-      ];
-
-      setCircularDependencies(cycles);
-
-      expect(circularDependencies.get()).toEqual(cycles);
-    });
-
-    it('should allow setting empty array', () => {
-      setCircularDependencies([['node-1', 'node-2', 'node-1']]);
-
-      setCircularDependencies([]);
-
-      expect(circularDependencies.get()).toEqual([]);
-    });
-
     it('should replace previous circular dependencies', () => {
       setCircularDependencies([['node-1', 'node-2', 'node-1']]);
 

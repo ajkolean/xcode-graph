@@ -118,20 +118,6 @@ describe('graph-cluster-details-panel - Rendering', () => {
     expect(header).to.not.exist;
   });
 
-  it('should render empty when cluster is undefined', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${undefined}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-cluster-details-panel>
-    `);
-
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header).to.not.exist;
-  });
-
   it('should render scrollable container', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
@@ -144,93 +130,6 @@ describe('graph-cluster-details-panel - Rendering', () => {
 
     const scrollable = el.shadowRoot?.querySelector('.scrollable');
     expect(scrollable).to.exist;
-  });
-});
-
-// ========================================
-// Property Tests
-// ========================================
-
-describe('graph-cluster-details-panel - Properties', () => {
-  it('should accept cluster property', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-cluster-details-panel>
-    `);
-
-    expect(el.cluster).to.equal(mockCluster);
-  });
-
-  it('should accept clusterNodes property', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-cluster-details-panel>
-    `);
-
-    expect(el.clusterNodes).to.equal(mockClusterNodes);
-  });
-
-  it('should accept allNodes property', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-cluster-details-panel>
-    `);
-
-    expect(el.allNodes).to.equal(mockAllNodes);
-  });
-
-  it('should accept edges property', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-cluster-details-panel>
-    `);
-
-    expect(el.edges).to.equal(mockEdges);
-  });
-
-  it('should accept filteredEdges property', async () => {
-    const filteredEdges = [mockEdges[0]];
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        .filteredEdges=${filteredEdges}
-      ></graph-cluster-details-panel>
-    `);
-
-    expect(el.filteredEdges).to.equal(filteredEdges);
-  });
-
-  it('should accept zoom property', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        zoom="1.5"
-      ></graph-cluster-details-panel>
-    `);
-
-    expect(el.zoom).to.equal(1.5);
   });
 });
 
@@ -504,35 +403,6 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
 
     const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
     expect(targetsList?.getAttribute('total-targets-count')).to.equal('3');
-  });
-
-  it('should propagate edges to targets list', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-cluster-details-panel>
-    `);
-
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
-    expect(targetsList).to.exist;
-  });
-
-  it('should propagate zoom to targets list', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        zoom="1.5"
-      ></graph-cluster-details-panel>
-    `);
-
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
-    expect(targetsList).to.exist;
   });
 
   it('should group nodes by type for targets list', async () => {

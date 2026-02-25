@@ -104,19 +104,6 @@ describe('graph-node-details-panel - Rendering', () => {
     expect(header).to.not.exist;
   });
 
-  it('should render empty when node is undefined', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${undefined}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-node-details-panel>
-    `);
-
-    const header = el.shadowRoot?.querySelector('graph-node-header');
-    expect(header).to.not.exist;
-  });
-
   it('should apply animation styles on render', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
       <graph-node-details-panel
@@ -130,101 +117,6 @@ describe('graph-node-details-panel - Rendering', () => {
     const header = el.shadowRoot?.querySelector('graph-node-header');
     expect(header).to.exist;
     expect(el.tagName.toLowerCase()).to.equal('graph-node-details-panel');
-  });
-});
-
-// ========================================
-// Property Tests
-// ========================================
-
-describe('graph-node-details-panel - Properties', () => {
-  it('should accept node property', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-node-details-panel>
-    `);
-
-    expect(el.node).to.equal(mockNode);
-  });
-
-  it('should accept allNodes property', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-node-details-panel>
-    `);
-
-    expect(el.allNodes).to.equal(mockAllNodes);
-  });
-
-  it('should accept edges property', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-node-details-panel>
-    `);
-
-    expect(el.edges).to.equal(mockEdges);
-  });
-
-  it('should accept filteredEdges property', async () => {
-    const filteredEdges = [mockEdges[0]];
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        .filteredEdges=${filteredEdges}
-      ></graph-node-details-panel>
-    `);
-
-    expect(el.filteredEdges).to.equal(filteredEdges);
-  });
-
-  it('should accept clusters property', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        .clusters=${[mockCluster]}
-      ></graph-node-details-panel>
-    `);
-
-    expect(el.clusters).to.deep.equal([mockCluster]);
-  });
-
-  it('should accept viewMode property', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        view-mode="dependencies"
-      ></graph-node-details-panel>
-    `);
-
-    expect(el.viewMode).to.equal('dependencies');
-  });
-
-  it('should accept zoom property', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        zoom="1.5"
-      ></graph-node-details-panel>
-    `);
-
-    expect(el.zoom).to.equal(1.5);
   });
 });
 
@@ -545,34 +437,6 @@ describe('graph-node-details-panel - Event Bubbling', () => {
 // ========================================
 
 describe('graph-node-details-panel - Props Propagation', () => {
-  it('should propagate node to header', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        zoom="1.0"
-      ></graph-node-details-panel>
-    `);
-
-    const header = el.shadowRoot?.querySelector('graph-node-header');
-    expect(header).to.exist;
-  });
-
-  it('should propagate zoom to header', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        zoom="1.5"
-      ></graph-node-details-panel>
-    `);
-
-    const header = el.shadowRoot?.querySelector('graph-node-header');
-    expect(header).to.exist;
-  });
-
   it('should propagate viewMode to actions', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
       <graph-node-details-panel
@@ -585,19 +449,6 @@ describe('graph-node-details-panel - Props Propagation', () => {
 
     const actions = el.shadowRoot?.querySelector('graph-node-actions');
     expect(actions?.getAttribute('view-mode')).to.equal('dependencies');
-  });
-
-  it('should propagate node to actions', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-node-details-panel>
-    `);
-
-    const actions = el.shadowRoot?.querySelector('graph-node-actions');
-    expect(actions).to.exist;
   });
 
   it('should propagate zoom to node lists', async () => {

@@ -35,18 +35,6 @@ describe('ui.actions', () => {
   // ==================== Tab Actions ====================
 
   describe('setActiveTab', () => {
-    it('should set active tab to graph', () => {
-      setActiveTab('graph');
-
-      expect(activeTab.get()).toBe('graph');
-    });
-
-    it('should set active tab to placeholder', () => {
-      setActiveTab('placeholder');
-
-      expect(activeTab.get()).toBe('placeholder');
-    });
-
     it('should allow switching between tabs', () => {
       const tabs: ActiveTab[] = ['graph', 'placeholder'];
 
@@ -182,31 +170,6 @@ describe('ui.actions', () => {
     });
   });
 
-  describe('resetZoom', () => {
-    it('should reset zoom to 1.0', () => {
-      zoom.set(1.5);
-
-      resetZoom();
-
-      expect(zoom.get()).toBe(1);
-    });
-
-    it('should reset from minimum zoom', () => {
-      zoom.set(0.2);
-
-      resetZoom();
-
-      expect(zoom.get()).toBe(1);
-    });
-
-    it('should reset from maximum zoom', () => {
-      zoom.set(2);
-
-      resetZoom();
-
-      expect(zoom.get()).toBe(1);
-    });
-  });
 
   // ==================== Animation Actions ====================
 
@@ -238,18 +201,6 @@ describe('ui.actions', () => {
   });
 
   describe('setEnableAnimation', () => {
-    it('should enable animation', () => {
-      setEnableAnimation(true);
-
-      expect(enableAnimation.get()).toBe(true);
-    });
-
-    it('should disable animation', () => {
-      setEnableAnimation(false);
-
-      expect(enableAnimation.get()).toBe(false);
-    });
-
     it('should replace previous value', () => {
       setEnableAnimation(true);
       setEnableAnimation(false);

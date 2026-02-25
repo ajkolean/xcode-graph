@@ -130,19 +130,6 @@ describe('GraphLayoutController', () => {
       controller.setEnableAnimation(false);
       expect(controller.enableAnimation).toBe(false);
     });
-
-    it('should update animation ticks', () => {
-      controller.setAnimationTicks(60);
-      // Configuration updated (checked internally by AnimationController)
-      expect(true).toBe(true); // Placeholder
-    });
-
-    it('should update collision strengths', () => {
-      controller.setNodeCollisionStrength(0.5);
-      controller.setClusterCollisionStrength(0.6);
-      // Configuration updated (checked internally by PhysicsController)
-      expect(true).toBe(true); // Placeholder
-    });
   });
 
   describe('Lifecycle', () => {
@@ -181,9 +168,6 @@ describe('GraphLayoutController', () => {
 
       // LayoutController should have computed positions
       expect(controller.nodePositions.size).toBe(10);
-
-      // PhysicsController should be ready (no errors)
-      expect(true).toBe(true);
 
       // AnimationController should not be running (disabled)
       expect(controller.isSettling).toBe(false);

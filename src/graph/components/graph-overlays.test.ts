@@ -66,7 +66,7 @@ describe('graph-controls', () => {
 
     const zoomInBtn = el.shadowRoot!.querySelector('button[title="Zoom in"]');
     const zoomOutBtn = el.shadowRoot!.querySelector('button[title="Zoom out"]');
-    const resetBtn = el.shadowRoot!.querySelector('button[title="Reset zoom"]');
+    const resetBtn = el.shadowRoot!.querySelector('button[title="Fit to view"]');
 
     expect(zoomInBtn).to.exist;
     expect(zoomOutBtn).to.exist;
@@ -112,7 +112,7 @@ describe('graph-controls', () => {
     });
 
     const resetBtn = el.shadowRoot!.querySelector(
-      'button[title="Reset zoom"]',
+      'button[title="Fit to view"]',
     ) as HTMLButtonElement;
     resetBtn.click();
 

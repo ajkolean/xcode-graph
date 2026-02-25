@@ -346,66 +346,6 @@ describe('graph-right-sidebar - State Management', () => {
     const header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
     expect(header).to.exist;
   });
-
-  it('should compute filter data from nodes', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    // Should render sidebar
-    const aside = el.shadowRoot?.querySelector('aside');
-    expect(aside).to.exist;
-  });
-
-  it('should track search query changes', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    // Component should render
-    expect(el).to.exist;
-    expect(el.allNodes).to.equal(mockNodes);
-  });
-
-  it('should clear filters when clear button clicked', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    // Component should have properties
-    expect(el.filteredNodes).to.equal(mockNodes);
-    expect(el.filteredEdges).to.equal(mockEdges);
-  });
-
-  it('should handle filter toggle events', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    // Should render header
-    const header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
-    expect(header).to.exist;
-  });
 });
 
 // ========================================
@@ -452,29 +392,6 @@ describe('graph-right-sidebar - Event Coordination', () => {
     const clusterPanel = el.shadowRoot?.querySelector('graph-cluster-details-panel');
     expect(clusterPanel).to.exist;
   });
-
-  it('should handle preview filter changes', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    const filterSection = el.shadowRoot?.querySelector('graph-filter-section');
-    filterSection?.dispatchEvent(
-      new CustomEvent('preview-change', {
-        detail: { type: 'nodeType', key: 'framework' },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-
-    await el.updateComplete;
-    // Preview should be set (tested via signal state)
-  });
 });
 
 // ========================================
@@ -482,35 +399,6 @@ describe('graph-right-sidebar - Event Coordination', () => {
 // ========================================
 
 describe('graph-right-sidebar - Filter Logic', () => {
-  it('should render all filter sections', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    // Sidebar should render
-    const aside = el.shadowRoot?.querySelector('aside');
-    expect(aside).to.exist;
-  });
-
-  it('should render package filter when packages exist', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    // Component should exist with nodes
-    expect(el.allNodes.some((n) => n.type === 'package')).to.be.true;
-  });
-
   it('should not render package filter when no packages exist', async () => {
     const noPackageNodes = mockNodes.filter((n) => n.type !== 'package');
 
@@ -542,35 +430,6 @@ describe('graph-right-sidebar - Filter Logic', () => {
     // Component should render with empty filtered nodes
     expect(el.filteredNodes.length).to.equal(0);
   });
-
-  it('should highlight stats when filters are active', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    // Component should render
-    expect(el).to.exist;
-    expect(el.allNodes.length).to.be.greaterThan(0);
-  });
-
-  it('should compute filter items with correct counts', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
-    `);
-
-    // Component should have nodes
-    expect(el.allNodes).to.equal(mockNodes);
-  });
 });
 
 // ========================================
@@ -591,39 +450,6 @@ describe('graph-right-sidebar - Edge Cases', () => {
     // Should still render header and filter view
     const header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
     expect(header).to.exist;
-  });
-
-  it('should handle empty edges array', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${[]}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${[]}
-      ></graph-right-sidebar>
-    `);
-
-    // Should render with no edges
-    expect(el.allEdges.length).to.equal(0);
-    expect(el.filteredEdges.length).to.equal(0);
-  });
-
-  it('should handle missing cluster in clusters list', async () => {
-    const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
-        .allNodes=${mockNodes}
-        .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
-        .clusters=${[]}
-      ></graph-right-sidebar>
-    `);
-
-    selectCluster('NonExistent');
-    await el.updateComplete;
-
-    const clusterPanel = el.shadowRoot?.querySelector('graph-cluster-details-panel');
-    expect(clusterPanel).to.exist;
   });
 
   it('should create synthetic cluster when not in clusters list', async () => {

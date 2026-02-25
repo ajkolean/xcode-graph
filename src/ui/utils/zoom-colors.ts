@@ -4,7 +4,7 @@
  * Similar to Figma, VSCode minimap, GitHub dependency graph, JetBrains tools
  */
 
-import { hexToHSL, hslToHex, rgbToHsl, hslToRgb } from './color-math';
+import { hexToHSL, hslToHex, hslToRgb, rgbToHsl } from './color-math';
 import {
   ZOOM_CONFIG,
   ZOOM_LIGHTNESS_ADJUSTMENT,
@@ -66,9 +66,7 @@ export function adjustColorForZoom(color: string, zoom: number): string {
 
   // Handle rgba/rgb colors
   if (color.startsWith('rgba') || color.startsWith('rgb')) {
-    const match = color.match(
-      /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/,
-    );
+    const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/);
     if (!match) return color;
 
     const r = Number(match[1]) / 255;

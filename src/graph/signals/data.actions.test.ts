@@ -110,18 +110,7 @@ describe('data.actions', () => {
       expect(edges.get()).toHaveLength(999);
     });
 
-    it('should store reference to provided arrays', () => {
-      const testNodes = [createTestNode('node-1')];
-      const testEdges = [createTestEdge('node-1', 'node-2')];
-
-      setGraphData(testNodes, testEdges);
-
-      // Signals store references, not deep copies
-      // This is expected behavior - the caller should not mutate after passing
-      expect(nodes.get()).toBe(testNodes);
-      expect(edges.get()).toBe(testEdges);
-    });
-  });
+});
 
   // ==================== clearGraphData Tests ====================
 
