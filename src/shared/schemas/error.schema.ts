@@ -62,7 +62,7 @@ export interface AppError {
   /** Human-readable error message */
   message: string;
   /** Optional technical details */
-  details?: string;
+  details?: string | undefined;
   /** Timestamp when error occurred */
   timestamp: number;
   /** Whether error has been dismissed */
@@ -70,9 +70,9 @@ export interface AppError {
   /** Whether error can be dismissed */
   dismissible: boolean;
   /** Optional action label (e.g., "Retry", "Reload") */
-  actionLabel?: string;
+  actionLabel?: string | undefined;
   /** Optional action callback identifier */
-  actionType?: string;
+  actionType?: string | undefined;
 }
 
 /**

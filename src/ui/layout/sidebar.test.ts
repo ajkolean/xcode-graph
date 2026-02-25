@@ -3,6 +3,7 @@
  */
 
 import { expect, fixture, html } from '@open-wc/testing';
+import { ActiveTab } from '@shared/schemas/app.schema';
 import { describe, it } from 'vitest';
 import type { GraphSidebar } from './sidebar';
 import './sidebar';
@@ -55,7 +56,7 @@ describe('graph-sidebar', () => {
     await el.updateComplete;
 
     expect(eventDetail).to.exist;
-    expect(eventDetail.tab).to.equal('graph');
+    expect(eventDetail!.tab).to.equal('graph');
   });
 
   it('should update active state when activeTab changes', async () => {
@@ -66,7 +67,7 @@ describe('graph-sidebar', () => {
     let activeButton = el.shadowRoot?.querySelector('.nav-button.active');
     expect(activeButton?.textContent).to.include('Overview');
 
-    el.activeTab = 'graph';
+    el.activeTab = ActiveTab.Graph;
     await el.updateComplete;
 
     activeButton = el.shadowRoot?.querySelector('.nav-button.active');

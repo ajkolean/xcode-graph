@@ -7,7 +7,9 @@
 
 import { expect, fixture, html } from '@open-wc/testing';
 import type { Cluster } from '@shared/schemas';
+import { ClusterType } from '@shared/schemas/cluster.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { beforeEach, describe, it } from 'vitest';
 import type { GraphRightSidebar } from './right-sidebar';
 import './right-sidebar';
@@ -24,33 +26,33 @@ const mockNodes: GraphNode[] = [
   {
     id: 'node1',
     name: 'CoreLib',
-    type: 'framework',
-    origin: 'internal',
-    platform: 'iOS',
+    type: NodeType.Framework,
+    origin: Origin.Local,
+    platform: Platform.iOS,
     project: 'MyApp',
   },
   {
     id: 'node2',
     name: 'Utils',
-    type: 'staticLibrary',
-    origin: 'internal',
-    platform: 'iOS',
+    type: NodeType.Library,
+    origin: Origin.Local,
+    platform: Platform.iOS,
     project: 'MyApp',
   },
   {
     id: 'node3',
     name: 'NetworkKit',
-    type: 'framework',
-    origin: 'external',
-    platform: 'macOS',
+    type: NodeType.Framework,
+    origin: Origin.External,
+    platform: Platform.macOS,
     project: 'OtherApp',
   },
   {
     id: 'pkg1',
     name: 'MyPackage',
-    type: 'package',
-    origin: 'internal',
-    platform: 'iOS',
+    type: NodeType.Package,
+    origin: Origin.Local,
+    platform: Platform.iOS,
   },
 ];
 
@@ -62,9 +64,9 @@ const mockEdges: GraphEdge[] = [
 const mockCluster: Cluster = {
   id: 'MyApp',
   name: 'MyApp',
-  type: 'project',
-  origin: 'local',
-  nodes: [mockNodes[0], mockNodes[1]],
+  type: ClusterType.Project,
+  origin: Origin.Local,
+  nodes: [mockNodes[0]!, mockNodes[1]!],
   anchors: ['node1'],
   metadata: new Map(),
 };
@@ -253,7 +255,7 @@ describe('graph-right-sidebar - Panel Switching', () => {
       ></graph-right-sidebar>
     `);
 
-    selectNode(mockNodes[0]);
+    selectNode(mockNodes[0]!);
     await el.updateComplete;
 
     const nodePanel = el.shadowRoot?.querySelector('graph-node-details-panel');
@@ -309,7 +311,7 @@ describe('graph-right-sidebar - Panel Switching', () => {
     let header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
     expect(header?.getAttribute('title')).to.equal('Project Overview');
 
-    selectNode(mockNodes[0]);
+    selectNode(mockNodes[0]!);
     await el.updateComplete;
 
     header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
@@ -363,7 +365,7 @@ describe('graph-right-sidebar - Event Coordination', () => {
       ></graph-right-sidebar>
     `);
 
-    selectNode(mockNodes[0]);
+    selectNode(mockNodes[0]!);
     await el.updateComplete;
 
     expect(selectedNode.get()).to.equal(mockNodes[0]);
@@ -400,7 +402,7 @@ describe('graph-right-sidebar - Event Coordination', () => {
 
 describe('graph-right-sidebar - Filter Logic', () => {
   it('should not render package filter when no packages exist', async () => {
-    const noPackageNodes = mockNodes.filter((n) => n.type !== 'package');
+    const noPackageNodes = mockNodes.filter((n) => n.type !== NodeType.Package);
 
     const el = await fixture<GraphRightSidebar>(html`
       <graph-right-sidebar
@@ -479,14 +481,14 @@ describe('graph-right-sidebar - Edge Cases', () => {
       ></graph-right-sidebar>
     `);
 
-    const newNodes = [
+    const newNodes: GraphNode[] = [
       ...mockNodes,
       {
         id: 'node4',
         name: 'NewNode',
-        type: 'framework',
-        origin: 'internal',
-        platform: 'iOS',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
       },
     ];
 

@@ -44,21 +44,21 @@ import { addError, dismissError, removeError } from '@shared/signals/error.actio
  */
 export interface ErrorHandlingOptions {
   /** Error category - defaults to Unknown */
-  category?: ErrorCategory;
+  category?: ErrorCategory | undefined;
   /** Error severity - defaults to Error */
-  severity?: ErrorSeverity;
+  severity?: ErrorSeverity | undefined;
   /** User-facing message - defaults to generic message */
-  userMessage?: string;
+  userMessage?: string | undefined;
   /** Whether error can be dismissed - defaults to true */
-  dismissible?: boolean;
+  dismissible?: boolean | undefined;
   /** Optional action label (e.g., "Retry") */
-  actionLabel?: string;
+  actionLabel?: string | undefined;
   /** Optional action type identifier */
-  actionType?: string;
+  actionType?: string | undefined;
   /** Whether to log to console - defaults to true */
-  logToConsole?: boolean;
+  logToConsole?: boolean | undefined;
   /** Auto-dismiss duration in ms - defaults based on severity */
-  autoDismissMs?: number;
+  autoDismissMs?: number | undefined;
 }
 
 /**

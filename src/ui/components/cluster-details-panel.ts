@@ -58,11 +58,25 @@ export class GraphClusterDetailsPanel extends LitElement {
       display: flex;
       flex-direction: column;
       height: 100%;
+      animation: panelSlideIn var(--durations-slow) var(--easings-out);
+    }
+
+    @keyframes panelSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     .scrollable {
       flex: 1;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
     }
   `;
 

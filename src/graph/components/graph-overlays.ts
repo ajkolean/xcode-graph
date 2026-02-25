@@ -91,6 +91,13 @@ export class GraphControls extends LitElement {
       color: var(--colors-muted-foreground);
     }
 
+    .zoom-label {
+      font-family: var(--fonts-mono);
+      font-variant-numeric: tabular-nums;
+      min-width: 3ch;
+      text-align: right;
+    }
+
     .divider {
       width: var(--border-widths-thin);
       height: var(--spacing-4);
@@ -183,7 +190,7 @@ export class GraphControls extends LitElement {
 
     return html`
       <div class="container" @wheel=${this.handleWheel} @mousedown=${this.handleMouseDown}>
-        <span>${percentage}%</span>
+        <span class="zoom-label">${percentage}%</span>
         <div class="divider"></div>
 
         <div class="zoom-buttons">

@@ -7,7 +7,9 @@
 
 import { expect, fixture, html } from '@open-wc/testing';
 import type { Cluster } from '@shared/schemas';
+import { ClusterType } from '@shared/schemas/cluster.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { describe, it } from 'vitest';
 import type { GraphClusterDetailsPanel } from './cluster-details-panel';
 import './cluster-details-panel';
@@ -20,25 +22,25 @@ const mockClusterNodes: GraphNode[] = [
   {
     id: 'node1',
     name: 'CoreLib',
-    type: 'framework',
-    origin: 'internal',
-    platform: 'iOS',
+    type: NodeType.Framework,
+    origin: Origin.Local,
+    platform: Platform.iOS,
     project: 'MyApp',
   },
   {
     id: 'node2',
     name: 'Utils',
-    type: 'staticLibrary',
-    origin: 'internal',
-    platform: 'iOS',
+    type: NodeType.Library,
+    origin: Origin.Local,
+    platform: Platform.iOS,
     project: 'MyApp',
   },
   {
     id: 'node3',
     name: 'NetworkKit',
-    type: 'framework',
-    origin: 'internal',
-    platform: 'macOS',
+    type: NodeType.Framework,
+    origin: Origin.Local,
+    platform: Platform.macOS,
     project: 'MyApp',
   },
 ];
@@ -48,9 +50,9 @@ const mockAllNodes: GraphNode[] = [
   {
     id: 'external1',
     name: 'External',
-    type: 'framework',
-    origin: 'external',
-    platform: 'iOS',
+    type: NodeType.Framework,
+    origin: Origin.External,
+    platform: Platform.iOS,
   },
 ];
 
@@ -63,17 +65,21 @@ const mockEdges: GraphEdge[] = [
 const mockCluster: Cluster = {
   id: 'MyApp',
   name: 'MyApp',
-  type: 'project',
-  origin: 'local',
+  type: ClusterType.Project,
+  origin: Origin.Local,
   nodes: mockClusterNodes,
+  anchors: ['node1'],
+  metadata: new Map(),
 };
 
 const mockExternalCluster: Cluster = {
   id: 'ExternalPackage',
   name: 'ExternalPackage',
-  type: 'package',
-  origin: 'external',
+  type: ClusterType.Package,
+  origin: Origin.External,
   nodes: [],
+  anchors: [],
+  metadata: new Map(),
 };
 
 // ========================================
@@ -464,9 +470,9 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
       {
         id: 'node1',
         name: 'Node1',
-        type: 'framework',
-        origin: 'internal',
-        platform: '',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: '' as Platform,
       },
     ];
 
@@ -507,9 +513,11 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
     const packageCluster: Cluster = {
       id: 'MyPackage',
       name: 'MyPackage',
-      type: 'package',
-      origin: 'local',
+      type: ClusterType.Package,
+      origin: Origin.Local,
       nodes: [],
+      anchors: [],
+      metadata: new Map(),
     };
 
     const el = await fixture<GraphClusterDetailsPanel>(html`

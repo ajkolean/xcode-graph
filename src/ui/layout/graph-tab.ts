@@ -203,10 +203,12 @@ export class GraphTab extends SignalWatcher(LitElement) {
               .nodeCount=${this.displayNodes.length}
               .edgeCount=${this.displayEdges.length}
               ?enable-animation=${enableAnimation.get()}
+              ?highlight-mode=${chainDisplayMode.get() === 'highlight'}
               @zoom-in=${this.handleZoomIn}
               @zoom-out=${this.handleZoomOut}
               @zoom-reset=${this.handleZoomReset}
               @toggle-animation=${this.handleToggleAnimation}
+              @toggle-chain-display=${this.handleToggleChainDisplay}
             ></graph-controls>
 
             <graph-canvas
@@ -217,6 +219,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
               .hoveredNode=${Signal.subtle.untrack(() => hoveredNode.get())}
               search-query=${searchQuery.get() || ''}
               view-mode=${viewMode.get()}
+              chain-display=${chainDisplayMode.get()}
               .zoom=${zoom.get()}
               ?enable-animation=${enableAnimation.get()}
               .transitiveDeps=${this.transitiveDeps}

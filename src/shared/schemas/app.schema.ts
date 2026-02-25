@@ -104,7 +104,7 @@ export const FilterStateInputSchema: z.ZodType<FilterStateInput> = z.object({
 /**
  * Filter state schema - transforms arrays to Sets for runtime use
  */
-export const FilterStateSchema: z.ZodType<FilterState, z.ZodTypeDef, FilterStateInput> =
+export const FilterStateSchema =
   FilterStateInputSchema.transform((input) => ({
     nodeTypes: new Set(input.nodeTypes),
     platforms: new Set(input.platforms),

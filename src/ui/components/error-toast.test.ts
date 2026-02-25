@@ -56,7 +56,7 @@ describe('GraphErrorToast', () => {
     });
 
     it('should not render details when not provided', async () => {
-      const error = createMockError({ details: undefined });
+      const error = createMockError({});
       element.error = error;
       await element.updateComplete;
 
@@ -196,10 +196,7 @@ describe('GraphErrorToast', () => {
     });
 
     it('should not render action button when no action provided', async () => {
-      const error = createMockError({
-        actionLabel: undefined,
-        actionType: undefined,
-      });
+      const error = createMockError({});
       element.error = error;
       await element.updateComplete;
 

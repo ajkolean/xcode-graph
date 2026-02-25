@@ -4,7 +4,9 @@
  */
 
 import type { Cluster } from '@shared/schemas';
+import { ClusterType } from '@shared/schemas/cluster.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { describe, expect, it } from 'vitest';
 import {
   createLayeredGraph,
@@ -16,7 +18,7 @@ import { computeHierarchicalLayout } from './index';
 /**
  * Helper to create clusters from nodes based on their project property
  */
-function createClustersFromGraph(nodes: GraphNode[], edges: GraphEdge[]): Cluster[] {
+function createClustersFromGraph(nodes: GraphNode[], _edges: GraphEdge[]): Cluster[] {
   const projectNodes = new Map<string, GraphNode[]>();
 
   for (const node of nodes) {
@@ -29,12 +31,12 @@ function createClustersFromGraph(nodes: GraphNode[], edges: GraphEdge[]): Cluste
 
   return Array.from(projectNodes.entries()).map(([id, clusterNodes]) => ({
     id,
-    label: id,
+    name: id,
+    type: ClusterType.Project,
+    origin: Origin.Local,
     nodes: clusterNodes,
-    internalEdges: edges.filter(
-      (e) =>
-        clusterNodes.some((n) => n.id === e.source) && clusterNodes.some((n) => n.id === e.target),
-    ),
+    anchors: clusterNodes.length > 0 ? [clusterNodes[0]!.id] : [],
+    metadata: new Map(),
   }));
 }
 
@@ -186,9 +188,9 @@ describe('computeHierarchicalLayout', () => {
     });
 
     it('should handle single node', async () => {
-      const nodes: GraphNode[] = [{ id: 'single', name: 'Single' }];
+      const nodes: GraphNode[] = [{ id: 'single', name: 'Single', type: NodeType.Framework, platform: Platform.iOS, origin: Origin.Local }];
       const edges: GraphEdge[] = [];
-      const clusters: Cluster[] = [{ id: 'c0', label: 'C0', nodes, internalEdges: [] }];
+      const clusters: Cluster[] = [{ id: 'c0', name: 'C0', type: ClusterType.Project, origin: Origin.Local, nodes, anchors: ['single'], metadata: new Map() }];
 
       const result = await computeHierarchicalLayout(nodes, edges, clusters);
 

@@ -1,12 +1,13 @@
 import type { FilterState } from '@shared/schemas/app.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { describe, expect, it } from 'vitest';
 import { applyGraphFilters } from './graph-filters';
 
 const defaultFilters: FilterState = {
-  nodeTypes: new Set(['app', 'package']),
-  platforms: new Set(['iOS']),
-  origins: new Set(['local', 'external']),
+  nodeTypes: new Set([NodeType.App, NodeType.Package]),
+  platforms: new Set([Platform.iOS]),
+  origins: new Set([Origin.Local, Origin.External]),
   projects: new Set(['Core']),
   packages: new Set(['AlamoFire']),
 };
@@ -15,17 +16,17 @@ const nodes: GraphNode[] = [
   {
     id: 'app',
     name: 'MainApp',
-    type: 'app',
-    platform: 'iOS',
-    origin: 'local',
+    type: NodeType.App,
+    platform: Platform.iOS,
+    origin: Origin.Local,
     project: 'Core',
   },
   {
     id: 'pkg',
     name: 'AlamoFire',
-    type: 'package',
-    platform: 'iOS',
-    origin: 'external',
+    type: NodeType.Package,
+    platform: Platform.iOS,
+    origin: Origin.External,
     project: 'Vendor',
   },
 ];

@@ -1,4 +1,5 @@
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { Origin, Platform } from '@shared/schemas/graph.schema';
 import { describe, expect, it } from 'vitest';
 import {
   createDiamondGraph,
@@ -104,9 +105,9 @@ describe('GraphDataService', () => {
   describe('getNodesByPlatform', () => {
     it('should return nodes with specified platform', () => {
       const nodes: GraphNode[] = [
-        createNode({ id: '1', name: 'A', platform: 'iOS' }),
-        createNode({ id: '2', name: 'B', platform: 'iOS' }),
-        createNode({ id: '3', name: 'C', platform: 'macOS' }),
+        createNode({ id: '1', name: 'A', platform: Platform.iOS }),
+        createNode({ id: '2', name: 'B', platform: Platform.iOS }),
+        createNode({ id: '3', name: 'C', platform: Platform.macOS }),
       ];
       const service = new GraphDataService(nodes, []);
 
@@ -118,7 +119,7 @@ describe('GraphDataService', () => {
     });
 
     it('should return empty for non-existent platform', () => {
-      const nodes: GraphNode[] = [createNode({ id: '1', name: 'A', platform: 'iOS' })];
+      const nodes: GraphNode[] = [createNode({ id: '1', name: 'A', platform: Platform.iOS })];
       const service = new GraphDataService(nodes, []);
 
       expect(service.getNodesByPlatform('watchOS')).toHaveLength(0);
@@ -130,7 +131,7 @@ describe('GraphDataService', () => {
       const { nodes, edges } = createProjectGraph();
       const service = new GraphDataService(nodes, edges);
 
-      const localNodes = service.getNodesByOrigin('local');
+      const localNodes = service.getNodesByOrigin(Origin.Local);
 
       for (const node of localNodes) {
         expect(node.origin).toBe('local');
@@ -141,7 +142,7 @@ describe('GraphDataService', () => {
       const { nodes, edges } = createProjectGraph();
       const service = new GraphDataService(nodes, edges);
 
-      const externalNodes = service.getNodesByOrigin('external');
+      const externalNodes = service.getNodesByOrigin(Origin.External);
 
       for (const node of externalNodes) {
         expect(node.origin).toBe('external');

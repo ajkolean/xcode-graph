@@ -20,8 +20,8 @@ export {
   toggleChainDisplay,
 } from './graph.actions';
 export {
-  chainDisplayMode,
   type ChainDisplayMode,
+  chainDisplayMode,
   circularDependencies,
   createIsNodeSelected,
   hasSelection,

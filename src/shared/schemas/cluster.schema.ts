@@ -8,7 +8,7 @@
  */
 
 import { z } from 'zod';
-import type { ClusterElkOptions } from '@/graph/layout/config';
+import { ElkHierarchyHandling, type ClusterElkOptions } from '@/graph/layout/config';
 import { type GraphNode, GraphNodeSchema, type Origin, OriginSchema } from './graph.schema';
 
 // ==================== Native Enums ====================
@@ -55,7 +55,7 @@ export interface ClusterNodeMetadata {
   /** Whether external nodes depend on this */
   hasExternalDependents: boolean;
   /** For tests, IDs of nodes being tested */
-  testSubjects?: string[];
+  testSubjects?: string[] | undefined;
   /** Number of nodes depending on this */
   dependencyCount: number;
   /** Number of nodes this depends on */
@@ -89,7 +89,7 @@ export interface Cluster {
   /** Local or external origin */
   origin: Origin;
   /** Path to the project/package directory */
-  path?: string;
+  path?: string | undefined;
   /** Nodes belonging to this cluster */
   nodes: GraphNode[];
   /** IDs of anchor/entry nodes */
@@ -97,9 +97,9 @@ export interface Cluster {
   /** Node metadata as Map for efficient lookup */
   metadata: Map<string, ClusterNodeMetadata>;
   /** ELK layout options for this cluster (overrides global config) */
-  elkOptions?: ClusterElkOptions;
+  elkOptions?: ClusterElkOptions | undefined;
   /** Visual bounding box */
-  bounds?: ClusterBounds;
+  bounds?: ClusterBounds | undefined;
 }
 
 /** Serialized cluster format (metadata as array for JSON) */
@@ -121,13 +121,13 @@ export interface PositionedNode {
   /** Layout metadata */
   metadata: ClusterNodeMetadata;
   /** X position relative to cluster center */
-  localX?: number;
+  localX?: number | undefined;
   /** Y position relative to cluster center */
-  localY?: number;
+  localY?: number | undefined;
   /** Target distance from center (ring layout) */
-  targetRadius?: number;
+  targetRadius?: number | undefined;
   /** Target angle in radians (ring layout) */
-  targetAngle?: number;
+  targetAngle?: number | undefined;
 }
 
 /** Physics force strengths */
@@ -216,7 +216,7 @@ export const ClusterSchema: z.ZodType<ClusterSerialized> = z.object({
   metadata: z.array(ClusterNodeMetadataSchema),
   elkOptions: z
     .object({
-      hierarchyHandling: z.enum(['INHERIT', 'INCLUDE_CHILDREN', 'SEPARATE_CHILDREN']).optional(),
+      hierarchyHandling: z.nativeEnum(ElkHierarchyHandling).optional(),
     })
     .optional(),
   bounds: ClusterBoundsSchema.optional(),

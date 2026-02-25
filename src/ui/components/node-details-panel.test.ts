@@ -6,8 +6,8 @@
  */
 
 import { expect, fixture, html } from '@open-wc/testing';
-import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { describe, it } from 'vitest';
 import type { GraphNodeDetailsPanel } from './node-details-panel';
 import './node-details-panel';
@@ -19,9 +19,9 @@ import './node-details-panel';
 const mockNode: GraphNode = {
   id: 'node1',
   name: 'CoreLib',
-  type: 'framework',
-  origin: 'internal',
-  platform: 'iOS',
+  type: NodeType.Framework,
+  origin: Origin.Local,
+  platform: Platform.iOS,
   project: 'MyApp',
   path: '/path/to/core',
 };
@@ -29,18 +29,18 @@ const mockNode: GraphNode = {
 const mockDependency: GraphNode = {
   id: 'dep1',
   name: 'Utils',
-  type: 'staticLibrary',
-  origin: 'internal',
-  platform: 'iOS',
+  type: NodeType.Library,
+  origin: Origin.Local,
+  platform: Platform.iOS,
   project: 'MyApp',
 };
 
 const mockDependent: GraphNode = {
   id: 'dept1',
   name: 'App',
-  type: 'application',
-  origin: 'internal',
-  platform: 'iOS',
+  type: NodeType.App,
+  origin: Origin.Local,
+  platform: Platform.iOS,
   project: 'MyApp',
 };
 
@@ -50,16 +50,6 @@ const mockEdges: GraphEdge[] = [
   { source: 'node1', target: 'dep1' }, // node1 depends on dep1
   { source: 'dept1', target: 'node1' }, // dept1 depends on node1
 ];
-
-const mockCluster: Cluster = {
-  id: 'MyApp',
-  name: 'MyApp',
-  type: 'project',
-  origin: 'local',
-  nodes: [mockNode, mockDependency, mockDependent],
-  anchors: ['node1'],
-  metadata: new Map(),
-};
 
 // ========================================
 // Rendering Tests
@@ -198,11 +188,41 @@ describe('graph-node-details-panel - Computed Properties', () => {
   it('should detect high fan-in', async () => {
     const manyDependents: GraphNode[] = [
       mockNode,
-      { id: 'd1', name: 'D1', type: 'framework', origin: 'internal', platform: 'iOS' },
-      { id: 'd2', name: 'D2', type: 'framework', origin: 'internal', platform: 'iOS' },
-      { id: 'd3', name: 'D3', type: 'framework', origin: 'internal', platform: 'iOS' },
-      { id: 'd4', name: 'D4', type: 'framework', origin: 'internal', platform: 'iOS' },
-      { id: 'd5', name: 'D5', type: 'framework', origin: 'internal', platform: 'iOS' },
+      {
+        id: 'd1',
+        name: 'D1',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
+      {
+        id: 'd2',
+        name: 'D2',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
+      {
+        id: 'd3',
+        name: 'D3',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
+      {
+        id: 'd4',
+        name: 'D4',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
+      {
+        id: 'd5',
+        name: 'D5',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
     ];
 
     const manyEdges: GraphEdge[] = [
@@ -228,11 +248,41 @@ describe('graph-node-details-panel - Computed Properties', () => {
   it('should detect high fan-out', async () => {
     const manyDependencies: GraphNode[] = [
       mockNode,
-      { id: 'd1', name: 'D1', type: 'framework', origin: 'internal', platform: 'iOS' },
-      { id: 'd2', name: 'D2', type: 'framework', origin: 'internal', platform: 'iOS' },
-      { id: 'd3', name: 'D3', type: 'framework', origin: 'internal', platform: 'iOS' },
-      { id: 'd4', name: 'D4', type: 'framework', origin: 'internal', platform: 'iOS' },
-      { id: 'd5', name: 'D5', type: 'framework', origin: 'internal', platform: 'iOS' },
+      {
+        id: 'd1',
+        name: 'D1',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
+      {
+        id: 'd2',
+        name: 'D2',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
+      {
+        id: 'd3',
+        name: 'D3',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
+      {
+        id: 'd4',
+        name: 'D4',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
+      {
+        id: 'd5',
+        name: 'D5',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+      },
     ];
 
     const manyEdges: GraphEdge[] = [
@@ -524,9 +574,9 @@ describe('graph-node-details-panel - Edge Cases', () => {
     const isolatedNode: GraphNode = {
       id: 'isolated',
       name: 'Isolated',
-      type: 'framework',
-      origin: 'internal',
-      platform: 'iOS',
+      type: NodeType.Framework,
+      origin: Origin.Local,
+      platform: Platform.iOS,
     };
 
     const el = await fixture<GraphNodeDetailsPanel>(html`

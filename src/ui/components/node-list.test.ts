@@ -4,6 +4,7 @@
 
 import { expect, fixture, html } from '@open-wc/testing';
 import type { GraphNode } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { describe, it } from 'vitest';
 import type { GraphNodeList } from './node-list';
 import './node-list';
@@ -12,14 +13,16 @@ const mockNodes: GraphNode[] = [
   {
     id: 'node1',
     name: 'CoreLib',
-    type: 'framework',
-    origin: 'internal',
+    type: NodeType.Framework,
+    origin: Origin.Local,
+    platform: Platform.iOS,
   },
   {
     id: 'node2',
     name: 'NetworkKit',
-    type: 'staticLibrary',
-    origin: 'external',
+    type: NodeType.Library,
+    origin: Origin.External,
+    platform: Platform.iOS,
   },
 ];
 
@@ -126,6 +129,6 @@ describe('graph-node-list', () => {
     `);
 
     const row = el.shadowRoot?.querySelector('graph-list-item-row');
-    expect(row?.getAttribute('subtitle')).to.equal('External StaticLibrary');
+    expect(row?.getAttribute('subtitle')).to.equal('External Library');
   });
 });

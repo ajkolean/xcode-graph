@@ -1,5 +1,6 @@
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { RoutedEdge } from '@graph/layout/types';
+import type { ChainDisplayMode } from '@graph/signals/graph.signals';
 import type { TransitiveResult } from '@graph/utils';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
@@ -12,7 +13,7 @@ import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
-import { getNodeSize } from '@ui/utils/sizing';
+import { computeNodeWeights, getNodeSize } from '@ui/utils/sizing';
 import {
   calculateViewportBounds,
   isCircleInViewport,
@@ -52,6 +53,9 @@ export class GraphCanvas extends LitElement {
   @property({ type: String, attribute: 'view-mode' })
   declare viewMode: ViewMode;
 
+  @property({ type: String, attribute: 'chain-display' })
+  declare chainDisplay: ChainDisplayMode;
+
   @property({ type: Number })
   declare zoom: number;
 
@@ -89,6 +93,7 @@ export class GraphCanvas extends LitElement {
   private manualNodePositions = new Map<string, { x: number; y: number }>();
   private manualClusterPositions = new Map<string, { x: number; y: number }>();
   private pathCache = new Map<string, Path2D>();
+  private nodeWeights = new Map<string, number>();
   private theme!: CanvasTheme;
 
   // Hover State
@@ -114,6 +119,7 @@ export class GraphCanvas extends LitElement {
     this.hoveredNode = null;
     this.searchQuery = '';
     this.viewMode = ViewMode.Full;
+    this.chainDisplay = 'direct';
     this.zoom = 1;
     this.enableAnimation = false;
     this.pan = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -187,6 +193,9 @@ export class GraphCanvas extends LitElement {
         this.updatePathCache();
         this.didInitialFit = false; // Reset fit flag when data changes
       }
+
+      // Compute transitive weights for node sizing (single O(n+e) pass)
+      this.nodeWeights = computeNodeWeights(this.nodes, this.edges);
     }
 
     if (changedProps.has('enableAnimation')) {
@@ -361,7 +370,7 @@ export class GraphCanvas extends LitElement {
         const manualPos = this.manualNodePositions.get(node.id);
         const wx = clusterX + (manualPos?.x ?? layoutPos.x);
         const wy = clusterY + (manualPos?.y ?? layoutPos.y);
-        const size = getNodeSize(node, this.edges);
+        const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
 
         const dx = worldPos.x - wx;
         const dy = worldPos.y - wy;
@@ -460,7 +469,7 @@ export class GraphCanvas extends LitElement {
           const manualPos = this.manualNodePositions.get(node.id);
           const wx = clusterPos.x + (manualPos?.x ?? layoutPos.x);
           const wy = clusterPos.y + (manualPos?.y ?? layoutPos.y);
-          const size = getNodeSize(node, this.edges);
+          const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
 
           if ((worldPos.x - wx) ** 2 + (worldPos.y - wy) ** 2 <= size ** 2) {
             hitNodeId = node.id;
@@ -655,7 +664,7 @@ export class GraphCanvas extends LitElement {
     const manualPos = this.manualNodePositions.get(node.id);
     const worldX = (manualClusterPos?.x ?? clusterPos.x) + (manualPos?.x ?? layoutPos.x);
     const worldY = (manualClusterPos?.y ?? clusterPos.y) + (manualPos?.y ?? layoutPos.y);
-    const size = getNodeSize(node, this.edges);
+    const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
 
     const screenX = worldX * this.zoom + this.pan.x;
     const screenY = worldY * this.zoom + this.pan.y;
@@ -774,6 +783,10 @@ export class GraphCanvas extends LitElement {
       ? getConnectedNodes(this.selectedNode.id, this.edges)
       : new Set<string>();
 
+    // Chain mode: focused, dependents, or both with a selected node
+    const isChainActive =
+      this.selectedNode && this.viewMode !== ViewMode.Full && this.viewMode !== ViewMode.Path;
+
     for (const node of this.nodes) {
       const layoutPos = this.layout.nodePositions.get(node.id);
       const layoutClusterPos = this.layout.clusterPositions.get(node.project || 'External');
@@ -788,15 +801,37 @@ export class GraphCanvas extends LitElement {
       const x = clusterX + (manualPos?.x ?? layoutPos.x);
       const y = clusterY + (manualPos?.y ?? layoutPos.y);
 
-      const size = getNodeSize(node, this.edges);
+      const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
       if (!isCircleInViewport({ x, y }, size, viewport)) continue;
-      const color = getNodeTypeColorFromTheme(node.type, this.theme);
-      const adjustedColor = adjustColorForZoom(color, this.zoom);
 
       const isHovered = this.hoveredNode === node.id;
       const isSelected = this.selectedNode?.id === node.id;
-
       const isConnected = this.selectedNode && connectedNodes.has(node.id);
+
+      // Chain membership
+      const isInDepsChain = this.transitiveDeps?.nodes.has(node.id) ?? false;
+      const isInDependentsChain = this.transitiveDependents?.nodes.has(node.id) ?? false;
+      const isInChain = isSelected || isInDepsChain || isInDependentsChain;
+
+      // Chain-aware alpha
+      let chainAlpha = 1.0;
+      if (isChainActive) {
+        if (this.chainDisplay === 'direct' && !isInChain) {
+          continue; // skip non-chain nodes in direct mode
+        }
+        if (this.chainDisplay === 'highlight') {
+          chainAlpha = this.getNodeChainAlpha(
+            node.id,
+            isSelected,
+            isInDepsChain,
+            isInDependentsChain,
+          );
+        }
+      }
+
+      const color = getNodeTypeColorFromTheme(node.type, this.theme);
+      const adjustedColor = adjustColorForZoom(color, this.zoom);
+
       const isSearchMatch =
         this.searchQuery && node.name.toLowerCase().includes(this.searchQuery.toLowerCase());
       const clusterDim =
@@ -813,17 +848,19 @@ export class GraphCanvas extends LitElement {
           node.type === 'package' &&
           node.name === this.previewFilter.value);
 
+      // In chain mode, selection dimming is handled by chainAlpha
       const isDimmed =
         (this.searchQuery && !isSearchMatch) ||
-        (this.selectedNode && !isSelected && !isConnected) ||
+        (!isChainActive && this.selectedNode && !isSelected && !isConnected) ||
         (this.previewFilter && !matchesPreview) ||
         clusterDim;
 
-      this.ctx.globalAlpha = isDimmed ? 0.3 : 1.0;
+      const alpha = (isDimmed ? 0.3 : 1.0) * chainAlpha;
+      this.ctx.globalAlpha = alpha;
 
       // Cycle node glow effect
       const isCycleNode = this.layout.cycleNodes?.has(node.id) ?? false;
-      if (isCycleNode && !isDimmed) {
+      if (isCycleNode && !isDimmed && chainAlpha > 0.3) {
         const pulse = (Math.sin(this.time / 300) + 1) / 2;
         const glowRadius = size + 6 + pulse * 3;
 
@@ -833,7 +870,7 @@ export class GraphCanvas extends LitElement {
         this.ctx.lineWidth = 2;
         this.ctx.globalAlpha = 0.4 + pulse * 0.3;
         this.ctx.stroke();
-        this.ctx.globalAlpha = isDimmed ? 0.3 : 1.0;
+        this.ctx.globalAlpha = alpha;
       }
 
       if (isSelected) {
@@ -841,9 +878,9 @@ export class GraphCanvas extends LitElement {
         this.ctx.beginPath();
         this.ctx.arc(x, y, size + 8 + pulse * 4, 0, Math.PI * 2);
         this.ctx.strokeStyle = adjustedColor;
-        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * 0.3 * (1 - pulse);
+        this.ctx.globalAlpha = alpha * 0.3 * (1 - pulse);
         this.ctx.stroke();
-        this.ctx.globalAlpha = isDimmed ? 0.3 : 1.0;
+        this.ctx.globalAlpha = alpha;
       }
 
       if (isHovered || isSelected) {
@@ -873,29 +910,64 @@ export class GraphCanvas extends LitElement {
 
       this.ctx.shadowBlur = 0;
 
-      // Show label when: zoomed in, hovering, selected, or connected to selected node
-      if (this.zoom >= 0.5 || isHovered || isSelected || isConnected) {
+      // Show label when: zoomed in, hovering, selected, connected, or in visible chain
+      const showLabel =
+        this.zoom >= 0.5 ||
+        isHovered ||
+        isSelected ||
+        isConnected ||
+        (isChainActive && isInChain && chainAlpha > 0.3);
+      if (showLabel) {
         const labelText =
           node.name.length > 20 && !isHovered && !isConnected
             ? `${node.name.substring(0, 20)}...`
             : node.name;
 
-        this.ctx.font = `${isSelected ? '600' : isConnected ? '500' : '400'} 12px var(--fonts-body, sans-serif)`;
+        this.ctx.font = `${isSelected ? '600' : isConnected || isInChain ? '500' : '400'} 12px var(--fonts-body, sans-serif)`;
         this.ctx.textAlign = 'center';
         this.ctx.fillStyle = adjustedColor;
 
-        this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * 0.9;
+        this.ctx.globalAlpha = alpha * 0.9;
         this.ctx.shadowColor = this.theme.shadowColor;
         this.ctx.shadowBlur = 8;
         this.ctx.fillText(labelText, x, y + size + 22);
 
-        this.ctx.globalAlpha = isDimmed ? 0.3 : 1.0;
+        this.ctx.globalAlpha = alpha;
         this.ctx.shadowColor = 'transparent';
         this.ctx.shadowBlur = 0;
         this.ctx.fillText(labelText, x, y + size + 22);
       }
     }
     this.ctx.globalAlpha = 1.0;
+  }
+
+  private getNodeChainAlpha(
+    nodeId: string,
+    isSelected: boolean,
+    isInDepsChain: boolean,
+    isInDependentsChain: boolean,
+  ): number {
+    if (isSelected) return 1.0;
+    if (!isInDepsChain && !isInDependentsChain) return 0.08;
+
+    // Find the shallowest depth from either chain
+    let depth = Number.POSITIVE_INFINITY;
+    let maxDepth = 1;
+
+    if (isInDepsChain && this.transitiveDeps) {
+      const d = this.transitiveDeps.nodeDepths.get(nodeId) ?? 0;
+      if (d < depth) depth = d;
+      maxDepth = Math.max(maxDepth, this.transitiveDeps.maxDepth);
+    }
+    if (isInDependentsChain && this.transitiveDependents) {
+      const d = this.transitiveDependents.nodeDepths.get(nodeId) ?? 0;
+      if (d < depth) depth = d;
+      maxDepth = Math.max(maxDepth, this.transitiveDependents.maxDepth);
+    }
+    if (!Number.isFinite(depth)) depth = 0;
+
+    // Depth 0 = selected node (1.0), max depth = 0.4
+    return 1.0 - (depth / maxDepth) * 0.6;
   }
 
   private getEdgeOpacity(edge: GraphEdge): number {
@@ -937,6 +1009,10 @@ export class GraphCanvas extends LitElement {
   private renderEdges(viewport: ViewportBounds) {
     const selectedNodeId = this.selectedNode?.id;
 
+    // Chain mode detection
+    const isChainActive =
+      this.selectedNode && this.viewMode !== ViewMode.Full && this.viewMode !== ViewMode.Path;
+
     // Build routed edge lookup map for cross-cluster edges
     const routedEdgeMap = new Map<string, RoutedEdge>();
     if (this.layout.routedEdges) {
@@ -948,9 +1024,27 @@ export class GraphCanvas extends LitElement {
     this.ctx.lineWidth = 1;
 
     for (const edge of this.edges) {
+      const edgeKey = `${edge.source}->${edge.target}`;
+      const inDepsChain = this.transitiveDeps?.edges.has(edgeKey) ?? false;
+      const inDependentsChain = this.transitiveDependents?.edges.has(edgeKey) ?? false;
+      const inChain = inDepsChain || inDependentsChain;
+
       const isConnectedToSelected =
         edge.source === selectedNodeId || edge.target === selectedNodeId;
-      this.renderSingleNodeEdge(edge, viewport, isConnectedToSelected, routedEdgeMap);
+
+      // In chain mode with direct display, skip non-chain edges (keep selected node edges)
+      if (isChainActive && this.chainDisplay === 'direct' && !inChain && !isConnectedToSelected) {
+        continue;
+      }
+
+      this.renderSingleNodeEdge(
+        edge,
+        viewport,
+        isConnectedToSelected,
+        !!isChainActive,
+        inChain,
+        routedEdgeMap,
+      );
     }
   }
 
@@ -958,6 +1052,8 @@ export class GraphCanvas extends LitElement {
     edge: GraphEdge,
     viewport: ViewportBounds,
     isHighlighted: boolean,
+    isChainActive: boolean,
+    inChain: boolean,
     routedEdgeMap?: Map<string, RoutedEdge>,
   ) {
     const sourceNode = this.nodes.find((n) => n.id === edge.source);
@@ -1039,7 +1135,19 @@ export class GraphCanvas extends LitElement {
       opacity = Math.max(opacity, 0.8);
     }
 
-    opacity *= this.getEdgeOpacity(edge);
+    // Chain-aware edge opacity
+    if (isChainActive && this.chainDisplay === 'highlight') {
+      if (inChain) {
+        // Chain edges: depth-based opacity, boosted visibility
+        const depthOpacity = this.getEdgeOpacity(edge);
+        opacity = isHighlighted ? 1.0 : depthOpacity * 0.8;
+      } else {
+        // Non-chain edges: nearly invisible
+        opacity = 0.03;
+      }
+    } else {
+      opacity *= this.getEdgeOpacity(edge);
+    }
 
     this.ctx.globalAlpha = Math.min(1, opacity);
 
@@ -1051,7 +1159,9 @@ export class GraphCanvas extends LitElement {
     const dashPattern = isCycleEdge ? [4, 4] : isCrossCluster ? [10, 5] : [4, 2];
     this.ctx.setLineDash(dashPattern);
     // Positive offset makes dashes flow FROM dependencies INTO the selected node
-    this.ctx.lineDashOffset = isHighlighted ? this.time / 20 : 0;
+    const animateEdge =
+      isHighlighted || (isChainActive && this.chainDisplay === 'highlight' && inChain);
+    this.ctx.lineDashOffset = animateEdge ? this.time / 20 : 0;
 
     // Check for port-routed path for cross-cluster edges
     const edgeKey = `${edge.source}->${edge.target}`;

@@ -6,6 +6,7 @@
  */
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { SignalSnapshot } from '../../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
@@ -19,11 +20,11 @@ describe('data.actions', () => {
   const createTestNode = (id: string): GraphNode => ({
     id,
     name: `Node ${id}`,
-    type: 'framework',
+    type: NodeType.Framework,
     path: `/path/to/${id}`,
-    platform: 'ios',
+    platform: Platform.iOS,
     project: 'TestProject',
-    origin: 'first-party',
+    origin: Origin.Local,
   });
 
   // Helper to create test edges
@@ -225,20 +226,20 @@ describe('data.actions', () => {
         {
           id: 'node-1',
           name: 'Framework A',
-          type: 'framework',
+          type: NodeType.Framework,
           path: '/path/to/framework',
-          platform: 'ios',
+          platform: Platform.iOS,
           project: 'Project1',
-          origin: 'first-party',
+          origin: Origin.Local,
         },
         {
           id: 'node-2',
           name: 'Package B',
-          type: 'package',
+          type: NodeType.Package,
           path: '/path/to/package',
-          platform: 'macos',
+          platform: Platform.macOS,
           project: 'Project2',
-          origin: 'third-party',
+          origin: Origin.External,
         },
       ];
 
@@ -246,10 +247,10 @@ describe('data.actions', () => {
 
       const storedNodes = nodes.get();
       expect(storedNodes).toHaveLength(2);
-      expect(storedNodes[0].type).toBe('framework');
-      expect(storedNodes[1].type).toBe('package');
-      expect(storedNodes[0].origin).toBe('first-party');
-      expect(storedNodes[1].origin).toBe('third-party');
+      expect(storedNodes[0]!.type).toBe(NodeType.Framework);
+      expect(storedNodes[1]!.type).toBe(NodeType.Package);
+      expect(storedNodes[0]!.origin).toBe(Origin.Local);
+      expect(storedNodes[1]!.origin).toBe(Origin.External);
     });
   });
 });

@@ -10,9 +10,9 @@
 // ==================== Graph Signals ====================
 
 export {
+  type ChainDisplayMode,
   // State signals
   chainDisplayMode,
-  type ChainDisplayMode,
   circularDependencies,
   // Actions
   clearGraphData,

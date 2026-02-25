@@ -10,10 +10,18 @@ import type { ReactiveController, ReactiveControllerHost } from 'lit';
 export class MockHost implements ReactiveControllerHost {
   private readonly controllers: ReactiveController[] = [];
   public updateCount = 0;
-  public updates: Array<{ timestamp: number; reason?: string }> = [];
+  public updates: Array<{ timestamp: number; reason?: string | undefined }> = [];
+  public readonly updateComplete: Promise<boolean> = Promise.resolve(true);
 
   addController(controller: ReactiveController): void {
     this.controllers.push(controller);
+  }
+
+  removeController(controller: ReactiveController): void {
+    const index = this.controllers.indexOf(controller);
+    if (index >= 0) {
+      this.controllers.splice(index, 1);
+    }
   }
 
   requestUpdate(reason?: string): void {

@@ -24,23 +24,23 @@ export interface NodePosition {
   /** Y velocity for physics animation */
   vy: number;
   /** Z position in 3D mode */
-  z?: number;
+  z?: number | undefined;
   /** Z velocity in 3D mode */
-  vz?: number;
+  vz?: number | undefined;
   /** Parent cluster ID */
   clusterId: string;
   /** Visual radius of the node */
   radius: number;
   /** Target distance from cluster center */
-  targetRadius?: number;
+  targetRadius?: number | undefined;
   /** Target angle in radians */
-  targetAngle?: number;
+  targetAngle?: number | undefined;
   /** Whether this is an anchor/entry point */
-  isAnchor?: boolean;
+  isAnchor?: boolean | undefined;
   /** Whether this is a test node */
-  isTest?: boolean;
+  isTest?: boolean | undefined;
   /** For test nodes, the subject being tested */
-  testSubject?: string;
+  testSubject?: string | undefined;
 }
 
 /** Cluster position during simulation */
@@ -56,15 +56,15 @@ export interface ClusterPosition {
   /** Y velocity for physics animation */
   vy: number;
   /** Z position of cluster center in 3D mode */
-  z?: number;
+  z?: number | undefined;
   /** Z velocity in 3D mode */
-  vz?: number;
+  vz?: number | undefined;
   /** Width of cluster bounding box */
   width: number;
   /** Height of cluster bounding box */
   height: number;
   /** Depth of cluster bounding box in 3D mode */
-  depth?: number;
+  depth?: number | undefined;
   /** Number of nodes in this cluster */
   nodeCount: number;
 }

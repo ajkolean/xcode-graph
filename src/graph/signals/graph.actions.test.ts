@@ -7,6 +7,7 @@
 
 import { ViewMode } from '@shared/schemas/app.schema';
 import type { GraphNode } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { SignalSnapshot } from '../../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
@@ -35,11 +36,11 @@ describe('graph.actions', () => {
   const createTestNode = (id: string, name = `Node ${id}`): GraphNode => ({
     id,
     name,
-    type: 'framework',
+    type: NodeType.Framework,
     path: `/path/to/${id}`,
-    platform: 'ios',
+    platform: Platform.iOS,
     project: 'TestProject',
-    origin: 'first-party',
+    origin: Origin.Local,
   });
 
   beforeEach(() => {

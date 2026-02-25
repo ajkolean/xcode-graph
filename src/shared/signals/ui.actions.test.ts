@@ -5,7 +5,7 @@
  * Tests tab switching, zoom controls, animation toggle, and preview filters.
  */
 
-import type { ActiveTab } from '@shared/schemas';
+import { ActiveTab } from '@shared/schemas';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { SignalSnapshot } from '../../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
@@ -19,7 +19,7 @@ import {
   zoomIn,
   zoomOut,
 } from './ui.actions';
-import { activeTab, enableAnimation, type PreviewFilter, previewFilter, zoom } from './ui.signals';
+import { activeTab, enableAnimation, previewFilter, zoom } from './ui.signals';
 
 describe('ui.actions', () => {
   let snapshot: SignalSnapshot;
@@ -36,7 +36,7 @@ describe('ui.actions', () => {
 
   describe('setActiveTab', () => {
     it('should allow switching between tabs', () => {
-      const tabs: ActiveTab[] = ['graph', 'placeholder'];
+      const tabs: ActiveTab[] = [ActiveTab.Graph, ActiveTab.Overview];
 
       for (const tab of tabs) {
         setActiveTab(tab);
@@ -45,10 +45,10 @@ describe('ui.actions', () => {
     });
 
     it('should replace previous tab', () => {
-      setActiveTab('graph');
-      setActiveTab('placeholder');
+      setActiveTab(ActiveTab.Graph);
+      setActiveTab(ActiveTab.Overview);
 
-      expect(activeTab.get()).toBe('placeholder');
+      expect(activeTab.get()).toBe(ActiveTab.Overview);
     });
   });
 
@@ -277,12 +277,12 @@ describe('ui.actions', () => {
     });
 
     it('should maintain state across multiple operations', () => {
-      setActiveTab('graph');
+      setActiveTab(ActiveTab.Graph);
       setZoom(1.5);
       setEnableAnimation(true);
       setPreviewFilter({ type: 'nodeType', value: 'framework' });
 
-      expect(activeTab.get()).toBe('graph');
+      expect(activeTab.get()).toBe(ActiveTab.Graph);
       expect(zoom.get()).toBe(1.5);
       expect(enableAnimation.get()).toBe(true);
       expect(previewFilter.get()).toEqual({ type: 'nodeType', value: 'framework' });
