@@ -16,7 +16,7 @@
 
 import type { GraphCanvas } from '@graph/components/graph-canvas';
 import type { TransitiveResult } from '@graph/utils';
-import { Signal, SignalWatcher } from '@lit-labs/signals';
+import { computed, Signal, SignalWatcher, watch } from '@lit-labs/signals';
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
@@ -49,6 +49,12 @@ import {
   zoomIn,
   zoomOut,
 } from '@shared/signals/index';
+
+/** Computed: whether chain display is in highlight mode */
+const highlightMode = computed(() => chainDisplayMode.get() === 'highlight');
+
+/** Computed: search query with empty string fallback (avoids attribute removal) */
+const searchQueryValue = computed(() => searchQuery.get() || '');
 
 const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
 
@@ -174,12 +180,12 @@ export class GraphTab extends SignalWatcherLitElement {
         <div class="content">
           <div class="graph-container">
             <graph-controls
-              .zoom=${zoom.get()}
-              .baseZoom=${baseZoom.get()}
+              .zoom=${watch(zoom)}
+              .baseZoom=${watch(baseZoom)}
               .nodeCount=${this.displayNodes.length}
               .edgeCount=${this.displayEdges.length}
-              ?enable-animation=${enableAnimation.get()}
-              ?highlight-mode=${chainDisplayMode.get() === 'highlight'}
+              ?enable-animation=${watch(enableAnimation)}
+              ?highlight-mode=${watch(highlightMode)}
               @zoom-in=${this.handleZoomIn}
               @zoom-out=${this.handleZoomOut}
               @zoom-reset=${this.handleZoomReset}
@@ -190,17 +196,17 @@ export class GraphTab extends SignalWatcherLitElement {
             <graph-canvas
               .nodes=${this.displayNodes}
               .edges=${this.displayEdges}
-              .selectedNode=${selectedNode.get()}
-              .selectedCluster=${selectedCluster.get()}
+              .selectedNode=${watch(selectedNode)}
+              .selectedCluster=${watch(selectedCluster)}
               .hoveredNode=${Signal.subtle.untrack(() => hoveredNode.get())}
-              search-query=${searchQuery.get() || ''}
-              view-mode=${viewMode.get()}
-              chain-display=${chainDisplayMode.get()}
-              .zoom=${zoom.get()}
-              ?enable-animation=${enableAnimation.get()}
+              search-query=${watch(searchQueryValue)}
+              view-mode=${watch(viewMode)}
+              chain-display=${watch(chainDisplayMode)}
+              .zoom=${watch(zoom)}
+              ?enable-animation=${watch(enableAnimation)}
               .transitiveDeps=${this.transitiveDeps}
               .transitiveDependents=${this.transitiveDependents}
-              .previewFilter=${previewFilter.get()}
+              .previewFilter=${watch(previewFilter)}
               @node-select=${this.handleNodeSelect}
               @cluster-select=${this.handleClusterSelect}
               @node-hover=${this.handleNodeHover}
