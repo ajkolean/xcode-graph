@@ -29,12 +29,14 @@ import '../components/right-sidebar';
 // Import signals
 // Import actions
 import {
+  chainDisplayMode,
   hoveredNode,
   selectCluster,
   selectedCluster,
   selectedNode,
   selectNode,
   setHoveredNode,
+  toggleChainDisplay,
   viewMode,
 } from '@graph/signals/index';
 import {
@@ -154,6 +156,10 @@ export class GraphTab extends SignalWatcher(LitElement) {
 
   private handleZoomChange(e: CustomEvent) {
     setZoom(e.detail);
+  }
+
+  private handleToggleChainDisplay() {
+    toggleChainDisplay();
   }
 
   // ========================================

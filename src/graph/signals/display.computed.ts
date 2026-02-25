@@ -68,54 +68,17 @@ export const transitiveData = new Signal.Computed(() => {
 
 /**
  * Computed signal for final display data.
- * Combines filtered data with view mode filtering based on transitive deps.
+ * Always passes all filtered nodes/edges through to the canvas.
+ * The canvas handles visibility (direct mode = hide non-chain, highlight mode = depth alpha).
  * Automatically recomputes when any dependency changes.
  */
 export const displayData = new Signal.Computed<DisplayData>(() => {
   const { filteredNodes, filteredEdges, searchResults } = filteredData.get();
   const { transitiveDeps, transitiveDependents } = transitiveData.get();
-  const currentViewMode = viewMode.get();
-  const currentSelectedNode = selectedNode.get();
-  const selectedNodeId = currentSelectedNode?.id ?? null;
-
-  let displayNodes = filteredNodes;
-  let displayEdges = filteredEdges;
-
-  if (currentViewMode === 'focused' && transitiveDeps.nodes.size > 0) {
-    displayNodes = filteredNodes.filter(
-      (n: GraphNode) => n.id === selectedNodeId || transitiveDeps.nodes.has(n.id),
-    );
-    displayEdges = filteredEdges.filter((e: GraphEdge) =>
-      transitiveDeps.edges.has(`${e.source}->${e.target}`),
-    );
-  } else if (currentViewMode === 'dependents' && transitiveDependents.nodes.size > 0) {
-    displayNodes = filteredNodes.filter(
-      (n: GraphNode) => n.id === selectedNodeId || transitiveDependents.nodes.has(n.id),
-    );
-    displayEdges = filteredEdges.filter((e: GraphEdge) =>
-      transitiveDependents.edges.has(`${e.source}->${e.target}`),
-    );
-  } else if (currentViewMode === 'both') {
-    const allRelevantNodes = new Set(
-      [selectedNodeId, ...transitiveDeps.nodes, ...transitiveDependents.nodes].filter(
-        (id): id is string => id !== null,
-      ),
-    );
-
-    displayNodes = filteredNodes.filter((n: GraphNode) => allRelevantNodes.has(n.id));
-
-    const allRelevantEdges = new Set([
-      ...Array.from(transitiveDeps.edges),
-      ...Array.from(transitiveDependents.edges),
-    ]);
-    displayEdges = filteredEdges.filter((e: GraphEdge) =>
-      allRelevantEdges.has(`${e.source}->${e.target}`),
-    );
-  }
 
   return {
-    filteredNodes: displayNodes,
-    filteredEdges: displayEdges,
+    filteredNodes,
+    filteredEdges,
     searchResults,
     transitiveDeps,
     transitiveDependents,

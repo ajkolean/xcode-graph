@@ -11,6 +11,8 @@
 
 export {
   // State signals
+  chainDisplayMode,
+  type ChainDisplayMode,
   circularDependencies,
   // Actions
   clearGraphData,
@@ -38,6 +40,7 @@ export {
   setHoveredNode,
   setViewMode,
   showDependents,
+  toggleChainDisplay,
   transitiveData,
   viewMode,
 } from '@graph/signals/index';

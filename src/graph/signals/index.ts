@@ -17,8 +17,11 @@ export {
   setHoveredNode,
   setViewMode,
   showDependents,
+  toggleChainDisplay,
 } from './graph.actions';
 export {
+  chainDisplayMode,
+  type ChainDisplayMode,
   circularDependencies,
   createIsNodeSelected,
   hasSelection,

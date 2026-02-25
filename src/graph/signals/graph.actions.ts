@@ -10,6 +10,7 @@
 import { ViewMode } from '@shared/schemas/app.schema';
 import type { GraphNode } from '@shared/schemas/graph.schema';
 import {
+  chainDisplayMode,
   circularDependencies,
   hoveredNode,
   selectedCluster,
@@ -129,6 +130,13 @@ export function showDependents(node: GraphNode): void {
   selectedNode.set(node);
   selectedCluster.set(null);
   viewMode.set(newMode);
+}
+
+/**
+ * Toggle chain display mode between 'direct' and 'highlight'
+ */
+export function toggleChainDisplay(): void {
+  chainDisplayMode.set(chainDisplayMode.get() === 'direct' ? 'highlight' : 'direct');
 }
 
 /**

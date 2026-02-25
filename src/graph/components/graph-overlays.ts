@@ -66,6 +66,9 @@ export class GraphControls extends LitElement {
   @property({ type: Number, attribute: 'edge-count' })
   declare edgeCount: number;
 
+  @property({ type: Boolean, attribute: 'highlight-mode' })
+  declare highlightMode: boolean;
+
   static override readonly styles = css`
     :host {
       display: block;
@@ -130,6 +133,12 @@ export class GraphControls extends LitElement {
       height: var(--sizes-icon-sm);
     }
 
+    .zoom-button.active {
+      background-color: color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border-color: color-mix(in srgb, var(--colors-primary) 50%, transparent);
+      color: var(--colors-primary);
+    }
+
     .hint {
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);
@@ -150,6 +159,10 @@ export class GraphControls extends LitElement {
 
   private handleZoomReset() {
     this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }));
+  }
+
+  private handleToggleHighlight() {
+    this.dispatchEvent(new CustomEvent('toggle-chain-display', { bubbles: true, composed: true }));
   }
 
   private handleWheel(e: WheelEvent) {
@@ -184,6 +197,14 @@ export class GraphControls extends LitElement {
             ${unsafeHTML(icons.Focus)}
           </button>
         </div>
+        <div class="divider"></div>
+        <button
+          class="zoom-button ${this.highlightMode ? 'active' : ''}"
+          @click=${this.handleToggleHighlight}
+          title="${this.highlightMode ? 'Switch to direct filter' : 'Switch to depth highlighting'}"
+        >
+          ${unsafeHTML(icons.Layers)}
+        </button>
         <div class="divider"></div>
         <span class="hint">Scroll zoom · Drag pan · Click select</span>
       </div>

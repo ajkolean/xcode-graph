@@ -13,6 +13,7 @@ export interface TransitiveResult {
   nodes: Set<string>;
   edges: Set<string>;
   edgeDepths: Map<string, number>;
+  nodeDepths: Map<string, number>;
   maxDepth: number;
 }
 
@@ -147,6 +148,7 @@ function traverseGraph(
   const visitedNodes = new Set<string>();
   const visitedEdges = new Set<string>();
   const edgeDepths = new Map<string, number>();
+  const nodeDepths = new Map<string, number>();
   let maxDepth = 0;
 
   const stack: Array<{ id: string; depth: number }> = [{ id: startId, depth: 0 }];
@@ -155,6 +157,7 @@ function traverseGraph(
     const { id, depth } = stack.pop()!;
     if (visitedNodes.has(id)) continue;
     visitedNodes.add(id);
+    nodeDepths.set(id, depth);
     maxDepth = Math.max(maxDepth, depth);
 
     for (const neighbor of getNeighbors(id)) {
@@ -167,7 +170,7 @@ function traverseGraph(
     }
   }
 
-  return { nodes: visitedNodes, edges: visitedEdges, edgeDepths, maxDepth };
+  return { nodes: visitedNodes, edges: visitedEdges, edgeDepths, nodeDepths, maxDepth };
 }
 
 /** Empty result for when traversal is not needed */
@@ -175,6 +178,7 @@ const EMPTY_RESULT: TransitiveResult = {
   nodes: new Set<string>(),
   edges: new Set<string>(),
   edgeDepths: new Map(),
+  nodeDepths: new Map(),
   maxDepth: 0,
 };
 

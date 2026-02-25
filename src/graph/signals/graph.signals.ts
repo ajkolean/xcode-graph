@@ -28,6 +28,10 @@ export const viewMode = signal<ViewMode>(ViewMode.Full);
 /** Detected circular dependency paths */
 export const circularDependencies = signal<string[][]>([]);
 
+/** Chain display mode: 'direct' filters to chain only, 'highlight' shows all with depth-based alpha */
+export type ChainDisplayMode = 'direct' | 'highlight';
+export const chainDisplayMode = signal<ChainDisplayMode>('direct');
+
 // ==================== Computed Signals ====================
 
 /** Check if any node or cluster is currently selected */
@@ -56,4 +60,5 @@ export function resetGraphSignals(): void {
   hoveredNode.set(null);
   viewMode.set(ViewMode.Full);
   circularDependencies.set([]);
+  chainDisplayMode.set('direct');
 }
