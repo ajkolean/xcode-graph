@@ -84,7 +84,10 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
 
   constructor(host: ReactiveControllerHost, machine: Machine<TSchema>, props: TSchema['props']) {
     this.host = host;
-    this.instance = new VanillaMachine(machine as Machine<MachineSchema>, props as MachineUserProps);
+    this.instance = new VanillaMachine(
+      machine as Machine<MachineSchema>,
+      props as MachineUserProps,
+    );
     this._service = this.instance.service as unknown as Service<TSchema>;
     host.addController(this);
   }

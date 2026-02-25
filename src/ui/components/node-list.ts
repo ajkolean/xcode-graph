@@ -22,11 +22,11 @@
 
 import type { NodeWithEdge } from '@graph/utils/node-utils';
 import { DependencyKind, type GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
 import './list-item-row.js';
-import { NodeListEventsMixin } from './node-list-events';
+import { NodeListEventsBase } from './node-list-events';
 import './section-header.js';
 
 /** Dependency kind colors and labels */
@@ -37,14 +37,7 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
   [DependencyKind.XCFramework]: { label: 'XCF', color: '#F59E0B' },
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: LitElement has abstract constructor, cast needed for mixin pattern
-const NodeListBase = NodeListEventsMixin(
-  LitElement as unknown as new (
-    ...args: any[]
-  ) => LitElement,
-);
-
-export class GraphNodeList extends NodeListBase {
+export class GraphNodeList extends NodeListEventsBase {
   // ========================================
   // Properties
   // ========================================
@@ -104,7 +97,7 @@ export class GraphNodeList extends NodeListBase {
   // Styles
   // ========================================
 
-  static readonly styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);

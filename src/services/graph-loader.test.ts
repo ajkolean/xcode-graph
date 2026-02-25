@@ -2,10 +2,10 @@
  * Tests for Progressive Graph Loader
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createLinearChain, createProjectGraph } from '../fixtures';
 import { ClusterType } from '@shared/schemas/cluster.schema';
 import { Origin } from '@shared/schemas/graph.schema';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createLinearChain, createProjectGraph } from '../fixtures';
 import { GraphLoader, type LoadProgress } from './graph-loader';
 
 describe('GraphLoader', () => {

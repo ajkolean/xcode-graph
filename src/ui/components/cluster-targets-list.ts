@@ -20,19 +20,12 @@
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
-import { css, html, LitElement } from 'lit';
+import { css, html } from 'lit';
 import { property } from 'lit/decorators.js';
-import { NodeListEventsMixin } from './node-list-events';
+import { NodeListEventsBase } from './node-list-events';
 import './list-item-row';
 
-// biome-ignore lint/suspicious/noExplicitAny: LitElement has abstract constructor, cast needed for mixin pattern
-const ClusterTargetsListBase = NodeListEventsMixin(
-  LitElement as unknown as new (
-    ...args: any[]
-  ) => LitElement,
-);
-
-export class GraphClusterTargetsList extends ClusterTargetsListBase {
+export class GraphClusterTargetsList extends NodeListEventsBase {
   // ========================================
   // Properties
   // ========================================
@@ -59,7 +52,7 @@ export class GraphClusterTargetsList extends ClusterTargetsListBase {
   // Styles
   // ========================================
 
-  static readonly styles = css`
+  static override readonly styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);

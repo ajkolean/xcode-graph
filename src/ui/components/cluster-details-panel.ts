@@ -22,7 +22,6 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import './cluster-composition.js';
 import './cluster-header';
-import './cluster-type-badge';
 import './cluster-stats';
 import './cluster-targets-list';
 
@@ -132,11 +131,6 @@ export class GraphClusterDetailsPanel extends LitElement {
         ?is-external=${isExternal}
         @back=${() => this.bubbleEvent('close')}
       ></graph-cluster-header>
-
-      <graph-cluster-type-badge
-        cluster-type=${this.cluster.type}
-        cluster-color=${this.clusterColor}
-      ></graph-cluster-type-badge>
 
       <div class="scrollable">
         <graph-cluster-stats

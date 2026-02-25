@@ -193,9 +193,9 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
     }
 
     this.ctx = {
-      get: (key) => context?.[key].get() as T["context"][typeof key],
+      get: (key) => context?.[key].get() as T['context'][typeof key],
       set: (key, value) => context?.[key].set(value),
-      initial: (key) => context?.[key].initial as T["context"][typeof key],
+      initial: (key) => context?.[key].initial as T['context'][typeof key],
       hash: (key) => {
         const current = context?.[key].get() as any;
         return context?.[key].hash(current) as string;
@@ -273,10 +273,13 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
 
       const currentState = this.state.get() as T['state'];
 
-      const stateOn = this.machine.states[currentState]?.on as Record<string, Transition<T> | Transition<T>[]> | undefined;
-      const globalOn = this.machine.on as Record<string, Transition<T> | Transition<T>[]> | undefined;
-      const transitions =
-        stateOn?.[event.type] ?? globalOn?.[event.type];
+      const stateOn = this.machine.states[currentState]?.on as
+        | Record<string, Transition<T> | Transition<T>[]>
+        | undefined;
+      const globalOn = this.machine.on as
+        | Record<string, Transition<T> | Transition<T>[]>
+        | undefined;
+      const transitions = stateOn?.[event.type] ?? globalOn?.[event.type];
 
       const transition = this.choose(transitions);
       if (!transition) return;
