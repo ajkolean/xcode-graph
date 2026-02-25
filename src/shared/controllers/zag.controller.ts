@@ -37,7 +37,7 @@
  * ```
  */
 
-import { VanillaMachine } from '@shared/machines/lib/vanilla-machine';
+import { type MachineUserProps, VanillaMachine } from '@shared/machines/lib/vanilla-machine';
 import { type Machine, type MachineSchema, MachineStatus, type Service } from '@zag-js/core';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
@@ -53,7 +53,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
   private readonly host: ReactiveControllerHost;
   private readonly instance: VanillaMachine;
   private readonly _service: Service<TSchema>;
-  private unsubscribe?: () => void;
+  private unsubscribe: (() => void) | undefined;
 
   /**
    * The machine service instance.
@@ -84,8 +84,8 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
 
   constructor(host: ReactiveControllerHost, machine: Machine<TSchema>, props: TSchema['props']) {
     this.host = host;
-    this.instance = new VanillaMachine(machine, props);
-    this._service = this.instance.service as Service<TSchema>;
+    this.instance = new VanillaMachine(machine as Machine<MachineSchema>, props as MachineUserProps);
+    this._service = this.instance.service as unknown as Service<TSchema>;
     host.addController(this);
   }
 
@@ -97,9 +97,10 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
     // Defensive cleanup of any existing subscription
     this.unsubscribe?.();
 
-    this.unsubscribe = this.instance.subscribe(() => {
+    this.instance.subscribe(() => {
       this.host.requestUpdate();
     });
+    this.unsubscribe = () => {};
     if (this._service.getStatus() !== MachineStatus.Started) {
       this.instance.start();
     }
@@ -131,7 +132,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * Shorthand for `service.send(event)`
    */
   send(event: TSchema['event']): void {
-    this._service.send(event);
+    this._service.send(event as any);
   }
 
   /**

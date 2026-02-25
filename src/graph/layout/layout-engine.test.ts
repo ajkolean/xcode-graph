@@ -188,9 +188,27 @@ describe('computeHierarchicalLayout', () => {
     });
 
     it('should handle single node', async () => {
-      const nodes: GraphNode[] = [{ id: 'single', name: 'Single', type: NodeType.Framework, platform: Platform.iOS, origin: Origin.Local }];
+      const nodes: GraphNode[] = [
+        {
+          id: 'single',
+          name: 'Single',
+          type: NodeType.Framework,
+          platform: Platform.iOS,
+          origin: Origin.Local,
+        },
+      ];
       const edges: GraphEdge[] = [];
-      const clusters: Cluster[] = [{ id: 'c0', name: 'C0', type: ClusterType.Project, origin: Origin.Local, nodes, anchors: ['single'], metadata: new Map() }];
+      const clusters: Cluster[] = [
+        {
+          id: 'c0',
+          name: 'C0',
+          type: ClusterType.Project,
+          origin: Origin.Local,
+          nodes,
+          anchors: ['single'],
+          metadata: new Map(),
+        },
+      ];
 
       const result = await computeHierarchicalLayout(nodes, edges, clusters);
 

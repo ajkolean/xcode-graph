@@ -126,7 +126,7 @@ describe('GraphErrorToast', () => {
       await new Promise((resolve) => setTimeout(resolve, 350));
 
       expect(dismissSpy).toHaveBeenCalled();
-      const event = dismissSpy.mock.calls[0][0] as CustomEvent;
+      const event = dismissSpy.mock.calls[0]![0] as CustomEvent;
       expect(event.detail.errorId).toBe('test-123');
     });
 
@@ -219,7 +219,7 @@ describe('GraphErrorToast', () => {
       actionButton?.click();
 
       expect(actionSpy).toHaveBeenCalled();
-      const event = actionSpy.mock.calls[0][0] as CustomEvent;
+      const event = actionSpy.mock.calls[0]![0] as CustomEvent;
       expect(event.detail.error).toEqual(error);
     });
   });

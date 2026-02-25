@@ -27,10 +27,10 @@ describe('graph-background', () => {
     const el = await fixture<GraphBackground>(html`<graph-background></graph-background>`);
 
     const svg = querySvgElement(el.shadowRoot!, 'svg');
-    const defs = querySvgElement(svg, 'defs');
+    const defs = querySvgElement(svg!, 'defs');
     expect(defs).to.exist;
 
-    const pattern = querySvgElement(defs, 'pattern#grid');
+    const pattern = querySvgElement(defs!, 'pattern#grid');
     expect(pattern).to.exist;
   });
 
@@ -38,7 +38,7 @@ describe('graph-background', () => {
     const el = await fixture<GraphBackground>(html`<graph-background></graph-background>`);
 
     const svg = querySvgElement(el.shadowRoot!, 'svg');
-    const rect = querySvgElement(svg, 'rect');
+    const rect = querySvgElement(svg!, 'rect');
     expect(rect).to.exist;
     expect(rect!.getAttribute('fill')).to.equal('url(#grid)');
   });

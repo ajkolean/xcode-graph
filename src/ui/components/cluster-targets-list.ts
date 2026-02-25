@@ -25,7 +25,14 @@ import { property } from 'lit/decorators.js';
 import { NodeListEventsMixin } from './node-list-events';
 import './list-item-row';
 
-export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement as any) {
+// biome-ignore lint/suspicious/noExplicitAny: LitElement has abstract constructor, cast needed for mixin pattern
+const ClusterTargetsListBase = NodeListEventsMixin(
+  LitElement as unknown as new (
+    ...args: any[]
+  ) => LitElement,
+);
+
+export class GraphClusterTargetsList extends ClusterTargetsListBase {
   // ========================================
   // Properties
   // ========================================
@@ -52,7 +59,7 @@ export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement as a
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static readonly styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);

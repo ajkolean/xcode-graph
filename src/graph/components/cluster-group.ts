@@ -177,7 +177,9 @@ export class GraphClusterGroup extends LitElement {
   // ========================================
 
   private get connectedNodes(): Set<string> {
-    return this.selectedNode ? getConnectedNodes(this.selectedNode.id, this.edges ?? []) : new Set();
+    return this.selectedNode
+      ? getConnectedNodes(this.selectedNode.id, this.edges ?? [])
+      : new Set();
   }
 
   private get clusterNodes(): GraphNodeType[] {

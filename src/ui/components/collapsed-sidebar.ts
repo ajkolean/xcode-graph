@@ -140,8 +140,7 @@ export class GraphCollapsedSidebar extends LitElement {
       text-align: center;
       font-size: var(--font-sizes-xs);
       font-family: var(--fonts-body);
-      color: var(--colors-foreground);
-      opacity: var(--opacity-30);
+      color: var(--colors-muted-foreground);
     }
   `;
 

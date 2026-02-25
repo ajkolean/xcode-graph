@@ -15,9 +15,7 @@ describe('Layout Aspect Ratio', () => {
     }
 
     // 2. Run Layout
-    const result = await computeHierarchicalLayout(nodes, edges, clusters, {
-      dimension: '2d',
-    });
+    const result = await computeHierarchicalLayout(nodes, edges, clusters, {});
 
     // 3. Compute Bounds
     let minX = Infinity,

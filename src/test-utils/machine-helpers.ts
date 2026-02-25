@@ -7,8 +7,8 @@
  * @module test-utils/machine-helpers
  */
 
-import { VanillaMachine } from '@shared/machines/lib/vanilla-machine';
-import type { Machine, MachineContext, MachineSchema, Service } from '@zag-js/core';
+import { type MachineUserProps, VanillaMachine } from '@shared/machines/lib/vanilla-machine';
+import type { Machine, MachineSchema, Service } from '@zag-js/core';
 
 /**
  * Configuration for creating a test machine service
@@ -33,7 +33,7 @@ export interface MachineTestConfig<TSchema extends MachineSchema> {
  */
 export interface MachineTestContext<TSchema extends MachineSchema> {
   /** The interpreted service */
-  service: Service<MachineContext<TSchema>>;
+  service: Service<TSchema>;
   /** Get the current state */
   getState: () => TSchema['state'];
   /** Get a context value */
@@ -73,15 +73,13 @@ export function createMachineTestContext<TSchema extends MachineSchema>(
   const { machine, props = {} as TSchema['props'], context } = config;
 
   // Create the Vanilla Machine instance with props
-  const instance = new VanillaMachine(machine, props);
-  const service = instance.service as Service<MachineContext<TSchema>>;
+  const instance = new VanillaMachine(machine as Machine<MachineSchema>, props as MachineUserProps);
+  const service = instance.service as unknown as Service<TSchema>;
 
   // Override initial context if provided
   if (context) {
     for (const [key, value] of Object.entries(context)) {
-      service.setContext((ctx) => {
-        ctx.set(key as keyof TSchema['context'], value);
-      });
+      service.context.set(key as any, value);
     }
   }
 
@@ -93,9 +91,9 @@ export function createMachineTestContext<TSchema extends MachineSchema>(
     getState: () => service.state.get() as TSchema['state'],
     getContext: <K extends keyof TSchema['context']>(key: K) => service.context.get(key),
     sendAndWait: async (event: TSchema['event']) => {
-      service.send(event);
+      service.send(event as any);
       // Wait for microtask queue to flush (VanillaMachine uses queueMicrotask)
-      await new Promise((resolve) => queueMicrotask(resolve));
+      await new Promise<void>((resolve) => queueMicrotask(resolve));
     },
     cleanup: () => instance.stop(),
   };

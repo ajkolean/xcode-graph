@@ -17,12 +17,12 @@ describe('GraphInteractionFullController', () => {
     host = new MockHost();
 
     const nodePositions = new Map<string, NodePosition>([
-      ['n1', { x: 100, y: 100, vx: 0, vy: 0, clusterId: 'c1', radius: 10 }],
-      ['n2', { x: 200, y: 200, vx: 0, vy: 0, clusterId: 'c1', radius: 10 }],
+      ['n1', { id: 'n1', x: 100, y: 100, vx: 0, vy: 0, clusterId: 'c1', radius: 10 }],
+      ['n2', { id: 'n2', x: 200, y: 200, vx: 0, vy: 0, clusterId: 'c1', radius: 10 }],
     ]);
 
     const clusterPositions = new Map<string, ClusterPosition>([
-      ['c1', { x: 0, y: 0, vx: 0, vy: 0, width: 400, height: 400 }],
+      ['c1', { id: 'c1', x: 0, y: 0, vx: 0, vy: 0, width: 400, height: 400, nodeCount: 2 }],
     ]);
 
     controller = new GraphInteractionFullController(host, {
@@ -85,7 +85,7 @@ describe('GraphInteractionFullController', () => {
 
     it('should update node positions', () => {
       const newPositions = new Map<string, NodePosition>([
-        ['n3', { x: 300, y: 300, vx: 0, vy: 0, clusterId: 'c1', radius: 10 }],
+        ['n3', { id: 'n3', x: 300, y: 300, vx: 0, vy: 0, clusterId: 'c1', radius: 10 }],
       ]);
 
       controller.updateConfig({ finalNodePositions: newPositions });
@@ -94,7 +94,7 @@ describe('GraphInteractionFullController', () => {
 
     it('should update cluster positions', () => {
       const newPositions = new Map<string, ClusterPosition>([
-        ['c2', { x: 100, y: 100, vx: 0, vy: 0, width: 200, height: 200 }],
+        ['c2', { id: 'c2', x: 100, y: 100, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 0 }],
       ]);
 
       controller.updateConfig({ clusterPositions: newPositions });
@@ -400,6 +400,7 @@ describe('GraphInteractionFullController', () => {
     it('should handle missing cluster gracefully', () => {
       // Add node without cluster
       controller.finalNodePositions.set('n3', {
+        id: 'n3',
         x: 100,
         y: 100,
         vx: 0,

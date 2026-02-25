@@ -85,7 +85,7 @@ describe('ErrorService', () => {
 
       const currentErrors = errors.get();
       expect(currentErrors).toHaveLength(1);
-      expect(currentErrors[0].message).toBe('Test');
+      expect(currentErrors[0]!.message).toBe('Test');
     });
 
     it('should include action label and type', () => {
@@ -160,7 +160,7 @@ describe('ErrorService', () => {
 
   describe('Auto-dismiss', () => {
     it('should auto-dismiss info errors after 3 seconds', () => {
-      const _appError = service.handleInfo('Test info');
+      service.handleInfo('Test info');
 
       expect(errors.get()).toHaveLength(1);
 
@@ -168,46 +168,46 @@ describe('ErrorService', () => {
 
       // Should be dismissed
       const currentErrors = errors.get();
-      expect(currentErrors[0].dismissed).toBe(true);
+      expect(currentErrors[0]!.dismissed).toBe(true);
     });
 
     it('should auto-dismiss warnings after 5 seconds', () => {
-      const _appError = service.handleWarning('Test warning');
+      service.handleWarning('Test warning');
 
       expect(errors.get()).toHaveLength(1);
 
       vi.advanceTimersByTime(5000);
 
       const currentErrors = errors.get();
-      expect(currentErrors[0].dismissed).toBe(true);
+      expect(currentErrors[0]!.dismissed).toBe(true);
     });
 
     it('should auto-dismiss errors after 7 seconds', () => {
       const error = new Error('Test error');
-      const _appError = service.handleError(error);
+      service.handleError(error);
 
       expect(errors.get()).toHaveLength(1);
 
       vi.advanceTimersByTime(7000);
 
       const currentErrors = errors.get();
-      expect(currentErrors[0].dismissed).toBe(true);
+      expect(currentErrors[0]!.dismissed).toBe(true);
     });
 
     it('should NOT auto-dismiss critical errors', () => {
-      const _appError = service.handleCriticalError(new Error('Critical'));
+      service.handleCriticalError(new Error('Critical'));
 
       expect(errors.get()).toHaveLength(1);
 
       vi.advanceTimersByTime(10000);
 
       const currentErrors = errors.get();
-      expect(currentErrors[0].dismissed).toBe(false);
+      expect(currentErrors[0]!.dismissed).toBe(false);
     });
 
     it('should use custom auto-dismiss duration', () => {
       const error = new Error('Test');
-      const _appError = service.handleError(error, {
+      service.handleError(error, {
         autoDismissMs: 2000,
       });
 
@@ -216,7 +216,7 @@ describe('ErrorService', () => {
       vi.advanceTimersByTime(2000);
 
       const currentErrors = errors.get();
-      expect(currentErrors[0].dismissed).toBe(true);
+      expect(currentErrors[0]!.dismissed).toBe(true);
     });
   });
 
@@ -227,7 +227,7 @@ describe('ErrorService', () => {
       service.dismiss(appError.id);
 
       const currentErrors = errors.get();
-      expect(currentErrors[0].dismissed).toBe(true);
+      expect(currentErrors[0]!.dismissed).toBe(true);
     });
 
     it('should remove error after dismissal animation', () => {

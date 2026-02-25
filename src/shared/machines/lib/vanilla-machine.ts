@@ -153,7 +153,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
   readonly state: Bindable<T['state']>;
 
   /** Current machine status */
-  status: MachineStatus;
+  status!: MachineStatus;
 
   constructor(machine: Machine<T>, userProps: MachineUserProps = {}) {
     this.machine = machine;
@@ -166,7 +166,7 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
     this.trackers = [];
 
     const { id, ids, getRootNode } = userProps;
-    this.scope = createScope({ id, ids, getRootNode });
+    this.scope = createScope({ id, ids, getRootNode: getRootNode ?? (() => document) });
 
     const props = machine.props?.({ props: compact(userProps), scope: this.scope }) ?? userProps;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -187,18 +187,18 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
 
     if (context) {
       Object.values(context).forEach((item) => {
-        const unsub = subscribe(item.ref, () => this.notify());
+        const unsub = subscribe((item as { ref: object }).ref, () => this.notify());
         this.cleanups.push(unsub);
       });
     }
 
     this.ctx = {
-      get: (key) => context?.[key].get(),
+      get: (key) => context?.[key].get() as T["context"][typeof key],
       set: (key, value) => context?.[key].set(value),
-      initial: (key) => context?.[key].initial,
+      initial: (key) => context?.[key].initial as T["context"][typeof key],
       hash: (key) => {
-        const current = context?.[key].get();
-        return context?.[key].hash(current);
+        const current = context?.[key].get() as any;
+        return context?.[key].hash(current) as string;
       },
     };
 
@@ -239,9 +239,9 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
 
   private cleanupPreviousState(prevState: T['state']): void {
     if (!prevState) return;
-    const exitEffects = this.effects.get(prevState);
+    const exitEffects = this.effects.get(prevState as string);
     exitEffects?.();
-    this.effects.delete(prevState);
+    this.effects.delete(prevState as string);
   }
 
   private executePreviousStateExit(prevState: T['state']): void {
@@ -251,14 +251,14 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
 
   private setupNextStateEffects(nextState: T['state']): void {
     const cleanup = this.effect(this.machine.states[nextState]?.effects);
-    if (cleanup) this.effects.set(nextState, cleanup);
+    if (cleanup) this.effects.set(nextState as string, cleanup);
   }
 
   private handleInitialState(prevState: T['state']): void {
     if (prevState !== INIT_STATE) return;
     this.action(this.machine.entry);
     const cleanup = this.effect(this.machine.effects);
-    if (cleanup) this.effects.set(INIT_STATE as T['state'], cleanup);
+    if (cleanup) this.effects.set(INIT_STATE as string, cleanup);
   }
 
   /**
@@ -273,8 +273,10 @@ export class VanillaMachine<T extends MachineSchema = MachineSchema> {
 
       const currentState = this.state.get() as T['state'];
 
+      const stateOn = this.machine.states[currentState]?.on as Record<string, Transition<T> | Transition<T>[]> | undefined;
+      const globalOn = this.machine.on as Record<string, Transition<T> | Transition<T>[]> | undefined;
       const transitions =
-        this.machine.states[currentState]?.on?.[event.type] ?? this.machine.on?.[event.type];
+        stateOn?.[event.type] ?? globalOn?.[event.type];
 
       const transition = this.choose(transitions);
       if (!transition) return;

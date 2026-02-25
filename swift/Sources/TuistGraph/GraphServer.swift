@@ -4,14 +4,12 @@ import NIOHTTP1
 
 /// Serves the interactive graph visualization over HTTP.
 ///
-/// Bundles the built web assets from `Resources/public/` and serves the
-/// raw XcodeGraph JSON at `/graph.json`. The JavaScript client handles
-/// transformation and rendering via the `<graph-app>` web component.
+/// Generates an HTML page that loads the `<graph-app>` web component from a CDN
+/// and fetches graph data from `/graph.json`. No bundled static assets required.
 ///
 /// Usage:
 /// ```swift
-/// let graph: XcodeGraph.Graph = ...
-/// let server = GraphServer(graph: graph)
+/// let server = try GraphServer(graph: xcodeGraph)
 /// try server.start() // opens browser, blocks until shutdown
 /// ```
 public final class GraphServer {
@@ -20,7 +18,7 @@ public final class GraphServer {
     private let eventLoopGroup: MultiThreadedEventLoopGroup
     private let port: Int
 
-    /// Creates a server for the given graph.
+    /// Creates a server that serves the given pre-encoded JSON data.
     ///
     /// - Parameters:
     ///   - graphJSON: Pre-encoded JSON data of the XcodeGraph `Graph` object.
@@ -31,7 +29,7 @@ public final class GraphServer {
         self.eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     }
 
-    /// Convenience initializer that encodes a `Codable` graph object.
+    /// Convenience initializer that encodes any `Encodable` graph object.
     ///
     /// - Parameters:
     ///   - graph: Any `Encodable` graph object (e.g. `XcodeGraph.Graph`).

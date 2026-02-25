@@ -16,9 +16,7 @@ describe('Layout Overlap', () => {
 
     // 2. Run Layout
     // Default config uses the newly tuned spacing values
-    const result = await computeHierarchicalLayout(nodes, edges, clusters, {
-      dimension: '2d',
-    });
+    const result = await computeHierarchicalLayout(nodes, edges, clusters, {});
 
     const positions = Array.from(result.clusterPositions.values());
 
@@ -28,30 +26,8 @@ describe('Layout Overlap', () => {
 
     for (let i = 0; i < positions.length; i++) {
       for (let j = i + 1; j < positions.length; j++) {
-        const c1 = positions[i];
-        const c2 = positions[j];
-
-        // Rectangular Overlap Check
-        // Positions from engine are Center coordinates
-        const r1 = {
-          left: c1.x - c1.width / 2,
-          right: c1.x + c1.width / 2,
-          top: c1.y - c1.height / 2,
-          bottom: c1.y + c1.height / 2,
-        };
-        const r2 = {
-          left: c2.x - c2.width / 2,
-          right: c2.x + c2.width / 2,
-          top: c2.y - c2.height / 2,
-          bottom: c2.y + c2.height / 2,
-        };
-
-        const _isRectOverlap = !(
-          r2.left >= r1.right ||
-          r2.right <= r1.left ||
-          r2.top >= r1.bottom ||
-          r2.bottom <= r1.top
-        );
+        const c1 = positions[i]!;
+        const c2 = positions[j]!;
 
         // Circular Overlap Check (Visual)
         // We use circular rendering, so this is critical

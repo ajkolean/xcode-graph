@@ -92,7 +92,7 @@ describe('graph-visualization', () => {
     expect(el.zoom).to.equal(1.5);
 
     const svg = querySvgElement(el.shadowRoot!, 'svg');
-    const mainGroup = querySvgElement(svg, 'g');
+    const mainGroup = querySvgElement(svg!, 'g');
     assertSvgElementExists(mainGroup);
     expect(mainGroup.getAttribute('transform')).to.include('scale(1.5)');
   });
@@ -121,7 +121,7 @@ describe('graph-visualization', () => {
     await el.updateComplete;
 
     const svg = querySvgElement(el.shadowRoot!, 'svg');
-    const defs = querySvgElement(svg, 'graph-svg-defs');
+    const defs = querySvgElement(svg!, 'graph-svg-defs');
     expect(defs).to.exist;
   });
 

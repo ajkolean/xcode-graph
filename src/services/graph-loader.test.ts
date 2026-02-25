@@ -4,6 +4,8 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createLinearChain, createProjectGraph } from '../fixtures';
+import { ClusterType } from '@shared/schemas/cluster.schema';
+import { Origin } from '@shared/schemas/graph.schema';
 import { GraphLoader, type LoadProgress } from './graph-loader';
 
 describe('GraphLoader', () => {
@@ -37,7 +39,7 @@ describe('GraphLoader', () => {
       expect(progressUpdates.length).toBeGreaterThan(5);
 
       // Last update should be complete
-      const lastUpdate = progressUpdates.at(-1);
+      const lastUpdate = progressUpdates.at(-1)!;
       expect(lastUpdate.type).toBe('complete');
       expect(lastUpdate.percentage).toBe(100);
       expect(lastUpdate.loadedNodes).toBe(250);
@@ -55,8 +57,8 @@ describe('GraphLoader', () => {
       await loadPromise;
 
       expect(progressUpdates).toHaveLength(1);
-      expect(progressUpdates[0].type).toBe('complete');
-      expect(progressUpdates[0].loadedNodes).toBe(0);
+      expect(progressUpdates[0]!.type).toBe('complete');
+      expect(progressUpdates[0]!.loadedNodes).toBe(0);
     });
 
     it('should calculate correct progress percentages', async () => {
@@ -75,7 +77,7 @@ describe('GraphLoader', () => {
       // Check percentages increase
       const percentages = progressUpdates.map((p) => p.percentage);
       for (let i = 1; i < percentages.length; i++) {
-        expect(percentages[i]).toBeGreaterThanOrEqual(percentages[i - 1]);
+        expect(percentages[i]).toBeGreaterThanOrEqual(percentages[i - 1]!);
       }
 
       // Final should be 100%
@@ -98,8 +100,8 @@ describe('GraphLoader', () => {
       await loadPromise;
 
       expect(firstChunk).not.toBeNull();
-      expect(firstChunk?.chunk).toBeDefined();
-      expect(firstChunk?.chunk?.nodes.length).toBeLessThanOrEqual(20);
+      expect(firstChunk!.chunk).toBeDefined();
+      expect(firstChunk!.chunk!.nodes.length).toBeLessThanOrEqual(20);
     });
   });
 
@@ -117,16 +119,20 @@ describe('GraphLoader', () => {
         {
           id: 'App',
           name: 'App',
-          type: 'project' as const,
-          origin: 'local' as const,
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes: nodes.filter((n) => n.project === 'App'),
+          anchors: [] as string[],
+          metadata: new Map(),
         },
         {
           id: 'Features',
           name: 'Features',
-          type: 'project' as const,
-          origin: 'local' as const,
+          type: ClusterType.Project,
+          origin: Origin.Local,
           nodes: nodes.filter((n) => n.project === 'Features'),
+          anchors: [] as string[],
+          metadata: new Map(),
         },
       ];
 
@@ -141,7 +147,7 @@ describe('GraphLoader', () => {
 
       // First chunk should have App cluster nodes
       expect(progressUpdates.length).toBeGreaterThan(0);
-      expect(progressUpdates[0].chunk?.nodes.some((n) => n.project === 'App')).toBe(true);
+      expect(progressUpdates[0]!.chunk?.nodes.some((n) => n.project === 'App')).toBe(true);
     });
   });
 

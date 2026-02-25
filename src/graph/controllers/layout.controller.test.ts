@@ -337,9 +337,7 @@ describe('LayoutController', () => {
 
     it('should handle nodes with no edges', async () => {
       const { nodes } = createLinearChain(3);
-      const edges: typeof nodes extends Array<infer T>
-        ? Array<{ source: string; target: string }>
-        : never = [];
+      const edges: Array<{ source: string; target: string }> = [];
 
       const result = await controller.computeLayout(nodes, edges);
 

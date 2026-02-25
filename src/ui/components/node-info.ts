@@ -61,7 +61,8 @@ export class GraphNodeInfo extends LitElement {
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);
       color: var(--colors-muted-foreground);
-      word-break: break-all;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
   `;
 

@@ -2,29 +2,17 @@
 
 ## How it works
 
-1. `pnpm build` produces web assets in `build/`
-2. Those files are bundled as Swift package resources in `Resources/public/`
-3. `GraphServer` serves them over HTTP + exposes `/graph.json`
-4. The JavaScript fetches `/graph.json`, transforms the raw XcodeGraph data, and renders via `<graph-app>`
+1. `GraphServer` starts a local HTTP server on `localhost:8081`
+2. `GET /` serves a generated HTML page that loads `<graph-app>` from the jsdelivr CDN
+3. `GET /graph.json` serves the raw XcodeGraph JSON
+4. The web component fetches `/graph.json`, transforms it client-side, and renders
 
-## Setup
-
-```bash
-# 1. Build the web assets
-cd /path/to/tuistgraph
-pnpm build
-
-# 2. Copy into Swift resources
-cp -r build/* swift/Sources/TuistGraph/Resources/public/
-```
+No bundled static assets. No `Resources/` directory. The HTML is generated in-memory.
 
 ## Usage in Tuist CLI
 
-Replace the existing Cytoscape `GraphServer` usage:
-
 ```swift
 import XcodeGraph
-import TuistGraph
 
 // In the `tuist graph` command handler:
 func run(graph: XcodeGraph.Graph) throws {
@@ -33,16 +21,29 @@ func run(graph: XcodeGraph.Graph) throws {
 }
 ```
 
-The `GraphServer` accepts any `Encodable` type. It encodes the graph to JSON
-and serves it at `/graph.json`. The web app's `transformTuistGraph()` function
-handles converting the raw XcodeGraph JSON into the visualization format.
+## Web component CDN
+
+The `<graph-app>` web component is published to npm as `@tuist/graph`.
+The server loads it from:
+
+```
+https://cdn.jsdelivr.net/npm/@tuist/graph/dist/tuistgraph.js
+```
+
+To publish a new version:
+
+```bash
+cd /path/to/tuistgraph
+pnpm build:lib            # produces dist/tuistgraph.js
+npm publish               # publishes to @tuist/graph
+```
 
 ## What changed from the Cytoscape version
 
 | Before | After |
 |--------|-------|
-| `CytoscapeGraph` type | Raw `XcodeGraph.Graph` — no Swift-side transformation |
-| Cytoscape.js renderer | Canvas2D `<graph-app>` web component |
+| `CytoscapeGraph` + Swift-side transform | Raw `XcodeGraph.Graph` — no transform needed |
+| Bundled Cytoscape assets in Swift resources | HTML loads `<graph-app>` from CDN — no bundled assets |
 | Basic node/edge display | Clustered layout, transitive chains, depth highlighting |
 | No filtering | Type, origin, platform, project, package filters |
 
@@ -53,10 +54,5 @@ swift/
 ├── Package.swift                          # Reference SPM manifest
 ├── Sources/TuistGraph/
 │   ├── GraphServer.swift                  # SwiftNIO server + browser open
-│   ├── GraphHTTPHandler.swift             # HTTP routing: /, /graph.json, static files
-│   └── Resources/public/                  # ← copy `pnpm build` output here
-│       ├── index.html
-│       └── assets/
-│           ├── index-*.js
-│           └── index-*.css
+│   └── GraphHTTPHandler.swift             # Routes: / (generated HTML), /graph.json
 ```

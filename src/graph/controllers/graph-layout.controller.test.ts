@@ -12,10 +12,13 @@ import { GraphLayoutController } from './graph-layout.controller';
 class MockHost {
   private readonly controllers: ReactiveController[] = [];
   updateCount = 0;
+  readonly updateComplete = Promise.resolve(true);
 
   addController(controller: ReactiveController) {
     this.controllers.push(controller);
   }
+
+  removeController(_controller: ReactiveController): void {}
 
   requestUpdate() {
     this.updateCount++;

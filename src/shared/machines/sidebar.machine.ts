@@ -109,11 +109,8 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
    * Initialize machine props with defaults
    */
   props({ props }) {
-    return {
-      id: props.id ?? 'sidebar',
-      defaultCollapsed: props.defaultCollapsed ?? false,
-      onCollapseChange: props.onCollapseChange,
-    };
+    const { id, ...rest } = props;
+    return { id: id ?? 'sidebar', ...rest } as SidebarMachineSchema['props'];
   },
 
   /**
@@ -121,10 +118,10 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
    */
   context({ bindable }) {
     return {
-      activeTab: bindable(() => ({
+      activeTab: bindable<SidebarTab>(() => ({
         defaultValue: 'filters' as SidebarTab,
       })),
-      expandedSections: bindable(() => ({
+      expandedSections: bindable<Record<SidebarSection, boolean>>(() => ({
         defaultValue: {
           productTypes: true,
           platforms: true,
@@ -132,10 +129,10 @@ export const sidebarMachine = createMachine<SidebarMachineSchema>({
           packages: true,
         },
       })),
-      selectedNodeId: bindable(() => ({
+      selectedNodeId: bindable<string | null>(() => ({
         defaultValue: null,
       })),
-      selectedClusterId: bindable(() => ({
+      selectedClusterId: bindable<string | null>(() => ({
         defaultValue: null,
       })),
     };

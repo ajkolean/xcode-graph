@@ -37,7 +37,14 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
   [DependencyKind.XCFramework]: { label: 'XCF', color: '#F59E0B' },
 };
 
-export class GraphNodeList extends NodeListEventsMixin(LitElement as any) {
+// biome-ignore lint/suspicious/noExplicitAny: LitElement has abstract constructor, cast needed for mixin pattern
+const NodeListBase = NodeListEventsMixin(
+  LitElement as unknown as new (
+    ...args: any[]
+  ) => LitElement,
+);
+
+export class GraphNodeList extends NodeListBase {
   // ========================================
   // Properties
   // ========================================
@@ -97,7 +104,7 @@ export class GraphNodeList extends NodeListEventsMixin(LitElement as any) {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static readonly styles = css`
     :host {
       display: block;
       padding: var(--spacing-md);

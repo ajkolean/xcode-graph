@@ -68,6 +68,11 @@ export class GraphNodeActions extends LitElement {
       cursor: pointer;
     }
 
+    .action-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+    }
+
     /* Dependency Chain Button (Purple) */
     .dependency-button {
       background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);

@@ -10,9 +10,15 @@
 import type { GraphNode } from '@shared/schemas/graph.schema';
 import type { LitElement } from 'lit';
 
-// Type for the mixin constructor
 // biome-ignore lint/suspicious/noExplicitAny: Mixin constructor requires any[] for rest params
-type Constructor<T = object> = new (...args: any[]) => T;
+type Constructor<T = {}> = new (...args: any[]) => T;
+
+/** Interface describing the methods added by NodeListEventsMixin */
+export declare class NodeListEventsInterface {
+  protected handleNodeSelect(e: CustomEvent<{ node: GraphNode }>): void;
+  protected handleNodeHover(e: CustomEvent<{ nodeId: string }>): void;
+  protected handleHoverEnd(): void;
+}
 
 /**
  * Mixin that adds node list event handling methods
@@ -22,8 +28,10 @@ type Constructor<T = object> = new (...args: any[]) => T;
  * - handleNodeHover: Forwards row-hover events as node-hover
  * - handleHoverEnd: Dispatches node-hover with null nodeId
  */
-export function NodeListEventsMixin<T extends Constructor<LitElement>>(Base: T) {
-  return class NodeListEvents extends Base {
+export function NodeListEventsMixin<T extends Constructor<LitElement>>(
+  Base: T,
+): Constructor<NodeListEventsInterface> & T {
+  class NodeListEvents extends Base {
     /**
      * Forward node selection event
      */
@@ -62,5 +70,6 @@ export function NodeListEventsMixin<T extends Constructor<LitElement>>(Base: T) 
         }),
       );
     }
-  };
+  }
+  return NodeListEvents as unknown as Constructor<NodeListEventsInterface> & T;
 }

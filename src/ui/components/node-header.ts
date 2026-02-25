@@ -143,7 +143,7 @@ export class GraphNodeHeader extends LitElement {
           ${svg`
             <path
               d="${iconPath}"
-              fill="rgba(15, 15, 20, 0.95)"
+              fill="rgba(var(--colors-background-rgb), var(--opacity-95))"
               stroke="${nodeDisplayColor}"
               stroke-width="2"
               stroke-linecap="round"
@@ -175,7 +175,7 @@ export class GraphNodeHeader extends LitElement {
               <graph-badge
                 slot="badges"
                 label="Remote"
-                color="#F59E0B"
+                color="var(--colors-warning)"
               ></graph-badge>
             `
             : ''

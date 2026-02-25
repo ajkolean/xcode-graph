@@ -2,7 +2,7 @@
  * Comlink Mocks - Test utilities for Comlink worker communication
  */
 
-import type { LayoutWorkerAPI } from '@/graph/workers/layout-api';
+import type { LayoutInput, LayoutProgress, LayoutWorkerAPI } from '@/graph/workers/layout-api';
 
 /**
  * Mock Comlink wrap function
@@ -110,7 +110,7 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
   public cancelAnimationCalls = 0;
   public getStatusCalls = 0;
 
-  async computeInitialLayout(_input: unknown) {
+  async computeInitialLayout(_input: LayoutInput) {
     this.computeInitialLayoutCalls++;
 
     if (this.shouldError) {
@@ -121,14 +121,13 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
     return this.mockInitialOutput;
   }
 
-  async computeAnimatedLayout(input: unknown, onProgress: (progress: unknown) => void) {
+  async computeAnimatedLayout(input: LayoutInput, onProgress: (progress: LayoutProgress) => void) {
     this.computeAnimatedLayoutCalls++;
 
     if (this.shouldError) {
       throw new Error(this.errorMessage);
     }
 
-    // @ts-expect-error - input has animationTicks
     const totalTicks = input.animationTicks ?? 30;
 
     // Send progress updates

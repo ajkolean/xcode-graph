@@ -36,7 +36,7 @@ describe('colorGenerator', () => {
     });
 
     it('should apply category variation', () => {
-      const _colorWithoutCategory = generateColor('test');
+      generateColor('test');
       const colorWithCategory = generateColor('test', 'platform');
 
       // May or may not be different depending on hash

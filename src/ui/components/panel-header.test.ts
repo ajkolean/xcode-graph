@@ -137,7 +137,7 @@ describe('graph-panel-header', () => {
     const iconSlot = el.shadowRoot?.querySelector('slot[name="icon"]') as HTMLSlotElement;
     const assignedNodes = iconSlot.assignedElements();
     expect(assignedNodes.length).to.equal(1);
-    expect(assignedNodes[0].id).to.equal('test-icon');
+    expect(assignedNodes[0]!.id).to.equal('test-icon');
   });
 
   it('should render badges slot content', async () => {
@@ -150,6 +150,6 @@ describe('graph-panel-header', () => {
     const badgesSlot = el.shadowRoot?.querySelector('slot[name="badges"]') as HTMLSlotElement;
     const assignedNodes = badgesSlot.assignedElements();
     expect(assignedNodes.length).to.equal(1);
-    expect(assignedNodes[0].id).to.equal('test-badge');
+    expect(assignedNodes[0]!.id).to.equal('test-badge');
   });
 });

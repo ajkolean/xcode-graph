@@ -29,9 +29,9 @@ import './panel-header.js';
 
 /** Source type colors and labels */
 const SOURCE_TYPE_CONFIG: Record<string, { label: string; color: string }> = {
-  [SourceType.Local]: { label: 'Local', color: '#10B981' },
-  [SourceType.Registry]: { label: 'Registry', color: '#3B82F6' },
-  [SourceType.Git]: { label: 'Git', color: '#8B5CF6' },
+  [SourceType.Local]: { label: 'Local', color: 'var(--colors-success)' },
+  [SourceType.Registry]: { label: 'Registry', color: 'var(--colors-info)' },
+  [SourceType.Git]: { label: 'Git', color: 'var(--colors-primary)' },
 };
 
 export class GraphClusterHeader extends LitElement {
@@ -128,12 +128,17 @@ export class GraphClusterHeader extends LitElement {
     }
 
     .copy-button.copied {
-      color: #10b981;
+      color: var(--colors-success);
+    }
+
+    .copy-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
     }
 
     .copy-button svg {
-      width: 14px;
-      height: 14px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
     }
   `;
 

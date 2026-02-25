@@ -129,7 +129,7 @@ export function computeNodeDependencies(
     for (const id of queue) visited.add(id);
     let i = 0;
     while (i < queue.length) {
-      for (const next of adjacency.get(queue[i]) ?? []) {
+      for (const next of adjacency.get(queue[i]!) ?? []) {
         if (!visited.has(next)) {
           visited.add(next);
           queue.push(next);

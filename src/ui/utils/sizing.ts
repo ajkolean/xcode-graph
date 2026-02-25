@@ -88,7 +88,7 @@ export function computeNodeWeights(nodes: GraphNode[], edges: GraphEdge[]): Map<
   // weight = sum of (1 + child weight) for each outgoing edge
   const weights = new Map<string, number>();
   for (let i = topoOrder.length - 1; i >= 0; i--) {
-    const id = topoOrder[i];
+    const id = topoOrder[i]!;
     let weight = 0;
     for (const child of outgoing.get(id) ?? []) {
       weight += 1 + (weights.get(child) ?? 0);

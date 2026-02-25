@@ -8,7 +8,7 @@
  */
 
 import { z } from 'zod';
-import { ElkHierarchyHandling, type ClusterElkOptions } from '@/graph/layout/config';
+import { type ClusterElkOptions, ElkHierarchyHandling } from '@/graph/layout/config';
 import { type GraphNode, GraphNodeSchema, type Origin, OriginSchema } from './graph.schema';
 
 // ==================== Native Enums ====================

@@ -7,7 +7,7 @@
  * @module test-utils/signal-helpers
  */
 
-import type { Signal } from '@lit-labs/signals';
+import { Signal } from '@lit-labs/signals';
 
 /**
  * Snapshot of signal values

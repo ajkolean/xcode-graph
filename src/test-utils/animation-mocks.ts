@@ -98,9 +98,7 @@ export class MockAnimationFrame {
 export function installAnimationFrameMock(): MockAnimationFrame {
   const mock = new MockAnimationFrame();
 
-  // @ts-expect-error - Mocking global
   globalThis.requestAnimationFrame = mock.request.bind(mock);
-  // @ts-expect-error - Mocking global
   globalThis.cancelAnimationFrame = mock.cancel.bind(mock);
 
   return mock;

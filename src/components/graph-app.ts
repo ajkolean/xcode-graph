@@ -23,6 +23,8 @@ import { css, html, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { GraphAnalysisService } from '@/services/graphAnalysisService';
 import { GraphDataService } from '@/services/graphDataService';
+import type { Graph } from '@/services/tuist-graph.schema.generated';
+import { transformTuistGraph } from '@/services/tuist-graph.service';
 import '@ui/layout/graph-tab';
 import '@ui/components/error-notification-container';
 
@@ -118,6 +120,16 @@ export class GraphApp extends SignalWatcher(LitElement) {
     if (!this.nodes?.length) return;
     setGraphData(this.nodes, this.edges ?? []);
     this.refreshGraphData(this.nodes, this.edges ?? []);
+  }
+
+  /**
+   * Load raw Tuist graph JSON (the output of `tuist graph --format json`).
+   * Transforms it into GraphData and sets nodes/edges automatically.
+   */
+  public loadRawGraph(raw: Graph): void {
+    const data = transformTuistGraph(raw);
+    this.nodes = data.nodes;
+    this.edges = data.edges;
   }
 
   // ========================================

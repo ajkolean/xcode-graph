@@ -5,91 +5,87 @@ import NIOHTTP1
 /// Handles HTTP requests for the graph visualization server.
 ///
 /// Routes:
-/// - `GET /`           → serves `index.html` from bundle
-/// - `GET /graph.json` → serves the pre-encoded graph JSON
-/// - `GET /*`          → serves static assets (JS, CSS) from bundle
+/// - `GET /`           → generated HTML page that loads `<graph-app>` from CDN
+/// - `GET /graph.json` → the raw XcodeGraph JSON
 final class GraphHTTPHandler: ChannelInboundHandler {
     typealias InboundIn = HTTPServerRequestPart
     typealias OutboundOut = HTTPServerResponsePart
 
     private let graphJSON: Data
-    private let bundle: Bundle
+    private let htmlPage: Data
 
-    init(graphJSON: Data, bundle: Bundle = .module) {
+    init(graphJSON: Data) {
         self.graphJSON = graphJSON
-        self.bundle = bundle
+        self.htmlPage = Data(Self.generateHTML().utf8)
     }
 
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let reqPart = unwrapInboundIn(data)
         guard case .head(let request) = reqPart else { return }
-        handleRequest(context: context, request: request)
+
+        let path = request.uri.split(separator: "?").first.map(String.init) ?? request.uri
+
+        switch path {
+        case "/":
+            respond(context: context, request: request, data: htmlPage, contentType: "text/html")
+        case "/graph.json":
+            respond(context: context, request: request, data: graphJSON, contentType: "application/json")
+        default:
+            respondError(context: context, request: request, status: .notFound)
+        }
     }
 
     func channelReadComplete(context: ChannelHandlerContext) {
         context.flush()
     }
 
-    // MARK: - Routing
+    // MARK: - HTML Generation
 
-    private func handleRequest(context: ChannelHandlerContext, request: HTTPRequestHead) {
-        // Strip query string for routing
-        let path = request.uri.split(separator: "?").first.map(String.init) ?? request.uri
+    /// The CDN URL for the web component bundle.
+    /// Update the version tag when publishing new releases.
+    private static let cdnURL = "https://cdn.jsdelivr.net/npm/@tuist/graph/dist/tuistgraph.js"
 
-        switch path {
-        case "/":
-            serveBundle(context: context, request: request, resource: "index", ext: "html", contentType: "text/html")
-        case "/graph.json":
-            serveData(context: context, request: request, data: graphJSON, contentType: "application/json")
-        default:
-            serveStaticFile(context: context, request: request, path: path)
-        }
-    }
+    private static func generateHTML() -> String {
+        """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Tuist Graph</title>
+          <style>
+            html, body { margin: 0; padding: 0; height: 100%; background: #0a0a0c; overflow: hidden; }
+            #root { height: 100%; }
+            .loading {
+              display: flex; align-items: center; justify-content: center;
+              height: 100%; color: #e1e4e8; font-family: system-ui, sans-serif;
+              font-size: 14px; opacity: 0.5;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="root"><div class="loading">Loading graph…</div></div>
+          <script type="module">
+            import '\(cdnURL)';
 
-    // MARK: - File Serving
+            const res = await fetch('/graph.json');
+            const raw = await res.json();
 
-    private func serveStaticFile(context: ChannelHandlerContext, request: HTTPRequestHead, path: String) {
-        // Normalize: "/assets/index-abc123.js" → look in bundle's "public" directory
-        let relativePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            const app = document.createElement('graph-app');
+            app.loadRawGraph(raw);
 
-        if let filePath = bundle.path(forResource: relativePath, ofType: nil, inDirectory: "public") {
-            let contentType = Self.contentType(for: path)
-            serveFile(context: context, request: request, filePath: filePath, contentType: contentType)
-        } else {
-            sendError(context: context, request: request, status: .notFound)
-        }
-    }
-
-    private func serveBundle(
-        context: ChannelHandlerContext,
-        request: HTTPRequestHead,
-        resource: String,
-        ext: String,
-        contentType: String
-    ) {
-        if let filePath = bundle.path(forResource: resource, ofType: ext, inDirectory: "public") {
-            serveFile(context: context, request: request, filePath: filePath, contentType: contentType)
-        } else {
-            sendError(context: context, request: request, status: .notFound)
-        }
-    }
-
-    private func serveFile(
-        context: ChannelHandlerContext,
-        request: HTTPRequestHead,
-        filePath: String,
-        contentType: String
-    ) {
-        guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else {
-            sendError(context: context, request: request, status: .internalServerError)
-            return
-        }
-        serveData(context: context, request: request, data: data, contentType: contentType)
+            const root = document.getElementById('root');
+            root.textContent = '';
+            root.appendChild(app);
+          </script>
+        </body>
+        </html>
+        """
     }
 
     // MARK: - Response Helpers
 
-    private func serveData(
+    private func respond(
         context: ChannelHandlerContext,
         request: HTTPRequestHead,
         data: Data,
@@ -98,10 +94,6 @@ final class GraphHTTPHandler: ChannelInboundHandler {
         var headers = HTTPHeaders()
         headers.add(name: "content-type", value: contentType)
         headers.add(name: "content-length", value: "\(data.count)")
-        // Cache static assets aggressively (hashed filenames)
-        if contentType != "text/html" && contentType != "application/json" {
-            headers.add(name: "cache-control", value: "public, max-age=31536000, immutable")
-        }
 
         let head = HTTPResponseHead(version: request.version, status: .ok, headers: headers)
         context.write(wrapOutboundOut(.head(head)), promise: nil)
@@ -109,7 +101,7 @@ final class GraphHTTPHandler: ChannelInboundHandler {
         context.writeAndFlush(wrapOutboundOut(.end(nil)), promise: nil)
     }
 
-    private func sendError(
+    private func respondError(
         context: ChannelHandlerContext,
         request: HTTPRequestHead,
         status: HTTPResponseStatus
@@ -123,23 +115,5 @@ final class GraphHTTPHandler: ChannelInboundHandler {
         context.write(wrapOutboundOut(.head(head)), promise: nil)
         context.write(wrapOutboundOut(.body(.byteBuffer(ByteBuffer(string: body)))), promise: nil)
         context.writeAndFlush(wrapOutboundOut(.end(nil)), promise: nil)
-    }
-
-    // MARK: - Content Types
-
-    private static func contentType(for path: String) -> String {
-        let ext = (path as NSString).pathExtension.lowercased()
-        switch ext {
-        case "html": return "text/html"
-        case "css": return "text/css"
-        case "js": return "application/javascript"
-        case "json": return "application/json"
-        case "png": return "image/png"
-        case "jpg", "jpeg": return "image/jpeg"
-        case "svg": return "image/svg+xml"
-        case "woff2": return "font/woff2"
-        case "woff": return "font/woff"
-        default: return "application/octet-stream"
-        }
     }
 }
