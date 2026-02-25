@@ -25,7 +25,7 @@ import { icons } from '@shared/controllers/icon.adapter';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
 import { getPlatformIconPath } from '@ui/utils/platform-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
-import { css, html, LitElement, svg } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
@@ -70,7 +70,7 @@ export class GraphFilterSection extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
     }
@@ -372,7 +372,7 @@ export class GraphFilterSection extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <!-- Section Header -->
       <button class="header-button" @click=${this.handleToggle}>

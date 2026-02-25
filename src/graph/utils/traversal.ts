@@ -239,6 +239,6 @@ export function computeTransitiveDependencies(
 /**
  * Export cache stats for debugging and testing
  */
-export function getTransitiveCacheStats() {
+export function getTransitiveCacheStats(): { size: number; maxSize: number; edgesHash: string } {
   return transitiveCache.getStats();
 }

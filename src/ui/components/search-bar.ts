@@ -16,7 +16,7 @@
  */
 
 import { icons } from '@shared/controllers/icon.adapter';
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import './icon-button.js';
@@ -36,7 +36,7 @@ export class GraphSearchBar extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: 0 var(--spacing-md) var(--spacing-sm);
@@ -189,7 +189,7 @@ export class GraphSearchBar extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <div class="container">
         <span class="search-icon">${unsafeHTML(icons.Search)}</span>

@@ -11,7 +11,7 @@
  * ```
  */
 
-import { css, LitElement, svg } from 'lit';
+import { type CSSResultGroup, css, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphSidebarCollapseIcon extends LitElement {
@@ -29,7 +29,7 @@ export class GraphSidebarCollapseIcon extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: inline-block;
     }
@@ -43,7 +43,7 @@ export class GraphSidebarCollapseIcon extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return svg`
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -21,7 +21,7 @@
 
 import { icons } from '@shared/controllers/icon.adapter';
 import { SourceType } from '@shared/schemas/graph.schema';
-import { css, html, LitElement, nothing } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import './badge.js';
@@ -66,7 +66,7 @@ export class GraphClusterHeader extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
     }
@@ -191,7 +191,7 @@ export class GraphClusterHeader extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const isPackage = this.clusterType === 'package';
     const clusterIcon = isPackage ? icons.Package : icons.Folder;
     const color = this.clusterColor || '#8B5CF6';

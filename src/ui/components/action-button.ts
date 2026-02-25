@@ -22,7 +22,7 @@
  * @slot - Button text content
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export type ActionButtonVariant = 'primary' | 'success' | 'warning' | 'neutral';
@@ -68,7 +68,7 @@ export class GraphActionButton extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: inline-flex;
     }
@@ -201,7 +201,7 @@ export class GraphActionButton extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <button ?disabled=${this.disabled}>
         <span class="icon">

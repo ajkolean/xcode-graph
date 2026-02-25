@@ -48,7 +48,10 @@ export class GraphInteractionFullController implements ReactiveController {
   isDragging = false;
   dragStart = { x: 0, y: 0 };
   draggedNode: string | null = null;
-  manualNodePositions = new Map<string, { x: number; y: number }>();
+  manualNodePositions: Map<string, { x: number; y: number }> = new Map<
+    string,
+    { x: number; y: number }
+  >();
   hasMoved = false;
 
   // SVG reference (set after render)
@@ -67,7 +70,7 @@ export class GraphInteractionFullController implements ReactiveController {
   // Public API
   // ========================================
 
-  setSvgElement(element: SVGSVGElement) {
+  setSvgElement(element: SVGSVGElement): void {
     this.svgElement = element;
   }
 
@@ -75,7 +78,7 @@ export class GraphInteractionFullController implements ReactiveController {
     return this.svgElement !== null;
   }
 
-  updateConfig(config: Partial<GraphInteractionConfig>) {
+  updateConfig(config: Partial<GraphInteractionConfig>): void {
     if (config.zoom !== undefined) this.zoom = config.zoom;
     if (config.finalNodePositions) this.finalNodePositions = config.finalNodePositions;
     if (config.clusterPositions) this.clusterPositions = config.clusterPositions;
@@ -85,7 +88,7 @@ export class GraphInteractionFullController implements ReactiveController {
   // Canvas Pan Handlers
   // ========================================
 
-  handleMouseDown = (e: MouseEvent) => {
+  handleMouseDown = (e: MouseEvent): void => {
     const target = e.target as HTMLElement;
     if (target.tagName === 'svg') {
       this.isDragging = true;
@@ -95,7 +98,7 @@ export class GraphInteractionFullController implements ReactiveController {
     }
   };
 
-  handleMouseMove = (e: MouseEvent) => {
+  handleMouseMove = (e: MouseEvent): void => {
     if (this.isDragging && !this.draggedNode) {
       // Pan mode
       this.hasMoved = true;
@@ -132,7 +135,7 @@ export class GraphInteractionFullController implements ReactiveController {
     }
   };
 
-  handleMouseUp = () => {
+  handleMouseUp = (): void => {
     this.isDragging = false;
     this.draggedNode = null;
     // Reset hasMoved after a short delay to allow click handler to check it first
@@ -147,7 +150,7 @@ export class GraphInteractionFullController implements ReactiveController {
   // Node Drag Handlers
   // ========================================
 
-  handleNodeMouseDown(nodeId: string, e: MouseEvent) {
+  handleNodeMouseDown(nodeId: string, e: MouseEvent): void {
     e.stopPropagation();
     this.draggedNode = nodeId;
     this.hasMoved = false;

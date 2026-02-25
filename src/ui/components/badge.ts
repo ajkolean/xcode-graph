@@ -31,7 +31,7 @@
  * ```
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export type BadgeVariant = 'pill' | 'rounded' | 'accent';
@@ -95,7 +95,7 @@ export class GraphBadge extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: inline-flex;
     }
@@ -180,7 +180,7 @@ export class GraphBadge extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const color = this.color || '#8B5CF6';
 
     // Compute class list

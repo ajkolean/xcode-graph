@@ -18,7 +18,7 @@ import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { generateColor } from '@ui/utils/color-generator';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './cluster-composition.js';
 import './cluster-header';
@@ -52,7 +52,7 @@ export class GraphClusterDetailsPanel extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
       flex-direction: column;
@@ -117,7 +117,7 @@ export class GraphClusterDetailsPanel extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.cluster) return html``;
 
     const isExternal = this.cluster.origin === 'external';

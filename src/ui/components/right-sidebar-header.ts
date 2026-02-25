@@ -15,7 +15,7 @@
  * @fires toggle-collapse - Dispatched when collapse button is clicked
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './sidebar-collapse-icon';
 import './icon-button.js';
@@ -35,7 +35,7 @@ export class GraphRightSidebarHeader extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: var(--spacing-3) var(--spacing-md);
@@ -79,7 +79,7 @@ export class GraphRightSidebarHeader extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <div class="container">
         ${this.isCollapsed ? '' : html`<h2 class="title">${this.title}</h2>`}

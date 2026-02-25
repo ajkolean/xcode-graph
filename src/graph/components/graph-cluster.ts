@@ -27,10 +27,10 @@
  * @fires cluster-click - Dispatched on click
  */
 
-import { LitElement, svg } from 'lit';
+import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
 
 export class GraphCluster extends LitElement {
-  static override readonly properties = {
+  static override readonly properties: PropertyDeclarations = {
     clusterId: { type: String, attribute: 'cluster-id' },
     x: { type: Number },
     y: { type: Number },
@@ -43,7 +43,7 @@ export class GraphCluster extends LitElement {
   };
 
   // No Shadow DOM for SVG elements
-  protected override createRenderRoot() {
+  protected override createRenderRoot(): this {
     return this;
   }
 
@@ -103,7 +103,7 @@ export class GraphCluster extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const clusterId = this.clusterId ?? '';
     const x = this.x ?? 0;
     const y = this.y ?? 0;

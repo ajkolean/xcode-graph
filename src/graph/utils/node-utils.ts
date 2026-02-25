@@ -238,7 +238,14 @@ export function computeClusterStats(
  * @param allNodes - All graph nodes
  * @returns Filter counts and utility functions
  */
-export function computeFilters(allNodes: GraphNode[]) {
+export function computeFilters(allNodes: GraphNode[]): {
+  typeCounts: Map<string, number>;
+  platformCounts: Map<string, number>;
+  projectCounts: Map<string, number>;
+  packageCounts: Map<string, number>;
+  hasActiveFilters: (filters: FilterState) => boolean;
+  createClearFilters: (onFiltersChange: (filters: FilterState) => void) => () => void;
+} {
   const typeCounts = new Map<string, number>();
   allNodes.forEach((node) => {
     typeCounts.set(node.type, (typeCounts.get(node.type) || 0) + 1);
@@ -285,11 +292,11 @@ export function computeFilters(allNodes: GraphNode[]) {
   };
 
   return {
-    typeCounts,
-    platformCounts,
-    projectCounts,
-    packageCounts,
-    hasActiveFilters,
-    createClearFilters,
+    typeCounts: typeCounts,
+    platformCounts: platformCounts,
+    projectCounts: projectCounts,
+    packageCounts: packageCounts,
+    hasActiveFilters: hasActiveFilters,
+    createClearFilters: createClearFilters,
   };
 }

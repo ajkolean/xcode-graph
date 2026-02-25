@@ -7,7 +7,7 @@
  * @module signals/ui
  */
 
-import { signal } from '@lit-labs/signals';
+import { type Signal, signal } from '@lit-labs/signals';
 import { type ActiveTab, DEFAULT_ACTIVE_TAB } from '@shared/schemas';
 
 // ==================== Types ====================
@@ -27,19 +27,19 @@ export type PreviewFilter = {
 // ==================== State Signals ====================
 
 /** Currently active application tab */
-export const activeTab = signal<ActiveTab>(DEFAULT_ACTIVE_TAB);
+export const activeTab: Signal.State<ActiveTab> = signal<ActiveTab>(DEFAULT_ACTIVE_TAB);
 
 /** Current zoom level (0.2 - 2.0) */
-export const zoom = signal<number>(1);
+export const zoom: Signal.State<number> = signal<number>(1);
 
 /** Base zoom level (scale factor that fits the graph) */
-export const baseZoom = signal<number>(1);
+export const baseZoom: Signal.State<number> = signal<number>(1);
 
 /** Whether layout animation is enabled */
-export const enableAnimation = signal<boolean>(false);
+export const enableAnimation: Signal.State<boolean> = signal<boolean>(false);
 
 /** Current preview filter for hover effects */
-export const previewFilter = signal<PreviewFilter>(null);
+export const previewFilter: Signal.State<PreviewFilter> = signal<PreviewFilter>(null);
 
 // ==================== Reset Utility ====================
 

@@ -19,11 +19,17 @@
 import { type ClusterPosition, type NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { html, LitElement, type PropertyValues } from 'lit';
+import {
+  html,
+  LitElement,
+  type PropertyDeclarations,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {
-  static override readonly properties = {
+  static override readonly properties: PropertyDeclarations = {
     edges: { attribute: false },
     nodes: { attribute: false },
     finalNodePositions: { attribute: false },
@@ -39,7 +45,7 @@ export class GraphEdges extends LitElement {
   };
 
   // No Shadow DOM for SVG
-  protected override createRenderRoot() {
+  protected override createRenderRoot(): this {
     return this;
   }
 
@@ -199,7 +205,7 @@ export class GraphEdges extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.edges || !this.nodes) return html``;
 
     const viewMode = this.viewMode ?? ViewMode.Full;

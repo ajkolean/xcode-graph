@@ -10,6 +10,7 @@ import { NodeRole } from '@shared/schemas/cluster.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { LayoutOptions } from './config';
 import { computeHierarchicalLayout as computeEngine } from './engine';
+import type { HierarchicalLayoutResult } from './types';
 
 export {
   analyzeCluster,
@@ -45,7 +46,7 @@ export async function computeHierarchicalLayout(
   edges: GraphEdge[],
   clusters: Cluster[],
   opts: LayoutOptions = {},
-) {
+): Promise<HierarchicalLayoutResult> {
   // Pre-compute role map for performance
   const nodeRoles = new Map<string, NodeRole>();
   for (const cluster of clusters) {

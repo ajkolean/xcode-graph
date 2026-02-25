@@ -12,7 +12,7 @@
  * @fires clear-filters - Dispatched when button is clicked (only when active)
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphClearFiltersButton extends LitElement {
@@ -30,7 +30,7 @@ export class GraphClearFiltersButton extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: 0 var(--spacing-md);
@@ -93,7 +93,7 @@ export class GraphClearFiltersButton extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <button
         ?disabled=${!this.isActive}

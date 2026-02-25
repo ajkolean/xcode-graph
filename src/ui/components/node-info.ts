@@ -12,7 +12,7 @@
 
 import type { GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
-import { css, html, LitElement, nothing } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './deployment-targets.js';
 import './info-row.js';
@@ -29,7 +29,7 @@ export class GraphNodeInfo extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -89,7 +89,7 @@ export class GraphNodeInfo extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.node) return html``;
 
     const showProductName = this.node.productName && this.node.productName !== this.node.name;

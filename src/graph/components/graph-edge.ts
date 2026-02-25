@@ -22,10 +22,10 @@
 
 import { generateBezierPath } from '@ui/utils/paths';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
-import { LitElement, svg } from 'lit';
+import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
 
 export class GraphEdge extends LitElement {
-  static override readonly properties = {
+  static override readonly properties: PropertyDeclarations = {
     x1: { type: Number },
     y1: { type: Number },
     x2: { type: Number },
@@ -39,7 +39,7 @@ export class GraphEdge extends LitElement {
   };
 
   // No Shadow DOM for SVG elements - must be in same SVG context
-  protected override createRenderRoot() {
+  protected override createRenderRoot(): this {
     return this;
   }
 
@@ -62,7 +62,7 @@ export class GraphEdge extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const x1 = this.x1 ?? 0;
     const y1 = this.y1 ?? 0;
     const x2 = this.x2 ?? 0;

@@ -7,17 +7,17 @@
  * @module signals/error
  */
 
-import { signal } from '@lit-labs/signals';
+import { type Signal, signal } from '@lit-labs/signals';
 import type { AppError } from '@shared/schemas/error.schema';
 import { DEFAULT_MAX_VISIBLE_TOASTS } from '@shared/schemas/error.schema';
 
 // ==================== State Signals ====================
 
 /** Active error notifications */
-export const errors = signal<AppError[]>([]);
+export const errors: Signal.State<AppError[]> = signal<AppError[]>([]);
 
 /** Maximum number of visible toasts at once */
-export const maxVisibleToasts = signal<number>(DEFAULT_MAX_VISIBLE_TOASTS);
+export const maxVisibleToasts: Signal.State<number> = signal<number>(DEFAULT_MAX_VISIBLE_TOASTS);
 
 // ==================== Computed Properties ====================
 

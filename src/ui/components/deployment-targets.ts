@@ -14,7 +14,7 @@
  */
 
 import type { DeploymentTargets, Destination } from '@shared/schemas/graph.schema';
-import { css, html, LitElement, nothing } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
 
@@ -72,7 +72,7 @@ export class GraphDeploymentTargets extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
     }
@@ -197,7 +197,7 @@ export class GraphDeploymentTargets extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult | typeof nothing {
     const hasPlatforms =
       this.deploymentTargets && Object.values(this.deploymentTargets).some((v) => v != null);
     const hasDestinations = this.destinations && this.destinations.length > 0;

@@ -2,7 +2,13 @@
  * Comlink Mocks - Test utilities for Comlink worker communication
  */
 
-import type { LayoutInput, LayoutProgress, LayoutWorkerAPI } from '@/graph/workers/layout-api';
+import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
+import type {
+  LayoutInput,
+  LayoutOutput,
+  LayoutProgress,
+  LayoutWorkerAPI,
+} from '@/graph/workers/layout-api';
 
 /**
  * Mock Comlink wrap function
@@ -86,19 +92,19 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
   public animationDelay = 10;
 
   // Mock data
-  public mockInitialOutput = {
-    nodePositions: new Map(),
-    clusterPositions: new Map(),
-    clusters: [],
+  public mockInitialOutput: LayoutOutput = {
+    nodePositions: new Map<string, NodePosition>(),
+    clusterPositions: new Map<string, ClusterPosition>(),
+    clusters: [] as Cluster[],
     isAnimating: false,
     tickCount: 0,
     totalTicks: 0,
   };
 
-  public mockAnimatedOutput = {
-    nodePositions: new Map(),
-    clusterPositions: new Map(),
-    clusters: [],
+  public mockAnimatedOutput: LayoutOutput = {
+    nodePositions: new Map<string, NodePosition>(),
+    clusterPositions: new Map<string, ClusterPosition>(),
+    clusters: [] as Cluster[],
     isAnimating: false,
     tickCount: 30,
     totalTicks: 30,
@@ -110,7 +116,7 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
   public cancelAnimationCalls = 0;
   public getStatusCalls = 0;
 
-  async computeInitialLayout(_input: LayoutInput) {
+  async computeInitialLayout(_input: LayoutInput): Promise<LayoutOutput> {
     this.computeInitialLayoutCalls++;
 
     if (this.shouldError) {
@@ -121,7 +127,10 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
     return this.mockInitialOutput;
   }
 
-  async computeAnimatedLayout(input: LayoutInput, onProgress: (progress: LayoutProgress) => void) {
+  async computeAnimatedLayout(
+    input: LayoutInput,
+    onProgress: (progress: LayoutProgress) => void,
+  ): Promise<LayoutOutput> {
     this.computeAnimatedLayoutCalls++;
 
     if (this.shouldError) {
@@ -150,11 +159,11 @@ export class MockLayoutWorkerAPI implements LayoutWorkerAPI {
     return this.mockAnimatedOutput;
   }
 
-  async cancelAnimation() {
+  async cancelAnimation(): Promise<void> {
     this.cancelAnimationCalls++;
   }
 
-  async getStatus() {
+  async getStatus(): Promise<{ isAnimating: boolean; currentTick: number; totalTicks: number }> {
     this.getStatusCalls++;
     return {
       isAnimating: false,

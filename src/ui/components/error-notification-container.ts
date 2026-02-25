@@ -23,20 +23,22 @@
 import { SignalWatcher } from '@lit-labs/signals';
 import type { AppError } from '@shared/schemas/error.schema';
 import { getToastErrors } from '@shared/signals/error.signals';
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { errorService } from '@/services/error-service';
 import './error-toast';
 
 // ==================== Component ====================
 
+const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
+
 @customElement('graph-error-notification-container')
-export class GraphErrorNotificationContainer extends SignalWatcher(LitElement) {
+export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
   // ========================================
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       position: fixed;
       bottom: var(--spacing-4);
@@ -85,7 +87,7 @@ export class GraphErrorNotificationContainer extends SignalWatcher(LitElement) {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult | null {
     // Get visible toasts from signal
     const toasts = getToastErrors();
 

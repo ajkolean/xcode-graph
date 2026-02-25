@@ -18,7 +18,7 @@
 
 import { icons } from '@shared/controllers/icon.adapter';
 import type { GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
@@ -37,7 +37,7 @@ export class GraphNodeActions extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -166,7 +166,7 @@ export class GraphNodeActions extends LitElement {
     return this.viewMode === 'both' ? 'both' : 'active';
   }
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.node) return html``;
 
     const depButtonClass = this.getChainButtonClass(this.isDependencyChainActive);

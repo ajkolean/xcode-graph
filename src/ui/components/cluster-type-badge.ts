@@ -13,7 +13,7 @@
  * ```
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
 
@@ -38,7 +38,7 @@ export class GraphClusterTypeBadge extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
@@ -65,7 +65,7 @@ export class GraphClusterTypeBadge extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const color = this.clusterColor || '#F59E0B';
 
     return html`

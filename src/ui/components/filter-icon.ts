@@ -14,7 +14,7 @@
  */
 
 import { FILTER_ICON_COLOR } from '@ui/utils/colors';
-import { css, LitElement, svg } from 'lit';
+import { type CSSResultGroup, css, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export type FilterIconName = 'product-types' | 'platforms' | 'projects' | 'packages';
@@ -46,7 +46,7 @@ export class GraphFilterIcon extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
@@ -143,7 +143,7 @@ export class GraphFilterIcon extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     switch (this.name) {
       case 'product-types':
         return this.renderProductTypes();

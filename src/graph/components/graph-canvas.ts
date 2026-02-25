@@ -21,7 +21,14 @@ import {
 } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { ZOOM_CONFIG } from '@ui/utils/zoom-constants';
-import { css, html, LitElement, type PropertyValues } from 'lit';
+import {
+  type CSSResultGroup,
+  css,
+  html,
+  LitElement,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { Starfield } from './starfield';
 
@@ -129,7 +136,7 @@ export class GraphCanvas extends LitElement {
   // Styles
   // ========================================
 
-  static override styles = css`
+  static override styles: CSSResultGroup = css`
     :host {
       display: block;
       width: 100%;
@@ -155,7 +162,7 @@ export class GraphCanvas extends LitElement {
   // Lifecycle
   // ========================================
 
-  override firstUpdated() {
+  override firstUpdated(): void {
     this.theme = resolveCanvasTheme(this);
     if (this.canvas) {
       this.ctx = this.canvas.getContext('2d', { alpha: true })!;
@@ -168,13 +175,13 @@ export class GraphCanvas extends LitElement {
     }
   }
 
-  override disconnectedCallback() {
+  override disconnectedCallback(): void {
     super.disconnectedCallback();
     window.removeEventListener('resize', this.handleResize);
     this.stopRenderLoop();
   }
 
-  override willUpdate(changedProps: PropertyValues<this>) {
+  override willUpdate(changedProps: PropertyValues<this>): void {
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       // Detect if this is a filter change (subset of already-laid-out nodes)
       // vs truly new graph data that requires a full re-layout.
@@ -208,7 +215,7 @@ export class GraphCanvas extends LitElement {
     }
   }
 
-  override updated(changedProps: PropertyValues<this>) {
+  override updated(changedProps: PropertyValues<this>): void {
     super.updated(changedProps);
 
     // Fit viewport once after layout completes (not during render)
@@ -239,7 +246,7 @@ export class GraphCanvas extends LitElement {
   /**
    * Fit graph into viewport: compute bounding box of all clusters and adjust pan/zoom.
    */
-  fitToViewport() {
+  fitToViewport(): void {
     if (!this.layout.clusterPositions.size) return;
     const rect = this.getBoundingClientRect();
     let minX = Infinity;
@@ -1241,7 +1248,7 @@ export class GraphCanvas extends LitElement {
     };
   }
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <canvas
         @mousedown=${this.handleCanvasMouseDown}

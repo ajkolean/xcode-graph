@@ -142,7 +142,10 @@ export class MockGraphInteractionController implements ReactiveController {
   isDragging = false;
   dragStart = { x: 0, y: 0 };
   draggedNode: string | null = null;
-  manualNodePositions = new Map<string, { x: number; y: number }>();
+  manualNodePositions: Map<string, { x: number; y: number }> = new Map<
+    string,
+    { x: number; y: number }
+  >();
   hasMoved = false;
 
   private svgElement: SVGSVGElement | null = null;

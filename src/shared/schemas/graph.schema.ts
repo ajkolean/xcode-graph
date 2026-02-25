@@ -191,7 +191,7 @@ export const SourceTypeSchema: z.ZodType<SourceType> = z.nativeEnum(SourceType);
 
 // ==================== Entity Schemas ====================
 
-export const BuildSettingsSchema = z.object({
+export const BuildSettingsSchema: z.ZodType<BuildSettings> = z.object({
   swiftVersion: z.string().optional(),
   compilationConditions: z.array(z.string()).optional(),
   codeSignIdentity: z.string().optional(),
@@ -199,7 +199,7 @@ export const BuildSettingsSchema = z.object({
   provisioningProfile: z.string().optional(),
 });
 
-export const DeploymentTargetsSchema = z.object({
+export const DeploymentTargetsSchema: z.ZodType<DeploymentTargets> = z.object({
   iOS: z.string().optional(),
   macOS: z.string().optional(),
   tvOS: z.string().optional(),
@@ -207,7 +207,7 @@ export const DeploymentTargetsSchema = z.object({
   visionOS: z.string().optional(),
 });
 
-export const DestinationSchema = z.enum([
+export const DestinationSchema: z.ZodType<Destination> = z.enum([
   'iPhone',
   'iPad',
   'mac',

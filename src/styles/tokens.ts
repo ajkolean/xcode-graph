@@ -223,7 +223,21 @@ export const opacityTokens = {
 /**
  * Unified token object for easy access to all design tokens
  */
-export const tokens = {
+export const tokens: {
+  readonly colors: typeof colorTokens;
+  readonly radii: typeof radiiTokens;
+  readonly borderWidths: typeof borderWidthTokens;
+  readonly fontSizes: typeof fontSizeTokens;
+  readonly fontWeights: typeof fontWeightTokens;
+  readonly fonts: typeof fontTokens;
+  readonly lineHeights: typeof lineHeightTokens;
+  readonly spacing: typeof spacingTokens;
+  readonly shadows: typeof shadowTokens;
+  readonly durations: typeof durationTokens;
+  readonly easings: typeof easingTokens;
+  readonly sizes: typeof sizeTokens;
+  readonly opacity: typeof opacityTokens;
+} = {
   colors: colorTokens,
   radii: radiiTokens,
   borderWidths: borderWidthTokens,

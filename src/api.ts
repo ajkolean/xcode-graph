@@ -48,11 +48,4 @@ export * from './ui/utils';
 
 // ==================== Library ====================
 
-export { bindable } from './shared/machines/lib/bindable';
-export {
-  type ExtendedEvent,
-  type ExtendedState,
-  type MachineEvent,
-  type MachineUserProps,
-  VanillaMachine,
-} from './shared/machines/lib/vanilla-machine';
+export { VanillaMachine } from '@zag-js/vanilla';

@@ -61,7 +61,12 @@ export const mockPackageFilters: FilterItem[] = [
 /**
  * All filter items organized by type
  */
-export const allFilters = {
+export const allFilters: {
+  nodeType: FilterItem[];
+  platform: FilterItem[];
+  project: FilterItem[];
+  package: FilterItem[];
+} = {
   nodeType: mockNodeTypeFilters,
   platform: mockPlatformFilters,
   project: mockProjectFilters,
@@ -71,10 +76,10 @@ export const allFilters = {
 /**
  * Selected filter items for testing active states
  */
-export const selectedNodeTypes = new Set(['app', 'framework', 'library']);
-export const selectedPlatforms = new Set(['iOS', 'macOS']);
-export const selectedProjects = new Set(['MainApp']);
-export const selectedPackages = new Set(['Alamofire', 'SwiftUI']);
+export const selectedNodeTypes: Set<string> = new Set(['app', 'framework', 'library']);
+export const selectedPlatforms: Set<string> = new Set(['iOS', 'macOS']);
+export const selectedProjects: Set<string> = new Set(['MainApp']);
+export const selectedPackages: Set<string> = new Set(['Alamofire', 'SwiftUI']);
 
 /**
  * Get filter items with few entries

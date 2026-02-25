@@ -17,7 +17,7 @@
 
 import { NodeType } from '@shared/schemas/graph.schema';
 import { getPlatformIconPath, PLATFORM_COLOR } from '@ui/utils/platform-icons';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
 import './stats-card';
@@ -63,7 +63,7 @@ export class GraphClusterStats extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -168,7 +168,7 @@ export class GraphClusterStats extends LitElement {
     `;
   }
 
-  override render() {
+  override render(): TemplateResult {
     const platformCount = this.platforms?.size || 0;
 
     return html`

@@ -287,14 +287,14 @@ export async function withTimeout<T>(fn: () => Promise<T>, timeoutMs: number): P
 // ==================== Global Circuit Breakers ====================
 
 /** Circuit breaker for layout computation */
-export const layoutCircuitBreaker = new CircuitBreaker('layout', {
+export const layoutCircuitBreaker: CircuitBreaker = new CircuitBreaker('layout', {
   failureThreshold: 3,
   resetTimeoutMs: 30000,
   successThreshold: 2,
 });
 
 /** Circuit breaker for worker communication */
-export const workerCircuitBreaker = new CircuitBreaker('worker', {
+export const workerCircuitBreaker: CircuitBreaker = new CircuitBreaker('worker', {
   failureThreshold: 5,
   resetTimeoutMs: 60000,
   successThreshold: 3,

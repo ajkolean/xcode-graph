@@ -19,7 +19,7 @@
 
 import { computeNodeDependencies } from '@graph/utils/node-utils';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement, nothing } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import './build-settings.js';
 import './node-header';
 import './node-info';
@@ -28,7 +28,7 @@ import './node-list.js';
 import type { Cluster } from '@shared/schemas';
 
 export class GraphNodeDetailsPanel extends LitElement {
-  static override readonly properties = {
+  static override readonly properties: Record<string, object> = {
     node: { attribute: false },
     allNodes: { attribute: false },
     edges: { attribute: false },
@@ -60,7 +60,7 @@ export class GraphNodeDetailsPanel extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
       flex-direction: column;
@@ -126,7 +126,7 @@ export class GraphNodeDetailsPanel extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.node) return html``;
 
     const { dependencies, dependents, metrics } = this.nodeData;

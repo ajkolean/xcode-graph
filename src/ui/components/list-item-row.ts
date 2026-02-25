@@ -24,7 +24,7 @@ import type { GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
-import { css, html, LitElement, svg } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
@@ -61,7 +61,7 @@ export class GraphListItemRow extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
     }
@@ -211,7 +211,7 @@ export class GraphListItemRow extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.node) return html``;
 
     const nodeColor = adjustColorForZoom(getNodeTypeColor(this.node.type), this.zoom);

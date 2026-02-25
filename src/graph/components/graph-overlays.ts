@@ -16,7 +16,7 @@
  */
 
 import { icons } from '@shared/controllers/icon.adapter';
-import { css, html, LitElement, svg } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
@@ -25,7 +25,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 // ========================================
 
 export class GraphBackground extends LitElement {
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       position: absolute;
@@ -35,7 +35,7 @@ export class GraphBackground extends LitElement {
     }
   `;
 
-  override render() {
+  override render(): TemplateResult {
     return svg`
       <svg style="width: 100%; height: 100%;">
         <defs>
@@ -69,7 +69,7 @@ export class GraphControls extends LitElement {
   @property({ type: Boolean, attribute: 'highlight-mode' })
   declare highlightMode: boolean;
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       position: absolute;
@@ -182,7 +182,7 @@ export class GraphControls extends LitElement {
     e.stopPropagation();
   }
 
-  override render() {
+  override render(): TemplateResult {
     const percentage =
       this.baseZoom > 0
         ? Math.round((this.zoom / this.baseZoom) * 100)
@@ -224,7 +224,7 @@ export class GraphControls extends LitElement {
 // ========================================
 
 export class GraphEmptyStateOverlay extends LitElement {
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       position: absolute;
@@ -259,7 +259,7 @@ export class GraphEmptyStateOverlay extends LitElement {
     }
   `;
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <div class="container">
         <div class="content">
@@ -276,7 +276,7 @@ export class GraphEmptyStateOverlay extends LitElement {
 // ========================================
 
 export class GraphInstructions extends LitElement {
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       position: absolute;
@@ -295,7 +295,7 @@ export class GraphInstructions extends LitElement {
     }
   `;
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <div class="container">
         Drag nodes to reposition · Click to inspect · Scroll to zoom

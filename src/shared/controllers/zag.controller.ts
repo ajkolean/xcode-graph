@@ -37,8 +37,8 @@
  * ```
  */
 
-import { type MachineUserProps, VanillaMachine } from '@shared/machines/lib/vanilla-machine';
 import { type Machine, type MachineSchema, MachineStatus, type Service } from '@zag-js/core';
+import { VanillaMachine } from '@zag-js/vanilla';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
 // ==================== Controller Class ====================
@@ -51,7 +51,7 @@ import type { ReactiveController, ReactiveControllerHost } from 'lit';
  */
 export class ZagController<TSchema extends MachineSchema> implements ReactiveController {
   private readonly host: ReactiveControllerHost;
-  private readonly instance: VanillaMachine;
+  private readonly instance: VanillaMachine<MachineSchema>;
   private readonly _service: Service<TSchema>;
   private unsubscribe: (() => void) | undefined;
 
@@ -70,7 +70,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * Get the current state of the machine.
    * Shorthand for `service.state`
    */
-  get state() {
+  get state(): Service<TSchema>['state'] {
     return this._service.state;
   }
 
@@ -78,7 +78,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * Get the machine context.
    * Shorthand for `service.context`
    */
-  get context() {
+  get context(): Service<TSchema>['context'] {
     return this._service.context;
   }
 
@@ -86,7 +86,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
     this.host = host;
     this.instance = new VanillaMachine(
       machine as Machine<MachineSchema>,
-      props as MachineUserProps,
+      props as Partial<MachineSchema['props']>,
     );
     this._service = this.instance.service as unknown as Service<TSchema>;
     host.addController(this);
@@ -100,10 +100,9 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
     // Defensive cleanup of any existing subscription
     this.unsubscribe?.();
 
-    this.instance.subscribe(() => {
+    this.unsubscribe = this.instance.subscribe(() => {
       this.host.requestUpdate();
     });
-    this.unsubscribe = () => {};
     if (this._service.getStatus() !== MachineStatus.Started) {
       this.instance.start();
     }

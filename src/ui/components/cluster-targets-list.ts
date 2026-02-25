@@ -20,7 +20,7 @@
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
-import { css, html } from 'lit';
+import { type CSSResultGroup, css, html, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { NodeListEventsBase } from './node-list-events';
 import './list-item-row';
@@ -52,7 +52,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -126,7 +126,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.nodesByType) return html``;
 
     return html`

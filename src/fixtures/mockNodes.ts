@@ -245,21 +245,25 @@ export const mockGraphNodes: GraphNode[] = [
 /**
  * Get mock nodes with dependencies
  */
-export function getNodeWithDependencies(nodeId: string = 'app-main') {
+export function getNodeWithDependencies(nodeId: string = 'app-main'): {
+  node: GraphNode;
+  dependencies: GraphNode[];
+  dependents: GraphNode[];
+} {
   const node = mockGraphNodes.find((n) => n.id === nodeId) || mockGraphNodes[0];
   const dependencies = mockGraphNodes.slice(2, 7); // Some frameworks and libraries
   const dependents = mockGraphNodes.slice(0, 2); // Some apps
 
   return {
-    node,
-    dependencies,
-    dependents,
+    node: node!,
+    dependencies: dependencies,
+    dependents: dependents,
   };
 }
 
 /**
  * Get nodes for a specific project
  */
-export function getNodesForProject(projectName: string) {
+export function getNodesForProject(projectName: string): GraphNode[] {
   return mockGraphNodes.filter((n) => n.project === projectName);
 }

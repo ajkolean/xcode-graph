@@ -13,7 +13,7 @@
  * ```
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 export class GraphCycleWarning extends LitElement {
@@ -34,7 +34,7 @@ export class GraphCycleWarning extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
     }
@@ -222,7 +222,7 @@ export class GraphCycleWarning extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult | null {
     if (this.isDismissed || !this.cycles || this.cycles.length === 0) {
       return null;
     }

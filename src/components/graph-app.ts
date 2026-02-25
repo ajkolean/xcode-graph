@@ -19,7 +19,7 @@
 
 import { SignalWatcher } from '@lit-labs/signals';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { GraphAnalysisService } from '@/services/graphAnalysisService';
 import { GraphDataService } from '@/services/graphDataService';
@@ -41,7 +41,9 @@ import {
 // Import signals and actions from shared module
 import { initializeFromData } from '@shared/signals/index';
 
-export class GraphApp extends SignalWatcher(LitElement) {
+const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
+
+export class GraphApp extends SignalWatcherLitElement {
   // ========================================
   // Public Properties
   // ========================================
@@ -90,7 +92,7 @@ export class GraphApp extends SignalWatcher(LitElement) {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
       flex-direction: column;
@@ -105,7 +107,7 @@ export class GraphApp extends SignalWatcher(LitElement) {
   // Lifecycle
   // ========================================
 
-  override connectedCallback() {
+  override connectedCallback(): void {
     super.connectedCallback();
     this.seedData();
   }
@@ -136,7 +138,7 @@ export class GraphApp extends SignalWatcher(LitElement) {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const display = displayData.get();
     const filtered = filteredData.get();
 

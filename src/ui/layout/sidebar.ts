@@ -19,7 +19,7 @@ import { ActiveTab, type ActiveTab as ActiveTabType } from '@shared/schemas';
 
 export type { ActiveTab } from '@shared/schemas';
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import '@ui/components/sidebar-collapse-icon';
@@ -60,7 +60,7 @@ export class GraphSidebar extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       width: var(--sizes-sidebar-expanded);
@@ -337,7 +337,7 @@ export class GraphSidebar extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <aside>
         <button class="collapse-button" @click=${this.toggleCollapse} title="Toggle sidebar">

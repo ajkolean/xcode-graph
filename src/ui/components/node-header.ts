@@ -21,7 +21,7 @@ import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
-import { css, html, LitElement, nothing, svg } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
 import './panel-header.js';
@@ -50,7 +50,7 @@ export class GraphNodeHeader extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
     }
@@ -99,7 +99,7 @@ export class GraphNodeHeader extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.node) return html``;
 
     const iconPath = getNodeIconPath(

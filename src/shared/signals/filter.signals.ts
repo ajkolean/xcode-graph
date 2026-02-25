@@ -24,16 +24,16 @@ export const DEFAULT_FILTERS: FilterState = {
 // ==================== State Signals ====================
 
 /** Current active filters */
-export const filters = signal<FilterState>({ ...DEFAULT_FILTERS });
+export const filters: Signal.State<FilterState> = signal<FilterState>({ ...DEFAULT_FILTERS });
 
 /** Current search query */
-export const searchQuery = signal<string>('');
+export const searchQuery: Signal.State<string> = signal<string>('');
 
 /** All available projects (for active filter detection) */
-export const allProjects = signal<Set<string>>(new Set());
+export const allProjects: Signal.State<Set<string>> = signal<Set<string>>(new Set());
 
 /** All available packages (for active filter detection) */
-export const allPackages = signal<Set<string>>(new Set());
+export const allPackages: Signal.State<Set<string>> = signal<Set<string>>(new Set());
 
 // ==================== Computed Signals ====================
 
@@ -41,7 +41,7 @@ export const allPackages = signal<Set<string>>(new Set());
  * Check if any filters are active (not showing everything)
  * Returns true if any filter is restricting the view
  */
-export const hasActiveFilters = new Signal.Computed(() => {
+export const hasActiveFilters: Signal.Computed<boolean> = new Signal.Computed(() => {
   const f = filters.get();
   const query = searchQuery.get();
   const projects = allProjects.get();

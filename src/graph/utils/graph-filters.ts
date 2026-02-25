@@ -11,7 +11,7 @@ export function applyGraphFilters(
   edges: GraphEdge[],
   filters: FilterState,
   searchQuery: string,
-) {
+): { filteredNodes: GraphNode[]; filteredEdges: GraphEdge[]; searchResults: number | null } {
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
   // Filter nodes (whitelist approach: only show nodes that match ALL filter criteria)
@@ -51,8 +51,8 @@ export function applyGraphFilters(
   const searchResults = normalizedQuery ? filteredNodes.length : null;
 
   return {
-    filteredNodes,
-    filteredEdges,
-    searchResults,
+    filteredNodes: filteredNodes,
+    filteredEdges: filteredEdges,
+    searchResults: searchResults,
   };
 }

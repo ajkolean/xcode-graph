@@ -11,7 +11,7 @@
  */
 
 import { icons } from '@shared/controllers/icon.adapter';
-import { css, html, LitElement, svg } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 export class GraphHeader extends LitElement {
@@ -19,7 +19,7 @@ export class GraphHeader extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
     }
@@ -305,7 +305,7 @@ export class GraphHeader extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <header>
         <!-- Left Section: Logo + Breadcrumbs -->

@@ -45,7 +45,7 @@ export interface DisplayData extends FilteredData {
  * Computed signal for filtered graph data.
  * Automatically recomputes when nodes, edges, filters, or searchQuery change.
  */
-export const filteredData = new Signal.Computed<FilteredData>(() => {
+export const filteredData: Signal.Computed<FilteredData> = new Signal.Computed<FilteredData>(() => {
   const currentNodes = nodes.get();
   const currentEdges = edges.get();
   const currentFilters = filters.get();
@@ -58,7 +58,10 @@ export const filteredData = new Signal.Computed<FilteredData>(() => {
  * Computed signal for transitive dependency data.
  * Automatically recomputes when viewMode, selectedNode, or edges change.
  */
-export const transitiveData = new Signal.Computed(() => {
+export const transitiveData: Signal.Computed<{
+  transitiveDeps: TransitiveResult;
+  transitiveDependents: TransitiveResult;
+}> = new Signal.Computed(() => {
   const currentViewMode = viewMode.get();
   const currentSelectedNode = selectedNode.get();
   const currentEdges = edges.get();
@@ -72,15 +75,15 @@ export const transitiveData = new Signal.Computed(() => {
  * The canvas handles visibility (direct mode = hide non-chain, highlight mode = depth alpha).
  * Automatically recomputes when any dependency changes.
  */
-export const displayData = new Signal.Computed<DisplayData>(() => {
+export const displayData: Signal.Computed<DisplayData> = new Signal.Computed<DisplayData>(() => {
   const { filteredNodes, filteredEdges, searchResults } = filteredData.get();
   const { transitiveDeps, transitiveDependents } = transitiveData.get();
 
   return {
-    filteredNodes,
-    filteredEdges,
-    searchResults,
-    transitiveDeps,
-    transitiveDependents,
+    filteredNodes: filteredNodes,
+    filteredEdges: filteredEdges,
+    searchResults: searchResults,
+    transitiveDeps: transitiveDeps,
+    transitiveDependents: transitiveDependents,
   };
 });

@@ -22,7 +22,7 @@
 
 import type { NodeWithEdge } from '@graph/utils/node-utils';
 import { DependencyKind, type GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, nothing } from 'lit';
+import { type CSSResultGroup, css, html, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
 import './list-item-row.js';
@@ -97,7 +97,7 @@ export class GraphNodeList extends NodeListEventsBase {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: var(--spacing-md);
@@ -180,7 +180,7 @@ export class GraphNodeList extends NodeListEventsBase {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const items = this.itemList;
     const count = items.length;
 

@@ -14,7 +14,7 @@
  * ```
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphSectionHeader extends LitElement {
@@ -50,7 +50,7 @@ export class GraphSectionHeader extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
       align-items: center;
@@ -76,7 +76,7 @@ export class GraphSectionHeader extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const countText = this.suffix ? `${this.count} ${this.suffix}` : `${this.count}`;
 
     return html`

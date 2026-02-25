@@ -25,7 +25,7 @@
  */
 
 import type { FilterState } from '@shared/schemas';
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import './stats-card';
 import './search-bar';
@@ -111,7 +111,7 @@ export class GraphFilterView extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
       flex-direction: column;
@@ -255,7 +255,7 @@ export class GraphFilterView extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <!-- Stats Cards -->
       <div class="stats-container">

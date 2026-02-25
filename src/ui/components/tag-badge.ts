@@ -11,7 +11,7 @@
  * ```
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 /** Tag prefix colors for visual distinction */
@@ -53,7 +53,7 @@ export class GraphTagBadge extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: inline-flex;
     }
@@ -118,7 +118,7 @@ export class GraphTagBadge extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.tag) return html``;
 
     const { prefix, value, color } = this.parseTag();

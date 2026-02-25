@@ -16,7 +16,7 @@ import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { getNodeSize } from '@ui/utils/sizing';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
-import { nothing, svg } from 'lit';
+import { nothing, svg, type TemplateResult } from 'lit';
 
 // ========================================
 // Cluster Card Renderer
@@ -35,7 +35,7 @@ export interface ClusterCardOptions {
   onClick?: () => void;
 }
 
-export function renderClusterCard(options: ClusterCardOptions) {
+export function renderClusterCard(options: ClusterCardOptions): TemplateResult {
   const {
     cluster,
     x,
@@ -162,7 +162,7 @@ export interface GraphNodeOptions {
   onClick?: (e: MouseEvent) => void;
 }
 
-export function renderGraphNode(options: GraphNodeOptions) {
+export function renderGraphNode(options: GraphNodeOptions): TemplateResult {
   const {
     node,
     x,
@@ -339,7 +339,7 @@ export interface GraphEdgeOptions {
   animated?: boolean;
 }
 
-export function renderGraphEdge(options: GraphEdgeOptions) {
+export function renderGraphEdge(options: GraphEdgeOptions): TemplateResult {
   const {
     x1,
     y1,
@@ -424,7 +424,9 @@ export interface RoutedGraphEdgeOptions {
   animated?: boolean;
 }
 
-export function renderRoutedGraphEdge(options: RoutedGraphEdgeOptions) {
+export function renderRoutedGraphEdge(
+  options: RoutedGraphEdgeOptions,
+): TemplateResult | typeof nothing {
   const {
     routedEdge,
     sourceClusterPosition,
@@ -699,7 +701,7 @@ function getEdgeOpacity(
   return 1;
 }
 
-export function renderGraphEdges(options: GraphEdgesOptions) {
+export function renderGraphEdges(options: GraphEdgesOptions): TemplateResult {
   const {
     edges,
     nodes,
@@ -821,7 +823,7 @@ export interface ClusterGroupOptions {
   onNodeClick?: (node: GraphNode, e: MouseEvent) => void;
 }
 
-export function renderClusterGroup(options: ClusterGroupOptions) {
+export function renderClusterGroup(options: ClusterGroupOptions): TemplateResult {
   const {
     cluster,
     clusterPosition,

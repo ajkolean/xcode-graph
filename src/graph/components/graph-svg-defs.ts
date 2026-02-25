@@ -17,15 +17,15 @@
  */
 
 import { getNodeIconPath } from '@ui/utils/node-icons';
-import { LitElement, svg } from 'lit';
+import { LitElement, svg, type TemplateResult } from 'lit';
 
 export class GraphSVGDefs extends LitElement {
   // No Shadow DOM for SVG defs - they need to be in the same SVG context
-  protected override createRenderRoot() {
+  protected override createRenderRoot(): this {
     return this;
   }
 
-  override render() {
+  override render(): TemplateResult {
     // Generate reusable node shapes for all type/platform combinations
     const nodeTypes = [
       'app',

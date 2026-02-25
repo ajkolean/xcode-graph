@@ -14,28 +14,28 @@ import type { GraphNode } from '@shared/schemas/graph.schema';
 // ==================== State Signals ====================
 
 /** Currently selected node (null if none) */
-export const selectedNode = signal<GraphNode | null>(null);
+export const selectedNode: Signal.State<GraphNode | null> = signal<GraphNode | null>(null);
 
 /** Currently selected cluster ID (null if none) */
-export const selectedCluster = signal<string | null>(null);
+export const selectedCluster: Signal.State<string | null> = signal<string | null>(null);
 
 /** Currently hovered node ID (null if none) */
-export const hoveredNode = signal<string | null>(null);
+export const hoveredNode: Signal.State<string | null> = signal<string | null>(null);
 
 /** Current graph visualization mode */
-export const viewMode = signal<ViewMode>(ViewMode.Full);
+export const viewMode: Signal.State<ViewMode> = signal<ViewMode>(ViewMode.Full);
 
 /** Detected circular dependency paths */
-export const circularDependencies = signal<string[][]>([]);
+export const circularDependencies: Signal.State<string[][]> = signal<string[][]>([]);
 
 /** Chain display mode: 'direct' filters to chain only, 'highlight' shows all with depth-based alpha */
 export type ChainDisplayMode = 'direct' | 'highlight';
-export const chainDisplayMode = signal<ChainDisplayMode>('direct');
+export const chainDisplayMode: Signal.State<ChainDisplayMode> = signal<ChainDisplayMode>('direct');
 
 // ==================== Computed Signals ====================
 
 /** Check if any node or cluster is currently selected */
-export const hasSelection = new Signal.Computed(
+export const hasSelection: Signal.Computed<boolean> = new Signal.Computed(
   () => selectedNode.get() !== null || selectedCluster.get() !== null,
 );
 

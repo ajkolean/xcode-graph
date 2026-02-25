@@ -12,6 +12,18 @@ interface BoundaryNode {
 
 type ValueOrAccessor<T> = T | ((node: BoundaryNode, index: number, nodes: BoundaryNode[]) => T);
 
+export interface BoundaryForce {
+  (alpha: number): void;
+  initialize: (_: BoundaryNode[]) => void;
+  x0: (_: ValueOrAccessor<number>) => BoundaryForce;
+  x1: (_: ValueOrAccessor<number>) => BoundaryForce;
+  y0: (_: ValueOrAccessor<number>) => BoundaryForce;
+  y1: (_: ValueOrAccessor<number>) => BoundaryForce;
+  strength: (_: ValueOrAccessor<number>) => BoundaryForce;
+  border: (_: ValueOrAccessor<number>) => BoundaryForce;
+  hardBoundary: (_: boolean) => BoundaryForce;
+}
+
 function constant<T>(x: T): (node: BoundaryNode, index: number, nodes: BoundaryNode[]) => T {
   return () => x;
 }
@@ -21,7 +33,7 @@ export default function forceBoundary(
   y0: ValueOrAccessor<number>,
   x1: ValueOrAccessor<number>,
   y1: ValueOrAccessor<number>,
-) {
+): BoundaryForce {
   let strength: ValueOrAccessor<number> = constant(0.1);
   let hardBoundary = true;
   let border: ValueOrAccessor<number> = constant(

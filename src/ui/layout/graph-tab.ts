@@ -19,7 +19,7 @@ import type { TransitiveResult } from '@graph/utils';
 import { Signal, SignalWatcher } from '@lit-labs/signals';
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import '@graph/components/graph-visualization';
 import '@graph/components/graph-canvas';
@@ -51,7 +51,9 @@ import {
   zoomOut,
 } from '@shared/signals/index';
 
-export class GraphTab extends SignalWatcher(LitElement) {
+const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
+
+export class GraphTab extends SignalWatcherLitElement {
   // ========================================
   // Properties
   // ========================================
@@ -90,7 +92,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
       flex: 1;
@@ -166,7 +168,7 @@ export class GraphTab extends SignalWatcher(LitElement) {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <div class="container">
         <!-- Graph + Sidebar -->

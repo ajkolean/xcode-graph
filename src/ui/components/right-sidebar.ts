@@ -24,7 +24,7 @@ import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { PLATFORM_COLOR } from '@ui/utils/platform-icons';
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './right-sidebar-header';
 import './collapsed-sidebar';
@@ -105,7 +105,9 @@ interface ExpandedContentOptions {
   items: FilterItemsGroup;
 }
 
-export class GraphRightSidebar extends SignalWatcher(LitElement) {
+const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
+
+export class GraphRightSidebar extends SignalWatcherLitElement {
   // ========================================
   // Properties
   // ========================================
@@ -139,7 +141,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       flex-shrink: 0;
@@ -585,7 +587,7 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const isCollapsed = this.isCollapsed;
     const expandedSections = this.sidebar.get('expandedSections');
     const filterData = this.filterData;

@@ -29,7 +29,7 @@
 import type { GraphNode as GraphNodeType } from '@shared/schemas/graph.schema';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
-import { LitElement, svg } from 'lit';
+import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
 
 /** Parameters for rendering node label */
 interface LabelRenderOptions {
@@ -43,7 +43,7 @@ interface LabelRenderOptions {
 }
 
 export class GraphNode extends LitElement {
-  static override readonly properties = {
+  static override readonly properties: PropertyDeclarations = {
     node: { attribute: false },
     x: { type: Number },
     y: { type: Number },
@@ -56,7 +56,7 @@ export class GraphNode extends LitElement {
   };
 
   // No Shadow DOM for SVG elements
-  protected override createRenderRoot() {
+  protected override createRenderRoot(): this {
     return this;
   }
 
@@ -363,7 +363,7 @@ export class GraphNode extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.node) return svg``;
 
     const props = this.getRenderProps();

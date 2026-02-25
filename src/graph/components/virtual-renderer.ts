@@ -14,7 +14,15 @@
 import type { NodePosition } from '@shared/schemas';
 import type { GraphNode } from '@shared/schemas/graph.schema';
 import { calculateViewportBounds, isCircleInViewport } from '@ui/utils/viewport';
-import { css, html, LitElement, type PropertyValues, svg } from 'lit';
+import {
+  type CSSResultGroup,
+  css,
+  html,
+  LitElement,
+  type PropertyValues,
+  svg,
+  type TemplateResult,
+} from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 export interface VirtualRenderConfig {
@@ -74,7 +82,7 @@ export class GraphVirtualRenderer extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: contents;
     }
@@ -147,7 +155,14 @@ export class GraphVirtualRenderer extends LitElement {
   /**
    * Get statistics about virtual rendering efficiency
    */
-  getVirtualRenderingStats() {
+  getVirtualRenderingStats(): {
+    totalNodes: number;
+    visibleNodes: number;
+    culledNodes: number;
+    cullingRatio: number;
+    percentageCulled: number;
+    renderCount: number;
+  } {
     return {
       totalNodes: this.nodes.length,
       visibleNodes: this.visibleNodeIds.size,
@@ -162,7 +177,7 @@ export class GraphVirtualRenderer extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     // Only render visible nodes
     const visibleNodes = this.nodes.filter((node) => this.visibleNodeIds.has(node.id));
 

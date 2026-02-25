@@ -10,7 +10,7 @@ import type { ClusterPosition, NodePosition } from '@shared/schemas/simulation.s
 // Node Positions
 // ========================================
 
-export const mockNodePositions = new Map<string, NodePosition>([
+export const mockNodePositions: Map<string, NodePosition> = new Map<string, NodePosition>([
   // MainApp cluster nodes
   [
     'app-main',
@@ -152,7 +152,7 @@ export const mockNodePositions = new Map<string, NodePosition>([
 // Cluster Positions
 // ========================================
 
-export const mockClusterPositions = new Map<string, ClusterPosition>([
+export const mockClusterPositions: Map<string, ClusterPosition> = new Map<string, ClusterPosition>([
   [
     'main-app',
     {

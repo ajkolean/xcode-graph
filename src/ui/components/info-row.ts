@@ -12,7 +12,7 @@
  * @slot - Default slot for complex value content (overrides value prop)
  */
 
-import { css, html, LitElement } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphInfoRow extends LitElement {
@@ -42,7 +42,7 @@ export class GraphInfoRow extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
       align-items: center;
@@ -66,7 +66,7 @@ export class GraphInfoRow extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <span class="label">${this.label}:</span>
       <span class="value">

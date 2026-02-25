@@ -21,6 +21,9 @@ importers:
       '@zag-js/utils':
         specifier: 1.34.1
         version: 1.34.1
+      '@zag-js/vanilla':
+        specifier: ^1.34.1
+        version: 1.34.1
       d3-force:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1071,6 +1074,9 @@ packages:
 
   '@zag-js/utils@1.34.1':
     resolution: {integrity: sha512-XgNTbcxPgNkPEuH/s/WUSU3M1mnO7453P53Wvym3dte+zPmqjwf5VT1FmEw8t6YQDBiBkIEKpUnNwR2x/pmZgg==}
+
+  '@zag-js/vanilla@1.34.1':
+    resolution: {integrity: sha512-hMiIUhbAwB8TuRLGSd9vFeVjA13S5yqrDlgDbA3kOeDdqKilEhHaXuSFS1iid6QXUbGTPOlrdh0VLJRtA8OnVQ==}
 
   accepts@1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
@@ -3668,6 +3674,13 @@ snapshots:
       csstype: 3.2.3
 
   '@zag-js/utils@1.34.1': {}
+
+  '@zag-js/vanilla@1.34.1':
+    dependencies:
+      '@zag-js/core': 1.34.1
+      '@zag-js/store': 1.34.1
+      '@zag-js/types': 1.34.1
+      '@zag-js/utils': 1.34.1
 
   accepts@1.3.8:
     dependencies:

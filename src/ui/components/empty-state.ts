@@ -12,7 +12,7 @@
  * @fires clear-filters - Dispatched when clear button is clicked
  */
 
-import { css, html, LitElement, svg } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphEmptyState extends LitElement {
@@ -30,7 +30,7 @@ export class GraphEmptyState extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       padding: var(--spacing-xl) var(--spacing-md);
@@ -173,7 +173,7 @@ export class GraphEmptyState extends LitElement {
     `;
   }
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <div class="icon-container">
         ${this.renderSearchIcon()}

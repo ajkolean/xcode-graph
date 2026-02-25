@@ -7,7 +7,7 @@
  * @module machines/sidebar
  */
 
-import { createMachine, type MachineSchema } from '@zag-js/core';
+import { createMachine, type Machine, type MachineSchema } from '@zag-js/core';
 
 // ==================== Type Definitions ====================
 
@@ -104,7 +104,7 @@ interface SidebarMachineSchema extends MachineSchema {
  * service.send({ type: 'SELECT_NODE', nodeId: 'node-1' });
  * ```
  */
-export const sidebarMachine = createMachine<SidebarMachineSchema>({
+export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<SidebarMachineSchema>({
   /**
    * Initialize machine props with defaults
    */

@@ -17,7 +17,7 @@
  */
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { css, html, LitElement, svg } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export class GraphCollapsedSidebar extends LitElement {
@@ -59,7 +59,7 @@ export class GraphCollapsedSidebar extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
       flex: 1;
@@ -212,7 +212,7 @@ export class GraphCollapsedSidebar extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     const showProductTypesBadge = this.nodeTypesFilterSize < (this.typeCounts?.size || 0);
     const showPlatformsBadge = this.platformsFilterSize < (this.platformCounts?.size || 0);
     const showProjectsBadge = this.projectsFilterSize < (this.projectCounts?.size || 0);

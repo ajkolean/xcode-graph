@@ -25,7 +25,14 @@
 
 import type { AppError } from '@shared/schemas/error.schema';
 import { ErrorSeverity } from '@shared/schemas/error.schema';
-import { css, html, LitElement, type PropertyValues } from 'lit';
+import {
+  type CSSResultGroup,
+  css,
+  html,
+  LitElement,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 // ==================== Severity Icons ====================
@@ -61,7 +68,7 @@ export class GraphErrorToast extends LitElement {
   // Styles
   // ========================================
 
-  static override readonly styles = css`
+  static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
       max-width: 400px;
@@ -244,7 +251,7 @@ export class GraphErrorToast extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult | null {
     if (!this.error) {
       return null;
     }

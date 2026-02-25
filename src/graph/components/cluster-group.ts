@@ -29,13 +29,13 @@ import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/grap
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
-import { html, LitElement } from 'lit';
+import { html, LitElement, type PropertyDeclarations, type TemplateResult } from 'lit';
 import './cluster-card';
 import './graph-edges';
 import './graph-node';
 
 export class GraphClusterGroup extends LitElement {
-  static override readonly properties = {
+  static override readonly properties: PropertyDeclarations = {
     cluster: { attribute: false },
     clusterPosition: { attribute: false },
     nodes: { attribute: false },
@@ -55,7 +55,7 @@ export class GraphClusterGroup extends LitElement {
   };
 
   // No Shadow DOM for SVG
-  protected override createRenderRoot() {
+  protected override createRenderRoot(): this {
     return this;
   }
 
@@ -190,7 +190,7 @@ export class GraphClusterGroup extends LitElement {
   // Render
   // ========================================
 
-  override render() {
+  override render(): TemplateResult {
     if (!this.cluster || !this.clusterPosition) return html``;
 
     const clusterPositionsMap = new Map([[this.cluster.id, this.clusterPosition]]);
