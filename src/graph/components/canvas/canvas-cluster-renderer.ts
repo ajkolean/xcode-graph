@@ -1,8 +1,8 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { generateColor } from '@ui/utils/color-generator';
-import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import type { ViewportBounds } from '@ui/utils/viewport';
+import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 
 export interface ClusterRenderContext {
   ctx: CanvasRenderingContext2D;

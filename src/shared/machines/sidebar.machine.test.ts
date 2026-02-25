@@ -61,18 +61,6 @@ describe('sidebarMachine', () => {
 
       ctx.cleanup();
     });
-
-    it('should initialize with no selections', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      expect(ctx.getContext('selectedNodeId')).toBeNull();
-      expect(ctx.getContext('selectedClusterId')).toBeNull();
-
-      ctx.cleanup();
-    });
   });
 
   // ==================== State Transition Tests ====================
@@ -134,36 +122,6 @@ describe('sidebarMachine', () => {
       ctx.cleanup();
     });
 
-    it('should expand and select node when SELECT_NODE sent in collapsed state', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar', defaultCollapsed: true },
-      });
-
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
-
-      expect(ctx.getState()).toBe('expanded');
-      expect(ctx.getContext('selectedNodeId')).toBe('node-1');
-      expect(ctx.getContext('activeTab')).toBe('nodeDetails');
-
-      ctx.cleanup();
-    });
-
-    it('should expand and select cluster when SELECT_CLUSTER sent in collapsed state', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar', defaultCollapsed: true },
-      });
-
-      await ctx.sendAndWait({ type: 'SELECT_CLUSTER', clusterId: 'cluster-1' });
-
-      expect(ctx.getState()).toBe('expanded');
-      expect(ctx.getContext('selectedClusterId')).toBe('cluster-1');
-      expect(ctx.getContext('activeTab')).toBe('clusterDetails');
-
-      ctx.cleanup();
-    });
-
     it('should expand and show section when EXPAND_TO_SECTION sent in collapsed state', async () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
@@ -192,132 +150,6 @@ describe('sidebarMachine', () => {
   // ==================== Context Update Tests ====================
 
   describe('context updates', () => {
-    it('should update selectedNodeId when SELECT_NODE is sent', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-123' });
-
-      expect(ctx.getContext('selectedNodeId')).toBe('node-123');
-
-      ctx.cleanup();
-    });
-
-    it('should clear selectedClusterId when SELECT_NODE is sent', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      // First select a cluster
-      await ctx.sendAndWait({ type: 'SELECT_CLUSTER', clusterId: 'cluster-1' });
-      expect(ctx.getContext('selectedClusterId')).toBe('cluster-1');
-
-      // Then select a node
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
-
-      expect(ctx.getContext('selectedNodeId')).toBe('node-1');
-      expect(ctx.getContext('selectedClusterId')).toBeNull();
-
-      ctx.cleanup();
-    });
-
-    it('should update selectedClusterId when SELECT_CLUSTER is sent', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      await ctx.sendAndWait({ type: 'SELECT_CLUSTER', clusterId: 'cluster-456' });
-
-      expect(ctx.getContext('selectedClusterId')).toBe('cluster-456');
-
-      ctx.cleanup();
-    });
-
-    it('should clear selectedNodeId when SELECT_CLUSTER is sent', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      // First select a node
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
-      expect(ctx.getContext('selectedNodeId')).toBe('node-1');
-
-      // Then select a cluster
-      await ctx.sendAndWait({ type: 'SELECT_CLUSTER', clusterId: 'cluster-1' });
-
-      expect(ctx.getContext('selectedClusterId')).toBe('cluster-1');
-      expect(ctx.getContext('selectedNodeId')).toBeNull();
-
-      ctx.cleanup();
-    });
-
-    it('should clear both selections when CLEAR_SELECTION is sent', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      // Set up selections
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
-
-      // Clear selections
-      await ctx.sendAndWait({ type: 'CLEAR_SELECTION' });
-
-      expect(ctx.getContext('selectedNodeId')).toBeNull();
-      expect(ctx.getContext('selectedClusterId')).toBeNull();
-
-      ctx.cleanup();
-    });
-
-    it('should switch to nodeDetails tab when SELECT_NODE is sent', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
-
-      expect(ctx.getContext('activeTab')).toBe('nodeDetails');
-
-      ctx.cleanup();
-    });
-
-    it('should switch to clusterDetails tab when SELECT_CLUSTER is sent', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      await ctx.sendAndWait({ type: 'SELECT_CLUSTER', clusterId: 'cluster-1' });
-
-      expect(ctx.getContext('activeTab')).toBe('clusterDetails');
-
-      ctx.cleanup();
-    });
-
-    it('should switch to filters tab when CLEAR_SELECTION is sent', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      // First select a node
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
-      expect(ctx.getContext('activeTab')).toBe('nodeDetails');
-
-      // Clear selection
-      await ctx.sendAndWait({ type: 'CLEAR_SELECTION' });
-
-      expect(ctx.getContext('activeTab')).toBe('filters');
-
-      ctx.cleanup();
-    });
-
     it('should switch tab when SWITCH_TAB is sent', async () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
@@ -477,24 +309,6 @@ describe('sidebarMachine', () => {
   // ==================== Event Handling Tests ====================
 
   describe('event handling', () => {
-    it('should handle multiple SELECT_NODE events', async () => {
-      const ctx = createMachineTestContext({
-        machine: sidebarMachine,
-        props: { id: 'test-sidebar' },
-      });
-
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
-      expect(ctx.getContext('selectedNodeId')).toBe('node-1');
-
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-2' });
-      expect(ctx.getContext('selectedNodeId')).toBe('node-2');
-
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-3' });
-      expect(ctx.getContext('selectedNodeId')).toBe('node-3');
-
-      ctx.cleanup();
-    });
-
     it('should handle multiple TOGGLE_SECTION events for different sections', async () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
@@ -533,21 +347,17 @@ describe('sidebarMachine', () => {
       ctx.cleanup();
     });
 
-    it('should handle EXPAND_TO_SECTION clearing selections', async () => {
+    it('should handle EXPAND_TO_SECTION switching to filters', async () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
         props: { id: 'test-sidebar' },
       });
 
-      // Select a node first
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
-      expect(ctx.getContext('selectedNodeId')).toBe('node-1');
+      await ctx.sendAndWait({ type: 'SWITCH_TAB', tab: 'nodeDetails' });
+      expect(ctx.getContext('activeTab')).toBe('nodeDetails');
 
-      // Expand to a section should clear selections
       await ctx.sendAndWait({ type: 'EXPAND_TO_SECTION', section: 'platforms' });
 
-      expect(ctx.getContext('selectedNodeId')).toBeNull();
-      expect(ctx.getContext('selectedClusterId')).toBeNull();
       expect(ctx.getContext('activeTab')).toBe('filters');
 
       ctx.cleanup();
@@ -560,17 +370,18 @@ describe('sidebarMachine', () => {
       });
 
       // Complex sequence of operations
-      await ctx.sendAndWait({ type: 'SELECT_NODE', nodeId: 'node-1' });
+      await ctx.sendAndWait({ type: 'SWITCH_TAB', tab: 'nodeDetails' });
       await ctx.sendAndWait({ type: 'TOGGLE_SECTION', section: 'platforms' });
       await ctx.sendAndWait({ type: 'COLLAPSE' });
-      await ctx.sendAndWait({ type: 'SELECT_CLUSTER', clusterId: 'cluster-1' });
+      await ctx.sendAndWait({ type: 'EXPAND' });
       await ctx.sendAndWait({ type: 'TOGGLE_SECTION', section: 'projects' });
 
       // Verify final state
       expect(ctx.getState()).toBe('expanded');
-      expect(ctx.getContext('selectedNodeId')).toBeNull();
-      expect(ctx.getContext('selectedClusterId')).toBe('cluster-1');
-      expect(ctx.getContext('activeTab')).toBe('clusterDetails');
+      expect(ctx.getContext('activeTab')).toBe('nodeDetails');
+      const sections = ctx.getContext('expandedSections');
+      expect(sections.platforms).toBe(false);
+      expect(sections.projects).toBe(false);
 
       ctx.cleanup();
     });

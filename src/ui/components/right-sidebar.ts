@@ -32,6 +32,7 @@ import './node-details-panel';
 import './cluster-details-panel';
 import './clear-filters-button';
 import './search-bar';
+import type { FilterItem } from './filter-section';
 import './filter-section';
 import './empty-state';
 import './stats-card';
@@ -58,13 +59,6 @@ import {
   setSearchQuery,
   zoom,
 } from '@shared/signals/index';
-
-/** Filter item for filter sections */
-interface FilterItem {
-  key: string;
-  count: number;
-  color: string;
-}
 
 /** Grouped filter items for all filter sections */
 interface FilterItemsGroup {

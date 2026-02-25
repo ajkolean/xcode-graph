@@ -47,8 +47,10 @@ export { applyGraphFilters } from './graph-filters';
 // ==================== Graph Traversal ====================
 
 export {
+  buildAdjacency,
   computeTransitiveDependencies,
   type TransitiveResult,
+  traverseGraph,
 } from './traversal';
 
 // Physics utilities removed - D3 handles force simulation

@@ -9,6 +9,7 @@
 
 import type { FilterState } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { buildAdjacency, traverseGraph } from './traversal';
 
 // ==================== Type Definitions ====================
 
@@ -113,35 +114,23 @@ export function computeNodeDependencies(
     (e) => e.target === node.id && nodeMap.has(e.source),
   ).length;
 
-  // Transitive counts via BFS on unfiltered edges
-  const outgoing = new Map<string, string[]>();
-  const incoming = new Map<string, string[]>();
-  for (const edge of edges) {
-    if (!outgoing.has(edge.source)) outgoing.set(edge.source, []);
-    outgoing.get(edge.source)!.push(edge.target);
-    if (!incoming.has(edge.target)) incoming.set(edge.target, []);
-    incoming.get(edge.target)!.push(edge.source);
-  }
+  // Transitive counts using shared traversal utility
+  const { outgoing, incoming } = buildAdjacency(edges);
 
-  const bfs = (startId: string, adjacency: Map<string, string[]>): number => {
-    const visited = new Set<string>();
-    const queue = adjacency.get(startId) ?? [];
-    for (const id of queue) visited.add(id);
-    let i = 0;
-    while (i < queue.length) {
-      for (const next of adjacency.get(queue[i]!) ?? []) {
-        if (!visited.has(next)) {
-          visited.add(next);
-          queue.push(next);
-        }
-      }
-      i++;
-    }
-    return visited.size;
-  };
+  const depsResult = traverseGraph(
+    node.id,
+    (id) => outgoing.get(id) ?? [],
+    (current, neighbor) => `${current}->${neighbor}`,
+  );
+  // Subtract 1 to exclude the start node itself
+  const transitiveDependencyCount = depsResult.nodes.size - 1;
 
-  const transitiveDependencyCount = bfs(node.id, outgoing);
-  const transitiveDependentCount = bfs(node.id, incoming);
+  const dependentsResult = traverseGraph(
+    node.id,
+    (id) => incoming.get(id) ?? [],
+    (current, neighbor) => `${neighbor}->${current}`,
+  );
+  const transitiveDependentCount = dependentsResult.nodes.size - 1;
 
   const depCount = dependencies.length;
   const depsCount = dependents.length;

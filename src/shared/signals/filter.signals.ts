@@ -9,14 +9,15 @@
 
 import { Signal, signal } from '@lit-labs/signals';
 import type { FilterState } from '@shared/schemas/app.schema';
+import { NODE_TYPE_VALUES, ORIGIN_VALUES, PLATFORM_VALUES } from '@shared/schemas/graph.schema';
 
 // ==================== Default Values ====================
 
 /** Default filter configuration - show everything */
 export const DEFAULT_FILTERS: FilterState = {
-  nodeTypes: new Set(['app', 'framework', 'library', 'test-unit', 'test-ui', 'cli', 'package']),
-  platforms: new Set(['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS']),
-  origins: new Set(['local', 'external']),
+  nodeTypes: new Set<string>(NODE_TYPE_VALUES),
+  platforms: new Set<string>(PLATFORM_VALUES),
+  origins: new Set<string>(ORIGIN_VALUES),
   projects: new Set<string>(),
   packages: new Set<string>(),
 };
@@ -47,9 +48,9 @@ export const hasActiveFilters: Signal.Computed<boolean> = new Signal.Computed(()
   const projects = allProjects.get();
   const packages = allPackages.get();
 
-  const allTypes = 7; // Total node types
-  const allPlatforms = 5;
-  const allOrigins = 2;
+  const allTypes = NODE_TYPE_VALUES.length;
+  const allPlatforms = PLATFORM_VALUES.length;
+  const allOrigins = ORIGIN_VALUES.length;
   const projectCount = projects.size || f.projects.size;
   const packageCount = packages.size || f.packages.size;
 

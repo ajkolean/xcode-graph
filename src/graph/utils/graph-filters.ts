@@ -5,6 +5,7 @@
 
 import type { FilterState } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { matchesSearch } from './visibility';
 
 function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
   if (!filters.nodeTypes.has(node.type)) return false;
@@ -18,17 +19,6 @@ function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
   if (node.type === 'package' && !filters.packages.has(node.name)) return false;
 
   return true;
-}
-
-function matchesSearch(node: GraphNode, normalizedQuery: string): boolean {
-  if (!normalizedQuery) return true;
-
-  const matchesName = node.name.toLowerCase().includes(normalizedQuery);
-  const matchesProject = node.project?.toLowerCase().includes(normalizedQuery);
-  const matchesPackage =
-    node.type === 'package' && node.name.toLowerCase().includes(normalizedQuery);
-
-  return !!(matchesName || matchesProject || matchesPackage);
 }
 
 export function applyGraphFilters(

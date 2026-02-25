@@ -204,10 +204,7 @@ export class GraphEdges extends LitElement {
    * Determines whether an edge should be visible based on cluster context.
    * Returns false if the edge should be filtered out.
    */
-  private isEdgeVisibleForCluster(
-    sourceClusterId: string,
-    targetClusterId: string,
-  ): boolean {
+  private isEdgeVisibleForCluster(sourceClusterId: string, targetClusterId: string): boolean {
     if (this.clusterId) {
       return sourceClusterId === this.clusterId && targetClusterId === this.clusterId;
     }
@@ -262,7 +259,13 @@ export class GraphEdges extends LitElement {
       this.selectedNode &&
       (edge.source === this.selectedNode.id || edge.target === this.selectedNode.id);
     const isFocused = this.hoveredNode === edge.source || this.hoveredNode === edge.target;
-    const opacity = this.computeEdgeFinalOpacity(edge, viewMode, sourceClusterId, targetClusterId, hoveredClusterId);
+    const opacity = this.computeEdgeFinalOpacity(
+      edge,
+      viewMode,
+      sourceClusterId,
+      targetClusterId,
+      hoveredClusterId,
+    );
 
     return html`
       <graph-edge

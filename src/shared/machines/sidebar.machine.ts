@@ -2,7 +2,7 @@
  * Sidebar State Machine
  *
  * Manages the right sidebar UI state using Zag-js state machine patterns.
- * Handles expand/collapse, tab switching, section accordion, and selection tracking.
+ * Handles expand/collapse, tab switching, and section accordion.
  *
  * @module machines/sidebar
  */
@@ -43,28 +43,16 @@ interface SidebarMachineSchema extends MachineSchema {
   context: {
     activeTab: SidebarTab;
     expandedSections: Record<SidebarSection, boolean>;
-    selectedNodeId: string | null;
-    selectedClusterId: string | null;
   };
   state: 'collapsed' | 'expanded';
   event:
     | { type: 'TOGGLE' }
     | { type: 'EXPAND' }
     | { type: 'COLLAPSE' }
-    | { type: 'SELECT_NODE'; nodeId: string }
-    | { type: 'SELECT_CLUSTER'; clusterId: string }
-    | { type: 'CLEAR_SELECTION' }
     | { type: 'SWITCH_TAB'; tab: SidebarTab }
     | { type: 'TOGGLE_SECTION'; section: SidebarSection }
     | { type: 'EXPAND_TO_SECTION'; section: SidebarSection };
   action:
-    | 'setSelectedNode'
-    | 'setSelectedCluster'
-    | 'clearSelectedNode'
-    | 'clearSelectedCluster'
-    | 'clearSelections'
-    | 'switchToNodeDetails'
-    | 'switchToClusterDetails'
     | 'switchToFilters'
     | 'switchTab'
     | 'toggleSection'
@@ -80,18 +68,15 @@ interface SidebarMachineSchema extends MachineSchema {
  * A Zag-js state machine managing the sidebar UI with two states:
  *
  * **States:**
- * - `collapsed`: Sidebar is hidden, can expand on toggle or selection
+ * - `collapsed`: Sidebar is hidden, can expand on toggle
  * - `expanded`: Sidebar is visible, shows active tab content
  *
  * **Context:**
  * - `activeTab`: Current visible tab (nodeDetails, clusterDetails, filters)
  * - `expandedSections`: Which accordion sections are open
- * - `selectedNodeId`: Currently selected node (if any)
- * - `selectedClusterId`: Currently selected cluster (if any)
  *
  * **Events:**
  * - `TOGGLE/EXPAND/COLLAPSE`: Control sidebar visibility
- * - `SELECT_NODE/SELECT_CLUSTER`: Selection triggers tab switch
  * - `SWITCH_TAB`: Manual tab change
  * - `TOGGLE_SECTION/EXPAND_TO_SECTION`: Accordion control
  *
@@ -101,7 +86,7 @@ interface SidebarMachineSchema extends MachineSchema {
  *   context: { defaultCollapsed: false },
  * });
  * service.start();
- * service.send({ type: 'SELECT_NODE', nodeId: 'node-1' });
+ * service.send({ type: 'SWITCH_TAB', tab: 'filters' });
  * ```
  */
 export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<SidebarMachineSchema>({
@@ -129,12 +114,6 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
           packages: true,
         },
       })),
-      selectedNodeId: bindable<string | null>(() => ({
-        defaultValue: null,
-      })),
-      selectedClusterId: bindable<string | null>(() => ({
-        defaultValue: null,
-      })),
     };
   },
 
@@ -153,7 +132,6 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
      *
      * Transitions to expanded on:
      * - TOGGLE/EXPAND events
-     * - SELECT_NODE/SELECT_CLUSTER (auto-expands to show details)
      * - EXPAND_TO_SECTION (auto-expands and shows filter section)
      */
     collapsed: {
@@ -163,15 +141,7 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
         EXPAND: { target: 'expanded' },
         EXPAND_TO_SECTION: {
           target: 'expanded',
-          actions: ['expandSection', 'clearSelections', 'switchToFilters'],
-        },
-        SELECT_NODE: {
-          target: 'expanded',
-          actions: ['setSelectedNode', 'clearSelectedCluster', 'switchToNodeDetails'],
-        },
-        SELECT_CLUSTER: {
-          target: 'expanded',
-          actions: ['setSelectedCluster', 'clearSelectedNode', 'switchToClusterDetails'],
+          actions: ['expandSection', 'switchToFilters'],
         },
       },
     },
@@ -181,7 +151,6 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
      *
      * Handles:
      * - TOGGLE/COLLAPSE to hide
-     * - Selection events (node/cluster)
      * - Tab switching
      * - Section accordion control
      */
@@ -190,15 +159,6 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
       on: {
         TOGGLE: { target: 'collapsed' },
         COLLAPSE: { target: 'collapsed' },
-        SELECT_NODE: {
-          actions: ['setSelectedNode', 'clearSelectedCluster', 'switchToNodeDetails'],
-        },
-        SELECT_CLUSTER: {
-          actions: ['setSelectedCluster', 'clearSelectedNode', 'switchToClusterDetails'],
-        },
-        CLEAR_SELECTION: {
-          actions: ['clearSelections', 'switchToFilters'],
-        },
         SWITCH_TAB: {
           actions: ['switchTab'],
         },
@@ -206,7 +166,7 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
           actions: ['toggleSection'],
         },
         EXPAND_TO_SECTION: {
-          actions: ['expandSection', 'clearSelections', 'switchToFilters'],
+          actions: ['expandSection', 'switchToFilters'],
         },
       },
     },
@@ -216,39 +176,6 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
 
   implementations: {
     actions: {
-      /** Store the selected node ID in context */
-      setSelectedNode: ({ context, event }) => {
-        if (event.type === 'SELECT_NODE') {
-          context.set('selectedNodeId', event.nodeId);
-        }
-      },
-      /** Store the selected cluster ID in context */
-      setSelectedCluster: ({ context, event }) => {
-        if (event.type === 'SELECT_CLUSTER') {
-          context.set('selectedClusterId', event.clusterId);
-        }
-      },
-      /** Clear selected node ID */
-      clearSelectedNode: ({ context }) => {
-        context.set('selectedNodeId', null);
-      },
-      /** Clear selected cluster ID */
-      clearSelectedCluster: ({ context }) => {
-        context.set('selectedClusterId', null);
-      },
-      /** Clear both node and cluster selections */
-      clearSelections: ({ context }) => {
-        context.set('selectedNodeId', null);
-        context.set('selectedClusterId', null);
-      },
-      /** Switch to node details tab */
-      switchToNodeDetails: ({ context }) => {
-        context.set('activeTab', 'nodeDetails');
-      },
-      /** Switch to cluster details tab */
-      switchToClusterDetails: ({ context }) => {
-        context.set('activeTab', 'clusterDetails');
-      },
       /** Switch to filters tab */
       switchToFilters: ({ context }) => {
         context.set('activeTab', 'filters');

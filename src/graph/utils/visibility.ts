@@ -8,6 +8,7 @@
  */
 
 import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/graph.schema';
+import { getConnectedNodes } from './connections';
 
 // ==================== Search Matching ====================
 
@@ -49,18 +50,8 @@ export function getConnectedNodeIds(
 ): Set<string> {
   if (!selectedNode) return new Set();
 
-  const connected = new Set<string>();
+  const connected = getConnectedNodes(selectedNode.id, edges);
   connected.add(selectedNode.id);
-
-  edges.forEach((edge) => {
-    if (edge.source === selectedNode.id) {
-      connected.add(edge.target);
-    }
-    if (edge.target === selectedNode.id) {
-      connected.add(edge.source);
-    }
-  });
-
   return connected;
 }
 

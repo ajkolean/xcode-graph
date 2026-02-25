@@ -111,7 +111,7 @@ class TransitiveCache {
 // Singleton cache instance
 const transitiveCache = new TransitiveCache();
 
-function buildAdjacency(edges: GraphEdge[]) {
+export function buildAdjacency(edges: GraphEdge[]) {
   const outgoing = new Map<string, string[]>();
   const incoming = new Map<string, string[]>();
 
@@ -134,7 +134,7 @@ function buildAdjacency(edges: GraphEdge[]) {
  * @param getEdgeKey - Function to construct edge key from current and neighbor IDs
  * @returns Traversal result with visited nodes, edges, depths, and max depth
  */
-function traverseGraph(
+export function traverseGraph(
   startId: string,
   getNeighbors: (id: string) => string[],
   getEdgeKey: (currentId: string, neighborId: string) => string,
