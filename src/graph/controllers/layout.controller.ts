@@ -21,7 +21,6 @@ import { groupIntoClusters } from '@graph/layout/cluster-grouping';
 import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { layoutDimension } from '@shared/signals/index';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import { computeHierarchicalLayout } from '@/graph/layout';
 
@@ -61,7 +60,6 @@ export class LayoutController implements ReactiveController {
   private cachedResult: LayoutResult | null = null;
   private cachedNodes: GraphNode[] = [];
   private cachedEdges: GraphEdge[] = [];
-  private cachedDimension: '2d' | '3d' = '2d';
 
   // Loading state
   public isComputing = false;
@@ -118,7 +116,6 @@ export class LayoutController implements ReactiveController {
       });
 
       // Step 3: Compute hierarchical layout positions using ELK (Async)
-      // Pass the current dimension from the signal for 2D/3D layout
       const {
         clusterPositions: initialClusterPos,
         nodePositions: initialNodePos,
@@ -128,9 +125,7 @@ export class LayoutController implements ReactiveController {
         sccSizes,
         clusterEdges,
         routedEdges,
-      } = await computeHierarchicalLayout(nodes, edges, analyzedClusters, {
-        dimension: layoutDimension.get(),
-      });
+      } = await computeHierarchicalLayout(nodes, edges, analyzedClusters);
 
       // Step 4: Add velocity properties for physics simulation
       const nodePositions = new Map<string, NodePosition>();
@@ -183,9 +178,7 @@ export class LayoutController implements ReactiveController {
   // ========================================
 
   private isSameInput(nodes: GraphNode[], edges: GraphEdge[]): boolean {
-    const currentDimension = layoutDimension.get();
     return (
-      currentDimension === this.cachedDimension &&
       nodes.length === this.cachedNodes.length &&
       edges.length === this.cachedEdges.length &&
       nodes === this.cachedNodes &&
@@ -197,7 +190,6 @@ export class LayoutController implements ReactiveController {
     this.cachedResult = result;
     this.cachedNodes = nodes;
     this.cachedEdges = edges;
-    this.cachedDimension = layoutDimension.get();
   }
 
   // ========================================

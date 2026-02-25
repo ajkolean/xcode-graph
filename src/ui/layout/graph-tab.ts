@@ -40,12 +40,10 @@ import {
 import {
   baseZoom,
   enableAnimation,
-  layoutDimension,
   previewFilter,
   searchQuery,
   setZoom,
   toggleAnimation,
-  toggleLayoutDimension,
   zoom,
   zoomIn,
   zoomOut,
@@ -154,12 +152,6 @@ export class GraphTab extends SignalWatcher(LitElement) {
     toggleAnimation();
   }
 
-  private handleToggleDimension() {
-    toggleLayoutDimension();
-    // Trigger layout recompute with new dimension
-    this.canvasElement?.recomputeLayout();
-  }
-
   private handleZoomChange(e: CustomEvent) {
     setZoom(e.detail);
   }
@@ -205,12 +197,10 @@ export class GraphTab extends SignalWatcher(LitElement) {
               .nodeCount=${this.displayNodes.length}
               .edgeCount=${this.displayEdges.length}
               ?enable-animation=${enableAnimation.get()}
-              .layoutDimension=${layoutDimension.get()}
               @zoom-in=${this.handleZoomIn}
               @zoom-out=${this.handleZoomOut}
               @zoom-reset=${this.handleZoomReset}
               @toggle-animation=${this.handleToggleAnimation}
-              @toggle-dimension=${this.handleToggleDimension}
             ></graph-controls>
 
             <graph-canvas

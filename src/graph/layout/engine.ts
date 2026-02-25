@@ -69,13 +69,7 @@ export async function computeHierarchicalLayout(
       // (Micro layout is already centered at 0,0)
       nodePositions.set(nodeId, {
         ...relPos,
-        x: relPos.x, // Store relative for rendering if needed, or absolute?
-        // Existing renderer expects RELATIVE to cluster in `x`/`y` if `clusterPositions` is used.
-        // Let's verify `GraphCanvas`.
-        // GraphCanvas: `worldX = clusterPos.x + nodePos.x`
-        // So we just store relative x/y.
         clusterId: cluster.id,
-        z: opts.getNodeZOffset ? opts.getNodeZOffset(nodeId) : 0,
       });
     }
 

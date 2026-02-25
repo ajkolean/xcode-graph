@@ -1,16 +1,9 @@
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type * as d3Force2D from 'd3-force';
-import type * as d3Force3D from 'd3-force-3d';
 
 // ============================================================================
 // Core Layout Types
 // ============================================================================
-
-/** Layout dimension: 2D or 3D */
-export type LayoutDimension = '2d' | '3d';
-
-/** Type for selecting 2D or 3D force module */
-export type D3ForceModule = typeof d3Force2D | typeof d3Force3D;
 
 /** Interface for simulation nodes */
 export interface SimNode extends d3Force2D.SimulationNodeDatum {
@@ -18,10 +11,8 @@ export interface SimNode extends d3Force2D.SimulationNodeDatum {
   clusterId?: string;
   x: number;
   y: number;
-  z?: number;
   vx: number;
   vy: number;
-  vz?: number;
 }
 
 /** Interface for simulation links */

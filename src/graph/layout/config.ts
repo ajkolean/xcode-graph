@@ -41,12 +41,6 @@ export const DEFAULT_CONFIG = {
   // Simulation
   iterations: 300,
 
-  // 3D-specific
-  initialZSpread: 400,
-  zCenterStrength: 0.02,
-  zStratumStrength: 0.18,
-  zFanInStrength: 0.16,
-
   // Cluster sizing
   minClusterSize: 60,
   clusterNodeSpacing: 12,
@@ -68,11 +62,6 @@ export const DEFAULT_CONFIG = {
   clusterBoundingRadius: 1200,
   clusterBoundingStrength: 0.5,
   clusterStrataAlignmentStrength: 0.45,
-
-  // 3D Z-axis role-based refinement (defaults)
-  zRoleStrength: 0.12,
-  zClampMin: -300,
-  zClampMax: 300,
 
   // ==========================================================================
   // ELK Layout Configuration
@@ -151,16 +140,6 @@ export type LayoutConfig = typeof DEFAULT_CONFIG;
  * Options for layout computation
  */
 export interface LayoutOptions {
-  /** Layout dimension: 2D or 3D (default: '2d') */
-  dimension?: '2d' | '3d';
-
   /** Override specific config values */
   configOverrides?: Partial<LayoutConfig>;
-
-  /**
-   * Callback to resolve Z-offset for a node.
-   * Decouples domain-specific "Roles" from the layout engine.
-   * Returns a number (e.g., -100 to +100) or 0.
-   */
-  getNodeZOffset?: (nodeId: string) => number;
 }

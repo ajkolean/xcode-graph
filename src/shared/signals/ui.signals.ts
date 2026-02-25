@@ -9,7 +9,6 @@
 
 import { signal } from '@lit-labs/signals';
 import { type ActiveTab, DEFAULT_ACTIVE_TAB } from '@shared/schemas';
-import type { LayoutDimension } from '@/graph/layout/types';
 
 // ==================== Types ====================
 
@@ -42,9 +41,6 @@ export const enableAnimation = signal<boolean>(false);
 /** Current preview filter for hover effects */
 export const previewFilter = signal<PreviewFilter>(null);
 
-/** Layout dimension: 2D or 3D */
-export const layoutDimension = signal<LayoutDimension>('2d');
-
 // ==================== Reset Utility ====================
 
 /**
@@ -57,5 +53,4 @@ export function resetUISignals(): void {
   baseZoom.set(1);
   enableAnimation.set(false);
   previewFilter.set(null);
-  layoutDimension.set('2d');
 }

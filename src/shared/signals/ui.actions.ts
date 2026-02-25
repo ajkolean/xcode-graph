@@ -8,13 +8,11 @@
  */
 
 import type { ActiveTab } from '@shared/schemas';
-import type { LayoutDimension } from '@/graph/layout/types';
 import { ZOOM_CONFIG } from '@/ui/utils/zoom-constants';
 import {
   activeTab,
   baseZoom,
   enableAnimation,
-  layoutDimension,
   type PreviewFilter,
   previewFilter,
   zoom,
@@ -94,21 +92,4 @@ export function setEnableAnimation(enabled: boolean): void {
  */
 export function setPreviewFilter(preview: PreviewFilter): void {
   previewFilter.set(preview);
-}
-
-// ==================== Layout Dimension Actions ====================
-
-/**
- * Toggle between 2D and 3D layout
- */
-export function toggleLayoutDimension(): void {
-  layoutDimension.set(layoutDimension.get() === '2d' ? '3d' : '2d');
-}
-
-/**
- * Set layout dimension explicitly
- * @param dimension - The layout dimension ('2d' or '3d')
- */
-export function setLayoutDimension(dimension: LayoutDimension): void {
-  layoutDimension.set(dimension);
 }
