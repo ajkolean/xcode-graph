@@ -57,8 +57,8 @@ function getNodeWorldPosition(
 function isNodeDimmed(
   node: GraphNode,
   isSelected: boolean,
-  isConnected: boolean | null,
-  isChainActive: boolean | null,
+  isConnected: boolean | GraphNode | null,
+  isChainActive: boolean | GraphNode | null,
   clusterDim: boolean | '' | null,
   rc: NodeRenderContext,
 ): boolean {
@@ -343,7 +343,7 @@ function renderSingleNode(
   }
 }
 
-export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds) {
+export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
   const { ctx, nodes, edges, selectedNode, viewMode, nodeWeights } = rc;
   const connectedNodes = selectedNode
     ? getConnectedNodes(selectedNode.id, edges)

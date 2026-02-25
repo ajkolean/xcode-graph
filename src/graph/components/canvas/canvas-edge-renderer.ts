@@ -368,7 +368,7 @@ function renderSingleEdge(
   rc.ctx.lineDashOffset = 0;
 }
 
-export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds) {
+export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): void {
   const { ctx, edges, selectedNode, viewMode, layout, transitiveDeps, transitiveDependents } = rc;
   const selectedNodeId = selectedNode?.id;
 

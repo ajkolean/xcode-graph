@@ -97,8 +97,6 @@ export class GraphEdges extends LitElement {
       }
       this.nodeToEdgesCache.get(edge.target)!.add(edgeKey);
     }
-
-    this.edgeCacheVersion++;
   }
 
   // ========================================

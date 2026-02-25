@@ -101,13 +101,15 @@ function extractBuildSettings(settings: RawSettings | undefined): BuildSettings 
   const result: BuildSettings = {};
 
   // Swift version
-  const swiftVersion = base.SWIFT_VERSION;
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const swiftVersion = base['SWIFT_VERSION'];
   if (swiftVersion && typeof swiftVersion === 'string') {
     result.swiftVersion = swiftVersion;
   }
 
   // Compilation conditions (from SWIFT_ACTIVE_COMPILATION_CONDITIONS)
-  const conditions = base.SWIFT_ACTIVE_COMPILATION_CONDITIONS as string[] | string | undefined;
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as string[] | string | undefined;
   if (conditions) {
     if (Array.isArray(conditions)) {
       result.compilationConditions = conditions.map(String);
@@ -117,19 +119,22 @@ function extractBuildSettings(settings: RawSettings | undefined): BuildSettings 
   }
 
   // Code signing
-  const codeSign = base.CODE_SIGN_IDENTITY;
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const codeSign = base['CODE_SIGN_IDENTITY'];
   if (codeSign && typeof codeSign === 'string') {
     result.codeSignIdentity = codeSign;
   }
 
   // Development team
-  const devTeam = base.DEVELOPMENT_TEAM;
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const devTeam = base['DEVELOPMENT_TEAM'];
   if (devTeam && typeof devTeam === 'string') {
     result.developmentTeam = devTeam;
   }
 
   // Provisioning profile
-  const profile = base.PROVISIONING_PROFILE_SPECIFIER;
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const profile = base['PROVISIONING_PROFILE_SPECIFIER'];
   if (profile && typeof profile === 'string') {
     result.provisioningProfile = profile;
   }

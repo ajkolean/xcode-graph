@@ -111,7 +111,10 @@ class TransitiveCache {
 // Singleton cache instance
 const transitiveCache = new TransitiveCache();
 
-export function buildAdjacency(edges: GraphEdge[]) {
+export function buildAdjacency(edges: GraphEdge[]): {
+  outgoing: Map<string, string[]>;
+  incoming: Map<string, string[]>;
+} {
   const outgoing = new Map<string, string[]>();
   const incoming = new Map<string, string[]>();
 
@@ -123,7 +126,7 @@ export function buildAdjacency(edges: GraphEdge[]) {
     incoming.get(edge.target)!.push(edge.source);
   }
 
-  return { outgoing, incoming };
+  return { outgoing: outgoing, incoming: incoming };
 }
 
 /**

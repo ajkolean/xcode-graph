@@ -91,7 +91,7 @@ function drawClusterLabels(
   ctx.fillText(`${nodeCount} targets`, cx, cy - radius + 4);
 }
 
-export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds) {
+export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds): void {
   const { ctx, layout, zoom, time, selectedCluster, hoveredCluster, manualClusterPositions } = rc;
   const activeClusterId = selectedCluster || hoveredCluster;
 
