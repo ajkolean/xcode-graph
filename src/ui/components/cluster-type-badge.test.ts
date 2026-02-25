@@ -122,8 +122,8 @@ describe('graph-cluster-type-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('graph-badge') as GraphBadge;
-    // Should use default amber color
-    expect(badge.color).to.equal('#FFA03C');
+    // Should use default orange color
+    expect(badge.color).to.equal('#F59E0B');
   });
 
   // ========================================

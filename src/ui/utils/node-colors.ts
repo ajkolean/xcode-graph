@@ -1,6 +1,6 @@
 /**
  * Utilities for node and project colors
- * Mission Control Theme - Amber/Teal color palette
+ * Noora-aligned palette
  */
 
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
@@ -8,30 +8,30 @@ import { generateColor } from './color-generator';
 
 /**
  * Color mapping for different node types
- * Uses the Mission Control palette with high contrast colors
+ * Uses the Noora palette with high contrast colors
  */
 export const NODE_TYPE_COLORS: Record<string, string> = {
-  // Primary - Amber (apps, main entry points)
-  app: '#FFA03C',
+  // Orange (apps, main entry points) — Noora orange-500
+  app: '#F59E0B',
 
-  // Teal (frameworks, core infrastructure)
-  framework: '#40E0D0',
+  // Azure (frameworks, core infrastructure) — Noora azure-500
+  framework: '#0EA5E9',
 
-  // Green (libraries, utilities)
-  library: '#50DC8C',
+  // Green (libraries, utilities) — Noora green-500
+  library: '#22C55E',
 
-  // Pink/Magenta (tests)
-  'test-unit': '#FF78B4',
-  'test-ui': '#FF78B4',
+  // Pink (tests) — Noora pink-500
+  'test-unit': '#EC4899',
+  'test-ui': '#EC4899',
 
-  // Purple (CLI tools)
-  cli: '#A08CFF',
+  // Blue (CLI tools) — Noora blue-500
+  cli: '#3B82F6',
 
-  // Yellow-orange (packages)
-  package: '#FFC864',
+  // Yellow (packages) — Noora yellow-500
+  package: '#EAB308',
 };
 
-const DEFAULT_NODE_COLOR = '#FFA03C';
+const DEFAULT_NODE_COLOR = '#F59E0B';
 
 /**
  * Gets the color for a node type (static fallback for DOM-based components)

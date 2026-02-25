@@ -14,7 +14,7 @@
  *     x="100"
  *     y="100"
  *     size="24"
- *     color="#FFA03C"
+ *     color="#F59E0B"
  *     is-selected
  *   ></graph-node>
  * </svg>
@@ -350,7 +350,7 @@ export class GraphNode extends LitElement {
     const x = this.x ?? 0;
     const y = this.y ?? 0;
     const size = this.size ?? 12;
-    const color = this.color ?? '#FFA03C';
+    const color = this.color ?? '#F59E0B';
     const zoom = this.zoom ?? 1;
     const isSelected = this.isSelected ?? false;
     const isHovered = this.isHovered ?? false;

@@ -8,7 +8,7 @@
  * ```html
  * <graph-cluster-type-badge
  *   cluster-type="package"
- *   cluster-color="#FFA03C"
+ *   cluster-color="#F59E0B"
  * ></graph-cluster-type-badge>
  * ```
  */
@@ -66,7 +66,7 @@ export class GraphClusterTypeBadge extends LitElement {
   // ========================================
 
   override render() {
-    const color = this.clusterColor || '#FFA03C';
+    const color = this.clusterColor || '#F59E0B';
 
     return html`
       <div class="container">

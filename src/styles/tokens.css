@@ -1,107 +1,107 @@
 /**
- * Design Tokens - "Mission Control" Theme
+ * Design Tokens — Noora-Aligned Theme
  *
- * A distinctive control room / data observatory aesthetic.
- * Amber/teal color scheme, monospace-heavy typography, sharp edges.
+ * Purple/blue color scheme, DM Sans / Inter typography, soft radii.
+ * Aligned with Tuist's Noora design system for native dashboard integration.
  *
  * Available in both Light DOM (:root) and Shadow DOM (:host) contexts
  * for maximum compatibility across React and Lit components.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap");
 
 :where(:root, :host) {
   /* ========================================
-     COLORS - Mission Control Palette
-     Amber primary, teal accent, blue-black backgrounds
+     COLORS — Noora-Aligned Palette
+     Purple primary, blue accent, neutral dark backgrounds
      ======================================== */
 
-  /* Core colors - Deep blue-black for depth */
-  --colors-background: rgba(8, 10, 15, 1);
-  --colors-background-rgb: 8, 10, 15;
+  /* Core colors - Neutral darks */
+  --colors-background: rgba(10, 10, 12, 1);
+  --colors-background-rgb: 10, 10, 12;
   --colors-foreground: rgba(225, 228, 232, 1);
   --colors-foreground-rgb: 225, 228, 232;
 
-  /* Card colors - Subtle gradient feel */
-  --colors-card: rgba(14, 17, 23, 1);
-  --colors-card-rgb: 14, 17, 23;
+  /* Card colors */
+  --colors-card: rgba(18, 18, 20, 1);
+  --colors-card-rgb: 18, 18, 20;
   --colors-card-foreground: rgba(225, 228, 232, 1);
 
   /* Popover colors */
-  --colors-popover: rgba(20, 24, 32, 1);
-  --colors-popover-rgb: 20, 24, 32;
+  --colors-popover: rgba(24, 24, 28, 1);
+  --colors-popover-rgb: 24, 24, 28;
   --colors-popover-foreground: rgba(225, 228, 232, 1);
 
-  /* Primary colors - Amber (control room alerts, active states) */
-  --colors-primary: rgba(255, 160, 60, 1);
-  --colors-primary-rgb: 255, 160, 60;
-  --colors-primary-foreground: rgba(8, 10, 15, 1);
-  --colors-primary-dim: rgba(255, 160, 60, 0.15);
+  /* Primary colors - Purple (Noora purple-500) */
+  --colors-primary: rgba(124, 58, 237, 1);
+  --colors-primary-rgb: 124, 58, 237;
+  --colors-primary-foreground: rgba(253, 253, 253, 1);
+  --colors-primary-dim: rgba(124, 58, 237, 0.15);
 
   /* Secondary colors */
   --colors-secondary: rgba(255, 255, 255, 0.05);
   --colors-secondary-foreground: rgba(225, 228, 232, 1);
 
-  /* Accent colors - Teal (secondary highlights, links) */
-  --colors-accent: rgba(64, 224, 208, 1);
-  --colors-accent-rgb: 64, 224, 208;
-  --colors-accent-foreground: rgba(8, 10, 15, 1);
-  --colors-accent-dim: rgba(64, 224, 208, 0.15);
+  /* Accent colors - Blue (Noora blue-500) */
+  --colors-accent: rgba(59, 130, 246, 1);
+  --colors-accent-rgb: 59, 130, 246;
+  --colors-accent-foreground: rgba(253, 253, 253, 1);
+  --colors-accent-dim: rgba(59, 130, 246, 0.15);
 
   /* Muted colors */
   --colors-muted: rgba(255, 255, 255, 0.04);
   --colors-muted-foreground: rgba(225, 228, 232, 0.5);
   --colors-muted-foreground-rgb: 225, 228, 232;
 
-  /* Destructive colors - Hot red for warnings */
-  --colors-destructive: rgba(255, 80, 80, 1);
-  --colors-destructive-rgb: 255, 80, 80;
+  /* Destructive colors - Red (Noora red-500) */
+  --colors-destructive: rgba(239, 68, 68, 1);
+  --colors-destructive-rgb: 239, 68, 68;
   --colors-destructive-foreground: rgba(253, 253, 253, 1);
 
-  /* Success color */
-  --colors-success: rgba(80, 220, 140, 1);
-  --colors-success-rgb: 80, 220, 140;
+  /* Success color (Noora green-500) */
+  --colors-success: rgba(34, 197, 94, 1);
+  --colors-success-rgb: 34, 197, 94;
 
-  /* Warning colors */
+  /* Warning colors (Noora orange-500) */
   --colors-warning: rgba(245, 158, 11, 1);
   --colors-warning-rgb: 245, 158, 11;
-  --colors-warning-foreground: rgba(8, 10, 15, 1);
+  --colors-warning-foreground: rgba(10, 10, 12, 1);
   --colors-warning-muted: rgba(245, 158, 11, 0.15);
 
-  /* Info colors */
-  --colors-info: rgba(59, 130, 246, 1);
-  --colors-info-rgb: 59, 130, 246;
+  /* Info colors (Noora azure-500) */
+  --colors-info: rgba(14, 165, 233, 1);
+  --colors-info-rgb: 14, 165, 233;
   --colors-info-foreground: rgba(253, 253, 253, 1);
 
   /* Border and input */
   --colors-border: rgba(255, 255, 255, 0.06);
-  --colors-border-accent: rgba(255, 160, 60, 0.3);
+  --colors-border-accent: rgba(124, 58, 237, 0.3);
   --colors-input: rgba(255, 255, 255, 0.04);
   --colors-input-background: rgba(255, 255, 255, 0.03);
 
   /* Ring (focus indicator) */
-  --colors-ring: rgba(255, 160, 60, 1);
+  --colors-ring: rgba(124, 58, 237, 1);
 
-  /* Chart colors - Distinct, readable palette */
-  --colors-chart-1: rgba(255, 160, 60, 1);
-  --colors-chart-2: rgba(64, 224, 208, 1);
-  --colors-chart-3: rgba(80, 220, 140, 1);
-  --colors-chart-4: rgba(255, 120, 180, 1);
-  --colors-chart-5: rgba(160, 140, 255, 1);
+  /* Chart colors - Noora chart palette */
+  --colors-chart-1: rgba(124, 58, 237, 1);
+  --colors-chart-2: rgba(59, 130, 246, 1);
+  --colors-chart-3: rgba(34, 197, 94, 1);
+  --colors-chart-4: rgba(236, 72, 153, 1);
+  --colors-chart-5: rgba(245, 158, 11, 1);
 
-  /* Node type colors - Semantic, high contrast */
-  --colors-node-app: rgba(255, 160, 60, 1);
-  --colors-node-framework: rgba(64, 224, 208, 1);
-  --colors-node-library: rgba(80, 220, 140, 1);
-  --colors-node-test: rgba(255, 120, 180, 1);
-  --colors-node-cli: rgba(160, 140, 255, 1);
-  --colors-node-package: rgba(255, 200, 100, 1);
+  /* Node type colors - Noora palette, semantic mapping */
+  --colors-node-app: rgba(245, 158, 11, 1);
+  --colors-node-framework: rgba(14, 165, 233, 1);
+  --colors-node-library: rgba(34, 197, 94, 1);
+  --colors-node-test: rgba(236, 72, 153, 1);
+  --colors-node-cli: rgba(59, 130, 246, 1);
+  --colors-node-package: rgba(234, 179, 8, 1);
 
   /* Canvas rendering colors */
-  --colors-canvas-tooltip-bg: rgba(30, 30, 35, 0.95);
-  --colors-canvas-shadow: rgba(30, 30, 35, 0.9);
-  --colors-canvas-cycle-edge: rgba(255, 100, 50, 0.8);
-  --colors-canvas-cycle-glow: rgba(255, 100, 50, 0.6);
+  --colors-canvas-tooltip-bg: rgba(24, 24, 28, 0.95);
+  --colors-canvas-shadow: rgba(24, 24, 28, 0.9);
+  --colors-canvas-cycle-edge: rgba(239, 68, 68, 0.8);
+  --colors-canvas-cycle-glow: rgba(239, 68, 68, 0.6);
 
   /* Starfield colors */
   --colors-starfield-warm: #f7f1da;
@@ -109,35 +109,36 @@
   --colors-starfield-cool: #d6e0ff;
 
   /* Sidebar colors */
-  --colors-sidebar: rgba(12, 14, 20, 1);
-  --colors-sidebar-rgb: 12, 14, 20;
+  --colors-sidebar: rgba(14, 14, 16, 1);
+  --colors-sidebar-rgb: 14, 14, 16;
   --colors-sidebar-foreground: rgba(225, 228, 232, 1);
-  --colors-sidebar-primary: rgba(255, 160, 60, 1);
-  --colors-sidebar-primary-foreground: rgba(8, 10, 15, 1);
-  --colors-sidebar-accent: rgba(255, 160, 60, 0.12);
+  --colors-sidebar-primary: rgba(124, 58, 237, 1);
+  --colors-sidebar-primary-foreground: rgba(253, 253, 253, 1);
+  --colors-sidebar-accent: rgba(124, 58, 237, 0.12);
   --colors-sidebar-accent-foreground: rgba(225, 228, 232, 1);
   --colors-sidebar-border: rgba(255, 255, 255, 0.04);
-  --colors-sidebar-ring: rgba(255, 160, 60, 1);
+  --colors-sidebar-ring: rgba(124, 58, 237, 1);
 
   /* Glow effects */
-  --colors-glow-primary: rgba(255, 160, 60, 0.4);
-  --colors-glow-accent: rgba(64, 224, 208, 0.4);
+  --colors-glow-primary: rgba(124, 58, 237, 0.4);
+  --colors-glow-accent: rgba(59, 130, 246, 0.4);
 
   /* Semantic colors */
   --colors-white: #ffffff;
   --colors-transparent: transparent;
 
   /* ========================================
-     BORDER RADIUS - Sharp, Brutalist
+     BORDER RADIUS — Noora scale
      ======================================== */
 
   --radii-none: 0;
-  --radii-xs: 1px;
-  --radii-sm: 2px;
-  --radii-md: 3px;
-  --radii-lg: 4px;
-  --radii-xl: 6px;
-  --radii-full: 9999px;
+  --radii-xs: 0.125rem;
+  --radii-sm: 0.25rem;
+  --radii-md: 0.375rem;
+  --radii-lg: 0.5rem;
+  --radii-xl: 0.75rem;
+  --radii-2xl: 1rem;
+  --radii-full: 1000px;
 
   /* ========================================
      BORDER WIDTHS
@@ -149,7 +150,7 @@
   --border-widths-thick: 3px;
 
   /* ========================================
-     TYPOGRAPHY - Technical, Precise
+     TYPOGRAPHY — Noora font stack
      ======================================== */
 
   /* Font sizes (8 tokens) */
@@ -169,10 +170,10 @@
   --font-weights-semibold: 600;
   --font-weights-bold: 700;
 
-  /* Font families - Mission Control stack */
-  --fonts-heading: "JetBrains Mono", "SF Mono", monospace;
-  --fonts-body: "IBM Plex Sans", system-ui, sans-serif;
-  --fonts-mono: "JetBrains Mono", "SF Mono", "Monaco", monospace;
+  /* Font families — Noora stack */
+  --fonts-heading: "DM Sans", sans-serif;
+  --fonts-body: "Inter", system-ui, sans-serif;
+  --fonts-mono: "Geist Mono", "JetBrains Mono", "SF Mono", monospace;
 
   /* Line heights (4 tokens) */
   --line-heights-none: 1;
@@ -211,22 +212,30 @@
   --spacing-xl: var(--spacing-8);
 
   /* ========================================
-     SHADOWS / ELEVATION - Deep, Atmospheric
+     SHADOWS / ELEVATION — Noora multi-layer (dark mode)
      ======================================== */
 
-  --shadows-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadows-sm:
+    0px 1px 1px 0px rgba(0, 0, 0, 0.15),
+    0px 0px 0px 1px rgba(255, 255, 255, 0.06),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.2);
 
   --shadows-md:
-    0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    0px 0px 0px 1px rgba(255, 255, 255, 0.06) inset,
+    0px -1px 0px 0px rgba(255, 255, 255, 0.08) inset,
+    0px 8px 6px 0px rgba(0, 0, 0, 0.15),
+    0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 
   --shadows-lg:
-    0 12px 24px rgba(0, 0, 0, 0.6), 0 6px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px
-    rgba(255, 255, 255, 0.05);
+    0px 0px 0px 1.5px rgba(255, 255, 255, 0.06) inset,
+    0px -1.5px 0px 0px rgba(255, 255, 255, 0.08) inset,
+    0px 4px 8px 0px rgba(0, 0, 0, 0.3),
+    0px 2px 4px 0px rgba(0, 0, 0, 0.2);
 
   /* Glow shadows */
-  --shadows-glow-primary: 0 0 20px rgba(255, 160, 60, 0.3), 0 0 40px rgba(255, 160, 60, 0.15);
+  --shadows-glow-primary: 0 0 20px rgba(124, 58, 237, 0.3), 0 0 40px rgba(124, 58, 237, 0.15);
 
-  --shadows-glow-accent: 0 0 20px rgba(64, 224, 208, 0.3), 0 0 40px rgba(64, 224, 208, 0.15);
+  --shadows-glow-accent: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.15);
 
   /* ========================================
      ANIMATION (8 tokens)
@@ -304,16 +313,16 @@
   );
 
   /* Card gradient */
-  --gradient-card: linear-gradient(135deg, rgba(18, 22, 30, 0.95) 0%, rgba(12, 15, 22, 0.98) 100%);
+  --gradient-card: linear-gradient(135deg, rgba(22, 22, 26, 0.95) 0%, rgba(16, 16, 20, 0.98) 100%);
 
   /* Header gradient */
-  --gradient-header: linear-gradient(180deg, rgba(16, 20, 28, 1) 0%, rgba(12, 15, 22, 0.98) 100%);
+  --gradient-header: linear-gradient(180deg, rgba(20, 20, 24, 1) 0%, rgba(16, 16, 20, 0.98) 100%);
 
   /* Accent left border gradient */
   --gradient-accent-border: linear-gradient(
     180deg,
     var(--colors-primary) 0%,
-    rgba(255, 160, 60, 0.4) 100%
+    rgba(124, 58, 237, 0.4) 100%
   );
 }
 
@@ -373,7 +382,7 @@
   }
 }
 
-/* New Mission Control animations */
+/* Entrance animations */
 
 @keyframes fadeInUp {
   from {
@@ -409,20 +418,20 @@
 @keyframes glowPulse {
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(255, 160, 60, 0.2);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 160, 60, 0.4);
+    box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
   }
 }
 
 @keyframes borderGlow {
   0%,
   100% {
-    border-color: rgba(255, 160, 60, 0.3);
+    border-color: rgba(124, 58, 237, 0.3);
   }
   50% {
-    border-color: rgba(255, 160, 60, 0.6);
+    border-color: rgba(124, 58, 237, 0.6);
   }
 }
 
