@@ -53,7 +53,10 @@ export function getBaseNodeSize(type: string): number {
  * Each node's weight = total number of transitive dependencies.
  * O(n + e) time complexity, called once when graph data changes.
  */
-export function computeNodeWeights(nodes: GraphNode[], edges: GraphEdge[]): Map<string, number> {
+function buildAdjacencyData(
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+): { outgoing: Map<string, string[]>; inDegree: Map<string, number> } {
   const outgoing = new Map<string, string[]>();
   const inDegree = new Map<string, number>();
 
@@ -67,7 +70,10 @@ export function computeNodeWeights(nodes: GraphNode[], edges: GraphEdge[]): Map<
     inDegree.set(edge.target, (inDegree.get(edge.target) ?? 0) + 1);
   }
 
-  // Kahn's topological sort
+  return { outgoing, inDegree };
+}
+
+function topologicalSort(outgoing: Map<string, string[]>, inDegree: Map<string, number>): string[] {
   const queue: string[] = [];
   for (const [id, deg] of inDegree) {
     if (deg === 0) queue.push(id);
@@ -83,6 +89,13 @@ export function computeNodeWeights(nodes: GraphNode[], edges: GraphEdge[]): Map<
       if (newDeg === 0) queue.push(neighbor);
     }
   }
+
+  return topoOrder;
+}
+
+export function computeNodeWeights(nodes: GraphNode[], edges: GraphEdge[]): Map<string, number> {
+  const { outgoing, inDegree } = buildAdjacencyData(nodes, edges);
+  const topoOrder = topologicalSort(outgoing, inDegree);
 
   // Process in reverse topological order (leaves first)
   // weight = sum of (1 + child weight) for each outgoing edge

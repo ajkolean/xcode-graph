@@ -355,9 +355,7 @@ export class GraphVisualization extends LitElement {
           hoveredClusterId: this.hoveredCluster,
           viewMode: this.viewMode ?? 'full',
           ...(this.transitiveDeps ? { transitiveDeps: this.transitiveDeps } : {}),
-          ...(this.transitiveDependents
-            ? { transitiveDependents: this.transitiveDependents }
-            : {}),
+          ...(this.transitiveDependents ? { transitiveDependents: this.transitiveDependents } : {}),
           zoom: this.zoom ?? 1,
         })}
       </g>

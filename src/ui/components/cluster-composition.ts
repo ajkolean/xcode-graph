@@ -77,8 +77,8 @@ export class GraphClusterComposition extends LitElement {
     }
 
     .toggle-icon {
-      width: 16px;
-      height: 16px;
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
       color: var(--colors-muted-foreground);
       transition: transform var(--durations-fast) var(--easings-out);
     }
@@ -129,8 +129,8 @@ export class GraphClusterComposition extends LitElement {
     }
 
     .resource-badge.privacy {
-      background-color: rgba(16, 185, 129, 0.15);
-      color: #10b981;
+      background-color: color-mix(in srgb, var(--colors-success) 15%, transparent);
+      color: var(--colors-success);
     }
 
     .section-divider {

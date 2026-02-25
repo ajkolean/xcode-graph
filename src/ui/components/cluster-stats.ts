@@ -15,23 +15,13 @@
  * ```
  */
 
-import { NodeType } from '@shared/schemas/graph.schema';
+import { getNodeTypeColor } from '@ui/utils/node-colors';
+import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { getPlatformIconPath, PLATFORM_COLOR } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
 import './stats-card';
-
-/** Node type colors and short labels for badges */
-const NODE_TYPE_CONFIG: Record<string, { label: string; color: string }> = {
-  [NodeType.App]: { label: 'App', color: '#10B981' },
-  [NodeType.Framework]: { label: 'Framework', color: '#3B82F6' },
-  [NodeType.Library]: { label: 'Library', color: '#8B5CF6' },
-  [NodeType.TestUnit]: { label: 'Unit Test', color: '#F59E0B' },
-  [NodeType.TestUi]: { label: 'UI Test', color: '#EC4899' },
-  [NodeType.Cli]: { label: 'CLI', color: '#6366F1' },
-  [NodeType.Package]: { label: 'Package', color: '#14B8A6' },
-};
 
 export class GraphClusterStats extends LitElement {
   // ========================================
@@ -148,17 +138,18 @@ export class GraphClusterStats extends LitElement {
         <div class="section-title">Target Breakdown</div>
         <div class="badges-grid">
           ${entries.map(([type, count]) => {
-            const config = NODE_TYPE_CONFIG[type] || { label: type, color: '#6B7280' };
+            const color = getNodeTypeColor(type);
+            const label = getNodeTypeLabel(type);
             return html`
               <span
                 class="type-badge"
                 style="
-                  color: ${config.color};
-                  background-color: ${config.color}15;
-                  border: var(--border-widths-thin) solid ${config.color}30;
+                  color: ${color};
+                  background-color: color-mix(in srgb, ${color} 15%, transparent);
+                  border: var(--border-widths-thin) solid color-mix(in srgb, ${color} 30%, transparent);
                 "
               >
-                <span>${config.label}</span>
+                <span>${label}</span>
                 <span class="type-count">${count}</span>
               </span>
             `;
@@ -195,16 +186,15 @@ export class GraphClusterStats extends LitElement {
               <div class="section-title">Platforms (${platformCount})</div>
               <div class="badges-grid">
                 ${Array.from(this.platforms).map((platform) => {
-                  const color =
-                    PLATFORM_COLOR[platform as keyof typeof PLATFORM_COLOR] || '#6F2CFF';
+                  const color = PLATFORM_COLOR;
                   const iconPath = getPlatformIconPath(platform);
 
                   return html`
                     <div
                       class="platform-badge"
                       style="
-                        background-color: ${color}15;
-                        border-color: ${color}30;
+                        background-color: color-mix(in srgb, ${color} 15%, transparent);
+                        border-color: color-mix(in srgb, ${color} 30%, transparent);
                       "
                     >
                       ${

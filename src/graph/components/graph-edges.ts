@@ -200,6 +200,38 @@ export class GraphEdges extends LitElement {
   // Render
   // ========================================
 
+  /**
+   * Determines whether an edge should be visible based on cluster context.
+   * Returns false if the edge should be filtered out.
+   */
+  private isEdgeVisibleForCluster(
+    sourceClusterId: string,
+    targetClusterId: string,
+  ): boolean {
+    if (this.clusterId) {
+      return sourceClusterId === this.clusterId && targetClusterId === this.clusterId;
+    }
+    return sourceClusterId !== targetClusterId;
+  }
+
+  /**
+   * Computes the final opacity for an edge, considering hover dimming.
+   */
+  private computeEdgeFinalOpacity(
+    edge: GraphEdgeType,
+    viewMode: ViewMode,
+    sourceClusterId: string,
+    targetClusterId: string,
+    hoveredClusterId: string | null,
+  ): number {
+    const baseOpacity = this.getEdgeOpacity(edge, viewMode);
+    if (!hoveredClusterId) return baseOpacity;
+
+    const isConnected =
+      sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId;
+    return isConnected ? baseOpacity : baseOpacity * 0.25;
+  }
+
   private renderEdge(
     edge: GraphEdgeType,
     nodeMap: Map<string, GraphNode>,
@@ -213,19 +245,12 @@ export class GraphEdges extends LitElement {
 
     const sourceClusterId = sourceNode.project || 'External';
     const targetClusterId = targetNode.project || 'External';
-
-    // Filter based on cluster context
-    if (this.clusterId) {
-      if (sourceClusterId !== this.clusterId || targetClusterId !== this.clusterId) return null;
-    } else if (sourceClusterId === targetClusterId) {
-      return null;
-    }
+    if (!this.isEdgeVisibleForCluster(sourceClusterId, targetClusterId)) return null;
 
     const sourcePos = this.finalNodePositions?.get(edge.source);
     const targetPos = this.finalNodePositions?.get(edge.target);
     const sourceCluster = this.clusterPositions?.get(sourceClusterId);
     const targetCluster = this.clusterPositions?.get(targetClusterId);
-
     if (!sourcePos || !targetPos || !sourceCluster || !targetCluster) return null;
 
     const x1 = sourceCluster.x + sourcePos.x;
@@ -237,14 +262,7 @@ export class GraphEdges extends LitElement {
       this.selectedNode &&
       (edge.source === this.selectedNode.id || edge.target === this.selectedNode.id);
     const isFocused = this.hoveredNode === edge.source || this.hoveredNode === edge.target;
-
-    const isConnectedToHoveredCluster =
-      hoveredClusterId &&
-      (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
-
-    const shouldDim = hoveredClusterId && !isConnectedToHoveredCluster;
-    const baseOpacity = this.getEdgeOpacity(edge, viewMode);
-    const opacity = shouldDim ? baseOpacity * 0.25 : baseOpacity;
+    const opacity = this.computeEdgeFinalOpacity(edge, viewMode, sourceClusterId, targetClusterId, hoveredClusterId);
 
     return html`
       <graph-edge

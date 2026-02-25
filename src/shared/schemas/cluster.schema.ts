@@ -8,7 +8,6 @@
  */
 
 import { z } from 'zod';
-import { type ClusterElkOptions, ElkHierarchyHandling } from '@/graph/layout/config';
 import { type GraphNode, GraphNodeSchema, type Origin, OriginSchema } from './graph.schema';
 
 // ==================== Native Enums ====================
@@ -38,6 +37,25 @@ export enum NodeRole {
 export enum ClusterType {
   Project = 'project',
   Package = 'package',
+}
+
+/**
+ * ELK Hierarchy Handling strategy
+ * - INHERIT: Use parent's setting (root defaults to SEPARATE_CHILDREN)
+ * - INCLUDE_CHILDREN: Layout node and all descendants in single run
+ * - SEPARATE_CHILDREN: Each child triggers its own layout run
+ */
+export enum ElkHierarchyHandling {
+  Inherit = 'INHERIT',
+  IncludeChildren = 'INCLUDE_CHILDREN',
+  SeparateChildren = 'SEPARATE_CHILDREN',
+}
+
+/**
+ * ELK-specific layout options that can be set per-cluster
+ */
+export interface ClusterElkOptions {
+  hierarchyHandling?: ElkHierarchyHandling | undefined;
 }
 
 // ==================== Type Definitions ====================

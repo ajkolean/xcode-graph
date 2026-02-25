@@ -898,8 +898,7 @@ function renderClusterNode(
   const isSelectedNode = selectedNode?.id === node.id;
   const isHovered = hoveredNode === node.id;
   const isConnected = selectedNode && connectedNodes.has(node.id);
-  const isSearchMatch =
-    searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
+  const isSearchMatch = searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
 
   const isDimmed =
     (searchQuery && !isSearchMatch) ||

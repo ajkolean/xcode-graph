@@ -82,19 +82,9 @@ interface PortRequirement {
  * 2. For each side of each cluster, distribute ports evenly along the boundary
  * 3. Order ports by edge weight (heavier edges get more central positions)
  */
-export function computeClusterPorts(
+function initializePortRequirements(
   clusterPositions: Map<string, ClusterPosition>,
-  clusterEdges: ClusterEdge[],
-  config: LayoutConfig,
-): Map<string, ClusterPort[]> {
-  const result = new Map<string, ClusterPort[]>();
-
-  // Initialize empty port arrays for each cluster
-  for (const clusterId of clusterPositions.keys()) {
-    result.set(clusterId, []);
-  }
-
-  // Step 1: Collect port requirements per cluster per side
+): Map<string, Map<PortSide, PortRequirement[]>> {
   const portRequirements = new Map<string, Map<PortSide, PortRequirement[]>>();
 
   for (const clusterId of clusterPositions.keys()) {
@@ -109,41 +99,53 @@ export function computeClusterPorts(
     );
   }
 
-  // Process each cluster edge to determine port requirements
+  return portRequirements;
+}
+
+function collectPortRequirements(
+  clusterEdges: ClusterEdge[],
+  clusterPositions: Map<string, ClusterPosition>,
+  portRequirements: Map<string, Map<PortSide, PortRequirement[]>>,
+): void {
   for (const edge of clusterEdges) {
     const sourcePos = clusterPositions.get(edge.source);
     const targetPos = clusterPositions.get(edge.target);
 
     if (!sourcePos || !targetPos) continue;
 
-    // Determine exit side for source cluster
     const exitSide = computePortSide(sourcePos.x, sourcePos.y, targetPos.x, targetPos.y);
-
-    // Add port requirement for source (exit)
-    const sourceReqs = portRequirements.get(edge.source);
-    if (sourceReqs) {
-      sourceReqs.get(exitSide)?.push({
-        clusterId: edge.source,
-        side: exitSide,
-        targetClusterId: edge.target,
-        weight: edge.weight,
-      });
-    }
-
-    // Determine entry side for target cluster (opposite of exit direction from target's perspective)
     const entrySide = getOppositeSide(exitSide);
 
-    // Add port requirement for target (entry)
-    const targetReqs = portRequirements.get(edge.target);
-    if (targetReqs) {
-      targetReqs.get(entrySide)?.push({
-        clusterId: edge.target,
-        side: entrySide,
-        targetClusterId: edge.source,
-        weight: edge.weight,
-      });
-    }
+    portRequirements.get(edge.source)?.get(exitSide)?.push({
+      clusterId: edge.source,
+      side: exitSide,
+      targetClusterId: edge.target,
+      weight: edge.weight,
+    });
+
+    portRequirements.get(edge.target)?.get(entrySide)?.push({
+      clusterId: edge.target,
+      side: entrySide,
+      targetClusterId: edge.source,
+      weight: edge.weight,
+    });
   }
+}
+
+export function computeClusterPorts(
+  clusterPositions: Map<string, ClusterPosition>,
+  clusterEdges: ClusterEdge[],
+  config: LayoutConfig,
+): Map<string, ClusterPort[]> {
+  const result = new Map<string, ClusterPort[]>();
+
+  for (const clusterId of clusterPositions.keys()) {
+    result.set(clusterId, []);
+  }
+
+  // Step 1: Collect port requirements per cluster per side
+  const portRequirements = initializePortRequirements(clusterPositions);
+  collectPortRequirements(clusterEdges, clusterPositions, portRequirements);
 
   // Step 2: Create ports for each cluster side
   for (const [clusterId, sideReqs] of portRequirements) {
@@ -155,13 +157,9 @@ export function computeClusterPorts(
     for (const [side, requirements] of sideReqs) {
       if (requirements.length === 0) continue;
 
-      // Sort by weight (descending) so heavier edges get central positions
       requirements.sort((a, b) => b.weight - a.weight);
-
-      // Limit ports per side
       const limitedReqs = requirements.slice(0, config.maxPortsPerSide);
 
-      // Calculate port positions along the boundary
       const ports = computePortPositionsOnSide(
         clusterId,
         side,

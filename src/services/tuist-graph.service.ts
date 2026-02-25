@@ -147,6 +147,28 @@ const NOTABLE_RESOURCE_PATTERNS = [
   'LaunchScreen',
 ];
 
+function getResourceFilePath(res: unknown): string {
+  const r = res as Record<string, unknown>;
+  if ('file' in r) return (r as { file: { path: string } }).file.path;
+  if ('folderReference' in r)
+    return (r as { folderReference: { path: string } }).folderReference.path;
+  return '';
+}
+
+function collectNotablePatterns(
+  resources: NonNullable<ResourceFileElements['resources']>,
+  notableResources: string[],
+): void {
+  for (const res of resources) {
+    const path = getResourceFilePath(res);
+    for (const pattern of NOTABLE_RESOURCE_PATTERNS) {
+      if (path.includes(pattern) && !notableResources.includes(pattern)) {
+        notableResources.push(pattern);
+      }
+    }
+  }
+}
+
 /** Extract resource metadata from target */
 function extractResourceMetadata(resources: ResourceFileElements | undefined): {
   resourceCount: number;
@@ -155,22 +177,12 @@ function extractResourceMetadata(resources: ResourceFileElements | undefined): {
   const resourceCount = resources?.resources?.length ?? 0;
   const notableResources: string[] = [];
 
-  // Check for privacy manifest
   if (resources?.privacyManifest) {
     notableResources.push('PrivacyInfo.xcprivacy');
   }
 
-  // Check resources for notable files
   if (resources?.resources) {
-    for (const res of resources.resources) {
-      const path =
-        'file' in res ? res.file.path : 'folderReference' in res ? res.folderReference.path : '';
-      for (const pattern of NOTABLE_RESOURCE_PATTERNS) {
-        if (path.includes(pattern) && !notableResources.includes(pattern)) {
-          notableResources.push(pattern);
-        }
-      }
-    }
+    collectNotablePatterns(resources.resources, notableResources);
   }
 
   return { resourceCount, notableResources };

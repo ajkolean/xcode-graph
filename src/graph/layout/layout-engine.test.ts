@@ -151,6 +151,24 @@ describe('computeHierarchicalLayout', () => {
   });
 
   describe('Node Positioning Within Clusters', () => {
+    function assertNodesWithinCluster(
+      cluster: Cluster,
+      result: Awaited<ReturnType<typeof computeHierarchicalLayout>>,
+    ) {
+      const clusterPos = result.clusterPositions.get(cluster.id);
+      if (!clusterPos) return;
+
+      const radius = Math.max(clusterPos.width, clusterPos.height) / 2;
+
+      for (const node of cluster.nodes) {
+        const nodePos = result.nodePositions.get(node.id);
+        if (!nodePos) continue;
+
+        const distFromCenter = Math.sqrt(nodePos.x ** 2 + nodePos.y ** 2);
+        expect(distFromCenter).toBeLessThan(radius + 100);
+      }
+    }
+
     it('should position nodes within their cluster boundaries', async () => {
       const { nodes, edges } = createProjectGraph();
       const clusters = createClustersFromGraph(nodes, edges);
@@ -158,22 +176,7 @@ describe('computeHierarchicalLayout', () => {
       const result = await computeHierarchicalLayout(nodes, edges, clusters);
 
       for (const cluster of clusters) {
-        const clusterPos = result.clusterPositions.get(cluster.id);
-        if (!clusterPos) continue;
-
-        const radius = Math.max(clusterPos.width, clusterPos.height) / 2;
-
-        for (const node of cluster.nodes) {
-          const nodePos = result.nodePositions.get(node.id);
-          if (!nodePos) continue;
-
-          // Node position is relative to cluster center
-          const distFromCenter = Math.sqrt(nodePos.x ** 2 + nodePos.y ** 2);
-
-          // Nodes should be within cluster radius (with some tolerance)
-          // ELK rectangles vs circular approximation - tolerance increased
-          expect(distFromCenter).toBeLessThan(radius + 100);
-        }
+        assertNodesWithinCluster(cluster, result);
       }
     });
   });

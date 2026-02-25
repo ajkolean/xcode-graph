@@ -161,6 +161,80 @@ export class GraphBuildSettings extends LitElement {
   // Render
   // ========================================
 
+  private renderCodeSignSection(): TemplateResult | typeof nothing {
+    if (!this.hasCodeSignSettings) return nothing;
+
+    return html`
+      <div class="code-sign-section">
+        <div class="section-label">Code Signing</div>
+        <div class="info-rows">
+          ${
+            this.settings!.codeSignIdentity
+              ? html`
+                <graph-info-row label="Identity">
+                  <span class="truncated" title=${this.settings!.codeSignIdentity}>
+                    ${this.settings!.codeSignIdentity}
+                  </span>
+                </graph-info-row>
+              `
+              : nothing
+          }
+          ${
+            this.settings!.developmentTeam
+              ? html`
+                <graph-info-row label="Team" value=${this.settings!.developmentTeam}>
+                </graph-info-row>
+              `
+              : nothing
+          }
+          ${
+            this.settings!.provisioningProfile
+              ? html`
+                <graph-info-row label="Profile">
+                  <span class="truncated" title=${this.settings!.provisioningProfile}>
+                    ${this.settings!.provisioningProfile}
+                  </span>
+                </graph-info-row>
+              `
+              : nothing
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  private renderExpandedContent(): TemplateResult {
+    return html`
+      <div class="content">
+        <div class="info-rows">
+          ${
+            this.settings!.swiftVersion
+              ? html`
+                <graph-info-row label="Swift Version" value=${this.settings!.swiftVersion}>
+                </graph-info-row>
+              `
+              : nothing
+          }
+          ${
+            this.settings!.compilationConditions && this.settings!.compilationConditions.length > 0
+              ? html`
+                <graph-info-row label="Conditions">
+                  <div class="conditions">
+                    ${this.settings!.compilationConditions.map(
+                      (condition) => html`<span class="condition-badge">${condition}</span>`,
+                    )}
+                  </div>
+                </graph-info-row>
+              `
+              : nothing
+          }
+        </div>
+
+        ${this.renderCodeSignSection()}
+      </div>
+    `;
+  }
+
   override render(): TemplateResult | typeof nothing {
     if (!this.hasSettings) return nothing;
 
@@ -178,83 +252,7 @@ export class GraphBuildSettings extends LitElement {
         </svg>
       </div>
 
-      ${
-        this.isExpanded
-          ? html`
-            <div class="content">
-              <div class="info-rows">
-                ${
-                  this.settings!.swiftVersion
-                    ? html`
-                      <graph-info-row label="Swift Version" value=${this.settings!.swiftVersion}>
-                      </graph-info-row>
-                    `
-                    : nothing
-                }
-                ${
-                  this.settings!.compilationConditions &&
-                  this.settings!.compilationConditions.length > 0
-                    ? html`
-                      <graph-info-row label="Conditions">
-                        <div class="conditions">
-                          ${this.settings!.compilationConditions.map(
-                            (condition) => html`<span class="condition-badge">${condition}</span>`,
-                          )}
-                        </div>
-                      </graph-info-row>
-                    `
-                    : nothing
-                }
-              </div>
-
-              ${
-                this.hasCodeSignSettings
-                  ? html`
-                    <div class="code-sign-section">
-                      <div class="section-label">Code Signing</div>
-                      <div class="info-rows">
-                        ${
-                          this.settings!.codeSignIdentity
-                            ? html`
-                              <graph-info-row label="Identity">
-                                <span class="truncated" title=${this.settings!.codeSignIdentity}>
-                                  ${this.settings!.codeSignIdentity}
-                                </span>
-                              </graph-info-row>
-                            `
-                            : nothing
-                        }
-                        ${
-                          this.settings!.developmentTeam
-                            ? html`
-                              <graph-info-row label="Team" value=${this.settings!.developmentTeam}>
-                              </graph-info-row>
-                            `
-                            : nothing
-                        }
-                        ${
-                          this.settings!.provisioningProfile
-                            ? html`
-                              <graph-info-row label="Profile">
-                                <span
-                                  class="truncated"
-                                  title=${this.settings!.provisioningProfile}
-                                >
-                                  ${this.settings!.provisioningProfile}
-                                </span>
-                              </graph-info-row>
-                            `
-                            : nothing
-                        }
-                      </div>
-                    </div>
-                  `
-                  : nothing
-              }
-            </div>
-          `
-          : nothing
-      }
+      ${this.isExpanded ? this.renderExpandedContent() : nothing}
     `;
   }
 }

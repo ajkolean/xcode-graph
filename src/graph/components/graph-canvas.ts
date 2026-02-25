@@ -4,7 +4,7 @@ import type { ChainDisplayMode } from '@graph/signals/graph.signals';
 import type { TransitiveResult } from '@graph/utils';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
-import { ViewMode } from '@shared/schemas';
+import { type NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
@@ -325,6 +325,57 @@ export class GraphCanvas extends LitElement {
     this.renderCanvas();
   }
 
+  private hitTestCluster(worldPos: { x: number; y: number }): string | null {
+    for (const cluster of this.layout.clusters) {
+      const layoutPos = this.layout.clusterPositions.get(cluster.id);
+      if (!layoutPos) continue;
+
+      const manualPos = this.manualClusterPositions.get(cluster.id);
+      const cx = manualPos?.x ?? layoutPos.x;
+      const cy = manualPos?.y ?? layoutPos.y;
+      const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
+
+      const dx = worldPos.x - cx;
+      const dy = worldPos.y - cy;
+      if (dx * dx + dy * dy <= radius * radius) {
+        return cluster.id;
+      }
+    }
+    return null;
+  }
+
+  private hitTestNode(worldPos: { x: number; y: number }): GraphNode | null {
+    for (let i = this.nodes.length - 1; i >= 0; i--) {
+      const node = this.nodes[i];
+      if (!node) continue;
+      const layoutPos = this.layout.nodePositions.get(node.id);
+      const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
+
+      if (!layoutPos || !clusterPos) continue;
+
+      const manualClusterPos = this.manualClusterPositions.get(node.project || 'External');
+      const clusterX = manualClusterPos?.x ?? clusterPos.x;
+      const clusterY = manualClusterPos?.y ?? clusterPos.y;
+
+      const manualPos = this.manualNodePositions.get(node.id);
+      const wx = clusterX + (manualPos?.x ?? layoutPos.x);
+      const wy = clusterY + (manualPos?.y ?? layoutPos.y);
+      const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
+
+      const dx = worldPos.x - wx;
+      const dy = worldPos.y - wy;
+
+      if (dx * dx + dy * dy <= size * size) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  private dispatchCanvasEvent(name: string, detail?: unknown) {
+    this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
+  }
+
   private handleCanvasMouseDown = (e: MouseEvent) => {
     this.isDragging = true;
     this.hasMoved = false;
@@ -336,214 +387,108 @@ export class GraphCanvas extends LitElement {
 
     // Check clusters first (if holding shift/cmd, allow cluster drag)
     if (e.shiftKey || e.metaKey) {
-      for (const cluster of this.layout.clusters) {
-        const layoutPos = this.layout.clusterPositions.get(cluster.id);
-        if (!layoutPos) continue;
-
-        const manualPos = this.manualClusterPositions.get(cluster.id);
-        const cx = manualPos?.x ?? layoutPos.x;
-        const cy = manualPos?.y ?? layoutPos.y;
-        const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
-
-        // Circular hit test
-        const dx = worldPos.x - cx;
-        const dy = worldPos.y - cy;
-        if (dx * dx + dy * dy <= radius * radius) {
-          this.draggedClusterId = cluster.id;
-          this.dispatchEvent(
-            new CustomEvent('cluster-select', {
-              detail: { clusterId: cluster.id },
-              bubbles: true,
-              composed: true,
-            }),
-          );
-          this.isDragging = false;
-          return;
-        }
+      const clusterId = this.hitTestCluster(worldPos);
+      if (clusterId) {
+        this.draggedClusterId = clusterId;
+        this.dispatchCanvasEvent('cluster-select', { clusterId });
+        this.isDragging = false;
+        return;
       }
     }
 
     // Check nodes
-    for (let i = this.nodes.length - 1; i >= 0; i--) {
-      const node = this.nodes[i];
-      if (!node) continue;
-      const layoutPos = this.layout.nodePositions.get(node.id);
-      const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
-
-      if (layoutPos && clusterPos) {
-        const manualClusterPos = this.manualClusterPositions.get(node.project || 'External');
-        const clusterX = manualClusterPos?.x ?? clusterPos.x;
-        const clusterY = manualClusterPos?.y ?? clusterPos.y;
-
-        const manualPos = this.manualNodePositions.get(node.id);
-        const wx = clusterX + (manualPos?.x ?? layoutPos.x);
-        const wy = clusterY + (manualPos?.y ?? layoutPos.y);
-        const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
-
-        const dx = worldPos.x - wx;
-        const dy = worldPos.y - wy;
-
-        if (dx * dx + dy * dy <= size * size) {
-          this.draggedNodeId = node.id;
-          // Toggle: clicking already-selected node unselects it
-          const newSelection = this.selectedNode?.id === node.id ? null : node;
-          this.dispatchEvent(
-            new CustomEvent('node-select', {
-              detail: { node: newSelection },
-              bubbles: true,
-              composed: true,
-            }),
-          );
-          this.isDragging = false; // Don't pan if dragging node
-          return;
-        }
-      }
+    const hitNode = this.hitTestNode(worldPos);
+    if (hitNode) {
+      this.draggedNodeId = hitNode.id;
+      const newSelection = this.selectedNode?.id === hitNode.id ? null : hitNode;
+      this.dispatchCanvasEvent('node-select', { node: newSelection });
+      this.isDragging = false;
+      return;
     }
 
     // Check clusters (for selection without dragging)
-    for (const cluster of this.layout.clusters) {
-      const layoutPos = this.layout.clusterPositions.get(cluster.id);
-      if (!layoutPos) continue;
-
-      const manualPos = this.manualClusterPositions.get(cluster.id);
-      const cx = manualPos?.x ?? layoutPos.x;
-      const cy = manualPos?.y ?? layoutPos.y;
-      const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
-
-      // Circular hit test
-      const dx = worldPos.x - cx;
-      const dy = worldPos.y - cy;
-      if (dx * dx + dy * dy <= radius * radius) {
-        this.dispatchEvent(
-          new CustomEvent('cluster-select', {
-            detail: { clusterId: cluster.id },
-            bubbles: true,
-            composed: true,
-          }),
-        );
-        return;
-      }
+    const clusterId = this.hitTestCluster(worldPos);
+    if (clusterId) {
+      this.dispatchCanvasEvent('cluster-select', { clusterId });
+      return;
     }
 
     // Mark that we clicked on empty space - deselection happens in mouseup if we didn't drag
     this.clickedEmptySpace = true;
   };
 
+  private handleDragCluster(worldPos: { x: number; y: number }) {
+    this.hasMoved = true;
+    this.manualClusterPositions.set(this.draggedClusterId!, {
+      x: worldPos.x,
+      y: worldPos.y,
+    });
+  }
+
+  private handleDragNode(worldPos: { x: number; y: number }) {
+    this.hasMoved = true;
+    const dragNode = this.nodes.find((n) => n.id === this.draggedNodeId);
+    if (!dragNode) return;
+
+    const layoutClusterPos = this.layout.clusterPositions.get(dragNode.project || 'External');
+    if (!layoutClusterPos) return;
+
+    const manualClusterPos = this.manualClusterPositions.get(dragNode.project || 'External');
+    const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
+    const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
+
+    this.manualNodePositions.set(dragNode.id, {
+      x: worldPos.x - clusterX,
+      y: worldPos.y - clusterY,
+    });
+  }
+
+  private handlePan(e: MouseEvent) {
+    const dx = e.clientX - this.lastMousePos.x;
+    const dy = e.clientY - this.lastMousePos.y;
+    this.pan = { x: this.pan.x + dx, y: this.pan.y + dy };
+    this.lastMousePos = { x: e.clientX, y: e.clientY };
+    this.hasMoved = true;
+  }
+
+  private handleHoverDetection(worldPos: { x: number; y: number }) {
+    const hitNode = this.hitTestNode(worldPos);
+    const hitNodeId = hitNode?.id ?? null;
+    const hitNodeCluster = hitNode ? hitNode.project || 'External' : null;
+
+    if (hitNodeId !== this.hoveredNode) {
+      this.hoveredNode = hitNodeId;
+      this.dispatchCanvasEvent('node-hover', { nodeId: hitNodeId });
+    }
+
+    const hitClusterId = hitNodeCluster ?? this.hitTestCluster(worldPos);
+
+    if (hitClusterId !== this.hoveredCluster) {
+      this.hoveredCluster = hitClusterId;
+      this.dispatchCanvasEvent('cluster-hover', { clusterId: hitClusterId });
+    }
+  }
+
   private handleCanvasMouseMove = (e: MouseEvent) => {
     const { x, y } = this.getMousePos(e);
     const worldPos = this.screenToWorld(x, y);
 
     if (this.draggedClusterId) {
-      // Dragging entire cluster
-      this.hasMoved = true;
-      this.manualClusterPositions.set(this.draggedClusterId, {
-        x: worldPos.x,
-        y: worldPos.y,
-      });
+      this.handleDragCluster(worldPos);
     } else if (this.draggedNodeId) {
-      // Dragging individual node
-      this.hasMoved = true;
-      const dragNode = this.nodes.find((n) => n.id === this.draggedNodeId);
-      if (dragNode) {
-        const layoutClusterPos = this.layout.clusterPositions.get(dragNode.project || 'External');
-        if (layoutClusterPos) {
-          const manualClusterPos = this.manualClusterPositions.get(dragNode.project || 'External');
-          const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
-          const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
-
-          this.manualNodePositions.set(dragNode.id, {
-            x: worldPos.x - clusterX,
-            y: worldPos.y - clusterY,
-          });
-        }
-      }
+      this.handleDragNode(worldPos);
     } else if (this.isDragging) {
-      const dx = e.clientX - this.lastMousePos.x;
-      const dy = e.clientY - this.lastMousePos.y;
-      this.pan = { x: this.pan.x + dx, y: this.pan.y + dy };
-      this.lastMousePos = { x: e.clientX, y: e.clientY };
-      this.hasMoved = true;
+      this.handlePan(e);
     } else {
-      let hitNodeId: string | null = null;
-      let hitClusterId: string | null = null;
-      let hitNodeCluster: string | null = null;
-
-      for (let i = this.nodes.length - 1; i >= 0; i--) {
-        const node = this.nodes[i];
-        if (!node) continue;
-        const layoutPos = this.layout.nodePositions.get(node.id);
-        const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
-
-        if (layoutPos && clusterPos) {
-          const manualPos = this.manualNodePositions.get(node.id);
-          const wx = clusterPos.x + (manualPos?.x ?? layoutPos.x);
-          const wy = clusterPos.y + (manualPos?.y ?? layoutPos.y);
-          const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
-
-          if ((worldPos.x - wx) ** 2 + (worldPos.y - wy) ** 2 <= size ** 2) {
-            hitNodeId = node.id;
-            hitNodeCluster = node.project || 'External';
-            break;
-          }
-        }
-      }
-
-      if (hitNodeId !== this.hoveredNode) {
-        this.hoveredNode = hitNodeId;
-        this.dispatchEvent(
-          new CustomEvent('node-hover', {
-            detail: { nodeId: hitNodeId },
-            bubbles: true,
-            composed: true,
-          }),
-        );
-      }
-
-      if (hitNodeCluster) {
-        hitClusterId = hitNodeCluster;
-      } else {
-        for (const cluster of this.layout.clusters) {
-          const pos = this.layout.clusterPositions.get(cluster.id);
-          if (!pos) continue;
-
-          const radius = Math.max(pos.width, pos.height) / 2;
-
-          // Circular hit test
-          const dx = worldPos.x - pos.x;
-          const dy = worldPos.y - pos.y;
-          if (dx * dx + dy * dy <= radius * radius) {
-            hitClusterId = cluster.id;
-            break;
-          }
-        }
-      }
-
-      if (hitClusterId !== this.hoveredCluster) {
-        this.hoveredCluster = hitClusterId;
-        this.dispatchEvent(
-          new CustomEvent('cluster-hover', {
-            detail: { clusterId: hitClusterId },
-            bubbles: true,
-            composed: true,
-          }),
-        );
-      }
+      this.handleHoverDetection(worldPos);
     }
   };
 
   private handleCanvasMouseUp = (e?: MouseEvent) => {
     // Deselect only if we clicked on empty space and didn't drag
     if (this.clickedEmptySpace && !this.hasMoved) {
-      this.dispatchEvent(
-        new CustomEvent('node-select', { detail: { node: null }, bubbles: true, composed: true }),
-      );
-      this.dispatchEvent(
-        new CustomEvent('cluster-select', {
-          detail: { clusterId: null },
-          bubbles: true,
-          composed: true,
-        }),
-      );
+      this.dispatchCanvasEvent('node-select', { node: null });
+      this.dispatchCanvasEvent('cluster-select', { clusterId: null });
     }
 
     this.isDragging = false;
@@ -558,23 +503,11 @@ export class GraphCanvas extends LitElement {
     if (e?.type === 'mouseleave') {
       if (this.hoveredNode) {
         this.hoveredNode = null;
-        this.dispatchEvent(
-          new CustomEvent('node-hover', {
-            detail: { nodeId: null },
-            bubbles: true,
-            composed: true,
-          }),
-        );
+        this.dispatchCanvasEvent('node-hover', { nodeId: null });
       }
       if (this.hoveredCluster) {
         this.hoveredCluster = null;
-        this.dispatchEvent(
-          new CustomEvent('cluster-hover', {
-            detail: { clusterId: null },
-            bubbles: true,
-            composed: true,
-          }),
-        );
+        this.dispatchCanvasEvent('cluster-hover', { clusterId: null });
       }
     }
   };
@@ -708,6 +641,80 @@ export class GraphCanvas extends LitElement {
     this.ctx.restore();
   }
 
+  private isClusterInViewport(
+    cx: number,
+    cy: number,
+    radius: number,
+    viewport: ViewportBounds,
+  ): boolean {
+    return !(
+      cx + radius < viewport.minX ||
+      cx - radius > viewport.maxX ||
+      cy + radius < viewport.minY ||
+      cy - radius > viewport.maxY
+    );
+  }
+
+  private drawClusterFillAndBorder(
+    cx: number,
+    cy: number,
+    radius: number,
+    clusterColor: string,
+    isActive: boolean,
+    isSelected: boolean,
+    shouldDim: boolean,
+    clusterType: string,
+  ) {
+    const dimFactor = shouldDim ? 0.3 : 1.0;
+    const borderOpacity = adjustOpacityForZoom(0.5, this.zoom);
+
+    // Draw cluster fill
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    this.ctx.fillStyle = clusterColor;
+    this.ctx.globalAlpha = isActive ? 0.05 : 0.08;
+    this.ctx.fill();
+
+    this.ctx.globalAlpha = dimFactor;
+
+    // Draw cluster border
+    this.ctx.lineWidth = isActive ? 2.5 : 2;
+    this.ctx.strokeStyle = clusterColor;
+    this.ctx.globalAlpha = (isActive ? 0.9 : borderOpacity) * dimFactor;
+    this.ctx.setLineDash(clusterType === 'project' ? [8, 8] : [3, 8]);
+
+    if (isSelected) {
+      this.ctx.lineDashOffset = -this.time / 50;
+    }
+
+    this.ctx.stroke();
+    this.ctx.setLineDash([]);
+    this.ctx.lineDashOffset = 0;
+  }
+
+  private drawClusterLabels(
+    cx: number,
+    cy: number,
+    radius: number,
+    clusterColor: string,
+    isActive: boolean,
+    shouldDim: boolean,
+    name: string,
+    nodeCount: number,
+  ) {
+    const dimFactor = shouldDim ? 0.3 : 1.0;
+
+    this.ctx.globalAlpha = (isActive ? 1 : 0.7) * dimFactor;
+    this.ctx.fillStyle = clusterColor;
+    this.ctx.font = `${isActive ? 600 : 500} 13px var(--fonts-body, sans-serif)`;
+    this.ctx.textAlign = 'center';
+    this.ctx.fillText(name, cx, cy - radius - 12);
+
+    this.ctx.font = `${isActive ? 500 : 400} 11px var(--fonts-body, sans-serif)`;
+    this.ctx.globalAlpha = (isActive ? 0.8 : 0.5) * dimFactor;
+    this.ctx.fillText(`${nodeCount} targets`, cx, cy - radius + 4);
+  }
+
   private renderClusters(viewport: ViewportBounds) {
     const activeClusterId = this.selectedCluster || this.hoveredCluster;
 
@@ -715,75 +722,299 @@ export class GraphCanvas extends LitElement {
       const layoutPos = this.layout.clusterPositions.get(cluster.id);
       if (!layoutPos) continue;
 
-      // Use manual position if cluster was dragged
       const manualPos = this.manualClusterPositions.get(cluster.id);
       const cx = manualPos?.x ?? layoutPos.x;
       const cy = manualPos?.y ?? layoutPos.y;
-
-      // Use circular clusters - radius is half of the larger dimension
       const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
 
-      // Viewport culling with circular bounds
-      if (
-        cx + radius < viewport.minX ||
-        cx - radius > viewport.maxX ||
-        cy + radius < viewport.minY ||
-        cy - radius > viewport.maxY
-      ) {
-        continue;
-      }
+      if (!this.isClusterInViewport(cx, cy, radius, viewport)) continue;
 
       const clusterColor = generateColor(cluster.name, cluster.type);
       const isHighlighted = this.hoveredCluster === cluster.id;
       const isSelected = this.selectedCluster === cluster.id;
       const isActive = isHighlighted || isSelected;
-      const borderOpacity = adjustOpacityForZoom(0.5, this.zoom);
+      const shouldDim = !!(activeClusterId && activeClusterId !== cluster.id);
 
-      const shouldDim = activeClusterId && activeClusterId !== cluster.id;
-
-      this.ctx.globalAlpha = shouldDim ? 0.3 : 1.0;
-
-      // Draw cluster fill
-      this.ctx.beginPath();
-      this.ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      this.ctx.fillStyle = clusterColor;
-      this.ctx.globalAlpha = isActive ? 0.05 : 0.08;
-      this.ctx.fill();
-
-      this.ctx.globalAlpha = shouldDim ? 0.3 : 1.0;
-
-      // Draw cluster border
-      this.ctx.lineWidth = isActive ? 2.5 : 2;
-      this.ctx.strokeStyle = clusterColor;
-      this.ctx.globalAlpha = (isActive ? 0.9 : borderOpacity) * (shouldDim ? 0.3 : 1.0);
-
-      if (cluster.type === 'project') {
-        this.ctx.setLineDash([8, 8]);
-      } else {
-        this.ctx.setLineDash([3, 8]);
-      }
-
-      if (isSelected) {
-        this.ctx.lineDashOffset = -this.time / 50;
-      }
-
-      this.ctx.stroke();
-      this.ctx.setLineDash([]);
-      this.ctx.lineDashOffset = 0;
-
-      // Draw label at top of circle
-      this.ctx.globalAlpha = (isActive ? 1 : 0.7) * (shouldDim ? 0.3 : 1.0);
-      this.ctx.fillStyle = clusterColor;
-      this.ctx.font = `${isActive ? 600 : 500} 13px var(--fonts-body, sans-serif)`;
-      this.ctx.textAlign = 'center';
-      this.ctx.fillText(cluster.name, cx, cy - radius - 12);
-
-      // Draw node count below cluster name
-      this.ctx.font = `${isActive ? 500 : 400} 11px var(--fonts-body, sans-serif)`;
-      this.ctx.globalAlpha = (isActive ? 0.8 : 0.5) * (shouldDim ? 0.3 : 1.0);
-      this.ctx.fillText(`${cluster.nodes.length} targets`, cx, cy - radius + 4);
+      this.drawClusterFillAndBorder(
+        cx,
+        cy,
+        radius,
+        clusterColor,
+        isActive,
+        isSelected,
+        shouldDim,
+        cluster.type,
+      );
+      this.drawClusterLabels(
+        cx,
+        cy,
+        radius,
+        clusterColor,
+        isActive,
+        shouldDim,
+        cluster.name,
+        cluster.nodes.length,
+      );
 
       this.ctx.globalAlpha = 1.0;
+    }
+  }
+
+  private getNodeWorldPosition(node: GraphNode): { x: number; y: number } | null {
+    const layoutPos = this.layout.nodePositions.get(node.id);
+    const layoutClusterPos = this.layout.clusterPositions.get(node.project || 'External');
+    if (!layoutPos || !layoutClusterPos) return null;
+
+    const clusterId = node.project || 'External';
+    const manualClusterPos = this.manualClusterPositions.get(clusterId);
+    const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
+    const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
+
+    const manualPos = this.manualNodePositions.get(node.id);
+    return {
+      x: clusterX + (manualPos?.x ?? layoutPos.x),
+      y: clusterY + (manualPos?.y ?? layoutPos.y),
+    };
+  }
+
+  private isNodeDimmed(
+    node: GraphNode,
+    isSelected: boolean,
+    isConnected: boolean | null,
+    isChainActive: boolean | null,
+    clusterDim: boolean | '' | null,
+  ): boolean {
+    const isSearchMatch =
+      this.searchQuery && node.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+    const matchesPreview =
+      !this.previewFilter ||
+      (this.previewFilter.type === 'nodeType' && node.type === this.previewFilter.value) ||
+      (this.previewFilter.type === 'platform' && node.platform === this.previewFilter.value) ||
+      (this.previewFilter.type === 'origin' && node.origin === this.previewFilter.value) ||
+      (this.previewFilter.type === 'project' && node.project === this.previewFilter.value) ||
+      (this.previewFilter.type === 'package' &&
+        node.type === 'package' &&
+        node.name === this.previewFilter.value);
+
+    return !!(
+      (this.searchQuery && !isSearchMatch) ||
+      (!isChainActive && this.selectedNode && !isSelected && !isConnected) ||
+      (this.previewFilter && !matchesPreview) ||
+      clusterDim
+    );
+  }
+
+  private drawNodeEffects(
+    x: number,
+    y: number,
+    size: number,
+    adjustedColor: string,
+    alpha: number,
+    isSelected: boolean,
+    isCycleNode: boolean,
+    isDimmed: boolean,
+    chainAlpha: number,
+  ) {
+    // Cycle node glow effect
+    if (isCycleNode && !isDimmed && chainAlpha > 0.3) {
+      const pulse = (Math.sin(this.time / 300) + 1) / 2;
+      const glowRadius = size + 6 + pulse * 3;
+
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+      this.ctx.strokeStyle = this.theme.cycleGlowColor;
+      this.ctx.lineWidth = 2;
+      this.ctx.globalAlpha = 0.4 + pulse * 0.3;
+      this.ctx.stroke();
+      this.ctx.globalAlpha = alpha;
+    }
+
+    if (isSelected) {
+      const pulse = (Math.sin(this.time / 200) + 1) / 2;
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, size + 8 + pulse * 4, 0, Math.PI * 2);
+      this.ctx.strokeStyle = adjustedColor;
+      this.ctx.globalAlpha = alpha * 0.3 * (1 - pulse);
+      this.ctx.stroke();
+      this.ctx.globalAlpha = alpha;
+    }
+  }
+
+  private drawNodeIcon(
+    node: GraphNode,
+    x: number,
+    y: number,
+    size: number,
+    adjustedColor: string,
+    isSelected: boolean,
+    isHovered: boolean,
+  ) {
+    if (isHovered || isSelected) {
+      this.ctx.shadowColor = adjustedColor;
+      this.ctx.shadowBlur = 10;
+    } else {
+      this.ctx.shadowColor = 'transparent';
+      this.ctx.shadowBlur = 0;
+    }
+
+    const scale = (size / 12) * (isHovered || isSelected ? 1.08 : 1.0);
+    this.ctx.translate(x, y);
+    this.ctx.scale(scale, scale);
+
+    const path = this.getPathForNode(node);
+    this.ctx.fillStyle = this.theme.tooltipBg;
+    this.ctx.fill(path);
+
+    this.ctx.strokeStyle = adjustedColor;
+    this.ctx.lineWidth = (isSelected ? 2.5 : 2) / scale;
+    this.ctx.stroke(path);
+
+    this.ctx.scale(1 / scale, 1 / scale);
+    this.ctx.translate(-x, -y);
+    this.ctx.shadowBlur = 0;
+  }
+
+  private drawNodeLabel(
+    node: GraphNode,
+    x: number,
+    y: number,
+    size: number,
+    adjustedColor: string,
+    alpha: number,
+    isSelected: boolean,
+    isHovered: boolean,
+    isConnected: boolean | null,
+    isInChain: boolean,
+  ) {
+    const labelText =
+      node.name.length > 20 && !isHovered && !isConnected
+        ? `${node.name.substring(0, 20)}...`
+        : node.name;
+
+    this.ctx.font = `${isSelected ? '600' : isConnected || isInChain ? '500' : '400'} 12px var(--fonts-body, sans-serif)`;
+    this.ctx.textAlign = 'center';
+    this.ctx.fillStyle = adjustedColor;
+
+    this.ctx.globalAlpha = alpha * 0.9;
+    this.ctx.shadowColor = this.theme.shadowColor;
+    this.ctx.shadowBlur = 8;
+    this.ctx.fillText(labelText, x, y + size + 22);
+
+    this.ctx.globalAlpha = alpha;
+    this.ctx.shadowColor = 'transparent';
+    this.ctx.shadowBlur = 0;
+    this.ctx.fillText(labelText, x, y + size + 22);
+  }
+
+  /**
+   * Determines the chain alpha for a node, returning null if the node should be skipped entirely.
+   */
+  private resolveChainAlpha(
+    node: GraphNode,
+    isSelected: boolean,
+    isChainActive: boolean | GraphNode | null,
+  ): number | null {
+    if (!isChainActive) return 1.0;
+
+    const isInDepsChain = this.transitiveDeps?.nodes.has(node.id) ?? false;
+    const isInDependentsChain = this.transitiveDependents?.nodes.has(node.id) ?? false;
+    const isInChain = isSelected || isInDepsChain || isInDependentsChain;
+
+    if (this.chainDisplay === 'direct' && !isInChain) return null;
+    if (this.chainDisplay === 'highlight') {
+      return this.getNodeChainAlpha(node.id, isSelected, isInDepsChain, isInDependentsChain);
+    }
+    return 1.0;
+  }
+
+  /**
+   * Determines whether a label should be shown for this node.
+   */
+  private shouldShowNodeLabel(
+    isHovered: boolean,
+    isSelected: boolean,
+    isConnected: boolean | GraphNode | null,
+    isChainActive: boolean | GraphNode | null,
+    chainAlpha: number,
+    nodeId: string,
+  ): boolean {
+    if (this.zoom >= 0.5 || isHovered || isSelected || isConnected) return true;
+    if (!isChainActive) return false;
+
+    const isInDepsChain = this.transitiveDeps?.nodes.has(nodeId) ?? false;
+    const isInDependentsChain = this.transitiveDependents?.nodes.has(nodeId) ?? false;
+    const isInChain = isSelected || isInDepsChain || isInDependentsChain;
+    return isInChain && chainAlpha > 0.3;
+  }
+
+  /**
+   * Renders a single node onto the canvas, including effects, icon, and label.
+   */
+  private renderSingleNode(
+    node: GraphNode,
+    x: number,
+    y: number,
+    isChainActive: boolean | GraphNode | null,
+    connectedNodes: Set<string>,
+    chainAlpha: number,
+  ) {
+    const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
+    const isHovered = this.hoveredNode === node.id;
+    const isSelected = this.selectedNode?.id === node.id;
+    const isConnected = this.selectedNode && connectedNodes.has(node.id);
+
+    const color = getNodeTypeColorFromTheme(node.type, this.theme);
+    const adjustedColor = adjustColorForZoom(color, this.zoom);
+    const clusterId = node.project || 'External';
+    const clusterDim =
+      (this.hoveredCluster && clusterId !== this.hoveredCluster) ||
+      (this.selectedCluster && clusterId !== this.selectedCluster);
+
+    const isDimmed = this.isNodeDimmed(node, isSelected, isConnected, isChainActive, clusterDim);
+    const alpha = (isDimmed ? 0.3 : 1.0) * chainAlpha;
+    this.ctx.globalAlpha = alpha;
+
+    const isCycleNode = this.layout.cycleNodes?.has(node.id) ?? false;
+    this.drawNodeEffects(
+      x,
+      y,
+      size,
+      adjustedColor,
+      alpha,
+      isSelected,
+      isCycleNode,
+      isDimmed,
+      chainAlpha,
+    );
+    this.drawNodeIcon(node, x, y, size, adjustedColor, isSelected, isHovered);
+
+    const isInChain =
+      (this.transitiveDeps?.nodes.has(node.id) ?? false) ||
+      (this.transitiveDependents?.nodes.has(node.id) ?? false) ||
+      isSelected;
+    if (
+      this.shouldShowNodeLabel(
+        isHovered,
+        isSelected,
+        isConnected,
+        isChainActive,
+        chainAlpha,
+        node.id,
+      )
+    ) {
+      this.drawNodeLabel(
+        node,
+        x,
+        y,
+        size,
+        adjustedColor,
+        alpha,
+        isSelected,
+        isHovered,
+        isConnected,
+        isInChain,
+      );
     }
   }
 
@@ -792,160 +1023,22 @@ export class GraphCanvas extends LitElement {
       ? getConnectedNodes(this.selectedNode.id, this.edges)
       : new Set<string>();
 
-    // Chain mode: focused, dependents, or both with a selected node
     const isChainActive =
       this.selectedNode && this.viewMode !== ViewMode.Full && this.viewMode !== ViewMode.Path;
 
     for (const node of this.nodes) {
-      const layoutPos = this.layout.nodePositions.get(node.id);
-      const layoutClusterPos = this.layout.clusterPositions.get(node.project || 'External');
-      if (!layoutPos || !layoutClusterPos) continue;
+      const pos = this.getNodeWorldPosition(node);
+      if (!pos) continue;
 
-      const clusterId = node.project || 'External';
-      const manualClusterPos = this.manualClusterPositions.get(clusterId);
-      const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
-      const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
-
-      const manualPos = this.manualNodePositions.get(node.id);
-      const x = clusterX + (manualPos?.x ?? layoutPos.x);
-      const y = clusterY + (manualPos?.y ?? layoutPos.y);
-
+      const { x, y } = pos;
       const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
       if (!isCircleInViewport({ x, y }, size, viewport)) continue;
 
-      const isHovered = this.hoveredNode === node.id;
       const isSelected = this.selectedNode?.id === node.id;
-      const isConnected = this.selectedNode && connectedNodes.has(node.id);
+      const chainAlpha = this.resolveChainAlpha(node, isSelected, isChainActive);
+      if (chainAlpha === null) continue;
 
-      // Chain membership
-      const isInDepsChain = this.transitiveDeps?.nodes.has(node.id) ?? false;
-      const isInDependentsChain = this.transitiveDependents?.nodes.has(node.id) ?? false;
-      const isInChain = isSelected || isInDepsChain || isInDependentsChain;
-
-      // Chain-aware alpha
-      let chainAlpha = 1.0;
-      if (isChainActive) {
-        if (this.chainDisplay === 'direct' && !isInChain) {
-          continue; // skip non-chain nodes in direct mode
-        }
-        if (this.chainDisplay === 'highlight') {
-          chainAlpha = this.getNodeChainAlpha(
-            node.id,
-            isSelected,
-            isInDepsChain,
-            isInDependentsChain,
-          );
-        }
-      }
-
-      const color = getNodeTypeColorFromTheme(node.type, this.theme);
-      const adjustedColor = adjustColorForZoom(color, this.zoom);
-
-      const isSearchMatch =
-        this.searchQuery && node.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-      const clusterDim =
-        (this.hoveredCluster && clusterId !== this.hoveredCluster) ||
-        (this.selectedCluster && clusterId !== this.selectedCluster);
-
-      const matchesPreview =
-        !this.previewFilter ||
-        (this.previewFilter.type === 'nodeType' && node.type === this.previewFilter.value) ||
-        (this.previewFilter.type === 'platform' && node.platform === this.previewFilter.value) ||
-        (this.previewFilter.type === 'origin' && node.origin === this.previewFilter.value) ||
-        (this.previewFilter.type === 'project' && node.project === this.previewFilter.value) ||
-        (this.previewFilter.type === 'package' &&
-          node.type === 'package' &&
-          node.name === this.previewFilter.value);
-
-      // In chain mode, selection dimming is handled by chainAlpha
-      const isDimmed =
-        (this.searchQuery && !isSearchMatch) ||
-        (!isChainActive && this.selectedNode && !isSelected && !isConnected) ||
-        (this.previewFilter && !matchesPreview) ||
-        clusterDim;
-
-      const alpha = (isDimmed ? 0.3 : 1.0) * chainAlpha;
-      this.ctx.globalAlpha = alpha;
-
-      // Cycle node glow effect
-      const isCycleNode = this.layout.cycleNodes?.has(node.id) ?? false;
-      if (isCycleNode && !isDimmed && chainAlpha > 0.3) {
-        const pulse = (Math.sin(this.time / 300) + 1) / 2;
-        const glowRadius = size + 6 + pulse * 3;
-
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
-        this.ctx.strokeStyle = this.theme.cycleGlowColor;
-        this.ctx.lineWidth = 2;
-        this.ctx.globalAlpha = 0.4 + pulse * 0.3;
-        this.ctx.stroke();
-        this.ctx.globalAlpha = alpha;
-      }
-
-      if (isSelected) {
-        const pulse = (Math.sin(this.time / 200) + 1) / 2;
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, size + 8 + pulse * 4, 0, Math.PI * 2);
-        this.ctx.strokeStyle = adjustedColor;
-        this.ctx.globalAlpha = alpha * 0.3 * (1 - pulse);
-        this.ctx.stroke();
-        this.ctx.globalAlpha = alpha;
-      }
-
-      if (isHovered || isSelected) {
-        this.ctx.shadowColor = adjustedColor;
-        this.ctx.shadowBlur = 10;
-      } else {
-        this.ctx.shadowColor = 'transparent';
-        this.ctx.shadowBlur = 0;
-      }
-
-      const scale = (size / 12) * (isHovered || isSelected ? 1.08 : 1.0);
-
-      this.ctx.translate(x, y);
-      this.ctx.scale(scale, scale);
-
-      const path = this.getPathForNode(node);
-
-      this.ctx.fillStyle = this.theme.tooltipBg;
-      this.ctx.fill(path);
-
-      this.ctx.strokeStyle = adjustedColor;
-      this.ctx.lineWidth = (isSelected ? 2.5 : 2) / scale;
-      this.ctx.stroke(path);
-
-      this.ctx.scale(1 / scale, 1 / scale);
-      this.ctx.translate(-x, -y);
-
-      this.ctx.shadowBlur = 0;
-
-      // Show label when: zoomed in, hovering, selected, connected, or in visible chain
-      const showLabel =
-        this.zoom >= 0.5 ||
-        isHovered ||
-        isSelected ||
-        isConnected ||
-        (isChainActive && isInChain && chainAlpha > 0.3);
-      if (showLabel) {
-        const labelText =
-          node.name.length > 20 && !isHovered && !isConnected
-            ? `${node.name.substring(0, 20)}...`
-            : node.name;
-
-        this.ctx.font = `${isSelected ? '600' : isConnected || isInChain ? '500' : '400'} 12px var(--fonts-body, sans-serif)`;
-        this.ctx.textAlign = 'center';
-        this.ctx.fillStyle = adjustedColor;
-
-        this.ctx.globalAlpha = alpha * 0.9;
-        this.ctx.shadowColor = this.theme.shadowColor;
-        this.ctx.shadowBlur = 8;
-        this.ctx.fillText(labelText, x, y + size + 22);
-
-        this.ctx.globalAlpha = alpha;
-        this.ctx.shadowColor = 'transparent';
-        this.ctx.shadowBlur = 0;
-        this.ctx.fillText(labelText, x, y + size + 22);
-      }
+      this.renderSingleNode(node, x, y, isChainActive, connectedNodes, chainAlpha);
     }
     this.ctx.globalAlpha = 1.0;
   }
@@ -979,36 +1072,36 @@ export class GraphCanvas extends LitElement {
     return 1.0 - (depth / maxDepth) * 0.6;
   }
 
+  private computeEdgeDepthOpacity(
+    edgeKey: string,
+    chain: { edges: Set<string>; edgeDepths: Map<string, number>; maxDepth: number },
+  ): number {
+    const depth = chain.edgeDepths.get(edgeKey) || 0;
+    const maxDepth = chain.maxDepth || 1;
+    return 1 - (depth / maxDepth) * 0.7;
+  }
+
   private getEdgeOpacity(edge: GraphEdge): number {
     const edgeKey = `${edge.source}->${edge.target}`;
-    const transitiveDeps = this.transitiveDeps;
-    const transitiveDependents = this.transitiveDependents;
+    const { transitiveDeps, transitiveDependents } = this;
 
     const inDepsChain = transitiveDeps?.edges.has(edgeKey);
     const inDependentsChain = transitiveDependents?.edges.has(edgeKey);
 
     if (this.viewMode === 'focused' && inDepsChain && transitiveDeps) {
-      const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
-      const maxDepth = transitiveDeps.maxDepth || 1;
-      return 1 - (depth / maxDepth) * 0.7;
+      return this.computeEdgeDepthOpacity(edgeKey, transitiveDeps);
     }
 
     if (this.viewMode === 'dependents' && inDependentsChain && transitiveDependents) {
-      const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
-      const maxDepth = transitiveDependents.maxDepth || 1;
-      return 1 - (depth / maxDepth) * 0.7;
+      return this.computeEdgeDepthOpacity(edgeKey, transitiveDependents);
     }
 
-    if (this.viewMode === 'both' && (inDepsChain || inDependentsChain)) {
+    if (this.viewMode === 'both') {
       if (inDepsChain && transitiveDeps) {
-        const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
-        const maxDepth = transitiveDeps.maxDepth || 1;
-        return 1 - (depth / maxDepth) * 0.7;
+        return this.computeEdgeDepthOpacity(edgeKey, transitiveDeps);
       }
       if (inDependentsChain && transitiveDependents) {
-        const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
-        const maxDepth = transitiveDependents.maxDepth || 1;
-        return 1 - (depth / maxDepth) * 0.7;
+        return this.computeEdgeDepthOpacity(edgeKey, transitiveDependents);
       }
     }
 
@@ -1057,6 +1150,210 @@ export class GraphCanvas extends LitElement {
     }
   }
 
+  private isCycleEdge(edge: GraphEdge): boolean {
+    const sourceScc = this.layout.nodeSccId?.get(edge.source);
+    const targetScc = this.layout.nodeSccId?.get(edge.target);
+    return (
+      sourceScc !== undefined &&
+      targetScc !== undefined &&
+      sourceScc === targetScc &&
+      (this.layout.sccSizes?.get(sourceScc) ?? 0) > 1
+    );
+  }
+
+  private resolveEdgeColor(
+    sourceNode: GraphNode,
+    targetNode: GraphNode,
+    isHighlighted: boolean,
+    isCycleEdge: boolean,
+  ): string {
+    if (isCycleEdge) return this.theme.cycleEdgeColor;
+
+    const colorNode =
+      isHighlighted && this.selectedNode
+        ? sourceNode.id === this.selectedNode.id
+          ? targetNode
+          : sourceNode
+        : targetNode;
+    const color = getNodeTypeColorFromTheme(colorNode.type, this.theme);
+
+    return isHighlighted ? color : adjustColorForZoom(color, this.zoom);
+  }
+
+  private computeEdgeOpacity(
+    edge: GraphEdge,
+    isHighlighted: boolean,
+    isChainActive: boolean,
+    inChain: boolean,
+    isCycleEdge: boolean,
+  ): number {
+    let opacity = isHighlighted ? 1.0 : 0.1;
+
+    if (isCycleEdge) {
+      opacity = Math.max(opacity, 0.8);
+    }
+
+    if (isChainActive && this.chainDisplay === 'highlight') {
+      if (inChain) {
+        const depthOpacity = this.getEdgeOpacity(edge);
+        opacity = isHighlighted ? 1.0 : depthOpacity * 0.8;
+      } else {
+        opacity = 0.03;
+      }
+    } else {
+      opacity *= this.getEdgeOpacity(edge);
+    }
+
+    return Math.min(1, opacity);
+  }
+
+  private drawRoutedEdgePath(
+    routedEdge: RoutedEdge,
+    sourceLayout: { x: number; y: number },
+    targetLayout: { x: number; y: number },
+    sClusterX: number,
+    sClusterY: number,
+    tClusterX: number,
+    tClusterY: number,
+    sourceNode: GraphNode,
+    targetNode: GraphNode,
+    isHighlighted: boolean,
+  ) {
+    if (isHighlighted) {
+      const otherNode = sourceNode.id === this.selectedNode?.id ? targetNode : sourceNode;
+      this.ctx.strokeStyle = getNodeTypeColorFromTheme(otherNode.type, this.theme);
+      this.ctx.globalAlpha = 0.9;
+    } else {
+      const baseOpacity = 0.15;
+      const targetOpacity = adjustOpacityForZoom(baseOpacity, this.zoom);
+      const gray = Math.round(255 * targetOpacity);
+      this.ctx.strokeStyle = `rgb(${gray}, ${gray}, ${gray})`;
+      this.ctx.globalAlpha = 1.0;
+    }
+
+    const pathString = generatePortRoutedPath(
+      { x: sourceLayout.x, y: sourceLayout.y },
+      { x: routedEdge.sourcePort.x, y: routedEdge.sourcePort.y },
+      { x: routedEdge.targetPort.x, y: routedEdge.targetPort.y },
+      { x: targetLayout.x, y: targetLayout.y },
+      routedEdge.waypoints,
+      { x: sClusterX, y: sClusterY },
+      { x: tClusterX, y: tClusterY },
+    );
+    this.ctx.stroke(new Path2D(pathString));
+  }
+
+  private drawDirectEdgePath(x1: number, y1: number, x2: number, y2: number) {
+    const distance = Math.hypot(x2 - x1, y2 - y1);
+    if (distance > 150) {
+      this.ctx.stroke(new Path2D(generateBezierPath(x1, y1, x2, y2)));
+    } else {
+      this.ctx.beginPath();
+      this.ctx.moveTo(x1, y1);
+      this.ctx.lineTo(x2, y2);
+      this.ctx.stroke();
+    }
+  }
+
+  /**
+   * Resolves the effective cluster position, using manual override if available.
+   */
+  private resolveClusterXY(
+    clusterId: string,
+    layoutPos: { x: number; y: number },
+  ): { x: number; y: number } {
+    const manual = this.manualClusterPositions.get(clusterId);
+    return { x: manual?.x ?? layoutPos.x, y: manual?.y ?? layoutPos.y };
+  }
+
+  /**
+   * Resolves world-space endpoint positions for an edge, accounting for manual overrides.
+   * Returns null if any required layout data is missing.
+   */
+  private resolveEdgeEndpoints(edge: GraphEdge): {
+    sourceNode: GraphNode;
+    targetNode: GraphNode;
+    sourceLayout: NodePosition;
+    targetLayout: NodePosition;
+    sourceClusterId: string;
+    targetClusterId: string;
+    sClusterX: number;
+    sClusterY: number;
+    tClusterX: number;
+    tClusterY: number;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+  } | null {
+    const sourceNode = this.nodes.find((n) => n.id === edge.source);
+    const targetNode = this.nodes.find((n) => n.id === edge.target);
+    if (!sourceNode || !targetNode) return null;
+
+    const sourceLayout = this.layout.nodePositions.get(edge.source);
+    const targetLayout = this.layout.nodePositions.get(edge.target);
+    if (!sourceLayout || !targetLayout) return null;
+
+    const sourceClusterId = sourceNode.project || 'External';
+    const targetClusterId = targetNode.project || 'External';
+    const sClusterLayout = this.layout.clusterPositions.get(sourceClusterId);
+    const tClusterLayout = this.layout.clusterPositions.get(targetClusterId);
+    if (!sClusterLayout || !tClusterLayout) return null;
+
+    const sCluster = this.resolveClusterXY(sourceClusterId, sClusterLayout);
+    const tCluster = this.resolveClusterXY(targetClusterId, tClusterLayout);
+
+    const sManual = this.manualNodePositions.get(edge.source);
+    const tManual = this.manualNodePositions.get(edge.target);
+
+    return {
+      sourceNode, targetNode, sourceLayout, targetLayout,
+      sourceClusterId, targetClusterId,
+      sClusterX: sCluster.x, sClusterY: sCluster.y,
+      tClusterX: tCluster.x, tClusterY: tCluster.y,
+      x1: sCluster.x + (sManual?.x ?? sourceLayout.x),
+      y1: sCluster.y + (sManual?.y ?? sourceLayout.y),
+      x2: tCluster.x + (tManual?.x ?? targetLayout.x),
+      y2: tCluster.y + (tManual?.y ?? targetLayout.y),
+    };
+  }
+
+  /**
+   * Applies visual styling to the canvas context for an edge.
+   */
+  private applyEdgeStyle(
+    edge: GraphEdge,
+    sourceNode: GraphNode,
+    targetNode: GraphNode,
+    isHighlighted: boolean,
+    isChainActive: boolean,
+    inChain: boolean,
+    cycleEdge: boolean,
+    isCrossCluster: boolean,
+  ) {
+    this.ctx.strokeStyle = this.resolveEdgeColor(sourceNode, targetNode, isHighlighted, cycleEdge);
+    this.ctx.globalAlpha = this.computeEdgeOpacity(
+      edge,
+      isHighlighted,
+      isChainActive,
+      inChain,
+      cycleEdge,
+    );
+    this.ctx.lineWidth = (isHighlighted ? 2.5 : cycleEdge ? 2 : 1) / this.zoom;
+    this.ctx.setLineDash(cycleEdge ? [4, 4] : isCrossCluster ? [10, 5] : [4, 2]);
+
+    const animateEdge =
+      isHighlighted || (isChainActive && this.chainDisplay === 'highlight' && inChain);
+    this.ctx.lineDashOffset = animateEdge ? this.time / 20 : 0;
+  }
+
+  /**
+   * Returns true if an intra-cluster edge should be hidden at the current LOD level.
+   */
+  private shouldHideIntraClusterEdge(sourceClusterId: string, isHighlighted: boolean): boolean {
+    return this.zoom < 0.6 && this.hoveredCluster !== sourceClusterId && !isHighlighted;
+  }
+
   private renderSingleNodeEdge(
     edge: GraphEdge,
     viewport: ViewportBounds,
@@ -1065,164 +1362,62 @@ export class GraphCanvas extends LitElement {
     inChain: boolean,
     routedEdgeMap?: Map<string, RoutedEdge>,
   ) {
-    const sourceNode = this.nodes.find((n) => n.id === edge.source);
-    const targetNode = this.nodes.find((n) => n.id === edge.target);
-    if (!sourceNode || !targetNode) return;
+    const endpoints = this.resolveEdgeEndpoints(edge);
+    if (!endpoints) return;
 
-    const sourceLayout = this.layout.nodePositions.get(edge.source);
-    const targetLayout = this.layout.nodePositions.get(edge.target);
-    if (!sourceLayout || !targetLayout) return;
+    const {
+      sourceNode,
+      targetNode,
+      sourceLayout,
+      targetLayout,
+      sourceClusterId,
+      targetClusterId,
+      sClusterX,
+      sClusterY,
+      tClusterX,
+      tClusterY,
+      x1,
+      y1,
+      x2,
+      y2,
+    } = endpoints;
 
-    const sClusterLayout = this.layout.clusterPositions.get(sourceNode.project || 'External');
-    const tClusterLayout = this.layout.clusterPositions.get(targetNode.project || 'External');
-    if (!sClusterLayout || !tClusterLayout) return;
-
-    const sourceClusterId = sourceNode.project || 'External';
-    const targetClusterId = targetNode.project || 'External';
-
-    // LOD: Hide intra-cluster edges when zoomed out (unless hovering that cluster or explicitly highlighted)
-    if (
-      sourceClusterId === targetClusterId &&
-      this.zoom < 0.6 &&
-      this.hoveredCluster !== sourceClusterId &&
-      !isHighlighted
-    ) {
-      return;
-    }
-
-    // Use manual cluster positions if clusters were dragged
-    const sClusterManual = this.manualClusterPositions.get(sourceClusterId);
-    const tClusterManual = this.manualClusterPositions.get(targetClusterId);
-
-    const sClusterX = sClusterManual?.x ?? sClusterLayout.x;
-    const sClusterY = sClusterManual?.y ?? sClusterLayout.y;
-    const tClusterX = tClusterManual?.x ?? tClusterLayout.x;
-    const tClusterY = tClusterManual?.y ?? tClusterLayout.y;
-
-    const sManual = this.manualNodePositions.get(edge.source);
-    const tManual = this.manualNodePositions.get(edge.target);
-
-    const x1 = sClusterX + (sManual?.x ?? sourceLayout.x);
-    const y1 = sClusterY + (sManual?.y ?? sourceLayout.y);
-    const x2 = tClusterX + (tManual?.x ?? targetLayout.x);
-    const y2 = tClusterY + (tManual?.y ?? targetLayout.y);
-
+    const isIntraCluster = sourceClusterId === targetClusterId;
+    if (isIntraCluster && this.shouldHideIntraClusterEdge(sourceClusterId, isHighlighted)) return;
     if (!isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport)) return;
 
-    // Cycle edge detection
-    const sourceScc = this.layout.nodeSccId?.get(edge.source);
-    const targetScc = this.layout.nodeSccId?.get(edge.target);
-    const isCycleEdge =
-      sourceScc !== undefined &&
-      targetScc !== undefined &&
-      sourceScc === targetScc &&
-      (this.layout.sccSizes?.get(sourceScc) ?? 0) > 1;
+    const cycleEdge = this.isCycleEdge(edge);
+    const isCrossCluster = !isIntraCluster;
 
-    // Use the OTHER node's color when highlighted (the one that isn't selected)
-    // This makes each edge match the icon of the node it connects to
-    const colorNode =
-      isHighlighted && this.selectedNode
-        ? sourceNode.id === this.selectedNode.id
-          ? targetNode
-          : sourceNode
-        : targetNode;
-    let color = getNodeTypeColorFromTheme(colorNode.type, this.theme);
+    this.applyEdgeStyle(
+      edge,
+      sourceNode,
+      targetNode,
+      isHighlighted,
+      isChainActive,
+      inChain,
+      cycleEdge,
+      isCrossCluster,
+    );
 
-    // Bypass adjustColorForZoom if highlighted to ensure visibility
-    if (!isHighlighted) {
-      color = adjustColorForZoom(color, this.zoom);
-    }
-
-    if (isCycleEdge) {
-      color = this.theme.cycleEdgeColor;
-    }
-    this.ctx.strokeStyle = color;
-
-    let opacity = isHighlighted ? 1.0 : 0.1;
-
-    if (isCycleEdge) {
-      opacity = Math.max(opacity, 0.8);
-    }
-
-    // Chain-aware edge opacity
-    if (isChainActive && this.chainDisplay === 'highlight') {
-      if (inChain) {
-        // Chain edges: depth-based opacity, boosted visibility
-        const depthOpacity = this.getEdgeOpacity(edge);
-        opacity = isHighlighted ? 1.0 : depthOpacity * 0.8;
-      } else {
-        // Non-chain edges: nearly invisible
-        opacity = 0.03;
-      }
-    } else {
-      opacity *= this.getEdgeOpacity(edge);
-    }
-
-    this.ctx.globalAlpha = Math.min(1, opacity);
-
-    // Scale line width by inverse zoom to maintain screen pixel width
-    const baseWidth = isHighlighted ? 2.5 : isCycleEdge ? 2 : 1;
-    this.ctx.lineWidth = baseWidth / this.zoom;
-
-    const isCrossCluster = sourceClusterId !== targetClusterId;
-    const dashPattern = isCycleEdge ? [4, 4] : isCrossCluster ? [10, 5] : [4, 2];
-    this.ctx.setLineDash(dashPattern);
-    // Positive offset makes dashes flow FROM dependencies INTO the selected node
-    const animateEdge =
-      isHighlighted || (isChainActive && this.chainDisplay === 'highlight' && inChain);
-    this.ctx.lineDashOffset = animateEdge ? this.time / 20 : 0;
-
-    // Check for port-routed path for cross-cluster edges
     const edgeKey = `${edge.source}->${edge.target}`;
     const routedEdge = isCrossCluster ? routedEdgeMap?.get(edgeKey) : undefined;
 
     if (routedEdge) {
-      if (isHighlighted) {
-        // Use the color of the OTHER node (not the selected one)
-        // This makes each edge match the icon of the node it connects to
-        const otherNode = sourceNode.id === this.selectedNode?.id ? targetNode : sourceNode;
-        const edgeColor = getNodeTypeColorFromTheme(otherNode.type, this.theme);
-        this.ctx.strokeStyle = edgeColor;
-        this.ctx.globalAlpha = 0.9;
-      } else {
-        // Use opaque gray instead of alpha to prevent stacking
-        // (multiple edges share the same port-to-port highway, causing overlap)
-        const baseOpacity = 0.15;
-        const targetOpacity = adjustOpacityForZoom(baseOpacity, this.zoom);
-        const gray = Math.round(255 * targetOpacity);
-        this.ctx.strokeStyle = `rgb(${gray}, ${gray}, ${gray})`;
-        this.ctx.globalAlpha = 1.0;
-      }
-
-      // Use port-routed path for cross-cluster edges (2D only for now)
-      const pathString = generatePortRoutedPath(
-        { x: sourceLayout.x, y: sourceLayout.y },
-        { x: routedEdge.sourcePort.x, y: routedEdge.sourcePort.y },
-        { x: routedEdge.targetPort.x, y: routedEdge.targetPort.y },
-        { x: targetLayout.x, y: targetLayout.y },
-        routedEdge.waypoints,
-        { x: sClusterX, y: sClusterY },
-        { x: tClusterX, y: tClusterY },
+      this.drawRoutedEdgePath(
+        routedEdge,
+        sourceLayout,
+        targetLayout,
+        sClusterX,
+        sClusterY,
+        tClusterX,
+        tClusterY,
+        sourceNode,
+        targetNode,
+        isHighlighted,
       );
-      const path = new Path2D(pathString);
-      this.ctx.stroke(path);
     } else if (!isCrossCluster) {
-      // Only render intra-cluster edges with direct bezier
-      // Skip cross-cluster edges without routing data (they'll be shown via port routing)
-      // Fall back to direct bezier
-      const distance = Math.hypot(x2 - x1, y2 - y1);
-      const useBezier = distance > 150;
-
-      if (useBezier) {
-        const pathString = generateBezierPath(x1, y1, x2, y2);
-        const path = new Path2D(pathString);
-        this.ctx.stroke(path);
-      } else {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x1, y1);
-        this.ctx.lineTo(x2, y2);
-        this.ctx.stroke();
-      }
+      this.drawDirectEdgePath(x1, y1, x2, y2);
     }
 
     this.ctx.setLineDash([]);

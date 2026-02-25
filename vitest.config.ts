@@ -18,6 +18,17 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     environment: 'jsdom',
     globals: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      include: ['src/**/*.ts'],
+      exclude: [
+        'src/**/*.test.ts',
+        'src/**/*.d.ts',
+        'src/fixtures/**',
+        'src/vite-env.d.ts',
+      ],
+    },
   },
   resolve: {
     alias: {

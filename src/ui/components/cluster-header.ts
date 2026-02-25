@@ -223,7 +223,7 @@ export class GraphClusterHeader extends LitElement {
         ></graph-badge>
         <graph-badge
           label=${sourceConfig?.label ?? ''}
-          color=${sourceConfig?.color ?? '#6B7280'}
+          color=${sourceConfig?.color ?? 'var(--colors-muted-foreground)'}
           variant="rounded"
           size="sm"
         ></graph-badge>
