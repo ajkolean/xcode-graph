@@ -107,7 +107,7 @@ function extractBuildSettings(settings: RawSettings | undefined): BuildSettings 
   }
 
   // Compilation conditions (from SWIFT_ACTIVE_COMPILATION_CONDITIONS)
-  const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'];
+  const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as string[] | string | undefined;
   if (conditions) {
     if (Array.isArray(conditions)) {
       result.compilationConditions = conditions.map(String);

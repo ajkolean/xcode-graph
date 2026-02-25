@@ -59,6 +59,8 @@ export function computeNodeDependencies(
     dependentCount: number;
     totalDependencyCount: number;
     totalDependentCount: number;
+    transitiveDependencyCount: number;
+    transitiveDependentCount: number;
     isHighFanIn: boolean;
     isHighFanOut: boolean;
     totalConnections: number;
@@ -73,6 +75,8 @@ export function computeNodeDependencies(
         dependentCount: 0,
         totalDependencyCount: 0,
         totalDependentCount: 0,
+        transitiveDependencyCount: 0,
+        transitiveDependentCount: 0,
         isHighFanIn: false,
         isHighFanOut: false,
         totalConnections: 0,
@@ -101,13 +105,43 @@ export function computeNodeDependencies(
     })
     .filter((item): item is NodeWithEdge => item !== null);
 
-  // Total counts (unfiltered)
+  // Total counts (unfiltered direct)
   const totalDependencyCount = edges.filter(
     (e) => e.source === node.id && nodeMap.has(e.target),
   ).length;
   const totalDependentCount = edges.filter(
     (e) => e.target === node.id && nodeMap.has(e.source),
   ).length;
+
+  // Transitive counts via BFS on unfiltered edges
+  const outgoing = new Map<string, string[]>();
+  const incoming = new Map<string, string[]>();
+  for (const edge of edges) {
+    if (!outgoing.has(edge.source)) outgoing.set(edge.source, []);
+    outgoing.get(edge.source)!.push(edge.target);
+    if (!incoming.has(edge.target)) incoming.set(edge.target, []);
+    incoming.get(edge.target)!.push(edge.source);
+  }
+
+  const bfs = (startId: string, adjacency: Map<string, string[]>): number => {
+    const visited = new Set<string>();
+    const queue = adjacency.get(startId) ?? [];
+    for (const id of queue) visited.add(id);
+    let i = 0;
+    while (i < queue.length) {
+      for (const next of adjacency.get(queue[i]) ?? []) {
+        if (!visited.has(next)) {
+          visited.add(next);
+          queue.push(next);
+        }
+      }
+      i++;
+    }
+    return visited.size;
+  };
+
+  const transitiveDependencyCount = bfs(node.id, outgoing);
+  const transitiveDependentCount = bfs(node.id, incoming);
 
   const depCount = dependencies.length;
   const depsCount = dependents.length;
@@ -120,6 +154,8 @@ export function computeNodeDependencies(
       dependentCount: depsCount,
       totalDependencyCount,
       totalDependentCount,
+      transitiveDependencyCount,
+      transitiveDependentCount,
       isHighFanIn: depsCount > 3,
       isHighFanOut: depCount > 3,
       totalConnections: depCount + depsCount,

@@ -48,9 +48,6 @@ export async function computeMacroLayout(
     },
   }));
 
-  // Dynamically calculate width based on AREA heuristic (more stable than sum widths)
-  // Packing efficiency ~60%
-  const _totalArea = children.reduce((sum, c) => sum + (c.width ?? 0) * (c.height ?? 0), 0);
   // Fixed large width to ensure ELK doesn't constrain itself unnecessarily
   const elkWidthHint = 10000;
 
@@ -169,7 +166,6 @@ export async function computeMacroLayout(
 
         // Define gaps explicitly
         const rowGap = 100; // Gap between sub-rows in same band
-        const _bandGap = config.elkLayerSpacing; // Gap between strata bands
 
         // Compute layout using circular bounds for safety
         const rowItems = row.map((n) => ({

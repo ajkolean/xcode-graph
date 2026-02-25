@@ -144,6 +144,8 @@ export class GraphNodeDetailsPanel extends LitElement {
         dependents-count=${metrics.dependentCount}
         total-dependencies-count=${metrics.totalDependencyCount}
         total-dependents-count=${metrics.totalDependentCount}
+        transitive-dependencies-count=${metrics.transitiveDependencyCount}
+        transitive-dependents-count=${metrics.transitiveDependentCount}
         ?is-high-fan-in=${metrics.isHighFanIn}
         ?is-high-fan-out=${metrics.isHighFanOut}
       ></graph-metrics-section>

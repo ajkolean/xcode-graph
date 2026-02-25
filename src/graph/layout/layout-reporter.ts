@@ -149,10 +149,9 @@ function computeBoundingBox(clusters: ClusterPosition[]) {
  */
 export function printClusterTable(result: HierarchicalLayoutResult, strataSpacing = 800): void {
   const clusters = Array.from(result.clusterPositions.entries())
-    .map(([id, pos]) => ({
-      id,
-      stratum: Math.floor(pos.y / strataSpacing),
+    .map(([_id, pos]) => ({
       ...pos,
+      stratum: Math.floor(pos.y / strataSpacing),
     }))
     .sort((a, b) => a.y - b.y || a.x - b.x);
 

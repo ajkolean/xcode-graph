@@ -127,12 +127,6 @@ export function generateWaypointPath(start: Point, waypoints: Point[], end: Poin
       const curr = points[i]!;
       const next = points[i + 1]!;
 
-      // Midpoint before current waypoint
-      const midBefore = {
-        x: (prev.x + curr.x) / 2,
-        y: (prev.y + curr.y) / 2,
-      };
-
       // Midpoint after current waypoint
       const midAfter = {
         x: (curr.x + next.x) / 2,

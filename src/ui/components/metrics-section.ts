@@ -33,6 +33,12 @@ export class GraphMetricsSection extends LitElement {
   @property({ type: Number, attribute: 'total-dependents-count' })
   declare totalDependentsCount: number;
 
+  @property({ type: Number, attribute: 'transitive-dependencies-count' })
+  declare transitiveDependenciesCount: number;
+
+  @property({ type: Number, attribute: 'transitive-dependents-count' })
+  declare transitiveDependentsCount: number;
+
   @property({ type: Boolean, attribute: 'is-high-fan-in' })
   declare isHighFanIn: boolean;
 
@@ -74,13 +80,23 @@ export class GraphMetricsSection extends LitElement {
 
       <div class="grid">
         <graph-stats-card
-          label="Dependencies Out"
+          label="Dependencies"
           value="${this.dependenciesCount}/${this.totalDependenciesCount}"
         ></graph-stats-card>
 
         <graph-stats-card
-          label="Dependencies In"
+          label="Dependents"
           value="${this.dependentsCount}/${this.totalDependentsCount}"
+        ></graph-stats-card>
+
+        <graph-stats-card
+          label="Transitive Deps"
+          value="${this.transitiveDependenciesCount}"
+        ></graph-stats-card>
+
+        <graph-stats-card
+          label="Transitive Dependents"
+          value="${this.transitiveDependentsCount}"
         ></graph-stats-card>
       </div>
     `;

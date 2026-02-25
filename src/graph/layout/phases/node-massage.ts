@@ -62,12 +62,6 @@ export function applyNodeMassage(
     if (node.y > maxY) maxY = node.y;
   }
 
-  // Recalculate size if nodes pushed out
-  // The original size is centered at 0,0, so width = max dimension * 2 usually?
-  // But here we can just take the bounding box size + padding
-  const _currentW = maxX - minX;
-  const _currentH = maxY - minY;
-
   // Ensure we don't shrink below original calculated size (which had "breathing room" logic)
   // but do expand if needed.
   // Actually, let's keep it simple: Expand if bounding box exceeds original size.

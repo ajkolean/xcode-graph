@@ -158,10 +158,10 @@ export class GraphClusterHeader extends LitElement {
 
     // Try to extract a meaningful short path
     const registryMatch = this.clusterPath.match(/\.build\/registry\/downloads\/([^/]+\/[^/]+)/);
-    if (registryMatch) return registryMatch[1];
+    if (registryMatch) return registryMatch[1] ?? '';
 
     const checkoutMatch = this.clusterPath.match(/\.build\/checkouts\/([^/]+)/);
-    if (checkoutMatch) return checkoutMatch[1];
+    if (checkoutMatch) return checkoutMatch[1] ?? '';
 
     // For local paths, show last 2-3 segments
     const segments = this.clusterPath.split('/').filter(Boolean);
@@ -217,8 +217,8 @@ export class GraphClusterHeader extends LitElement {
           size="sm"
         ></graph-badge>
         <graph-badge
-          label=${sourceConfig.label}
-          color=${sourceConfig.color}
+          label=${sourceConfig?.label ?? ''}
+          color=${sourceConfig?.color ?? '#6B7280'}
           variant="rounded"
           size="sm"
         ></graph-badge>

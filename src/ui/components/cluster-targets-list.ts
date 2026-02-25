@@ -25,7 +25,7 @@ import { property } from 'lit/decorators.js';
 import { NodeListEventsMixin } from './node-list-events';
 import './list-item-row';
 
-export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement) {
+export class GraphClusterTargetsList extends NodeListEventsMixin(LitElement as any) {
   // ========================================
   // Properties
   // ========================================

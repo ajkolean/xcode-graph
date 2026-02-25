@@ -19,7 +19,7 @@
 import { type ClusterPosition, type NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { html, LitElement } from 'lit';
+import { html, LitElement, type PropertyValues } from 'lit';
 import './graph-edge';
 
 export class GraphEdges extends LitElement {
@@ -78,6 +78,7 @@ export class GraphEdges extends LitElement {
   // Memoization
   // ========================================
 
+  private edgeCacheVersion = 0;
   private nodeToEdgesCache = new Map<string, Set<string>>();
 
   private buildNodeToEdgesCache() {

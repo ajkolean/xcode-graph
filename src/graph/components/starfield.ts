@@ -133,7 +133,7 @@ export class Starfield {
               : Math.random() < 0.9
                 ? 0
                 : 2 // dim: mostly neutral, rare cool blue
-          ],
+          ] ?? palette[0]!,
       });
     }
 
@@ -168,6 +168,7 @@ export class Starfield {
 
     for (let i = 0; i < count; i++) {
       const star = stars[i];
+      if (!star) continue;
 
       // Parallax: nearer stars (depth → 1) move more with pan.
       const parallaxFactor = star.depth * parallaxIntensity;

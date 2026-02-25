@@ -11,7 +11,8 @@ import type { GraphNode } from '@shared/schemas/graph.schema';
 import type { LitElement } from 'lit';
 
 // Type for the mixin constructor
-type Constructor<T = object> = new (...args: unknown[]) => T;
+// biome-ignore lint/suspicious/noExplicitAny: Mixin constructor requires any[] for rest params
+type Constructor<T = object> = new (...args: any[]) => T;
 
 /**
  * Mixin that adds node list event handling methods

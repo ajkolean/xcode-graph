@@ -177,7 +177,7 @@ export class GraphClusterGroup extends LitElement {
   // ========================================
 
   private get connectedNodes(): Set<string> {
-    return this.selectedNode ? getConnectedNodes(this.selectedNode.id, this.edges) : new Set();
+    return this.selectedNode ? getConnectedNodes(this.selectedNode.id, this.edges ?? []) : new Set();
   }
 
   private get clusterNodes(): GraphNodeType[] {
@@ -271,8 +271,8 @@ export class GraphClusterGroup extends LitElement {
 
             const size = getNodeSize(node, edges);
             const color = getNodeTypeColor(node.type);
-            const x = this.clusterPosition.x + pos.x;
-            const y = this.clusterPosition.y + pos.y;
+            const x = this.clusterPosition!.x + pos.x;
+            const y = this.clusterPosition!.y + pos.y;
 
             return html`
               <graph-node

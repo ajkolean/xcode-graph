@@ -89,6 +89,7 @@ export class GraphFilterView extends LitElement {
     this.filters = {
       nodeTypes: new Set(),
       platforms: new Set(),
+      origins: new Set(),
       projects: new Set(),
       packages: new Set(),
     };
@@ -291,7 +292,7 @@ export class GraphFilterView extends LitElement {
             id="productTypes"
             title="Product Types"
             icon-name="product-types"
-            ?is-expanded=${this.expandedSections.productTypes}
+            ?is-expanded=${this.expandedSections['productTypes']}
             .items=${this.nodeTypeItems}
             .selectedItems=${this.filters.nodeTypes}
             filter-type="nodeType"
@@ -309,7 +310,7 @@ export class GraphFilterView extends LitElement {
             id="platforms"
             title="Platforms"
             icon-name="platforms"
-            ?is-expanded=${this.expandedSections.platforms}
+            ?is-expanded=${this.expandedSections['platforms']}
             .items=${this.platformItems}
             .selectedItems=${this.filters.platforms}
             filter-type="platform"
@@ -327,7 +328,7 @@ export class GraphFilterView extends LitElement {
             id="projects"
             title="Projects"
             icon-name="projects"
-            ?is-expanded=${this.expandedSections.projects}
+            ?is-expanded=${this.expandedSections['projects']}
             .items=${this.projectItems}
             .selectedItems=${this.filters.projects}
             filter-type="project"
@@ -348,7 +349,7 @@ export class GraphFilterView extends LitElement {
                   id="packages"
                   title="Packages"
                   icon-name="packages"
-                  ?is-expanded=${this.expandedSections.packages}
+                  ?is-expanded=${this.expandedSections['packages']}
                   .items=${this.packageItems}
                   .selectedItems=${this.filters.packages}
                   filter-type="package"

@@ -19,12 +19,6 @@ export interface TransitiveResult {
 
 // ==================== Memoization Cache ====================
 
-interface CacheKey {
-  nodeId: string;
-  direction: 'dependencies' | 'dependents';
-  edgesHash: string;
-}
-
 interface CacheEntry {
   result: TransitiveResult;
   timestamp: number;
@@ -46,8 +40,8 @@ class TransitiveCache {
       return edges.map((e) => `${e.source}→${e.target}`).join('|');
     }
     // Use length + first + last edges as fingerprint
-    const first = edges[0];
-    const last = edges[edges.length - 1];
+    const first = edges[0]!;
+    const last = edges[edges.length - 1]!;
     return `${edges.length}:${first.source}→${first.target}|${last.source}→${last.target}`;
   }
 

@@ -193,7 +193,7 @@ export class GraphVisualization extends LitElement {
   /**
    * Check if hover state changed
    */
-  private hasHoverStateChange(changedProps: PropertyValues<this>): boolean {
+  private hasHoverStateChange(changedProps: Map<PropertyKey, unknown>): boolean {
     if (changedProps.has('hoveredCluster')) {
       const oldHover = changedProps.get('hoveredCluster');
       if (oldHover !== this.hoveredCluster) return true;

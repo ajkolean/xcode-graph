@@ -106,9 +106,9 @@ export class GraphTagBadge extends LitElement {
   private parseTag(): { prefix: string; value: string; color: string } {
     const parts = this.tag.split(':');
     if (parts.length >= 2) {
-      const prefix = parts[0];
+      const prefix = parts[0] ?? '';
       const value = parts.slice(1).join(':');
-      const color = TAG_PREFIX_COLORS[prefix] || DEFAULT_TAG_COLOR;
+      const color = TAG_PREFIX_COLORS[prefix] ?? DEFAULT_TAG_COLOR;
       return { prefix, value, color };
     }
     return { prefix: '', value: this.tag, color: DEFAULT_TAG_COLOR };

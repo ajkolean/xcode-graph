@@ -48,8 +48,8 @@ import {
   showDependents,
   viewMode,
 } from '@graph/signals/index';
+import type { FilterState } from '@shared/schemas';
 import {
-  type FilterState,
   filters,
   type PreviewFilter,
   searchQuery,

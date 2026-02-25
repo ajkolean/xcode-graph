@@ -109,7 +109,7 @@ export function identifyAnchors(
     const sorted = externalEntryPoints.toSorted(
       (a, b) => (externalDependents.get(b.id) || 0) - (externalDependents.get(a.id) || 0),
     );
-    return [sorted[0]];
+    return [sorted[0]!];
   }
 
   // 4. Fallback: most-depended-upon node
@@ -117,7 +117,7 @@ export function identifyAnchors(
     (a, b) => (dependents.get(b.id)?.size || 0) - (dependents.get(a.id)?.size || 0),
   );
 
-  return sorted.length > 0 ? [sorted[0]] : [];
+  return sorted.length > 0 ? [sorted[0]!] : [];
 }
 
 // Helper: Count internal dependencies for a node
@@ -186,6 +186,7 @@ function distributeIntoLayers(sortedNodes: GraphNode[], layers: Map<string, numb
 
   for (let index = 0; index < sortedNodes.length; index++) {
     const node = sortedNodes[index];
+    if (!node) continue;
     const layer = Math.min(numLayers, Math.floor(index / nodesPerLayer) + 1);
     layers.set(node.id, layer);
   }

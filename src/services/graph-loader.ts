@@ -168,6 +168,7 @@ export class GraphLoader {
     // Load cluster by cluster
     for (let i = 0; i < orderedClusters.length; i++) {
       const cluster = orderedClusters[i];
+      if (!cluster) continue;
       const clusterNodes = cluster.nodes;
 
       loadedNodes.push(...clusterNodes);

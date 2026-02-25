@@ -5,7 +5,6 @@ import type { TransitiveResult } from '@graph/utils';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
 import { ViewMode } from '@shared/schemas';
-import type { Cluster } from '@shared/schemas/cluster.schema';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
@@ -101,6 +100,7 @@ export class GraphCanvas extends LitElement {
 
   // Track if mousedown was on empty space (for deselection on mouseup)
   private clickedEmptySpace = false;
+  private hasMoved = false;
 
   // Animation State
   private animationFrameId: number | null = null;
@@ -359,6 +359,7 @@ export class GraphCanvas extends LitElement {
     // Check nodes
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const node = this.nodes[i];
+      if (!node) continue;
       const layoutPos = this.layout.nodePositions.get(node.id);
       const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
 
@@ -435,15 +436,15 @@ export class GraphCanvas extends LitElement {
     } else if (this.draggedNodeId) {
       // Dragging individual node
       this.hasMoved = true;
-      const node = this.nodes.find((n) => n.id === this.draggedNodeId);
-      if (node) {
-        const layoutClusterPos = this.layout.clusterPositions.get(node.project || 'External');
+      const dragNode = this.nodes.find((n) => n.id === this.draggedNodeId);
+      if (dragNode) {
+        const layoutClusterPos = this.layout.clusterPositions.get(dragNode.project || 'External');
         if (layoutClusterPos) {
-          const manualClusterPos = this.manualClusterPositions.get(node.project || 'External');
+          const manualClusterPos = this.manualClusterPositions.get(dragNode.project || 'External');
           const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
           const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
 
-          this.manualNodePositions.set(node.id, {
+          this.manualNodePositions.set(dragNode.id, {
             x: worldPos.x - clusterX,
             y: worldPos.y - clusterY,
           });
@@ -462,6 +463,7 @@ export class GraphCanvas extends LitElement {
 
       for (let i = this.nodes.length - 1; i >= 0; i--) {
         const node = this.nodes[i];
+        if (!node) continue;
         const layoutPos = this.layout.nodePositions.get(node.id);
         const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
 

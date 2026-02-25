@@ -37,7 +37,7 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
   [DependencyKind.XCFramework]: { label: 'XCF', color: '#F59E0B' },
 };
 
-export class GraphNodeList extends NodeListEventsMixin(LitElement) {
+export class GraphNodeList extends NodeListEventsMixin(LitElement as any) {
   // ========================================
   // Properties
   // ========================================

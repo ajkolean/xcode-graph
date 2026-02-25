@@ -88,8 +88,8 @@ export function applyForceMassage(
       ...original,
       x: node.x,
       y: node.y,
-      vx: node.vx, // Save velocity if we ever want to animate continued settling
-      vy: node.vy,
+      vx: (node as any).vx ?? 0, // Save velocity if we ever want to animate continued settling
+      vy: (node as any).vy ?? 0,
     });
   }
 
