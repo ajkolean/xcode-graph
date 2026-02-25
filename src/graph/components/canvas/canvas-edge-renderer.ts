@@ -164,6 +164,18 @@ function getEdgeOpacity(edge: GraphEdge, rc: EdgeRenderContext): number {
   return 1;
 }
 
+function getChainHighlightOpacity(
+  edge: GraphEdge,
+  isHighlighted: boolean,
+  inChain: boolean,
+  rc: EdgeRenderContext,
+): number {
+  if (inChain) {
+    return isHighlighted ? 1.0 : getEdgeOpacity(edge, rc) * 0.8;
+  }
+  return 0.03;
+}
+
 function computeEdgeOpacity(
   edge: GraphEdge,
   isHighlighted: boolean,
@@ -172,24 +184,14 @@ function computeEdgeOpacity(
   isCycle: boolean,
   rc: EdgeRenderContext,
 ): number {
-  let opacity = isHighlighted ? 1.0 : 0.1;
-
-  if (isCycle) {
-    opacity = Math.max(opacity, 0.8);
-  }
+  const baseOpacity = isHighlighted ? 1.0 : 0.1;
+  const cycleOpacity = isCycle ? Math.max(baseOpacity, 0.8) : baseOpacity;
 
   if (isChainActive && rc.chainDisplay === 'highlight') {
-    if (inChain) {
-      const depthOpacity = getEdgeOpacity(edge, rc);
-      opacity = isHighlighted ? 1.0 : depthOpacity * 0.8;
-    } else {
-      opacity = 0.03;
-    }
-  } else {
-    opacity *= getEdgeOpacity(edge, rc);
+    return Math.min(1, getChainHighlightOpacity(edge, isHighlighted, inChain, rc));
   }
 
-  return Math.min(1, opacity);
+  return Math.min(1, cycleOpacity * getEdgeOpacity(edge, rc));
 }
 
 function drawRoutedEdgePath(
@@ -289,6 +291,56 @@ function shouldHideIntraClusterEdge(
   return zoom < 0.6 && hoveredCluster !== sourceClusterId && !isHighlighted;
 }
 
+function isEdgeVisible(
+  endpoints: NonNullable<ReturnType<typeof resolveEdgeEndpoints>>,
+  viewport: ViewportBounds,
+  isHighlighted: boolean,
+  rc: EdgeRenderContext,
+): boolean {
+  const { sourceClusterId, x1, y1, x2, y2 } = endpoints;
+  const isIntraCluster = sourceClusterId === endpoints.targetClusterId;
+  if (
+    isIntraCluster &&
+    shouldHideIntraClusterEdge(sourceClusterId, isHighlighted, rc.zoom, rc.hoveredCluster)
+  ) {
+    return false;
+  }
+  return isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport);
+}
+
+function drawEdgePath(
+  edge: GraphEdge,
+  endpoints: NonNullable<ReturnType<typeof resolveEdgeEndpoints>>,
+  isCrossCluster: boolean,
+  isHighlighted: boolean,
+  rc: EdgeRenderContext,
+) {
+  if (isCrossCluster) {
+    const edgeKey = `${edge.source}->${edge.target}`;
+    const routedEdge = rc.routedEdgeMap.get(edgeKey);
+    if (routedEdge) {
+      drawRoutedEdgePath(
+        rc.ctx,
+        routedEdge,
+        endpoints.sourceLayout,
+        endpoints.targetLayout,
+        endpoints.sClusterX,
+        endpoints.sClusterY,
+        endpoints.tClusterX,
+        endpoints.tClusterY,
+        endpoints.sourceNode,
+        endpoints.targetNode,
+        isHighlighted,
+        rc.selectedNode,
+        rc.zoom,
+        rc.theme,
+      );
+    }
+  } else {
+    drawDirectEdgePath(rc.ctx, endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2);
+  }
+}
+
 function renderSingleEdge(
   edge: GraphEdge,
   viewport: ViewportBounds,
@@ -299,40 +351,16 @@ function renderSingleEdge(
 ) {
   const endpoints = resolveEdgeEndpoints(edge, rc);
   if (!endpoints) return;
+  if (!isEdgeVisible(endpoints, viewport, isHighlighted, rc)) return;
 
-  const {
-    sourceNode,
-    targetNode,
-    sourceLayout,
-    targetLayout,
-    sourceClusterId,
-    targetClusterId,
-    sClusterX,
-    sClusterY,
-    tClusterX,
-    tClusterY,
-    x1,
-    y1,
-    x2,
-    y2,
-  } = endpoints;
-
-  const isIntraCluster = sourceClusterId === targetClusterId;
-  if (
-    isIntraCluster &&
-    shouldHideIntraClusterEdge(sourceClusterId, isHighlighted, rc.zoom, rc.hoveredCluster)
-  )
-    return;
-  if (!isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport)) return;
-
+  const isCrossCluster = endpoints.sourceClusterId !== endpoints.targetClusterId;
   const cycleEdge = isCycleEdge(edge, rc.layout);
-  const isCrossCluster = !isIntraCluster;
 
   applyEdgeStyle(
     rc.ctx,
     edge,
-    sourceNode,
-    targetNode,
+    endpoints.sourceNode,
+    endpoints.targetNode,
     isHighlighted,
     isChainActive,
     inChain,
@@ -341,29 +369,7 @@ function renderSingleEdge(
     rc,
   );
 
-  const edgeKey = `${edge.source}->${edge.target}`;
-  const routedEdge = isCrossCluster ? rc.routedEdgeMap.get(edgeKey) : undefined;
-
-  if (routedEdge) {
-    drawRoutedEdgePath(
-      rc.ctx,
-      routedEdge,
-      sourceLayout,
-      targetLayout,
-      sClusterX,
-      sClusterY,
-      tClusterX,
-      tClusterY,
-      sourceNode,
-      targetNode,
-      isHighlighted,
-      rc.selectedNode,
-      rc.zoom,
-      rc.theme,
-    );
-  } else if (!isCrossCluster) {
-    drawDirectEdgePath(rc.ctx, x1, y1, x2, y2);
-  }
+  drawEdgePath(edge, endpoints, isCrossCluster, isHighlighted, rc);
 
   rc.ctx.setLineDash([]);
   rc.ctx.lineDashOffset = 0;

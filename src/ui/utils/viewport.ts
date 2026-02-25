@@ -97,72 +97,69 @@ export function isLineInViewport(start: Point, end: Point, bounds: ViewportBound
   return cohenSutherlandIntersect(start, end, bounds);
 }
 
+// Cohen-Sutherland region codes
+const CS_LEFT = 1;
+const CS_RIGHT = 2;
+const CS_BOTTOM = 4;
+const CS_TOP = 8;
+
+function computeOutCode(x: number, y: number, bounds: ViewportBounds): number {
+  let code = 0;
+  if (x < bounds.minX) code |= CS_LEFT;
+  else if (x > bounds.maxX) code |= CS_RIGHT;
+  if (y < bounds.minY) code |= CS_BOTTOM;
+  else if (y > bounds.maxY) code |= CS_TOP;
+  return code;
+}
+
+function clipToBoundary(
+  outcodeOut: number,
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  bounds: ViewportBounds,
+): Point {
+  if (outcodeOut & CS_TOP) {
+    return { x: x0 + ((x1 - x0) * (bounds.maxY - y0)) / (y1 - y0), y: bounds.maxY };
+  }
+  if (outcodeOut & CS_BOTTOM) {
+    return { x: x0 + ((x1 - x0) * (bounds.minY - y0)) / (y1 - y0), y: bounds.minY };
+  }
+  if (outcodeOut & CS_RIGHT) {
+    return { x: bounds.maxX, y: y0 + ((y1 - y0) * (bounds.maxX - x0)) / (x1 - x0) };
+  }
+  return { x: bounds.minX, y: y0 + ((y1 - y0) * (bounds.minX - x0)) / (x1 - x0) };
+}
+
 /**
  * Cohen-Sutherland line clipping algorithm
  * Returns true if line intersects the viewport rectangle
  */
 function cohenSutherlandIntersect(start: Point, end: Point, bounds: ViewportBounds): boolean {
-  const INSIDE = 0; // 0000
-  const LEFT = 1; // 0001
-  const RIGHT = 2; // 0010
-  const BOTTOM = 4; // 0100
-  const TOP = 8; // 1000
-
-  function computeOutCode(x: number, y: number): number {
-    let code = INSIDE;
-    if (x < bounds.minX) code |= LEFT;
-    else if (x > bounds.maxX) code |= RIGHT;
-    if (y < bounds.minY) code |= BOTTOM;
-    else if (y > bounds.maxY) code |= TOP;
-    return code;
-  }
-
   let x0 = start.x;
   let y0 = start.y;
   let x1 = end.x;
   let y1 = end.y;
 
-  let outcode0 = computeOutCode(x0, y0);
-  let outcode1 = computeOutCode(x1, y1);
+  let outcode0 = computeOutCode(x0, y0, bounds);
+  let outcode1 = computeOutCode(x1, y1, bounds);
 
   while (true) {
-    if (!(outcode0 | outcode1)) {
-      // Both points inside
-      return true;
-    }
-    if (outcode0 & outcode1) {
-      // Both points on same side outside
-      return false;
-    }
+    if (!(outcode0 | outcode1)) return true;
+    if (outcode0 & outcode1) return false;
 
-    // At least one point outside, clip
     const outcodeOut = outcode0 || outcode1;
-    let x: number;
-    let y: number;
-
-    if (outcodeOut & TOP) {
-      x = x0 + ((x1 - x0) * (bounds.maxY - y0)) / (y1 - y0);
-      y = bounds.maxY;
-    } else if (outcodeOut & BOTTOM) {
-      x = x0 + ((x1 - x0) * (bounds.minY - y0)) / (y1 - y0);
-      y = bounds.minY;
-    } else if (outcodeOut & RIGHT) {
-      y = y0 + ((y1 - y0) * (bounds.maxX - x0)) / (x1 - x0);
-      x = bounds.maxX;
-    } else {
-      // LEFT
-      y = y0 + ((y1 - y0) * (bounds.minX - x0)) / (x1 - x0);
-      x = bounds.minX;
-    }
+    const clipped = clipToBoundary(outcodeOut, x0, y0, x1, y1, bounds);
 
     if (outcodeOut === outcode0) {
-      x0 = x;
-      y0 = y;
-      outcode0 = computeOutCode(x0, y0);
+      x0 = clipped.x;
+      y0 = clipped.y;
+      outcode0 = computeOutCode(x0, y0, bounds);
     } else {
-      x1 = x;
-      y1 = y;
-      outcode1 = computeOutCode(x1, y1);
+      x1 = clipped.x;
+      y1 = clipped.y;
+      outcode1 = computeOutCode(x1, y1, bounds);
     }
   }
 }

@@ -197,6 +197,41 @@ export class GraphClusterGroup extends LitElement {
   }
 
   // ========================================
+  // Render Helpers
+  // ========================================
+
+  private isNodeDimmed(
+    node: GraphNodeType,
+    isSelectedNode: boolean,
+    isConnected: boolean | GraphNodeType | null | undefined,
+    searchQuery: string,
+  ): boolean {
+    const isSearchDimmed =
+      !!searchQuery && !node.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const isSelectionDimmed = !!this.selectedNode && !isSelectedNode && !isConnected;
+    const isPreviewDimmed = !!this.previewFilter && !this.matchesPreview(node);
+    return isSearchDimmed || isSelectionDimmed || isPreviewDimmed;
+  }
+
+  private matchesPreview(node: GraphNodeType): boolean {
+    if (!this.previewFilter) return true;
+    switch (this.previewFilter.type) {
+      case 'nodeType':
+        return node.type === this.previewFilter.value;
+      case 'platform':
+        return node.platform === this.previewFilter.value;
+      case 'origin':
+        return node.origin === this.previewFilter.value;
+      case 'project':
+        return node.project === this.previewFilter.value;
+      case 'package':
+        return node.type === NodeType.Package && node.name === this.previewFilter.value;
+      default:
+        return true;
+    }
+  }
+
+  // ========================================
   // Render
   // ========================================
 
@@ -259,43 +294,18 @@ export class GraphClusterGroup extends LitElement {
             if (!pos) return null;
 
             const isSelectedNode = this.selectedNode?.id === node.id;
-            const isHovered = this.hoveredNode === node.id;
             const isConnected = this.selectedNode && this.connectedNodes.has(node.id);
-            const isSearchMatch =
-              searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
-
-            const matchesPreview =
-              !this.previewFilter ||
-              (this.previewFilter.type === 'nodeType' && node.type === this.previewFilter.value) ||
-              (this.previewFilter.type === 'platform' &&
-                node.platform === this.previewFilter.value) ||
-              (this.previewFilter.type === 'origin' && node.origin === this.previewFilter.value) ||
-              (this.previewFilter.type === 'project' &&
-                node.project === this.previewFilter.value) ||
-              (this.previewFilter.type === 'package' &&
-                node.type === NodeType.Package &&
-                node.name === this.previewFilter.value);
-
-            const isDimmed =
-              (searchQuery && !isSearchMatch) ||
-              (this.selectedNode && !isSelectedNode && !isConnected) ||
-              (this.previewFilter && !matchesPreview);
-
-            const size = getNodeSize(node, edges);
-            const color = getNodeTypeColor(node.type);
-            const x = this.clusterPosition!.x + pos.x;
-            const y = this.clusterPosition!.y + pos.y;
 
             return html`
               <graph-node
                 .node=${node}
-                .x=${x}
-                .y=${y}
-                .size=${size}
-                .color=${color}
+                .x=${this.clusterPosition!.x + pos.x}
+                .y=${this.clusterPosition!.y + pos.y}
+                .size=${getNodeSize(node, edges)}
+                .color=${getNodeTypeColor(node.type)}
                 .isSelected=${isSelectedNode}
-                .isHovered=${isHovered}
-                .isDimmed=${isDimmed}
+                .isHovered=${this.hoveredNode === node.id}
+                .isDimmed=${this.isNodeDimmed(node, isSelectedNode, isConnected, searchQuery)}
                 .zoom=${zoom}
                 @node-mouseenter=${() =>
                   this.dispatchEvent(
