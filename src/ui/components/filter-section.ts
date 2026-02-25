@@ -22,6 +22,7 @@
  */
 
 import { icons } from '@shared/controllers/icon.adapter';
+import { NodeType, Platform } from '@shared/schemas/graph.schema';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
 import { getPlatformIconPath } from '@ui/utils/platform-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
@@ -313,7 +314,10 @@ export class GraphFilterSection extends LitElement {
 
     switch (this.filterType) {
       case 'nodeType': {
-        const iconPath = getNodeIconPath(item.key, item.key === 'app' ? 'iOS' : undefined);
+        const iconPath = getNodeIconPath(
+          item.key,
+          item.key === NodeType.App ? Platform.iOS : undefined,
+        );
         return svg`
           <svg width="16" height="16" viewBox="-18 -18 36 36" style="filter: ${dropShadow}; opacity: ${opacity}">
             <path

@@ -4,7 +4,7 @@
  */
 
 import type { FilterState } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.schema';
 import { matchesSearch } from './visibility';
 
 function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
@@ -13,10 +13,11 @@ function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
   if (!filters.origins.has(node.origin)) return false;
 
   // Project filter: only applies to non-package nodes with a project
-  if (node.project && node.type !== 'package' && !filters.projects.has(node.project)) return false;
+  if (node.project && node.type !== NodeType.Package && !filters.projects.has(node.project))
+    return false;
 
   // Package filter: only applies to package nodes
-  if (node.type === 'package' && !filters.packages.has(node.name)) return false;
+  if (node.type === NodeType.Package && !filters.packages.has(node.name)) return false;
 
   return true;
 }

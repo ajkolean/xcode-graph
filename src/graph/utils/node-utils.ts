@@ -8,12 +8,12 @@
  */
 
 import type { FilterState } from '@shared/schemas';
-import type {
-  GraphEdge,
-  GraphNode,
+import {
+  type GraphEdge,
+  type GraphNode,
   NodeType,
   Origin,
-  Platform,
+  type Platform,
 } from '@shared/schemas/graph.schema';
 import { buildAdjacency, traverseGraph } from './traversal';
 
@@ -253,14 +253,14 @@ export function computeFilters(allNodes: GraphNode[]): {
 
   const projectCounts = new Map<string, number>();
   allNodes.forEach((node) => {
-    if (node.project && node.type !== 'package') {
+    if (node.project && node.type !== NodeType.Package) {
       projectCounts.set(node.project, (projectCounts.get(node.project) || 0) + 1);
     }
   });
 
   const packageCounts = new Map<string, number>();
   allNodes.forEach((node) => {
-    if (node.type === 'package') {
+    if (node.type === NodeType.Package) {
       packageCounts.set(node.name, (packageCounts.get(node.name) || 0) + 1);
     }
   });
@@ -279,7 +279,7 @@ export function computeFilters(allNodes: GraphNode[]): {
       onFiltersChange({
         nodeTypes: new Set(typeCounts.keys()) as Set<NodeType>,
         platforms: new Set(platformCounts.keys()) as Set<Platform>,
-        origins: new Set(['local', 'external']) as Set<Origin>,
+        origins: new Set([Origin.Local, Origin.External]),
         projects: new Set(projectCounts.keys()),
         packages: new Set(packageCounts.keys()),
       });

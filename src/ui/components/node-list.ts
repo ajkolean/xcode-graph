@@ -21,7 +21,7 @@
  */
 
 import type { NodeWithEdge } from '@graph/utils/node-utils';
-import { DependencyKind, type GraphNode } from '@shared/schemas/graph.schema';
+import { DependencyKind, type GraphNode, Origin } from '@shared/schemas/graph.schema';
 import { type CSSResultGroup, css, html, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
@@ -154,7 +154,7 @@ export class GraphNodeList extends NodeListEventsBase {
 
   private getNodeSubtitle(node: GraphNode): string {
     const typeLabel = node.type.charAt(0).toUpperCase() + node.type.slice(1);
-    return node.origin === 'external' ? `External ${typeLabel}` : typeLabel;
+    return node.origin === Origin.External ? `External ${typeLabel}` : typeLabel;
   }
 
   private renderKindBadge(item: NodeWithEdge) {

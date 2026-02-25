@@ -2,6 +2,8 @@
  * Node icon utilities for consistent node type representation
  */
 
+import { NodeType, Platform } from '@shared/schemas/graph.schema';
+
 // Smartphone icon path (iOS / default)
 const SMARTPHONE_ICON_PATH = `
   M-8,-16
@@ -22,12 +24,12 @@ const SMARTPHONE_ICON_PATH = `
  * Get SVG path data for app nodes based on platform
  * Each platform has a distinctive icon shape
  */
-export function getAppIconPath(platform: string): string {
+export function getAppIconPath(platform: Platform | string): string {
   switch (platform) {
-    case 'iOS':
+    case Platform.iOS:
       return SMARTPHONE_ICON_PATH;
 
-    case 'macOS':
+    case Platform.macOS:
       // Monitor icon (macOS)
       return `
         M-14,-10
@@ -46,7 +48,7 @@ export function getAppIconPath(platform: string): string {
         L0,12
       `;
 
-    case 'visionOS':
+    case Platform.visionOS:
       // Glasses icon (visionOS)
       return `
         M-6,-2
@@ -63,7 +65,7 @@ export function getAppIconPath(platform: string): string {
         A8,8 0 0,1 6,-10
       `;
 
-    case 'tvOS':
+    case Platform.tvOS:
       // TV icon (tvOS)
       return `
         M-14,-2
@@ -81,7 +83,7 @@ export function getAppIconPath(platform: string): string {
         L8,-14
       `;
 
-    case 'watchOS':
+    case Platform.watchOS:
       // Watch icon (watchOS)
       return `
         M-6,-16
@@ -115,17 +117,17 @@ export function getAppIconPath(platform: string): string {
  * Get SVG path data for node type icons
  * All icons are centered at (0, 0) and sized appropriately
  */
-export function getNodeIconPath(type: string, platform?: string): string {
-  if (type === 'app' && platform) {
+export function getNodeIconPath(type: NodeType | string, platform?: Platform | string): string {
+  if (type === NodeType.App && platform) {
     return getAppIconPath(platform);
   }
 
   switch (type) {
-    case 'app':
+    case NodeType.App:
       // Default smartphone icon if no platform specified
-      return getAppIconPath('iOS');
+      return getAppIconPath(Platform.iOS);
 
-    case 'framework':
+    case NodeType.Framework:
       // Triangle (simple geometric shape)
       return `
         M0,-14
@@ -134,7 +136,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         Z
       `;
 
-    case 'library':
+    case NodeType.Library:
       // Pentagon (simple geometric shape)
       return `
         M0,-14
@@ -145,7 +147,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         Z
       `;
 
-    case 'test-unit':
+    case NodeType.TestUnit:
       // Flask icon (testing)
       return `
         M-6,-14 
@@ -164,7 +166,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         L8,8
       `;
 
-    case 'test-ui':
+    case NodeType.TestUi:
       // Microscope icon
       return `
         M-12,14 
@@ -186,7 +188,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         A2,2 0 0,1 -6,6
       `;
 
-    case 'cli':
+    case NodeType.Cli:
       // Terminal icon
       return `
         M-14,-12 
@@ -206,7 +208,7 @@ export function getNodeIconPath(type: string, platform?: string): string {
         L8,4
       `;
 
-    case 'package':
+    case NodeType.Package:
       // Package/Box icon
       return `
         M-12,-6 
@@ -236,15 +238,15 @@ export function getNodeIconPath(type: string, platform?: string): string {
 /**
  * Get a human-readable label for a node type
  */
-export function getNodeTypeLabel(type: string): string {
+export function getNodeTypeLabel(type: NodeType | string): string {
   const labels: Record<string, string> = {
-    app: 'App Target',
-    framework: 'Framework',
-    library: 'Library',
-    'test-unit': 'Unit Test',
-    'test-ui': 'UI Test',
-    cli: 'CLI Tool',
-    package: 'Swift Package',
+    [NodeType.App]: 'App Target',
+    [NodeType.Framework]: 'Framework',
+    [NodeType.Library]: 'Library',
+    [NodeType.TestUnit]: 'Unit Test',
+    [NodeType.TestUi]: 'UI Test',
+    [NodeType.Cli]: 'CLI Tool',
+    [NodeType.Package]: 'Swift Package',
   };
 
   return labels[type] || type;

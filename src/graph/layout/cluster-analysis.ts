@@ -102,7 +102,8 @@ export function identifyAnchors(
   // 3. Try frameworks/libs with external dependents
   const externalEntryPoints = nodes.filter(
     (n) =>
-      (n.type === 'framework' || n.type === 'library') && (externalDependents.get(n.id) || 0) > 0,
+      (n.type === NodeType.Framework || n.type === NodeType.Library) &&
+      (externalDependents.get(n.id) || 0) > 0,
   );
   if (externalEntryPoints.length > 0) {
     // Return the one with most external dependents

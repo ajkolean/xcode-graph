@@ -16,7 +16,7 @@
  * @fires cluster-click - Dispatched when cluster badge clicked (detail: { clusterId })
  */
 
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import { type GraphNode, NodeType } from '@shared/schemas/graph.schema';
 import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
@@ -74,7 +74,7 @@ export class GraphNodeHeader extends LitElement {
 
   private handleBack() {
     if (this.showClusterLink) {
-      const clusterId = this.node.type === 'package' ? this.node.name : this.node.project;
+      const clusterId = this.node.type === NodeType.Package ? this.node.name : this.node.project;
       if (clusterId) {
         this.dispatchEvent(
           new CustomEvent('cluster-click', {
@@ -104,13 +104,13 @@ export class GraphNodeHeader extends LitElement {
 
     const iconPath = getNodeIconPath(
       this.node.type,
-      this.node.type === 'app' ? this.node.platform : undefined,
+      this.node.type === NodeType.App ? this.node.platform : undefined,
     );
     const nodeTypeColor = getNodeTypeColor(this.node.type);
     const nodeDisplayColor = adjustColorForZoom(nodeTypeColor, this.zoom);
 
     let clusterColor: string;
-    if (this.node.type === 'package') {
+    if (this.node.type === NodeType.Package) {
       clusterColor = generateColor(this.node.name, 'package');
     } else if (this.node.project) {
       clusterColor = generateColor(this.node.project, 'project');
@@ -119,14 +119,14 @@ export class GraphNodeHeader extends LitElement {
     }
     const clusterDisplayColor = adjustColorForZoom(clusterColor, this.zoom);
 
-    const showClusterBadge = this.node.project || this.node.type === 'package';
+    const showClusterBadge = this.node.project || this.node.type === NodeType.Package;
     const getSubtitle = (): string | undefined => {
       if (!showClusterBadge) return undefined;
-      if (this.node.type === 'package') return this.node.name;
+      if (this.node.type === NodeType.Package) return this.node.name;
       return this.node.project;
     };
     const subtitle = getSubtitle();
-    const clusterBadgeLabel = this.node.type === 'package' ? 'Package' : 'Project';
+    const clusterBadgeLabel = this.node.type === NodeType.Package ? 'Package' : 'Project';
 
     const hasTags = this.node.tags && this.node.tags.length > 0;
 

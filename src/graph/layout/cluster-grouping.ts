@@ -58,7 +58,7 @@ export function arrangeClusterGrid(
   // Sort clusters: local first, then by size
   const sortedClusters = [...clusters].sort((a, b) => {
     if (a.origin !== b.origin) {
-      return a.origin === 'local' ? -1 : 1;
+      return a.origin === Origin.Local ? -1 : 1;
     }
     return b.nodes.length - a.nodes.length;
   });

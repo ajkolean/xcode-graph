@@ -25,7 +25,11 @@
 import type { TransitiveResult } from '@graph/utils';
 import { getConnectedNodes } from '@graph/utils/connections';
 import type { Cluster, ClusterPosition, NodePosition, ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/graph.schema';
+import {
+  type GraphEdge,
+  type GraphNode as GraphNodeType,
+  NodeType,
+} from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
@@ -269,7 +273,7 @@ export class GraphClusterGroup extends LitElement {
               (this.previewFilter.type === 'project' &&
                 node.project === this.previewFilter.value) ||
               (this.previewFilter.type === 'package' &&
-                node.type === 'package' &&
+                node.type === NodeType.Package &&
                 node.name === this.previewFilter.value);
 
             const isDimmed =

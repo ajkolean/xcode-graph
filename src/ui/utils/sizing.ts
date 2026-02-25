@@ -2,6 +2,7 @@
  * Utilities for calculating node sizes
  */
 
+import { buildAdjacency } from '@graph/utils/traversal';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 
 /**
@@ -57,17 +58,17 @@ function buildAdjacencyData(
   nodes: GraphNode[],
   edges: GraphEdge[],
 ): { outgoing: Map<string, string[]>; inDegree: Map<string, number> } {
-  const outgoing = new Map<string, string[]>();
-  const inDegree = new Map<string, number>();
+  const { outgoing, incoming } = buildAdjacency(edges);
 
+  // Ensure all nodes are present (topological sort requires every node in the map)
   for (const node of nodes) {
-    outgoing.set(node.id, []);
-    inDegree.set(node.id, 0);
+    if (!outgoing.has(node.id)) outgoing.set(node.id, []);
   }
 
-  for (const edge of edges) {
-    outgoing.get(edge.source)?.push(edge.target);
-    inDegree.set(edge.target, (inDegree.get(edge.target) ?? 0) + 1);
+  // Derive inDegree counts from the incoming adjacency list
+  const inDegree = new Map<string, number>();
+  for (const node of nodes) {
+    inDegree.set(node.id, incoming.get(node.id)?.length ?? 0);
   }
 
   return { outgoing, inDegree };

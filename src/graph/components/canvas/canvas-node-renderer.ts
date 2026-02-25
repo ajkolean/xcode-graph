@@ -2,7 +2,7 @@ import type { GraphLayoutController } from '@graph/controllers/graph-layout.cont
 import type { TransitiveResult } from '@graph/utils';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
@@ -72,7 +72,7 @@ function isNodeDimmed(
     (rc.previewFilter.type === 'origin' && node.origin === rc.previewFilter.value) ||
     (rc.previewFilter.type === 'project' && node.project === rc.previewFilter.value) ||
     (rc.previewFilter.type === 'package' &&
-      node.type === 'package' &&
+      node.type === NodeType.Package &&
       node.name === rc.previewFilter.value);
 
   return !!(

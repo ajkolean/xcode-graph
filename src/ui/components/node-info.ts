@@ -10,7 +10,7 @@
  * ```
  */
 
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import { type GraphNode, Origin } from '@shared/schemas/graph.schema';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
@@ -71,7 +71,7 @@ export class GraphNodeInfo extends LitElement {
   // ========================================
 
   private get originLabel(): string {
-    return this.node.origin === 'local' ? 'Local Project' : 'External Package';
+    return this.node.origin === Origin.Local ? 'Local Project' : 'External Package';
   }
 
   private get hasDeploymentTargets(): boolean {

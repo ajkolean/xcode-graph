@@ -21,7 +21,7 @@ import { SignalWatcher } from '@lit-labs/signals';
 import { createMachineController } from '@shared/controllers/zag.controller';
 import { type SidebarSection, sidebarMachine } from '@shared/machines/sidebar.machine';
 import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { PLATFORM_COLOR } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
@@ -255,14 +255,16 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     if (existing) return existing;
 
     const clusterNodes = this.allNodes.filter(
-      (n) => (n.type === 'package' ? n.name : n.project) === clusterId,
+      (n) => (n.type === NodeType.Package ? n.name : n.project) === clusterId,
     );
     if (clusterNodes.length === 0) return undefined;
 
     const firstNode = clusterNodes[0];
     if (!firstNode) return undefined;
-    const type = firstNode.type === 'package' ? 'package' : 'project';
-    const origin = clusterNodes.some((n) => n.origin === 'external') ? 'external' : 'local';
+    const type = firstNode.type === NodeType.Package ? 'package' : 'project';
+    const origin = clusterNodes.some((n) => n.origin === Origin.External)
+      ? Origin.External
+      : Origin.Local;
 
     return {
       id: clusterId,
@@ -400,7 +402,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       <graph-cluster-details-panel
         .cluster=${this.findClusterById(clusterId)}
         .clusterNodes=${this.allNodes.filter(
-          (n) => (n.type === 'package' ? n.name : n.project) === clusterId,
+          (n) => (n.type === NodeType.Package ? n.name : n.project) === clusterId,
         )}
         .allNodes=${this.allNodes}
         .edges=${this.allEdges}

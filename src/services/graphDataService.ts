@@ -5,12 +5,7 @@
 
 import { addToMultiMap } from '@shared/collections';
 import type { Cluster } from '@shared/schemas';
-import {
-  type GraphEdge,
-  type GraphNode,
-  NodeType,
-  type Origin,
-} from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 
 export class GraphDataService {
   private readonly nodes: GraphNode[];
@@ -277,7 +272,9 @@ export class GraphDataService {
 
     const firstNode = clusterNodes[0];
     const clusterType = firstNode?.type === NodeType.Package ? NodeType.Package : 'project';
-    const clusterOrigin = clusterNodes.some((n) => n.origin === 'external') ? 'external' : 'local';
+    const clusterOrigin = clusterNodes.some((n) => n.origin === Origin.External)
+      ? Origin.External
+      : Origin.Local;
 
     return {
       id: clusterId,

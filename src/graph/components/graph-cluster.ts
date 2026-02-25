@@ -27,6 +27,7 @@
  * @fires cluster-click - Dispatched on click
  */
 
+import { Origin } from '@shared/schemas/graph.schema';
 import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
 
 export class GraphCluster extends LitElement {
@@ -58,7 +59,7 @@ export class GraphCluster extends LitElement {
   declare height: number | undefined;
   declare color: string | undefined;
   declare nodeCount: number | undefined;
-  declare origin: 'local' | 'external' | undefined;
+  declare origin: Origin | undefined;
   declare isHovered: boolean | undefined;
 
   // ========================================
@@ -112,7 +113,7 @@ export class GraphCluster extends LitElement {
       height: this.height ?? 0,
       color: this.color ?? '#888',
       nodeCount: this.nodeCount ?? 0,
-      origin: (this.origin ?? 'local') as 'local' | 'external',
+      origin: this.origin ?? Origin.Local,
       isHovered: this.isHovered ?? false,
     };
   }
@@ -128,7 +129,7 @@ export class GraphCluster extends LitElement {
     return svg`
       <g
         role="group"
-        aria-label="${clusterId} cluster, ${nodeCount} targets, ${origin === 'external' ? 'external' : 'local'}"
+        aria-label="${clusterId} cluster, ${nodeCount} targets, ${origin === Origin.External ? 'external' : 'local'}"
         tabindex="0"
         @mouseenter=${this.handleMouseEnter}
         @mouseleave=${this.handleMouseLeave}
@@ -239,7 +240,7 @@ export class GraphCluster extends LitElement {
             transition: opacity var(--durations-slow) ease;
           "
         >
-          ${origin === 'external' ? 'EXTERNAL' : 'LOCAL'} · ${nodeCount} targets
+          ${origin === Origin.External ? 'EXTERNAL' : 'LOCAL'} · ${nodeCount} targets
         </text>
 
         <!-- Content (edges and nodes) - slotted -->

@@ -5,7 +5,7 @@
  */
 
 import {
-  ZOOM_CONFIG,
+  normalizeZoom,
   ZOOM_LIGHTNESS_ADJUSTMENT,
   ZOOM_OPACITY,
   ZOOM_SATURATION,
@@ -19,17 +19,8 @@ import { hexToHSL, hslToHex, hslToRgb, rgbToHsl } from './color-math';
  * @returns Saturation multiplier (0.3 at min zoom, 1.0 at max zoom)
  */
 function getSaturationMultiplier(zoom: number): number {
-  // At zoom 0.5 (zoomed out): 0.25 saturation (very muted/pastel)
-  // At zoom 1.0 (default): 0.6 saturation (moderate)
-  // At zoom 2.0 (zoomed in): 1.0 saturation (full neon)
-
-  // Normalize zoom to 0-1 range
-  const normalizedZoom =
-    (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
-  const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
-
-  // Linear interpolation
-  return ZOOM_SATURATION.MIN + (ZOOM_SATURATION.MAX - ZOOM_SATURATION.MIN) * clampedZoom;
+  const t = normalizeZoom(zoom);
+  return ZOOM_SATURATION.MIN + (ZOOM_SATURATION.MAX - ZOOM_SATURATION.MIN) * t;
 }
 
 /**
@@ -37,13 +28,7 @@ function getSaturationMultiplier(zoom: number): number {
  * When zoomed out, slightly increase lightness for better readability
  */
 function getLightnessAdjustment(zoom: number): number {
-  // At min zoom: +15 lightness (lighter/softer)
-  // At max zoom: 0 lightness (original)
-  const normalizedZoom =
-    (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
-  const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
-
-  return ZOOM_LIGHTNESS_ADJUSTMENT.AT_MIN_ZOOM * (1 - clampedZoom);
+  return ZOOM_LIGHTNESS_ADJUSTMENT.AT_MIN_ZOOM * (1 - normalizeZoom(zoom));
 }
 
 /**
@@ -95,16 +80,9 @@ export function adjustColorForZoom(color: string, zoom: number): string {
  * Some elements should be more transparent when zoomed out
  */
 export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number {
-  // At min zoom: reduce opacity by 20%
-  // At max zoom: full opacity
-  const normalizedZoom =
-    (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
-  const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
-
+  const t = normalizeZoom(zoom);
   const opacityMultiplier =
-    ZOOM_OPACITY.MIN_MULTIPLIER +
-    (ZOOM_OPACITY.MAX_MULTIPLIER - ZOOM_OPACITY.MIN_MULTIPLIER) * clampedZoom;
-
+    ZOOM_OPACITY.MIN_MULTIPLIER + (ZOOM_OPACITY.MAX_MULTIPLIER - ZOOM_OPACITY.MIN_MULTIPLIER) * t;
   return baseOpacity * opacityMultiplier;
 }
 
@@ -113,15 +91,10 @@ export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number 
  * Thinner strokes when zoomed out for cleaner look
  */
 export function getZoomAwareStrokeWidth(baseWidth: number, zoom: number): number {
-  const normalizedZoom =
-    (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
-  const clampedZoom = Math.max(0, Math.min(1, normalizedZoom));
-
-  // At min zoom: 70% of base width
-  // At max zoom: 100% of base width
+  const t = normalizeZoom(zoom);
   return (
     baseWidth *
     (ZOOM_STROKE_WIDTH.MIN_MULTIPLIER +
-      (ZOOM_STROKE_WIDTH.MAX_MULTIPLIER - ZOOM_STROKE_WIDTH.MIN_MULTIPLIER) * clampedZoom)
+      (ZOOM_STROKE_WIDTH.MAX_MULTIPLIER - ZOOM_STROKE_WIDTH.MIN_MULTIPLIER) * t)
   );
 }
