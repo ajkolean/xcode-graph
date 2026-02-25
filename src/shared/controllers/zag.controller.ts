@@ -134,7 +134,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * Shorthand for `service.send(event)`
    */
   send(event: TSchema['event']): void {
-    this._service.send(event as any);
+    this._service.send(event as Parameters<Service<TSchema>['send']>[0]);
   }
 
   /**

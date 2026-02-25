@@ -1,7 +1,19 @@
 import type { Cluster, NodePosition } from '@shared/schemas';
 import { NodeRole } from '@shared/schemas/cluster.schema';
+import type { SimulationNodeDatum } from 'd3-force';
 import * as d3 from 'd3-force';
 import type { LayoutConfig } from '../config';
+
+/** Simulation node for micro-layout within a cluster */
+interface MicroSimNode extends SimulationNodeDatum {
+  id: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  role: NodeRole;
+  radius: number;
+}
 
 export interface MicroLayoutResult {
   clusterId: string;
@@ -92,11 +104,11 @@ export function computeClusterInterior(cluster: Cluster, config: LayoutConfig): 
 
   // 4. Create Forces
   const simulation = d3
-    .forceSimulation(simNodes as any)
+    .forceSimulation<MicroSimNode>(simNodes)
     // A. Collision (prevent overlap)
     .force(
       'collide',
-      d3.forceCollide().radius((d: any) => d.radius + config.nodeCollisionPadding),
+      d3.forceCollide<MicroSimNode>().radius((d) => d.radius + config.nodeCollisionPadding),
     )
     // B. Solar System Orbit (Band-based positioning)
     .force('orbit', (alpha) => {

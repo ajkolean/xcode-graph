@@ -79,12 +79,6 @@ export class GraphEdges extends LitElement {
       }
     | undefined;
   declare zoom: number | undefined;
-
-  // ========================================
-  // Memoization
-  // ========================================
-
-  private edgeCacheVersion = 0;
   private nodeToEdgesCache = new Map<string, Set<string>>();
 
   private buildNodeToEdgesCache() {
@@ -111,33 +105,34 @@ export class GraphEdges extends LitElement {
   // Helpers
   // ========================================
 
+  private computeDepthOpacity(
+    edgeKey: string,
+    chain: { edges: Set<string>; edgeDepths: Map<string, number>; maxDepth: number },
+  ): number {
+    const depth = chain.edgeDepths.get(edgeKey) || 0;
+    const maxDepth = chain.maxDepth || 1;
+    return 1 - (depth / maxDepth) * 0.7;
+  }
+
   private getEdgeOpacity(edge: GraphEdgeType, viewMode: ViewMode): number {
     const edgeKey = `${edge.source}->${edge.target}`;
     const inDepsChain = this.transitiveDeps?.edges.has(edgeKey);
     const inDependentsChain = this.transitiveDependents?.edges.has(edgeKey);
 
     if (viewMode === ViewMode.Focused && inDepsChain && this.transitiveDeps) {
-      const depth = this.transitiveDeps.edgeDepths.get(edgeKey) || 0;
-      const maxDepth = this.transitiveDeps.maxDepth || 1;
-      return 1 - (depth / maxDepth) * 0.7;
+      return this.computeDepthOpacity(edgeKey, this.transitiveDeps);
     }
 
     if (viewMode === ViewMode.Dependents && inDependentsChain && this.transitiveDependents) {
-      const depth = this.transitiveDependents.edgeDepths.get(edgeKey) || 0;
-      const maxDepth = this.transitiveDependents.maxDepth || 1;
-      return 1 - (depth / maxDepth) * 0.7;
+      return this.computeDepthOpacity(edgeKey, this.transitiveDependents);
     }
 
-    if (viewMode === ViewMode.Both && (inDepsChain || inDependentsChain)) {
+    if (viewMode === ViewMode.Both) {
       if (inDepsChain && this.transitiveDeps) {
-        const depth = this.transitiveDeps.edgeDepths.get(edgeKey) || 0;
-        const maxDepth = this.transitiveDeps.maxDepth || 1;
-        return 1 - (depth / maxDepth) * 0.7;
+        return this.computeDepthOpacity(edgeKey, this.transitiveDeps);
       }
       if (inDependentsChain && this.transitiveDependents) {
-        const depth = this.transitiveDependents.edgeDepths.get(edgeKey) || 0;
-        const maxDepth = this.transitiveDependents.maxDepth || 1;
-        return 1 - (depth / maxDepth) * 0.7;
+        return this.computeDepthOpacity(edgeKey, this.transitiveDependents);
       }
     }
 
@@ -205,6 +200,68 @@ export class GraphEdges extends LitElement {
   // Render
   // ========================================
 
+  private renderEdge(
+    edge: GraphEdgeType,
+    nodeMap: Map<string, GraphNode>,
+    viewMode: ViewMode,
+    zoom: number,
+    hoveredClusterId: string | null,
+  ): TemplateResult | null {
+    const sourceNode = nodeMap.get(edge.source);
+    const targetNode = nodeMap.get(edge.target);
+    if (!sourceNode || !targetNode) return null;
+
+    const sourceClusterId = sourceNode.project || 'External';
+    const targetClusterId = targetNode.project || 'External';
+
+    // Filter based on cluster context
+    if (this.clusterId) {
+      if (sourceClusterId !== this.clusterId || targetClusterId !== this.clusterId) return null;
+    } else if (sourceClusterId === targetClusterId) {
+      return null;
+    }
+
+    const sourcePos = this.finalNodePositions?.get(edge.source);
+    const targetPos = this.finalNodePositions?.get(edge.target);
+    const sourceCluster = this.clusterPositions?.get(sourceClusterId);
+    const targetCluster = this.clusterPositions?.get(targetClusterId);
+
+    if (!sourcePos || !targetPos || !sourceCluster || !targetCluster) return null;
+
+    const x1 = sourceCluster.x + sourcePos.x;
+    const y1 = sourceCluster.y + sourcePos.y;
+    const x2 = targetCluster.x + targetPos.x;
+    const y2 = targetCluster.y + targetPos.y;
+
+    const isHighlighted =
+      this.selectedNode &&
+      (edge.source === this.selectedNode.id || edge.target === this.selectedNode.id);
+    const isFocused = this.hoveredNode === edge.source || this.hoveredNode === edge.target;
+
+    const isConnectedToHoveredCluster =
+      hoveredClusterId &&
+      (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
+
+    const shouldDim = hoveredClusterId && !isConnectedToHoveredCluster;
+    const baseOpacity = this.getEdgeOpacity(edge, viewMode);
+    const opacity = shouldDim ? baseOpacity * 0.25 : baseOpacity;
+
+    return html`
+      <graph-edge
+        .x1=${x1}
+        .y1=${y1}
+        .x2=${x2}
+        .y2=${y2}
+        .color=${getNodeTypeColor(targetNode.type)}
+        .isHighlighted=${isHighlighted || isFocused}
+        .isDependent=${!this.clusterId}
+        .opacity=${opacity}
+        .zoom=${zoom}
+        .animated=${isFocused || isHighlighted}
+      ></graph-edge>
+    `;
+  }
+
   override render(): TemplateResult {
     if (!this.edges || !this.nodes) return html``;
 
@@ -216,66 +273,7 @@ export class GraphEdges extends LitElement {
     const nodeMap = new Map(this.nodes.map((n) => [n.id, n]));
 
     return html`
-      ${this.edges.map((edge) => {
-        const sourceNode = nodeMap.get(edge.source);
-        const targetNode = nodeMap.get(edge.target);
-        if (!sourceNode || !targetNode) return null;
-
-        const sourceClusterId = sourceNode.project || 'External';
-        const targetClusterId = targetNode.project || 'External';
-
-        // Filter based on cluster context
-        if (this.clusterId) {
-          if (sourceClusterId !== this.clusterId || targetClusterId !== this.clusterId) return null;
-        } else if (sourceClusterId === targetClusterId) {
-          return null;
-        }
-
-        const sourcePos = this.finalNodePositions?.get(edge.source);
-        const targetPos = this.finalNodePositions?.get(edge.target);
-        const sourceCluster = this.clusterPositions?.get(sourceClusterId);
-        const targetCluster = this.clusterPositions?.get(targetClusterId);
-
-        if (!sourcePos || !targetPos || !sourceCluster || !targetCluster) return null;
-
-        const x1 = sourceCluster.x + sourcePos.x;
-        const y1 = sourceCluster.y + sourcePos.y;
-        const x2 = targetCluster.x + targetPos.x;
-        const y2 = targetCluster.y + targetPos.y;
-
-        const isHighlighted =
-          this.selectedNode &&
-          (edge.source === this.selectedNode.id || edge.target === this.selectedNode.id);
-        const isFocused = this.hoveredNode === edge.source || this.hoveredNode === edge.target;
-
-        const isConnectedToHoveredCluster =
-          hoveredClusterId &&
-          (sourceClusterId === hoveredClusterId || targetClusterId === hoveredClusterId);
-
-        const shouldDim = hoveredClusterId && !isConnectedToHoveredCluster;
-        const edgeColor = getNodeTypeColor(targetNode.type);
-        const isCrossCluster = !this.clusterId;
-        const shouldAnimate = isFocused || isHighlighted;
-
-        const opacity = shouldDim
-          ? this.getEdgeOpacity(edge, viewMode) * 0.25
-          : this.getEdgeOpacity(edge, viewMode);
-
-        return html`
-          <graph-edge
-            .x1=${x1}
-            .y1=${y1}
-            .x2=${x2}
-            .y2=${y2}
-            .color=${edgeColor}
-            .isHighlighted=${isHighlighted || isFocused}
-            .isDependent=${isCrossCluster}
-            .opacity=${opacity}
-            .zoom=${zoom}
-            .animated=${shouldAnimate}
-          ></graph-edge>
-        `;
-      })}
+      ${this.edges.map((edge) => this.renderEdge(edge, nodeMap, viewMode, zoom, hoveredClusterId))}
     `;
   }
 }

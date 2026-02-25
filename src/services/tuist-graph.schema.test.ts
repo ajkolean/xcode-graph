@@ -24,7 +24,7 @@ describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
     // Count by checking every other element (keys)
     let targetCount = 0;
     let packageCount = 0;
-    let otherCount = 0;
+    let _otherCount = 0;
 
     for (let i = 0; i < graph.dependencies.length; i += 2) {
       const source = graph.dependencies[i];
@@ -33,7 +33,7 @@ describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
       } else if (typeof source === 'object' && 'packageProduct' in source) {
         packageCount++;
       } else if (typeof source === 'object') {
-        otherCount++;
+        _otherCount++;
       }
     }
 

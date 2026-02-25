@@ -7,11 +7,11 @@
 
 import type { GraphDataService } from './graphDataService';
 
-export class GraphStatsService {
+export const GraphStatsService = {
   /**
    * Get node statistics
    */
-  static getNodeStats(
+  getNodeStats(
     service: GraphDataService,
     nodeId: string,
   ): {
@@ -31,12 +31,12 @@ export class GraphStatsService {
       transitiveDeps: transitiveDeps.nodes.size - 1, // Exclude self
       transitiveDependents: transitiveDependents.nodes.size - 1, // Exclude self
     };
-  }
+  },
 
   /**
    * Get cluster statistics
    */
-  static getClusterStats(
+  getClusterStats(
     service: GraphDataService,
     clusterId: string,
   ): {
@@ -65,12 +65,12 @@ export class GraphStatsService {
       dependents,
       platforms,
     };
-  }
+  },
 
   /**
    * Get overall graph statistics
    */
-  static getGraphStats(service: GraphDataService): {
+  getGraphStats(service: GraphDataService): {
     totalNodes: number;
     totalEdges: number;
     avgDependencies: number;
@@ -109,5 +109,5 @@ export class GraphStatsService {
       maxDependencies: maxDeps,
       isolatedNodes: isolated,
     };
-  }
-}
+  },
+} as const;

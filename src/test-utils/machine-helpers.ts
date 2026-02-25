@@ -82,7 +82,10 @@ export function createMachineTestContext<TSchema extends MachineSchema>(
   // Override initial context if provided
   if (context) {
     for (const [key, value] of Object.entries(context)) {
-      service.context.set(key as any, value);
+      service.context.set(
+        key as keyof TSchema['context'],
+        value as TSchema['context'][keyof TSchema['context']],
+      );
     }
   }
 
@@ -94,7 +97,7 @@ export function createMachineTestContext<TSchema extends MachineSchema>(
     getState: () => service.state.get() as TSchema['state'],
     getContext: <K extends keyof TSchema['context']>(key: K) => service.context.get(key),
     sendAndWait: async (event: TSchema['event']) => {
-      service.send(event as any);
+      service.send(event as Parameters<Service<TSchema>['send']>[0]);
       // Wait for microtask queue to flush (VanillaMachine uses queueMicrotask)
       await new Promise<void>((resolve) => queueMicrotask(resolve));
     },

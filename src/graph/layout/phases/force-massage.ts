@@ -1,7 +1,31 @@
 import type { ClusterPosition } from '@shared/schemas';
-import { forceCollide, forceLink, forceSimulation, forceX, forceY } from 'd3-force';
+import {
+  forceCollide,
+  forceLink,
+  forceSimulation,
+  forceX,
+  forceY,
+  type SimulationLinkDatum,
+  type SimulationNodeDatum,
+} from 'd3-force';
 import type { ClusterGraph } from '../cluster-graph';
 import type { LayoutConfig } from '../config';
+
+/** Simulation node for cluster force-massage */
+interface ClusterSimNode extends SimulationNodeDatum {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  ox: number;
+  oy: number;
+}
+
+/** Simulation link for cluster force-massage */
+interface ClusterSimLink extends SimulationLinkDatum<ClusterSimNode> {
+  strength: number;
+}
 
 /**
  * Apply a short force-directed simulation to "massage" cluster positions.
@@ -16,7 +40,7 @@ export function applyForceMassage(
   // 1. Prepare simulation nodes
   // d3-force modifies nodes in place, so we create a working copy
   // We need to store width/height for collision radius
-  const nodes = Array.from(clusterPositions.values()).map((pos) => ({
+  const nodes: ClusterSimNode[] = Array.from(clusterPositions.values()).map((pos) => ({
     id: pos.id,
     x: pos.x,
     y: pos.y,
@@ -39,17 +63,17 @@ export function applyForceMassage(
     .filter((l) => l.source && l.target); // Filter broken links
 
   // 3. Configure Simulation
-  const simulation = forceSimulation(nodes as any)
+  const simulation = forceSimulation<ClusterSimNode>(nodes)
     // Link force to keep related clusters together
     .force(
       'link',
-      forceLink(links as any)
-        .id((d: any) => d.id)
-        .distance((d: any) => {
+      forceLink<ClusterSimNode, ClusterSimLink>(links as ClusterSimLink[])
+        .id((d) => d.id)
+        .distance((d) => {
           // Ideal distance based on size of connected nodes
           // r1 + r2 + buffer
-          const s = d.source;
-          const t = d.target;
+          const s = d.source as ClusterSimNode;
+          const t = d.target as ClusterSimNode;
           const r1 = Math.max(s.width, s.height) / 2;
           const r2 = Math.max(t.width, t.height) / 2;
           return r1 + r2 + config.elkLayerSpacing;
@@ -59,8 +83,8 @@ export function applyForceMassage(
     // Collision force to prevent overlap
     .force(
       'collide',
-      forceCollide()
-        .radius((d: any) => {
+      forceCollide<ClusterSimNode>()
+        .radius((d) => {
           // Use circumscribed circle or slightly larger
           return Math.max(d.width, d.height) / 2 + config.elkNodeSpacing / 2;
         })
@@ -70,8 +94,8 @@ export function applyForceMassage(
     // Tether to initial positions (to preserve ELK's general structure)
     // This acts like "gravity" keeping them near where ELK put them,
     // but allowing local relaxation.
-    .force('x', forceX((d: any) => d.ox).strength(0.05))
-    .force('y', forceY((d: any) => d.oy).strength(0.05))
+    .force('x', forceX<ClusterSimNode>((d) => d.ox).strength(0.05))
+    .force('y', forceY<ClusterSimNode>((d) => d.oy).strength(0.05))
     .stop();
 
   // 4. Run Simulation
@@ -88,8 +112,8 @@ export function applyForceMassage(
       ...original,
       x: node.x,
       y: node.y,
-      vx: (node as any).vx ?? 0, // Save velocity if we ever want to animate continued settling
-      vy: (node as any).vy ?? 0,
+      vx: node.vx ?? 0, // Save velocity if we ever want to animate continued settling
+      vy: node.vy ?? 0,
     });
   }
 

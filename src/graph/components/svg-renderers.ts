@@ -663,6 +663,15 @@ function getEdgeVisualState(
   return { isHighlighted, isFocused, shouldDim, shouldAnimate, isCrossCluster };
 }
 
+function computeChainDepthOpacity(
+  edgeKey: string,
+  chain: { edgeDepths: Map<string, number>; maxDepth: number },
+): number {
+  const depth = chain.edgeDepths.get(edgeKey) || 0;
+  const maxDepth = chain.maxDepth || 1;
+  return 1 - (depth / maxDepth) * 0.7;
+}
+
 function getEdgeOpacity(
   edge: GraphEdge,
   viewMode: string,
@@ -674,36 +683,31 @@ function getEdgeOpacity(
   const inDependentsChain = transitiveDependents?.edges.has(edgeKey);
 
   if (viewMode === 'focused' && inDepsChain && transitiveDeps) {
-    const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
-    const maxDepth = transitiveDeps.maxDepth || 1;
-    return 1 - (depth / maxDepth) * 0.7;
+    return computeChainDepthOpacity(edgeKey, transitiveDeps);
   }
 
   if (viewMode === 'dependents' && inDependentsChain && transitiveDependents) {
-    const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
-    const maxDepth = transitiveDependents.maxDepth || 1;
-    return 1 - (depth / maxDepth) * 0.7;
+    return computeChainDepthOpacity(edgeKey, transitiveDependents);
   }
 
-  if (viewMode === 'both' && (inDepsChain || inDependentsChain)) {
+  if (viewMode === 'both') {
     if (inDepsChain && transitiveDeps) {
-      const depth = transitiveDeps.edgeDepths.get(edgeKey) || 0;
-      const maxDepth = transitiveDeps.maxDepth || 1;
-      return 1 - (depth / maxDepth) * 0.7;
+      return computeChainDepthOpacity(edgeKey, transitiveDeps);
     }
     if (inDependentsChain && transitiveDependents) {
-      const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
-      const maxDepth = transitiveDependents.maxDepth || 1;
-      return 1 - (depth / maxDepth) * 0.7;
+      return computeChainDepthOpacity(edgeKey, transitiveDependents);
     }
   }
 
   return 1;
 }
 
-export function renderGraphEdges(options: GraphEdgesOptions): TemplateResult {
+function renderSingleEdge(
+  edge: GraphEdge,
+  options: GraphEdgesOptions,
+  routedEdgeMap: Map<string, RoutedEdge>,
+): TemplateResult | typeof nothing {
   const {
-    edges,
     nodes,
     nodeMap,
     layoutNodePositions,
@@ -718,8 +722,91 @@ export function renderGraphEdges(options: GraphEdgesOptions): TemplateResult {
     transitiveDependents,
     zoom = 1,
     viewportBounds,
-    routedEdges,
   } = options;
+
+  const endpoints = resolveEdgeEndpoints(edge, nodes, nodeMap);
+  if (!endpoints) return nothing;
+
+  if (!shouldRenderEdge(endpoints, clusterId ?? undefined)) return nothing;
+
+  const visualState = getEdgeVisualState(
+    edge,
+    endpoints,
+    selectedNode,
+    hoveredNode,
+    hoveredClusterId ?? null,
+    clusterId ?? undefined,
+  );
+
+  const baseOpacity = getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
+  const opacity = visualState.shouldDim ? baseOpacity * 0.25 : baseOpacity;
+
+  // Check if this is a cross-cluster edge with routing data
+  const routedEdge = routedEdgeMap.get(`${edge.source}->${edge.target}`);
+
+  if (routedEdge && visualState.isCrossCluster) {
+    return renderRoutedCrossClusterEdge(
+      routedEdge,
+      endpoints,
+      clusterPositions,
+      layoutNodePositions,
+      opacity,
+      zoom,
+      visualState,
+    );
+  }
+
+  // Fall back to direct bezier for intra-cluster edges or edges without routing
+  const positions = calculateEdgePositions(
+    edge,
+    endpoints,
+    layoutNodePositions,
+    clusterPositions,
+    manualNodePositions,
+    viewportBounds,
+  );
+  if (!positions) return nothing;
+
+  return renderGraphEdge({
+    ...positions,
+    color: getNodeTypeColor(endpoints.targetNode.type),
+    isHighlighted: visualState.isHighlighted || visualState.isFocused,
+    isDependent: visualState.isCrossCluster,
+    opacity,
+    zoom,
+    animated: false,
+  });
+}
+
+function renderRoutedCrossClusterEdge(
+  routedEdge: RoutedEdge,
+  endpoints: EdgeEndpoints,
+  clusterPositions: Map<string, ClusterPosition>,
+  layoutNodePositions: Map<string, NodePosition>,
+  opacity: number,
+  zoom: number,
+  visualState: EdgeVisualState,
+): TemplateResult | typeof nothing {
+  const sourceClusterPos = clusterPositions.get(endpoints.sourceClusterId);
+  const targetClusterPos = clusterPositions.get(endpoints.targetClusterId);
+
+  if (!sourceClusterPos || !targetClusterPos) return nothing;
+
+  return renderRoutedGraphEdge({
+    routedEdge,
+    sourceClusterPosition: sourceClusterPos,
+    targetClusterPosition: targetClusterPos,
+    layoutNodePositions,
+    color: getNodeTypeColor(endpoints.targetNode.type),
+    isHighlighted: visualState.isHighlighted || visualState.isFocused,
+    opacity,
+    zoom,
+    animated: false,
+  });
+}
+
+export function renderGraphEdges(options: GraphEdgesOptions): TemplateResult {
+  const { edges, routedEdges } = options;
 
   // Build a lookup map for routed edges: "sourceId->targetId" -> RoutedEdge
   const routedEdgeMap = new Map<string, RoutedEdge>();
@@ -730,69 +817,7 @@ export function renderGraphEdges(options: GraphEdgesOptions): TemplateResult {
   }
 
   return svg`
-    ${edges.map((edge) => {
-      const endpoints = resolveEdgeEndpoints(edge, nodes, nodeMap);
-      if (!endpoints) return nothing;
-
-      if (!shouldRenderEdge(endpoints, clusterId ?? undefined)) return nothing;
-
-      const visualState = getEdgeVisualState(
-        edge,
-        endpoints,
-        selectedNode,
-        hoveredNode,
-        hoveredClusterId ?? null,
-        clusterId ?? undefined,
-      );
-
-      const baseOpacity = getEdgeOpacity(edge, viewMode, transitiveDeps, transitiveDependents);
-      const opacity = visualState.shouldDim ? baseOpacity * 0.25 : baseOpacity;
-
-      // Check if this is a cross-cluster edge with routing data
-      const edgeKey = `${edge.source}->${edge.target}`;
-      const routedEdge = routedEdgeMap.get(edgeKey);
-
-      if (routedEdge && visualState.isCrossCluster) {
-        // Use port-routed path for cross-cluster edges
-        const sourceClusterPos = clusterPositions.get(endpoints.sourceClusterId);
-        const targetClusterPos = clusterPositions.get(endpoints.targetClusterId);
-
-        if (sourceClusterPos && targetClusterPos) {
-          return renderRoutedGraphEdge({
-            routedEdge,
-            sourceClusterPosition: sourceClusterPos,
-            targetClusterPosition: targetClusterPos,
-            layoutNodePositions,
-            color: getNodeTypeColor(endpoints.targetNode.type),
-            isHighlighted: visualState.isHighlighted || visualState.isFocused,
-            opacity,
-            zoom,
-            animated: false,
-          });
-        }
-      }
-
-      // Fall back to direct bezier for intra-cluster edges or edges without routing
-      const positions = calculateEdgePositions(
-        edge,
-        endpoints,
-        layoutNodePositions,
-        clusterPositions,
-        manualNodePositions,
-        viewportBounds,
-      );
-      if (!positions) return nothing;
-
-      return renderGraphEdge({
-        ...positions,
-        color: getNodeTypeColor(endpoints.targetNode.type),
-        isHighlighted: visualState.isHighlighted || visualState.isFocused,
-        isDependent: visualState.isCrossCluster,
-        opacity,
-        zoom,
-        animated: false,
-      });
-    })}
+    ${edges.map((edge) => renderSingleEdge(edge, options, routedEdgeMap))}
   `;
 }
 
@@ -823,34 +848,98 @@ export interface ClusterGroupOptions {
   onNodeClick?: (node: GraphNode, e: MouseEvent) => void;
 }
 
-export function renderClusterGroup(options: ClusterGroupOptions): TemplateResult {
+function matchesPreviewFilter(
+  node: GraphNode,
+  previewFilter: { type: string; value: string } | null | undefined,
+): boolean {
+  if (!previewFilter) return true;
+  if (previewFilter.type === 'nodeType' && node.type === previewFilter.value) return true;
+  if (previewFilter.type === 'platform' && node.platform === previewFilter.value) return true;
+  if (previewFilter.type === 'origin' && node.origin === previewFilter.value) return true;
+  if (previewFilter.type === 'project' && node.project === previewFilter.value) return true;
+  if (
+    previewFilter.type === 'package' &&
+    node.type === 'package' &&
+    node.name === previewFilter.value
+  )
+    return true;
+  return false;
+}
+
+function renderClusterNode(
+  node: GraphNode,
+  options: ClusterGroupOptions,
+  connectedNodes: Set<string>,
+): TemplateResult | typeof nothing {
   const {
-    cluster,
     clusterPosition,
-    nodes: _nodes,
     edges,
     layoutNodePositions,
     manualNodePositions,
     selectedNode,
     hoveredNode,
-    isClusterHovered = false,
-    isClusterSelected = false,
     searchQuery = '',
     zoom = 1,
     previewFilter,
-    onClusterClick,
-    onClusterMouseEnter,
-    onClusterMouseLeave,
     onNodeMouseEnter,
     onNodeMouseLeave,
     onNodeMouseDown,
     onNodeClick,
   } = options;
 
+  const layoutPos = layoutNodePositions.get(node.id);
+  if (!layoutPos) return nothing;
+
+  // Resolve position (manual overrides layout)
+  const manualPos = manualNodePositions?.get(node.id);
+  const posX = manualPos?.x ?? layoutPos.x;
+  const posY = manualPos?.y ?? layoutPos.y;
+
+  const isSelectedNode = selectedNode?.id === node.id;
+  const isHovered = hoveredNode === node.id;
+  const isConnected = selectedNode && connectedNodes.has(node.id);
+  const isSearchMatch =
+    searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+  const isDimmed =
+    (searchQuery && !isSearchMatch) ||
+    (selectedNode && !isSelectedNode && !isConnected) ||
+    (previewFilter && !matchesPreviewFilter(node, previewFilter));
+
+  return renderGraphNode({
+    node,
+    x: clusterPosition.x + posX,
+    y: clusterPosition.y + posY,
+    size: getNodeSize(node, edges),
+    color: getNodeTypeColor(node.type),
+    isSelected: isSelectedNode,
+    isHovered,
+    isDimmed: isDimmed ?? false,
+    zoom,
+    ...(onNodeMouseEnter ? { onMouseEnter: () => onNodeMouseEnter(node.id) } : {}),
+    ...(onNodeMouseLeave ? { onMouseLeave: onNodeMouseLeave } : {}),
+    ...(onNodeMouseDown ? { onMouseDown: (e: MouseEvent) => onNodeMouseDown(node.id, e) } : {}),
+    ...(onNodeClick ? { onClick: (e: MouseEvent) => onNodeClick(node, e) } : {}),
+  });
+}
+
+export function renderClusterGroup(options: ClusterGroupOptions): TemplateResult {
+  const {
+    cluster,
+    clusterPosition,
+    edges,
+    selectedNode,
+    isClusterHovered = false,
+    isClusterSelected = false,
+    zoom = 1,
+    onClusterClick,
+    onClusterMouseEnter,
+    onClusterMouseLeave,
+  } = options;
+
   const connectedNodes = selectedNode
     ? getConnectedNodes(selectedNode.id, edges)
     : new Set<string>();
-  const clusterNodes = cluster.nodes;
 
   return svg`
     <g
@@ -872,59 +961,7 @@ export function renderClusterGroup(options: ClusterGroupOptions): TemplateResult
 
       <!-- Nodes -->
       <g class="nodes">
-        ${clusterNodes.map((node) => {
-          const layoutPos = layoutNodePositions.get(node.id);
-          if (!layoutPos) return nothing;
-
-          // Resolve position (manual overrides layout)
-          const manualPos = manualNodePositions?.get(node.id);
-          const posX = manualPos?.x ?? layoutPos.x;
-          const posY = manualPos?.y ?? layoutPos.y;
-
-          const isSelectedNode = selectedNode?.id === node.id;
-          const isHovered = hoveredNode === node.id;
-          const isConnected = selectedNode && connectedNodes.has(node.id);
-          const isSearchMatch =
-            searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
-
-          const matchesPreview =
-            !previewFilter ||
-            (previewFilter.type === 'nodeType' && node.type === previewFilter.value) ||
-            (previewFilter.type === 'platform' && node.platform === previewFilter.value) ||
-            (previewFilter.type === 'origin' && node.origin === previewFilter.value) ||
-            (previewFilter.type === 'project' && node.project === previewFilter.value) ||
-            (previewFilter.type === 'package' &&
-              node.type === 'package' &&
-              node.name === previewFilter.value);
-
-          const isDimmed =
-            (searchQuery && !isSearchMatch) ||
-            (selectedNode && !isSelectedNode && !isConnected) ||
-            (previewFilter && !matchesPreview);
-
-          const size = getNodeSize(node, edges);
-          const color = getNodeTypeColor(node.type);
-          const x = clusterPosition.x + posX;
-          const y = clusterPosition.y + posY;
-
-          return renderGraphNode({
-            node,
-            x,
-            y,
-            size,
-            color,
-            isSelected: isSelectedNode,
-            isHovered,
-            isDimmed: isDimmed ?? false,
-            zoom,
-            ...(onNodeMouseEnter ? { onMouseEnter: () => onNodeMouseEnter(node.id) } : {}),
-            ...(onNodeMouseLeave ? { onMouseLeave: onNodeMouseLeave } : {}),
-            ...(onNodeMouseDown
-              ? { onMouseDown: (e: MouseEvent) => onNodeMouseDown(node.id, e) }
-              : {}),
-            ...(onNodeClick ? { onClick: (e: MouseEvent) => onNodeClick(node, e) } : {}),
-          });
-        })}
+        ${cluster.nodes.map((node) => renderClusterNode(node, options, connectedNodes))}
       </g>
     </g>
   `;

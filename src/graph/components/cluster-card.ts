@@ -86,88 +86,102 @@ export class GraphClusterCard extends LitElement {
   // Render
   // ========================================
 
+  private resolveRenderProps() {
+    return {
+      x: this.x ?? 0,
+      y: this.y ?? 0,
+      width: this.width ?? 0,
+      height: this.height ?? 0,
+      zoom: this.zoom ?? 1,
+      isHighlighted: this.isHighlighted ?? false,
+      isDimmed: this.isDimmed ?? false,
+      isSelected: this.isSelected ?? false,
+      clickable: this.clickable ?? false,
+    };
+  }
+
+  private computeCardStyles(
+    props: ReturnType<GraphClusterCard['resolveRenderProps']>,
+    zoomAdjustedColor: string,
+  ) {
+    const isActive = props.isHighlighted || props.isSelected;
+    return {
+      isActive,
+      cursorStyle: props.clickable ? 'pointer' : 'default',
+      strokeDasharray: this.cluster!.type === 'project' ? '8 8' : '3 8',
+      fillAlpha: isActive ? '08' : '18',
+      textOpacity: isActive ? 1 : 0.6,
+      fontWeight: isActive ? 600 : 500,
+      textShadow: isActive
+        ? `0 0 8px ${zoomAdjustedColor}40, 0 0 16px ${zoomAdjustedColor}20`
+        : 'none',
+      borderOpacity: adjustOpacityForZoom(0.5, props.zoom),
+    };
+  }
+
   override render(): SVGTemplateResult {
     if (!this.cluster) return svg``;
 
-    const x = this.x ?? 0;
-    const y = this.y ?? 0;
-    const width = this.width ?? 0;
-    const height = this.height ?? 0;
-    const zoom = this.zoom ?? 1;
-    const isHighlighted = this.isHighlighted ?? false;
-    const isDimmed = this.isDimmed ?? false;
-    const isSelected = this.isSelected ?? false;
-    const clickable = this.clickable ?? false;
-
+    const props = this.resolveRenderProps();
     const clusterColor = generateColor(this.cluster.name, this.cluster.type);
-    const zoomAdjustedColor = adjustColorForZoom(clusterColor, zoom);
-    const borderOpacity = adjustOpacityForZoom(0.5, zoom);
-
-    const isActive = isHighlighted || isSelected;
-    const cursorStyle = clickable ? 'pointer' : 'default';
-    const strokeDasharray = this.cluster.type === 'project' ? '8 8' : '3 8';
-    const fillAlpha = isActive ? '08' : '18';
-    const textOpacity = isActive ? 1 : 0.6;
-    const fontWeight = isActive ? 600 : 500;
-    const textShadow = isActive
-      ? `0 0 8px ${zoomAdjustedColor}40, 0 0 16px ${zoomAdjustedColor}20`
-      : 'none';
+    const zoomAdjustedColor = adjustColorForZoom(clusterColor, props.zoom);
+    const styles = this.computeCardStyles(props, zoomAdjustedColor);
 
     return svg`
       <g
-        opacity="${isDimmed ? 0.3 : 1}"
-        role="${clickable ? 'button' : ''}"
-        tabindex="${clickable ? 0 : -1}"
-        aria-label="${clickable ? `${this.cluster.name} cluster, ${this.cluster.nodes.length} targets` : ''}"
+        opacity="${props.isDimmed ? 0.3 : 1}"
+        role="${props.clickable ? 'button' : ''}"
+        tabindex="${props.clickable ? 0 : -1}"
+        aria-label="${props.clickable ? `${this.cluster.name} cluster, ${this.cluster.nodes.length} targets` : ''}"
         @click=${this.handleClick}
         @keydown=${this.handleKeyDown}
       >
         <!-- Background fill -->
         <rect
-          x="${x}"
-          y="${y}"
-          width="${width}"
-          height="${height}"
+          x="${props.x}"
+          y="${props.y}"
+          width="${props.width}"
+          height="${props.height}"
           rx="8"
           ry="8"
-          fill="${zoomAdjustedColor}${fillAlpha}"
+          fill="${zoomAdjustedColor}${styles.fillAlpha}"
           stroke="none"
-          style="transition: fill var(--durations-normal) ease-in-out; cursor: ${cursorStyle}"
+          style="transition: fill var(--durations-normal) ease-in-out; cursor: ${styles.cursorStyle}"
         />
 
         <!-- Border -->
         <rect
-          x="${x}"
-          y="${y}"
-          width="${width}"
-          height="${height}"
+          x="${props.x}"
+          y="${props.y}"
+          width="${props.width}"
+          height="${props.height}"
           rx="8"
           ry="8"
           fill="none"
           stroke="${zoomAdjustedColor}"
           stroke-width="3.5"
-          stroke-opacity="${isActive ? 0.9 : borderOpacity}"
-          stroke-dasharray="${strokeDasharray}"
+          stroke-opacity="${styles.isActive ? 0.9 : styles.borderOpacity}"
+          stroke-dasharray="${styles.strokeDasharray}"
           stroke-linecap="round"
           style="
             transition: stroke-opacity var(--durations-normal) ease-in-out;
-            cursor: ${cursorStyle};
-            ${isSelected ? 'animation: marchingAnts var(--durations-slower) linear infinite' : ''}
+            cursor: ${styles.cursorStyle};
+            ${props.isSelected ? 'animation: marchingAnts var(--durations-slower) linear infinite' : ''}
           "
         />
 
         <!-- Cluster label -->
         <text
-          x="${x + 12}"
-          y="${y + 20}"
+          x="${props.x + 12}"
+          y="${props.y + 20}"
           fill="${zoomAdjustedColor}"
           style="
             font-family: var(--fonts-body);
             font-size: var(--font-sizes-label);
-            font-weight: ${fontWeight};
+            font-weight: ${styles.fontWeight};
             pointer-events: none;
-            opacity: ${textOpacity};
-            text-shadow: ${textShadow};
+            opacity: ${styles.textOpacity};
+            text-shadow: ${styles.textShadow};
             transition: opacity var(--durations-normal), font-weight var(--durations-normal), text-shadow var(--durations-normal);
           "
         >
@@ -176,17 +190,17 @@ export class GraphClusterCard extends LitElement {
 
         <!-- Target count -->
         <text
-          x="${x + width - 12}"
-          y="${y + 20}"
+          x="${props.x + props.width - 12}"
+          y="${props.y + 20}"
           text-anchor="end"
           fill="${zoomAdjustedColor}"
           style="
             font-family: var(--fonts-body);
             font-size: var(--font-sizes-sm);
-            font-weight: ${fontWeight};
+            font-weight: ${styles.fontWeight};
             pointer-events: none;
-            opacity: ${textOpacity};
-            text-shadow: ${textShadow};
+            opacity: ${styles.textOpacity};
+            text-shadow: ${styles.textShadow};
             transition: opacity var(--durations-normal), font-weight var(--durations-normal), text-shadow var(--durations-normal);
           "
         >

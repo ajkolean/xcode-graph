@@ -101,12 +101,10 @@ describe('graph-cluster-details-panel - Rendering', () => {
     expect(el).to.exist;
 
     const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    const typeBadge = el.shadowRoot?.querySelector('graph-cluster-type-badge');
     const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
     const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
 
     expect(header).to.exist;
-    expect(typeBadge).to.exist;
     expect(stats).to.exist;
     expect(targetsList).to.exist;
   });
@@ -383,7 +381,7 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
     expect(header?.getAttribute('cluster-type')).to.equal('project');
   });
 
-  it('should propagate cluster type to type badge', async () => {
+  it('should propagate cluster type to header', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel
         .cluster=${mockCluster}
@@ -393,8 +391,8 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
       ></graph-cluster-details-panel>
     `);
 
-    const badge = el.shadowRoot?.querySelector('graph-cluster-type-badge');
-    expect(badge?.getAttribute('cluster-type')).to.equal('project');
+    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    expect(header?.getAttribute('cluster-type')).to.equal('project');
   });
 
   it('should propagate cluster nodes to targets list', async () => {

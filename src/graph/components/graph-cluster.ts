@@ -103,16 +103,23 @@ export class GraphCluster extends LitElement {
   // Render
   // ========================================
 
+  private resolveClusterProps() {
+    return {
+      clusterId: this.clusterId ?? '',
+      x: this.x ?? 0,
+      y: this.y ?? 0,
+      width: this.width ?? 0,
+      height: this.height ?? 0,
+      color: this.color ?? '#888',
+      nodeCount: this.nodeCount ?? 0,
+      origin: (this.origin ?? 'local') as 'local' | 'external',
+      isHovered: this.isHovered ?? false,
+    };
+  }
+
   override render(): TemplateResult {
-    const clusterId = this.clusterId ?? '';
-    const x = this.x ?? 0;
-    const y = this.y ?? 0;
-    const width = this.width ?? 0;
-    const height = this.height ?? 0;
-    const color = this.color ?? '#888';
-    const nodeCount = this.nodeCount ?? 0;
-    const origin = this.origin ?? 'local';
-    const isHovered = this.isHovered ?? false;
+    const { clusterId, x, y, width, height, color, nodeCount, origin, isHovered } =
+      this.resolveClusterProps();
 
     // Unique IDs for gradients
     const bgGradientId = `cluster-bg-${clusterId}`;

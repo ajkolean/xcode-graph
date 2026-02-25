@@ -101,13 +101,13 @@ function extractBuildSettings(settings: RawSettings | undefined): BuildSettings 
   const result: BuildSettings = {};
 
   // Swift version
-  const swiftVersion = base['SWIFT_VERSION'];
+  const swiftVersion = base.SWIFT_VERSION;
   if (swiftVersion && typeof swiftVersion === 'string') {
     result.swiftVersion = swiftVersion;
   }
 
   // Compilation conditions (from SWIFT_ACTIVE_COMPILATION_CONDITIONS)
-  const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as string[] | string | undefined;
+  const conditions = base.SWIFT_ACTIVE_COMPILATION_CONDITIONS as string[] | string | undefined;
   if (conditions) {
     if (Array.isArray(conditions)) {
       result.compilationConditions = conditions.map(String);
@@ -117,19 +117,19 @@ function extractBuildSettings(settings: RawSettings | undefined): BuildSettings 
   }
 
   // Code signing
-  const codeSign = base['CODE_SIGN_IDENTITY'];
+  const codeSign = base.CODE_SIGN_IDENTITY;
   if (codeSign && typeof codeSign === 'string') {
     result.codeSignIdentity = codeSign;
   }
 
   // Development team
-  const devTeam = base['DEVELOPMENT_TEAM'];
+  const devTeam = base.DEVELOPMENT_TEAM;
   if (devTeam && typeof devTeam === 'string') {
     result.developmentTeam = devTeam;
   }
 
   // Provisioning profile
-  const profile = base['PROVISIONING_PROFILE_SPECIFIER'];
+  const profile = base.PROVISIONING_PROFILE_SPECIFIER;
   if (profile && typeof profile === 'string') {
     result.provisioningProfile = profile;
   }
@@ -288,6 +288,13 @@ function createNodeFromTarget(
   if (target.sources?.length) {
     node.sourcePaths = target.sources.map((s) => s.path);
     node.sourceCount = target.sources.length;
+  } else if (target.buildableFolders?.length) {
+    // Local project targets use buildableFolders instead of sources
+    const resolvedFiles = target.buildableFolders.flatMap((bf) => bf.resolvedFiles);
+    if (resolvedFiles.length > 0) {
+      node.sourcePaths = resolvedFiles.map((f) => f.path);
+      node.sourceCount = resolvedFiles.length;
+    }
   }
 
   const meta = target.metadata as { tags?: string[] } | null;

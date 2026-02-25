@@ -7,11 +7,11 @@
 
 import type { GraphDataService } from './graphDataService';
 
-export class GraphAnalysisService {
+export const GraphAnalysisService = {
   /**
    * Check if there's a path between two nodes
    */
-  static hasPath(service: GraphDataService, fromId: string, toId: string): boolean {
+  hasPath(service: GraphDataService, fromId: string, toId: string): boolean {
     const visited = new Set<string>();
     const queue = [fromId];
 
@@ -32,12 +32,12 @@ export class GraphAnalysisService {
     }
 
     return false;
-  }
+  },
 
   /**
    * Detect circular dependencies in the graph
    */
-  static findCircularDependencies(service: GraphDataService): string[][] {
+  findCircularDependencies(service: GraphDataService): string[][] {
     const cycles: string[][] = [];
     const visited = new Set<string>();
     const recStack = new Set<string>();
@@ -70,5 +70,5 @@ export class GraphAnalysisService {
     });
 
     return cycles;
-  }
-}
+  },
+} as const;

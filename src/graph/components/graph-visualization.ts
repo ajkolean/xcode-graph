@@ -227,45 +227,53 @@ export class GraphVisualization extends LitElement {
     );
   }
 
+  private handleGraphDataChange(): void {
+    // Optimization: Compute nodeMap for O(1) lookups ONLY if not provided via props
+    if (!this.nodeMap) {
+      this.internalNodeMap = new Map((this.nodes ?? []).map((n) => [n.id, n]));
+    }
+
+    this.layout.enableAnimation = this.enableAnimation ?? false;
+    // ELK layout is asynchronous
+    this.layout.computeLayout(this.nodes ?? [], this.edges ?? []).catch(console.error);
+
+    // Keep interaction controller in sync with fresh layout positions
+    this.interaction.updateConfig({
+      finalNodePositions: this.layout.nodePositions,
+      clusterPositions: this.layout.clusterPositions,
+    });
+  }
+
+  private handleAnimationChange(): void {
+    const enableAnimation = this.enableAnimation ?? false;
+    this.layout.enableAnimation = enableAnimation;
+
+    if (!enableAnimation) {
+      this.layout.stopAnimation();
+    } else if (this.nodes && this.edges) {
+      this.layout.computeLayout(this.nodes, this.edges).catch(console.error);
+    }
+  }
+
+  private handleZoomChange(): void {
+    this.interaction.updateConfig({
+      zoom: this.zoom ?? 1,
+      finalNodePositions: this.layout.nodePositions,
+      clusterPositions: this.layout.clusterPositions,
+    });
+  }
+
   override willUpdate(changedProps: PropertyValues<this>): void {
-    // Update layout when nodes/edges change
     if (changedProps.has('nodes') || changedProps.has('edges')) {
-      // Optimization: Compute nodeMap for O(1) lookups ONLY if not provided via props
-      if (!this.nodeMap) {
-        this.internalNodeMap = new Map((this.nodes ?? []).map((n) => [n.id, n]));
-      }
-
-      this.layout.enableAnimation = this.enableAnimation ?? false;
-      // ELK layout is asynchronous
-      this.layout.computeLayout(this.nodes ?? [], this.edges ?? []).catch(console.error);
-
-      // Keep interaction controller in sync with fresh layout positions
-      this.interaction.updateConfig({
-        finalNodePositions: this.layout.nodePositions,
-        clusterPositions: this.layout.clusterPositions,
-      });
+      this.handleGraphDataChange();
     }
 
-    // Update animation when enableAnimation changes
     if (changedProps.has('enableAnimation')) {
-      const enableAnimation = this.enableAnimation ?? false;
-      this.layout.enableAnimation = enableAnimation;
-
-      // If toggled on/off after initial render, re-run layout or stop animation
-      if (!enableAnimation) {
-        this.layout.stopAnimation();
-      } else if (this.nodes && this.edges) {
-        this.layout.computeLayout(this.nodes, this.edges).catch(console.error);
-      }
+      this.handleAnimationChange();
     }
 
-    // Update interaction config when zoom changes
     if (changedProps.has('zoom')) {
-      this.interaction.updateConfig({
-        zoom: this.zoom ?? 1,
-        finalNodePositions: this.layout.nodePositions,
-        clusterPositions: this.layout.clusterPositions,
-      });
+      this.handleZoomChange();
     }
   }
 
@@ -321,6 +329,76 @@ export class GraphVisualization extends LitElement {
   // Render
   // ========================================
 
+  private dispatchBubble(eventName: string, detail?: unknown) {
+    this.dispatchEvent(
+      new CustomEvent(eventName, {
+        detail,
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private renderGraphContent() {
+    return svg`
+      <!-- Cross-cluster edges -->
+      <g class="cluster-edges">
+        ${renderGraphEdges({
+          edges: this.edges ?? [],
+          nodes: this.nodes ?? [],
+          nodeMap: this.effectiveNodeMap,
+          layoutNodePositions: this.layout.nodePositions,
+          manualNodePositions: this.interaction.manualNodePositions,
+          clusterPositions: this.layout.clusterPositions,
+          selectedNode: this.selectedNode ?? null,
+          hoveredNode: this.hoveredNode ?? null,
+          hoveredClusterId: this.hoveredCluster,
+          viewMode: this.viewMode ?? 'full',
+          ...(this.transitiveDeps ? { transitiveDeps: this.transitiveDeps } : {}),
+          ...(this.transitiveDependents
+            ? { transitiveDependents: this.transitiveDependents }
+            : {}),
+          zoom: this.zoom ?? 1,
+        })}
+      </g>
+
+      <!-- Clusters with nodes and internal edges -->
+      ${this.layout.clusters.map((cluster) => this.renderSingleCluster(cluster))}
+    `;
+  }
+
+  private renderSingleCluster(cluster: { id: string; nodes: GraphNodeType[] }) {
+    const position = this.layout.clusterPositions.get(cluster.id);
+    if (!position) return null;
+
+    return renderClusterGroup({
+      cluster: cluster as import('@shared/schemas').Cluster,
+      clusterPosition: position,
+      nodes: this.nodes ?? [],
+      edges: this.edges ?? [],
+      layoutNodePositions: this.layout.nodePositions,
+      manualNodePositions: this.interaction.manualNodePositions,
+      selectedNode: this.selectedNode ?? null,
+      hoveredNode: this.hoveredNode ?? null,
+      isClusterHovered: this.hoveredCluster === cluster.id,
+      isClusterSelected: this.selectedCluster === cluster.id,
+      searchQuery: this.searchQuery ?? '',
+      zoom: this.zoom ?? 1,
+      previewFilter: this.previewFilter ?? null,
+      onClusterClick: () => this.dispatchBubble('cluster-select', { clusterId: cluster.id }),
+      onClusterMouseEnter: () => this.scheduleHoverUpdate(cluster.id),
+      onClusterMouseLeave: () => this.scheduleHoverUpdate(null),
+      onNodeMouseEnter: (nodeId) => this.dispatchBubble('node-hover', { nodeId }),
+      onNodeMouseLeave: () => this.dispatchBubble('node-hover', { nodeId: null }),
+      onNodeMouseDown: (nodeId, e) => this.interaction.handleNodeMouseDown(nodeId, e),
+      onNodeClick: (node) => {
+        if (!this.interaction.hasMoved) {
+          this.dispatchBubble('node-select', { node });
+        }
+      },
+    });
+  }
+
   override render(): TemplateResult {
     return html`
       <graph-background></graph-background>
@@ -330,15 +408,10 @@ export class GraphVisualization extends LitElement {
         node-count=${this.nodes?.length ?? 0}
         edge-count=${this.edges?.length ?? 0}
         ?enable-animation=${this.enableAnimation}
-        @zoom-in=${() => this.dispatchEvent(new CustomEvent('zoom-in', { bubbles: true, composed: true }))}
-        @zoom-out=${() =>
-          this.dispatchEvent(new CustomEvent('zoom-out', { bubbles: true, composed: true }))}
-        @zoom-reset=${() =>
-          this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }))}
-        @toggle-animation=${() =>
-          this.dispatchEvent(
-            new CustomEvent('toggle-animation', { bubbles: true, composed: true }),
-          )}
+        @zoom-in=${() => this.dispatchBubble('zoom-in')}
+        @zoom-out=${() => this.dispatchBubble('zoom-out')}
+        @zoom-reset=${() => this.dispatchBubble('zoom-reset')}
+        @toggle-animation=${() => this.dispatchBubble('toggle-animation')}
       ></graph-controls>
 
       <svg
@@ -353,98 +426,7 @@ export class GraphVisualization extends LitElement {
         <graph-svg-defs></graph-svg-defs>
 
         <g transform="translate(${this.interaction.pan.x}, ${this.interaction.pan.y}) scale(${this.zoom ?? 1})">
-          ${
-            this.nodes?.length
-              ? svg`
-                <!-- Cross-cluster edges -->
-                <g class="cluster-edges">
-                  ${renderGraphEdges({
-                    edges: this.edges ?? [],
-                    nodes: this.nodes ?? [],
-                    nodeMap: this.effectiveNodeMap,
-                    layoutNodePositions: this.layout.nodePositions,
-                    manualNodePositions: this.interaction.manualNodePositions,
-                    clusterPositions: this.layout.clusterPositions,
-                    selectedNode: this.selectedNode ?? null,
-                    hoveredNode: this.hoveredNode ?? null,
-                    hoveredClusterId: this.hoveredCluster,
-                    viewMode: this.viewMode ?? 'full',
-                    ...(this.transitiveDeps ? { transitiveDeps: this.transitiveDeps } : {}),
-                    ...(this.transitiveDependents
-                      ? { transitiveDependents: this.transitiveDependents }
-                      : {}),
-                    zoom: this.zoom ?? 1,
-                  })}
-                </g>
-
-                <!-- Clusters with nodes and internal edges -->
-                ${this.layout.clusters.map((cluster) => {
-                  const position = this.layout.clusterPositions.get(cluster.id);
-                  if (!position) return null;
-
-                  const isSelected = this.selectedCluster === cluster.id;
-
-                  return renderClusterGroup({
-                    cluster,
-                    clusterPosition: position,
-                    nodes: this.nodes ?? [],
-                    edges: this.edges ?? [],
-                    layoutNodePositions: this.layout.nodePositions,
-                    manualNodePositions: this.interaction.manualNodePositions,
-                    selectedNode: this.selectedNode ?? null,
-                    hoveredNode: this.hoveredNode ?? null,
-                    isClusterHovered: this.hoveredCluster === cluster.id,
-                    isClusterSelected: isSelected,
-                    searchQuery: this.searchQuery ?? '',
-                    zoom: this.zoom ?? 1,
-                    previewFilter: this.previewFilter ?? null,
-                    onClusterClick: () =>
-                      this.dispatchEvent(
-                        new CustomEvent('cluster-select', {
-                          detail: { clusterId: cluster.id },
-                          bubbles: true,
-                          composed: true,
-                        }),
-                      ),
-                    onClusterMouseEnter: () => {
-                      this.scheduleHoverUpdate(cluster.id);
-                    },
-                    onClusterMouseLeave: () => {
-                      this.scheduleHoverUpdate(null);
-                    },
-                    onNodeMouseEnter: (nodeId) =>
-                      this.dispatchEvent(
-                        new CustomEvent('node-hover', {
-                          detail: { nodeId },
-                          bubbles: true,
-                          composed: true,
-                        }),
-                      ),
-                    onNodeMouseLeave: () =>
-                      this.dispatchEvent(
-                        new CustomEvent('node-hover', {
-                          detail: { nodeId: null },
-                          bubbles: true,
-                          composed: true,
-                        }),
-                      ),
-                    onNodeMouseDown: (nodeId, e) => this.interaction.handleNodeMouseDown(nodeId, e),
-                    onNodeClick: (node) => {
-                      if (!this.interaction.hasMoved) {
-                        this.dispatchEvent(
-                          new CustomEvent('node-select', {
-                            detail: { node },
-                            bubbles: true,
-                            composed: true,
-                          }),
-                        );
-                      }
-                    },
-                  });
-                })}
-              `
-              : ''
-          }
+          ${this.nodes?.length ? this.renderGraphContent() : ''}
         </g>
       </svg>
 

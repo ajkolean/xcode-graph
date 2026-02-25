@@ -1,7 +1,27 @@
 import type { NodePosition } from '@shared/schemas';
-import { forceCollide, forceManyBody, forceSimulation, forceX, forceY } from 'd3-force';
+import {
+  forceCollide,
+  forceManyBody,
+  forceSimulation,
+  forceX,
+  forceY,
+  type SimulationNodeDatum,
+} from 'd3-force';
 import type { LayoutConfig } from '../config';
 import type { MicroLayoutResult } from './micro-layout';
+
+/** Simulation node for node massage pass */
+interface MassageSimNode extends SimulationNodeDatum {
+  id: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  clusterId: string;
+  radius: number;
+  ox: number;
+  oy: number;
+}
 
 /**
  * Apply a gentle force-directed "massage" to nodes within a cluster.
@@ -21,10 +41,10 @@ export function applyNodeMassage(
 
   if (nodes.length === 0) return micro;
 
-  const simulation = forceSimulation(nodes as any)
+  const simulation = forceSimulation<MassageSimNode>(nodes as MassageSimNode[])
     // 1. Anchor to original positions (preserve Solar System bands)
-    .force('x', forceX((d: any) => d.ox).strength(0.1))
-    .force('y', forceY((d: any) => d.oy).strength(0.1))
+    .force('x', forceX<MassageSimNode>((d) => d.ox).strength(0.1))
+    .force('y', forceY<MassageSimNode>((d) => d.oy).strength(0.1))
 
     // 2. Gentle repulsion to "fluff" the cluster
     .force('charge', forceManyBody().strength(-30))
@@ -32,8 +52,8 @@ export function applyNodeMassage(
     // 3. Hard collision to ensure no overlaps
     .force(
       'collide',
-      forceCollide()
-        .radius((d: any) => (d.radius ?? config.nodeRadius) + config.clusterNodeSpacing)
+      forceCollide<MassageSimNode>()
+        .radius((d) => (d.radius ?? config.nodeRadius) + config.clusterNodeSpacing)
         .strength(0.9)
         .iterations(2),
     )

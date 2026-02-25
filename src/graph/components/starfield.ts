@@ -110,35 +110,42 @@ export class Starfield {
     const spanY = height * spanMultiplier;
     const offsetX = spanX * 0.25; // center the spawn region
     const offsetY = spanY * 0.25;
-    const palette = this.palette;
 
     for (let i = 0; i < count; i++) {
       const isBright = Math.random() < brightRatio;
-
-      // Depth in [0.1, 0.9] to avoid extremes
-      const depth = Math.random() * 0.8 + 0.1;
-
-      this.stars.push({
-        x: Math.random() * spanX - offsetX,
-        y: Math.random() * spanY - offsetY,
-        r: isBright ? Math.random() * 1.5 + 1.0 : Math.random() * 0.8 + 0.2,
-        a: isBright ? Math.random() * 0.4 + 0.5 : Math.random() * 0.2 + 0.05,
-        depth,
-        color:
-          palette[
-            isBright
-              ? Math.random() < 0.7
-                ? 1
-                : 0 // bright: mostly golden, sometimes neutral
-              : Math.random() < 0.9
-                ? 0
-                : 2 // dim: mostly neutral, rare cool blue
-          ] ?? palette[0]!,
-      });
+      this.stars.push(this.createStar(isBright, spanX, spanY, offsetX, offsetY));
     }
 
     // Sort by depth so distant stars render first (behind nearer ones)
     this.stars.sort((a, b) => a.depth - b.depth);
+  }
+
+  private createStar(
+    isBright: boolean,
+    spanX: number,
+    spanY: number,
+    offsetX: number,
+    offsetY: number,
+  ): Star {
+    const palette = this.palette;
+    // Depth in [0.1, 0.9] to avoid extremes
+    const depth = Math.random() * 0.8 + 0.1;
+    const colorIndex = isBright
+      ? Math.random() < 0.7
+        ? 1
+        : 0 // bright: mostly golden, sometimes neutral
+      : Math.random() < 0.9
+        ? 0
+        : 2; // dim: mostly neutral, rare cool blue
+
+    return {
+      x: Math.random() * spanX - offsetX,
+      y: Math.random() * spanY - offsetY,
+      r: isBright ? Math.random() * 1.5 + 1.0 : Math.random() * 0.8 + 0.2,
+      a: isBright ? Math.random() * 0.4 + 0.5 : Math.random() * 0.2 + 0.05,
+      depth,
+      color: palette[colorIndex] ?? palette[0]!,
+    };
   }
 
   /**

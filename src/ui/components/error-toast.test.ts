@@ -139,7 +139,7 @@ describe('GraphErrorToast', () => {
       element.addEventListener('dismiss', dismissSpy);
 
       // Try to call handleDismiss directly (no close button exists)
-      (element as any).handleDismiss();
+      (element as unknown as { handleDismiss: () => void }).handleDismiss();
 
       await new Promise((resolve) => setTimeout(resolve, 350));
 

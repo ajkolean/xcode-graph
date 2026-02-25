@@ -62,22 +62,27 @@ export class GraphEdge extends LitElement {
   // Render
   // ========================================
 
+  private resolveEdgeProps() {
+    return {
+      x1: this.x1 ?? 0,
+      y1: this.y1 ?? 0,
+      x2: this.x2 ?? 0,
+      y2: this.y2 ?? 0,
+      color: this.color ?? '#888',
+      zoom: this.zoom ?? 1,
+      opacity: this.opacity ?? 1,
+      isDependent: this.isDependent ?? false,
+      animated: this.animated ?? false,
+      isHighlighted: this.isHighlighted ?? false,
+    };
+  }
+
   override render(): TemplateResult {
-    const x1 = this.x1 ?? 0;
-    const y1 = this.y1 ?? 0;
-    const x2 = this.x2 ?? 0;
-    const y2 = this.y2 ?? 0;
-    const color = this.color ?? '#888';
-    const zoom = this.zoom ?? 1;
-    const opacity = this.opacity ?? 1;
-    const isDependent = this.isDependent ?? false;
-    const animated = this.animated ?? false;
-    const isHighlighted = this.isHighlighted ?? false;
+    const { x1, y1, x2, y2, color, zoom, opacity, isDependent, animated, isHighlighted } =
+      this.resolveEdgeProps();
 
     // Calculate distance to determine if we should use bezier curve
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const distance = Math.hypot(dx, dy);
+    const distance = Math.hypot(x2 - x1, y2 - y1);
     const useBezier = distance > 150;
 
     // Adjust color based on zoom level

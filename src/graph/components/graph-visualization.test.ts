@@ -145,7 +145,7 @@ describe('graph-visualization', () => {
 
     await el.updateComplete;
 
-    let eventDetail: any = null;
+    let eventDetail: { node: unknown } | null = null;
     el.addEventListener('node-select', ((e: CustomEvent) => {
       eventDetail = e.detail;
     }) as EventListener);
@@ -155,7 +155,7 @@ describe('graph-visualization', () => {
     svg!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     expect(eventDetail).to.exist;
-    expect(eventDetail.node).to.be.null;
+    expect(eventDetail!.node).to.be.null;
   });
 
   it('should dispatch zoom-in event from controls', async () => {
