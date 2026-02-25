@@ -139,7 +139,6 @@ export class GraphNodeActions extends LitElement {
       new CustomEvent('focus-node', {
         detail: { node: this.node },
         bubbles: true,
-        composed: true,
       }),
     );
   }
@@ -149,7 +148,6 @@ export class GraphNodeActions extends LitElement {
       new CustomEvent('show-dependents', {
         detail: { node: this.node },
         bubbles: true,
-        composed: true,
       }),
     );
   }

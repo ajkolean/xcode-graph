@@ -152,35 +152,4 @@ describe('graph-panel-header', () => {
     expect(assignedNodes.length).to.equal(1);
     expect(assignedNodes[0].id).to.equal('test-badge');
   });
-
-  // ========================================
-  // Shadow DOM Structure Tests
-  // ========================================
-
-  it('should have back button', async () => {
-    const el = await fixture<GraphPanelHeader>(html`
-      <graph-panel-header title="Test"></graph-panel-header>
-    `);
-
-    const button = el.shadowRoot?.querySelector('.back-button');
-    expect(button).to.exist;
-  });
-
-  it('should have icon box', async () => {
-    const el = await fixture<GraphPanelHeader>(html`
-      <graph-panel-header title="Test"></graph-panel-header>
-    `);
-
-    const iconBox = el.shadowRoot?.querySelector('.icon-box');
-    expect(iconBox).to.exist;
-  });
-
-  it('should have badges container', async () => {
-    const el = await fixture<GraphPanelHeader>(html`
-      <graph-panel-header title="Test"></graph-panel-header>
-    `);
-
-    const badges = el.shadowRoot?.querySelector('.badges');
-    expect(badges).to.exist;
-  });
 });

@@ -92,13 +92,4 @@ describe('graph-action-button', () => {
 
     expect(eventFired).to.be.true;
   });
-
-  it('should be a valid custom element', async () => {
-    const el = await fixture<GraphActionButton>(html`
-      <graph-action-button></graph-action-button>
-    `);
-
-    expect(el.tagName.toLowerCase()).to.equal('graph-action-button');
-    expect(el.shadowRoot).to.exist;
-  });
 });

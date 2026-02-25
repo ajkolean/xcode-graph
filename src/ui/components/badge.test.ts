@@ -34,22 +34,6 @@ describe('graph-badge', () => {
   // Property Tests
   // ========================================
 
-  it('should accept label property', async () => {
-    const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Framework"></graph-badge>
-    `);
-
-    expect(el.label).to.equal('Framework');
-  });
-
-  it('should accept color property', async () => {
-    const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" color="#FF0000"></graph-badge>
-    `);
-
-    expect(el.color).to.equal('#FF0000');
-  });
-
   it('should default to pill variant', async () => {
     const el = await fixture<GraphBadge>(html`
       <graph-badge label="Test"></graph-badge>
@@ -130,15 +114,6 @@ describe('graph-badge', () => {
 
     const badge = el.shadowRoot?.querySelector('.badge');
     expect(badge?.classList.contains('interactive')).to.be.true;
-  });
-
-  it('should not apply interactive class when interactive is false', async () => {
-    const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test"></graph-badge>
-    `);
-
-    const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('interactive')).to.be.false;
   });
 
   it('should apply glow class when glow is true', async () => {

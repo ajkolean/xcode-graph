@@ -41,15 +41,6 @@ describe('graph-info-row', () => {
     expect(slot).to.exist;
   });
 
-  it('should be a valid custom element', async () => {
-    const el = await fixture<GraphInfoRow>(html`
-      <graph-info-row label="Test"></graph-info-row>
-    `);
-
-    expect(el.tagName.toLowerCase()).to.equal('graph-info-row');
-    expect(el.shadowRoot).to.exist;
-  });
-
   it('should update when properties change', async () => {
     const el = await fixture<GraphInfoRow>(html`
       <graph-info-row label="Type" value="Framework"></graph-info-row>

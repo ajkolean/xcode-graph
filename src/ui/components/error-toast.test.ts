@@ -51,7 +51,7 @@ describe('GraphErrorToast', () => {
       await element.updateComplete;
 
       const details = element.shadowRoot?.querySelector('.details');
-      expect(details).toBeDefined();
+      expect(details).to.exist;
       expect(details?.textContent).toBe('Stack trace here');
     });
 
@@ -99,7 +99,7 @@ describe('GraphErrorToast', () => {
       await element.updateComplete;
 
       const closeIcon = element.shadowRoot?.querySelector('.close-icon');
-      expect(closeIcon).toBeDefined();
+      expect(closeIcon).to.exist;
     });
 
     it('should not render close button when not dismissible', async () => {
@@ -191,7 +191,7 @@ describe('GraphErrorToast', () => {
       await element.updateComplete;
 
       const actionButton = element.shadowRoot?.querySelector('.action-button');
-      expect(actionButton).toBeDefined();
+      expect(actionButton).to.exist;
       expect(actionButton?.textContent?.trim()).toBe('Retry');
     });
 

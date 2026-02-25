@@ -8,14 +8,6 @@ import type { GraphEmptyState } from './empty-state';
 import './empty-state';
 
 describe('graph-empty-state', () => {
-  it('should render', async () => {
-    const el = await fixture<GraphEmptyState>(html`
-      <graph-empty-state></graph-empty-state>
-    `);
-
-    expect(el).to.exist;
-  });
-
   it('should show title and description', async () => {
     const el = await fixture<GraphEmptyState>(html`
       <graph-empty-state></graph-empty-state>

@@ -20,10 +20,6 @@ describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
     const json = readFileSync(FIXTURE_PATH, 'utf-8');
     const graph: Graph = JSON.parse(json);
 
-    console.log('Graph name:', graph.name);
-    console.log('Dependencies count (flat array):', graph.dependencies.length);
-    console.log('Projects count (flat array):', graph.projects.length);
-
     // Dependencies is flat alternating: [key, value, key, value, ...]
     // Count by checking every other element (keys)
     let targetCount = 0;
@@ -40,10 +36,6 @@ describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
         otherCount++;
       }
     }
-
-    console.log('Target dependencies:', targetCount);
-    console.log('Package dependencies:', packageCount);
-    console.log('Other dependencies:', otherCount);
 
     expect(targetCount + packageCount).toBeGreaterThan(0);
   });
@@ -88,7 +80,6 @@ describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
           expect(target.product).toBeDefined();
           expect(target.destinations).toBeDefined();
 
-          console.log('Sample target:', target.name, '- Product:', target.product);
           return;
         }
       }

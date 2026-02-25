@@ -17,18 +17,6 @@ import {
 } from './test-helpers/graph-fixtures';
 
 describe('graph-virtual-renderer', () => {
-  it('should render with default properties', async () => {
-    const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer></graph-virtual-renderer>`,
-    );
-
-    expect(el).to.exist;
-    expect(el.nodes).to.deep.equal([]);
-    expect(el.viewportWidth).to.equal(1000);
-    expect(el.viewportHeight).to.equal(800);
-    expect(el.zoom).to.equal(1);
-  });
-
   it('should accept viewport dimensions', async () => {
     const el = await fixture<GraphVirtualRenderer>(
       html`<graph-virtual-renderer

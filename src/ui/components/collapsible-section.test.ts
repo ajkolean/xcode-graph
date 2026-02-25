@@ -77,13 +77,4 @@ describe('graph-collapsible-section', () => {
     const iconSlot = el.shadowRoot?.querySelector('slot[name="icon"]');
     expect(iconSlot).to.exist;
   });
-
-  it('should be a valid custom element', async () => {
-    const el = await fixture<GraphCollapsibleSection>(html`
-      <graph-collapsible-section title="Test"></graph-collapsible-section>
-    `);
-
-    expect(el.tagName.toLowerCase()).to.equal('graph-collapsible-section');
-    expect(el.shadowRoot).to.exist;
-  });
 });

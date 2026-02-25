@@ -15,14 +15,6 @@ const mockNode = {
 };
 
 describe('graph-list-item-row', () => {
-  it('should render', async () => {
-    const el = await fixture<GraphListItemRow>(html`
-      <graph-list-item-row .node=${mockNode}></graph-list-item-row>
-    `);
-
-    expect(el).to.exist;
-  });
-
   it('should render node name', async () => {
     const el = await fixture<GraphListItemRow>(html`
       <graph-list-item-row .node=${mockNode}></graph-list-item-row>

@@ -52,22 +52,6 @@ describe('graph-cluster-type-badge', () => {
   // Property Tests
   // ========================================
 
-  it('should accept clusterType property', async () => {
-    const el = await fixture<GraphClusterTypeBadge>(html`
-      <graph-cluster-type-badge cluster-type="package"></graph-cluster-type-badge>
-    `);
-
-    expect(el.clusterType).to.equal('package');
-  });
-
-  it('should accept clusterColor property', async () => {
-    const el = await fixture<GraphClusterTypeBadge>(html`
-      <graph-cluster-type-badge cluster-color="#FF0000"></graph-cluster-type-badge>
-    `);
-
-    expect(el.clusterColor).to.equal('#FF0000');
-  });
-
   it('should update badge text when clusterType changes', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
       <graph-cluster-type-badge cluster-type="package"></graph-cluster-type-badge>

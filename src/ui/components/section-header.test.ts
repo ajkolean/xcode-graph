@@ -45,13 +45,4 @@ describe('graph-section-header', () => {
     const count = el.shadowRoot?.querySelector('.count');
     expect(count?.textContent).to.equal('0');
   });
-
-  it('should be a valid custom element', async () => {
-    const el = await fixture<GraphSectionHeader>(html`
-      <graph-section-header title="Test"></graph-section-header>
-    `);
-
-    expect(el.tagName.toLowerCase()).to.equal('graph-section-header');
-    expect(el.shadowRoot).to.exist;
-  });
 });

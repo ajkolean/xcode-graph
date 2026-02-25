@@ -109,8 +109,7 @@ describe('data.actions', () => {
       expect(nodes.get()).toHaveLength(1000);
       expect(edges.get()).toHaveLength(999);
     });
-
-});
+  });
 
   // ==================== clearGraphData Tests ====================
 

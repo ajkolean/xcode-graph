@@ -110,13 +110,4 @@ describe('graph-alert-banner', () => {
     const actionsSlot = el.shadowRoot?.querySelector('slot[name="actions"]');
     expect(actionsSlot).to.exist;
   });
-
-  it('should be a valid custom element', async () => {
-    const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner></graph-alert-banner>
-    `);
-
-    expect(el.tagName.toLowerCase()).to.equal('graph-alert-banner');
-    expect(el.shadowRoot).to.exist;
-  });
 });

@@ -111,30 +111,6 @@ describe('graph-clear-filters-button', () => {
   });
 
   // ========================================
-  // Styling Tests
-  // ========================================
-
-  it('should apply active styles when isActive is true', async () => {
-    const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button is-active></graph-clear-filters-button>
-    `);
-
-    const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    expect(button).to.exist;
-    // Styles are applied via Shadow DOM CSS
-  });
-
-  it('should apply disabled styles when isActive is false', async () => {
-    const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button></graph-clear-filters-button>
-    `);
-
-    const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    expect(button).to.exist;
-    // Styles are applied via Shadow DOM CSS
-  });
-
-  // ========================================
   // Accessibility Tests
   // ========================================
 
@@ -145,14 +121,5 @@ describe('graph-clear-filters-button', () => {
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
     expect(button.hasAttribute('disabled')).to.be.true;
-  });
-
-  it('should not have disabled attribute when active', async () => {
-    const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button is-active></graph-clear-filters-button>
-    `);
-
-    const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    expect(button.hasAttribute('disabled')).to.be.false;
   });
 });

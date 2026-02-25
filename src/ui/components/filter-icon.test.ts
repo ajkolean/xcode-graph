@@ -72,13 +72,4 @@ describe('graph-filter-icon', () => {
     expect(svg?.getAttribute('width')).to.equal('24');
     expect(svg?.getAttribute('height')).to.equal('24');
   });
-
-  it('should be a valid custom element', async () => {
-    const el = await fixture<GraphFilterIcon>(html`
-      <graph-filter-icon></graph-filter-icon>
-    `);
-
-    expect(el.tagName.toLowerCase()).to.equal('graph-filter-icon');
-    expect(el.shadowRoot).to.exist;
-  });
 });

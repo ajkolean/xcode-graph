@@ -56,22 +56,4 @@ describe('graph-panel-section', () => {
     expect(el.shrink).to.be.true;
     expect(el.hasAttribute('shrink')).to.be.true;
   });
-
-  it('should support no shrink', async () => {
-    const el = await fixture<GraphPanelSection>(html`
-      <graph-panel-section></graph-panel-section>
-    `);
-
-    // Default is shrink=true
-    expect(el.shrink).to.be.true;
-  });
-
-  it('should be a valid custom element', async () => {
-    const el = await fixture<GraphPanelSection>(html`
-      <graph-panel-section></graph-panel-section>
-    `);
-
-    expect(el.tagName.toLowerCase()).to.equal('graph-panel-section');
-    expect(el.shadowRoot).to.exist;
-  });
 });

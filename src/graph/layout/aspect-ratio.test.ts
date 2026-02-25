@@ -40,9 +40,6 @@ describe('Layout Aspect Ratio', () => {
     const height = maxY - minY;
     const aspectRatio = width / height;
 
-    console.log(`Layout Dimensions: ${width.toFixed(0)}x${height.toFixed(0)}`);
-    console.log(`Aspect Ratio: ${aspectRatio.toFixed(2)}`);
-
     // 4. Assert
     // Allow slightly wider range if graph is naturally weird, but target 0.75 - 1.33
     // Given 1.6 width constraint in ELK + wrapping, it might lean wide (1.6).

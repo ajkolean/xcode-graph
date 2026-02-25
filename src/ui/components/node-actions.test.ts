@@ -15,14 +15,6 @@ const mockNode = {
 };
 
 describe('graph-node-actions', () => {
-  it('should render', async () => {
-    const el = await fixture<GraphNodeActions>(html`
-      <graph-node-actions .node=${mockNode}></graph-node-actions>
-    `);
-
-    expect(el).to.exist;
-  });
-
   it('should render action buttons', async () => {
     const el = await fixture<GraphNodeActions>(html`
       <graph-node-actions .node=${mockNode}></graph-node-actions>

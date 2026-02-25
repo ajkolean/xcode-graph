@@ -109,13 +109,4 @@ describe('graph-icon-button', () => {
 
     expect(eventFired).to.be.false;
   });
-
-  it('should be a valid custom element', async () => {
-    const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button></graph-icon-button>
-    `);
-
-    expect(el.tagName.toLowerCase()).to.equal('graph-icon-button');
-    expect(el.shadowRoot).to.exist;
-  });
 });

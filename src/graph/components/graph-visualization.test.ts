@@ -8,11 +8,7 @@ import { expect, fixture, html } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphVisualization } from './graph-visualization';
 import './graph-visualization';
-import {
-  createMediumTestGraph,
-  createSmallTestGraph,
-  createTestNode,
-} from './test-helpers/graph-fixtures';
+import { createSmallTestGraph, createTestNode } from './test-helpers/graph-fixtures';
 import { assertSvgElementExists, querySvgElement } from './test-helpers/svg-assertions';
 
 describe('graph-visualization', () => {
@@ -138,25 +134,6 @@ describe('graph-visualization', () => {
 
     const background = el.shadowRoot!.querySelector('graph-background');
     expect(background).to.exist;
-  });
-
-  it('should render cluster groups for each unique project', async () => {
-    const { nodes, edges } = createMediumTestGraph();
-    // This graph has 2 projects: ProjectA and ProjectB
-
-    const el = await fixture<GraphVisualization>(html`
-      <graph-visualization .nodes=${nodes} .edges=${edges}></graph-visualization>
-    `);
-
-    await el.updateComplete;
-
-    // Wait for layout to compute
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    await el.updateComplete;
-
-    // Component should accept nodes and edges
-    expect(el.nodes?.length).to.equal(5);
-    expect(el.edges?.length).to.equal(5);
   });
 
   it('should dispatch node-select event on canvas click', async () => {

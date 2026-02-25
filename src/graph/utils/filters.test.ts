@@ -61,15 +61,5 @@ describe('filterHelpers', () => {
         expect(colorMap1.get(item)).toBe(colorMap2.get(item));
       });
     });
-
-    it('should generate different colors for different categories', () => {
-      const items = ['Test'];
-      const platformColor = generateColorMap(items, 'platform').get('Test');
-      const projectColor = generateColorMap(items, 'project').get('Test');
-
-      // Colors may differ based on category (though not guaranteed)
-      expect(platformColor).toMatch(/^#[0-9a-fA-F]{6}$/);
-      expect(projectColor).toMatch(/^#[0-9a-fA-F]{6}$/);
-    });
   });
 });

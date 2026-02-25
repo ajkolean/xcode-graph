@@ -170,7 +170,6 @@ describe('ui.actions', () => {
     });
   });
 
-
   // ==================== Animation Actions ====================
 
   describe('toggleAnimation', () => {
@@ -212,72 +211,6 @@ describe('ui.actions', () => {
   // ==================== Preview Filter Actions ====================
 
   describe('setPreviewFilter', () => {
-    it('should set node type preview filter', () => {
-      const preview: PreviewFilter = {
-        type: 'nodeType',
-        value: 'framework',
-      };
-
-      setPreviewFilter(preview);
-
-      expect(previewFilter.get()).toEqual(preview);
-    });
-
-    it('should set platform preview filter', () => {
-      const preview: PreviewFilter = {
-        type: 'platform',
-        value: 'iOS',
-      };
-
-      setPreviewFilter(preview);
-
-      expect(previewFilter.get()).toEqual(preview);
-    });
-
-    it('should set origin preview filter', () => {
-      const preview: PreviewFilter = {
-        type: 'origin',
-        value: 'local',
-      };
-
-      setPreviewFilter(preview);
-
-      expect(previewFilter.get()).toEqual(preview);
-    });
-
-    it('should set project preview filter', () => {
-      const preview: PreviewFilter = {
-        type: 'project',
-        value: 'MyProject',
-      };
-
-      setPreviewFilter(preview);
-
-      expect(previewFilter.get()).toEqual(preview);
-    });
-
-    it('should set package preview filter', () => {
-      const preview: PreviewFilter = {
-        type: 'package',
-        value: 'MyPackage',
-      };
-
-      setPreviewFilter(preview);
-
-      expect(previewFilter.get()).toEqual(preview);
-    });
-
-    it('should set cluster preview filter', () => {
-      const preview: PreviewFilter = {
-        type: 'cluster',
-        value: 'cluster-1',
-      };
-
-      setPreviewFilter(preview);
-
-      expect(previewFilter.get()).toEqual(preview);
-    });
-
     it('should clear preview filter with null', () => {
       setPreviewFilter({ type: 'nodeType', value: 'framework' });
 

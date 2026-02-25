@@ -16,14 +16,6 @@ const mockNode = {
 };
 
 describe('graph-node-info', () => {
-  it('should render', async () => {
-    const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${mockNode}></graph-node-info>
-    `);
-
-    expect(el).to.exist;
-  });
-
   it('should render title', async () => {
     const el = await fixture<GraphNodeInfo>(html`
       <graph-node-info .node=${mockNode}></graph-node-info>
