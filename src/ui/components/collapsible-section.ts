@@ -124,12 +124,25 @@ export class GraphCollapsibleSection extends LitElement {
       height: var(--sizes-icon-sm);
     }
 
+    .header-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+      border-radius: var(--radii-sm);
+    }
+
     .content {
-      display: none;
+      display: grid;
+      grid-template-rows: 0fr;
+      overflow: hidden;
+      transition: grid-template-rows var(--durations-slow) var(--easings-default);
     }
 
     .content.expanded {
-      display: block;
+      grid-template-rows: 1fr;
+    }
+
+    .content-inner {
+      min-height: 0;
     }
   `;
 
@@ -163,7 +176,9 @@ export class GraphCollapsibleSection extends LitElement {
       </button>
 
       <div class="content ${this.isExpanded ? 'expanded' : ''}">
-        <slot></slot>
+        <div class="content-inner">
+          <slot></slot>
+        </div>
       </div>
     `;
   }

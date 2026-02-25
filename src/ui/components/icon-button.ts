@@ -91,6 +91,11 @@ export class GraphIconButton extends LitElement {
         transform var(--durations-fast) var(--easings-out);
     }
 
+    button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+    }
+
     button:disabled {
       cursor: not-allowed;
       opacity: var(--opacity-40);
@@ -219,6 +224,7 @@ export class GraphIconButton extends LitElement {
       <button
         ?disabled=${this.disabled}
         title=${this.title || ''}
+        aria-label=${this.title || ''}
       >
         <slot></slot>
       </button>

@@ -115,11 +115,7 @@ export class GraphEdges extends LitElement {
       return 1 - (depth / maxDepth) * 0.7;
     }
 
-    if (
-      (viewMode === ViewMode.Dependents || viewMode === ViewMode.Impact) &&
-      inDependentsChain &&
-      this.transitiveDependents
-    ) {
+    if (viewMode === ViewMode.Dependents && inDependentsChain && this.transitiveDependents) {
       const depth = this.transitiveDependents.edgeDepths.get(edgeKey) || 0;
       const maxDepth = this.transitiveDependents.maxDepth || 1;
       return 1 - (depth / maxDepth) * 0.7;

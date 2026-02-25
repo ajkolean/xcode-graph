@@ -54,6 +54,7 @@ export class GraphRightSidebarHeader extends LitElement {
       font-size: var(--font-sizes-h2);
       font-weight: var(--font-weights-medium);
       color: var(--colors-foreground);
+      transition: opacity var(--durations-normal) var(--easings-out);
     }
 
     graph-icon-button {

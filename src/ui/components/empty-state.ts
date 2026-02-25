@@ -122,6 +122,12 @@ export class GraphEmptyState extends LitElement {
 
     .clear-button:active {
       transform: translateY(0);
+      box-shadow: 0 0 10px rgba(var(--colors-primary-rgb), var(--opacity-15));
+    }
+
+    .clear-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
     }
 
     .clear-button svg {

@@ -170,15 +170,23 @@ export class GraphCanvas extends LitElement {
 
   override willUpdate(changedProps: PropertyValues<this>) {
     if (changedProps.has('nodes') || changedProps.has('edges')) {
-      this.layout.enableAnimation = this.enableAnimation;
-      // ELK layout is asynchronous
-      this.layout.computeLayout(this.nodes, this.edges).catch((err) => {
-        console.error('Layout computation failed', err);
-      });
-      this.manualNodePositions.clear();
-      this.manualClusterPositions.clear(); // Clear manual cluster positions on new data
-      this.updatePathCache();
-      this.didInitialFit = false; // Reset fit flag when data changes
+      // Detect if this is a filter change (subset of already-laid-out nodes)
+      // vs truly new graph data that requires a full re-layout.
+      const isFilterChange =
+        this.layout.nodePositions.size > 0 &&
+        this.nodes.every((n) => this.layout.nodePositions.has(n.id));
+
+      if (!isFilterChange) {
+        this.layout.enableAnimation = this.enableAnimation;
+        // ELK layout is asynchronous
+        this.layout.computeLayout(this.nodes, this.edges).catch((err) => {
+          console.error('Layout computation failed', err);
+        });
+        this.manualNodePositions.clear();
+        this.manualClusterPositions.clear();
+        this.updatePathCache();
+        this.didInitialFit = false; // Reset fit flag when data changes
+      }
     }
 
     if (changedProps.has('enableAnimation')) {
@@ -904,11 +912,7 @@ export class GraphCanvas extends LitElement {
       return 1 - (depth / maxDepth) * 0.7;
     }
 
-    if (
-      (this.viewMode === 'dependents' || this.viewMode === 'impact') &&
-      inDependentsChain &&
-      transitiveDependents
-    ) {
+    if (this.viewMode === 'dependents' && inDependentsChain && transitiveDependents) {
       const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
       const maxDepth = transitiveDependents.maxDepth || 1;
       return 1 - (depth / maxDepth) * 0.7;

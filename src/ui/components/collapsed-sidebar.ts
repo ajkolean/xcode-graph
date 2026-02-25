@@ -73,16 +73,22 @@ export class GraphCollapsedSidebar extends LitElement {
       position: relative;
       padding: var(--spacing-2);
       border-radius: var(--radii-md);
-      transition: background-color var(--durations-normal);
+      transition:
+        background-color var(--durations-normal),
+        opacity var(--durations-normal);
       background: none;
       border: none;
       color: var(--colors-primary);
-      opacity: var(--opacity-80);
       cursor: pointer;
     }
 
     .icon-button:hover {
-      background-color: var(--colors-muted);
+      background-color: rgba(var(--colors-primary-rgb), var(--opacity-10));
+    }
+
+    .icon-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
     }
 
     .icon-button svg {

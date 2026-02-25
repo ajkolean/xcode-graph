@@ -88,10 +88,7 @@ export const displayData = new Signal.Computed<DisplayData>(() => {
     displayEdges = filteredEdges.filter((e: GraphEdge) =>
       transitiveDeps.edges.has(`${e.source}->${e.target}`),
     );
-  } else if (
-    (currentViewMode === 'dependents' || currentViewMode === 'impact') &&
-    transitiveDependents.nodes.size > 0
-  ) {
+  } else if (currentViewMode === 'dependents' && transitiveDependents.nodes.size > 0) {
     displayNodes = filteredNodes.filter(
       (n: GraphNode) => n.id === selectedNodeId || transitiveDependents.nodes.has(n.id),
     );

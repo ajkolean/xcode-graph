@@ -11,7 +11,6 @@ describe('ViewModeSchema', () => {
     expect(ViewModeSchema.parse('full')).toBe('full');
     expect(ViewModeSchema.parse('focused')).toBe('focused');
     expect(ViewModeSchema.parse('path')).toBe('path');
-    expect(ViewModeSchema.parse('impact')).toBe('impact');
     expect(ViewModeSchema.parse('dependents')).toBe('dependents');
     expect(ViewModeSchema.parse('both')).toBe('both');
   });

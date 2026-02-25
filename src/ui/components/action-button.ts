@@ -98,9 +98,19 @@ export class GraphActionButton extends LitElement {
       width: 100%;
     }
 
+    button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+    }
+
     button:disabled {
       cursor: not-allowed;
       opacity: var(--opacity-40);
+    }
+
+    button:disabled:hover {
+      background-color: inherit;
+      border-color: inherit;
     }
 
     .icon {

@@ -116,6 +116,15 @@ export class GraphControls extends LitElement {
       background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
     }
 
+    .zoom-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+    }
+
+    .zoom-button:active {
+      transform: scale(0.92);
+    }
+
     .zoom-button svg {
       width: var(--sizes-icon-sm);
       height: var(--sizes-icon-sm);

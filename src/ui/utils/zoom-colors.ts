@@ -4,7 +4,7 @@
  * Similar to Figma, VSCode minimap, GitHub dependency graph, JetBrains tools
  */
 
-import { hexToHSL, hslToHex } from './color-math';
+import { hexToHSL, hslToHex, rgbToHsl, hslToRgb } from './color-math';
 import {
   ZOOM_CONFIG,
   ZOOM_LIGHTNESS_ADJUSTMENT,
@@ -61,23 +61,34 @@ export function adjustColorForZoom(color: string, zoom: number): string {
     return '#6F2CFF'; // Default purple color
   }
 
-  // Handle rgba/rgb colors - extract hex part
+  const saturationMultiplier = getSaturationMultiplier(zoom);
+  const lightnessAdjustment = getLightnessAdjustment(zoom);
+
+  // Handle rgba/rgb colors
   if (color.startsWith('rgba') || color.startsWith('rgb')) {
-    return color; // Return as-is for now, could enhance later
+    const match = color.match(
+      /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/,
+    );
+    if (!match) return color;
+
+    const r = Number(match[1]) / 255;
+    const g = Number(match[2]) / 255;
+    const b = Number(match[3]) / 255;
+    const a = match[4] !== undefined ? Number(match[4]) : 1;
+
+    const hsl = rgbToHsl(r, g, b);
+    const adjS = hsl.s * saturationMultiplier;
+    const adjL = Math.min(0.95, hsl.l + lightnessAdjustment / 100);
+    const rgb = hslToRgb(hsl.h, adjS, adjL);
+
+    return `rgba(${Math.round(rgb.r * 255)}, ${Math.round(rgb.g * 255)}, ${Math.round(rgb.b * 255)}, ${a})`;
   }
 
-  // Convert to HSL
+  // Handle hex colors
   const hsl = hexToHSL(color);
-
-  // Adjust saturation based on zoom
-  const saturationMultiplier = getSaturationMultiplier(zoom);
   const adjustedSaturation = hsl.s * saturationMultiplier;
-
-  // Adjust lightness based on zoom (lighter when zoomed out)
-  const lightnessAdjustment = getLightnessAdjustment(zoom);
   const adjustedLightness = Math.min(95, hsl.l + lightnessAdjustment);
 
-  // Convert back to hex
   return hslToHex(hsl.h, adjustedSaturation, adjustedLightness);
 }
 

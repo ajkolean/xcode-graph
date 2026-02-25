@@ -677,11 +677,7 @@ function getEdgeOpacity(
     return 1 - (depth / maxDepth) * 0.7;
   }
 
-  if (
-    (viewMode === 'dependents' || viewMode === 'impact') &&
-    inDependentsChain &&
-    transitiveDependents
-  ) {
+  if (viewMode === 'dependents' && inDependentsChain && transitiveDependents) {
     const depth = transitiveDependents.edgeDepths.get(edgeKey) || 0;
     const maxDepth = transitiveDependents.maxDepth || 1;
     return 1 - (depth / maxDepth) * 0.7;

@@ -32,22 +32,22 @@ describe('graph-node-actions', () => {
     expect(buttons?.length).to.be.greaterThan(0);
   });
 
-  it('should show "Show Dependency Chain" when not active', async () => {
+  it('should show "Show Dependencies" when not active', async () => {
     const el = await fixture<GraphNodeActions>(html`
       <graph-node-actions .node=${mockNode}></graph-node-actions>
     `);
 
     const button = el.shadowRoot?.querySelector('.dependency-button');
-    expect(button?.textContent).to.include('Show Dependency Chain');
+    expect(button?.textContent).to.include('Show Dependencies');
   });
 
-  it('should show "Hide Dependency Chain" when focused', async () => {
+  it('should show "Hide Dependencies" when focused', async () => {
     const el = await fixture<GraphNodeActions>(html`
       <graph-node-actions .node=${mockNode} view-mode="focused"></graph-node-actions>
     `);
 
     const button = el.shadowRoot?.querySelector('.dependency-button');
-    expect(button?.textContent).to.include('Hide Dependency Chain');
+    expect(button?.textContent).to.include('Hide Dependencies');
   });
 
   it('should dispatch focus-node event', async () => {

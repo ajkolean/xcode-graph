@@ -220,7 +220,7 @@ export function computeTransitiveDependencies(
 
   // Dependents (incoming edges) - with caching
   let transitiveDependents: TransitiveResult = EMPTY_RESULT;
-  if (['dependents', 'both', 'impact'].includes(viewMode) && selectedNode) {
+  if (['dependents', 'both'].includes(viewMode) && selectedNode) {
     const cached = transitiveCache.get(selectedNode.id, 'dependents');
     if (cached) {
       transitiveDependents = cached;

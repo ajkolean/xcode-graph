@@ -19,7 +19,6 @@ import {
   setHoveredNode,
   setViewMode,
   showDependents,
-  showImpact,
 } from './graph.actions';
 import {
   circularDependencies,
@@ -200,12 +199,6 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
-    it('should set view mode to Impact', () => {
-      setViewMode(ViewMode.Impact);
-
-      expect(viewMode.get()).toBe(ViewMode.Impact);
-    });
-
     it('should allow changing view mode multiple times', () => {
       setViewMode(ViewMode.Focused);
       expect(viewMode.get()).toBe(ViewMode.Focused);
@@ -376,38 +369,6 @@ describe('graph.actions', () => {
     });
   });
 
-  describe('showImpact', () => {
-    it('should select node and set view mode to Impact', () => {
-      const node = createTestNode('node-1');
-
-      showImpact(node);
-
-      expect(selectedNode.get()).toBe(node);
-      expect(viewMode.get()).toBe(ViewMode.Impact);
-    });
-
-    it('should clear selected cluster when showing impact', () => {
-      selectedCluster.set('cluster-1');
-      const node = createTestNode('node-1');
-
-      showImpact(node);
-
-      expect(selectedCluster.get()).toBeNull();
-    });
-
-    it('should always set view mode to Impact regardless of current mode', () => {
-      const node = createTestNode('node-1');
-      viewMode.set(ViewMode.Focused);
-
-      showImpact(node);
-      expect(viewMode.get()).toBe(ViewMode.Impact);
-
-      // Click again
-      showImpact(node);
-      expect(viewMode.get()).toBe(ViewMode.Impact);
-    });
-  });
-
   describe('resetView', () => {
     it('should clear selected node', () => {
       const node = createTestNode('node-1');
@@ -438,7 +399,7 @@ describe('graph.actions', () => {
       const node = createTestNode('node-1');
       selectedNode.set(node);
       selectedCluster.set('cluster-1');
-      viewMode.set(ViewMode.Impact);
+      viewMode.set(ViewMode.Dependents);
 
       resetView();
 

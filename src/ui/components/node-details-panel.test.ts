@@ -475,32 +475,6 @@ describe('graph-node-details-panel - Event Bubbling', () => {
     expect(eventFired).to.be.true;
   });
 
-  it('should bubble show-impact event', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-node-details-panel>
-    `);
-
-    let eventFired = false;
-    el.addEventListener('show-impact', () => {
-      eventFired = true;
-    });
-
-    const actions = el.shadowRoot?.querySelector('graph-node-actions');
-    actions?.dispatchEvent(
-      new CustomEvent('show-impact', {
-        detail: { node: mockNode },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-
-    expect(eventFired).to.be.true;
-  });
-
   it('should bubble node-select event from dependency list', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
       <graph-node-details-panel
