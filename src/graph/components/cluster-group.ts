@@ -29,7 +29,13 @@ import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/grap
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
-import { html, LitElement, type PropertyDeclarations, type TemplateResult } from 'lit';
+import {
+  html,
+  LitElement,
+  type PropertyDeclarations,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import './cluster-card';
 import './graph-edges';
 import './graph-node';
@@ -128,14 +134,14 @@ export class GraphClusterGroup extends LitElement {
   // Lifecycle
   // ========================================
 
-  private hasSignificantZoomChange(changedProps: Map<PropertyKey, unknown>): boolean {
+  private hasSignificantZoomChange(changedProps: PropertyValues): boolean {
     if (!changedProps.has('zoom')) return false;
     const oldZoom = (changedProps.get('zoom') as number) ?? 1;
     const newZoom = this.zoom ?? 1;
     return Math.abs(newZoom - oldZoom) > 0.01;
   }
 
-  private hasHoverStateChange(changedProps: Map<PropertyKey, unknown>): boolean {
+  private hasHoverStateChange(changedProps: PropertyValues): boolean {
     if (changedProps.has('hoveredNode')) {
       const oldHover = changedProps.get('hoveredNode');
       if (oldHover !== this.hoveredNode) return true;
@@ -151,7 +157,7 @@ export class GraphClusterGroup extends LitElement {
     return false;
   }
 
-  override shouldUpdate(changedProps: Map<PropertyKey, unknown>): boolean {
+  override shouldUpdate(changedProps: PropertyValues): boolean {
     if (!changedProps.size) return true;
 
     return (

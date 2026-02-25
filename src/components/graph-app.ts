@@ -19,7 +19,14 @@
 
 import { SignalWatcher } from '@lit-labs/signals';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
+import {
+  type CSSResultGroup,
+  css,
+  html,
+  LitElement,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import { property } from 'lit/decorators.js';
 import { GraphAnalysisService } from '@/services/graphAnalysisService';
 import { GraphDataService } from '@/services/graphDataService';
@@ -112,7 +119,7 @@ export class GraphApp extends SignalWatcherLitElement {
     this.seedData();
   }
 
-  override willUpdate(changed: Map<string, unknown>): void {
+  override willUpdate(changed: PropertyValues<this>): void {
     if (changed.has('nodes') || changed.has('edges')) {
       this.seedData();
     }

@@ -18,9 +18,11 @@ import type {
   Graph,
   GraphDependency,
   Project,
+  ProjectType,
   DeploymentTargets as RawDeploymentTargets,
   Product as RawProduct,
   Settings as RawSettings,
+  ResourceFileElement,
   ResourceFileElements,
   Target,
 } from './tuist-graph.schema.generated';
@@ -152,11 +154,9 @@ const NOTABLE_RESOURCE_PATTERNS = [
   'LaunchScreen',
 ];
 
-function getResourceFilePath(res: unknown): string {
-  const r = res as Record<string, unknown>;
-  if ('file' in r) return (r as { file: { path: string } }).file.path;
-  if ('folderReference' in r)
-    return (r as { folderReference: { path: string } }).folderReference.path;
+function getResourceFilePath(res: ResourceFileElement): string {
+  if ('file' in res) return res.file.path;
+  if ('folderReference' in res) return res.folderReference.path;
   return '';
 }
 
@@ -194,11 +194,8 @@ function extractResourceMetadata(resources: ResourceFileElements | undefined): {
 }
 
 /** Determine origin based on project type and path */
-function getOriginFromProject(
-  projectPath: string,
-  projectType: { local?: unknown; external?: unknown },
-): Origin {
-  if (projectType.external) return Origin.External;
+function getOriginFromProject(projectPath: string, projectType: ProjectType): Origin {
+  if ('external' in projectType) return Origin.External;
   const externalPaths = ['.build/checkouts/', '.build/registry/downloads/'];
   if (externalPaths.some((p) => projectPath.includes(p))) return Origin.External;
   return Origin.Local;
@@ -314,9 +311,8 @@ function createNodeFromTarget(
     }
   }
 
-  const meta = target.metadata as { tags?: string[] } | null;
-  if (meta?.tags?.length) {
-    node.tags = meta.tags;
+  if (target.metadata.tags.length > 0) {
+    node.tags = target.metadata.tags;
   }
 
   // Determine if this is a remote/external target

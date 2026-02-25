@@ -3,6 +3,13 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeSize } from '@ui/utils/sizing';
 import { ZOOM_CONFIG } from '@ui/utils/zoom-constants';
 
+export interface CanvasEventMap {
+  'node-select': { node: GraphNode | null };
+  'cluster-select': { clusterId: string | null };
+  'node-hover': { nodeId: string | null };
+  'cluster-hover': { clusterId: string | null };
+}
+
 export interface InteractionState {
   pan: { x: number; y: number };
   zoom: number;
@@ -27,7 +34,7 @@ export interface InteractionContext {
   manualClusterPositions: Map<string, { x: number; y: number }>;
   getMousePos: (e: MouseEvent) => { x: number; y: number };
   screenToWorld: (screenX: number, screenY: number) => { x: number; y: number };
-  dispatchCanvasEvent: (name: string, detail?: unknown) => void;
+  dispatchCanvasEvent: <K extends keyof CanvasEventMap>(name: K, detail: CanvasEventMap[K]) => void;
   dispatchZoomChange: (zoom: number) => void;
 }
 

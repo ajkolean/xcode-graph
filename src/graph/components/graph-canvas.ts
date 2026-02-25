@@ -24,6 +24,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { renderClusters } from './canvas/canvas-cluster-renderer';
 import { renderEdges } from './canvas/canvas-edge-renderer';
 import {
+  type CanvasEventMap,
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
@@ -345,7 +346,10 @@ export class GraphCanvas extends LitElement {
     this.renderCanvas();
   }
 
-  private dispatchCanvasEvent = (name: string, detail?: unknown) => {
+  private dispatchCanvasEvent = <K extends keyof CanvasEventMap>(
+    name: K,
+    detail: CanvasEventMap[K],
+  ) => {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   };
 
