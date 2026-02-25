@@ -97,6 +97,17 @@
   --colors-node-cli: rgba(160, 140, 255, 1);
   --colors-node-package: rgba(255, 200, 100, 1);
 
+  /* Canvas rendering colors */
+  --colors-canvas-tooltip-bg: rgba(30, 30, 35, 0.95);
+  --colors-canvas-shadow: rgba(30, 30, 35, 0.9);
+  --colors-canvas-cycle-edge: rgba(255, 100, 50, 0.8);
+  --colors-canvas-cycle-glow: rgba(255, 100, 50, 0.6);
+
+  /* Starfield colors */
+  --colors-starfield-warm: #f7f1da;
+  --colors-starfield-golden: #f5e0b5;
+  --colors-starfield-cool: #d6e0ff;
+
   /* Sidebar colors */
   --colors-sidebar: rgba(12, 14, 20, 1);
   --colors-sidebar-rgb: 12, 14, 20;

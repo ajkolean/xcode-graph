@@ -29,7 +29,7 @@ export { adjustColorForZoom, adjustOpacityForZoom } from './zoom-colors';
 
 // ==================== Node Theming ====================
 
-export { getNodeTypeColor, NODE_TYPE_COLORS } from './node-colors';
+export { getNodeTypeColor, getNodeTypeColorFromTheme, NODE_TYPE_COLORS } from './node-colors';
 
 // ==================== Icons ====================
 

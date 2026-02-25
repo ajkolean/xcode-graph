@@ -3,6 +3,7 @@
  * Mission Control Theme - Amber/Teal color palette
  */
 
+import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { generateColor } from './color-generator';
 
 /**
@@ -33,10 +34,30 @@ export const NODE_TYPE_COLORS: Record<string, string> = {
 const DEFAULT_NODE_COLOR = '#FFA03C';
 
 /**
- * Gets the color for a node type
+ * Gets the color for a node type (static fallback for DOM-based components)
  */
 export function getNodeTypeColor(type: string): string {
   return NODE_TYPE_COLORS[type] ?? DEFAULT_NODE_COLOR;
+}
+
+/** Map from node type to CanvasTheme key */
+const THEME_KEY_MAP: Record<string, keyof CanvasTheme> = {
+  app: 'nodeApp',
+  framework: 'nodeFramework',
+  library: 'nodeLibrary',
+  'test-unit': 'nodeTest',
+  'test-ui': 'nodeTest',
+  cli: 'nodeCli',
+  package: 'nodePackage',
+};
+
+/**
+ * Gets the color for a node type from a resolved CanvasTheme.
+ * Use this in Canvas2D rendering to respect CSS custom property overrides.
+ */
+export function getNodeTypeColorFromTheme(type: string, theme: CanvasTheme): string {
+  const key = THEME_KEY_MAP[type];
+  return key ? theme[key] : theme.nodeApp;
 }
 
 /**

@@ -1,6 +1,7 @@
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { RoutedEdge } from '@graph/layout/types';
 import type { TransitiveResult } from '@graph/utils';
+import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
 import { ViewMode } from '@shared/schemas';
 import type { Cluster } from '@shared/schemas/cluster.schema';
@@ -8,7 +9,7 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
 import { generateColor } from '@ui/utils/color-generator';
-import { getNodeTypeColor } from '@ui/utils/node-colors';
+import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { getNodeSize } from '@ui/utils/sizing';
@@ -88,6 +89,7 @@ export class GraphCanvas extends LitElement {
   private manualNodePositions = new Map<string, { x: number; y: number }>();
   private manualClusterPositions = new Map<string, { x: number; y: number }>();
   private pathCache = new Map<string, Path2D>();
+  private theme!: CanvasTheme;
 
   // Hover State
   private hoveredCluster: string | null = null;
@@ -148,6 +150,7 @@ export class GraphCanvas extends LitElement {
   // ========================================
 
   override firstUpdated() {
+    this.theme = resolveCanvasTheme(this);
     if (this.canvas) {
       this.ctx = this.canvas.getContext('2d', { alpha: true })!;
       this.resizeCanvas();
@@ -287,6 +290,14 @@ export class GraphCanvas extends LitElement {
     this.canvas.style.width = `${rect.width}px`;
     this.canvas.style.height = `${rect.height}px`;
 
+    if (this.theme) {
+      this.starfield.setColors([
+        this.theme.starfieldWarm,
+        this.theme.starfieldGolden,
+        this.theme.starfieldCool,
+      ]);
+    }
+    this.starfield.generate(rect.width, rect.height);
     this.renderCanvas();
   }
 
@@ -597,6 +608,9 @@ export class GraphCanvas extends LitElement {
 
     this.ctx.clearRect(0, 0, width, height);
 
+    // Render starfield behind everything (in screen space)
+    this.starfield.render(this.ctx, this.pan.x, this.pan.y);
+
     // Apply world transform for graph elements
     this.ctx.save();
     this.ctx.translate(this.pan.x, this.pan.y);
@@ -625,12 +639,14 @@ export class GraphCanvas extends LitElement {
     if (!node || node.name.length <= 20) return;
 
     const layoutPos = this.layout.nodePositions.get(node.id);
-    const clusterPos = this.layout.clusterPositions.get(node.project || 'External');
-    if (!layoutPos || !clusterPos) return;
+    if (!layoutPos) return;
+    const clusterPos = this.layout.clusterPositions.get(layoutPos.clusterId);
+    if (!clusterPos) return;
 
+    const manualClusterPos = this.manualClusterPositions.get(layoutPos.clusterId);
     const manualPos = this.manualNodePositions.get(node.id);
-    const worldX = clusterPos.x + (manualPos?.x ?? layoutPos.x);
-    const worldY = clusterPos.y + (manualPos?.y ?? layoutPos.y);
+    const worldX = (manualClusterPos?.x ?? clusterPos.x) + (manualPos?.x ?? layoutPos.x);
+    const worldY = (manualClusterPos?.y ?? clusterPos.y) + (manualPos?.y ?? layoutPos.y);
     const size = getNodeSize(node, this.edges);
 
     const screenX = worldX * this.zoom + this.pan.x;
@@ -647,8 +663,11 @@ export class GraphCanvas extends LitElement {
     const y = screenY - size * this.zoom - 35;
 
     this.ctx.save();
-    this.ctx.fillStyle = 'rgba(30, 30, 35, 0.95)';
-    this.ctx.strokeStyle = adjustColorForZoom(getNodeTypeColor(node.type), this.zoom);
+    this.ctx.fillStyle = this.theme.tooltipBg;
+    this.ctx.strokeStyle = adjustColorForZoom(
+      getNodeTypeColorFromTheme(node.type, this.theme),
+      this.zoom,
+    );
     this.ctx.lineWidth = 1;
 
     this.ctx.beginPath();
@@ -763,7 +782,7 @@ export class GraphCanvas extends LitElement {
 
       const size = getNodeSize(node, this.edges);
       if (!isCircleInViewport({ x, y }, size, viewport)) continue;
-      const color = getNodeTypeColor(node.type);
+      const color = getNodeTypeColorFromTheme(node.type, this.theme);
       const adjustedColor = adjustColorForZoom(color, this.zoom);
 
       const isHovered = this.hoveredNode === node.id;
@@ -802,7 +821,7 @@ export class GraphCanvas extends LitElement {
 
         this.ctx.beginPath();
         this.ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
-        this.ctx.strokeStyle = 'rgba(255, 100, 50, 0.6)';
+        this.ctx.strokeStyle = this.theme.cycleGlowColor;
         this.ctx.lineWidth = 2;
         this.ctx.globalAlpha = 0.4 + pulse * 0.3;
         this.ctx.stroke();
@@ -834,7 +853,7 @@ export class GraphCanvas extends LitElement {
 
       const path = this.getPathForNode(node);
 
-      this.ctx.fillStyle = 'rgba(30, 30, 35, 0.95)';
+      this.ctx.fillStyle = this.theme.tooltipBg;
       this.ctx.fill(path);
 
       this.ctx.strokeStyle = adjustedColor;
@@ -858,7 +877,7 @@ export class GraphCanvas extends LitElement {
         this.ctx.fillStyle = adjustedColor;
 
         this.ctx.globalAlpha = (isDimmed ? 0.3 : 1.0) * 0.9;
-        this.ctx.shadowColor = 'rgba(30, 30, 35, 0.9)';
+        this.ctx.shadowColor = this.theme.shadowColor;
         this.ctx.shadowBlur = 8;
         this.ctx.fillText(labelText, x, y + size + 22);
 
@@ -998,7 +1017,7 @@ export class GraphCanvas extends LitElement {
           ? targetNode
           : sourceNode
         : targetNode;
-    let color = getNodeTypeColor(colorNode.type);
+    let color = getNodeTypeColorFromTheme(colorNode.type, this.theme);
 
     // Bypass adjustColorForZoom if highlighted to ensure visibility
     if (!isHighlighted) {
@@ -1006,7 +1025,7 @@ export class GraphCanvas extends LitElement {
     }
 
     if (isCycleEdge) {
-      color = 'rgba(255, 100, 50, 0.8)';
+      color = this.theme.cycleEdgeColor;
     }
     this.ctx.strokeStyle = color;
 
@@ -1039,7 +1058,7 @@ export class GraphCanvas extends LitElement {
         // Use the color of the OTHER node (not the selected one)
         // This makes each edge match the icon of the node it connects to
         const otherNode = sourceNode.id === this.selectedNode?.id ? targetNode : sourceNode;
-        const edgeColor = getNodeTypeColor(otherNode.type);
+        const edgeColor = getNodeTypeColorFromTheme(otherNode.type, this.theme);
         this.ctx.strokeStyle = edgeColor;
         this.ctx.globalAlpha = 0.9;
       } else {

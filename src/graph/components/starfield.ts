@@ -33,7 +33,7 @@ export interface StarfieldOptions {
   spanMultiplier?: number;
 }
 
-const STAR_PALETTE = [
+const DEFAULT_STAR_PALETTE = [
   '#f7f1da', // soft warm off-white
   '#f5e0b5', // warmer, almost golden
   '#d6e0ff', // occasional cool blue-white
@@ -51,6 +51,7 @@ export class Starfield {
   private width = 0;
   private height = 0;
   private options: Required<StarfieldOptions>;
+  private palette: string[] = DEFAULT_STAR_PALETTE;
 
   constructor(options: StarfieldOptions = {}) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
@@ -62,6 +63,14 @@ export class Starfield {
    */
   public setOptions(options: StarfieldOptions): void {
     this.options = { ...this.options, ...options };
+  }
+
+  /**
+   * Set the star color palette. Expects [warm, golden, cool].
+   * Takes effect on the next `generate()` call.
+   */
+  public setColors(colors: string[]): void {
+    this.palette = colors.length >= 3 ? colors : DEFAULT_STAR_PALETTE;
   }
 
   /**
@@ -101,7 +110,7 @@ export class Starfield {
     const spanY = height * spanMultiplier;
     const offsetX = spanX * 0.25; // center the spawn region
     const offsetY = spanY * 0.25;
-    const palette = STAR_PALETTE;
+    const palette = this.palette;
 
     for (let i = 0; i < count; i++) {
       const isBright = Math.random() < brightRatio;
