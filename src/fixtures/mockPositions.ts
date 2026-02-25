@@ -1,5 +1,5 @@
 /**
- * Mock position data for Storybook stories
+ * Mock position data for tests and fixtures
  *
  * Provides deterministic node and cluster positions for consistent rendering
  */

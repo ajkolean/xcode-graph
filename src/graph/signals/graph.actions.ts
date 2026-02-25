@@ -132,16 +132,6 @@ export function showDependents(node: GraphNode): void {
 }
 
 /**
- * Show impact analysis for a node
- * @param node - The node to analyze impact for
- */
-export function showImpact(node: GraphNode): void {
-  selectedNode.set(node);
-  selectedCluster.set(null);
-  viewMode.set(ViewMode.Impact);
-}
-
-/**
  * Reset to full view with no selection
  */
 export function resetView(): void {

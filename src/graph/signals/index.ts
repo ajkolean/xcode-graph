@@ -17,7 +17,6 @@ export {
   setHoveredNode,
   setViewMode,
   showDependents,
-  showImpact,
 } from './graph.actions';
 export {
   circularDependencies,

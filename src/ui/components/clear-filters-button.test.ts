@@ -121,7 +121,7 @@ describe('graph-clear-filters-button', () => {
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
     expect(button).to.exist;
-    // Styles are applied via Shadow DOM CSS - verified visually in Storybook
+    // Styles are applied via Shadow DOM CSS
   });
 
   it('should apply disabled styles when isActive is false', async () => {
@@ -131,7 +131,7 @@ describe('graph-clear-filters-button', () => {
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
     expect(button).to.exist;
-    // Styles are applied via Shadow DOM CSS - verified visually in Storybook
+    // Styles are applied via Shadow DOM CSS
   });
 
   // ========================================

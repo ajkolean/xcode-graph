@@ -1,5 +1,5 @@
 /**
- * Mock Cluster data for Storybook stories
+ * Mock Cluster data for tests and fixtures
  */
 
 import {

@@ -1,5 +1,5 @@
 /**
- * Mock FilterItem data for Storybook stories
+ * Mock FilterItem data for tests and fixtures
  */
 
 import type { FilterItem } from '@ui/components/filter-section';

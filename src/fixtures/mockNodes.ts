@@ -1,5 +1,5 @@
 /**
- * Mock GraphNode data for Storybook stories
+ * Mock GraphNode data for tests and fixtures
  */
 
 import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';

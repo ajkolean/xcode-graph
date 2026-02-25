@@ -1,7 +1,7 @@
 /**
  * NodeActions Lit Component
  *
- * Action buttons for node (Focus, Show Dependents, Show Impact).
+ * Action buttons for node (Show Dependency Chain, Show Dependents).
  * Displays active state based on current view mode.
  *
  * @example
@@ -12,9 +12,8 @@
  * ></graph-node-actions>
  * ```
  *
- * @fires focus-node - Dispatched when focus button clicked
+ * @fires focus-node - Dispatched when dependency chain button clicked
  * @fires show-dependents - Dispatched when dependents button clicked
- * @fires show-impact - Dispatched when impact button clicked
  */
 
 import { icons } from '@shared/controllers/icon.adapter';
@@ -105,19 +104,6 @@ export class GraphNodeActions extends LitElement {
       color: var(--colors-primary-foreground);
     }
 
-    /* Impact Button (neutral/foreground) */
-    .impact-button {
-      background-color: color-mix(in srgb, var(--colors-foreground) 8%, transparent);
-      border-color: color-mix(in srgb, var(--colors-foreground) 25%, transparent);
-      color: var(--colors-foreground);
-    }
-
-    .impact-button.active {
-      background-color: var(--colors-foreground);
-      border-color: var(--colors-foreground);
-      color: var(--colors-background);
-    }
-
     .icon {
       display: inline-flex;
     }
@@ -144,10 +130,6 @@ export class GraphNodeActions extends LitElement {
     return this.viewMode === 'dependents' || this.viewMode === 'both';
   }
 
-  private get isImpactActive(): boolean {
-    return this.viewMode === 'impact';
-  }
-
   // ========================================
   // Event Handlers
   // ========================================
@@ -172,16 +154,6 @@ export class GraphNodeActions extends LitElement {
     );
   }
 
-  private handleShowImpact() {
-    this.dispatchEvent(
-      new CustomEvent('show-impact', {
-        detail: { node: this.node },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-  }
-
   // ========================================
   // Render
   // ========================================
@@ -197,11 +169,8 @@ export class GraphNodeActions extends LitElement {
     const depButtonClass = this.getChainButtonClass(this.isDependencyChainActive);
     const depentsButtonClass = this.getChainButtonClass(this.isDependentsChainActive);
 
-    const impactButtonClass = this.isImpactActive ? 'active' : '';
-
     return html`
       <div class="actions">
-        <!-- Dependency Chain Button -->
         <button
           class="action-button dependency-button ${depButtonClass}"
           @click=${this.handleFocusNode}
@@ -209,25 +178,15 @@ export class GraphNodeActions extends LitElement {
           <span class="icon">
             ${unsafeHTML(this.isDependencyChainActive ? icons.EyeOff : icons.Eye)}
           </span>
-          ${this.isDependencyChainActive ? 'Hide Dependency Chain' : 'Show Dependency Chain'}
+          ${this.isDependencyChainActive ? 'Hide Dependencies' : 'Show Dependencies'}
         </button>
 
-        <!-- Dependents Chain Button -->
         <button
           class="action-button dependents-button ${depentsButtonClass}"
           @click=${this.handleShowDependents}
         >
           <span class="icon rotated">${unsafeHTML(icons.Focus)}</span>
-          ${this.isDependentsChainActive ? 'Hide Dependents Chain' : 'Show Dependents Chain'}
-        </button>
-
-        <!-- Impact View Button -->
-        <button
-          class="action-button impact-button ${impactButtonClass}"
-          @click=${this.handleShowImpact}
-        >
-          <span class="icon">${unsafeHTML(icons.Focus)}</span>
-          ${this.isImpactActive ? 'Impact Active' : 'Show Impact'}
+          ${this.isDependentsChainActive ? 'Hide Dependents' : 'Show Dependents'}
         </button>
       </div>
     `;

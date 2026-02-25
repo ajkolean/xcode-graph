@@ -46,7 +46,6 @@ import {
   selectNode,
   setHoveredNode,
   showDependents,
-  showImpact,
   viewMode,
 } from '@graph/signals/index';
 import {
@@ -396,7 +395,6 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
         @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
         @focus-node=${(e: CustomEvent) => focusNode(e.detail.node)}
         @show-dependents=${(e: CustomEvent) => showDependents(e.detail.node)}
-        @show-impact=${(e: CustomEvent) => showImpact(e.detail.node)}
       ></graph-node-details-panel>
     `;
   }

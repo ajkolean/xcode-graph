@@ -64,7 +64,7 @@ describe('graph-edge', () => {
     const edge = svgEl.querySelector('graph-edge') as GraphEdge;
     await edge.updateComplete;
 
-    // Component renders SVG elements (verified visually in Storybook)
+    // Component renders SVG elements
     expect(edge).to.exist;
   });
 

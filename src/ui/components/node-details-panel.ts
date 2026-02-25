@@ -14,7 +14,7 @@
  * ></graph-node-details-panel>
  * ```
  *
- * @fires close, node-select, cluster-select, node-hover, focus-node, show-dependents, show-impact
+ * @fires close, node-select, cluster-select, node-hover, focus-node, show-dependents
  */
 
 import { computeNodeDependencies } from '@graph/utils/node-utils';
@@ -153,7 +153,6 @@ export class GraphNodeDetailsPanel extends LitElement {
         view-mode=${this.viewMode}
         @focus-node=${(e: CustomEvent) => this.bubbleEvent('focus-node', e.detail)}
         @show-dependents=${(e: CustomEvent) => this.bubbleEvent('show-dependents', e.detail)}
-        @show-impact=${(e: CustomEvent) => this.bubbleEvent('show-impact', e.detail)}
       ></graph-node-actions>
 
       <graph-node-list

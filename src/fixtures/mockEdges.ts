@@ -1,5 +1,5 @@
 /**
- * Mock GraphEdge data for Storybook stories
+ * Mock GraphEdge data for tests and fixtures
  */
 
 import type { GraphEdge } from '@shared/schemas/graph.schema';

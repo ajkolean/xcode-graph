@@ -85,7 +85,7 @@ describe('graph-node', () => {
     const node = svgEl.querySelector('graph-node') as GraphNode;
     await node.updateComplete;
 
-    // Component supports event listeners (tested via Storybook interactions)
+    // Component supports event listeners
     expect(node).to.exist;
   });
 

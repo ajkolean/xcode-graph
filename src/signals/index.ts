@@ -38,7 +38,6 @@ export {
   setHoveredNode,
   setViewMode,
   showDependents,
-  showImpact,
   transitiveData,
   viewMode,
 } from '@graph/signals/index';

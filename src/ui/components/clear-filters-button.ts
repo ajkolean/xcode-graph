@@ -44,9 +44,9 @@ export class GraphClearFiltersButton extends LitElement {
     }
 
     :host([is-active]) {
-      max-height: 40px;
+      max-height: 48px;
       opacity: 1;
-      padding: 0 var(--spacing-md) var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
     }
 
     button {

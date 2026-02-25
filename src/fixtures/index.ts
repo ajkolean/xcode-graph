@@ -25,7 +25,7 @@ export * from './largeGraph';
 export * from './mockClusters';
 export * from './mockEdges';
 export * from './mockFilters';
-// Mock data (pre-built fixtures for stories)
+// Mock data (pre-built fixtures for tests)
 export * from './mockNodes';
 export * from './mockPositions';
 // Node builders

@@ -40,17 +40,15 @@ export enum ActiveTab {
  * View mode enum - determines graph visualization mode
  *
  * - Full: Show entire graph
- * - Focused: Show selected node and direct connections
+ * - Focused: Show selected node and its transitive dependencies
  * - Path: Show path between two nodes
- * - Impact: Show downstream dependents
- * - Dependents: Show nodes that depend on selection
+ * - Dependents: Show nodes that transitively depend on selection
  * - Both: Show both dependencies and dependents
  */
 export enum ViewMode {
   Full = 'full',
   Focused = 'focused',
   Path = 'path',
-  Impact = 'impact',
   Dependents = 'dependents',
   Both = 'both',
 }
