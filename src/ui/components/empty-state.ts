@@ -71,6 +71,12 @@ export class GraphEmptyState extends LitElement {
       }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      .icon-container {
+        animation: none;
+      }
+    }
+
     .icon-container svg {
       width: var(--sizes-icon-xl);
       height: var(--sizes-icon-xl);
@@ -84,7 +90,7 @@ export class GraphEmptyState extends LitElement {
       font-size: var(--font-sizes-base);
       font-weight: var(--font-weights-medium);
       color: var(--colors-foreground);
-      letter-spacing: -0.01em;
+      letter-spacing: var(--letter-spacing-tight);
     }
 
     .description {
@@ -108,7 +114,7 @@ export class GraphEmptyState extends LitElement {
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-semibold);
       color: var(--colors-primary);
-      letter-spacing: 0.04em;
+      letter-spacing: var(--letter-spacing-wide);
       text-transform: uppercase;
       cursor: pointer;
     }

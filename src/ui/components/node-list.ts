@@ -31,10 +31,10 @@ import './section-header.js';
 
 /** Dependency kind colors and labels */
 const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> = {
-  [DependencyKind.Target]: { label: 'Target', color: '#10B981' },
-  [DependencyKind.Project]: { label: 'Project', color: '#3B82F6' },
-  [DependencyKind.Sdk]: { label: 'SDK', color: '#8B5CF6' },
-  [DependencyKind.XCFramework]: { label: 'XCF', color: '#F59E0B' },
+  [DependencyKind.Target]: { label: 'Target', color: 'var(--colors-success)' },
+  [DependencyKind.Project]: { label: 'Project', color: 'var(--colors-info)' },
+  [DependencyKind.Sdk]: { label: 'SDK', color: 'var(--colors-primary)' },
+  [DependencyKind.XCFramework]: { label: 'XCF', color: 'var(--colors-warning)' },
 };
 
 export class GraphNodeList extends NodeListEventsBase {
@@ -162,7 +162,7 @@ export class GraphNodeList extends NodeListEventsBase {
 
     const config = DEPENDENCY_KIND_CONFIG[item.edge.kind] || {
       label: item.edge.kind,
-      color: '#6B7280',
+      color: 'var(--colors-muted-foreground)',
     };
 
     return html`

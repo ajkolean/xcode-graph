@@ -103,6 +103,11 @@ export class GraphListItemRow extends LitElement {
       transform: scale(0.99);
     }
 
+    button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+    }
+
     .icon-container {
       flex-shrink: 0;
       display: flex;
@@ -145,7 +150,7 @@ export class GraphListItemRow extends LitElement {
       color: var(--colors-muted-foreground);
       margin-top: 2px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: var(--letter-spacing-wide);
     }
 
     .chevron {
@@ -236,7 +241,7 @@ export class GraphListItemRow extends LitElement {
             >
               <path
                 d="${iconPath}"
-                fill="rgba(12, 15, 22, 0.95)"
+                fill="rgba(var(--colors-background-rgb), var(--opacity-95))"
                 stroke="${nodeColor}"
                 stroke-width="1.8"
                 stroke-linecap="round"

@@ -38,9 +38,9 @@ export class GraphClearFiltersButton extends LitElement {
       overflow: hidden;
       opacity: 0;
       transition:
-        max-height var(--durations-slow) var(--easings-default),
+        max-height var(--durations-normal) var(--easings-default),
         opacity var(--durations-normal) var(--easings-default),
-        padding var(--durations-slow) var(--easings-default);
+        padding var(--durations-normal) var(--easings-default);
     }
 
     :host([is-active]) {
@@ -69,6 +69,11 @@ export class GraphClearFiltersButton extends LitElement {
 
     button:hover {
       background-color: color-mix(in srgb, var(--colors-primary) 15%, transparent);
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
     }
   `;
 

@@ -68,7 +68,7 @@ export class GraphSectionHeader extends LitElement {
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-xs);
       color: var(--colors-foreground);
-      opacity: var(--opacity-30);
+      opacity: var(--opacity-50);
     }
   `;
 
