@@ -28,31 +28,17 @@ class TransitiveCache {
   private cache = new Map<string, CacheEntry>();
   private maxSize = 100; // LRU cache size
   private edgesReference: GraphEdge[] | null = null;
-  private edgesHash = '';
+  private version = 0;
 
   /**
-   * Generate a simple hash from edges array
-   * Uses length and first/last edges as a quick fingerprint
-   */
-  private hashEdges(edges: GraphEdge[]): string {
-    if (edges.length === 0) return 'empty';
-    if (edges.length <= 2) {
-      return edges.map((e) => `${e.source}→${e.target}`).join('|');
-    }
-    // Use length + first + last edges as fingerprint
-    const first = edges[0]!;
-    const last = edges[edges.length - 1]!;
-    return `${edges.length}:${first.source}→${first.target}|${last.source}→${last.target}`;
-  }
-
-  /**
-   * Check if edges have changed and invalidate cache if needed
+   * Check if edges have changed and invalidate cache if needed.
+   * Uses reference identity as the primary check, with a monotonic
+   * version counter to ensure cache keys are always unique per change.
    */
   invalidateIfEdgesChanged(edges: GraphEdge[]): void {
-    const newHash = this.hashEdges(edges);
-    if (this.edgesHash !== newHash || this.edgesReference !== edges) {
+    if (this.edgesReference !== edges) {
       this.cache.clear();
-      this.edgesHash = newHash;
+      this.version++;
       this.edgesReference = edges;
     }
   }
@@ -61,7 +47,7 @@ class TransitiveCache {
    * Get cached result if available
    */
   get(nodeId: string, direction: 'dependencies' | 'dependents'): TransitiveResult | null {
-    const key = `${nodeId}:${direction}:${this.edgesHash}`;
+    const key = `${nodeId}:${direction}:${this.version}`;
     const entry = this.cache.get(key);
     if (!entry) return null;
 
@@ -74,7 +60,7 @@ class TransitiveCache {
    * Store result in cache with LRU eviction
    */
   set(nodeId: string, direction: 'dependencies' | 'dependents', result: TransitiveResult): void {
-    const key = `${nodeId}:${direction}:${this.edgesHash}`;
+    const key = `${nodeId}:${direction}:${this.version}`;
 
     // LRU eviction if cache is full
     if (this.cache.size >= this.maxSize) {
@@ -103,7 +89,7 @@ class TransitiveCache {
     return {
       size: this.cache.size,
       maxSize: this.maxSize,
-      edgesHash: this.edgesHash,
+      version: this.version,
     };
   }
 }
@@ -242,6 +228,6 @@ export function computeTransitiveDependencies(
 /**
  * Export cache stats for debugging and testing
  */
-export function getTransitiveCacheStats(): { size: number; maxSize: number; edgesHash: string } {
+export function getTransitiveCacheStats(): { size: number; maxSize: number; version: number } {
   return transitiveCache.getStats();
 }

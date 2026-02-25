@@ -8,6 +8,7 @@
  */
 
 import type { FilterState } from '@shared/schemas/app.schema';
+import type { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { allPackages, allProjects, DEFAULT_FILTERS, filters, searchQuery } from './filter.signals';
 
 // ==================== Helper Functions ====================
@@ -52,7 +53,7 @@ export function setSearchQuery(query: string): void {
  * Toggle a node type filter on/off
  * @param type - The node type to toggle
  */
-export function toggleNodeType(type: string): void {
+export function toggleNodeType(type: NodeType): void {
   const current = filters.get();
   filters.set({
     ...current,
@@ -64,7 +65,7 @@ export function toggleNodeType(type: string): void {
  * Toggle a platform filter on/off
  * @param platform - The platform to toggle
  */
-export function togglePlatform(platform: string): void {
+export function togglePlatform(platform: Platform): void {
   const current = filters.get();
   filters.set({
     ...current,
@@ -76,7 +77,7 @@ export function togglePlatform(platform: string): void {
  * Toggle an origin filter on/off
  * @param origin - The origin to toggle
  */
-export function toggleOrigin(origin: string): void {
+export function toggleOrigin(origin: Origin): void {
   const current = filters.get();
   filters.set({
     ...current,

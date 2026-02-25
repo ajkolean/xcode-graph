@@ -1,7 +1,7 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeSize } from '@ui/utils/sizing';
-import { ZOOM_CONFIG } from '@ui/utils/zoom-constants';
+import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
 
 export interface CanvasEventMap {
   'node-select': { node: GraphNode | null };

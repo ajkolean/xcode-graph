@@ -1,6 +1,6 @@
 import type { FilterState } from '@shared/schemas';
 import type { GraphEdge } from '@shared/schemas/graph.schema';
-import { Platform } from '@shared/schemas/graph.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { describe, expect, it } from 'vitest';
 import {
   createDiamondGraph,
@@ -251,9 +251,9 @@ describe('computeFilters', () => {
     const result = computeFilters(nodes);
 
     const allFilters: FilterState = {
-      nodeTypes: new Set(result.typeCounts.keys()),
-      platforms: new Set(result.platformCounts.keys()),
-      origins: new Set(['local', 'external']),
+      nodeTypes: new Set(result.typeCounts.keys()) as Set<NodeType>,
+      platforms: new Set(result.platformCounts.keys()) as Set<Platform>,
+      origins: new Set([Origin.Local, Origin.External]),
       projects: new Set(result.projectCounts.keys()),
       packages: new Set(result.packageCounts.keys()),
     };
@@ -262,7 +262,7 @@ describe('computeFilters', () => {
 
     const filteredState: FilterState = {
       ...allFilters,
-      nodeTypes: new Set(['app']),
+      nodeTypes: new Set([NodeType.App]),
     };
 
     expect(result.hasActiveFilters(filteredState)).toBe(true);

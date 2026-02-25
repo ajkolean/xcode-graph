@@ -6,6 +6,7 @@
  */
 
 import type { FilterState } from '@shared/schemas/app.schema';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { SignalSnapshot } from '../../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
@@ -38,9 +39,9 @@ describe('filter.actions', () => {
   describe('setFilters', () => {
     it('should replace all filters', () => {
       const newFilters: FilterState = {
-        nodeTypes: new Set(['framework']),
-        platforms: new Set(['iOS']),
-        origins: new Set(['local']),
+        nodeTypes: new Set([NodeType.Framework]),
+        platforms: new Set([Platform.iOS]),
+        origins: new Set([Origin.Local]),
         projects: new Set(['Project1']),
         packages: new Set(['Package1']),
       };
@@ -97,25 +98,25 @@ describe('filter.actions', () => {
       // Start with empty node types
       filters.set({ ...DEFAULT_FILTERS, nodeTypes: new Set() });
 
-      toggleNodeType('framework');
+      toggleNodeType(NodeType.Framework);
 
-      expect(filters.get().nodeTypes.has('framework')).toBe(true);
+      expect(filters.get().nodeTypes.has(NodeType.Framework)).toBe(true);
     });
 
     it('should remove node type when present', () => {
       // Start with framework included
-      filters.set({ ...DEFAULT_FILTERS, nodeTypes: new Set(['framework', 'app']) });
+      filters.set({ ...DEFAULT_FILTERS, nodeTypes: new Set([NodeType.Framework, NodeType.App]) });
 
-      toggleNodeType('framework');
+      toggleNodeType(NodeType.Framework);
 
-      expect(filters.get().nodeTypes.has('framework')).toBe(false);
-      expect(filters.get().nodeTypes.has('app')).toBe(true);
+      expect(filters.get().nodeTypes.has(NodeType.Framework)).toBe(false);
+      expect(filters.get().nodeTypes.has(NodeType.App)).toBe(true);
     });
 
     it('should not affect other filter categories', () => {
       const initialFilters = filters.get();
 
-      toggleNodeType('framework');
+      toggleNodeType(NodeType.Framework);
 
       const updatedFilters = filters.get();
       expect(updatedFilters.platforms).toEqual(initialFilters.platforms);
@@ -129,24 +130,24 @@ describe('filter.actions', () => {
     it('should add platform when not present', () => {
       filters.set({ ...DEFAULT_FILTERS, platforms: new Set() });
 
-      togglePlatform('iOS');
+      togglePlatform(Platform.iOS);
 
-      expect(filters.get().platforms.has('iOS')).toBe(true);
+      expect(filters.get().platforms.has(Platform.iOS)).toBe(true);
     });
 
     it('should remove platform when present', () => {
-      filters.set({ ...DEFAULT_FILTERS, platforms: new Set(['iOS', 'macOS']) });
+      filters.set({ ...DEFAULT_FILTERS, platforms: new Set([Platform.iOS, Platform.macOS]) });
 
-      togglePlatform('iOS');
+      togglePlatform(Platform.iOS);
 
-      expect(filters.get().platforms.has('iOS')).toBe(false);
-      expect(filters.get().platforms.has('macOS')).toBe(true);
+      expect(filters.get().platforms.has(Platform.iOS)).toBe(false);
+      expect(filters.get().platforms.has(Platform.macOS)).toBe(true);
     });
 
     it('should not affect other filter categories', () => {
       const initialFilters = filters.get();
 
-      togglePlatform('iOS');
+      togglePlatform(Platform.iOS);
 
       const updatedFilters = filters.get();
       expect(updatedFilters.nodeTypes).toEqual(initialFilters.nodeTypes);
@@ -158,24 +159,24 @@ describe('filter.actions', () => {
     it('should add origin when not present', () => {
       filters.set({ ...DEFAULT_FILTERS, origins: new Set() });
 
-      toggleOrigin('local');
+      toggleOrigin(Origin.Local);
 
-      expect(filters.get().origins.has('local')).toBe(true);
+      expect(filters.get().origins.has(Origin.Local)).toBe(true);
     });
 
     it('should remove origin when present', () => {
-      filters.set({ ...DEFAULT_FILTERS, origins: new Set(['local', 'external']) });
+      filters.set({ ...DEFAULT_FILTERS, origins: new Set([Origin.Local, Origin.External]) });
 
-      toggleOrigin('local');
+      toggleOrigin(Origin.Local);
 
-      expect(filters.get().origins.has('local')).toBe(false);
-      expect(filters.get().origins.has('external')).toBe(true);
+      expect(filters.get().origins.has(Origin.Local)).toBe(false);
+      expect(filters.get().origins.has(Origin.External)).toBe(true);
     });
 
     it('should not affect other filter categories', () => {
       const initialFilters = filters.get();
 
-      toggleOrigin('local');
+      toggleOrigin(Origin.Local);
 
       const updatedFilters = filters.get();
       expect(updatedFilters.nodeTypes).toEqual(initialFilters.nodeTypes);
@@ -253,9 +254,9 @@ describe('filter.actions', () => {
     it('should reset to default filters', () => {
       // Modify filters
       filters.set({
-        nodeTypes: new Set(['framework']),
-        platforms: new Set(['iOS']),
-        origins: new Set(['local']),
+        nodeTypes: new Set([NodeType.Framework]),
+        platforms: new Set([Platform.iOS]),
+        origins: new Set([Origin.Local]),
         projects: new Set(['Project1']),
         packages: new Set(['Package1']),
       });
@@ -272,9 +273,9 @@ describe('filter.actions', () => {
 
     it('should accept custom defaults', () => {
       const customDefaults: FilterState = {
-        nodeTypes: new Set(['framework']),
-        platforms: new Set(['iOS']),
-        origins: new Set(['local']),
+        nodeTypes: new Set([NodeType.Framework]),
+        platforms: new Set([Platform.iOS]),
+        origins: new Set([Origin.Local]),
         projects: new Set(['CustomProject']),
         packages: new Set(['CustomPackage']),
       };
@@ -358,25 +359,25 @@ describe('filter.actions', () => {
     it('should handle multiple filter toggles in sequence', () => {
       filters.set({ ...DEFAULT_FILTERS });
 
-      toggleNodeType('framework');
-      toggleNodeType('app');
-      togglePlatform('iOS');
-      toggleOrigin('local');
+      toggleNodeType(NodeType.Framework);
+      toggleNodeType(NodeType.App);
+      togglePlatform(Platform.iOS);
+      toggleOrigin(Origin.Local);
       toggleProject('Project1');
       togglePackage('Package1');
 
       const current = filters.get();
-      expect(current.nodeTypes.has('framework')).toBe(false);
-      expect(current.nodeTypes.has('app')).toBe(false);
-      expect(current.platforms.has('iOS')).toBe(false);
-      expect(current.origins.has('local')).toBe(false);
+      expect(current.nodeTypes.has(NodeType.Framework)).toBe(false);
+      expect(current.nodeTypes.has(NodeType.App)).toBe(false);
+      expect(current.platforms.has(Platform.iOS)).toBe(false);
+      expect(current.origins.has(Origin.Local)).toBe(false);
       expect(current.projects.has('Project1')).toBe(true);
       expect(current.packages.has('Package1')).toBe(true);
     });
 
     it('should handle clear after multiple modifications', () => {
-      toggleNodeType('framework');
-      togglePlatform('iOS');
+      toggleNodeType(NodeType.Framework);
+      togglePlatform(Platform.iOS);
       toggleProject('Project1');
       setSearchQuery('test');
 
@@ -400,7 +401,7 @@ describe('filter.actions', () => {
     });
 
     it('should handle rapid toggle operations', () => {
-      const type = 'framework';
+      const type = NodeType.Framework;
 
       toggleNodeType(type);
       toggleNodeType(type);
@@ -414,7 +415,7 @@ describe('filter.actions', () => {
     it('should maintain immutability across operations', () => {
       const snapshot1 = filters.get();
 
-      toggleNodeType('framework');
+      toggleNodeType(NodeType.Framework);
       const snapshot2 = filters.get();
 
       // Different instances
@@ -428,18 +429,18 @@ describe('filter.actions', () => {
       initializeFromData(new Set(['Core', 'UI', 'Network']), new Set(['Alamofire', 'SDWebImage']));
 
       // Apply some filters
-      toggleNodeType('test-unit');
-      toggleNodeType('test-ui');
-      togglePlatform('visionOS');
-      togglePlatform('watchOS');
+      toggleNodeType(NodeType.TestUnit);
+      toggleNodeType(NodeType.TestUi);
+      togglePlatform(Platform.visionOS);
+      togglePlatform(Platform.watchOS);
       toggleProject('Network');
       setSearchQuery('Button');
 
       const current = filters.get();
-      expect(current.nodeTypes.has('test-unit')).toBe(false);
-      expect(current.nodeTypes.has('framework')).toBe(true);
-      expect(current.platforms.has('iOS')).toBe(true);
-      expect(current.platforms.has('visionOS')).toBe(false);
+      expect(current.nodeTypes.has(NodeType.TestUnit)).toBe(false);
+      expect(current.nodeTypes.has(NodeType.Framework)).toBe(true);
+      expect(current.platforms.has(Platform.iOS)).toBe(true);
+      expect(current.platforms.has(Platform.visionOS)).toBe(false);
       expect(current.projects.has('Core')).toBe(true);
       expect(current.projects.has('Network')).toBe(false);
       expect(searchQuery.get()).toBe('Button');

@@ -1,7 +1,9 @@
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
+import type { RoutedEdge } from '@graph/layout/types';
 import type { ChainDisplayMode } from '@graph/signals/graph.signals';
 import type { TransitiveResult } from '@graph/utils';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
+import { getConnectedNodes } from '@graph/utils/connections';
 import { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
@@ -11,7 +13,7 @@ import { getNodeIconPath } from '@ui/utils/node-icons';
 import { computeNodeWeights, getNodeSize } from '@ui/utils/sizing';
 import { calculateViewportBounds } from '@ui/utils/viewport';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
-import { ZOOM_CONFIG } from '@ui/utils/zoom-constants';
+import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
 import {
   type CSSResultGroup,
   css,
@@ -111,12 +113,17 @@ export class GraphCanvas extends LitElement {
   private manualClusterPositions = new Map<string, { x: number; y: number }>();
   private pathCache = new Map<string, Path2D>();
   private nodeWeights = new Map<string, number>();
+  private nodeMap = new Map<string, GraphNode>();
+  private connectedNodesCache: { nodeId: string; result: Set<string> } | null = null;
+  private routedEdgeMapCache: Map<string, RoutedEdge> | null = null;
   private theme!: CanvasTheme;
 
-  // Animation State
+  // Animation & Render State
   private animationFrameId: number | null = null;
   private time = 0;
   private didInitialFit = false;
+  private needsRender = true;
+  private isAnimating = false;
 
   // Starfield background
   private starfield = new Starfield();
@@ -172,7 +179,7 @@ export class GraphCanvas extends LitElement {
       this.resizeCanvas();
       window.addEventListener('resize', this.handleResize);
       this.centerGraph();
-      this.startRenderLoop();
+      this.requestRender();
     } else {
       console.error('Canvas element not found in firstUpdated');
     }
@@ -202,6 +209,13 @@ export class GraphCanvas extends LitElement {
       }
 
       this.nodeWeights = computeNodeWeights(this.nodes, this.edges);
+      this.rebuildNodeMap();
+      this.connectedNodesCache = null;
+      this.routedEdgeMapCache = null;
+    }
+
+    if (changedProps.has('selectedNode')) {
+      this.connectedNodesCache = null;
     }
 
     if (changedProps.has('enableAnimation')) {
@@ -212,6 +226,16 @@ export class GraphCanvas extends LitElement {
         this.layout.computeLayout(this.nodes, this.edges).catch(console.error);
       }
     }
+
+    if (
+      changedProps.has('selectedNode') ||
+      changedProps.has('viewMode') ||
+      changedProps.has('chainDisplay')
+    ) {
+      this.updateAnimatingState();
+    }
+
+    this.requestRender();
   }
 
   override updated(changedProps: PropertyValues<this>): void {
@@ -225,6 +249,38 @@ export class GraphCanvas extends LitElement {
 
   private updatePathCache() {
     this.pathCache.clear();
+  }
+
+  private rebuildNodeMap() {
+    this.nodeMap.clear();
+    for (const node of this.nodes) {
+      this.nodeMap.set(node.id, node);
+    }
+  }
+
+  private getConnectedNodesSet(): Set<string> {
+    if (!this.selectedNode) return new Set<string>();
+    if (
+      this.connectedNodesCache &&
+      this.connectedNodesCache.nodeId === this.selectedNode.id
+    ) {
+      return this.connectedNodesCache.result;
+    }
+    const result = getConnectedNodes(this.selectedNode.id, this.edges);
+    this.connectedNodesCache = { nodeId: this.selectedNode.id, result };
+    return result;
+  }
+
+  private getRoutedEdgeMap(): Map<string, RoutedEdge> {
+    if (this.routedEdgeMapCache) return this.routedEdgeMapCache;
+    const map = new Map<string, RoutedEdge>();
+    if (this.layout.routedEdges) {
+      for (const re of this.layout.routedEdges) {
+        map.set(`${re.sourceNodeId}->${re.targetNodeId}`, re);
+      }
+    }
+    this.routedEdgeMapCache = map;
+    return map;
   }
 
   private getPathForNode = (node: GraphNode): Path2D => {
@@ -343,7 +399,7 @@ export class GraphCanvas extends LitElement {
       ]);
     }
     this.starfield.generate(rect.width, rect.height);
-    this.renderCanvas();
+    this.requestRender();
   }
 
   private dispatchCanvasEvent = <K extends keyof CanvasEventMap>(
@@ -356,43 +412,63 @@ export class GraphCanvas extends LitElement {
   private handleCanvasMouseDown = (e: MouseEvent) => {
     this.interactionState.zoom = this.zoom;
     handleMouseDown(e, this.getInteractionContext());
+    this.requestRender();
   };
 
   private handleCanvasMouseMove = (e: MouseEvent) => {
     this.interactionState.zoom = this.zoom;
     handleMouseMove(e, this.getInteractionContext());
     this.hoveredNode = this.interactionState.hoveredNode;
+    this.requestRender();
   };
 
   private handleCanvasMouseUp = (e?: MouseEvent) => {
     handleMouseUp(e, this.getInteractionContext());
     this.hoveredNode = this.interactionState.hoveredNode;
+    this.requestRender();
   };
 
   private handleCanvasWheel = (e: WheelEvent) => {
     this.interactionState.zoom = this.zoom;
     handleWheel(e, this.getInteractionContext());
     this.zoom = this.interactionState.zoom;
+    this.requestRender();
   };
 
   // ========================================
   // Rendering
   // ========================================
 
-  private startRenderLoop() {
-    const loop = (timestamp: number) => {
-      this.time = timestamp;
-      this.renderCanvas();
-      this.animationFrameId = requestAnimationFrame(loop);
-    };
-    this.animationFrameId = requestAnimationFrame(loop);
+  private requestRender() {
+    this.needsRender = true;
+    if (this.animationFrameId === null) {
+      this.animationFrameId = requestAnimationFrame(this.renderLoop);
+    }
   }
+
+  private renderLoop = (timestamp: number) => {
+    this.animationFrameId = null;
+    this.time = timestamp;
+    this.needsRender = false;
+    this.renderCanvas();
+
+    if (this.isAnimating) {
+      this.animationFrameId = requestAnimationFrame(this.renderLoop);
+    }
+  };
 
   private stopRenderLoop() {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
+  }
+
+  private updateAnimatingState() {
+    const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
+    const hasSelectedChain =
+      !!this.selectedNode && this.viewMode !== 'full' && this.viewMode !== 'path';
+    this.isAnimating = hasCycleNodes || hasSelectedChain;
   }
 
   private renderCanvas() {
@@ -443,6 +519,8 @@ export class GraphCanvas extends LitElement {
         transitiveDependents: this.transitiveDependents,
         manualNodePositions: this.manualNodePositions,
         manualClusterPositions: this.manualClusterPositions,
+        nodeMap: this.nodeMap,
+        routedEdgeMap: this.getRoutedEdgeMap(),
       },
       viewport,
     );
@@ -470,6 +548,7 @@ export class GraphCanvas extends LitElement {
         manualNodePositions: this.manualNodePositions,
         manualClusterPositions: this.manualClusterPositions,
         getPathForNode: this.getPathForNode,
+        connectedNodes: this.getConnectedNodesSet(),
       },
       viewport,
     );

@@ -39,7 +39,7 @@ export class GraphSearchBar extends LitElement {
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
-      padding: 0 var(--spacing-md) var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm);
     }
 
     .container {
@@ -84,7 +84,7 @@ export class GraphSearchBar extends LitElement {
         rgba(var(--colors-foreground-rgb), var(--opacity-2)) 0%,
         rgba(var(--colors-foreground-rgb), var(--opacity-4)) 100%
       );
-      border: var(--border-widths-thin) solid var(--colors-border);
+      border: var(--border-widths-thin) solid transparent;
       color: var(--colors-foreground);
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);
@@ -92,7 +92,7 @@ export class GraphSearchBar extends LitElement {
     }
 
     input:hover {
-      border-color: rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      border-color: transparent;
       background: linear-gradient(
         90deg,
         rgba(var(--colors-foreground-rgb), var(--opacity-4)) 0%,

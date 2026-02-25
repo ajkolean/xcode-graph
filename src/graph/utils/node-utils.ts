@@ -8,7 +8,7 @@
  */
 
 import type { FilterState } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 import { buildAdjacency, traverseGraph } from './traversal';
 
 // ==================== Type Definitions ====================
@@ -271,9 +271,9 @@ export function computeFilters(allNodes: GraphNode[]): {
   const createClearFilters = (onFiltersChange: (filters: FilterState) => void) => {
     return () => {
       onFiltersChange({
-        nodeTypes: new Set(typeCounts.keys()),
-        platforms: new Set(platformCounts.keys()),
-        origins: new Set(['local', 'external']),
+        nodeTypes: new Set(typeCounts.keys()) as Set<NodeType>,
+        platforms: new Set(platformCounts.keys()) as Set<Platform>,
+        origins: new Set(['local', 'external']) as Set<Origin>,
         projects: new Set(projectCounts.keys()),
         packages: new Set(packageCounts.keys()),
       });

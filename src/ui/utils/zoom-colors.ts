@@ -11,7 +11,7 @@ import {
   ZOOM_OPACITY,
   ZOOM_SATURATION,
   ZOOM_STROKE_WIDTH,
-} from './zoom-constants';
+} from '@shared/utils/zoom-constants';
 
 /**
  * Calculate saturation multiplier based on zoom level

@@ -9,15 +9,22 @@
 
 import { Signal, signal } from '@lit-labs/signals';
 import type { FilterState } from '@shared/schemas/app.schema';
-import { NODE_TYPE_VALUES, ORIGIN_VALUES, PLATFORM_VALUES } from '@shared/schemas/graph.schema';
+import {
+  type NodeType,
+  NODE_TYPE_VALUES,
+  type Origin,
+  ORIGIN_VALUES,
+  type Platform,
+  PLATFORM_VALUES,
+} from '@shared/schemas/graph.schema';
 
 // ==================== Default Values ====================
 
 /** Default filter configuration - show everything */
 export const DEFAULT_FILTERS: FilterState = {
-  nodeTypes: new Set<string>(NODE_TYPE_VALUES),
-  platforms: new Set<string>(PLATFORM_VALUES),
-  origins: new Set<string>(ORIGIN_VALUES),
+  nodeTypes: new Set<NodeType>(NODE_TYPE_VALUES),
+  platforms: new Set<Platform>(PLATFORM_VALUES),
+  origins: new Set<Origin>(ORIGIN_VALUES),
   projects: new Set<string>(),
   packages: new Set<string>(),
 };

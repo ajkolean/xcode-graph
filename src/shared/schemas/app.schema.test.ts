@@ -5,6 +5,7 @@ import {
   serializeFilterState,
   ViewModeSchema,
 } from './app.schema';
+import { NodeType, Origin, Platform } from './graph.schema';
 
 describe('ViewModeSchema', () => {
   it('should accept valid view modes', () => {
@@ -77,8 +78,8 @@ describe('FilterStateSchema', () => {
 
     expect(result.nodeTypes).toBeInstanceOf(Set);
     expect(result.nodeTypes.size).toBe(2); // duplicates removed
-    expect(result.nodeTypes.has('app')).toBe(true);
-    expect(result.nodeTypes.has('framework')).toBe(true);
+    expect(result.nodeTypes.has(NodeType.App)).toBe(true);
+    expect(result.nodeTypes.has(NodeType.Framework)).toBe(true);
 
     expect(result.platforms).toBeInstanceOf(Set);
     expect(result.platforms.size).toBe(2);
@@ -115,9 +116,9 @@ describe('FilterStateSchema', () => {
 describe('serializeFilterState', () => {
   it('should convert Sets back to arrays', () => {
     const filterState = {
-      nodeTypes: new Set(['app', 'framework']),
-      platforms: new Set(['iOS']),
-      origins: new Set(['local', 'external']),
+      nodeTypes: new Set([NodeType.App, NodeType.Framework]),
+      platforms: new Set([Platform.iOS]),
+      origins: new Set([Origin.Local, Origin.External]),
       projects: new Set(['Project1', 'Project2']),
       packages: new Set(['Package1']),
     };
@@ -144,9 +145,9 @@ describe('serializeFilterState', () => {
 
   it('should handle empty Sets', () => {
     const emptyState = {
-      nodeTypes: new Set<string>(),
-      platforms: new Set<string>(),
-      origins: new Set<string>(),
+      nodeTypes: new Set<NodeType>(),
+      platforms: new Set<Platform>(),
+      origins: new Set<Origin>(),
       projects: new Set<string>(),
       packages: new Set<string>(),
     };

@@ -1,7 +1,6 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { TransitiveResult } from '@graph/utils';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
-import { getConnectedNodes } from '@graph/utils/connections';
 import type { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
@@ -32,6 +31,7 @@ export interface NodeRenderContext {
   manualNodePositions: Map<string, { x: number; y: number }>;
   manualClusterPositions: Map<string, { x: number; y: number }>;
   getPathForNode: (node: GraphNode) => Path2D;
+  connectedNodes: Set<string>;
 }
 
 function getNodeWorldPosition(
@@ -344,10 +344,7 @@ function renderSingleNode(
 }
 
 export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
-  const { ctx, nodes, edges, selectedNode, viewMode, nodeWeights } = rc;
-  const connectedNodes = selectedNode
-    ? getConnectedNodes(selectedNode.id, edges)
-    : new Set<string>();
+  const { ctx, nodes, edges, selectedNode, viewMode, nodeWeights, connectedNodes } = rc;
 
   const isChainActive = selectedNode && viewMode !== 'full' && viewMode !== 'path';
 

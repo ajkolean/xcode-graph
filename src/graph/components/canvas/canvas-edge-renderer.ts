@@ -25,6 +25,8 @@ export interface EdgeRenderContext {
   transitiveDependents: TransitiveResult | undefined;
   manualNodePositions: Map<string, { x: number; y: number }>;
   manualClusterPositions: Map<string, { x: number; y: number }>;
+  nodeMap: Map<string, GraphNode>;
+  routedEdgeMap: Map<string, RoutedEdge>;
 }
 
 function resolveClusterXY(
@@ -55,8 +57,8 @@ function resolveEdgeEndpoints(
   x2: number;
   y2: number;
 } | null {
-  const sourceNode = rc.nodes.find((n) => n.id === edge.source);
-  const targetNode = rc.nodes.find((n) => n.id === edge.target);
+  const sourceNode = rc.nodeMap.get(edge.source);
+  const targetNode = rc.nodeMap.get(edge.target);
   if (!sourceNode || !targetNode) return null;
 
   const sourceLayout = rc.layout.nodePositions.get(edge.source);
@@ -293,7 +295,6 @@ function renderSingleEdge(
   isHighlighted: boolean,
   isChainActive: boolean,
   inChain: boolean,
-  routedEdgeMap: Map<string, RoutedEdge> | undefined,
   rc: EdgeRenderContext,
 ) {
   const endpoints = resolveEdgeEndpoints(edge, rc);
@@ -341,7 +342,7 @@ function renderSingleEdge(
   );
 
   const edgeKey = `${edge.source}->${edge.target}`;
-  const routedEdge = isCrossCluster ? routedEdgeMap?.get(edgeKey) : undefined;
+  const routedEdge = isCrossCluster ? rc.routedEdgeMap.get(edgeKey) : undefined;
 
   if (routedEdge) {
     drawRoutedEdgePath(
@@ -369,17 +370,10 @@ function renderSingleEdge(
 }
 
 export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): void {
-  const { ctx, edges, selectedNode, viewMode, layout, transitiveDeps, transitiveDependents } = rc;
+  const { ctx, edges, selectedNode, viewMode, transitiveDeps, transitiveDependents } = rc;
   const selectedNodeId = selectedNode?.id;
 
   const isChainActive = selectedNode && viewMode !== 'full' && viewMode !== 'path';
-
-  const routedEdgeMap = new Map<string, RoutedEdge>();
-  if (layout.routedEdges) {
-    for (const re of layout.routedEdges) {
-      routedEdgeMap.set(`${re.sourceNodeId}->${re.targetNodeId}`, re);
-    }
-  }
 
   ctx.lineWidth = 1;
 
@@ -401,7 +395,6 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
       isConnectedToSelected,
       !!isChainActive,
       inChain,
-      routedEdgeMap,
       rc,
     );
   }

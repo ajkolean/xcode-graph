@@ -8,6 +8,7 @@
  */
 
 import { z } from 'zod';
+import type { NodeType, Origin, Platform } from './graph.schema';
 
 // ==================== Native Enums ====================
 
@@ -72,11 +73,11 @@ export interface FilterStateInput {
 /** Runtime filter state with Sets for efficient lookup */
 export interface FilterState {
   /** Selected node types to show */
-  nodeTypes: Set<string>;
+  nodeTypes: Set<NodeType>;
   /** Selected platforms to show */
-  platforms: Set<string>;
+  platforms: Set<Platform>;
   /** Selected origins to show */
-  origins: Set<string>;
+  origins: Set<Origin>;
   /** Selected projects to show */
   projects: Set<string>;
   /** Selected packages to show */
@@ -108,9 +109,9 @@ export const FilterStateSchema: z.ZodPipe<
   z.ZodType<FilterStateInput>,
   z.ZodTransform<FilterState, FilterStateInput>
 > = FilterStateInputSchema.transform((input) => ({
-  nodeTypes: new Set(input.nodeTypes),
-  platforms: new Set(input.platforms),
-  origins: new Set(input.origins),
+  nodeTypes: new Set(input.nodeTypes) as Set<NodeType>,
+  platforms: new Set(input.platforms) as Set<Platform>,
+  origins: new Set(input.origins) as Set<Origin>,
   projects: new Set(input.projects),
   packages: new Set(input.packages),
 }));

@@ -211,6 +211,6 @@ describe('computeTransitiveDependencies', () => {
 
     // Cache should have been invalidated and repopulated
     const stats2 = getTransitiveCacheStats();
-    expect(stats2.edgesHash).not.toBe(stats1.edgesHash);
+    expect(stats2.version).not.toBe(stats1.version);
   });
 });
