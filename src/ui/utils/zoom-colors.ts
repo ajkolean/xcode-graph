@@ -4,7 +4,6 @@
  * Similar to Figma, VSCode minimap, GitHub dependency graph, JetBrains tools
  */
 
-import { hexToHSL, hslToHex, hslToRgb, rgbToHsl } from './color-math';
 import {
   ZOOM_CONFIG,
   ZOOM_LIGHTNESS_ADJUSTMENT,
@@ -12,6 +11,7 @@ import {
   ZOOM_SATURATION,
   ZOOM_STROKE_WIDTH,
 } from '@shared/utils/zoom-constants';
+import { hexToHSL, hslToHex, hslToRgb, rgbToHsl } from './color-math';
 
 /**
  * Calculate saturation multiplier based on zoom level

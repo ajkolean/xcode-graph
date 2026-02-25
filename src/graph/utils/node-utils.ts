@@ -8,7 +8,13 @@
  */
 
 import type { FilterState } from '@shared/schemas';
-import type { GraphEdge, GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import type {
+  GraphEdge,
+  GraphNode,
+  NodeType,
+  Origin,
+  Platform,
+} from '@shared/schemas/graph.schema';
 import { buildAdjacency, traverseGraph } from './traversal';
 
 // ==================== Type Definitions ====================

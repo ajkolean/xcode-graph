@@ -3,16 +3,30 @@
  */
 
 import type { FilterState } from '@shared/schemas';
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
 
 /**
  * Create a FilterState that includes everything
  */
 export function createAllInclusiveFilters(): FilterState {
   return {
-    nodeTypes: new Set(['app', 'framework', 'library', 'test-unit', 'test-ui', 'cli', 'package']),
-    platforms: new Set(['iOS', 'macOS', 'visionOS', 'tvOS', 'watchOS']),
-    origins: new Set(['local', 'external']),
+    nodeTypes: new Set([
+      NodeType.App,
+      NodeType.Framework,
+      NodeType.Library,
+      NodeType.TestUnit,
+      NodeType.TestUi,
+      NodeType.Cli,
+      NodeType.Package,
+    ]),
+    platforms: new Set([
+      Platform.iOS,
+      Platform.macOS,
+      Platform.visionOS,
+      Platform.tvOS,
+      Platform.watchOS,
+    ]),
+    origins: new Set([Origin.Local, Origin.External]),
     projects: new Set(['Main', 'Core', 'Features', 'Tools', 'App']),
     packages: new Set(['Alamofire', 'Kingfisher', 'Package1', 'Package2']),
   };

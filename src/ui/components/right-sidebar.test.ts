@@ -82,9 +82,9 @@ describe('graph-right-sidebar - Rendering', () => {
     selectCluster(null);
     setSearchQuery('');
     setFilters({
-      nodeTypes: new Set(['framework', 'staticLibrary', 'package']),
-      platforms: new Set(['iOS', 'macOS']),
-      origins: new Set(['local', 'external']),
+      nodeTypes: new Set([NodeType.Framework, NodeType.Library, NodeType.Package]),
+      platforms: new Set([Platform.iOS, Platform.macOS]),
+      origins: new Set([Origin.Local, Origin.External]),
       projects: new Set(['MyApp', 'OtherApp']),
       packages: new Set(['MyPackage']),
     });

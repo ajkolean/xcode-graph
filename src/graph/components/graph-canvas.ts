@@ -8,12 +8,12 @@ import { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
+import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { computeNodeWeights, getNodeSize } from '@ui/utils/sizing';
 import { calculateViewportBounds } from '@ui/utils/viewport';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
-import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
 import {
   type CSSResultGroup,
   css,
@@ -116,13 +116,13 @@ export class GraphCanvas extends LitElement {
   private nodeMap = new Map<string, GraphNode>();
   private connectedNodesCache: { nodeId: string; result: Set<string> } | null = null;
   private routedEdgeMapCache: Map<string, RoutedEdge> | null = null;
+  private lastRoutedEdgesRef: RoutedEdge[] | undefined = undefined;
   private theme!: CanvasTheme;
 
   // Animation & Render State
   private animationFrameId: number | null = null;
   private time = 0;
   private didInitialFit = false;
-  private needsRender = true;
   private isAnimating = false;
 
   // Starfield background
@@ -260,10 +260,7 @@ export class GraphCanvas extends LitElement {
 
   private getConnectedNodesSet(): Set<string> {
     if (!this.selectedNode) return new Set<string>();
-    if (
-      this.connectedNodesCache &&
-      this.connectedNodesCache.nodeId === this.selectedNode.id
-    ) {
+    if (this.connectedNodesCache && this.connectedNodesCache.nodeId === this.selectedNode.id) {
       return this.connectedNodesCache.result;
     }
     const result = getConnectedNodes(this.selectedNode.id, this.edges);
@@ -272,14 +269,18 @@ export class GraphCanvas extends LitElement {
   }
 
   private getRoutedEdgeMap(): Map<string, RoutedEdge> {
-    if (this.routedEdgeMapCache) return this.routedEdgeMapCache;
+    const currentRouted = this.layout.routedEdges;
+    if (this.routedEdgeMapCache && this.lastRoutedEdgesRef === currentRouted) {
+      return this.routedEdgeMapCache;
+    }
     const map = new Map<string, RoutedEdge>();
-    if (this.layout.routedEdges) {
-      for (const re of this.layout.routedEdges) {
+    if (currentRouted) {
+      for (const re of currentRouted) {
         map.set(`${re.sourceNodeId}->${re.targetNodeId}`, re);
       }
     }
     this.routedEdgeMapCache = map;
+    this.lastRoutedEdgesRef = currentRouted;
     return map;
   }
 
@@ -440,7 +441,6 @@ export class GraphCanvas extends LitElement {
   // ========================================
 
   private requestRender() {
-    this.needsRender = true;
     if (this.animationFrameId === null) {
       this.animationFrameId = requestAnimationFrame(this.renderLoop);
     }
@@ -449,7 +449,6 @@ export class GraphCanvas extends LitElement {
   private renderLoop = (timestamp: number) => {
     this.animationFrameId = null;
     this.time = timestamp;
-    this.needsRender = false;
     this.renderCanvas();
 
     if (this.isAnimating) {

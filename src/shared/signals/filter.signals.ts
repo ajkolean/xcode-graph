@@ -10,12 +10,12 @@
 import { Signal, signal } from '@lit-labs/signals';
 import type { FilterState } from '@shared/schemas/app.schema';
 import {
-  type NodeType,
   NODE_TYPE_VALUES,
-  type Origin,
+  type NodeType,
   ORIGIN_VALUES,
-  type Platform,
+  type Origin,
   PLATFORM_VALUES,
+  type Platform,
 } from '@shared/schemas/graph.schema';
 
 // ==================== Default Values ====================

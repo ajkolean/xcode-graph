@@ -389,13 +389,6 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
       continue;
     }
 
-    renderSingleEdge(
-      edge,
-      viewport,
-      isConnectedToSelected,
-      !!isChainActive,
-      inChain,
-      rc,
-    );
+    renderSingleEdge(edge, viewport, isConnectedToSelected, !!isChainActive, inChain, rc);
   }
 }
