@@ -237,6 +237,12 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
       position: relative;
       z-index: 1;
     }
+
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(var(--colors-primary-rgb), var(--opacity-20)) 50%, transparent 100%);
+      margin: var(--spacing-1) 0;
+    }
   `;
 
   // ========================================
@@ -522,6 +528,8 @@ export class GraphRightSidebar extends SignalWatcher(LitElement) {
           this.handleItemToggle('project', e.detail.key, e.detail.checked)}
         @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
       ></graph-filter-section>
+
+      ${packageItems.length ? html`<div class="section-divider"></div>` : ''}
 
       ${
         packageItems.length

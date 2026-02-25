@@ -44,10 +44,6 @@ vite.config.ts.timestamp-*
 # Playwright MCP
 .playwright-mcp/
 
-# Storybook
-screenshots/
-storybook-static/
-
 # Visual Parity Testing
 .visual-parity-diffs/
 .playwright-results/

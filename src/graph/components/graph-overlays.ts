@@ -121,6 +121,14 @@ export class GraphControls extends LitElement {
       height: var(--sizes-icon-sm);
     }
 
+    .hint {
+      font-family: var(--fonts-mono);
+      font-size: var(--font-sizes-xs);
+      letter-spacing: var(--letter-spacing-wide);
+      color: var(--colors-muted-foreground);
+      opacity: var(--opacity-40);
+      white-space: nowrap;
+    }
   `;
 
   private handleZoomIn() {
@@ -163,10 +171,12 @@ export class GraphControls extends LitElement {
           <button class="zoom-button" @click=${this.handleZoomOut} title="Zoom out">
             ${unsafeHTML(icons.ZoomOut)}
           </button>
-          <button class="zoom-button" @click=${this.handleZoomReset} title="Reset zoom">
-            ${unsafeHTML(icons.Maximize2)}
+          <button class="zoom-button" @click=${this.handleZoomReset} title="Fit to view">
+            ${unsafeHTML(icons.Focus)}
           </button>
         </div>
+        <div class="divider"></div>
+        <span class="hint">Scroll zoom · Drag pan · Click select</span>
       </div>
     `;
   }

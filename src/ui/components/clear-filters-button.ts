@@ -33,6 +33,19 @@ export class GraphClearFiltersButton extends LitElement {
   static override readonly styles = css`
     :host {
       display: block;
+      padding: 0 var(--spacing-md);
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition:
+        max-height var(--durations-slow) var(--easings-default),
+        opacity var(--durations-normal) var(--easings-default),
+        padding var(--durations-slow) var(--easings-default);
+    }
+
+    :host([is-active]) {
+      max-height: 40px;
+      opacity: 1;
       padding: 0 var(--spacing-md) var(--spacing-sm);
     }
 
@@ -47,24 +60,15 @@ export class GraphClearFiltersButton extends LitElement {
       border: var(--border-widths-thin) solid transparent;
     }
 
-    button:not(:disabled) {
+    button {
       background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
       border-color: color-mix(in srgb, var(--colors-primary) 30%, transparent);
       color: var(--colors-primary);
       cursor: pointer;
-      opacity: 1;
     }
 
-    button:not(:disabled):hover {
+    button:hover {
       background-color: color-mix(in srgb, var(--colors-primary) 15%, transparent);
-    }
-
-    button:disabled {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
-      border-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
-      color: var(--colors-muted-foreground);
-      cursor: not-allowed;
-      opacity: var(--opacity-50);
     }
   `;
 

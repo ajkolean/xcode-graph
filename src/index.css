@@ -137,10 +137,19 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  html,
+  body {
+    height: 100%;
+  }
+
   body {
     line-height: inherit;
     background-color: var(--background);
     color: var(--foreground);
+  }
+
+  #root {
+    height: 100%;
   }
 
   hr {

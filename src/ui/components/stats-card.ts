@@ -53,7 +53,8 @@ export class GraphStatsCard extends LitElement {
       border-radius: var(--radii-sm);
       background: var(--gradient-card);
       border: var(--border-widths-thin) solid var(--colors-border);
-      border-left: var(--border-widths-thick) solid var(--colors-primary);
+      border-left: 4px solid var(--colors-primary);
+      box-shadow: inset 3px 0 8px -3px rgba(var(--colors-primary-rgb), var(--opacity-20));
       cursor: default;
       transition:
         transform var(--durations-normal) var(--easings-out),
@@ -95,7 +96,7 @@ export class GraphStatsCard extends LitElement {
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
       color: var(--colors-primary);
-      opacity: var(--opacity-80);
+      opacity: var(--opacity-100);
       margin-bottom: var(--spacing-1);
     }
 
@@ -111,6 +112,7 @@ export class GraphStatsCard extends LitElement {
       font-variant-numeric: tabular-nums;
       color: var(--colors-foreground);
       line-height: var(--line-heights-none);
+      text-shadow: 0 0 30px rgba(var(--colors-primary-rgb), var(--opacity-10));
     }
 
     .value.highlighted {

@@ -18,5 +18,5 @@
     "noImplicitOverride": false
   },
   "include": ["src"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.stories.tsx", "src/components/**", "node_modules"]
+  "exclude": ["src/**/*.test.ts", "src/components/**", "node_modules"]
 }

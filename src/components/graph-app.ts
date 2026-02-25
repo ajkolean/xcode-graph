@@ -1,26 +1,26 @@
 /**
- * GraphApp Lit Component - Main Application Entry
+ * GraphApp Lit Component - Embeddable Graph Visualization
  *
  * Root application component that orchestrates the entire graph visualization.
- * Uses Lit Signals for state management and coordinates all child components.
- *
- * **Features:**
- * - Tab navigation (Graph, Builds, Test Runs, etc.)
- * - Circular dependency detection and warning
- * - Filter and search state management
- * - Automatic memoized data computation via computed signals
+ * Accepts graph data via `.nodes` and `.edges` properties, making it a
+ * self-contained web component that can be embedded in any host application.
  *
  * @module components/graph-app
  *
  * @example
  * ```html
+ * <!-- Standalone (uses built-in demo data) -->
  * <graph-app></graph-app>
+ *
+ * <!-- Embedded with custom data -->
+ * <graph-app .nodes=${myNodes} .edges=${myEdges}></graph-app>
  * ```
  */
 
 import { SignalWatcher } from '@lit-labs/signals';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { css, html, LitElement } from 'lit';
-import { tuistGraphData } from '@/fixtures/tuist-graph-data';
+import { property } from 'lit/decorators.js';
 import { GraphAnalysisService } from '@/services/graphAnalysisService';
 import { GraphDataService } from '@/services/graphDataService';
 import '@ui/layout/graph-tab';
@@ -41,13 +41,23 @@ import { initializeFromData } from '@shared/signals/index';
 
 export class GraphApp extends SignalWatcher(LitElement) {
   // ========================================
+  // Public Properties
+  // ========================================
+
+  @property({ attribute: false })
+  declare nodes: GraphNode[];
+
+  @property({ attribute: false })
+  declare edges: GraphEdge[];
+
+  // ========================================
   // Data Service
   // ========================================
   private graphDataService: GraphDataService | null = null;
   private dataFingerprint: string | null = null;
   private filtersInitialized = false;
 
-  private refreshGraphData(nodes: typeof tuistGraphData.nodes, edges: typeof tuistGraphData.edges) {
+  private refreshGraphData(nodes: GraphNode[], edges: GraphEdge[]) {
     const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((n) => n.id).join(',')}-${edges.map((e) => `${e.source}->${e.target}`).join(',')}`;
     if (fingerprint === this.dataFingerprint) return;
     this.dataFingerprint = fingerprint;
@@ -82,7 +92,7 @@ export class GraphApp extends SignalWatcher(LitElement) {
     :host {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100%;
       background-color: var(--color-background);
       color: var(--color-foreground);
       font-family: var(--fonts-body);
@@ -95,14 +105,19 @@ export class GraphApp extends SignalWatcher(LitElement) {
 
   override connectedCallback() {
     super.connectedCallback();
-
-    // Initialize data signals with graph data
-    setGraphData(tuistGraphData.nodes, tuistGraphData.edges);
-    this.refreshGraphData(tuistGraphData.nodes, tuistGraphData.edges);
+    this.seedData();
   }
 
-  override updated(): void {
-    this.refreshGraphData(allNodes.get(), allEdges.get());
+  override willUpdate(changed: Map<string, unknown>): void {
+    if (changed.has('nodes') || changed.has('edges')) {
+      this.seedData();
+    }
+  }
+
+  private seedData(): void {
+    if (!this.nodes?.length) return;
+    setGraphData(this.nodes, this.edges ?? []);
+    this.refreshGraphData(this.nodes, this.edges ?? []);
   }
 
   // ========================================

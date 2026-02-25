@@ -152,7 +152,7 @@ export class GraphFilterSection extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--spacing-2) var(--spacing-md);
+      padding: 6px var(--spacing-md);
       background: transparent;
       border: none;
       cursor: pointer;

@@ -1,8 +1,6 @@
 /// <reference types="vitest" />
 
 import path from 'node:path';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -17,39 +15,9 @@ export default defineConfig({
     },
   },
   test: {
-    projects: [
-      // Unit tests project (default)
-      {
-        extends: true,
-        test: {
-          name: 'unit',
-          include: ['src/**/*.test.ts'],
-          environment: 'jsdom',
-          globals: true,
-        },
-      },
-      // Storybook tests project
-      {
-        extends: true,
-        plugins: [
-          storybookTest({
-            configDir: path.join(__dirname, '.storybook'),
-            storybookScript: 'pnpm storybook --no-open',
-          }),
-        ],
-        test: {
-          name: 'storybook',
-          browser: {
-            enabled: true,
-            provider: playwright(),
-            headless: true,
-            instances: [{ browser: 'chromium' }],
-          },
-          setupFiles: ['./.storybook/vitest.setup.ts'],
-          testTimeout: 30000, // Match your old test-runner timeout
-        },
-      },
-    ],
+    include: ['src/**/*.test.ts'],
+    environment: 'jsdom',
+    globals: true,
   },
   resolve: {
     alias: {

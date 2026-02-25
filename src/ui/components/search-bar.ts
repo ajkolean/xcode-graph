@@ -128,17 +128,29 @@ export class GraphSearchBar extends LitElement {
     }
 
     .keyboard-hint {
-      padding: var(--spacing-1) var(--spacing-2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 var(--spacing-1);
       border-radius: var(--radii-sm);
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
+      background: linear-gradient(
+        180deg,
+        rgba(var(--colors-foreground-rgb), var(--opacity-10)) 0%,
+        rgba(var(--colors-foreground-rgb), var(--opacity-4)) 100%
+      );
       border: var(--border-widths-thin) solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      box-shadow:
+        0 1px 0 rgba(var(--colors-foreground-rgb), var(--opacity-10)),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);
-      font-weight: var(--font-weights-medium);
+      font-weight: var(--font-weights-semibold);
       color: var(--colors-foreground);
-      opacity: var(--opacity-40);
+      opacity: var(--opacity-50);
       pointer-events: none;
-      letter-spacing: 0.02em;
+      line-height: 1;
     }
   `;
 
