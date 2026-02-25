@@ -183,11 +183,11 @@ export interface GraphData {
 
 // ==================== Enum Schemas ====================
 
-export const NodeTypeSchema: z.ZodType<NodeType> = z.nativeEnum(NodeType);
-export const PlatformSchema: z.ZodType<Platform> = z.nativeEnum(Platform);
-export const OriginSchema: z.ZodType<Origin> = z.nativeEnum(Origin);
-export const DependencyKindSchema: z.ZodType<DependencyKind> = z.nativeEnum(DependencyKind);
-export const SourceTypeSchema: z.ZodType<SourceType> = z.nativeEnum(SourceType);
+export const NodeTypeSchema: z.ZodType<NodeType> = z.enum(NodeType);
+export const PlatformSchema: z.ZodType<Platform> = z.enum(Platform);
+export const OriginSchema: z.ZodType<Origin> = z.enum(Origin);
+export const DependencyKindSchema: z.ZodType<DependencyKind> = z.enum(DependencyKind);
+export const SourceTypeSchema: z.ZodType<SourceType> = z.enum(SourceType);
 
 // ==================== Entity Schemas ====================
 
@@ -269,7 +269,7 @@ export const GraphDataSchema: z.ZodType<GraphData> = z
       const nodeIds = new Set(data.nodes.map((n) => n.id));
       return data.edges.every((e) => nodeIds.has(e.source) && nodeIds.has(e.target));
     },
-    { message: 'All edge endpoints must reference existing nodes' },
+    { error: 'All edge endpoints must reference existing nodes' },
   );
 
 // ==================== Value Arrays ====================

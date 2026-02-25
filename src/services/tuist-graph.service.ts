@@ -273,6 +273,41 @@ interface TargetLookupData {
   origin: Origin;
 }
 
+/** Populate source paths from either sources or buildable folders */
+function populateSourcePaths(node: GraphNode, target: Target): void {
+  if (target.sources?.length) {
+    node.sourcePaths = target.sources.map((s) => s.path);
+    node.sourceCount = target.sources.length;
+  } else if (target.buildableFolders?.length) {
+    const resolvedFiles = target.buildableFolders.flatMap((bf) => bf.resolvedFiles);
+    if (resolvedFiles.length > 0) {
+      node.sourcePaths = resolvedFiles.map((f) => f.path);
+      node.sourceCount = resolvedFiles.length;
+    }
+  }
+}
+
+/** Populate optional metadata fields (tags, remote, build settings, resources) */
+function populateOptionalMetadata(node: GraphNode, target: Target): void {
+  if (target.metadata.tags.length > 0) {
+    node.tags = target.metadata.tags;
+  }
+  if (target.type === TargetType.Remote) {
+    node.isRemote = true;
+  }
+  const buildSettings = extractBuildSettings(target.settings);
+  if (buildSettings) {
+    node.buildSettings = buildSettings;
+  }
+  const { resourceCount, notableResources } = extractResourceMetadata(target.resources);
+  if (resourceCount > 0) {
+    node.resourceCount = resourceCount;
+  }
+  if (notableResources.length > 0) {
+    node.notableResources = notableResources;
+  }
+}
+
 /** Create a rich GraphNode from target data */
 function createNodeFromTarget(
   key: string,
@@ -299,41 +334,8 @@ function createNodeFromTarget(
   const destinations = mapDestinations(target.destinations);
   if (destinations) node.destinations = destinations;
 
-  if (target.sources?.length) {
-    node.sourcePaths = target.sources.map((s) => s.path);
-    node.sourceCount = target.sources.length;
-  } else if (target.buildableFolders?.length) {
-    // Local project targets use buildableFolders instead of sources
-    const resolvedFiles = target.buildableFolders.flatMap((bf) => bf.resolvedFiles);
-    if (resolvedFiles.length > 0) {
-      node.sourcePaths = resolvedFiles.map((f) => f.path);
-      node.sourceCount = resolvedFiles.length;
-    }
-  }
-
-  if (target.metadata.tags.length > 0) {
-    node.tags = target.metadata.tags;
-  }
-
-  // Determine if this is a remote/external target
-  if (target.type === TargetType.Remote) {
-    node.isRemote = true;
-  }
-
-  // Extract curated build settings from Release config
-  const buildSettings = extractBuildSettings(target.settings);
-  if (buildSettings) {
-    node.buildSettings = buildSettings;
-  }
-
-  // Extract resource metadata
-  const { resourceCount, notableResources } = extractResourceMetadata(target.resources);
-  if (resourceCount > 0) {
-    node.resourceCount = resourceCount;
-  }
-  if (notableResources.length > 0) {
-    node.notableResources = notableResources;
-  }
+  populateSourcePaths(node, target);
+  populateOptionalMetadata(node, target);
 
   return node;
 }

@@ -54,6 +54,37 @@ function getNodeWorldPosition(
   };
 }
 
+function isSearchDimmed(node: GraphNode, searchQuery: string): boolean {
+  return !!searchQuery && !node.name.toLowerCase().includes(searchQuery.toLowerCase());
+}
+
+function isSelectionDimmed(
+  isSelected: boolean,
+  isConnected: boolean | GraphNode | null,
+  isChainActive: boolean | GraphNode | null,
+  selectedNode: GraphNode | null,
+): boolean {
+  return !isChainActive && !!selectedNode && !isSelected && !isConnected;
+}
+
+function isPreviewDimmed(node: GraphNode, previewFilter: PreviewFilter | undefined): boolean {
+  if (!previewFilter) return false;
+  switch (previewFilter.type) {
+    case 'nodeType':
+      return node.type !== previewFilter.value;
+    case 'platform':
+      return node.platform !== previewFilter.value;
+    case 'origin':
+      return node.origin !== previewFilter.value;
+    case 'project':
+      return node.project !== previewFilter.value;
+    case 'package':
+      return !(node.type === NodeType.Package && node.name === previewFilter.value);
+    default:
+      return false;
+  }
+}
+
 function isNodeDimmed(
   node: GraphNode,
   isSelected: boolean,
@@ -62,24 +93,11 @@ function isNodeDimmed(
   clusterDim: boolean | '' | null,
   rc: NodeRenderContext,
 ): boolean {
-  const isSearchMatch =
-    rc.searchQuery && node.name.toLowerCase().includes(rc.searchQuery.toLowerCase());
-
-  const matchesPreview =
-    !rc.previewFilter ||
-    (rc.previewFilter.type === 'nodeType' && node.type === rc.previewFilter.value) ||
-    (rc.previewFilter.type === 'platform' && node.platform === rc.previewFilter.value) ||
-    (rc.previewFilter.type === 'origin' && node.origin === rc.previewFilter.value) ||
-    (rc.previewFilter.type === 'project' && node.project === rc.previewFilter.value) ||
-    (rc.previewFilter.type === 'package' &&
-      node.type === NodeType.Package &&
-      node.name === rc.previewFilter.value);
-
-  return !!(
-    (rc.searchQuery && !isSearchMatch) ||
-    (!isChainActive && rc.selectedNode && !isSelected && !isConnected) ||
-    (rc.previewFilter && !matchesPreview) ||
-    clusterDim
+  return (
+    isSearchDimmed(node, rc.searchQuery) ||
+    isSelectionDimmed(isSelected, isConnected, isChainActive, rc.selectedNode) ||
+    isPreviewDimmed(node, rc.previewFilter) ||
+    !!clusterDim
   );
 }
 
@@ -265,16 +283,26 @@ function shouldShowNodeLabel(
   return isInChain && chainAlpha > 0.3;
 }
 
-function renderSingleNode(
+interface NodeVisualState {
+  size: number;
+  isHovered: boolean;
+  isSelected: boolean;
+  isConnected: boolean | null;
+  adjustedColor: string;
+  isDimmed: boolean;
+  alpha: number;
+  isCycleNode: boolean;
+  isInChain: boolean;
+}
+
+function resolveNodeVisualState(
   node: GraphNode,
-  x: number,
-  y: number,
   isChainActive: boolean | GraphNode | null,
   connectedNodes: Set<string>,
   chainAlpha: number,
   rc: NodeRenderContext,
-) {
-  const { ctx, theme, zoom, time, edges, nodeWeights, selectedNode, hoveredNode } = rc;
+): NodeVisualState {
+  const { edges, nodeWeights, selectedNode, hoveredNode, zoom, theme } = rc;
   const size = getNodeSize(node, edges, nodeWeights.get(node.id));
   const isHovered = hoveredNode === node.id;
   const isSelected = selectedNode?.id === node.id;
@@ -289,19 +317,48 @@ function renderSingleNode(
 
   const isDimmed = isNodeDimmed(node, isSelected, isConnected, isChainActive, clusterDim, rc);
   const alpha = (isDimmed ? 0.3 : 1.0) * chainAlpha;
-  ctx.globalAlpha = alpha;
-
   const isCycleNode = rc.layout.cycleNodes?.has(node.id) ?? false;
+  const isInChain =
+    (rc.transitiveDeps?.nodes.has(node.id) ?? false) ||
+    (rc.transitiveDependents?.nodes.has(node.id) ?? false) ||
+    isSelected;
+
+  return {
+    size,
+    isHovered,
+    isSelected,
+    isConnected,
+    adjustedColor,
+    isDimmed,
+    alpha,
+    isCycleNode,
+    isInChain,
+  };
+}
+
+function renderSingleNode(
+  node: GraphNode,
+  x: number,
+  y: number,
+  isChainActive: boolean | GraphNode | null,
+  connectedNodes: Set<string>,
+  chainAlpha: number,
+  rc: NodeRenderContext,
+) {
+  const { ctx, theme, time } = rc;
+  const vs = resolveNodeVisualState(node, isChainActive, connectedNodes, chainAlpha, rc);
+  ctx.globalAlpha = vs.alpha;
+
   drawNodeEffects(
     ctx,
     x,
     y,
-    size,
-    adjustedColor,
-    alpha,
-    isSelected,
-    isCycleNode,
-    isDimmed,
+    vs.size,
+    vs.adjustedColor,
+    vs.alpha,
+    vs.isSelected,
+    vs.isCycleNode,
+    vs.isDimmed,
     chainAlpha,
     time,
     theme,
@@ -311,33 +368,37 @@ function renderSingleNode(
     node,
     x,
     y,
-    size,
-    adjustedColor,
-    isSelected,
-    isHovered,
+    vs.size,
+    vs.adjustedColor,
+    vs.isSelected,
+    vs.isHovered,
     rc.getPathForNode,
     theme,
   );
 
-  const isInChain =
-    (rc.transitiveDeps?.nodes.has(node.id) ?? false) ||
-    (rc.transitiveDependents?.nodes.has(node.id) ?? false) ||
-    isSelected;
   if (
-    shouldShowNodeLabel(isHovered, isSelected, isConnected, isChainActive, chainAlpha, node.id, rc)
+    shouldShowNodeLabel(
+      vs.isHovered,
+      vs.isSelected,
+      vs.isConnected,
+      isChainActive,
+      chainAlpha,
+      node.id,
+      rc,
+    )
   ) {
     drawNodeLabel(
       ctx,
       node,
       x,
       y,
-      size,
-      adjustedColor,
-      alpha,
-      isSelected,
-      isHovered,
-      isConnected,
-      isInChain,
+      vs.size,
+      vs.adjustedColor,
+      vs.alpha,
+      vs.isSelected,
+      vs.isHovered,
+      vs.isConnected,
+      vs.isInChain,
       theme,
     );
   }

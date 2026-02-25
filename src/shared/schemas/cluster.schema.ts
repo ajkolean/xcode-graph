@@ -188,8 +188,8 @@ export interface ClusterLayoutConfig {
 
 // ==================== Enum Schemas ====================
 
-export const NodeRoleSchema: z.ZodType<NodeRole> = z.nativeEnum(NodeRole);
-export const ClusterTypeSchema: z.ZodType<ClusterType> = z.nativeEnum(ClusterType);
+export const NodeRoleSchema: z.ZodType<NodeRole> = z.enum(NodeRole);
+export const ClusterTypeSchema: z.ZodType<ClusterType> = z.enum(ClusterType);
 
 // ==================== Entity Schemas ====================
 
@@ -234,7 +234,7 @@ export const ClusterSchema: z.ZodType<ClusterSerialized> = z.object({
   metadata: z.array(ClusterNodeMetadataSchema),
   elkOptions: z
     .object({
-      hierarchyHandling: z.nativeEnum(ElkHierarchyHandling).optional(),
+      hierarchyHandling: z.enum(ElkHierarchyHandling).optional(),
     })
     .optional(),
   bounds: ClusterBoundsSchema.optional(),

@@ -87,8 +87,8 @@ export interface ErrorNotificationState {
 
 // ==================== Enum Schemas ====================
 
-export const ErrorSeveritySchema: z.ZodType<ErrorSeverity> = z.nativeEnum(ErrorSeverity);
-export const ErrorCategorySchema: z.ZodType<ErrorCategory> = z.nativeEnum(ErrorCategory);
+export const ErrorSeveritySchema: z.ZodType<ErrorSeverity> = z.enum(ErrorSeverity);
+export const ErrorCategorySchema: z.ZodType<ErrorCategory> = z.enum(ErrorCategory);
 
 // ==================== Error Schemas ====================
 

@@ -86,8 +86,8 @@ export interface FilterState {
 
 // ==================== Enum Schemas ====================
 
-export const ActiveTabSchema: z.ZodType<ActiveTab> = z.nativeEnum(ActiveTab);
-export const ViewModeSchema: z.ZodType<ViewMode> = z.nativeEnum(ViewMode);
+export const ActiveTabSchema: z.ZodType<ActiveTab> = z.enum(ActiveTab);
+export const ViewModeSchema: z.ZodType<ViewMode> = z.enum(ViewMode);
 
 // ==================== Filter State Schemas ====================
 
