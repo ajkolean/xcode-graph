@@ -61,6 +61,9 @@ export class GraphSectionHeader extends LitElement {
     .title {
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-sm);
+      font-weight: var(--font-weights-semibold);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
       color: var(--colors-muted-foreground);
     }
 

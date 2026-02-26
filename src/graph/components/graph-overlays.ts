@@ -151,7 +151,7 @@ export class GraphControls extends LitElement {
       font-size: var(--font-sizes-xs);
       letter-spacing: var(--letter-spacing-wide);
       color: var(--colors-muted-foreground);
-      opacity: var(--opacity-40);
+      opacity: var(--opacity-60);
       white-space: nowrap;
     }
   `;

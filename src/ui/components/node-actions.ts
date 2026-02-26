@@ -80,6 +80,11 @@ export class GraphNodeActions extends LitElement {
       color: color-mix(in srgb, var(--colors-primary) 120%, white);
     }
 
+    .dependency-button:hover {
+      background-color: color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border-color: color-mix(in srgb, var(--colors-primary) 50%, transparent);
+    }
+
     .dependency-button.active {
       background-color: var(--colors-primary);
       border-color: var(--colors-primary);
@@ -95,6 +100,11 @@ export class GraphNodeActions extends LitElement {
       background-color: color-mix(in srgb, var(--colors-chart-3) 10%, transparent);
       border-color: color-mix(in srgb, var(--colors-chart-3) 30%, transparent);
       color: var(--colors-chart-3);
+    }
+
+    .dependents-button:hover {
+      background-color: color-mix(in srgb, var(--colors-chart-3) 20%, transparent);
+      border-color: color-mix(in srgb, var(--colors-chart-3) 50%, transparent);
     }
 
     .dependents-button.active {

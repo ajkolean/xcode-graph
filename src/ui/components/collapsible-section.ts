@@ -97,7 +97,7 @@ export class GraphCollapsibleSection extends LitElement {
       font-size: var(--font-sizes-xs);
       color: var(--colors-muted-foreground);
       font-weight: var(--font-weights-semibold);
-      letter-spacing: 0.08em;
+      letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
       transition: color var(--durations-normal);
     }

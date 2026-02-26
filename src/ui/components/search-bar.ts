@@ -92,7 +92,7 @@ export class GraphSearchBar extends LitElement {
     }
 
     input:hover {
-      border-color: transparent;
+      border-color: var(--colors-border);
       background: linear-gradient(
         90deg,
         rgba(var(--colors-foreground-rgb), var(--opacity-4)) 0%,

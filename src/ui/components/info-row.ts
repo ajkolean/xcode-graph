@@ -47,6 +47,7 @@ export class GraphInfoRow extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: var(--spacing-3);
     }
 
     .label {

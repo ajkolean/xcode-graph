@@ -155,7 +155,7 @@ export class GraphListItemRow extends LitElement {
 
     .chevron {
       flex-shrink: 0;
-      margin-left: -4px;
+      margin-left: calc(-1 * var(--spacing-1));
       color: var(--colors-muted-foreground);
       transition:
         opacity var(--durations-fast) var(--easings-out),

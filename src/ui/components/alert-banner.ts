@@ -97,20 +97,17 @@ export class GraphAlertBanner extends LitElement {
 
     /* Variant: Warning */
     :host([variant="warning"]) .banner {
-      background: var(--colors-warning-bg, #fef3cd);
-      border-color: var(--colors-warning-border, #f0ad4e);
+      background: rgba(var(--colors-warning-rgb), var(--opacity-10));
+      border-color: rgba(var(--colors-warning-rgb), var(--opacity-30));
     }
 
-    :host([variant="warning"]) .title {
-      color: var(--colors-warning-text, #856404);
-    }
-
+    :host([variant="warning"]) .title,
     :host([variant="warning"]) .message {
-      color: var(--colors-warning-text, #856404);
+      color: var(--colors-warning);
     }
 
     :host([variant="warning"]) .close-btn {
-      color: var(--colors-warning-text, #856404);
+      color: var(--colors-warning);
     }
 
     /* Variant: Error */
@@ -144,22 +141,22 @@ export class GraphAlertBanner extends LitElement {
 
     /* Variant: Success */
     :host([variant="success"]) .banner {
-      background: rgba(var(--colors-chart-3-rgb, 74, 222, 128), var(--opacity-10));
-      border-color: rgba(var(--colors-chart-3-rgb, 74, 222, 128), var(--opacity-30));
+      background: rgba(var(--colors-success-rgb), var(--opacity-10));
+      border-color: rgba(var(--colors-success-rgb), var(--opacity-30));
     }
 
     :host([variant="success"]) .title,
     :host([variant="success"]) .message {
-      color: var(--colors-chart-3);
+      color: var(--colors-success);
     }
 
     :host([variant="success"]) .close-btn {
-      color: var(--colors-chart-3);
+      color: var(--colors-success);
     }
 
     .icon {
       flex-shrink: 0;
-      font-size: var(--font-sizes-xl);
+      font-size: var(--font-sizes-h3);
       line-height: 1;
     }
 

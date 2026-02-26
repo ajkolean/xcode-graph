@@ -71,6 +71,10 @@ export class GraphClearFiltersButton extends LitElement {
       background-color: color-mix(in srgb, var(--colors-primary) 15%, transparent);
     }
 
+    button:active {
+      transform: scale(0.98);
+    }
+
     button:focus-visible {
       outline: 2px solid var(--colors-primary);
       outline-offset: 2px;

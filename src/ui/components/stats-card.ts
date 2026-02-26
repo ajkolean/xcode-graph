@@ -129,6 +129,12 @@ export class GraphStatsCard extends LitElement {
       pointer-events: none;
       border-radius: inherit;
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .container:hover {
+        transform: none;
+      }
+    }
   `;
 
   // ========================================

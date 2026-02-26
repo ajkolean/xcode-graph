@@ -152,7 +152,7 @@ export class GraphBadge extends LitElement {
       font-size: var(--font-sizes-sm);
       line-height: var(--line-heights-tight);
       font-weight: var(--font-weights-medium);
-      letter-spacing: 0.02em;
+      letter-spacing: var(--letter-spacing-normal);
     }
 
     /* Interactive states */

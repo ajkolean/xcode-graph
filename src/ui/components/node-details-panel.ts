@@ -21,6 +21,7 @@ import { computeNodeDependencies } from '@graph/utils/node-utils';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import './build-settings.js';
+import './metrics-section';
 import './node-header';
 import './node-info';
 import './node-actions';
@@ -68,7 +69,7 @@ export class GraphNodeDetailsPanel extends LitElement {
       overflow-y: auto;
       scrollbar-width: thin;
       scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
-      animation: panelSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: panelSlideIn var(--durations-slow) var(--easings-default);
     }
 
     @keyframes panelSlideIn {

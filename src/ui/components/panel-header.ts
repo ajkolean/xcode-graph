@@ -101,7 +101,7 @@ export class GraphPanelHeader extends LitElement {
       border: none;
       color: var(--colors-muted-foreground);
       cursor: pointer;
-      transition: background-color var(--durations-normal);
+      transition: background-color var(--durations-normal) var(--easings-out);
       margin-top: var(--spacing-3);
     }
 
@@ -210,7 +210,7 @@ export class GraphPanelHeader extends LitElement {
     return html`
       <div class="header-row">
         <!-- Back Button -->
-        <button class="back-button" @click=${this.handleBack}>
+        <button class="back-button" aria-label="Back to overview" @click=${this.handleBack}>
           ${unsafeHTML(icons.ChevronLeft)}
         </button>
 

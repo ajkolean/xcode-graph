@@ -58,7 +58,7 @@ export class GraphEmptyState extends LitElement {
       justify-content: center;
       border-radius: var(--radii-lg);
       background: rgba(var(--colors-primary-rgb), var(--opacity-10));
-      border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-15));
+      border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-20));
       animation: iconPulse 3s ease-in-out infinite;
     }
 
@@ -67,7 +67,7 @@ export class GraphEmptyState extends LitElement {
         box-shadow: 0 0 0 0 rgba(var(--colors-primary-rgb), var(--opacity-10));
       }
       50% {
-        box-shadow: 0 0 20px 4px rgba(var(--colors-primary-rgb), var(--opacity-15));
+        box-shadow: 0 0 20px 4px rgba(var(--colors-primary-rgb), var(--opacity-20));
       }
     }
 
@@ -128,7 +128,7 @@ export class GraphEmptyState extends LitElement {
 
     .clear-button:active {
       transform: translateY(0);
-      box-shadow: 0 0 10px rgba(var(--colors-primary-rgb), var(--opacity-15));
+      box-shadow: 0 0 10px rgba(var(--colors-primary-rgb), var(--opacity-20));
     }
 
     .clear-button:focus-visible {

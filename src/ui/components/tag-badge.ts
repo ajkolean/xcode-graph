@@ -67,7 +67,7 @@ export class GraphTagBadge extends LitElement {
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-medium);
-      letter-spacing: 0.01em;
+      letter-spacing: var(--letter-spacing-normal);
       cursor: default;
       transition:
         background-color var(--durations-fast) var(--easings-out),
@@ -80,7 +80,7 @@ export class GraphTagBadge extends LitElement {
     }
 
     .prefix {
-      opacity: 0.7;
+      opacity: var(--opacity-70);
     }
 
     .value {

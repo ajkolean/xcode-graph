@@ -76,8 +76,8 @@ export class GraphErrorToast extends LitElement {
       opacity: 0;
       transform: translateX(100%);
       transition:
-        opacity 0.3s ease,
-        transform 0.3s ease;
+        opacity var(--durations-slow) var(--easings-default),
+        transform var(--durations-slow) var(--easings-default);
     }
 
     :host([visible]) {
@@ -90,15 +90,15 @@ export class GraphErrorToast extends LitElement {
       align-items: flex-start;
       gap: var(--spacing-3);
       padding: var(--spacing-3) var(--spacing-4);
-      background-color: var(--color-surface);
+      background-color: var(--colors-card);
       border-left: 4px solid var(--severity-color);
-      border-radius: var(--radius-2);
-      box-shadow: var(--shadow-lg);
+      border-radius: var(--radii-sm);
+      box-shadow: var(--shadows-lg);
       min-height: 60px;
     }
 
     .icon {
-      font-size: var(--font-size-xl);
+      font-size: var(--font-sizes-h3);
       line-height: 1;
       flex-shrink: 0;
     }
@@ -109,16 +109,16 @@ export class GraphErrorToast extends LitElement {
     }
 
     .message {
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-foreground);
+      font-size: var(--font-sizes-sm);
+      font-weight: var(--font-weights-medium);
+      color: var(--colors-foreground);
       margin: 0 0 var(--spacing-1) 0;
       word-wrap: break-word;
     }
 
     .details {
-      font-size: var(--font-size-xs);
-      color: var(--color-foreground-muted);
+      font-size: var(--font-sizes-xs);
+      color: var(--colors-muted-foreground);
       margin: 0;
       font-family: var(--fonts-mono);
       white-space: pre-wrap;
@@ -136,20 +136,20 @@ export class GraphErrorToast extends LitElement {
     .action-button,
     .dismiss-button {
       padding: var(--spacing-1) var(--spacing-2);
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-medium);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-1);
-      background-color: var(--color-surface);
-      color: var(--color-foreground);
+      font-size: var(--font-sizes-xs);
+      font-weight: var(--font-weights-medium);
+      border: 1px solid var(--colors-border);
+      border-radius: var(--radii-xs);
+      background-color: var(--colors-card);
+      color: var(--colors-foreground);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all var(--durations-normal) var(--easings-default);
     }
 
     .action-button:hover,
     .dismiss-button:hover {
-      background-color: var(--color-surface-hover);
-      border-color: var(--color-border-hover);
+      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      border-color: var(--colors-border);
     }
 
     .action-button {
@@ -165,32 +165,32 @@ export class GraphErrorToast extends LitElement {
     .close-icon {
       flex-shrink: 0;
       cursor: pointer;
-      font-size: var(--font-size-xl);
+      font-size: var(--font-sizes-h3);
       line-height: 1;
-      color: var(--color-foreground-muted);
-      transition: color 0.2s ease;
+      color: var(--colors-muted-foreground);
+      transition: color var(--durations-normal) var(--easings-default);
       user-select: none;
     }
 
     .close-icon:hover {
-      color: var(--color-foreground);
+      color: var(--colors-foreground);
     }
 
     /* Severity-specific colors */
     :host([data-severity='info']) {
-      --severity-color: var(--color-info, #3b82f6);
+      --severity-color: var(--colors-info);
     }
 
     :host([data-severity='warning']) {
-      --severity-color: var(--color-warning, #f59e0b);
+      --severity-color: var(--colors-warning);
     }
 
     :host([data-severity='error']) {
-      --severity-color: var(--color-error, #ef4444);
+      --severity-color: var(--colors-destructive);
     }
 
     :host([data-severity='critical']) {
-      --severity-color: var(--color-critical, #dc2626);
+      --severity-color: var(--colors-destructive);
     }
   `;
 

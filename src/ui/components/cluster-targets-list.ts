@@ -84,7 +84,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
       color: var(--colors-muted-foreground);
       margin-bottom: var(--spacing-sm);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: var(--letter-spacing-wide);
     }
 
     .node-list {

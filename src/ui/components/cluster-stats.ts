@@ -114,7 +114,7 @@ export class GraphClusterStats extends LitElement {
     }
 
     .type-count {
-      opacity: 0.8;
+      opacity: var(--opacity-80);
     }
   `;
 

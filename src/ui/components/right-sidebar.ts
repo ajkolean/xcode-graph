@@ -183,8 +183,16 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       z-index: 0;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      aside::before,
+      aside::after {
+        animation: none;
+      }
+    }
+
     .filter-content {
-      height: 100%;
+      flex: 1;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -192,8 +200,33 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       z-index: 1;
     }
 
+    .filter-header {
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Subtle shadow at the bottom edge of the pinned header */
+    .filter-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(
+        to bottom,
+        rgba(var(--colors-background-rgb), var(--opacity-40)) 0%,
+        rgba(var(--colors-background-rgb), 0) 100%
+      );
+      pointer-events: none;
+      z-index: 3;
+      transform: translateY(100%);
+    }
+
     .filter-scroll {
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       scrollbar-width: thin;
       scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
@@ -427,29 +460,31 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
     return html`
       <div class="filter-content">
-        <div class="stats-row">
-          <graph-stats-card
-            label="Nodes"
-            value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
-            ?highlighted=${isFiltersActive}
-          ></graph-stats-card>
-          <graph-stats-card
-            label="Dependencies"
-            value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
-            ?highlighted=${isFiltersActive}
-          ></graph-stats-card>
+        <div class="filter-header">
+          <div class="stats-row">
+            <graph-stats-card
+              label="Nodes"
+              value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
+              ?highlighted=${isFiltersActive}
+            ></graph-stats-card>
+            <graph-stats-card
+              label="Dependencies"
+              value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
+              ?highlighted=${isFiltersActive}
+            ></graph-stats-card>
+          </div>
+
+          <graph-clear-filters-button
+            ?is-active=${isFiltersActive || !!currentSearchQuery}
+            @clear-filters=${() => this.handleClearFilters()}
+          ></graph-clear-filters-button>
+
+          <graph-search-bar
+            search-query=${currentSearchQuery || ''}
+            @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
+            @search-clear=${() => this.handleSearchChange('')}
+          ></graph-search-bar>
         </div>
-
-        <graph-clear-filters-button
-          ?is-active=${isFiltersActive || !!currentSearchQuery}
-          @clear-filters=${() => this.handleClearFilters()}
-        ></graph-clear-filters-button>
-
-        <graph-search-bar
-          search-query=${currentSearchQuery || ''}
-          @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
-          @search-clear=${() => this.handleSearchChange('')}
-        ></graph-search-bar>
 
         <div class="filter-scroll">
           <div class="filter-sections">

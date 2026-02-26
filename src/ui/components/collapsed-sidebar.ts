@@ -139,7 +139,8 @@ export class GraphCollapsedSidebar extends LitElement {
     .stat-label {
       text-align: center;
       font-size: var(--font-sizes-xs);
-      font-family: var(--fonts-body);
+      font-family: var(--fonts-mono);
+      letter-spacing: var(--letter-spacing-wider);
       color: var(--colors-muted-foreground);
     }
   `;

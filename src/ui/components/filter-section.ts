@@ -115,7 +115,7 @@ export class GraphFilterSection extends LitElement {
       font-size: var(--font-sizes-xs);
       color: var(--colors-muted-foreground);
       font-weight: var(--font-weights-semibold);
-      letter-spacing: 0.08em;
+      letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
       transition: color var(--durations-normal);
     }
@@ -145,7 +145,7 @@ export class GraphFilterSection extends LitElement {
     .items {
       display: flex;
       flex-direction: column;
-      gap: 1px;
+      gap: var(--border-widths-thin);
     }
 
     .item-button {
@@ -153,12 +153,13 @@ export class GraphFilterSection extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px var(--spacing-md);
+      padding: var(--spacing-2) var(--spacing-md);
       background: transparent;
       border: none;
       cursor: pointer;
       transition: background-color var(--durations-fast) var(--easings-default),
-                  box-shadow var(--durations-fast) var(--easings-default);
+                  box-shadow var(--durations-fast) var(--easings-default),
+                  opacity var(--durations-fast) var(--easings-default);
       position: relative;
       border-radius: var(--radii-md);
       /* Staggered animation */
@@ -185,7 +186,18 @@ export class GraphFilterSection extends LitElement {
       }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      .item-button {
+        animation: none;
+      }
+    }
+
+    .item-button.deselected {
+      opacity: var(--opacity-60);
+    }
+
     .item-button:hover {
+      opacity: var(--opacity-100);
       background-color: rgba(var(--colors-primary-rgb), var(--opacity-5));
       box-shadow: inset 0 0 0 1px rgba(var(--colors-primary-rgb), var(--opacity-10));
     }
@@ -322,7 +334,7 @@ export class GraphFilterSection extends LitElement {
           <svg width="16" height="16" viewBox="-18 -18 36 36" style="filter: ${dropShadow}; opacity: ${opacity}">
             <path
               d="${iconPath}"
-              fill="rgba(15, 15, 20, 0.95)"
+              fill="rgba(var(--colors-background-rgb), var(--opacity-95))"
               stroke="${zoomColor}"
               stroke-width="2"
               stroke-linecap="round"
@@ -376,6 +388,48 @@ export class GraphFilterSection extends LitElement {
   // Render
   // ========================================
 
+  private renderItem(item: FilterItem) {
+    const isSelected = this.selectedItems?.has(item.key) || false;
+    const zoomColor = adjustColorForZoom(item.color, this.zoom);
+
+    return html`
+      <button
+        class="item-button ${isSelected ? '' : 'deselected'}"
+        @click=${() => this.handleItemToggle(item.key, !isSelected)}
+        @mouseenter=${() => this.handleItemHover(item)}
+        @mouseleave=${() => this.handleItemHover(null)}
+      >
+        ${
+          isSelected
+            ? html`
+              <div
+                class="item-accent"
+                style="
+                  background-color: ${zoomColor};
+                  box-shadow: 0 0 4px ${zoomColor}60;
+                "
+              ></div>
+            `
+            : ''
+        }
+
+        <div class="item-content">
+          ${this.renderItemIcon(item, isSelected, zoomColor)}
+          <span class="item-label ${isSelected ? 'selected' : ''}">
+            ${this.filterType === 'nodeType' ? getNodeTypeLabel(item.key) : item.key}
+          </span>
+        </div>
+
+        <span
+          class="item-count ${isSelected ? 'selected' : ''}"
+          style="background-color: ${zoomColor}10"
+        >
+          ${item.count}
+        </span>
+      </button>
+    `;
+  }
+
   override render(): TemplateResult {
     return html`
       <!-- Section Header -->
@@ -394,47 +448,7 @@ export class GraphFilterSection extends LitElement {
         this.isExpanded
           ? html`
             <div class="items">
-              ${this.items?.map((item) => {
-                const isSelected = this.selectedItems?.has(item.key) || false;
-                const zoomColor = adjustColorForZoom(item.color, this.zoom);
-
-                return html`
-                  <button
-                    class="item-button"
-                    @click=${() => this.handleItemToggle(item.key, !isSelected)}
-                    @mouseenter=${() => this.handleItemHover(item)}
-                    @mouseleave=${() => this.handleItemHover(null)}
-                  >
-                    ${
-                      isSelected
-                        ? html`
-                          <div
-                            class="item-accent"
-                            style="
-                              background-color: ${zoomColor};
-                              box-shadow: 0 0 4px ${zoomColor}60;
-                            "
-                          ></div>
-                        `
-                        : ''
-                    }
-
-                    <div class="item-content">
-                      ${this.renderItemIcon(item, isSelected, zoomColor)}
-                      <span class="item-label ${isSelected ? 'selected' : ''}">
-                        ${this.filterType === 'nodeType' ? getNodeTypeLabel(item.key) : item.key}
-                      </span>
-                    </div>
-
-                    <span
-                      class="item-count ${isSelected ? 'selected' : ''}"
-                      style="background-color: ${zoomColor}10"
-                    >
-                      ${item.count}
-                    </span>
-                  </button>
-                `;
-              })}
+              ${this.items?.map((item) => this.renderItem(item))}
             </div>
           `
           : ''
