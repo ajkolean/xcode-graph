@@ -1,9 +1,9 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
+import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-constants';
 import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
-import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-constants';
 
 export interface ClusterRenderContext {
   ctx: CanvasRenderingContext2D;
@@ -68,14 +68,9 @@ function drawClusterFillAndBorder(
   ctx.lineDashOffset = 0;
 }
 
-function getAdaptiveClusterFontSize(baseFontSize: number, zoom: number, radius: number): number {
-  const compensated = baseFontSize * (1 / zoom) ** CLUSTER_LABEL_CONFIG.COMPENSATION_POWER;
-  const maxByRadius = radius * CLUSTER_LABEL_CONFIG.MAX_SIZE_RADIUS_RATIO;
-  return Math.min(
-    Math.max(compensated, baseFontSize),
-    maxByRadius,
-    CLUSTER_LABEL_CONFIG.MAX_FONT_SIZE,
-  );
+function getAdaptiveClusterFontSize(targetScreenSize: number, zoom: number): number {
+  const graphSize = targetScreenSize / zoom;
+  return Math.min(graphSize, CLUSTER_LABEL_CONFIG.MAX_FONT_SIZE);
 }
 
 function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
@@ -129,16 +124,8 @@ function drawClusterLabels(
   zoom: number,
 ) {
   const dimFactor = shouldDim ? 0.3 : 1.0;
-  const nameFontSize = getAdaptiveClusterFontSize(
-    CLUSTER_LABEL_CONFIG.NAME_BASE_SIZE,
-    zoom,
-    radius,
-  );
-  const countFontSize = getAdaptiveClusterFontSize(
-    CLUSTER_LABEL_CONFIG.COUNT_BASE_SIZE,
-    zoom,
-    radius,
-  );
+  const nameFontSize = getAdaptiveClusterFontSize(CLUSTER_LABEL_CONFIG.NAME_SCREEN_SIZE, zoom);
+  const countFontSize = getAdaptiveClusterFontSize(CLUSTER_LABEL_CONFIG.COUNT_SCREEN_SIZE, zoom);
   const maxTextWidth = radius * 1.6;
   const centered = zoom < CLUSTER_LABEL_CONFIG.CENTER_LABEL_ZOOM;
   const showSubtitle = zoom >= CLUSTER_LABEL_CONFIG.SUBTITLE_HIDE_ZOOM;

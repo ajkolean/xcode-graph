@@ -66,16 +66,12 @@ export const ZOOM_STROKE_WIDTH = {
  * Labels scale inversely with zoom to remain legible at low zoom levels
  */
 export const CLUSTER_LABEL_CONFIG = {
-  /** Base font size for cluster name (in graph-space px) */
-  NAME_BASE_SIZE: 13,
-  /** Base font size for subtitle / target count */
-  COUNT_BASE_SIZE: 11,
-  /** Exponent for inverse-zoom compensation: fontSize = base * (1/zoom)^power */
-  COMPENSATION_POWER: 0.7,
-  /** Max font size as a fraction of cluster radius */
-  MAX_SIZE_RADIUS_RATIO: 0.4,
-  /** Absolute max font size cap (graph-space px) */
-  MAX_FONT_SIZE: 120,
+  /** Target screen-apparent size for cluster name (px) */
+  NAME_SCREEN_SIZE: 14,
+  /** Target screen-apparent size for subtitle / target count (px) */
+  COUNT_SCREEN_SIZE: 11,
+  /** Absolute max graph-space font size cap (prevents enormous values at tiny zoom) */
+  MAX_FONT_SIZE: 800,
   /** Below this zoom, hide the subtitle ("N targets") */
   SUBTITLE_HIDE_ZOOM: 0.25,
   /** Below this zoom, center the label inside the cluster circle */

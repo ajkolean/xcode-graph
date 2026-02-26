@@ -9,6 +9,7 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
 import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
+import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { computeNodeWeights, getNodeSize } from '@ui/utils/sizing';
@@ -555,12 +556,15 @@ export class GraphCanvas extends LitElement {
     this.ctx.restore();
 
     this.renderTooltip();
+    this.renderClusterTooltip();
   }
 
   private renderTooltip() {
     if (!this.hoveredNode) return;
     const node = this.nodes.find((n) => n.id === this.hoveredNode);
-    if (!node || node.name.length <= 20) return;
+    if (!node) return;
+    const labelsVisible = this.zoom >= 0.5;
+    if (labelsVisible && node.name.length <= 20) return;
 
     const layoutPos = this.layout.nodePositions.get(node.id);
     if (!layoutPos) return;
@@ -604,6 +608,61 @@ export class GraphCanvas extends LitElement {
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
     this.ctx.fillText(text, screenX, y + tooltipHeight / 2);
+    this.ctx.restore();
+  }
+
+  private renderClusterTooltip() {
+    const clusterId = this.interactionState.hoveredCluster;
+    if (!clusterId || this.hoveredNode) return;
+
+    const cluster = this.layout.clusters.find((c) => c.id === clusterId);
+    if (!cluster) return;
+    const layoutPos = this.layout.clusterPositions.get(clusterId);
+    if (!layoutPos) return;
+
+    const manualPos = this.manualClusterPositions.get(clusterId);
+    const worldX = manualPos?.x ?? layoutPos.x;
+    const worldY = manualPos?.y ?? layoutPos.y;
+    const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
+
+    const pan = this.interactionState.pan;
+    const screenX = worldX * this.zoom + pan.x;
+    const screenY = worldY * this.zoom + pan.y;
+
+    const name = cluster.name;
+    const subtitle = `${cluster.nodes.length} targets`;
+    const padding = 10;
+
+    this.ctx.save();
+    this.ctx.font = '600 13px var(--fonts-body, sans-serif)';
+    const nameWidth = this.ctx.measureText(name).width;
+    this.ctx.font = '400 11px var(--fonts-body, sans-serif)';
+    const subtitleWidth = this.ctx.measureText(subtitle).width;
+
+    const tooltipWidth = Math.max(nameWidth, subtitleWidth) + padding * 2;
+    const tooltipHeight = 40;
+    const x = screenX - tooltipWidth / 2;
+    const y = screenY - radius * this.zoom - 20 - tooltipHeight;
+
+    const clusterColor = generateColor(cluster.name, cluster.type);
+
+    this.ctx.fillStyle = this.theme.tooltipBg;
+    this.ctx.strokeStyle = adjustColorForZoom(clusterColor, this.zoom);
+    this.ctx.lineWidth = 1;
+    this.ctx.beginPath();
+    this.ctx.roundRect(x, y, tooltipWidth, tooltipHeight, 4);
+    this.ctx.fill();
+    this.ctx.stroke();
+
+    this.ctx.textAlign = 'center';
+    this.ctx.fillStyle = this.ctx.strokeStyle;
+    this.ctx.font = '600 13px var(--fonts-body, sans-serif)';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText(name, screenX, y + 14);
+
+    this.ctx.globalAlpha = 0.7;
+    this.ctx.font = '400 11px var(--fonts-body, sans-serif)';
+    this.ctx.fillText(subtitle, screenX, y + 28);
     this.ctx.restore();
   }
 
