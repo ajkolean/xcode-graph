@@ -61,6 +61,27 @@ export const ZOOM_STROKE_WIDTH = {
  * Normalize a zoom value to the 0–1 range and clamp.
  * 0 = fully zoomed out (MIN_ZOOM), 1 = fully zoomed in (MAX_ZOOM).
  */
+/**
+ * Cluster label adaptive sizing configuration
+ * Labels scale inversely with zoom to remain legible at low zoom levels
+ */
+export const CLUSTER_LABEL_CONFIG = {
+  /** Base font size for cluster name (in graph-space px) */
+  NAME_BASE_SIZE: 13,
+  /** Base font size for subtitle / target count */
+  COUNT_BASE_SIZE: 11,
+  /** Exponent for inverse-zoom compensation: fontSize = base * (1/zoom)^power */
+  COMPENSATION_POWER: 0.7,
+  /** Max font size as a fraction of cluster radius */
+  MAX_SIZE_RADIUS_RATIO: 0.4,
+  /** Absolute max font size cap (graph-space px) */
+  MAX_FONT_SIZE: 120,
+  /** Below this zoom, hide the subtitle ("N targets") */
+  SUBTITLE_HIDE_ZOOM: 0.25,
+  /** Below this zoom, center the label inside the cluster circle */
+  CENTER_LABEL_ZOOM: 0.3,
+} as const;
+
 export function normalizeZoom(zoom: number): number {
   const t = (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
   return Math.max(0, Math.min(1, t));

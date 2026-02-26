@@ -3,6 +3,7 @@ import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
+import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-constants';
 
 export interface ClusterRenderContext {
   ctx: CanvasRenderingContext2D;
@@ -67,6 +68,54 @@ function drawClusterFillAndBorder(
   ctx.lineDashOffset = 0;
 }
 
+function getAdaptiveClusterFontSize(baseFontSize: number, zoom: number, radius: number): number {
+  const compensated = baseFontSize * (1 / zoom) ** CLUSTER_LABEL_CONFIG.COMPENSATION_POWER;
+  const maxByRadius = radius * CLUSTER_LABEL_CONFIG.MAX_SIZE_RADIUS_RATIO;
+  return Math.min(
+    Math.max(compensated, baseFontSize),
+    maxByRadius,
+    CLUSTER_LABEL_CONFIG.MAX_FONT_SIZE,
+  );
+}
+
+function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let truncated = text;
+  while (truncated.length > 1 && ctx.measureText(`${truncated}…`).width > maxWidth) {
+    truncated = truncated.slice(0, -1);
+  }
+  return `${truncated}…`;
+}
+
+interface LabelPosition {
+  nameY: number;
+  nameBaseline: CanvasTextBaseline;
+  subtitleY: number;
+}
+
+function getLabelPosition(
+  cy: number,
+  radius: number,
+  nameFontSize: number,
+  countFontSize: number,
+  centered: boolean,
+  showSubtitle: boolean,
+): LabelPosition {
+  if (centered) {
+    const gap = nameFontSize * 0.3;
+    return {
+      nameY: showSubtitle ? cy - gap / 2 : cy,
+      nameBaseline: showSubtitle ? 'alphabetic' : 'middle',
+      subtitleY: cy + countFontSize + gap / 2,
+    };
+  }
+  return {
+    nameY: cy - radius - nameFontSize * 0.9,
+    nameBaseline: 'alphabetic',
+    subtitleY: cy - radius + countFontSize * 0.35,
+  };
+}
+
 function drawClusterLabels(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -77,18 +126,43 @@ function drawClusterLabels(
   shouldDim: boolean,
   name: string,
   nodeCount: number,
+  zoom: number,
 ) {
   const dimFactor = shouldDim ? 0.3 : 1.0;
+  const nameFontSize = getAdaptiveClusterFontSize(
+    CLUSTER_LABEL_CONFIG.NAME_BASE_SIZE,
+    zoom,
+    radius,
+  );
+  const countFontSize = getAdaptiveClusterFontSize(
+    CLUSTER_LABEL_CONFIG.COUNT_BASE_SIZE,
+    zoom,
+    radius,
+  );
+  const maxTextWidth = radius * 1.6;
+  const centered = zoom < CLUSTER_LABEL_CONFIG.CENTER_LABEL_ZOOM;
+  const showSubtitle = zoom >= CLUSTER_LABEL_CONFIG.SUBTITLE_HIDE_ZOOM;
+  const pos = getLabelPosition(cy, radius, nameFontSize, countFontSize, centered, showSubtitle);
 
-  ctx.globalAlpha = (isActive ? 1 : 0.7) * dimFactor;
   ctx.fillStyle = clusterColor;
-  ctx.font = `${isActive ? 600 : 500} 13px var(--fonts-body, sans-serif)`;
   ctx.textAlign = 'center';
-  ctx.fillText(name, cx, cy - radius - 12);
 
-  ctx.font = `${isActive ? 500 : 400} 11px var(--fonts-body, sans-serif)`;
-  ctx.globalAlpha = (isActive ? 0.8 : 0.5) * dimFactor;
-  ctx.fillText(`${nodeCount} targets`, cx, cy - radius + 4);
+  // Name label
+  ctx.font = `${isActive ? 600 : 500} ${nameFontSize}px var(--fonts-body, sans-serif)`;
+  const displayName = truncateText(ctx, name, maxTextWidth);
+  ctx.globalAlpha = (isActive ? 1 : 0.7) * dimFactor;
+  ctx.textBaseline = pos.nameBaseline;
+  ctx.fillText(displayName, cx, pos.nameY);
+
+  // Subtitle ("N targets")
+  if (showSubtitle) {
+    ctx.font = `${isActive ? 500 : 400} ${countFontSize}px var(--fonts-body, sans-serif)`;
+    ctx.globalAlpha = (isActive ? 0.8 : 0.5) * dimFactor;
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(`${nodeCount} targets`, cx, pos.subtitleY);
+  }
+
+  ctx.textBaseline = 'alphabetic';
 }
 
 export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds): void {
@@ -135,6 +209,7 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
       shouldDim,
       cluster.name,
       cluster.nodes.length,
+      zoom,
     );
 
     ctx.globalAlpha = 1.0;
