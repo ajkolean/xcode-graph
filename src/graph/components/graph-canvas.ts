@@ -133,6 +133,11 @@ export class GraphCanvas extends LitElement {
   // Starfield background
   private starfield = new Starfield();
 
+  // Cached background gradient (recreated on resize)
+  private bgGradient: CanvasGradient | null = null;
+  private bgGradientWidth = 0;
+  private bgGradientHeight = 0;
+
   constructor() {
     super();
     this.nodes = [];
@@ -184,6 +189,7 @@ export class GraphCanvas extends LitElement {
       this.resizeCanvas();
       window.addEventListener('resize', this.handleResize);
       this.centerGraph();
+      this.isAnimating = true;
       this.requestRender();
     } else {
       console.error('Canvas element not found in firstUpdated');
@@ -555,10 +561,8 @@ export class GraphCanvas extends LitElement {
   }
 
   private updateAnimatingState() {
-    const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
-    const hasSelectedChain =
-      !!this.selectedNode && this.viewMode !== 'full' && this.viewMode !== 'path';
-    this.isAnimating = hasCycleNodes || hasSelectedChain;
+    // Always animate for starfield twinkling
+    this.isAnimating = true;
   }
 
   private renderCanvas() {
@@ -570,7 +574,23 @@ export class GraphCanvas extends LitElement {
 
     this.ctx.clearRect(0, 0, width, height);
 
-    this.starfield.render(this.ctx, pan.x, pan.y);
+    // Background radial gradient (slightly lighter center, darker edges)
+    if (!this.bgGradient || this.bgGradientWidth !== width || this.bgGradientHeight !== height) {
+      const cx = width / 2;
+      const cy = height / 2;
+      const outerRadius = Math.hypot(cx, cy);
+      const grad = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, outerRadius);
+      grad.addColorStop(0, 'rgba(30,28,24,1)');
+      grad.addColorStop(1, 'rgba(10,9,8,1)');
+      this.bgGradient = grad;
+      this.bgGradientWidth = width;
+      this.bgGradientHeight = height;
+    }
+    this.ctx.fillStyle = this.bgGradient;
+    this.ctx.fillRect(0, 0, width, height);
+
+    this.starfield.render(this.ctx, pan.x, pan.y, this.time);
+    this.starfield.renderVignette(this.ctx);
 
     this.ctx.save();
     this.ctx.translate(pan.x, pan.y);

@@ -5,6 +5,14 @@ import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 
+/** Convert a hex color (#RRGGBB) to an rgba() string */
+function hexToRgba(hex: string, alpha: number): string {
+  const r = Number.parseInt(hex.slice(1, 3), 16);
+  const g = Number.parseInt(hex.slice(3, 5), 16);
+  const b = Number.parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 export interface ClusterRenderContext {
   ctx: CanvasRenderingContext2D;
   layout: GraphLayoutController;
@@ -60,14 +68,19 @@ function drawClusterFillAndBorder(
 ) {
   const dimFactor = shouldDim ? 0.3 : 1.0;
   const borderOpacity = adjustOpacityForZoom(0.5, zoom);
+  const fillOpacity = getClusterFillOpacity(nodeCount, isActive);
+
+  // Radial gradient fill (brighter center → fade at edges)
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+  grad.addColorStop(0, hexToRgba(clusterColor, fillOpacity * 1.8));
+  grad.addColorStop(0.6, hexToRgba(clusterColor, fillOpacity));
+  grad.addColorStop(1, hexToRgba(clusterColor, fillOpacity * 0.3));
 
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.fillStyle = clusterColor;
-  ctx.globalAlpha = getClusterFillOpacity(nodeCount, isActive);
-  ctx.fill();
-
+  ctx.fillStyle = grad;
   ctx.globalAlpha = dimFactor;
+  ctx.fill();
 
   ctx.lineWidth = getClusterBorderWidth(nodeCount, isActive);
   ctx.strokeStyle = clusterColor;
@@ -81,6 +94,17 @@ function drawClusterFillAndBorder(
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.lineDashOffset = 0;
+
+  // Hover glow border: soft ring outside the cluster
+  if (isActive) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius + 3, 0, Math.PI * 2);
+    ctx.strokeStyle = clusterColor;
+    ctx.lineWidth = 4;
+    ctx.globalAlpha = 0.08 * dimFactor;
+    ctx.setLineDash([]);
+    ctx.stroke();
+  }
 }
 
 function getAdaptiveClusterFontSize(targetScreenSize: number, zoom: number): number {

@@ -73,11 +73,13 @@ describe('graph-controls', () => {
     expect(resetBtn).to.exist;
   });
 
-  it('should dispatch zoom-in event when zoom in button clicked', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
+  it('should dispatch zoom-step event when zoom in button clicked', async () => {
+    const el = await fixture<GraphControls>(
+      html`<graph-controls zoom="1" base-zoom="1"></graph-controls>`,
+    );
 
     let eventFired = false;
-    el.addEventListener('zoom-in', () => {
+    el.addEventListener('zoom-step', () => {
       eventFired = true;
     });
 
@@ -87,11 +89,13 @@ describe('graph-controls', () => {
     expect(eventFired).to.be.true;
   });
 
-  it('should dispatch zoom-out event when zoom out button clicked', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
+  it('should dispatch zoom-step event when zoom out button clicked', async () => {
+    const el = await fixture<GraphControls>(
+      html`<graph-controls zoom="1" base-zoom="1"></graph-controls>`,
+    );
 
     let eventFired = false;
-    el.addEventListener('zoom-out', () => {
+    el.addEventListener('zoom-step', () => {
       eventFired = true;
     });
 

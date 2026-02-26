@@ -101,6 +101,23 @@ function isNodeDimmed(
   );
 }
 
+/** Parse an rgba/rgb color string and return it with a new alpha value */
+function colorWithAlpha(rgbaColor: string, newAlpha: number): string {
+  const match = rgbaColor.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*[\d.]+\s*)?\)$/);
+  if (match) {
+    return `rgba(${match[1]},${match[2]},${match[3]},${newAlpha})`;
+  }
+  // Hex color fallback: parse #RRGGBB
+  const hexMatch = rgbaColor.match(/^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/);
+  if (hexMatch) {
+    const r = Number.parseInt(hexMatch[1]!, 16);
+    const g = Number.parseInt(hexMatch[2]!, 16);
+    const b = Number.parseInt(hexMatch[3]!, 16);
+    return `rgba(${r},${g},${b},${newAlpha})`;
+  }
+  return rgbaColor;
+}
+
 function drawNodeEffects(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -129,12 +146,41 @@ function drawNodeEffects(
   }
 
   if (isSelected) {
-    const pulse = (Math.sin(time / 200) + 1) / 2;
+    const pulse1 = (Math.sin(time / 800) + 1) / 2;
+    const pulse2 = (Math.sin(time / 1200 + 1.5) + 1) / 2;
+    const pulse3 = (Math.sin(time / 200) + 1) / 2;
+
+    // Outer glow: radial gradient, slow pulse
+    const outerRadius = size + 20 + pulse1 * 6;
+    const outerGrad = ctx.createRadialGradient(x, y, size * 0.5, x, y, outerRadius);
+    outerGrad.addColorStop(0, colorWithAlpha(adjustedColor, 0.15));
+    outerGrad.addColorStop(1, colorWithAlpha(adjustedColor, 0));
     ctx.beginPath();
-    ctx.arc(x, y, size + 8 + pulse * 4, 0, Math.PI * 2);
+    ctx.arc(x, y, outerRadius, 0, Math.PI * 2);
+    ctx.fillStyle = outerGrad;
+    ctx.globalAlpha = alpha;
+    ctx.fill();
+
+    // Mid glow: radial gradient, offset phase
+    const midRadius = size + 12 + pulse2 * 4;
+    const midGrad = ctx.createRadialGradient(x, y, size * 0.3, x, y, midRadius);
+    midGrad.addColorStop(0, colorWithAlpha(adjustedColor, 0.25));
+    midGrad.addColorStop(1, colorWithAlpha(adjustedColor, 0));
+    ctx.beginPath();
+    ctx.arc(x, y, midRadius, 0, Math.PI * 2);
+    ctx.fillStyle = midGrad;
+    ctx.globalAlpha = alpha;
+    ctx.fill();
+
+    // Inner ring: thin stroke, higher opacity
+    const innerRadius = size + 5 + pulse3 * 2;
+    ctx.beginPath();
+    ctx.arc(x, y, innerRadius, 0, Math.PI * 2);
     ctx.strokeStyle = adjustedColor;
-    ctx.globalAlpha = alpha * 0.3 * (1 - pulse);
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = alpha * (0.4 + pulse3 * 0.2);
     ctx.stroke();
+
     ctx.globalAlpha = alpha;
   }
 }

@@ -196,7 +196,7 @@ function computeEdgeOpacity(
   const zoomFactor = getZoomOpacityFactor(rc.zoom, isHighlighted);
   if (zoomFactor === 0) return 0;
 
-  const baseOpacity = isHighlighted ? 1.0 : 0.1;
+  const baseOpacity = isHighlighted ? 1.0 : 0.15;
   const cycleOpacity = isCycle ? Math.max(baseOpacity, 0.8) : baseOpacity;
 
   if (isChainActive && rc.chainDisplay === 'highlight') {
@@ -310,7 +310,7 @@ function applyEdgeStyle(
   );
   ctx.globalAlpha = computeEdgeOpacity(edge, isHighlighted, isChainActive, inChain, cycleEdge, rc);
   ctx.lineWidth = (isHighlighted ? 2.5 : cycleEdge ? 2 : 1) / rc.zoom;
-  ctx.setLineDash(cycleEdge ? [4, 4] : isCrossCluster ? [10, 5] : [4, 2]);
+  ctx.setLineDash(cycleEdge ? [4, 4] : isCrossCluster ? [10, 5] : []);
 
   const animateEdge =
     isHighlighted || (isChainActive && rc.chainDisplay === 'highlight' && inChain);
@@ -393,6 +393,26 @@ function renderSingleEdge(
 
   const isCrossCluster = endpoints.sourceClusterId !== endpoints.targetClusterId;
   const cycleEdge = isCycleEdge(edge, rc.layout);
+
+  // Glow pass behind highlighted edges
+  if (isHighlighted) {
+    const glowColor = resolveEdgeColor(
+      endpoints.sourceNode,
+      endpoints.targetNode,
+      true,
+      cycleEdge,
+      rc.selectedNode,
+      rc.zoom,
+      rc.theme,
+    );
+    rc.ctx.save();
+    rc.ctx.strokeStyle = glowColor;
+    rc.ctx.globalAlpha = 0.15;
+    rc.ctx.lineWidth = 6 / rc.zoom;
+    rc.ctx.setLineDash([]);
+    drawEdgePath(edge, endpoints, isCrossCluster, true, rc);
+    rc.ctx.restore();
+  }
 
   applyEdgeStyle(
     rc.ctx,

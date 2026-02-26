@@ -17,6 +17,8 @@ export interface Star {
   a: number;
   depth: number;
   color: string;
+  twinkleSpeed: number;
+  twinklePhase: number;
 }
 
 export interface StarfieldOptions {
@@ -145,6 +147,8 @@ export class Starfield {
       a: isBright ? Math.random() * 0.2 + 0.2 : Math.random() * 0.2 + 0.05,
       depth,
       color: palette[colorIndex] ?? palette[0]!,
+      twinkleSpeed: Math.random() * 0.001 + 0.0003,
+      twinklePhase: Math.random() * Math.PI * 2,
     };
   }
 
@@ -155,8 +159,9 @@ export class Starfield {
    * @param ctx  Canvas context
    * @param panX Camera pan offset in world space X
    * @param panY Camera pan offset in world space Y
+   * @param time Current animation timestamp (ms) for twinkling
    */
-  public render(ctx: CanvasRenderingContext2D, panX: number, panY: number): void {
+  public render(ctx: CanvasRenderingContext2D, panX: number, panY: number, time = 0): void {
     const stars = this.stars;
     const count = stars.length;
 
@@ -201,13 +206,47 @@ export class Starfield {
         continue;
       }
 
-      ctx.globalAlpha = star.a;
+      const twinkle = 0.7 + 0.3 * Math.sin(time * star.twinkleSpeed + star.twinklePhase);
+      ctx.globalAlpha = star.a * twinkle;
       ctx.fillStyle = star.color;
       ctx.beginPath();
       ctx.arc(wrappedX, wrappedY, star.r, 0, Math.PI * 2);
       ctx.fill();
     }
 
+    ctx.restore();
+  }
+
+  private vignetteGradient: CanvasGradient | null = null;
+  private vignetteWidth = 0;
+  private vignetteHeight = 0;
+
+  /**
+   * Render a subtle vignette overlay that darkens canvas edges.
+   * The gradient is cached and only recreated when dimensions change.
+   */
+  public renderVignette(ctx: CanvasRenderingContext2D): void {
+    if (this.width <= 0 || this.height <= 0) return;
+
+    if (
+      !this.vignetteGradient ||
+      this.vignetteWidth !== this.width ||
+      this.vignetteHeight !== this.height
+    ) {
+      const cx = this.width / 2;
+      const cy = this.height / 2;
+      const outerRadius = Math.hypot(cx, cy);
+      const grad = ctx.createRadialGradient(cx, cy, outerRadius * 0.3, cx, cy, outerRadius);
+      grad.addColorStop(0, 'rgba(0,0,0,0)');
+      grad.addColorStop(1, 'rgba(0,0,0,0.35)');
+      this.vignetteGradient = grad;
+      this.vignetteWidth = this.width;
+      this.vignetteHeight = this.height;
+    }
+
+    ctx.save();
+    ctx.fillStyle = this.vignetteGradient;
+    ctx.fillRect(0, 0, this.width, this.height);
     ctx.restore();
   }
 

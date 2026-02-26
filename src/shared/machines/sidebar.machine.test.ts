@@ -47,7 +47,7 @@ describe('sidebarMachine', () => {
       ctx.cleanup();
     });
 
-    it('should initialize with all sections expanded', async () => {
+    it('should initialize with correct default expanded sections', async () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
         props: { id: 'test-sidebar' },
@@ -56,8 +56,8 @@ describe('sidebarMachine', () => {
       const sections = ctx.getContext('expandedSections');
       expect(sections.productTypes).toBe(true);
       expect(sections.platforms).toBe(true);
-      expect(sections.projects).toBe(true);
-      expect(sections.packages).toBe(true);
+      expect(sections.projects).toBe(false);
+      expect(sections.packages).toBe(false);
 
       ctx.cleanup();
     });
@@ -195,8 +195,7 @@ describe('sidebarMachine', () => {
         props: { id: 'test-sidebar' },
       });
 
-      // First collapse a section
-      await ctx.sendAndWait({ type: 'TOGGLE_SECTION', section: 'projects' });
+      // Projects starts collapsed by default
       const collapsedSections = ctx.getContext('expandedSections');
       expect(collapsedSections.projects).toBe(false);
 
@@ -381,7 +380,8 @@ describe('sidebarMachine', () => {
       expect(ctx.getContext('activeTab')).toBe('nodeDetails');
       const sections = ctx.getContext('expandedSections');
       expect(sections.platforms).toBe(false);
-      expect(sections.projects).toBe(false);
+      // projects starts collapsed, toggle expands it
+      expect(sections.projects).toBe(true);
 
       ctx.cleanup();
     });
