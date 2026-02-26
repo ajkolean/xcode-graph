@@ -158,6 +158,8 @@ export class GraphNodeDetailsPanel extends LitElement {
         @show-dependents=${(e: CustomEvent) => this.bubbleEvent('show-dependents', e.detail)}
       ></graph-node-actions>
 
+      <graph-node-info .node=${this.node}></graph-node-info>
+
       <graph-node-list
         title="Dependencies"
         .items=${dependencies}
@@ -179,8 +181,6 @@ export class GraphNodeDetailsPanel extends LitElement {
         @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
       ></graph-node-list>
-
-      <graph-node-info .node=${this.node}></graph-node-info>
 
       ${
         this.node.buildSettings

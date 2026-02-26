@@ -82,21 +82,25 @@ export class GraphMetricsSection extends LitElement {
         <graph-stats-card
           label="Dependencies"
           value="${this.dependenciesCount}/${this.totalDependenciesCount}"
+          compact
         ></graph-stats-card>
 
         <graph-stats-card
           label="Dependents"
           value="${this.dependentsCount}/${this.totalDependentsCount}"
+          compact
         ></graph-stats-card>
 
         <graph-stats-card
           label="Transitive Deps"
           value="${this.transitiveDependenciesCount}"
+          compact
         ></graph-stats-card>
 
         <graph-stats-card
           label="Transitive Dependents"
           value="${this.transitiveDependentsCount}"
+          compact
         ></graph-stats-card>
       </div>
     `;

@@ -262,6 +262,45 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       background: linear-gradient(90deg, transparent 0%, rgba(var(--colors-primary-rgb), var(--opacity-20)) 50%, transparent 100%);
       margin: var(--spacing-1) 0;
     }
+
+    .breadcrumb-button {
+      display: block;
+      padding: var(--spacing-2) var(--spacing-md);
+      background: none;
+      border: none;
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
+      color: var(--colors-primary);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      font-weight: var(--font-weights-medium);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: background-color var(--durations-fast) var(--easings-default);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .breadcrumb-button:hover {
+      background-color: rgba(var(--colors-primary-rgb), var(--opacity-5));
+    }
+
+    .breadcrumb-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: -2px;
+    }
+
+    .filters-active-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--colors-primary);
+      margin-left: var(--spacing-2);
+      vertical-align: middle;
+      box-shadow: 0 0 6px rgba(var(--colors-primary-rgb), var(--opacity-50));
+    }
   `;
 
   // ========================================
@@ -452,6 +491,12 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     return html`
       <div class="filter-content">
         <div class="filter-header">
+          <graph-search-bar
+            search-query=${currentSearchQuery || ''}
+            @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
+            @search-clear=${() => this.handleSearchChange('')}
+          ></graph-search-bar>
+
           <div class="stats-row">
             <graph-stats-card
               label="Nodes"
@@ -464,24 +509,9 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
               ?highlighted=${isFiltersActive}
             ></graph-stats-card>
           </div>
-
-          <graph-clear-filters-button
-            ?is-active=${isFiltersActive || !!currentSearchQuery}
-            @clear-filters=${() => this.handleClearFilters()}
-          ></graph-clear-filters-button>
-
-          <graph-search-bar
-            search-query=${currentSearchQuery || ''}
-            @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
-            @search-clear=${() => this.handleSearchChange('')}
-          ></graph-search-bar>
         </div>
 
         <div class="filter-scroll">
-          <div class="filter-sections">
-            ${this.renderFilterSections(currentFilters, currentZoom, expandedSections, items)}
-          </div>
-
           ${
             this.filteredNodes?.length === 0
               ? html`
@@ -492,6 +522,15 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
               `
               : ''
           }
+
+          <div class="filter-sections">
+            ${this.renderFilterSections(currentFilters, currentZoom, expandedSections, items)}
+          </div>
+
+          <graph-clear-filters-button
+            ?is-active=${isFiltersActive || !!currentSearchQuery}
+            @clear-filters=${() => this.handleClearFilters()}
+          ></graph-clear-filters-button>
         </div>
       </div>
     `;
@@ -576,6 +615,19 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
+  private handleBackToFilters() {
+    selectNode(null);
+    selectCluster(null);
+  }
+
+  private renderBreadcrumb() {
+    return html`
+      <button class="breadcrumb-button" @click=${this.handleBackToFilters}>
+        ← Back to Filters
+      </button>
+    `;
+  }
+
   private renderExpandedContent(options: ExpandedContentOptions) {
     const {
       selectedNode,
@@ -590,10 +642,16 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     } = options;
 
     if (selectedNode) {
-      return this.renderNodeDetails(selectedNode, currentViewMode, currentZoom);
+      return html`
+        ${this.renderBreadcrumb()}
+        ${this.renderNodeDetails(selectedNode, currentViewMode, currentZoom)}
+      `;
     }
     if (selectedCluster) {
-      return this.renderClusterDetails(selectedCluster, currentZoom);
+      return html`
+        ${this.renderBreadcrumb()}
+        ${this.renderClusterDetails(selectedCluster, currentZoom)}
+      `;
     }
     return this.renderFilterView({
       filters: currentFilters,
@@ -676,6 +734,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         <graph-right-sidebar-header
           title=${this.headerTitle}
           ?is-collapsed=${isCollapsed}
+          ?has-active-filters=${isFiltersActive}
           @toggle-collapse=${this.handleToggleCollapse}
         ></graph-right-sidebar-header>
 

@@ -109,6 +109,11 @@ export class GraphPanelHeader extends LitElement {
       background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
     }
 
+    .back-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+    }
+
     .back-button svg {
       width: var(--sizes-icon-lg);
       height: var(--sizes-icon-lg);

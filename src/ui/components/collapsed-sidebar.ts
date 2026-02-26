@@ -121,11 +121,23 @@ export class GraphCollapsedSidebar extends LitElement {
       background-color: var(--colors-border);
     }
 
+    .stats-section {
+      border-top: 1px solid var(--colors-border);
+      padding-top: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
     .stat {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: var(--spacing-2);
+      padding: var(--spacing-2);
+      border-radius: var(--radii-sm);
+      background: var(--gradient-card);
     }
 
     .stat-value {
@@ -133,7 +145,7 @@ export class GraphCollapsedSidebar extends LitElement {
       font-size: var(--font-sizes-xs);
       font-family: var(--fonts-body);
       font-weight: var(--font-weights-semibold);
-      color: var(--colors-muted-foreground);
+      color: var(--colors-foreground);
     }
 
     .stat-label {
@@ -166,10 +178,9 @@ export class GraphCollapsedSidebar extends LitElement {
   private renderProductTypesIcon() {
     return svg`
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="7" />
-        <rect x="14" y="3" width="7" height="7" />
-        <rect x="14" y="14" width="7" height="7" />
-        <rect x="3" y="14" width="7" height="7" />
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+        <line x1="12" y1="22.08" x2="12" y2="12" />
       </svg>
     `;
   }
@@ -177,15 +188,9 @@ export class GraphCollapsedSidebar extends LitElement {
   private renderPlatformsIcon() {
     return svg`
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="4" />
-        <line x1="3" y1="9.5" x2="21" y2="9.5" />
-        <line x1="3" y1="14.5" x2="21" y2="14.5" />
-        <line x1="9.5" y1="3" x2="9.5" y2="21" />
-        <line x1="14.5" y1="3" x2="14.5" y2="21" />
-        <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor" />
-        <circle cx="14.5" cy="9.5" r="1.5" fill="currentColor" />
-        <circle cx="9.5" cy="14.5" r="1.5" fill="currentColor" />
-        <circle cx="14.5" cy="14.5" r="1.5" fill="currentColor" />
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
       </svg>
     `;
   }
@@ -260,18 +265,17 @@ export class GraphCollapsedSidebar extends LitElement {
         ${showPackagesBadge ? html`<div class="badge">${this.packagesFilterSize}</div>` : ''}
       </button>
 
-      <!-- Divider -->
-      <div class="divider"></div>
-
       <!-- Stats -->
-      <div class="stat">
-        <div class="stat-value">${this.filteredNodes?.length || 0}</div>
-        <div class="stat-label">NODES</div>
-      </div>
+      <div class="stats-section">
+        <div class="stat">
+          <div class="stat-value">${this.filteredNodes?.length || 0}</div>
+          <div class="stat-label">NODES</div>
+        </div>
 
-      <div class="stat">
-        <div class="stat-value">${this.filteredEdges?.length || 0}</div>
-        <div class="stat-label">EDGES</div>
+        <div class="stat">
+          <div class="stat-value">${this.filteredEdges?.length || 0}</div>
+          <div class="stat-label">EDGES</div>
+        </div>
       </div>
     `;
   }

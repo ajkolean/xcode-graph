@@ -31,6 +31,9 @@ export class GraphRightSidebarHeader extends LitElement {
   @property({ type: Boolean, attribute: 'is-collapsed' })
   declare isCollapsed: boolean;
 
+  @property({ type: Boolean, attribute: 'has-active-filters' })
+  declare hasActiveFilters: boolean;
+
   // ========================================
   // Styles
   // ========================================
@@ -57,8 +60,30 @@ export class GraphRightSidebarHeader extends LitElement {
       transition: opacity var(--durations-normal) var(--easings-out);
     }
 
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .filters-active-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--colors-primary);
+      flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(var(--colors-primary-rgb), 0.5);
+    }
+
     graph-icon-button {
       margin-left: auto;
+      min-width: 32px;
+      min-height: 32px;
+    }
+
+    graph-icon-button:hover {
+      transform: scale(1.08);
+      transition: transform var(--durations-fast) var(--easings-out);
     }
   `;
 
@@ -82,7 +107,16 @@ export class GraphRightSidebarHeader extends LitElement {
   override render(): TemplateResult {
     return html`
       <div class="container">
-        ${this.isCollapsed ? '' : html`<h2 class="title">${this.title}</h2>`}
+        ${
+          this.isCollapsed
+            ? ''
+            : html`
+          <div class="title-wrapper">
+            <h2 class="title">${this.title}</h2>
+            ${this.hasActiveFilters ? html`<span class="filters-active-dot" title="Filters active"></span>` : ''}
+          </div>
+        `
+        }
         <graph-icon-button
           variant="ghost"
           color="neutral"

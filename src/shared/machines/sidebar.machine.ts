@@ -110,8 +110,8 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
         defaultValue: {
           productTypes: true,
           platforms: true,
-          projects: true,
-          packages: true,
+          projects: false,
+          packages: false,
         },
       })),
     };

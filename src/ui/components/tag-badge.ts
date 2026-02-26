@@ -63,7 +63,7 @@ export class GraphTagBadge extends LitElement {
       align-items: center;
       gap: var(--spacing-1);
       padding: var(--spacing-1) var(--spacing-2);
-      border-radius: var(--radii-sm);
+      border-radius: var(--radii-full);
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-medium);
@@ -74,8 +74,8 @@ export class GraphTagBadge extends LitElement {
         border-color var(--durations-fast) var(--easings-out),
         filter var(--durations-fast) var(--easings-out);
 
-      background-color: var(--tag-bg);
-      border: var(--border-widths-thin) solid var(--tag-border);
+      background-color: transparent;
+      border: 1px solid var(--tag-color);
       color: var(--tag-color);
     }
 
@@ -94,8 +94,8 @@ export class GraphTagBadge extends LitElement {
 
     .tag-badge.interactive:hover {
       filter: brightness(1.1);
-      background-color: var(--tag-bg-hover);
-      border-color: var(--tag-border-hover);
+      background-color: var(--tag-bg);
+      border-color: var(--tag-color);
     }
   `;
 

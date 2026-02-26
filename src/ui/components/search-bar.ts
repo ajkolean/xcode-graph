@@ -158,6 +158,42 @@ export class GraphSearchBar extends LitElement {
   `;
 
   // ========================================
+  // Lifecycle
+  // ========================================
+
+  private readonly handleGlobalKeyDown = (e: KeyboardEvent) => {
+    if (e.key === '/' && !this.isInputFocused()) {
+      e.preventDefault();
+      this.inputElement?.focus();
+    }
+  };
+
+  private isInputFocused(): boolean {
+    const active = document.activeElement;
+    if (!active) return false;
+    const tag = active.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || (active as HTMLElement).isContentEditable) {
+      return true;
+    }
+    const root = active.shadowRoot;
+    if (root?.activeElement) {
+      const innerTag = root.activeElement.tagName.toLowerCase();
+      return innerTag === 'input' || innerTag === 'textarea';
+    }
+    return false;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('keydown', this.handleGlobalKeyDown);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('keydown', this.handleGlobalKeyDown);
+  }
+
+  // ========================================
   // Event Handlers
   // ========================================
 
