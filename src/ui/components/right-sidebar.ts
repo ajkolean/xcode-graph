@@ -173,15 +173,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       z-index: 0;
     }
 
-    /* Subtle scan line effect */
-    aside::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--effect-scanlines);
-      pointer-events: none;
-      z-index: 0;
-    }
 
     @media (prefers-reduced-motion: reduce) {
       aside::before,

@@ -17,7 +17,7 @@
 
 import { icons } from '@shared/controllers/icon.adapter';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import './icon-button.js';
 
@@ -31,6 +31,9 @@ export class GraphSearchBar extends LitElement {
    */
   @property({ type: String, attribute: 'search-query' })
   declare searchQuery: string;
+
+  @query('input')
+  private declare inputElement: HTMLInputElement;
 
   // ========================================
   // Styles
@@ -67,7 +70,7 @@ export class GraphSearchBar extends LitElement {
 
     /* Animate icon on focus */
     :host(:focus-within) .search-icon {
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
       transform: translateY(-50%) scale(1.1);
     }
 

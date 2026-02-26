@@ -146,7 +146,7 @@ export class GraphIconButton extends LitElement {
     /* Ghost + Primary */
     :host([variant="ghost"][color="primary"]) button:hover:not(:disabled) {
       background-color: rgba(var(--colors-primary-rgb), var(--opacity-10));
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     /* Ghost + Destructive */
@@ -171,7 +171,7 @@ export class GraphIconButton extends LitElement {
     :host([variant="subtle"][color="primary"]) button:hover:not(:disabled) {
       background: rgba(var(--colors-primary-rgb), var(--opacity-10));
       border-color: rgba(var(--colors-primary-rgb), var(--opacity-20));
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     :host([variant="subtle"][color="destructive"]) button:hover:not(:disabled) {

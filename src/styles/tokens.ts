@@ -34,6 +34,7 @@ export const colorTokens = {
 
   // Primary colors
   primary: 'var(--colors-primary)',
+  'primary-text': 'var(--colors-primary-text)',
   'primary-foreground': 'var(--colors-primary-foreground)',
 
   // Secondary colors

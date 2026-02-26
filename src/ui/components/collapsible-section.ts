@@ -77,7 +77,7 @@ export class GraphCollapsibleSection extends LitElement {
     }
 
     .header-button:hover .header-title {
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .header-icon {
@@ -89,7 +89,7 @@ export class GraphCollapsibleSection extends LitElement {
 
     .header-button:hover .header-icon {
       opacity: var(--opacity-100);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .header-title {
@@ -116,7 +116,7 @@ export class GraphCollapsibleSection extends LitElement {
 
     .header-button:hover .chevron {
       opacity: var(--opacity-80);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .chevron svg {

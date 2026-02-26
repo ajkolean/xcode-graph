@@ -78,7 +78,7 @@ export class GraphCollapsedSidebar extends LitElement {
         opacity var(--durations-normal);
       background: none;
       border: none;
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
       cursor: pointer;
     }
 
@@ -112,7 +112,7 @@ export class GraphCollapsedSidebar extends LitElement {
       font-size: var(--font-sizes-xs);
       font-family: var(--fonts-body);
       font-weight: var(--font-weights-semibold);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .divider {

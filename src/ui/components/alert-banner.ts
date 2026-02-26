@@ -132,7 +132,7 @@ export class GraphAlertBanner extends LitElement {
     }
 
     .title {
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .message {

@@ -95,7 +95,7 @@ export class GraphFilterSection extends LitElement {
     }
 
     .header-button:hover .header-title {
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .header-icon {
@@ -107,12 +107,12 @@ export class GraphFilterSection extends LitElement {
 
     .header-button:hover .header-icon {
       opacity: var(--opacity-100);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .header-title {
       font-family: var(--fonts-mono);
-      font-size: var(--font-sizes-xs);
+      font-size: var(--font-sizes-label);
       color: var(--colors-muted-foreground);
       font-weight: var(--font-weights-semibold);
       letter-spacing: var(--letter-spacing-wider);
@@ -134,7 +134,7 @@ export class GraphFilterSection extends LitElement {
 
     .header-button:hover .chevron {
       opacity: var(--opacity-80);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .chevron svg {
@@ -281,6 +281,16 @@ export class GraphFilterSection extends LitElement {
     .item-button:hover .item-count {
       opacity: var(--opacity-70);
     }
+
+    .header-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+    }
+
+    .item-button:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+    }
   `;
 
   // ========================================
@@ -365,12 +375,12 @@ export class GraphFilterSection extends LitElement {
           <div
             class="item-icon"
             style="
-              width: 12px;
-              height: 12px;
+              width: 16px;
+              height: 16px;
               border-radius: var(--radius);
               background-color: ${zoomColor};
               opacity: ${opacity};
-              box-shadow: 0 0 8px ${zoomColor}${isSelected ? '80' : '60'};
+              border: 1px solid rgba(255, 255, 255, 0.15);
             "
           ></div>
         `;
@@ -395,6 +405,7 @@ export class GraphFilterSection extends LitElement {
     return html`
       <button
         class="item-button ${isSelected ? '' : 'deselected'}"
+        aria-pressed=${isSelected}
         @click=${() => this.handleItemToggle(item.key, !isSelected)}
         @mouseenter=${() => this.handleItemHover(item)}
         @mouseleave=${() => this.handleItemHover(null)}

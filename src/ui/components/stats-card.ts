@@ -37,6 +37,12 @@ export class GraphStatsCard extends LitElement {
   @property({ type: Boolean, attribute: 'highlighted' })
   declare highlighted: boolean;
 
+  /**
+   * Whether to use compact sizing (smaller fonts for node detail metrics)
+   */
+  @property({ type: Boolean, attribute: 'compact' })
+  declare compact: boolean;
+
   // ========================================
   // Styles
   // ========================================
@@ -95,7 +101,7 @@ export class GraphStatsCard extends LitElement {
       font-weight: var(--font-weights-medium);
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
       opacity: var(--opacity-100);
       margin-bottom: var(--spacing-1);
     }
@@ -107,7 +113,7 @@ export class GraphStatsCard extends LitElement {
     .value {
       position: relative;
       font-family: var(--fonts-heading);
-      font-size: var(--font-sizes-h1);
+      font-size: var(--font-sizes-h2);
       font-weight: var(--font-weights-medium);
       font-variant-numeric: tabular-nums;
       color: var(--colors-foreground);
@@ -115,20 +121,20 @@ export class GraphStatsCard extends LitElement {
       text-shadow: 0 0 30px rgba(var(--colors-primary-rgb), var(--opacity-10));
     }
 
+    /* Compact mode for node detail metrics */
+    :host([compact]) .value {
+      font-size: var(--font-sizes-h3);
+    }
+
+    :host([compact]) .label {
+      font-size: 12px;
+    }
+
     .value.highlighted {
       color: var(--colors-accent);
       text-shadow: 0 0 20px rgba(var(--colors-accent-rgb), var(--opacity-40));
     }
 
-    /* Subtle scan line effect */
-    .container::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--effect-scanlines);
-      pointer-events: none;
-      border-radius: inherit;
-    }
 
     @media (prefers-reduced-motion: reduce) {
       .container:hover {

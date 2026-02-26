@@ -32,9 +32,10 @@
   --colors-popover-rgb: 24, 24, 28;
   --colors-popover-foreground: rgba(225, 228, 232, 1);
 
-  /* Primary colors - Purple (Noora purple-500) */
+  /* Primary purple: interactive elements, brand identity, hover states */
   --colors-primary: rgba(124, 58, 237, 1);
   --colors-primary-rgb: 124, 58, 237;
+  --colors-primary-text: rgba(167, 119, 247, 1);
   --colors-primary-foreground: rgba(253, 253, 253, 1);
   --colors-primary-dim: rgba(124, 58, 237, 0.15);
 
@@ -42,7 +43,7 @@
   --colors-secondary: rgba(255, 255, 255, 0.05);
   --colors-secondary-foreground: rgba(225, 228, 232, 1);
 
-  /* Accent colors - Blue (Noora blue-500) */
+  /* Accent blue: state changes, active filters, highlighted data */
   --colors-accent: rgba(59, 130, 246, 1);
   --colors-accent-rgb: 59, 130, 246;
   --colors-accent-foreground: rgba(253, 253, 253, 1);
@@ -50,7 +51,7 @@
 
   /* Muted colors */
   --colors-muted: rgba(255, 255, 255, 0.04);
-  --colors-muted-foreground: rgba(225, 228, 232, 0.5);
+  --colors-muted-foreground: rgba(225, 228, 232, 0.65);
   --colors-muted-foreground-rgb: 225, 228, 232;
 
   /* Destructive colors - Red (Noora red-500) */
@@ -74,7 +75,7 @@
   --colors-info-foreground: rgba(253, 253, 253, 1);
 
   /* Border and input */
-  --colors-border: rgba(255, 255, 255, 0.06);
+  --colors-border: rgba(255, 255, 255, 0.08);
   --colors-border-accent: rgba(124, 58, 237, 0.3);
   --colors-input: rgba(255, 255, 255, 0.04);
   --colors-input-background: rgba(255, 255, 255, 0.03);
@@ -116,7 +117,7 @@
   --colors-sidebar-primary-foreground: rgba(253, 253, 253, 1);
   --colors-sidebar-accent: rgba(124, 58, 237, 0.12);
   --colors-sidebar-accent-foreground: rgba(225, 228, 232, 1);
-  --colors-sidebar-border: rgba(255, 255, 255, 0.04);
+  --colors-sidebar-border: rgba(255, 255, 255, 0.10);
   --colors-sidebar-ring: rgba(124, 58, 237, 1);
 
   /* Glow effects */

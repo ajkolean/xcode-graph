@@ -38,14 +38,6 @@ export class GraphHeader extends LitElement {
       overflow: hidden;
     }
 
-    /* Scan line effect */
-    header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--effect-scanlines);
-      pointer-events: none;
-    }
 
     /* Subtle noise texture */
     header::after {

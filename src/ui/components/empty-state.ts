@@ -80,7 +80,7 @@ export class GraphEmptyState extends LitElement {
     .icon-container svg {
       width: var(--sizes-icon-xl);
       height: var(--sizes-icon-xl);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
       opacity: var(--opacity-80);
     }
 
@@ -113,7 +113,7 @@ export class GraphEmptyState extends LitElement {
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-semibold);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
       letter-spacing: var(--letter-spacing-wide);
       text-transform: uppercase;
       cursor: pointer;

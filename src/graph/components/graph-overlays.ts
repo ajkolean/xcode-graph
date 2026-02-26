@@ -143,7 +143,7 @@ export class GraphControls extends LitElement {
     .zoom-button.active {
       background-color: color-mix(in srgb, var(--colors-primary) 20%, transparent);
       border-color: color-mix(in srgb, var(--colors-primary) 50%, transparent);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .hint {
@@ -151,17 +151,57 @@ export class GraphControls extends LitElement {
       font-size: var(--font-sizes-xs);
       letter-spacing: var(--letter-spacing-wide);
       color: var(--colors-muted-foreground);
-      opacity: var(--opacity-60);
       white-space: nowrap;
+    }
+
+    .zoom-button.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      pointer-events: none;
     }
   `;
 
+  private static readonly ZOOM_STEPS = [0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0];
+
+  private get zoomRatio(): number {
+    return this.baseZoom > 0 ? this.zoom / this.baseZoom : this.zoom;
+  }
+
+  private get atMinZoom(): boolean {
+    return this.zoomRatio <= GraphControls.ZOOM_STEPS[0]! + 0.01;
+  }
+
+  private get atMaxZoom(): boolean {
+    return this.zoomRatio >= GraphControls.ZOOM_STEPS[GraphControls.ZOOM_STEPS.length - 1]! - 0.01;
+  }
+
   private handleZoomIn() {
-    this.dispatchEvent(new CustomEvent('zoom-in', { bubbles: true, composed: true }));
+    const current = this.zoomRatio;
+    const nextStep = GraphControls.ZOOM_STEPS.find((s) => s > current + 0.01);
+    if (nextStep !== undefined) {
+      const newZoom = nextStep * (this.baseZoom > 0 ? this.baseZoom : 1);
+      this.dispatchEvent(
+        new CustomEvent('zoom-step', { detail: newZoom, bubbles: true, composed: true }),
+      );
+    }
   }
 
   private handleZoomOut() {
-    this.dispatchEvent(new CustomEvent('zoom-out', { bubbles: true, composed: true }));
+    const current = this.zoomRatio;
+    const steps = GraphControls.ZOOM_STEPS;
+    let prevStep: number | undefined;
+    for (let i = steps.length - 1; i >= 0; i--) {
+      if (steps[i]! < current - 0.01) {
+        prevStep = steps[i];
+        break;
+      }
+    }
+    if (prevStep !== undefined) {
+      const newZoom = prevStep * (this.baseZoom > 0 ? this.baseZoom : 1);
+      this.dispatchEvent(
+        new CustomEvent('zoom-step', { detail: newZoom, bubbles: true, composed: true }),
+      );
+    }
   }
 
   private handleZoomReset() {

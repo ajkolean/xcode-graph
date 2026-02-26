@@ -63,7 +63,7 @@ export class GraphClearFiltersButton extends LitElement {
     button {
       background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
       border-color: color-mix(in srgb, var(--colors-primary) 30%, transparent);
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
       cursor: pointer;
     }
 

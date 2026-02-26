@@ -202,7 +202,7 @@ export class GraphSidebar extends LitElement {
     }
 
     .nav-button.active .icon-container {
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
     }
 
     .icon-container svg {
@@ -253,7 +253,7 @@ export class GraphSidebar extends LitElement {
       font-weight: var(--font-weights-medium);
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
-      color: var(--colors-primary);
+      color: var(--colors-primary-text);
       opacity: var(--opacity-60);
       padding: var(--spacing-2) var(--spacing-3) var(--spacing-1);
     }
