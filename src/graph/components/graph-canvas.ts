@@ -622,6 +622,7 @@ export class GraphCanvas extends LitElement {
         time: this.time,
         theme: this.theme,
         selectedNode: this.selectedNode,
+        selectedCluster: this.selectedCluster,
         hoveredCluster: this.interactionState.hoveredCluster,
         viewMode: this.viewMode,
         chainDisplay: this.chainDisplay,

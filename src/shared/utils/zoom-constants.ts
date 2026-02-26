@@ -67,15 +67,9 @@ export const ZOOM_STROKE_WIDTH = {
  */
 export const CLUSTER_LABEL_CONFIG = {
   /** Target screen-apparent size for cluster name (px) */
-  NAME_SCREEN_SIZE: 14,
-  /** Target screen-apparent size for subtitle / target count (px) */
-  COUNT_SCREEN_SIZE: 11,
+  NAME_SCREEN_SIZE: 24,
   /** Absolute max graph-space font size cap (prevents enormous values at tiny zoom) */
   MAX_FONT_SIZE: 800,
-  /** Below this zoom, hide the subtitle ("N targets") */
-  SUBTITLE_HIDE_ZOOM: 0.25,
-  /** Below this zoom, center the label inside the cluster circle */
-  CENTER_LABEL_ZOOM: 0.3,
 } as const;
 
 export function normalizeZoom(zoom: number): number {

@@ -7,7 +7,7 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
-import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
+import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 
 export interface EdgeRenderContext {
   ctx: CanvasRenderingContext2D;
@@ -18,6 +18,7 @@ export interface EdgeRenderContext {
   time: number;
   theme: CanvasTheme;
   selectedNode: GraphNode | null;
+  selectedCluster: string | null;
   hoveredCluster: string | null;
   viewMode: ViewMode;
   chainDisplay: string;
@@ -215,25 +216,7 @@ function drawRoutedEdgePath(
   sClusterY: number,
   tClusterX: number,
   tClusterY: number,
-  sourceNode: GraphNode,
-  targetNode: GraphNode,
-  isHighlighted: boolean,
-  selectedNode: GraphNode | null,
-  zoom: number,
-  theme: CanvasTheme,
 ) {
-  if (isHighlighted) {
-    const otherNode = sourceNode.id === selectedNode?.id ? targetNode : sourceNode;
-    ctx.strokeStyle = getNodeTypeColorFromTheme(otherNode.type, theme);
-    ctx.globalAlpha = 0.9;
-  } else {
-    const baseOpacity = 0.15;
-    const targetOpacity = adjustOpacityForZoom(baseOpacity, zoom);
-    const gray = Math.round(255 * targetOpacity);
-    ctx.strokeStyle = `rgb(${gray}, ${gray}, ${gray})`;
-    ctx.globalAlpha = 1.0;
-  }
-
   const pathString = generatePortRoutedPath(
     { x: sourceLayout.x, y: sourceLayout.y },
     { x: routedEdge.sourcePort.x, y: routedEdge.sourcePort.y },
@@ -310,10 +293,21 @@ function applyEdgeStyle(
   );
   ctx.globalAlpha = computeEdgeOpacity(edge, isHighlighted, isChainActive, inChain, cycleEdge, rc);
   ctx.lineWidth = (isHighlighted ? 2.5 : cycleEdge ? 2 : 1) / rc.zoom;
-  ctx.setLineDash(cycleEdge ? [4, 4] : isCrossCluster ? [10, 5] : []);
-
   const animateEdge =
     isHighlighted || (isChainActive && rc.chainDisplay === 'highlight' && inChain);
+
+  // Highlighted/chain edges always get marching-ants dashes for directional flow;
+  // non-highlighted: cross-cluster dashed, intra-cluster solid, cycle always dashed
+  if (cycleEdge) {
+    ctx.setLineDash([4, 4]);
+  } else if (animateEdge) {
+    ctx.setLineDash([6, 3]);
+  } else if (isCrossCluster) {
+    ctx.setLineDash([10, 5]);
+  } else {
+    ctx.setLineDash([]);
+  }
+
   ctx.lineDashOffset = animateEdge ? rc.time / 20 : 0;
 }
 
@@ -363,12 +357,6 @@ function drawEdgePath(
         endpoints.sClusterY,
         endpoints.tClusterX,
         endpoints.tClusterY,
-        endpoints.sourceNode,
-        endpoints.targetNode,
-        isHighlighted,
-        rc.selectedNode,
-        rc.zoom,
-        rc.theme,
       );
     }
   } else {
@@ -454,10 +442,17 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
 
     const isConnectedToSelected = edge.source === selectedNodeId || edge.target === selectedNodeId;
 
+    const isConnectedToSelectedCluster =
+      rc.selectedCluster != null &&
+      (rc.nodeMap.get(edge.source)?.project === rc.selectedCluster ||
+        rc.nodeMap.get(edge.target)?.project === rc.selectedCluster);
+
+    const isHighlighted = isConnectedToSelected || isConnectedToSelectedCluster;
+
     if (isChainActive && rc.chainDisplay === 'direct' && !inChain && !isConnectedToSelected) {
       continue;
     }
 
-    renderSingleEdge(edge, viewport, isConnectedToSelected, !!isChainActive, inChain, rc);
+    renderSingleEdge(edge, viewport, isHighlighted, !!isChainActive, inChain, rc);
   }
 }

@@ -121,35 +121,6 @@ function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: num
   return `${truncated}…`;
 }
 
-interface LabelPosition {
-  nameY: number;
-  nameBaseline: CanvasTextBaseline;
-  subtitleY: number;
-}
-
-function getLabelPosition(
-  cy: number,
-  radius: number,
-  nameFontSize: number,
-  countFontSize: number,
-  centered: boolean,
-  showSubtitle: boolean,
-): LabelPosition {
-  if (centered) {
-    const gap = nameFontSize * 0.3;
-    return {
-      nameY: showSubtitle ? cy - gap / 2 : cy,
-      nameBaseline: showSubtitle ? 'alphabetic' : 'middle',
-      subtitleY: cy + countFontSize + gap / 2,
-    };
-  }
-  return {
-    nameY: cy - radius - nameFontSize * 0.9,
-    nameBaseline: 'alphabetic',
-    subtitleY: cy - radius + countFontSize * 0.35,
-  };
-}
-
 function drawClusterLabels(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -159,36 +130,20 @@ function drawClusterLabels(
   isActive: boolean,
   shouldDim: boolean,
   name: string,
-  nodeCount: number,
   zoom: number,
 ) {
   const dimFactor = shouldDim ? 0.3 : 1.0;
   const nameFontSize = getAdaptiveClusterFontSize(CLUSTER_LABEL_CONFIG.NAME_SCREEN_SIZE, zoom);
-  const countFontSize = getAdaptiveClusterFontSize(CLUSTER_LABEL_CONFIG.COUNT_SCREEN_SIZE, zoom);
   const maxTextWidth = radius * 1.6;
-  const centered = zoom < CLUSTER_LABEL_CONFIG.CENTER_LABEL_ZOOM;
-  const showSubtitle = zoom >= CLUSTER_LABEL_CONFIG.SUBTITLE_HIDE_ZOOM;
-  const pos = getLabelPosition(cy, radius, nameFontSize, countFontSize, centered, showSubtitle);
+  const nameY = cy - radius - nameFontSize * 0.9;
 
   ctx.fillStyle = clusterColor;
   ctx.textAlign = 'center';
-
-  // Name label
+  ctx.textBaseline = 'alphabetic';
   ctx.font = `${isActive ? 600 : 500} ${nameFontSize}px var(--fonts-body, sans-serif)`;
   const displayName = truncateText(ctx, name, maxTextWidth);
   ctx.globalAlpha = (isActive ? 1 : 0.7) * dimFactor;
-  ctx.textBaseline = pos.nameBaseline;
-  ctx.fillText(displayName, cx, pos.nameY);
-
-  // Subtitle ("N targets")
-  if (showSubtitle) {
-    ctx.font = `${isActive ? 500 : 400} ${countFontSize}px var(--fonts-body, sans-serif)`;
-    ctx.globalAlpha = (isActive ? 0.8 : 0.5) * dimFactor;
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillText(`${nodeCount} targets`, cx, pos.subtitleY);
-  }
-
-  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(displayName, cx, nameY);
 }
 
 export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds): void {
@@ -226,18 +181,7 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
       time,
       cluster.nodes.length,
     );
-    drawClusterLabels(
-      ctx,
-      cx,
-      cy,
-      radius,
-      clusterColor,
-      isActive,
-      shouldDim,
-      cluster.name,
-      cluster.nodes.length,
-      zoom,
-    );
+    drawClusterLabels(ctx, cx, cy, radius, clusterColor, isActive, shouldDim, cluster.name, zoom);
 
     ctx.globalAlpha = 1.0;
   }
