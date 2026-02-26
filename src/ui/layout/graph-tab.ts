@@ -152,6 +152,10 @@ export class GraphTab extends SignalWatcherLitElement {
     zoomOut();
   }
 
+  private handleZoomStep(e: CustomEvent<number>) {
+    setZoom(e.detail);
+  }
+
   private handleZoomReset() {
     // Fit to viewport instead of resetting to 1.0
     this.canvasElement?.fitToViewport();
@@ -188,6 +192,7 @@ export class GraphTab extends SignalWatcherLitElement {
               ?highlight-mode=${watch(highlightMode)}
               @zoom-in=${this.handleZoomIn}
               @zoom-out=${this.handleZoomOut}
+              @zoom-step=${this.handleZoomStep}
               @zoom-reset=${this.handleZoomReset}
               @toggle-animation=${this.handleToggleAnimation}
               @toggle-chain-display=${this.handleToggleChainDisplay}

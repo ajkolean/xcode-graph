@@ -176,6 +176,15 @@ function drawNodeIcon(
   ctx.shadowBlur = 0;
 }
 
+/** Compute adaptive font size that maintains readable screen-apparent size at low zoom */
+function getAdaptiveNodeFontSize(zoom: number): number {
+  const targetScreenSize = 12;
+  if (zoom >= 0.5) return targetScreenSize;
+  // Scale inversely with zoom to maintain readable screen size, capped
+  const graphSize = targetScreenSize / zoom;
+  return Math.min(graphSize, 200);
+}
+
 function drawNodeLabel(
   ctx: CanvasRenderingContext2D,
   node: GraphNode,
@@ -189,25 +198,29 @@ function drawNodeLabel(
   isConnected: boolean | null,
   isInChain: boolean,
   theme: CanvasTheme,
+  zoom: number,
 ) {
   const labelText =
     node.name.length > 20 && !isHovered && !isConnected
       ? `${node.name.substring(0, 20)}...`
       : node.name;
 
-  ctx.font = `${isSelected ? '600' : isConnected || isInChain ? '500' : '400'} 12px var(--fonts-body, sans-serif)`;
+  const fontSize = getAdaptiveNodeFontSize(zoom);
+  ctx.font = `${isSelected ? '600' : isConnected || isInChain ? '500' : '400'} ${fontSize}px var(--fonts-body, sans-serif)`;
   ctx.textAlign = 'center';
   ctx.fillStyle = adjustedColor;
+
+  const labelY = y + size + fontSize * 1.8;
 
   ctx.globalAlpha = alpha * 0.9;
   ctx.shadowColor = theme.shadowColor;
   ctx.shadowBlur = 8;
-  ctx.fillText(labelText, x, y + size + 22);
+  ctx.fillText(labelText, x, labelY);
 
   ctx.globalAlpha = alpha;
   ctx.shadowColor = 'transparent';
   ctx.shadowBlur = 0;
-  ctx.fillText(labelText, x, y + size + 22);
+  ctx.fillText(labelText, x, labelY);
 }
 
 function getNodeChainAlpha(
@@ -265,6 +278,17 @@ function resolveChainAlpha(
   return 1.0;
 }
 
+/** Threshold: top-weighted nodes are considered "hub" nodes */
+const HUB_WEIGHT_PERCENTILE = 0.9;
+
+function isHubNode(nodeId: string, rc: NodeRenderContext): boolean {
+  if (rc.nodeWeights.size === 0) return false;
+  const weight = rc.nodeWeights.get(nodeId) ?? 0;
+  const weights = Array.from(rc.nodeWeights.values()).sort((a, b) => a - b);
+  const threshold = weights[Math.floor(weights.length * HUB_WEIGHT_PERCENTILE)] ?? 0;
+  return weight >= threshold && weight > 0;
+}
+
 function shouldShowNodeLabel(
   isHovered: boolean,
   isSelected: boolean,
@@ -274,7 +298,9 @@ function shouldShowNodeLabel(
   nodeId: string,
   rc: NodeRenderContext,
 ): boolean {
-  if (rc.zoom >= 0.5 || isHovered || isSelected || isConnected) return true;
+  if (rc.zoom >= 0.3 || isHovered || isSelected || isConnected) return true;
+  // Always show labels for hub nodes regardless of zoom
+  if (isHubNode(nodeId, rc)) return true;
   if (!isChainActive) return false;
 
   const isInDepsChain = rc.transitiveDeps?.nodes.has(nodeId) ?? false;
@@ -400,6 +426,7 @@ function renderSingleNode(
       vs.isConnected,
       vs.isInChain,
       theme,
+      rc.zoom,
     );
   }
 }

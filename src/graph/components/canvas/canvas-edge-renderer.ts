@@ -176,6 +176,15 @@ function getChainHighlightOpacity(
   return 0.03;
 }
 
+/** Progressive edge disclosure: fade edges at low zoom levels */
+function getZoomOpacityFactor(zoom: number, isHighlighted: boolean): number {
+  // Always show highlighted/selected edges at full opacity
+  if (isHighlighted) return 1.0;
+  if (zoom < 0.3) return 0;
+  if (zoom < 0.6) return (zoom - 0.3) / 0.3;
+  return 1.0;
+}
+
 function computeEdgeOpacity(
   edge: GraphEdge,
   isHighlighted: boolean,
@@ -184,14 +193,17 @@ function computeEdgeOpacity(
   isCycle: boolean,
   rc: EdgeRenderContext,
 ): number {
+  const zoomFactor = getZoomOpacityFactor(rc.zoom, isHighlighted);
+  if (zoomFactor === 0) return 0;
+
   const baseOpacity = isHighlighted ? 1.0 : 0.1;
   const cycleOpacity = isCycle ? Math.max(baseOpacity, 0.8) : baseOpacity;
 
   if (isChainActive && rc.chainDisplay === 'highlight') {
-    return Math.min(1, getChainHighlightOpacity(edge, isHighlighted, inChain, rc));
+    return Math.min(1, getChainHighlightOpacity(edge, isHighlighted, inChain, rc) * zoomFactor);
   }
 
-  return Math.min(1, cycleOpacity * getEdgeOpacity(edge, rc));
+  return Math.min(1, cycleOpacity * getEdgeOpacity(edge, rc) * zoomFactor);
 }
 
 function drawRoutedEdgePath(
@@ -232,6 +244,29 @@ function drawRoutedEdgePath(
     { x: tClusterX, y: tClusterY },
   );
   ctx.stroke(new Path2D(pathString));
+}
+
+function drawArrowhead(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  fromX: number,
+  fromY: number,
+  zoom: number,
+) {
+  const arrowSize = 7 / zoom;
+  const angle = Math.atan2(y - fromY, x - fromX);
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-arrowSize, arrowSize * 0.5);
+  ctx.lineTo(-arrowSize, -arrowSize * 0.5);
+  ctx.closePath();
+  ctx.fillStyle = ctx.strokeStyle;
+  ctx.fill();
+  ctx.restore();
 }
 
 function drawDirectEdgePath(
@@ -349,6 +384,9 @@ function renderSingleEdge(
   inChain: boolean,
   rc: EdgeRenderContext,
 ) {
+  // Skip non-highlighted edges entirely at very low zoom
+  if (!isHighlighted && rc.zoom < 0.3) return;
+
   const endpoints = resolveEdgeEndpoints(edge, rc);
   if (!endpoints) return;
   if (!isEdgeVisible(endpoints, viewport, isHighlighted, rc)) return;
@@ -370,6 +408,11 @@ function renderSingleEdge(
   );
 
   drawEdgePath(edge, endpoints, isCrossCluster, isHighlighted, rc);
+
+  // Draw arrowhead at target end for highlighted edges
+  if (isHighlighted) {
+    drawArrowhead(rc.ctx, endpoints.x2, endpoints.y2, endpoints.x1, endpoints.y1, rc.zoom);
+  }
 
   rc.ctx.setLineDash([]);
   rc.ctx.lineDashOffset = 0;

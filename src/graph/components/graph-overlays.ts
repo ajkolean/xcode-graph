@@ -223,21 +223,28 @@ export class GraphControls extends LitElement {
   }
 
   override render(): TemplateResult {
-    const percentage =
-      this.baseZoom > 0
-        ? Math.round((this.zoom / this.baseZoom) * 100)
-        : Math.round(this.zoom * 100);
+    const ratio = this.zoomRatio;
+    const isFit = Math.abs(ratio - 1.0) < 0.02;
+    const zoomLabel = isFit ? 'Fit' : `${Math.round(ratio * 100)}%`;
 
     return html`
       <div class="container" @wheel=${this.handleWheel} @mousedown=${this.handleMouseDown}>
-        <span class="zoom-label">${percentage}%</span>
+        <span class="zoom-label">${zoomLabel}</span>
         <div class="divider"></div>
 
         <div class="zoom-buttons">
-          <button class="zoom-button" @click=${this.handleZoomIn} title="Zoom in">
+          <button
+            class="zoom-button ${this.atMaxZoom ? 'disabled' : ''}"
+            @click=${this.handleZoomIn}
+            title="Zoom in"
+          >
             ${unsafeHTML(icons.ZoomIn)}
           </button>
-          <button class="zoom-button" @click=${this.handleZoomOut} title="Zoom out">
+          <button
+            class="zoom-button ${this.atMinZoom ? 'disabled' : ''}"
+            @click=${this.handleZoomOut}
+            title="Zoom out"
+          >
             ${unsafeHTML(icons.ZoomOut)}
           </button>
           <button class="zoom-button" @click=${this.handleZoomReset} title="Fit to view">
@@ -253,7 +260,7 @@ export class GraphControls extends LitElement {
           ${unsafeHTML(icons.Layers)}
         </button>
         <div class="divider"></div>
-        <span class="hint">Scroll zoom · Drag pan · Click select</span>
+        <span class="hint">Scroll zoom · Drag pan · Click select · ⇧Click clusters</span>
       </div>
     `;
   }

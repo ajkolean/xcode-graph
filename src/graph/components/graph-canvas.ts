@@ -126,6 +126,10 @@ export class GraphCanvas extends LitElement {
   private didInitialFit = false;
   private isAnimating = false;
 
+  // Fade-out animation for removed nodes
+  private fadingOutNodes = new Map<string, { node: GraphNode; startTime: number }>();
+  private static readonly FADE_OUT_DURATION = 250;
+
   // Starfield background
   private starfield = new Starfield();
 
@@ -192,8 +196,26 @@ export class GraphCanvas extends LitElement {
     this.stopRenderLoop();
   }
 
+  private trackRemovedNodesForFadeOut(changedProps: PropertyValues<this>) {
+    const prevNodes = changedProps.get('nodes') as GraphNode[] | undefined;
+    if (!prevNodes || prevNodes.length === 0) return;
+
+    const currentIds = new Set(this.nodes.map((n) => n.id));
+    const now = performance.now();
+    for (const node of prevNodes) {
+      if (!currentIds.has(node.id) && !this.fadingOutNodes.has(node.id)) {
+        this.fadingOutNodes.set(node.id, { node, startTime: now });
+      }
+    }
+    if (this.fadingOutNodes.size > 0) {
+      this.isAnimating = true;
+    }
+  }
+
   override willUpdate(changedProps: PropertyValues<this>): void {
     if (changedProps.has('nodes') || changedProps.has('edges')) {
+      this.trackRemovedNodesForFadeOut(changedProps);
+
       const isFilterChange =
         this.layout.nodePositions.size > 0 &&
         this.nodes.every((n) => this.layout.nodePositions.has(n.id));
@@ -421,6 +443,18 @@ export class GraphCanvas extends LitElement {
     this.interactionState.zoom = this.zoom;
     handleMouseMove(e, this.getInteractionContext());
     this.hoveredNode = this.interactionState.hoveredNode;
+
+    // Fix #30: cursor pointer on hoverable nodes
+    if (this.canvas) {
+      if (this.interactionState.isDragging) {
+        this.canvas.style.cursor = 'grabbing';
+      } else if (this.interactionState.hoveredNode) {
+        this.canvas.style.cursor = 'pointer';
+      } else {
+        this.canvas.style.cursor = 'grab';
+      }
+    }
+
     this.requestRender();
   };
 
@@ -434,6 +468,62 @@ export class GraphCanvas extends LitElement {
     this.interactionState.zoom = this.zoom;
     handleWheel(e, this.getInteractionContext());
     this.zoom = this.interactionState.zoom;
+    this.requestRender();
+  };
+
+  private handleCanvasKeyDown = (e: KeyboardEvent) => {
+    const PAN_STEP = 50;
+    const ctx = this.getInteractionContext();
+
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault();
+        this.interactionState.pan.y += PAN_STEP;
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        this.interactionState.pan.y -= PAN_STEP;
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        this.interactionState.pan.x += PAN_STEP;
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        this.interactionState.pan.x -= PAN_STEP;
+        break;
+      case '+':
+      case '=':
+        e.preventDefault();
+        this.dispatchEvent(new CustomEvent('zoom-in', { bubbles: true, composed: true }));
+        return;
+      case '-':
+        e.preventDefault();
+        this.dispatchEvent(new CustomEvent('zoom-out', { bubbles: true, composed: true }));
+        return;
+      case '0':
+        e.preventDefault();
+        this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }));
+        return;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (this.interactionState.hoveredNode) {
+          const node = this.nodes.find((n) => n.id === this.interactionState.hoveredNode);
+          if (node) {
+            const newSelection = this.selectedNode?.id === node.id ? null : node;
+            ctx.dispatchCanvasEvent('node-select', { node: newSelection });
+          }
+        }
+        return;
+      case 'Escape':
+        e.preventDefault();
+        ctx.dispatchCanvasEvent('node-select', { node: null });
+        ctx.dispatchCanvasEvent('cluster-select', { clusterId: null });
+        return;
+      default:
+        return;
+    }
     this.requestRender();
   };
 
@@ -553,18 +643,81 @@ export class GraphCanvas extends LitElement {
       viewport,
     );
 
+    // Render fading-out nodes
+    this.renderFadingNodes();
+
     this.ctx.restore();
 
     this.renderTooltip();
     this.renderClusterTooltip();
   }
 
+  private renderFadingNodes() {
+    if (this.fadingOutNodes.size === 0) return;
+
+    const now = performance.now();
+    const toRemove: string[] = [];
+
+    for (const [nodeId, { node, startTime }] of this.fadingOutNodes) {
+      const elapsed = now - startTime;
+      if (elapsed >= GraphCanvas.FADE_OUT_DURATION) {
+        toRemove.push(nodeId);
+        continue;
+      }
+
+      const alpha = 1 - elapsed / GraphCanvas.FADE_OUT_DURATION;
+      const layoutPos = this.layout.nodePositions.get(nodeId);
+      if (!layoutPos) {
+        toRemove.push(nodeId);
+        continue;
+      }
+
+      const clusterPos = this.layout.clusterPositions.get(layoutPos.clusterId);
+      if (!clusterPos) {
+        toRemove.push(nodeId);
+        continue;
+      }
+
+      const manualClusterPos = this.manualClusterPositions.get(layoutPos.clusterId);
+      const manualPos = this.manualNodePositions.get(nodeId);
+      const x = (manualClusterPos?.x ?? clusterPos.x) + (manualPos?.x ?? layoutPos.x);
+      const y = (manualClusterPos?.y ?? clusterPos.y) + (manualPos?.y ?? layoutPos.y);
+      const size = getNodeSize(node, this.edges, this.nodeWeights.get(nodeId));
+
+      // Draw fading node icon
+      this.ctx.globalAlpha = alpha * 0.5;
+      const color = adjustColorForZoom(getNodeTypeColorFromTheme(node.type, this.theme), this.zoom);
+      const scale = (size / 12) * 1.0;
+      this.ctx.save();
+      this.ctx.translate(x, y);
+      this.ctx.scale(scale, scale);
+      const path = this.getPathForNode(node);
+      this.ctx.fillStyle = this.theme.tooltipBg;
+      this.ctx.fill(path);
+      this.ctx.strokeStyle = color;
+      this.ctx.lineWidth = 2 / scale;
+      this.ctx.stroke(path);
+      this.ctx.restore();
+    }
+
+    for (const id of toRemove) {
+      this.fadingOutNodes.delete(id);
+    }
+
+    if (this.fadingOutNodes.size === 0) {
+      this.updateAnimatingState();
+    }
+
+    this.ctx.globalAlpha = 1.0;
+  }
+
   private renderTooltip() {
     if (!this.hoveredNode) return;
     const node = this.nodes.find((n) => n.id === this.hoveredNode);
     if (!node) return;
-    const labelsVisible = this.zoom >= 0.5;
-    if (labelsVisible && node.name.length <= 20) return;
+    // At low zoom, always show tooltip (labels are likely hidden).
+    // At higher zoom, only show if label would be truncated.
+    if (this.zoom >= 0.5 && node.name.length <= 20) return;
 
     const layoutPos = this.layout.nodePositions.get(node.id);
     if (!layoutPos) return;
@@ -689,11 +842,15 @@ export class GraphCanvas extends LitElement {
   override render(): TemplateResult {
     return html`
       <canvas
+        tabindex="0"
+        role="application"
+        aria-label="Dependency graph visualization"
         @mousedown=${this.handleCanvasMouseDown}
         @mousemove=${this.handleCanvasMouseMove}
         @mouseup=${this.handleCanvasMouseUp}
         @mouseleave=${this.handleCanvasMouseUp}
         @wheel=${this.handleCanvasWheel}
+        @keydown=${this.handleCanvasKeyDown}
       ></canvas>
     `;
   }

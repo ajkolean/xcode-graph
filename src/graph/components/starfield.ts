@@ -40,9 +40,9 @@ const DEFAULT_STAR_PALETTE = [
 ];
 
 const DEFAULT_OPTIONS: Required<StarfieldOptions> = {
-  count: 400,
-  brightRatio: 0.025,
-  parallaxIntensity: 0.15,
+  count: 250,
+  brightRatio: 0.01,
+  parallaxIntensity: 0.08,
   spanMultiplier: 2.0,
 };
 
@@ -141,8 +141,8 @@ export class Starfield {
     return {
       x: Math.random() * spanX - offsetX,
       y: Math.random() * spanY - offsetY,
-      r: isBright ? Math.random() * 1.5 + 1.0 : Math.random() * 0.8 + 0.2,
-      a: isBright ? Math.random() * 0.4 + 0.5 : Math.random() * 0.2 + 0.05,
+      r: isBright ? Math.random() * 0.5 + 1.0 : Math.random() * 0.8 + 0.2,
+      a: isBright ? Math.random() * 0.2 + 0.2 : Math.random() * 0.2 + 0.05,
       depth,
       color: palette[colorIndex] ?? palette[0]!,
     };

@@ -30,6 +30,20 @@ function isClusterInViewport(
   );
 }
 
+/** Scale fill opacity based on cluster node count for visual hierarchy */
+function getClusterFillOpacity(nodeCount: number, isActive: boolean): number {
+  if (isActive) return 0.05;
+  if (nodeCount <= 5) return 0.03;
+  if (nodeCount <= 20) return 0.05;
+  return 0.08;
+}
+
+/** Scale border width based on cluster node count for visual hierarchy */
+function getClusterBorderWidth(nodeCount: number, isActive: boolean): number {
+  const baseWidth = isActive ? 2.5 : 2;
+  return Math.max(1, Math.log2(nodeCount)) * baseWidth;
+}
+
 function drawClusterFillAndBorder(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -42,6 +56,7 @@ function drawClusterFillAndBorder(
   clusterType: string,
   zoom: number,
   time: number,
+  nodeCount: number,
 ) {
   const dimFactor = shouldDim ? 0.3 : 1.0;
   const borderOpacity = adjustOpacityForZoom(0.5, zoom);
@@ -49,12 +64,12 @@ function drawClusterFillAndBorder(
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.fillStyle = clusterColor;
-  ctx.globalAlpha = isActive ? 0.05 : 0.08;
+  ctx.globalAlpha = getClusterFillOpacity(nodeCount, isActive);
   ctx.fill();
 
   ctx.globalAlpha = dimFactor;
 
-  ctx.lineWidth = isActive ? 2.5 : 2;
+  ctx.lineWidth = getClusterBorderWidth(nodeCount, isActive);
   ctx.strokeStyle = clusterColor;
   ctx.globalAlpha = (isActive ? 0.9 : borderOpacity) * dimFactor;
   ctx.setLineDash(clusterType === 'project' ? [8, 8] : [3, 8]);
@@ -185,6 +200,7 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
       cluster.type,
       zoom,
       time,
+      cluster.nodes.length,
     );
     drawClusterLabels(
       ctx,
