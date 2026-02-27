@@ -1,8 +1,9 @@
 /**
- * Starfield - Parallax star background for graph visualization
+ * Starfield - Static parallax star background for graph visualization
  *
  * Renders a subtle starfield with depth-based parallax effect.
- * Stars are generated once and rendered efficiently each frame.
+ * Stars are rendered to a cached OffscreenCanvas and only re-rendered
+ * when the pan position changes, avoiding per-frame computation.
  *
  * Usage:
  *   const starfield = new Starfield();
@@ -17,16 +18,14 @@ export interface Star {
   a: number;
   depth: number;
   color: string;
-  twinkleSpeed: number;
-  twinklePhase: number;
 }
 
 export interface StarfieldOptions {
-  /** Number of stars to generate (default: 400) */
+  /** Number of stars to generate (default: 100) */
   count?: number;
-  /** Percentage of stars that are bright (default: 0.025) */
+  /** Percentage of stars that are bright (default: 0.01) */
   brightRatio?: number;
-  /** Parallax intensity multiplier (default: 0.15) */
+  /** Parallax intensity multiplier (default: 0.08) */
   parallaxIntensity?: number;
   /**
    * How far beyond the viewport to spawn stars (default: 2.0).
@@ -42,7 +41,7 @@ const DEFAULT_STAR_PALETTE = [
 ];
 
 const DEFAULT_OPTIONS: Required<StarfieldOptions> = {
-  count: 250,
+  count: 100,
   brightRatio: 0.01,
   parallaxIntensity: 0.08,
   spanMultiplier: 2.0,
@@ -54,6 +53,11 @@ export class Starfield {
   private height = 0;
   private options: Required<StarfieldOptions>;
   private palette: string[] = DEFAULT_STAR_PALETTE;
+
+  // Cached bitmap for static starfield
+  private cachedCanvas: OffscreenCanvas | null = null;
+  private cachedPanX = Number.NaN;
+  private cachedPanY = Number.NaN;
 
   constructor(options: StarfieldOptions = {}) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
@@ -103,6 +107,9 @@ export class Starfield {
     this.width = width;
     this.height = height;
     this.stars = [] as Star[];
+    this.cachedCanvas = null;
+    this.cachedPanX = Number.NaN;
+    this.cachedPanY = Number.NaN;
 
     if (width <= 0 || height <= 0) return;
 
@@ -144,56 +151,78 @@ export class Starfield {
       x: Math.random() * spanX - offsetX,
       y: Math.random() * spanY - offsetY,
       r: isBright ? Math.random() * 0.5 + 1.0 : Math.random() * 0.8 + 0.2,
-      a: isBright ? Math.random() * 0.2 + 0.2 : Math.random() * 0.2 + 0.05,
+      a: Math.min(isBright ? Math.random() * 0.1 + 0.1 : Math.random() * 0.1 + 0.03, 0.15),
       depth,
       color: palette[colorIndex] ?? palette[0]!,
-      twinkleSpeed: Math.random() * 0.001 + 0.0003,
-      twinklePhase: Math.random() * Math.PI * 2,
     };
   }
 
   /**
    * Render the starfield with parallax based on pan position.
-   * Stars at different depths move at different rates.
+   * Stars are rendered to a cached OffscreenCanvas and only re-rendered
+   * when the pan position changes. Each frame just blits the cached bitmap.
    *
    * @param ctx  Canvas context
    * @param panX Camera pan offset in world space X
    * @param panY Camera pan offset in world space Y
-   * @param time Current animation timestamp (ms) for twinkling
    */
-  public render(ctx: CanvasRenderingContext2D, panX: number, panY: number, time = 0): void {
+  public render(ctx: CanvasRenderingContext2D, panX: number, panY: number): void {
     const stars = this.stars;
     const count = stars.length;
 
     if (count === 0 || this.width <= 0 || this.height <= 0) return;
 
     const { width, height } = this;
-    const { parallaxIntensity, spanMultiplier } = this.options;
 
-    // Precompute values used in wrapping math
+    // Round pan to nearest pixel to avoid excessive cache invalidation
+    const rpx = Math.round(panX);
+    const rpy = Math.round(panY);
+
+    if (!this.cachedCanvas || this.cachedPanX !== rpx || this.cachedPanY !== rpy) {
+      this.renderToCache(rpx, rpy);
+      this.cachedPanX = rpx;
+      this.cachedPanY = rpy;
+    }
+
+    if (this.cachedCanvas) {
+      ctx.drawImage(this.cachedCanvas, 0, 0, width, height);
+    }
+  }
+
+  private renderToCache(panX: number, panY: number): void {
+    const { width, height } = this;
+    const { parallaxIntensity, spanMultiplier } = this.options;
+    const stars = this.stars;
+    const count = stars.length;
+
+    if (
+      !this.cachedCanvas ||
+      this.cachedCanvas.width !== width ||
+      this.cachedCanvas.height !== height
+    ) {
+      this.cachedCanvas = new OffscreenCanvas(width, height);
+    }
+
+    const offCtx = this.cachedCanvas.getContext('2d')!;
+    offCtx.clearRect(0, 0, width, height);
+
     const spanX = width * spanMultiplier;
     const spanY = height * spanMultiplier;
     const halfWidth = width * 0.5;
     const halfHeight = height * 0.5;
 
-    ctx.save();
-
     for (let i = 0; i < count; i++) {
       const star = stars[i];
       if (!star) continue;
 
-      // Parallax: nearer stars (depth → 1) move more with pan.
       const parallaxFactor = star.depth * parallaxIntensity;
 
       const sx = star.x + panX * parallaxFactor;
       const sy = star.y + panY * parallaxFactor;
 
-      // Wrap stars to create an infinite tiling effect.
-      // We keep them inside [-halfWidth, width + halfWidth] range.
       let wrappedX = sx;
       let wrappedY = sy;
 
-      // Fast "mod in range" without allocations.
       if (spanX > 0) {
         wrappedX = ((sx + spanX) % spanX) - (spanX * 0.5 - halfWidth);
       }
@@ -201,20 +230,16 @@ export class Starfield {
         wrappedY = ((sy + spanY) % spanY) - (spanY * 0.5 - halfHeight);
       }
 
-      // Skip if outside visible area (+ small margin)
       if (wrappedX < -5 || wrappedX > width + 5 || wrappedY < -5 || wrappedY > height + 5) {
         continue;
       }
 
-      const twinkle = 0.7 + 0.3 * Math.sin(time * star.twinkleSpeed + star.twinklePhase);
-      ctx.globalAlpha = star.a * twinkle;
-      ctx.fillStyle = star.color;
-      ctx.beginPath();
-      ctx.arc(wrappedX, wrappedY, star.r, 0, Math.PI * 2);
-      ctx.fill();
+      offCtx.globalAlpha = star.a;
+      offCtx.fillStyle = star.color;
+      offCtx.beginPath();
+      offCtx.arc(wrappedX, wrappedY, star.r, 0, Math.PI * 2);
+      offCtx.fill();
     }
-
-    ctx.restore();
   }
 
   private vignetteGradient: CanvasGradient | null = null;
@@ -253,5 +278,8 @@ export class Starfield {
   /** Clear all stars (e.g. when tearing down the canvas) */
   public clear(): void {
     this.stars = [];
+    this.cachedCanvas = null;
+    this.cachedPanX = Number.NaN;
+    this.cachedPanY = Number.NaN;
   }
 }

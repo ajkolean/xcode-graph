@@ -17,6 +17,10 @@ export interface CanvasTheme {
   nodeCli: string;
   nodePackage: string;
 
+  // Canvas background gradient
+  canvasBgCenter: string;
+  canvasBgEdge: string;
+
   // Canvas chrome colors
   tooltipBg: string;
   shadowColor: string;
@@ -35,12 +39,14 @@ export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
   const get = (prop: string, fallback: string) => s.getPropertyValue(prop).trim() || fallback;
 
   return {
-    nodeApp: get('--colors-node-app', 'rgba(245, 158, 11, 1)'),
-    nodeFramework: get('--colors-node-framework', 'rgba(14, 165, 233, 1)'),
-    nodeLibrary: get('--colors-node-library', 'rgba(34, 197, 94, 1)'),
-    nodeTest: get('--colors-node-test', 'rgba(236, 72, 153, 1)'),
-    nodeCli: get('--colors-node-cli', 'rgba(59, 130, 246, 1)'),
-    nodePackage: get('--colors-node-package', 'rgba(234, 179, 8, 1)'),
+    nodeApp: get('--colors-node-app', 'rgba(240, 176, 64, 1)'),
+    nodeFramework: get('--colors-node-framework', 'rgba(100, 181, 246, 1)'),
+    nodeLibrary: get('--colors-node-library', 'rgba(129, 199, 132, 1)'),
+    nodeTest: get('--colors-node-test', 'rgba(240, 120, 170, 1)'),
+    nodeCli: get('--colors-node-cli', 'rgba(120, 160, 246, 1)'),
+    nodePackage: get('--colors-node-package', 'rgba(234, 196, 72, 1)'),
+    canvasBgCenter: get('--colors-canvas-bg-center', 'rgba(22, 22, 26, 1)'),
+    canvasBgEdge: get('--colors-canvas-bg-edge', 'rgba(10, 10, 12, 1)'),
     tooltipBg: get('--colors-canvas-tooltip-bg', 'rgba(24, 24, 28, 0.95)'),
     shadowColor: get('--colors-canvas-shadow', 'rgba(24, 24, 28, 0.9)'),
     cycleEdgeColor: get('--colors-canvas-cycle-edge', 'rgba(239, 68, 68, 0.8)'),

@@ -1,4 +1,5 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
+import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
 import { getNodeSize } from '@ui/utils/sizing';
@@ -46,13 +47,11 @@ function hitTestCluster(
     const layoutPos = ctx.layout.clusterPositions.get(cluster.id);
     if (!layoutPos) continue;
 
-    const manualPos = ctx.manualClusterPositions.get(cluster.id);
-    const cx = manualPos?.x ?? layoutPos.x;
-    const cy = manualPos?.y ?? layoutPos.y;
+    const pos = resolveClusterPosition(cluster.id, layoutPos, ctx.manualClusterPositions);
     const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
 
-    const dx = worldPos.x - cx;
-    const dy = worldPos.y - cy;
+    const dx = worldPos.x - pos.x;
+    const dy = worldPos.y - pos.y;
     if (dx * dx + dy * dy <= radius * radius) {
       return cluster.id;
     }
@@ -64,27 +63,30 @@ function hitTestNode(
   worldPos: { x: number; y: number },
   ctx: InteractionContext,
 ): GraphNode | null {
+  // Scale hit radius inversely at high zoom to prevent overlapping hit areas
+  const zoom = ctx.state.zoom;
+  const hitScale = zoom > 2 ? 2 / zoom : 1;
+
   for (let i = ctx.nodes.length - 1; i >= 0; i--) {
     const node = ctx.nodes[i];
     if (!node) continue;
-    const layoutPos = ctx.layout.nodePositions.get(node.id);
-    const clusterPos = ctx.layout.clusterPositions.get(node.project || 'External');
 
-    if (!layoutPos || !clusterPos) continue;
+    const pos = resolveNodeWorldPosition(
+      node.id,
+      node.project || 'External',
+      ctx.layout,
+      ctx.manualNodePositions,
+      ctx.manualClusterPositions,
+    );
+    if (!pos) continue;
 
-    const manualClusterPos = ctx.manualClusterPositions.get(node.project || 'External');
-    const clusterX = manualClusterPos?.x ?? clusterPos.x;
-    const clusterY = manualClusterPos?.y ?? clusterPos.y;
-
-    const manualPos = ctx.manualNodePositions.get(node.id);
-    const wx = clusterX + (manualPos?.x ?? layoutPos.x);
-    const wy = clusterY + (manualPos?.y ?? layoutPos.y);
     const size = getNodeSize(node, ctx.edges, ctx.nodeWeights.get(node.id));
+    const hitRadius = size * 2 * hitScale;
 
-    const dx = worldPos.x - wx;
-    const dy = worldPos.y - wy;
+    const dx = worldPos.x - pos.x;
+    const dy = worldPos.y - pos.y;
 
-    if (dx * dx + dy * dy <= size * size) {
+    if (dx * dx + dy * dy <= hitRadius * hitRadius) {
       return node;
     }
   }
@@ -135,15 +137,18 @@ function handleDragNode(worldPos: { x: number; y: number }, ctx: InteractionCont
   const dragNode = ctx.nodes.find((n) => n.id === state.draggedNodeId);
   if (!dragNode) return;
 
-  const layoutClusterPos = ctx.layout.clusterPositions.get(dragNode.project || 'External');
+  const clusterId = dragNode.project || 'External';
+  const layoutClusterPos = ctx.layout.clusterPositions.get(clusterId);
   if (!layoutClusterPos) return;
 
-  const manualClusterPos = ctx.manualClusterPositions.get(dragNode.project || 'External');
-  const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
-  const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
+  const clusterPos = resolveClusterPosition(
+    clusterId,
+    layoutClusterPos,
+    ctx.manualClusterPositions,
+  );
   ctx.manualNodePositions.set(dragNode.id, {
-    x: worldPos.x - clusterX,
-    y: worldPos.y - clusterY,
+    x: worldPos.x - clusterPos.x,
+    y: worldPos.y - clusterPos.y,
   });
 }
 

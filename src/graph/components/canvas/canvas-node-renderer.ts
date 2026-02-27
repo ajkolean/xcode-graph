@@ -1,5 +1,8 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { TransitiveResult } from '@graph/utils';
+import { type AnimatedValue, getAnimatedAlpha } from '@graph/utils/canvas-animation';
+import { colorWithAlpha } from '@graph/utils/canvas-colors';
+import { resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { ViewMode } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.schema';
@@ -32,26 +35,8 @@ export interface NodeRenderContext {
   manualClusterPositions: Map<string, { x: number; y: number }>;
   getPathForNode: (node: GraphNode) => Path2D;
   connectedNodes: Set<string>;
-}
-
-function getNodeWorldPosition(
-  node: GraphNode,
-  rc: NodeRenderContext,
-): { x: number; y: number } | null {
-  const layoutPos = rc.layout.nodePositions.get(node.id);
-  const layoutClusterPos = rc.layout.clusterPositions.get(node.project || 'External');
-  if (!layoutPos || !layoutClusterPos) return null;
-
-  const clusterId = node.project || 'External';
-  const manualClusterPos = rc.manualClusterPositions.get(clusterId);
-  const clusterX = manualClusterPos?.x ?? layoutClusterPos.x;
-  const clusterY = manualClusterPos?.y ?? layoutClusterPos.y;
-
-  const manualPos = rc.manualNodePositions.get(node.id);
-  return {
-    x: clusterX + (manualPos?.x ?? layoutPos.x),
-    y: clusterY + (manualPos?.y ?? layoutPos.y),
-  };
+  hubWeightThreshold: number;
+  nodeAlphaMap: Map<string, AnimatedValue>;
 }
 
 function isSearchDimmed(node: GraphNode, searchQuery: string): boolean {
@@ -101,21 +86,33 @@ function isNodeDimmed(
   );
 }
 
-/** Parse an rgba/rgb color string and return it with a new alpha value */
-function colorWithAlpha(rgbaColor: string, newAlpha: number): string {
-  const match = rgbaColor.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*[\d.]+\s*)?\)$/);
-  if (match) {
-    return `rgba(${match[1]},${match[2]},${match[3]},${newAlpha})`;
+/** Cache for pre-rendered glow bitmaps keyed by color+size */
+const glowCache = new Map<string, OffscreenCanvas>();
+const GLOW_CACHE_MAX = 64;
+
+function getGlowBitmap(color: string, radius: number): OffscreenCanvas {
+  const key = `${color}:${Math.round(radius)}`;
+  let cached = glowCache.get(key);
+  if (cached) return cached;
+
+  // Evict oldest entries if cache is full
+  if (glowCache.size >= GLOW_CACHE_MAX) {
+    const firstKey = glowCache.keys().next().value;
+    if (firstKey) glowCache.delete(firstKey);
   }
-  // Hex color fallback: parse #RRGGBB
-  const hexMatch = rgbaColor.match(/^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/);
-  if (hexMatch) {
-    const r = Number.parseInt(hexMatch[1]!, 16);
-    const g = Number.parseInt(hexMatch[2]!, 16);
-    const b = Number.parseInt(hexMatch[3]!, 16);
-    return `rgba(${r},${g},${b},${newAlpha})`;
-  }
-  return rgbaColor;
+
+  const dim = Math.ceil(radius * 2);
+  cached = new OffscreenCanvas(dim, dim);
+  const octx = cached.getContext('2d')!;
+  const cx = dim / 2;
+  const grad = octx.createRadialGradient(cx, cx, 0, cx, cx, radius);
+  grad.addColorStop(0, colorWithAlpha(color, 0.5));
+  grad.addColorStop(0.5, colorWithAlpha(color, 0.15));
+  grad.addColorStop(1, colorWithAlpha(color, 0));
+  octx.fillStyle = grad;
+  octx.fillRect(0, 0, dim, dim);
+  glowCache.set(key, cached);
+  return cached;
 }
 
 function drawNodeEffects(
@@ -147,28 +144,17 @@ function drawNodeEffects(
 
   if (isSelected) {
     const pulse1 = (Math.sin(time / 800) + 1) / 2;
-    const pulse2 = (Math.sin(time / 1200 + 1.5) + 1) / 2;
     const pulse3 = (Math.sin(time / 200) + 1) / 2;
 
-    // Outer glow: radial gradient, slow pulse
+    // Combined outer+mid glow: single radial gradient with 3 stops
     const outerRadius = size + 20 + pulse1 * 6;
-    const outerGrad = ctx.createRadialGradient(x, y, size * 0.5, x, y, outerRadius);
-    outerGrad.addColorStop(0, colorWithAlpha(adjustedColor, 0.15));
-    outerGrad.addColorStop(1, colorWithAlpha(adjustedColor, 0));
+    const glowGrad = ctx.createRadialGradient(x, y, size * 0.3, x, y, outerRadius);
+    glowGrad.addColorStop(0, colorWithAlpha(adjustedColor, 0.25));
+    glowGrad.addColorStop(0.5, colorWithAlpha(adjustedColor, 0.12));
+    glowGrad.addColorStop(1, colorWithAlpha(adjustedColor, 0));
     ctx.beginPath();
     ctx.arc(x, y, outerRadius, 0, Math.PI * 2);
-    ctx.fillStyle = outerGrad;
-    ctx.globalAlpha = alpha;
-    ctx.fill();
-
-    // Mid glow: radial gradient, offset phase
-    const midRadius = size + 12 + pulse2 * 4;
-    const midGrad = ctx.createRadialGradient(x, y, size * 0.3, x, y, midRadius);
-    midGrad.addColorStop(0, colorWithAlpha(adjustedColor, 0.25));
-    midGrad.addColorStop(1, colorWithAlpha(adjustedColor, 0));
-    ctx.beginPath();
-    ctx.arc(x, y, midRadius, 0, Math.PI * 2);
-    ctx.fillStyle = midGrad;
+    ctx.fillStyle = glowGrad;
     ctx.globalAlpha = alpha;
     ctx.fill();
 
@@ -197,20 +183,23 @@ function drawNodeIcon(
   getPathForNode: (node: GraphNode) => Path2D,
   theme: CanvasTheme,
 ) {
+  const scale = (size / 12) * (isHovered || isSelected ? 1.08 : 1.0);
+
+  // Draw pre-rendered glow behind the icon for hovered/selected nodes
   if (isHovered || isSelected) {
-    ctx.shadowColor = adjustedColor;
-    ctx.shadowBlur = 10;
-  } else {
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
+    const glowRadius = size * 2;
+    const glow = getGlowBitmap(adjustedColor, glowRadius);
+    ctx.drawImage(glow, x - glowRadius, y - glowRadius);
   }
 
-  const scale = (size / 12) * (isHovered || isSelected ? 1.08 : 1.0);
   ctx.translate(x, y);
   ctx.scale(scale, scale);
 
   const path = getPathForNode(node);
   ctx.fillStyle = theme.tooltipBg;
+  ctx.fill(path);
+
+  ctx.fillStyle = colorWithAlpha(adjustedColor, 0.12);
   ctx.fill(path);
 
   ctx.strokeStyle = adjustedColor;
@@ -219,7 +208,6 @@ function drawNodeIcon(
 
   ctx.scale(1 / scale, 1 / scale);
   ctx.translate(-x, -y);
-  ctx.shadowBlur = 0;
 }
 
 /** Compute adaptive font size that maintains readable screen-apparent size at low zoom */
@@ -258,14 +246,20 @@ function drawNodeLabel(
 
   const labelY = y + size + fontSize * 1.8;
 
-  ctx.globalAlpha = alpha * 0.9;
-  ctx.shadowColor = theme.shadowColor;
-  ctx.shadowBlur = 8;
-  ctx.fillText(labelText, x, labelY);
+  // Dark halo pass: draw text in shadow color at small offsets for readability
+  ctx.globalAlpha = alpha * 0.7;
+  ctx.fillStyle = theme.shadowColor;
+  const offsets = [-1.5, 0, 1.5];
+  for (const ox of offsets) {
+    for (const oy of offsets) {
+      if (ox === 0 && oy === 0) continue;
+      ctx.fillText(labelText, x + ox, labelY + oy);
+    }
+  }
 
+  // Clean text on top
   ctx.globalAlpha = alpha;
-  ctx.shadowColor = 'transparent';
-  ctx.shadowBlur = 0;
+  ctx.fillStyle = adjustedColor;
   ctx.fillText(labelText, x, labelY);
 }
 
@@ -324,15 +318,9 @@ function resolveChainAlpha(
   return 1.0;
 }
 
-/** Threshold: top-weighted nodes are considered "hub" nodes */
-const HUB_WEIGHT_PERCENTILE = 0.9;
-
 function isHubNode(nodeId: string, rc: NodeRenderContext): boolean {
-  if (rc.nodeWeights.size === 0) return false;
   const weight = rc.nodeWeights.get(nodeId) ?? 0;
-  const weights = Array.from(rc.nodeWeights.values()).sort((a, b) => a - b);
-  const threshold = weights[Math.floor(weights.length * HUB_WEIGHT_PERCENTILE)] ?? 0;
-  return weight >= threshold && weight > 0;
+  return weight >= rc.hubWeightThreshold && weight > 0;
 }
 
 function shouldShowNodeLabel(
@@ -369,13 +357,13 @@ interface NodeVisualState {
 
 function resolveNodeVisualState(
   node: GraphNode,
+  size: number,
   isChainActive: boolean | GraphNode | null,
   connectedNodes: Set<string>,
   chainAlpha: number,
   rc: NodeRenderContext,
 ): NodeVisualState {
-  const { edges, nodeWeights, selectedNode, hoveredNode, zoom, theme } = rc;
-  const size = getNodeSize(node, edges, nodeWeights.get(node.id));
+  const { selectedNode, hoveredNode, zoom, theme } = rc;
   const isHovered = hoveredNode === node.id;
   const isSelected = selectedNode?.id === node.id;
   const isConnected = selectedNode && connectedNodes.has(node.id);
@@ -388,7 +376,8 @@ function resolveNodeVisualState(
     (rc.selectedCluster && clusterId !== rc.selectedCluster);
 
   const isDimmed = isNodeDimmed(node, isSelected, isConnected, isChainActive, clusterDim, rc);
-  const alpha = (isDimmed ? 0.3 : 1.0) * chainAlpha;
+  const dimAlpha = getAnimatedAlpha(rc.nodeAlphaMap, node.id);
+  const alpha = dimAlpha * chainAlpha;
   const isCycleNode = rc.layout.cycleNodes?.has(node.id) ?? false;
   const isInChain =
     (rc.transitiveDeps?.nodes.has(node.id) ?? false) ||
@@ -412,13 +401,14 @@ function renderSingleNode(
   node: GraphNode,
   x: number,
   y: number,
+  size: number,
   isChainActive: boolean | GraphNode | null,
   connectedNodes: Set<string>,
   chainAlpha: number,
   rc: NodeRenderContext,
 ) {
   const { ctx, theme, time } = rc;
-  const vs = resolveNodeVisualState(node, isChainActive, connectedNodes, chainAlpha, rc);
+  const vs = resolveNodeVisualState(node, size, isChainActive, connectedNodes, chainAlpha, rc);
   ctx.globalAlpha = vs.alpha;
 
   drawNodeEffects(
@@ -480,10 +470,21 @@ function renderSingleNode(
 export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
   const { ctx, nodes, edges, selectedNode, viewMode, nodeWeights, connectedNodes } = rc;
 
+  // Skip individual node rendering at extreme zoom-out; centroid dots handle visibility
+  if (rc.zoom < 0.15) {
+    return;
+  }
+
   const isChainActive = selectedNode && viewMode !== 'full' && viewMode !== 'path';
 
   for (const node of nodes) {
-    const pos = getNodeWorldPosition(node, rc);
+    const pos = resolveNodeWorldPosition(
+      node.id,
+      node.project || 'External',
+      rc.layout,
+      rc.manualNodePositions,
+      rc.manualClusterPositions,
+    );
     if (!pos) continue;
 
     const { x, y } = pos;
@@ -494,7 +495,7 @@ export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): vo
     const chainAlpha = resolveChainAlpha(node, isSelected, isChainActive, rc);
     if (chainAlpha === null) continue;
 
-    renderSingleNode(node, x, y, isChainActive, connectedNodes, chainAlpha, rc);
+    renderSingleNode(node, x, y, size, isChainActive, connectedNodes, chainAlpha, rc);
   }
   ctx.globalAlpha = 1.0;
 }

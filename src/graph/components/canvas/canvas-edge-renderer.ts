@@ -1,6 +1,7 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { RoutedEdge } from '@graph/layout/types';
 import type { TransitiveResult } from '@graph/utils';
+import { resolveClusterPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
@@ -28,15 +29,7 @@ export interface EdgeRenderContext {
   manualClusterPositions: Map<string, { x: number; y: number }>;
   nodeMap: Map<string, GraphNode>;
   routedEdgeMap: Map<string, RoutedEdge>;
-}
-
-function resolveClusterXY(
-  clusterId: string,
-  layoutPos: { x: number; y: number },
-  manualClusterPositions: Map<string, { x: number; y: number }>,
-): { x: number; y: number } {
-  const manual = manualClusterPositions.get(clusterId);
-  return { x: manual?.x ?? layoutPos.x, y: manual?.y ?? layoutPos.y };
+  edgePathCache: Map<string, Path2D>;
 }
 
 function resolveEdgeEndpoints(
@@ -72,8 +65,16 @@ function resolveEdgeEndpoints(
   const tClusterLayout = rc.layout.clusterPositions.get(targetClusterId);
   if (!sClusterLayout || !tClusterLayout) return null;
 
-  const sCluster = resolveClusterXY(sourceClusterId, sClusterLayout, rc.manualClusterPositions);
-  const tCluster = resolveClusterXY(targetClusterId, tClusterLayout, rc.manualClusterPositions);
+  const sCluster = resolveClusterPosition(
+    sourceClusterId,
+    sClusterLayout,
+    rc.manualClusterPositions,
+  );
+  const tCluster = resolveClusterPosition(
+    targetClusterId,
+    tClusterLayout,
+    rc.manualClusterPositions,
+  );
 
   const sManual = rc.manualNodePositions.get(edge.source);
   const tManual = rc.manualNodePositions.get(edge.target);
@@ -138,8 +139,7 @@ function computeEdgeDepthOpacity(
   return 1 - (depth / maxDepth) * 0.7;
 }
 
-function getEdgeOpacity(edge: GraphEdge, rc: EdgeRenderContext): number {
-  const edgeKey = `${edge.source}->${edge.target}`;
+function getEdgeOpacity(edgeKey: string, rc: EdgeRenderContext): number {
   const { transitiveDeps, transitiveDependents } = rc;
 
   const inDepsChain = transitiveDeps?.edges.has(edgeKey);
@@ -166,13 +166,13 @@ function getEdgeOpacity(edge: GraphEdge, rc: EdgeRenderContext): number {
 }
 
 function getChainHighlightOpacity(
-  edge: GraphEdge,
+  edgeKey: string,
   isHighlighted: boolean,
   inChain: boolean,
   rc: EdgeRenderContext,
 ): number {
   if (inChain) {
-    return isHighlighted ? 1.0 : getEdgeOpacity(edge, rc) * 0.8;
+    return isHighlighted ? 1.0 : getEdgeOpacity(edgeKey, rc) * 0.8;
   }
   return 0.03;
 }
@@ -187,7 +187,7 @@ function getZoomOpacityFactor(zoom: number, isHighlighted: boolean): number {
 }
 
 function computeEdgeOpacity(
-  edge: GraphEdge,
+  edgeKey: string,
   isHighlighted: boolean,
   isChainActive: boolean,
   inChain: boolean,
@@ -197,14 +197,14 @@ function computeEdgeOpacity(
   const zoomFactor = getZoomOpacityFactor(rc.zoom, isHighlighted);
   if (zoomFactor === 0) return 0;
 
-  const baseOpacity = isHighlighted ? 1.0 : 0.15;
+  const baseOpacity = isHighlighted ? 1.0 : 0.25;
   const cycleOpacity = isCycle ? Math.max(baseOpacity, 0.8) : baseOpacity;
 
   if (isChainActive && rc.chainDisplay === 'highlight') {
-    return Math.min(1, getChainHighlightOpacity(edge, isHighlighted, inChain, rc) * zoomFactor);
+    return Math.min(1, getChainHighlightOpacity(edgeKey, isHighlighted, inChain, rc) * zoomFactor);
   }
 
-  return Math.min(1, cycleOpacity * getEdgeOpacity(edge, rc) * zoomFactor);
+  return Math.min(1, cycleOpacity * getEdgeOpacity(edgeKey, rc) * zoomFactor);
 }
 
 function drawRoutedEdgePath(
@@ -216,17 +216,24 @@ function drawRoutedEdgePath(
   sClusterY: number,
   tClusterX: number,
   tClusterY: number,
+  edgeKey: string,
+  edgePathCache: Map<string, Path2D>,
 ) {
-  const pathString = generatePortRoutedPath(
-    { x: sourceLayout.x, y: sourceLayout.y },
-    { x: routedEdge.sourcePort.x, y: routedEdge.sourcePort.y },
-    { x: routedEdge.targetPort.x, y: routedEdge.targetPort.y },
-    { x: targetLayout.x, y: targetLayout.y },
-    routedEdge.waypoints,
-    { x: sClusterX, y: sClusterY },
-    { x: tClusterX, y: tClusterY },
-  );
-  ctx.stroke(new Path2D(pathString));
+  let path = edgePathCache.get(edgeKey);
+  if (!path) {
+    const pathString = generatePortRoutedPath(
+      { x: sourceLayout.x, y: sourceLayout.y },
+      { x: routedEdge.sourcePort.x, y: routedEdge.sourcePort.y },
+      { x: routedEdge.targetPort.x, y: routedEdge.targetPort.y },
+      { x: targetLayout.x, y: targetLayout.y },
+      routedEdge.waypoints,
+      { x: sClusterX, y: sClusterY },
+      { x: tClusterX, y: tClusterY },
+    );
+    path = new Path2D(pathString);
+    edgePathCache.set(edgeKey, path);
+  }
+  ctx.stroke(path);
 }
 
 function drawArrowhead(
@@ -236,8 +243,9 @@ function drawArrowhead(
   fromX: number,
   fromY: number,
   zoom: number,
+  highlighted = true,
 ) {
-  const arrowSize = 7 / zoom;
+  const arrowSize = (highlighted ? 7 : 5) / zoom;
   const angle = Math.atan2(y - fromY, x - fromX);
   ctx.save();
   ctx.translate(x, y);
@@ -272,7 +280,7 @@ function drawDirectEdgePath(
 
 function applyEdgeStyle(
   ctx: CanvasRenderingContext2D,
-  edge: GraphEdge,
+  edgeKey: string,
   sourceNode: GraphNode,
   targetNode: GraphNode,
   isHighlighted: boolean,
@@ -291,7 +299,14 @@ function applyEdgeStyle(
     rc.zoom,
     rc.theme,
   );
-  ctx.globalAlpha = computeEdgeOpacity(edge, isHighlighted, isChainActive, inChain, cycleEdge, rc);
+  ctx.globalAlpha = computeEdgeOpacity(
+    edgeKey,
+    isHighlighted,
+    isChainActive,
+    inChain,
+    cycleEdge,
+    rc,
+  );
   ctx.lineWidth = (isHighlighted ? 2.5 : cycleEdge ? 2 : 1) / rc.zoom;
   const animateEdge =
     isHighlighted || (isChainActive && rc.chainDisplay === 'highlight' && inChain);
@@ -338,14 +353,13 @@ function isEdgeVisible(
 }
 
 function drawEdgePath(
-  edge: GraphEdge,
+  edgeKey: string,
   endpoints: NonNullable<ReturnType<typeof resolveEdgeEndpoints>>,
   isCrossCluster: boolean,
-  isHighlighted: boolean,
+  _isHighlighted: boolean,
   rc: EdgeRenderContext,
 ) {
   if (isCrossCluster) {
-    const edgeKey = `${edge.source}->${edge.target}`;
     const routedEdge = rc.routedEdgeMap.get(edgeKey);
     if (routedEdge) {
       drawRoutedEdgePath(
@@ -357,6 +371,8 @@ function drawEdgePath(
         endpoints.sClusterY,
         endpoints.tClusterX,
         endpoints.tClusterY,
+        edgeKey,
+        rc.edgePathCache,
       );
     }
   } else {
@@ -366,6 +382,7 @@ function drawEdgePath(
 
 function renderSingleEdge(
   edge: GraphEdge,
+  edgeKey: string,
   viewport: ViewportBounds,
   isHighlighted: boolean,
   isChainActive: boolean,
@@ -398,13 +415,13 @@ function renderSingleEdge(
     rc.ctx.globalAlpha = 0.15;
     rc.ctx.lineWidth = 6 / rc.zoom;
     rc.ctx.setLineDash([]);
-    drawEdgePath(edge, endpoints, isCrossCluster, true, rc);
+    drawEdgePath(edgeKey, endpoints, isCrossCluster, true, rc);
     rc.ctx.restore();
   }
 
   applyEdgeStyle(
     rc.ctx,
-    edge,
+    edgeKey,
     endpoints.sourceNode,
     endpoints.targetNode,
     isHighlighted,
@@ -415,11 +432,13 @@ function renderSingleEdge(
     rc,
   );
 
-  drawEdgePath(edge, endpoints, isCrossCluster, isHighlighted, rc);
+  drawEdgePath(edgeKey, endpoints, isCrossCluster, isHighlighted, rc);
 
   // Draw arrowhead at target end for highlighted edges
   if (isHighlighted) {
     drawArrowhead(rc.ctx, endpoints.x2, endpoints.y2, endpoints.x1, endpoints.y1, rc.zoom);
+  } else if (rc.zoom > 0.5) {
+    drawArrowhead(rc.ctx, endpoints.x2, endpoints.y2, endpoints.x1, endpoints.y1, rc.zoom, false);
   }
 
   rc.ctx.setLineDash([]);
@@ -453,6 +472,6 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
       continue;
     }
 
-    renderSingleEdge(edge, viewport, isHighlighted, !!isChainActive, inChain, rc);
+    renderSingleEdge(edge, edgeKey, viewport, isHighlighted, !!isChainActive, inChain, rc);
   }
 }

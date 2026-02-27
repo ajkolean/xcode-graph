@@ -83,22 +83,24 @@
   /* Ring (focus indicator) */
   --colors-ring: rgba(124, 58, 237, 1);
 
-  /* Chart colors - Noora chart palette */
+  /* Chart colors - Softened palette matching node type colors */
   --colors-chart-1: rgba(124, 58, 237, 1);
-  --colors-chart-2: rgba(59, 130, 246, 1);
-  --colors-chart-3: rgba(34, 197, 94, 1);
-  --colors-chart-4: rgba(236, 72, 153, 1);
-  --colors-chart-5: rgba(245, 158, 11, 1);
+  --colors-chart-2: rgba(120, 160, 246, 1);
+  --colors-chart-3: rgba(129, 199, 132, 1);
+  --colors-chart-4: rgba(240, 120, 170, 1);
+  --colors-chart-5: rgba(240, 176, 64, 1);
 
-  /* Node type colors - Noora palette, semantic mapping */
-  --colors-node-app: rgba(245, 158, 11, 1);
-  --colors-node-framework: rgba(14, 165, 233, 1);
-  --colors-node-library: rgba(34, 197, 94, 1);
-  --colors-node-test: rgba(236, 72, 153, 1);
-  --colors-node-cli: rgba(59, 130, 246, 1);
-  --colors-node-package: rgba(234, 179, 8, 1);
+  /* Node type colors - Softened palette to reduce bleed on dark backgrounds */
+  --colors-node-app: rgba(240, 176, 64, 1);
+  --colors-node-framework: rgba(100, 181, 246, 1);
+  --colors-node-library: rgba(129, 199, 132, 1);
+  --colors-node-test: rgba(240, 120, 170, 1);
+  --colors-node-cli: rgba(120, 160, 246, 1);
+  --colors-node-package: rgba(234, 196, 72, 1);
 
   /* Canvas rendering colors */
+  --colors-canvas-bg-center: rgba(22, 22, 26, 1);
+  --colors-canvas-bg-edge: rgba(10, 10, 12, 1);
   --colors-canvas-tooltip-bg: rgba(24, 24, 28, 0.95);
   --colors-canvas-shadow: rgba(24, 24, 28, 0.9);
   --colors-canvas-cycle-edge: rgba(239, 68, 68, 0.8);

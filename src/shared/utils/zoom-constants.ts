@@ -20,8 +20,8 @@ export const ZOOM_CONFIG = {
 export const ZOOM_SATURATION = {
   /** Saturation multiplier at minimum zoom (very desaturated/pastel) */
   MIN: 0.25,
-  /** Saturation multiplier at maximum zoom (full saturation/neon) */
-  MAX: 1,
+  /** Saturation multiplier at maximum zoom (slightly desaturated to reduce bleed on dark bg) */
+  MAX: 0.8,
 } as const;
 
 /**

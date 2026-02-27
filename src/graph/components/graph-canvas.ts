@@ -2,6 +2,12 @@ import { GraphLayoutController } from '@graph/controllers/graph-layout.controlle
 import type { RoutedEdge } from '@graph/layout/types';
 import type { ChainDisplayMode } from '@graph/signals/graph.signals';
 import type { TransitiveResult } from '@graph/utils';
+import {
+  type AnimatedValue,
+  setAnimatedTarget,
+  tickAnimationMap,
+} from '@graph/utils/canvas-animation';
+import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
 import { ViewMode } from '@shared/schemas';
@@ -113,6 +119,7 @@ export class GraphCanvas extends LitElement {
   private manualNodePositions = new Map<string, { x: number; y: number }>();
   private manualClusterPositions = new Map<string, { x: number; y: number }>();
   private pathCache = new Map<string, Path2D>();
+  private edgePathCache = new Map<string, Path2D>();
   private nodeWeights = new Map<string, number>();
   private nodeMap = new Map<string, GraphNode>();
   private connectedNodesCache: { nodeId: string; result: Set<string> } | null = null;
@@ -123,8 +130,12 @@ export class GraphCanvas extends LitElement {
   // Animation & Render State
   private animationFrameId: number | null = null;
   private time = 0;
+  private lastFrameTime = 0;
   private didInitialFit = false;
   private isAnimating = false;
+
+  // Smooth opacity transitions for selection/deselection
+  private nodeAlphaMap = new Map<string, AnimatedValue>();
 
   // Fade-out animation for removed nodes
   private fadingOutNodes = new Map<string, { node: GraphNode; startTime: number }>();
@@ -243,8 +254,9 @@ export class GraphCanvas extends LitElement {
       this.routedEdgeMapCache = null;
     }
 
-    if (changedProps.has('selectedNode')) {
+    if (changedProps.has('selectedNode') || changedProps.has('selectedCluster')) {
       this.connectedNodesCache = null;
+      this.updateNodeAlphaTargets();
     }
 
     if (changedProps.has('enableAnimation')) {
@@ -258,6 +270,7 @@ export class GraphCanvas extends LitElement {
 
     if (
       changedProps.has('selectedNode') ||
+      changedProps.has('selectedCluster') ||
       changedProps.has('viewMode') ||
       changedProps.has('chainDisplay')
     ) {
@@ -278,12 +291,36 @@ export class GraphCanvas extends LitElement {
 
   private updatePathCache() {
     this.pathCache.clear();
+    this.edgePathCache.clear();
   }
 
   private rebuildNodeMap() {
     this.nodeMap.clear();
     for (const node of this.nodes) {
       this.nodeMap.set(node.id, node);
+    }
+  }
+
+  private updateNodeAlphaTargets() {
+    const connected = this.selectedNode
+      ? getConnectedNodes(this.selectedNode.id, this.edges)
+      : null;
+    for (const node of this.nodes) {
+      const isSelected = this.selectedNode?.id === node.id;
+      const isConnected = connected?.has(node.id) ?? false;
+      const clusterId = node.project || 'External';
+      const isClusterSelected = this.selectedCluster === clusterId;
+
+      const shouldDim =
+        (!!this.selectedNode && !isSelected && !isConnected) ||
+        (!!this.selectedCluster && !isClusterSelected);
+
+      setAnimatedTarget(this.nodeAlphaMap, node.id, shouldDim ? 0.3 : 1.0);
+    }
+    // Ensure animation loop runs to process the transitions
+    if (this.nodeAlphaMap.size > 0) {
+      this.isAnimating = true;
+      this.requestRender();
     }
   }
 
@@ -450,11 +487,10 @@ export class GraphCanvas extends LitElement {
     handleMouseMove(e, this.getInteractionContext());
     this.hoveredNode = this.interactionState.hoveredNode;
 
-    // Fix #30: cursor pointer on hoverable nodes
     if (this.canvas) {
       if (this.interactionState.isDragging) {
         this.canvas.style.cursor = 'grabbing';
-      } else if (this.interactionState.hoveredNode) {
+      } else if (this.interactionState.hoveredNode || this.interactionState.hoveredCluster) {
         this.canvas.style.cursor = 'pointer';
       } else {
         this.canvas.style.cursor = 'grab';
@@ -545,11 +581,26 @@ export class GraphCanvas extends LitElement {
 
   private renderLoop = (timestamp: number) => {
     this.animationFrameId = null;
+    const dt = this.lastFrameTime > 0 ? timestamp - this.lastFrameTime : 16;
+    this.lastFrameTime = timestamp;
     this.time = timestamp;
+
+    // Tick opacity transition animations
+    const alphaAnimating = tickAnimationMap(this.nodeAlphaMap, dt);
+    if (alphaAnimating && !this.isAnimating) {
+      this.isAnimating = true;
+    }
+
     this.renderCanvas();
 
     if (this.isAnimating) {
-      this.animationFrameId = requestAnimationFrame(this.renderLoop);
+      // Re-check: if only alpha was animating and it settled, stop
+      if (!alphaAnimating) {
+        this.updateAnimatingState();
+      }
+      if (this.isAnimating) {
+        this.animationFrameId = requestAnimationFrame(this.renderLoop);
+      }
     }
   };
 
@@ -561,8 +612,12 @@ export class GraphCanvas extends LitElement {
   }
 
   private updateAnimatingState() {
-    // Always animate for starfield twinkling
-    this.isAnimating = true;
+    const hasSelectedNode = !!this.selectedNode;
+    const hasSelectedCluster = !!this.selectedCluster;
+    const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
+    const hasFadingNodes = this.fadingOutNodes.size > 0;
+
+    this.isAnimating = hasSelectedNode || hasSelectedCluster || hasCycleNodes || hasFadingNodes;
   }
 
   private renderCanvas() {
@@ -580,8 +635,8 @@ export class GraphCanvas extends LitElement {
       const cy = height / 2;
       const outerRadius = Math.hypot(cx, cy);
       const grad = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, outerRadius);
-      grad.addColorStop(0, 'rgba(30,28,24,1)');
-      grad.addColorStop(1, 'rgba(10,9,8,1)');
+      grad.addColorStop(0, this.theme.canvasBgCenter);
+      grad.addColorStop(1, this.theme.canvasBgEdge);
       this.bgGradient = grad;
       this.bgGradientWidth = width;
       this.bgGradientHeight = height;
@@ -589,7 +644,7 @@ export class GraphCanvas extends LitElement {
     this.ctx.fillStyle = this.bgGradient;
     this.ctx.fillRect(0, 0, width, height);
 
-    this.starfield.render(this.ctx, pan.x, pan.y, this.time);
+    this.starfield.render(this.ctx, pan.x, pan.y);
     this.starfield.renderVignette(this.ctx);
 
     this.ctx.save();
@@ -632,9 +687,13 @@ export class GraphCanvas extends LitElement {
         manualClusterPositions: this.manualClusterPositions,
         nodeMap: this.nodeMap,
         routedEdgeMap: this.getRoutedEdgeMap(),
+        edgePathCache: this.edgePathCache,
       },
       viewport,
     );
+
+    const weights = Array.from(this.nodeWeights.values()).sort((a, b) => a - b);
+    const hubWeightThreshold = weights[Math.floor(weights.length * 0.9)] ?? 0;
 
     renderNodes(
       {
@@ -660,6 +719,8 @@ export class GraphCanvas extends LitElement {
         manualClusterPositions: this.manualClusterPositions,
         getPathForNode: this.getPathForNode,
         connectedNodes: this.getConnectedNodesSet(),
+        hubWeightThreshold,
+        nodeAlphaMap: this.nodeAlphaMap,
       },
       viewport,
     );
@@ -687,22 +748,20 @@ export class GraphCanvas extends LitElement {
       }
 
       const alpha = 1 - elapsed / GraphCanvas.FADE_OUT_DURATION;
-      const layoutPos = this.layout.nodePositions.get(nodeId);
-      if (!layoutPos) {
+      const clusterId = node.project || 'External';
+      const pos = resolveNodeWorldPosition(
+        nodeId,
+        clusterId,
+        this.layout,
+        this.manualNodePositions,
+        this.manualClusterPositions,
+      );
+      if (!pos) {
         toRemove.push(nodeId);
         continue;
       }
 
-      const clusterPos = this.layout.clusterPositions.get(layoutPos.clusterId);
-      if (!clusterPos) {
-        toRemove.push(nodeId);
-        continue;
-      }
-
-      const manualClusterPos = this.manualClusterPositions.get(layoutPos.clusterId);
-      const manualPos = this.manualNodePositions.get(nodeId);
-      const x = (manualClusterPos?.x ?? clusterPos.x) + (manualPos?.x ?? layoutPos.x);
-      const y = (manualClusterPos?.y ?? clusterPos.y) + (manualPos?.y ?? layoutPos.y);
+      const { x, y } = pos;
       const size = getNodeSize(node, this.edges, this.nodeWeights.get(nodeId));
 
       // Draw fading node icon
@@ -740,20 +799,20 @@ export class GraphCanvas extends LitElement {
     // At higher zoom, only show if label would be truncated.
     if (this.zoom >= 0.5 && node.name.length <= 20) return;
 
-    const layoutPos = this.layout.nodePositions.get(node.id);
-    if (!layoutPos) return;
-    const clusterPos = this.layout.clusterPositions.get(layoutPos.clusterId);
-    if (!clusterPos) return;
+    const worldPos = resolveNodeWorldPosition(
+      node.id,
+      node.project || 'External',
+      this.layout,
+      this.manualNodePositions,
+      this.manualClusterPositions,
+    );
+    if (!worldPos) return;
 
-    const manualClusterPos = this.manualClusterPositions.get(layoutPos.clusterId);
-    const manualPos = this.manualNodePositions.get(node.id);
-    const worldX = (manualClusterPos?.x ?? clusterPos.x) + (manualPos?.x ?? layoutPos.x);
-    const worldY = (manualClusterPos?.y ?? clusterPos.y) + (manualPos?.y ?? layoutPos.y);
     const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
 
     const pan = this.interactionState.pan;
-    const screenX = worldX * this.zoom + pan.x;
-    const screenY = worldY * this.zoom + pan.y;
+    const screenX = worldPos.x * this.zoom + pan.x;
+    const screenY = worldPos.y * this.zoom + pan.y;
 
     const text = node.name;
     this.ctx.font = '12px var(--fonts-body, sans-serif)';
@@ -794,14 +853,16 @@ export class GraphCanvas extends LitElement {
     const layoutPos = this.layout.clusterPositions.get(clusterId);
     if (!layoutPos) return;
 
-    const manualPos = this.manualClusterPositions.get(clusterId);
-    const worldX = manualPos?.x ?? layoutPos.x;
-    const worldY = manualPos?.y ?? layoutPos.y;
+    const clusterWorldPos = resolveClusterPosition(
+      clusterId,
+      layoutPos,
+      this.manualClusterPositions,
+    );
     const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
 
     const pan = this.interactionState.pan;
-    const screenX = worldX * this.zoom + pan.x;
-    const screenY = worldY * this.zoom + pan.y;
+    const screenX = clusterWorldPos.x * this.zoom + pan.x;
+    const screenY = clusterWorldPos.y * this.zoom + pan.y;
 
     const name = cluster.name;
     const subtitle = `${cluster.nodes.length} targets`;
