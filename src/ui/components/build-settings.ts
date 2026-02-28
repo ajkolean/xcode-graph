@@ -68,9 +68,10 @@ export class GraphBuildSettings extends LitElement {
     }
 
     .title {
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-label);
-      color: var(--colors-muted-foreground);
+      font-family: var(--fonts-heading);
+      font-size: var(--font-sizes-base);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-foreground);
     }
 
     .toggle-icon {

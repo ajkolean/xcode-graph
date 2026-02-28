@@ -23,11 +23,10 @@
 import type { NodeWithEdge } from '@graph/utils/node-utils';
 import { DependencyKind, type GraphNode, Origin } from '@shared/schemas/graph.schema';
 import { type CSSResultGroup, css, html, nothing, type TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import './badge.js';
 import './list-item-row.js';
 import { NodeListEventsBase } from './node-list-events';
-import './section-header.js';
 
 /** Dependency kind colors and labels */
 const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> = {
@@ -84,6 +83,15 @@ export class GraphNodeList extends NodeListEventsBase {
   @property({ type: Boolean, attribute: 'show-kind' })
   declare showKind: boolean;
 
+  /**
+   * Whether to start expanded (default: true)
+   */
+  @property({ type: Boolean })
+  declare expanded: boolean;
+
+  @state()
+  private declare isExpanded: boolean;
+
   constructor() {
     super();
     this.title = '';
@@ -91,6 +99,13 @@ export class GraphNodeList extends NodeListEventsBase {
     this.emptyMessage = 'No items';
     this.zoom = 1;
     this.showKind = true;
+    this.expanded = true;
+    this.isExpanded = true;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.isExpanded = this.expanded;
   }
 
   // ========================================
@@ -102,6 +117,44 @@ export class GraphNodeList extends NodeListEventsBase {
       display: block;
       padding: var(--spacing-md);
       border-bottom: var(--border-widths-thin) solid var(--colors-border);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .header-title {
+      font-family: var(--fonts-heading);
+      font-size: var(--font-sizes-base);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-foreground);
+    }
+
+    .count {
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-xs);
+      color: var(--colors-foreground);
+      opacity: var(--opacity-50);
+      margin-left: var(--spacing-2);
+    }
+
+    .toggle-icon {
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
+      color: var(--colors-muted-foreground);
+      transition: transform var(--durations-fast) var(--easings-out);
+    }
+
+    .toggle-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    .content {
+      margin-top: var(--spacing-3);
     }
 
     .empty {
@@ -136,6 +189,10 @@ export class GraphNodeList extends NodeListEventsBase {
   // ========================================
   // Helpers
   // ========================================
+
+  private toggleExpanded() {
+    this.isExpanded = !this.isExpanded;
+  }
 
   private get itemList(): NodeWithEdge[] {
     // Support both new items prop and legacy nodes prop
@@ -183,38 +240,57 @@ export class GraphNodeList extends NodeListEventsBase {
   override render(): TemplateResult {
     const items = this.itemList;
     const count = items.length;
+    const countText = this.suffix ? `${count} ${this.suffix}` : `${count}`;
 
     return html`
-      <graph-section-header
-        title=${this.title}
-        count=${count}
-        suffix=${this.suffix}
-      ></graph-section-header>
+      <div class="header" @click=${this.toggleExpanded}>
+        <div>
+          <span class="header-title">${this.title}</span>
+          <span class="count">${countText}</span>
+        </div>
+        <svg
+          class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
 
       ${
-        count === 0
-          ? html`<div class="empty">${this.emptyMessage}</div>`
-          : html`
-            <div class="list">
-              ${items.map(
-                (item) => html`
-                  <div class="item-row">
-                    <div class="item-content">
-                      <graph-list-item-row
-                        .node=${item.node}
-                        subtitle=${this.getNodeSubtitle(item.node)}
-                        .zoom=${this.zoom}
-                        @row-select=${this.handleNodeSelect}
-                        @row-hover=${this.handleNodeHover}
-                        @row-hover-end=${this.handleHoverEnd}
-                      ></graph-list-item-row>
-                    </div>
-                    ${this.renderKindBadge(item)}
+        this.isExpanded
+          ? html`
+          <div class="content">
+            ${
+              count === 0
+                ? html`<div class="empty">${this.emptyMessage}</div>`
+                : html`
+                  <div class="list">
+                    ${items.map(
+                      (item) => html`
+                        <div class="item-row">
+                          <div class="item-content">
+                            <graph-list-item-row
+                              .node=${item.node}
+                              subtitle=${this.getNodeSubtitle(item.node)}
+                              .zoom=${this.zoom}
+                              @row-select=${this.handleNodeSelect}
+                              @row-hover=${this.handleNodeHover}
+                              @row-hover-end=${this.handleHoverEnd}
+                            ></graph-list-item-row>
+                          </div>
+                          ${this.renderKindBadge(item)}
+                        </div>
+                      `,
+                    )}
                   </div>
-                `,
-              )}
-            </div>
-          `
+                `
+            }
+          </div>
+        `
+          : nothing
       }
     `;
   }

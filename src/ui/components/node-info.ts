@@ -25,12 +25,25 @@ export class GraphNodeInfo extends LitElement {
   @property({ attribute: false })
   declare node: GraphNode;
 
+  @property({ type: Boolean })
+  declare expanded: boolean;
+
+  @state()
+  private declare isExpanded: boolean;
+
   @state()
   private declare scriptExpanded: boolean;
 
   constructor() {
     super();
+    this.expanded = true;
+    this.isExpanded = true;
     this.scriptExpanded = false;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.isExpanded = this.expanded;
   }
 
   // ========================================
@@ -41,7 +54,37 @@ export class GraphNodeInfo extends LitElement {
     :host {
       display: block;
       padding: var(--spacing-md);
-      margin-top: auto;
+      border-bottom: var(--border-widths-thin) solid var(--colors-border);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .header-title {
+      font-family: var(--fonts-heading);
+      font-size: var(--font-sizes-base);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-foreground);
+    }
+
+    .toggle-icon {
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
+      color: var(--colors-muted-foreground);
+      transition: transform var(--durations-fast) var(--easings-out);
+    }
+
+    .toggle-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    .content {
+      margin-top: var(--spacing-md);
     }
 
     .section {
@@ -124,6 +167,10 @@ export class GraphNodeInfo extends LitElement {
   // Helpers
   // ========================================
 
+  private toggleExpanded() {
+    this.isExpanded = !this.isExpanded;
+  }
+
   private get originLabel(): string {
     return this.node.origin === Origin.Local ? 'Local Project' : 'External Package';
   }
@@ -171,9 +218,7 @@ export class GraphNodeInfo extends LitElement {
     `;
   }
 
-  override render(): TemplateResult {
-    if (!this.node) return html``;
-
+  private renderExpandedContent(): TemplateResult {
     const showProductName = this.node.productName && this.node.productName !== this.node.name;
     const showBundleId = !!this.node.bundleId;
     const showDeploymentTargets = this.hasDeploymentTargets || this.hasDestinations;
@@ -181,67 +226,87 @@ export class GraphNodeInfo extends LitElement {
     const showResourceCount = this.node.resourceCount != null && this.node.resourceCount > 0;
 
     return html`
-      <!-- Basic Info Section -->
-      <div class="section">
-        <div class="title">Node Info</div>
-        <div class="info-rows">
-          <graph-info-row label="Platform" value=${this.node.platform}></graph-info-row>
-          <graph-info-row label="Origin" value=${this.originLabel}></graph-info-row>
-          <graph-info-row label="Type" value=${getNodeTypeLabel(this.node.type)}></graph-info-row>
-          ${
-            showProductName
-              ? html`<graph-info-row label="Product" value=${this.node.productName!}></graph-info-row>`
-              : nothing
-          }
-          ${
-            showBundleId
-              ? html`<graph-info-row label="Bundle ID">
-                <span class="bundle-id">${this.node.bundleId}</span>
-              </graph-info-row>`
-              : nothing
-          }
+      <div class="content">
+        <div class="section">
+          <div class="title">Node Info</div>
+          <div class="info-rows">
+            <graph-info-row label="Platform" value=${this.node.platform}></graph-info-row>
+            <graph-info-row label="Origin" value=${this.originLabel}></graph-info-row>
+            <graph-info-row label="Type" value=${getNodeTypeLabel(this.node.type)}></graph-info-row>
+            ${
+              showProductName
+                ? html`<graph-info-row label="Product" value=${this.node.productName!}></graph-info-row>`
+                : nothing
+            }
+            ${
+              showBundleId
+                ? html`<graph-info-row label="Bundle ID">
+                  <span class="bundle-id">${this.node.bundleId}</span>
+                </graph-info-row>`
+                : nothing
+            }
+          </div>
         </div>
+
+        ${
+          showDeploymentTargets
+            ? html`
+            <div class="section">
+              <div class="title">Platform Support</div>
+              <graph-deployment-targets
+                .deploymentTargets=${this.node.deploymentTargets}
+                .destinations=${this.node.destinations}
+              ></graph-deployment-targets>
+            </div>
+          `
+            : nothing
+        }
+
+        ${
+          showSourceCount || showResourceCount
+            ? html`
+            <div class="section">
+              <div class="title">Contents</div>
+              <div class="info-rows">
+                ${
+                  showSourceCount
+                    ? html`<graph-info-row label="Source Files" value=${String(this.node.sourceCount)}></graph-info-row>`
+                    : nothing
+                }
+                ${
+                  showResourceCount
+                    ? html`<graph-info-row label="Resources" value=${String(this.node.resourceCount)}></graph-info-row>`
+                    : nothing
+                }
+              </div>
+            </div>
+          `
+            : nothing
+        }
+
+        ${this.renderForeignBuild()}
+      </div>
+    `;
+  }
+
+  override render(): TemplateResult {
+    if (!this.node) return html``;
+
+    return html`
+      <div class="header" @click=${this.toggleExpanded}>
+        <span class="header-title">Details</span>
+        <svg
+          class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
       </div>
 
-      <!-- Deployment Targets Section -->
-      ${
-        showDeploymentTargets
-          ? html`
-          <div class="section">
-            <div class="title">Platform Support</div>
-            <graph-deployment-targets
-              .deploymentTargets=${this.node.deploymentTargets}
-              .destinations=${this.node.destinations}
-            ></graph-deployment-targets>
-          </div>
-        `
-          : nothing
-      }
-
-      <!-- File Counts Section -->
-      ${
-        showSourceCount || showResourceCount
-          ? html`
-          <div class="section">
-            <div class="title">Contents</div>
-            <div class="info-rows">
-              ${
-                showSourceCount
-                  ? html`<graph-info-row label="Source Files" value=${String(this.node.sourceCount)}></graph-info-row>`
-                  : nothing
-              }
-              ${
-                showResourceCount
-                  ? html`<graph-info-row label="Resources" value=${String(this.node.resourceCount)}></graph-info-row>`
-                  : nothing
-              }
-            </div>
-          </div>
-        `
-          : nothing
-      }
-
-      ${this.renderForeignBuild()}
+      ${this.isExpanded ? this.renderExpandedContent() : nothing}
     `;
   }
 }
