@@ -3,11 +3,12 @@
  *
  * Reusable stats card component for displaying metrics.
  * Features bold left accent border, noise texture, and monospace typography.
+ * Can be toggleable for interactive highlight controls.
  *
  * @example
  * ```html
  * <graph-stats-card label="Total" value="42"></graph-stats-card>
- * <graph-stats-card label="Selected" value="10" highlighted></graph-stats-card>
+ * <graph-stats-card label="Deps" value="10" toggleable active></graph-stats-card>
  * ```
  */
 
@@ -42,6 +43,18 @@ export class GraphStatsCard extends LitElement {
    */
   @property({ type: Boolean, attribute: 'compact' })
   declare compact: boolean;
+
+  /**
+   * Whether this card is a clickable toggle
+   */
+  @property({ type: Boolean, attribute: 'toggleable' })
+  declare toggleable: boolean;
+
+  /**
+   * Whether this toggleable card is currently active (on)
+   */
+  @property({ type: Boolean, attribute: 'active' })
+  declare active: boolean;
 
   // ========================================
   // Styles
@@ -94,6 +107,34 @@ export class GraphStatsCard extends LitElement {
       box-shadow: var(--shadows-glow-accent);
     }
 
+    /* Toggleable styles */
+    .container.toggleable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Toggleable inactive: gray/muted appearance */
+    .container.toggleable:not(.active) {
+      border-left-color: rgba(var(--colors-muted-foreground-rgb, 148, 163, 184), 0.3);
+      box-shadow: none;
+    }
+
+    .container.toggleable:not(.active):hover {
+      box-shadow: 0 0 12px rgba(var(--colors-muted-foreground-rgb, 148, 163, 184), 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Toggleable active: purple styling */
+    .container.toggleable.active {
+      border-left-color: var(--colors-primary);
+      box-shadow: inset 3px 0 8px -3px rgba(var(--colors-primary-rgb), var(--opacity-20));
+    }
+
+    .container.toggleable.active:hover {
+      box-shadow: var(--shadows-glow-primary);
+      transform: translateY(-2px);
+    }
+
     .label {
       position: relative;
       font-family: var(--fonts-mono);
@@ -108,6 +149,17 @@ export class GraphStatsCard extends LitElement {
 
     .container.highlighted .label {
       color: var(--colors-accent);
+    }
+
+    /* Toggleable inactive label: muted */
+    .container.toggleable:not(.active) .label {
+      color: var(--colors-muted-foreground);
+      opacity: 0.7;
+    }
+
+    /* Toggleable active label: primary */
+    .container.toggleable.active .label {
+      color: var(--colors-primary-text);
     }
 
     .value {
@@ -135,6 +187,11 @@ export class GraphStatsCard extends LitElement {
       text-shadow: 0 0 20px rgba(var(--colors-accent-rgb), var(--opacity-40));
     }
 
+    /* Toggleable inactive value: muted */
+    .container.toggleable:not(.active) .value {
+      color: var(--colors-muted-foreground);
+      text-shadow: none;
+    }
 
     @media (prefers-reduced-motion: reduce) {
       .container:hover {
@@ -144,12 +201,36 @@ export class GraphStatsCard extends LitElement {
   `;
 
   // ========================================
+  // Event Handlers
+  // ========================================
+
+  private handleClick() {
+    if (this.toggleable) {
+      this.dispatchEvent(
+        new CustomEvent('card-toggle', {
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
+  }
+
+  // ========================================
   // Render
   // ========================================
 
   override render(): TemplateResult {
+    const classes = [
+      'container',
+      this.highlighted ? 'highlighted' : '',
+      this.toggleable ? 'toggleable' : '',
+      this.active ? 'active' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+
     return html`
-      <div class="container ${this.highlighted ? 'highlighted' : ''}">
+      <div class="${classes}" @click=${this.handleClick}>
         <div class="label">${this.label}</div>
         <div class="value ${this.highlighted ? 'highlighted' : ''}">
           ${this.value}

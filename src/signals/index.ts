@@ -10,9 +10,7 @@
 // ==================== Graph Signals ====================
 
 export {
-  type ChainDisplayMode,
   // State signals
-  chainDisplayMode,
   circularDependencies,
   // Actions
   clearGraphData,
@@ -23,13 +21,18 @@ export {
   edges,
   type FilteredData,
   filteredData,
-  focusNode,
   hasSelection,
+  type HighlightCard,
+  highlightDirectDependents,
+  highlightDirectDeps,
+  highlightTransitiveDependents,
+  highlightTransitiveDeps,
   hoveredNode,
   nodes,
   // Reset utilities
   resetDataSignals,
   resetGraphSignals,
+  resetHighlightToggles,
   resetView,
   selectCluster,
   selectedCluster,
@@ -38,9 +41,7 @@ export {
   setCircularDependencies,
   setGraphData,
   setHoveredNode,
-  setViewMode,
-  showDependents,
-  toggleChainDisplay,
+  toggleHighlight,
   transitiveData,
   viewMode,
 } from '@graph/signals/index';

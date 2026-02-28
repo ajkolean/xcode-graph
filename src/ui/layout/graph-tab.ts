@@ -28,14 +28,16 @@ import '../components/right-sidebar';
 // Import signals
 // Import actions
 import {
-  chainDisplayMode,
+  highlightDirectDependents,
+  highlightDirectDeps,
+  highlightTransitiveDependents,
+  highlightTransitiveDeps,
   hoveredNode,
   selectCluster,
   selectedCluster,
   selectedNode,
   selectNode,
   setHoveredNode,
-  toggleChainDisplay,
   viewMode,
 } from '@graph/signals/index';
 import {
@@ -49,9 +51,6 @@ import {
   zoomIn,
   zoomOut,
 } from '@shared/signals/index';
-
-/** Computed: whether chain display is in highlight mode */
-const highlightMode = computed(() => chainDisplayMode.get() === 'highlight');
 
 /** Computed: search query with empty string fallback (avoids attribute removal) */
 const searchQueryValue = computed(() => searchQuery.get() || '');
@@ -169,10 +168,6 @@ export class GraphTab extends SignalWatcherLitElement {
     setZoom(e.detail);
   }
 
-  private handleToggleChainDisplay() {
-    toggleChainDisplay();
-  }
-
   // ========================================
   // Render
   // ========================================
@@ -189,13 +184,11 @@ export class GraphTab extends SignalWatcherLitElement {
               .nodeCount=${this.displayNodes.length}
               .edgeCount=${this.displayEdges.length}
               ?enable-animation=${watch(enableAnimation)}
-              ?highlight-mode=${watch(highlightMode)}
               @zoom-in=${this.handleZoomIn}
               @zoom-out=${this.handleZoomOut}
               @zoom-step=${this.handleZoomStep}
               @zoom-reset=${this.handleZoomReset}
               @toggle-animation=${this.handleToggleAnimation}
-              @toggle-chain-display=${this.handleToggleChainDisplay}
             ></graph-controls>
 
             <graph-canvas
@@ -206,12 +199,15 @@ export class GraphTab extends SignalWatcherLitElement {
               .hoveredNode=${Signal.subtle.untrack(() => hoveredNode.get())}
               search-query=${watch(searchQueryValue)}
               view-mode=${watch(viewMode)}
-              chain-display=${watch(chainDisplayMode)}
               .zoom=${watch(zoom)}
               ?enable-animation=${watch(enableAnimation)}
               .transitiveDeps=${this.transitiveDeps}
               .transitiveDependents=${this.transitiveDependents}
               .previewFilter=${watch(previewFilter)}
+              ?show-direct-deps=${watch(highlightDirectDeps)}
+              ?show-transitive-deps=${watch(highlightTransitiveDeps)}
+              ?show-direct-dependents=${watch(highlightDirectDependents)}
+              ?show-transitive-dependents=${watch(highlightTransitiveDependents)}
               @node-select=${this.handleNodeSelect}
               @cluster-select=${this.handleClusterSelect}
               @node-hover=${this.handleNodeHover}

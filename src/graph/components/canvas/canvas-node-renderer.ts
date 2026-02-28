@@ -26,7 +26,6 @@ export interface NodeRenderContext {
   hoveredCluster: string | null;
   searchQuery: string;
   viewMode: ViewMode;
-  chainDisplay: string;
   transitiveDeps: TransitiveResult | undefined;
   transitiveDependents: TransitiveResult | undefined;
   previewFilter: PreviewFilter | undefined;
@@ -263,58 +262,12 @@ function drawNodeLabel(
   ctx.fillText(labelText, x, labelY);
 }
 
-function getNodeChainAlpha(
-  nodeId: string,
-  isSelected: boolean,
-  isInDepsChain: boolean,
-  isInDependentsChain: boolean,
-  transitiveDeps: TransitiveResult | undefined,
-  transitiveDependents: TransitiveResult | undefined,
-): number {
-  if (isSelected) return 1.0;
-  if (!isInDepsChain && !isInDependentsChain) return 0.08;
-
-  let depth = Number.POSITIVE_INFINITY;
-  let maxDepth = 1;
-
-  if (isInDepsChain && transitiveDeps) {
-    const d = transitiveDeps.nodeDepths.get(nodeId) ?? 0;
-    if (d < depth) depth = d;
-    maxDepth = Math.max(maxDepth, transitiveDeps.maxDepth);
-  }
-  if (isInDependentsChain && transitiveDependents) {
-    const d = transitiveDependents.nodeDepths.get(nodeId) ?? 0;
-    if (d < depth) depth = d;
-    maxDepth = Math.max(maxDepth, transitiveDependents.maxDepth);
-  }
-  if (!Number.isFinite(depth)) depth = 0;
-
-  return 1.0 - (depth / maxDepth) * 0.6;
-}
-
 function resolveChainAlpha(
-  node: GraphNode,
-  isSelected: boolean,
-  isChainActive: boolean | GraphNode | null,
-  rc: NodeRenderContext,
-): number | null {
-  if (!isChainActive) return 1.0;
-
-  const isInDepsChain = rc.transitiveDeps?.nodes.has(node.id) ?? false;
-  const isInDependentsChain = rc.transitiveDependents?.nodes.has(node.id) ?? false;
-  const isInChain = isSelected || isInDepsChain || isInDependentsChain;
-
-  if (rc.chainDisplay === 'direct' && !isInChain) return null;
-  if (rc.chainDisplay === 'highlight') {
-    return getNodeChainAlpha(
-      node.id,
-      isSelected,
-      isInDepsChain,
-      isInDependentsChain,
-      rc.transitiveDeps,
-      rc.transitiveDependents,
-    );
-  }
+  _node: GraphNode,
+  _isSelected: boolean,
+  _isChainActive: boolean | GraphNode | null,
+  _rc: NodeRenderContext,
+): number {
   return 1.0;
 }
 
@@ -493,7 +446,6 @@ export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): vo
 
     const isSelected = selectedNode?.id === node.id;
     const chainAlpha = resolveChainAlpha(node, isSelected, isChainActive, rc);
-    if (chainAlpha === null) continue;
 
     renderSingleNode(node, x, y, size, isChainActive, connectedNodes, chainAlpha, rc);
   }

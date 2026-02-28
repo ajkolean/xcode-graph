@@ -20,8 +20,8 @@
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
-import { type CSSResultGroup, css, html, type TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
+import { type CSSResultGroup, css, html, nothing, type TemplateResult } from 'lit';
+import { property, state } from 'lit/decorators.js';
 import { NodeListEventsBase } from './node-list-events';
 import './list-item-row';
 
@@ -48,6 +48,26 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
   @property({ type: Number })
   declare zoom: number;
 
+  /**
+   * Whether to start expanded (default: true)
+   */
+  @property({ type: Boolean })
+  declare expanded: boolean;
+
+  @state()
+  private declare isExpanded: boolean;
+
+  constructor() {
+    super();
+    this.expanded = true;
+    this.isExpanded = true;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.isExpanded = this.expanded;
+  }
+
   // ========================================
   // Styles
   // ========================================
@@ -58,12 +78,34 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
       padding: var(--spacing-md);
     }
 
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
     .main-title {
       font-family: var(--fonts-heading);
       font-size: var(--font-sizes-base);
       font-weight: var(--font-weights-semibold);
       color: var(--colors-foreground);
-      margin-bottom: var(--spacing-md);
+    }
+
+    .toggle-icon {
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
+      color: var(--colors-muted-foreground);
+      transition: transform var(--durations-fast) var(--easings-out);
+    }
+
+    .toggle-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    .content {
+      margin-top: var(--spacing-md);
     }
 
     .sections {
@@ -98,6 +140,10 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
   // Helpers
   // ========================================
 
+  private toggleExpanded() {
+    this.isExpanded = !this.isExpanded;
+  }
+
   private getNodeStats(nodeId: string): { dependencies: number; dependents: number } {
     if (!this.edges) return { dependencies: 0, dependents: 0 };
 
@@ -130,39 +176,58 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     if (!this.nodesByType) return html``;
 
     return html`
-      <h3 class="main-title">
-        Targets (${this.filteredTargetsCount || 0}/${this.totalTargetsCount || 0})
-      </h3>
+      <div class="header" @click=${this.toggleExpanded}>
+        <span class="main-title">
+          Targets (${this.filteredTargetsCount || 0}/${this.totalTargetsCount || 0})
+        </span>
+        <svg
+          class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
 
-      <div class="sections">
-        ${Object.entries(this.nodesByType).map(
-          ([type, nodes]) => html`
-          <div class="type-section">
-            <div class="type-header">
-              ${getNodeTypeLabel(type)} (${nodes.length})
-            </div>
+      ${
+        this.isExpanded
+          ? html`
+          <div class="content">
+            <div class="sections">
+              ${Object.entries(this.nodesByType).map(
+                ([type, nodes]) => html`
+                <div class="type-section">
+                  <div class="type-header">
+                    ${getNodeTypeLabel(type)} (${nodes.length})
+                  </div>
 
-            <div class="node-list">
-              ${nodes.map((node) => {
-                const stats = this.getNodeStats(node.id);
-                const subtitle = this.formatNodeStatsSubtitle(stats);
+                  <div class="node-list">
+                    ${nodes.map((node) => {
+                      const stats = this.getNodeStats(node.id);
+                      const subtitle = this.formatNodeStatsSubtitle(stats);
 
-                return html`
-                  <graph-list-item-row
-                    .node=${node}
-                    subtitle=${subtitle || ''}
-                    .zoom=${this.zoom}
-                    @row-select=${this.handleNodeSelect}
-                    @row-hover=${this.handleNodeHover}
-                    @row-hover-end=${this.handleHoverEnd}
-                  ></graph-list-item-row>
-                `;
-              })}
+                      return html`
+                        <graph-list-item-row
+                          .node=${node}
+                          subtitle=${subtitle || ''}
+                          .zoom=${this.zoom}
+                          @row-select=${this.handleNodeSelect}
+                          @row-hover=${this.handleNodeHover}
+                          @row-hover-end=${this.handleHoverEnd}
+                        ></graph-list-item-row>
+                      `;
+                    })}
+                  </div>
+                </div>
+              `,
+              )}
             </div>
           </div>
-        `,
-        )}
-      </div>
+        `
+          : nothing
+      }
     `;
   }
 }

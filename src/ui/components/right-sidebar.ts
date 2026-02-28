@@ -40,14 +40,16 @@ import './stats-card';
 // Import signals
 // Import actions
 import {
-  focusNode,
+  highlightDirectDependents,
+  highlightDirectDeps,
+  highlightTransitiveDependents,
+  highlightTransitiveDeps,
   selectCluster,
   selectedCluster,
   selectedNode,
   selectNode,
   setHoveredNode,
-  showDependents,
-  viewMode,
+  toggleHighlight,
 } from '@graph/signals/index';
 import type { FilterState } from '@shared/schemas';
 import {
@@ -90,7 +92,10 @@ interface FilterViewOptions {
 interface ExpandedContentOptions {
   selectedNode: GraphNode | null;
   selectedCluster: string | null;
-  viewMode: string;
+  activeDirectDeps: boolean;
+  activeTransitiveDeps: boolean;
+  activeDirectDependents: boolean;
+  activeTransitiveDependents: boolean;
   zoom: number;
   filters: FilterState;
   searchQuery: string;
@@ -440,7 +445,16 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
-  private renderNodeDetails(node: GraphNode, currentViewMode: string, currentZoom: number) {
+  private renderNodeDetails(
+    node: GraphNode,
+    currentZoom: number,
+    toggleStates: {
+      activeDirectDeps: boolean;
+      activeTransitiveDeps: boolean;
+      activeDirectDependents: boolean;
+      activeTransitiveDependents: boolean;
+    },
+  ) {
     return html`
       <graph-node-details-panel
         .node=${node}
@@ -448,14 +462,19 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         .edges=${this.allEdges}
         .filteredEdges=${this.filteredEdges}
         .clusters=${this.clusters}
-        view-mode=${currentViewMode}
+        ?active-direct-deps=${toggleStates.activeDirectDeps}
+        ?active-transitive-deps=${toggleStates.activeTransitiveDeps}
+        ?active-direct-dependents=${toggleStates.activeDirectDependents}
+        ?active-transitive-dependents=${toggleStates.activeTransitiveDependents}
         .zoom=${currentZoom}
         @close=${() => selectNode(null)}
         @node-select=${(e: CustomEvent) => selectNode(e.detail.node)}
         @cluster-select=${(e: CustomEvent) => selectCluster(e.detail.clusterId)}
         @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
-        @focus-node=${(e: CustomEvent) => focusNode(e.detail.node)}
-        @show-dependents=${(e: CustomEvent) => showDependents(e.detail.node)}
+        @toggle-direct-deps=${() => toggleHighlight('direct-deps')}
+        @toggle-transitive-deps=${() => toggleHighlight('transitive-deps')}
+        @toggle-direct-dependents=${() => toggleHighlight('direct-dependents')}
+        @toggle-transitive-dependents=${() => toggleHighlight('transitive-dependents')}
       ></graph-node-details-panel>
     `;
   }
@@ -632,7 +651,10 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     const {
       selectedNode,
       selectedCluster,
-      viewMode: currentViewMode,
+      activeDirectDeps,
+      activeTransitiveDeps,
+      activeDirectDependents,
+      activeTransitiveDependents,
       zoom: currentZoom,
       filters: currentFilters,
       searchQuery: currentSearchQuery,
@@ -644,7 +666,12 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     if (selectedNode) {
       return html`
         ${this.renderBreadcrumb()}
-        ${this.renderNodeDetails(selectedNode, currentViewMode, currentZoom)}
+        ${this.renderNodeDetails(selectedNode, currentZoom, {
+          activeDirectDeps,
+          activeTransitiveDeps,
+          activeDirectDependents,
+          activeTransitiveDependents,
+        })}
       `;
     }
     if (selectedCluster) {
@@ -675,7 +702,10 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     const currentSearchQuery = searchQuery.get();
     const currentSelectedNode = selectedNode.get();
     const currentSelectedCluster = selectedCluster.get();
-    const currentViewMode = viewMode.get();
+    const currentActiveDirectDeps = highlightDirectDeps.get();
+    const currentActiveTransitiveDeps = highlightTransitiveDeps.get();
+    const currentActiveDirectDependents = highlightDirectDependents.get();
+    const currentActiveTransitiveDependents = highlightTransitiveDependents.get();
     const currentZoom = zoom.get();
     const isFiltersActive = filterData.hasActiveFilters(currentFilters);
 
@@ -720,7 +750,10 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       : this.renderExpandedContent({
           selectedNode: currentSelectedNode,
           selectedCluster: currentSelectedCluster,
-          viewMode: currentViewMode,
+          activeDirectDeps: currentActiveDirectDeps,
+          activeTransitiveDeps: currentActiveTransitiveDeps,
+          activeDirectDependents: currentActiveDirectDependents,
+          activeTransitiveDependents: currentActiveTransitiveDependents,
           zoom: currentZoom,
           filters: currentFilters,
           searchQuery: currentSearchQuery,

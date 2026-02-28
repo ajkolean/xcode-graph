@@ -2,12 +2,14 @@
  * MetricsSection Lit Component
  *
  * Displays node metrics using StatsCard components in a grid.
+ * Cards can be toggleable to control edge highlighting on the canvas.
  *
  * @example
  * ```html
  * <graph-metrics-section
  *   dependencies-count="5"
  *   total-dependencies-count="10"
+ *   active-direct-deps
  * ></graph-metrics-section>
  * ```
  */
@@ -45,6 +47,18 @@ export class GraphMetricsSection extends LitElement {
   @property({ type: Boolean, attribute: 'is-high-fan-out' })
   declare isHighFanOut: boolean;
 
+  @property({ type: Boolean, attribute: 'active-direct-deps' })
+  declare activeDirectDeps: boolean;
+
+  @property({ type: Boolean, attribute: 'active-transitive-deps' })
+  declare activeTransitiveDeps: boolean;
+
+  @property({ type: Boolean, attribute: 'active-direct-dependents' })
+  declare activeDirectDependents: boolean;
+
+  @property({ type: Boolean, attribute: 'active-transitive-dependents' })
+  declare activeTransitiveDependents: boolean;
+
   // ========================================
   // Styles
   // ========================================
@@ -71,6 +85,19 @@ export class GraphMetricsSection extends LitElement {
   `;
 
   // ========================================
+  // Event Handlers
+  // ========================================
+
+  private handleCardToggle(card: string) {
+    this.dispatchEvent(
+      new CustomEvent(card, {
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  // ========================================
   // Render
   // ========================================
 
@@ -83,24 +110,36 @@ export class GraphMetricsSection extends LitElement {
           label="Dependencies"
           value="${this.dependenciesCount}/${this.totalDependenciesCount}"
           compact
+          toggleable
+          ?active=${this.activeDirectDeps}
+          @card-toggle=${() => this.handleCardToggle('toggle-direct-deps')}
         ></graph-stats-card>
 
         <graph-stats-card
           label="Dependents"
           value="${this.dependentsCount}/${this.totalDependentsCount}"
           compact
+          toggleable
+          ?active=${this.activeDirectDependents}
+          @card-toggle=${() => this.handleCardToggle('toggle-direct-dependents')}
         ></graph-stats-card>
 
         <graph-stats-card
           label="Transitive Deps"
           value="${this.transitiveDependenciesCount}"
           compact
+          toggleable
+          ?active=${this.activeTransitiveDeps}
+          @card-toggle=${() => this.handleCardToggle('toggle-transitive-deps')}
         ></graph-stats-card>
 
         <graph-stats-card
           label="Transitive Dependents"
           value="${this.transitiveDependentsCount}"
           compact
+          toggleable
+          ?active=${this.activeTransitiveDependents}
+          @card-toggle=${() => this.handleCardToggle('toggle-transitive-dependents')}
         ></graph-stats-card>
       </div>
     `;

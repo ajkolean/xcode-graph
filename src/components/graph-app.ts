@@ -33,8 +33,6 @@ import { GraphDataService } from '@/services/graphDataService';
 import type { Graph } from '@/services/tuist-graph.schema.generated';
 import { transformTuistGraph } from '@/services/tuist-graph.service';
 import '@ui/layout/graph-tab';
-import '@ui/layout/header';
-import '@ui/layout/sidebar';
 import '@ui/components/error-notification-container';
 
 // Import signals and actions from graph module
@@ -104,18 +102,11 @@ export class GraphApp extends SignalWatcherLitElement {
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
-      flex-direction: column;
       height: 100%;
       background-color: var(--color-background);
       color: var(--color-foreground);
       font-family: var(--fonts-body);
-    }
-
-    .main-layout {
-      display: flex;
-      flex: 1;
       overflow: hidden;
-      min-height: 0;
     }
   `;
 
@@ -159,22 +150,16 @@ export class GraphApp extends SignalWatcherLitElement {
     const filtered = filteredData.get();
 
     return html`
-      <graph-header></graph-header>
-
-      <div class="main-layout">
-        <graph-sidebar active-tab="graph" collapsed></graph-sidebar>
-
-        <graph-tab
-          .displayNodes=${display.filteredNodes}
-          .displayEdges=${display.filteredEdges}
-          .filteredNodes=${filtered.filteredNodes}
-          .filteredEdges=${filtered.filteredEdges}
-          .allNodes=${allNodes.get()}
-          .allEdges=${allEdges.get()}
-          .transitiveDeps=${display.transitiveDeps}
-          .transitiveDependents=${display.transitiveDependents}
-        ></graph-tab>
-      </div>
+      <graph-tab
+        .displayNodes=${display.filteredNodes}
+        .displayEdges=${display.filteredEdges}
+        .filteredNodes=${filtered.filteredNodes}
+        .filteredEdges=${filtered.filteredEdges}
+        .allNodes=${allNodes.get()}
+        .allEdges=${allEdges.get()}
+        .transitiveDeps=${display.transitiveDeps}
+        .transitiveDependents=${display.transitiveDependents}
+      ></graph-tab>
 
       <graph-error-notification-container></graph-error-notification-container>
     `;

@@ -66,9 +66,6 @@ export class GraphControls extends LitElement {
   @property({ type: Number, attribute: 'edge-count' })
   declare edgeCount: number;
 
-  @property({ type: Boolean, attribute: 'highlight-mode' })
-  declare highlightMode: boolean;
-
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
@@ -208,10 +205,6 @@ export class GraphControls extends LitElement {
     this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }));
   }
 
-  private handleToggleHighlight() {
-    this.dispatchEvent(new CustomEvent('toggle-chain-display', { bubbles: true, composed: true }));
-  }
-
   private handleWheel(e: WheelEvent) {
     // Stop wheel events from propagating to the canvas
     e.stopPropagation();
@@ -251,14 +244,6 @@ export class GraphControls extends LitElement {
             ${unsafeHTML(icons.Focus)}
           </button>
         </div>
-        <div class="divider"></div>
-        <button
-          class="zoom-button ${this.highlightMode ? 'active' : ''}"
-          @click=${this.handleToggleHighlight}
-          title="${this.highlightMode ? 'Switch to direct filter' : 'Switch to depth highlighting'}"
-        >
-          ${unsafeHTML(icons.Layers)}
-        </button>
         <div class="divider"></div>
         <span class="hint">Scroll zoom · Drag pan · Click select · ⇧Click clusters</span>
       </div>

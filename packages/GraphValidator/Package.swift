@@ -10,7 +10,7 @@ let package = Package(
         .executable(name: "transform-graph", targets: ["TransformGraph"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/tuist/XcodeGraph.git", from: "1.29.40"),
+        .package(url: "https://github.com/tuist/XcodeGraph.git", exact: "1.34.5"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0"),
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0"),
     ],

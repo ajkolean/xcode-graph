@@ -22,17 +22,35 @@ export const selectedCluster: Signal.State<string | null> = signal<string | null
 /** Currently hovered node ID (null if none) */
 export const hoveredNode: Signal.State<string | null> = signal<string | null>(null);
 
-/** Current graph visualization mode */
-export const viewMode: Signal.State<ViewMode> = signal<ViewMode>(ViewMode.Full);
-
 /** Detected circular dependency paths */
 export const circularDependencies: Signal.State<string[][]> = signal<string[][]>([]);
 
-/** Chain display mode: 'direct' filters to chain only, 'highlight' shows all with depth-based alpha */
-export type ChainDisplayMode = 'direct' | 'highlight';
-export const chainDisplayMode: Signal.State<ChainDisplayMode> = signal<ChainDisplayMode>('direct');
+// ==================== Highlight Toggle Signals ====================
+
+/** Whether direct dependencies are highlighted */
+export const highlightDirectDeps: Signal.State<boolean> = signal<boolean>(false);
+
+/** Whether transitive dependencies are highlighted */
+export const highlightTransitiveDeps: Signal.State<boolean> = signal<boolean>(false);
+
+/** Whether direct dependents are highlighted */
+export const highlightDirectDependents: Signal.State<boolean> = signal<boolean>(false);
+
+/** Whether transitive dependents are highlighted */
+export const highlightTransitiveDependents: Signal.State<boolean> = signal<boolean>(false);
 
 // ==================== Computed Signals ====================
+
+/** Current graph visualization mode, derived from highlight toggles */
+export const viewMode: Signal.Computed<ViewMode> = new Signal.Computed(() => {
+  const anyDeps = highlightDirectDeps.get() || highlightTransitiveDeps.get();
+  const anyDependents = highlightDirectDependents.get() || highlightTransitiveDependents.get();
+
+  if (anyDeps && anyDependents) return ViewMode.Both;
+  if (anyDeps) return ViewMode.Focused;
+  if (anyDependents) return ViewMode.Dependents;
+  return ViewMode.Full;
+});
 
 /** Check if any node or cluster is currently selected */
 export const hasSelection: Signal.Computed<boolean> = new Signal.Computed(
@@ -58,7 +76,9 @@ export function resetGraphSignals(): void {
   selectedNode.set(null);
   selectedCluster.set(null);
   hoveredNode.set(null);
-  viewMode.set(ViewMode.Full);
+  highlightDirectDeps.set(false);
+  highlightTransitiveDeps.set(false);
+  highlightDirectDependents.set(false);
+  highlightTransitiveDependents.set(false);
   circularDependencies.set([]);
-  chainDisplayMode.set('direct');
 }

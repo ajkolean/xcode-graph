@@ -9,22 +9,23 @@
 // ==================== Graph Signals ====================
 
 export {
-  focusNode,
+  type HighlightCard,
+  resetHighlightToggles,
   resetView,
   selectCluster,
   selectNode,
   setCircularDependencies,
   setHoveredNode,
-  setViewMode,
-  showDependents,
-  toggleChainDisplay,
+  toggleHighlight,
 } from './graph.actions';
 export {
-  type ChainDisplayMode,
-  chainDisplayMode,
   circularDependencies,
   createIsNodeSelected,
   hasSelection,
+  highlightDirectDependents,
+  highlightDirectDeps,
+  highlightTransitiveDependents,
+  highlightTransitiveDeps,
   hoveredNode,
   resetGraphSignals,
   selectedCluster,

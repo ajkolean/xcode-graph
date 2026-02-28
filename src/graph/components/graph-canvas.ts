@@ -1,6 +1,5 @@
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { RoutedEdge } from '@graph/layout/types';
-import type { ChainDisplayMode } from '@graph/signals/graph.signals';
 import type { TransitiveResult } from '@graph/utils';
 import {
   type AnimatedValue,
@@ -71,9 +70,6 @@ export class GraphCanvas extends LitElement {
   @property({ type: String, attribute: 'view-mode' })
   declare viewMode: ViewMode;
 
-  @property({ type: String, attribute: 'chain-display' })
-  declare chainDisplay: ChainDisplayMode;
-
   @property({ type: Number })
   declare zoom: number;
 
@@ -88,6 +84,18 @@ export class GraphCanvas extends LitElement {
 
   @property({ attribute: false })
   declare previewFilter: PreviewFilter | undefined;
+
+  @property({ type: Boolean, attribute: 'show-direct-deps' })
+  declare showDirectDeps: boolean;
+
+  @property({ type: Boolean, attribute: 'show-transitive-deps' })
+  declare showTransitiveDeps: boolean;
+
+  @property({ type: Boolean, attribute: 'show-direct-dependents' })
+  declare showDirectDependents: boolean;
+
+  @property({ type: Boolean, attribute: 'show-transitive-dependents' })
+  declare showTransitiveDependents: boolean;
 
   // ========================================
   // Internal State & Controllers
@@ -158,9 +166,12 @@ export class GraphCanvas extends LitElement {
     this.hoveredNode = null;
     this.searchQuery = '';
     this.viewMode = ViewMode.Full;
-    this.chainDisplay = 'direct';
     this.zoom = 1;
     this.enableAnimation = false;
+    this.showDirectDeps = false;
+    this.showTransitiveDeps = false;
+    this.showDirectDependents = false;
+    this.showTransitiveDependents = false;
   }
 
   // ========================================
@@ -271,8 +282,7 @@ export class GraphCanvas extends LitElement {
     if (
       changedProps.has('selectedNode') ||
       changedProps.has('selectedCluster') ||
-      changedProps.has('viewMode') ||
-      changedProps.has('chainDisplay')
+      changedProps.has('viewMode')
     ) {
       this.updateAnimatingState();
     }
@@ -617,7 +627,14 @@ export class GraphCanvas extends LitElement {
     const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
     const hasFadingNodes = this.fadingOutNodes.size > 0;
 
-    this.isAnimating = hasSelectedNode || hasSelectedCluster || hasCycleNodes || hasFadingNodes;
+    const hasAlphaAnimations = this.nodeAlphaMap.size > 0;
+
+    this.isAnimating =
+      hasSelectedNode ||
+      hasSelectedCluster ||
+      hasCycleNodes ||
+      hasFadingNodes ||
+      hasAlphaAnimations;
   }
 
   private renderCanvas() {
@@ -680,7 +697,6 @@ export class GraphCanvas extends LitElement {
         selectedCluster: this.selectedCluster,
         hoveredCluster: this.interactionState.hoveredCluster,
         viewMode: this.viewMode,
-        chainDisplay: this.chainDisplay,
         transitiveDeps: this.transitiveDeps,
         transitiveDependents: this.transitiveDependents,
         manualNodePositions: this.manualNodePositions,
@@ -688,6 +704,10 @@ export class GraphCanvas extends LitElement {
         nodeMap: this.nodeMap,
         routedEdgeMap: this.getRoutedEdgeMap(),
         edgePathCache: this.edgePathCache,
+        showDirectDeps: this.showDirectDeps,
+        showTransitiveDeps: this.showTransitiveDeps,
+        showDirectDependents: this.showDirectDependents,
+        showTransitiveDependents: this.showTransitiveDependents,
       },
       viewport,
     );
@@ -710,7 +730,6 @@ export class GraphCanvas extends LitElement {
         hoveredCluster: this.interactionState.hoveredCluster,
         searchQuery: this.searchQuery,
         viewMode: this.viewMode,
-        chainDisplay: this.chainDisplay,
         transitiveDeps: this.transitiveDeps,
         transitiveDependents: this.transitiveDependents,
         previewFilter: this.previewFilter,
@@ -721,6 +740,10 @@ export class GraphCanvas extends LitElement {
         connectedNodes: this.getConnectedNodesSet(),
         hubWeightThreshold,
         nodeAlphaMap: this.nodeAlphaMap,
+        showDirectDeps: this.showDirectDeps,
+        showTransitiveDeps: this.showTransitiveDeps,
+        showDirectDependents: this.showDirectDependents,
+        showTransitiveDependents: this.showTransitiveDependents,
       },
       viewport,
     );

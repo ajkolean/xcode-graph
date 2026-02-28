@@ -7,16 +7,25 @@
  * @module signals/graph.actions
  */
 
-import { ViewMode } from '@shared/schemas/app.schema';
 import type { GraphNode } from '@shared/schemas/graph.schema';
 import {
-  chainDisplayMode,
   circularDependencies,
+  highlightDirectDependents,
+  highlightDirectDeps,
+  highlightTransitiveDependents,
+  highlightTransitiveDeps,
   hoveredNode,
   selectedCluster,
   selectedNode,
-  viewMode,
 } from './graph.signals';
+
+// ==================== Highlight Toggle Types ====================
+
+export type HighlightCard =
+  | 'direct-deps'
+  | 'transitive-deps'
+  | 'direct-dependents'
+  | 'transitive-dependents';
 
 // ==================== Basic Actions ====================
 
@@ -28,7 +37,7 @@ export function selectNode(node: GraphNode | null): void {
   selectedNode.set(node);
   selectedCluster.set(null);
   if (!node) {
-    viewMode.set(ViewMode.Full);
+    resetHighlightToggles();
   }
 }
 
@@ -39,7 +48,7 @@ export function selectNode(node: GraphNode | null): void {
 export function selectCluster(clusterId: string | null): void {
   selectedCluster.set(clusterId);
   selectedNode.set(null);
-  viewMode.set(ViewMode.Full);
+  resetHighlightToggles();
 }
 
 /**
@@ -65,14 +74,6 @@ export function setHoveredNode(nodeId: string | null): void {
 }
 
 /**
- * Change the view mode
- * @param mode - The new view mode
- */
-export function setViewMode(mode: ViewMode): void {
-  viewMode.set(mode);
-}
-
-/**
  * Update detected circular dependencies
  * @param cycles - Array of circular dependency paths
  */
@@ -80,64 +81,40 @@ export function setCircularDependencies(cycles: string[][]): void {
   circularDependencies.set(cycles);
 }
 
+// ==================== Highlight Toggle Actions ====================
+
+/**
+ * Toggle a highlight card on/off
+ * @param card - Which highlight card to toggle
+ */
+export function toggleHighlight(card: HighlightCard): void {
+  switch (card) {
+    case 'direct-deps':
+      highlightDirectDeps.set(!highlightDirectDeps.get());
+      break;
+    case 'transitive-deps':
+      highlightTransitiveDeps.set(!highlightTransitiveDeps.get());
+      break;
+    case 'direct-dependents':
+      highlightDirectDependents.set(!highlightDirectDependents.get());
+      break;
+    case 'transitive-dependents':
+      highlightTransitiveDependents.set(!highlightTransitiveDependents.get());
+      break;
+  }
+}
+
+/**
+ * Reset all highlight toggles to false
+ */
+export function resetHighlightToggles(): void {
+  highlightDirectDeps.set(false);
+  highlightTransitiveDeps.set(false);
+  highlightDirectDependents.set(false);
+  highlightTransitiveDependents.set(false);
+}
+
 // ==================== Complex Actions ====================
-
-/**
- * Focus on a node with view mode cycling
- *
- * When clicking the same node repeatedly, cycles through:
- * focused -> full -> both (if coming from dependents)
- *
- * @param node - The node to focus on
- */
-export function focusNode(node: GraphNode): void {
-  const currentViewMode = viewMode.get();
-  const currentSelectedNode = selectedNode.get();
-
-  let newMode: ViewMode = ViewMode.Focused;
-
-  if (currentSelectedNode?.id === node.id) {
-    if (currentViewMode === ViewMode.Focused) newMode = ViewMode.Full;
-    else if (currentViewMode === ViewMode.Both) newMode = ViewMode.Dependents;
-    else if (currentViewMode === ViewMode.Dependents) newMode = ViewMode.Both;
-  }
-
-  selectedNode.set(node);
-  selectedCluster.set(null);
-  viewMode.set(newMode);
-}
-
-/**
- * Show dependents of a node with view mode cycling
- *
- * When clicking the same node repeatedly, cycles through:
- * dependents -> full -> both (if coming from focused)
- *
- * @param node - The node to show dependents for
- */
-export function showDependents(node: GraphNode): void {
-  const currentViewMode = viewMode.get();
-  const currentSelectedNode = selectedNode.get();
-
-  let newMode: ViewMode = ViewMode.Dependents;
-
-  if (currentSelectedNode?.id === node.id) {
-    if (currentViewMode === ViewMode.Dependents) newMode = ViewMode.Full;
-    else if (currentViewMode === ViewMode.Both) newMode = ViewMode.Focused;
-    else if (currentViewMode === ViewMode.Focused) newMode = ViewMode.Both;
-  }
-
-  selectedNode.set(node);
-  selectedCluster.set(null);
-  viewMode.set(newMode);
-}
-
-/**
- * Toggle chain display mode between 'direct' and 'highlight'
- */
-export function toggleChainDisplay(): void {
-  chainDisplayMode.set(chainDisplayMode.get() === 'direct' ? 'highlight' : 'direct');
-}
 
 /**
  * Reset to full view with no selection
@@ -145,5 +122,5 @@ export function toggleChainDisplay(): void {
 export function resetView(): void {
   selectedNode.set(null);
   selectedCluster.set(null);
-  viewMode.set(ViewMode.Full);
+  resetHighlightToggles();
 }

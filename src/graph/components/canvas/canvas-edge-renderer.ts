@@ -22,7 +22,6 @@ export interface EdgeRenderContext {
   selectedCluster: string | null;
   hoveredCluster: string | null;
   viewMode: ViewMode;
-  chainDisplay: string;
   transitiveDeps: TransitiveResult | undefined;
   transitiveDependents: TransitiveResult | undefined;
   manualNodePositions: Map<string, { x: number; y: number }>;
@@ -30,6 +29,10 @@ export interface EdgeRenderContext {
   nodeMap: Map<string, GraphNode>;
   routedEdgeMap: Map<string, RoutedEdge>;
   edgePathCache: Map<string, Path2D>;
+  showDirectDeps: boolean;
+  showTransitiveDeps: boolean;
+  showDirectDependents: boolean;
+  showTransitiveDependents: boolean;
 }
 
 function resolveEdgeEndpoints(
@@ -111,7 +114,7 @@ function isCycleEdge(edge: GraphEdge, layout: GraphLayoutController): boolean {
 function resolveEdgeColor(
   sourceNode: GraphNode,
   targetNode: GraphNode,
-  isHighlighted: boolean,
+  isEmphasized: boolean,
   isCycle: boolean,
   selectedNode: GraphNode | null,
   zoom: number,
@@ -120,67 +123,31 @@ function resolveEdgeColor(
   if (isCycle) return theme.cycleEdgeColor;
 
   const colorNode =
-    isHighlighted && selectedNode
+    isEmphasized && selectedNode
       ? sourceNode.id === selectedNode.id
         ? targetNode
         : sourceNode
       : targetNode;
   const color = getNodeTypeColorFromTheme(colorNode.type, theme);
 
-  return isHighlighted ? color : adjustColorForZoom(color, zoom);
+  return isEmphasized ? color : adjustColorForZoom(color, zoom);
 }
 
-function computeEdgeDepthOpacity(
-  edgeKey: string,
-  chain: { edges: Set<string>; edgeDepths: Map<string, number>; maxDepth: number },
-): number {
-  const depth = chain.edgeDepths.get(edgeKey) || 0;
-  const maxDepth = chain.maxDepth || 1;
-  return 1 - (depth / maxDepth) * 0.7;
-}
-
-function getEdgeOpacity(edgeKey: string, rc: EdgeRenderContext): number {
-  const { transitiveDeps, transitiveDependents } = rc;
-
-  const inDepsChain = transitiveDeps?.edges.has(edgeKey);
-  const inDependentsChain = transitiveDependents?.edges.has(edgeKey);
-
-  if (rc.viewMode === 'focused' && inDepsChain && transitiveDeps) {
-    return computeEdgeDepthOpacity(edgeKey, transitiveDeps);
+/** Get the minimum edge depth across active chains (deps/dependents) */
+function getChainEdgeDepth(edgeKey: string, rc: EdgeRenderContext): number {
+  let depth = Number.POSITIVE_INFINITY;
+  if (rc.transitiveDeps?.edges.has(edgeKey)) {
+    depth = Math.min(depth, rc.transitiveDeps.edgeDepths.get(edgeKey) ?? 0);
   }
-
-  if (rc.viewMode === 'dependents' && inDependentsChain && transitiveDependents) {
-    return computeEdgeDepthOpacity(edgeKey, transitiveDependents);
+  if (rc.transitiveDependents?.edges.has(edgeKey)) {
+    depth = Math.min(depth, rc.transitiveDependents.edgeDepths.get(edgeKey) ?? 0);
   }
-
-  if (rc.viewMode === 'both') {
-    if (inDepsChain && transitiveDeps) {
-      return computeEdgeDepthOpacity(edgeKey, transitiveDeps);
-    }
-    if (inDependentsChain && transitiveDependents) {
-      return computeEdgeDepthOpacity(edgeKey, transitiveDependents);
-    }
-  }
-
-  return 1;
-}
-
-function getChainHighlightOpacity(
-  edgeKey: string,
-  isHighlighted: boolean,
-  inChain: boolean,
-  rc: EdgeRenderContext,
-): number {
-  if (inChain) {
-    return isHighlighted ? 1.0 : getEdgeOpacity(edgeKey, rc) * 0.8;
-  }
-  return 0.03;
+  return Number.isFinite(depth) ? depth : 0;
 }
 
 /** Progressive edge disclosure: fade edges at low zoom levels */
-function getZoomOpacityFactor(zoom: number, isHighlighted: boolean): number {
-  // Always show highlighted/selected edges at full opacity
-  if (isHighlighted) return 1.0;
+function getZoomOpacityFactor(zoom: number, isEmphasized: boolean): number {
+  if (isEmphasized) return 1.0;
   if (zoom < 0.3) return 0;
   if (zoom < 0.6) return (zoom - 0.3) / 0.3;
   return 1.0;
@@ -194,17 +161,21 @@ function computeEdgeOpacity(
   isCycle: boolean,
   rc: EdgeRenderContext,
 ): number {
-  const zoomFactor = getZoomOpacityFactor(rc.zoom, isHighlighted);
+  const isEmphasized = isHighlighted || (isChainActive && inChain);
+  const zoomFactor = getZoomOpacityFactor(rc.zoom, isEmphasized);
   if (zoomFactor === 0) return 0;
+
+  // Chain edges: direct (depth 0) = full opacity, transitive (depth >= 1) = 50%
+  if (isChainActive && inChain) {
+    const depth = getChainEdgeDepth(edgeKey, rc);
+    const chainAlpha = depth === 0 ? 1.0 : 0.5;
+    return Math.min(1, chainAlpha * zoomFactor);
+  }
 
   const baseOpacity = isHighlighted ? 1.0 : 0.25;
   const cycleOpacity = isCycle ? Math.max(baseOpacity, 0.8) : baseOpacity;
 
-  if (isChainActive && rc.chainDisplay === 'highlight') {
-    return Math.min(1, getChainHighlightOpacity(edgeKey, isHighlighted, inChain, rc) * zoomFactor);
-  }
-
-  return Math.min(1, cycleOpacity * getEdgeOpacity(edgeKey, rc) * zoomFactor);
+  return Math.min(1, cycleOpacity * zoomFactor);
 }
 
 function drawRoutedEdgePath(
@@ -290,10 +261,11 @@ function applyEdgeStyle(
   isCrossCluster: boolean,
   rc: EdgeRenderContext,
 ) {
+  const isEmphasized = isHighlighted || (isChainActive && inChain);
   ctx.strokeStyle = resolveEdgeColor(
     sourceNode,
     targetNode,
-    isHighlighted,
+    isEmphasized,
     cycleEdge,
     rc.selectedNode,
     rc.zoom,
@@ -307,9 +279,8 @@ function applyEdgeStyle(
     cycleEdge,
     rc,
   );
-  ctx.lineWidth = (isHighlighted ? 2.5 : cycleEdge ? 2 : 1) / rc.zoom;
-  const animateEdge =
-    isHighlighted || (isChainActive && rc.chainDisplay === 'highlight' && inChain);
+  ctx.lineWidth = (isEmphasized ? 2.5 : cycleEdge ? 2 : 1) / rc.zoom;
+  const animateEdge = isEmphasized;
 
   // Highlighted/chain edges always get marching-ants dashes for directional flow;
   // non-highlighted: cross-cluster dashed, intra-cluster solid, cycle always dashed
@@ -389,18 +360,20 @@ function renderSingleEdge(
   inChain: boolean,
   rc: EdgeRenderContext,
 ) {
-  // Skip non-highlighted edges entirely at very low zoom
-  if (!isHighlighted && rc.zoom < 0.3) return;
+  const isEmphasized = isHighlighted || (isChainActive && inChain);
+
+  // Skip non-emphasized edges entirely at very low zoom
+  if (!isEmphasized && rc.zoom < 0.3) return;
 
   const endpoints = resolveEdgeEndpoints(edge, rc);
   if (!endpoints) return;
-  if (!isEdgeVisible(endpoints, viewport, isHighlighted, rc)) return;
+  if (!isEdgeVisible(endpoints, viewport, isEmphasized, rc)) return;
 
   const isCrossCluster = endpoints.sourceClusterId !== endpoints.targetClusterId;
   const cycleEdge = isCycleEdge(edge, rc.layout);
 
-  // Glow pass behind highlighted edges
-  if (isHighlighted) {
+  // Glow pass behind emphasized edges (highlighted or chain)
+  if (isEmphasized) {
     const glowColor = resolveEdgeColor(
       endpoints.sourceNode,
       endpoints.targetNode,
@@ -412,7 +385,14 @@ function renderSingleEdge(
     );
     rc.ctx.save();
     rc.ctx.strokeStyle = glowColor;
-    rc.ctx.globalAlpha = 0.15;
+    // Chain edges scale glow with their opacity (direct=full, transitive=dimmer)
+    const glowAlpha =
+      isChainActive && inChain && !isHighlighted
+        ? getChainEdgeDepth(edgeKey, rc) === 0
+          ? 0.15
+          : 0.08
+        : 0.15;
+    rc.ctx.globalAlpha = glowAlpha;
     rc.ctx.lineWidth = 6 / rc.zoom;
     rc.ctx.setLineDash([]);
     drawEdgePath(edgeKey, endpoints, isCrossCluster, true, rc);
@@ -432,10 +412,10 @@ function renderSingleEdge(
     rc,
   );
 
-  drawEdgePath(edgeKey, endpoints, isCrossCluster, isHighlighted, rc);
+  drawEdgePath(edgeKey, endpoints, isCrossCluster, isEmphasized, rc);
 
-  // Draw arrowhead at target end for highlighted edges
-  if (isHighlighted) {
+  // Draw arrowhead at target end for emphasized edges
+  if (isEmphasized) {
     drawArrowhead(rc.ctx, endpoints.x2, endpoints.y2, endpoints.x1, endpoints.y1, rc.zoom);
   } else if (rc.zoom > 0.5) {
     drawArrowhead(rc.ctx, endpoints.x2, endpoints.y2, endpoints.x1, endpoints.y1, rc.zoom, false);
@@ -467,10 +447,6 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
         rc.nodeMap.get(edge.target)?.project === rc.selectedCluster);
 
     const isHighlighted = isConnectedToSelected || isConnectedToSelectedCluster;
-
-    if (isChainActive && rc.chainDisplay === 'direct' && !inChain && !isConnectedToSelected) {
-      continue;
-    }
 
     renderSingleEdge(edge, edgeKey, viewport, isHighlighted, !!isChainActive, inChain, rc);
   }

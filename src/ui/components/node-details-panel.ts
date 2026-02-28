@@ -14,7 +14,7 @@
  * ></graph-node-details-panel>
  * ```
  *
- * @fires close, node-select, cluster-select, node-hover, focus-node, show-dependents
+ * @fires close, node-select, cluster-select, node-hover, toggle-direct-deps, toggle-transitive-deps, toggle-direct-dependents, toggle-transitive-dependents
  */
 
 import { computeNodeDependencies } from '@graph/utils/node-utils';
@@ -24,7 +24,6 @@ import './build-settings.js';
 import './metrics-section';
 import './node-header';
 import './node-info';
-import './node-actions';
 import './node-list.js';
 import type { Cluster } from '@shared/schemas';
 
@@ -35,7 +34,10 @@ export class GraphNodeDetailsPanel extends LitElement {
     edges: { attribute: false },
     filteredEdges: { attribute: false },
     clusters: { attribute: false },
-    viewMode: { type: String, attribute: 'view-mode' },
+    activeDirectDeps: { type: Boolean, attribute: 'active-direct-deps' },
+    activeTransitiveDeps: { type: Boolean, attribute: 'active-transitive-deps' },
+    activeDirectDependents: { type: Boolean, attribute: 'active-direct-dependents' },
+    activeTransitiveDependents: { type: Boolean, attribute: 'active-transitive-dependents' },
     zoom: { type: Number },
   };
 
@@ -53,7 +55,13 @@ export class GraphNodeDetailsPanel extends LitElement {
 
   declare clusters: Cluster[] | undefined;
 
-  declare viewMode: string;
+  declare activeDirectDeps: boolean;
+
+  declare activeTransitiveDeps: boolean;
+
+  declare activeDirectDependents: boolean;
+
+  declare activeTransitiveDependents: boolean;
 
   declare zoom: number;
 
@@ -149,14 +157,15 @@ export class GraphNodeDetailsPanel extends LitElement {
         transitive-dependents-count=${metrics.transitiveDependentCount}
         ?is-high-fan-in=${metrics.isHighFanIn}
         ?is-high-fan-out=${metrics.isHighFanOut}
+        ?active-direct-deps=${this.activeDirectDeps}
+        ?active-transitive-deps=${this.activeTransitiveDeps}
+        ?active-direct-dependents=${this.activeDirectDependents}
+        ?active-transitive-dependents=${this.activeTransitiveDependents}
+        @toggle-direct-deps=${() => this.bubbleEvent('toggle-direct-deps')}
+        @toggle-transitive-deps=${() => this.bubbleEvent('toggle-transitive-deps')}
+        @toggle-direct-dependents=${() => this.bubbleEvent('toggle-direct-dependents')}
+        @toggle-transitive-dependents=${() => this.bubbleEvent('toggle-transitive-dependents')}
       ></graph-metrics-section>
-
-      <graph-node-actions
-        .node=${this.node}
-        view-mode=${this.viewMode}
-        @focus-node=${(e: CustomEvent) => this.bubbleEvent('focus-node', e.detail)}
-        @show-dependents=${(e: CustomEvent) => this.bubbleEvent('show-dependents', e.detail)}
-      ></graph-node-actions>
 
       <graph-node-info .node=${this.node}></graph-node-info>
 
