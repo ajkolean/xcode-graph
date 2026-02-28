@@ -45,6 +45,12 @@ export class GraphClusterDetailsPanel extends LitElement {
   @property({ attribute: false })
   declare filteredEdges: GraphEdge[] | undefined;
 
+  @property({ type: Boolean, attribute: 'active-direct-deps' })
+  declare activeDirectDeps: boolean;
+
+  @property({ type: Boolean, attribute: 'active-direct-dependents' })
+  declare activeDirectDependents: boolean;
+
   @property({ type: Number })
   declare zoom: number;
 
@@ -138,6 +144,8 @@ export class GraphClusterDetailsPanel extends LitElement {
           total-dependencies=${this.stats.totalDependencies}
           filtered-dependents=${this.stats.filteredDependents}
           total-dependents=${this.stats.totalDependents}
+          ?active-direct-deps=${this.activeDirectDeps}
+          ?active-direct-dependents=${this.activeDirectDependents}
           .platforms=${this.stats.platforms}
           .targetBreakdown=${this.targetBreakdown}
         ></graph-cluster-stats>

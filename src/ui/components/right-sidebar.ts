@@ -458,7 +458,14 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
-  private renderClusterDetails(clusterId: string, currentZoom: number) {
+  private renderClusterDetails(
+    clusterId: string,
+    currentZoom: number,
+    toggleStates: {
+      activeDirectDeps: boolean;
+      activeDirectDependents: boolean;
+    },
+  ) {
     return html`
       <graph-cluster-details-panel
         .cluster=${this.findClusterById(clusterId)}
@@ -468,10 +475,14 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         .allNodes=${this.allNodes}
         .edges=${this.allEdges}
         .filteredEdges=${this.filteredEdges}
+        ?active-direct-deps=${toggleStates.activeDirectDeps}
+        ?active-direct-dependents=${toggleStates.activeDirectDependents}
         .zoom=${currentZoom}
         @close=${() => selectCluster(null)}
         @node-select=${(e: CustomEvent) => selectNode(e.detail.node)}
         @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
+        @toggle-direct-deps=${() => toggleHighlight('direct-deps')}
+        @toggle-direct-dependents=${() => toggleHighlight('direct-dependents')}
       ></graph-cluster-details-panel>
     `;
   }
@@ -656,7 +667,10 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     if (selectedCluster) {
       return html`
         ${this.renderBreadcrumb()}
-        ${this.renderClusterDetails(selectedCluster, currentZoom)}
+        ${this.renderClusterDetails(selectedCluster, currentZoom, {
+          activeDirectDeps,
+          activeDirectDependents,
+        })}
       `;
     }
     return this.renderFilterView({

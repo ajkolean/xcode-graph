@@ -465,12 +465,10 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
     const edgeKey = `${edge.source}->${edge.target}`;
     const inChain = isChainActive && isEdgeInActiveChain(edgeKey, rc);
 
-    const isConnectedToSelectedCluster =
+    const isHighlighted =
       rc.selectedCluster != null &&
-      (rc.nodeMap.get(edge.source)?.project === rc.selectedCluster ||
-        rc.nodeMap.get(edge.target)?.project === rc.selectedCluster);
-
-    const isHighlighted = isConnectedToSelectedCluster;
+      ((rc.showDirectDeps && rc.nodeMap.get(edge.source)?.project === rc.selectedCluster) ||
+        (rc.showDirectDependents && rc.nodeMap.get(edge.target)?.project === rc.selectedCluster));
 
     renderSingleEdge(edge, edgeKey, viewport, isHighlighted, isChainActive, inChain, rc);
   }

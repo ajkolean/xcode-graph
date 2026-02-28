@@ -54,7 +54,14 @@ export function selectNode(node: GraphNode | null): void {
 export function selectCluster(clusterId: string | null): void {
   selectedCluster.set(clusterId);
   selectedNode.set(null);
-  resetHighlightToggles();
+  if (clusterId) {
+    highlightDirectDeps.set(true);
+    highlightDirectDependents.set(true);
+    highlightTransitiveDeps.set(false);
+    highlightTransitiveDependents.set(false);
+  } else {
+    resetHighlightToggles();
+  }
 }
 
 /**

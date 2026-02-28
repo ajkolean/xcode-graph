@@ -132,12 +132,23 @@ describe('graph.actions', () => {
       expect(selectedNode.get()).toBeNull();
     });
 
-    it('should reset highlight toggles when selecting cluster', () => {
-      highlightDirectDeps.set(true);
-
+    it('should auto-enable direct deps and dependents when selecting a cluster', () => {
       selectCluster('cluster-1');
 
+      expect(highlightDirectDeps.get()).toBe(true);
+      expect(highlightDirectDependents.get()).toBe(true);
+      expect(highlightTransitiveDeps.get()).toBe(false);
+      expect(highlightTransitiveDependents.get()).toBe(false);
+      expect(viewMode.get()).toBe(ViewMode.Both);
+    });
+
+    it('should reset highlight toggles when deselecting cluster', () => {
+      selectCluster('cluster-1');
+
+      selectCluster(null);
+
       expect(highlightDirectDeps.get()).toBe(false);
+      expect(highlightDirectDependents.get()).toBe(false);
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
@@ -346,14 +357,15 @@ describe('graph.actions', () => {
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should reset toggles when switching from node to cluster', () => {
+    it('should keep direct toggles active when switching from node to cluster', () => {
       const node = createTestNode('node-1');
       selectNode(node);
       // selectNode auto-enables direct deps + direct dependents = Both
       expect(viewMode.get()).toBe(ViewMode.Both);
 
       selectCluster('cluster-1');
-      expect(viewMode.get()).toBe(ViewMode.Full);
+      // selectCluster also auto-enables direct deps + direct dependents
+      expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
     it('should maintain hover state independently of selection', async () => {

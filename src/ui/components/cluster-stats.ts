@@ -40,6 +40,12 @@ export class GraphClusterStats extends LitElement {
   @property({ type: Number, attribute: 'total-dependents' })
   declare totalDependents: number;
 
+  @property({ type: Boolean, attribute: 'active-direct-deps' })
+  declare activeDirectDeps: boolean;
+
+  @property({ type: Boolean, attribute: 'active-direct-dependents' })
+  declare activeDirectDependents: boolean;
+
   @property({ attribute: false })
   declare platforms: Set<string>;
 
@@ -119,6 +125,19 @@ export class GraphClusterStats extends LitElement {
   `;
 
   // ========================================
+  // Event Handlers
+  // ========================================
+
+  private handleCardToggle(card: string) {
+    this.dispatchEvent(
+      new CustomEvent(card, {
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  // ========================================
   // Render
   // ========================================
 
@@ -167,11 +186,19 @@ export class GraphClusterStats extends LitElement {
         <graph-stats-card
           label="Dependencies"
           value="${this.filteredDependencies}/${this.totalDependencies}"
+          compact
+          toggleable
+          ?active=${this.activeDirectDeps}
+          @card-toggle=${() => this.handleCardToggle('toggle-direct-deps')}
         ></graph-stats-card>
 
         <graph-stats-card
           label="Dependents"
           value="${this.filteredDependents}/${this.totalDependents}"
+          compact
+          toggleable
+          ?active=${this.activeDirectDependents}
+          @card-toggle=${() => this.handleCardToggle('toggle-direct-dependents')}
         ></graph-stats-card>
       </div>
 
