@@ -339,6 +339,26 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     return !!selectedNode.get() || !!selectedCluster.get();
   }
 
+  /** Derive workspace name from the largest local project cluster */
+  private get workspaceName(): string {
+    const projectCounts = new Map<string, number>();
+    for (const node of this.allNodes) {
+      if (node.origin === Origin.Local && node.project) {
+        projectCounts.set(node.project, (projectCounts.get(node.project) || 0) + 1);
+      }
+    }
+    if (projectCounts.size === 0) return 'Project Overview';
+    let largest = '';
+    let max = 0;
+    for (const [name, count] of projectCounts) {
+      if (count > max) {
+        max = count;
+        largest = name;
+      }
+    }
+    return largest || 'Project Overview';
+  }
+
   // ========================================
   // Event Helpers
   // ========================================
@@ -499,10 +519,13 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       filters: currentFilters,
       searchQuery: currentSearchQuery,
       zoom: currentZoom,
-      isFiltersActive,
       expandedSections,
       items,
     } = options;
+
+    const nodesFiltered = (this.filteredNodes?.length ?? 0) !== (this.allNodes?.length ?? 0);
+    const edgesFiltered = (this.filteredEdges?.length ?? 0) !== (this.allEdges?.length ?? 0);
+    const hasAnyFiltering = nodesFiltered || edgesFiltered || !!currentSearchQuery;
 
     return html`
       <div class="filter-content">
@@ -513,16 +536,21 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
             @search-clear=${() => this.handleSearchChange('')}
           ></graph-search-bar>
 
+          <graph-clear-filters-button
+            ?is-active=${hasAnyFiltering}
+            @clear-filters=${() => this.handleClearFilters()}
+          ></graph-clear-filters-button>
+
           <div class="stats-row">
             <graph-stats-card
               label="Nodes"
               value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
-              ?highlighted=${isFiltersActive}
+              ?highlighted=${nodesFiltered}
             ></graph-stats-card>
             <graph-stats-card
               label="Dependencies"
               value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
-              ?highlighted=${isFiltersActive}
+              ?highlighted=${edgesFiltered}
             ></graph-stats-card>
           </div>
         </div>
@@ -532,7 +560,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
             this.filteredNodes?.length === 0
               ? html`
                 <graph-empty-state
-                  ?has-active-filters=${isFiltersActive || !!currentSearchQuery}
+                  ?has-active-filters=${hasAnyFiltering}
                   @clear-filters=${() => this.handleClearFilters()}
                 ></graph-empty-state>
               `
@@ -542,11 +570,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
           <div class="filter-sections">
             ${this.renderFilterSections(currentFilters, currentZoom, expandedSections, items)}
           </div>
-
-          <graph-clear-filters-button
-            ?is-active=${isFiltersActive || !!currentSearchQuery}
-            @clear-filters=${() => this.handleClearFilters()}
-          ></graph-clear-filters-button>
         </div>
       </div>
     `;
@@ -778,7 +801,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
           !this.isViewingDetails || isCollapsed
             ? html`
             <graph-right-sidebar-header
-              title="Project Overview"
+              title=${this.workspaceName}
               ?is-collapsed=${isCollapsed}
               ?has-active-filters=${isFiltersActive}
               @toggle-collapse=${this.handleToggleCollapse}

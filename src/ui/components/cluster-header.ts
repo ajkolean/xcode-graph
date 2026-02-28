@@ -205,29 +205,28 @@ export class GraphClusterHeader extends LitElement {
         subtitle=${this.isExternal ? 'External' : 'Internal'}
         color=${color}
         title-size="md"
-        no-badges
       >
         <!-- Cluster Icon -->
         <span slot="icon" class="cluster-icon" style="color: ${color}">
           ${unsafeHTML(clusterIcon)}
         </span>
-      </graph-panel-header>
 
-      <!-- Source Type and Type Badges -->
-      <div class="badges-row">
+        <!-- Source Type and Type Badges -->
         <graph-badge
+          slot="badges"
           label=${isPackage ? 'Package' : 'Project'}
           color=${color}
           variant="rounded"
           size="sm"
         ></graph-badge>
         <graph-badge
+          slot="badges"
           label=${sourceConfig?.label ?? ''}
           color=${sourceConfig?.color ?? 'var(--colors-muted-foreground)'}
           variant="rounded"
           size="sm"
         ></graph-badge>
-      </div>
+      </graph-panel-header>
 
       <!-- Path with Copy Button -->
       ${

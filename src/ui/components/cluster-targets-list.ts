@@ -87,10 +87,12 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     }
 
     .main-title {
-      font-family: var(--fonts-heading);
-      font-size: var(--font-sizes-base);
+      font-family: var(--fonts-mono);
+      font-size: var(--font-sizes-label);
       font-weight: var(--font-weights-semibold);
-      color: var(--colors-foreground);
+      color: var(--colors-muted-foreground);
+      letter-spacing: var(--letter-spacing-wider);
+      text-transform: uppercase;
     }
 
     .toggle-icon {

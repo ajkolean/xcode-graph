@@ -41,7 +41,7 @@ export class GraphRightSidebarHeader extends LitElement {
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
-      padding: var(--spacing-3) var(--spacing-md);
+      padding: var(--spacing-2) var(--spacing-md);
       flex-shrink: 0;
       border-bottom: var(--border-widths-thin) solid var(--colors-sidebar-border);
     }
