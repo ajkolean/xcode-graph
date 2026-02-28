@@ -13,7 +13,7 @@
 import { type GraphNode, Origin } from '@shared/schemas/graph.schema';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import './deployment-targets.js';
 import './info-row.js';
 
@@ -24,6 +24,14 @@ export class GraphNodeInfo extends LitElement {
 
   @property({ attribute: false })
   declare node: GraphNode;
+
+  @state()
+  private declare scriptExpanded: boolean;
+
+  constructor() {
+    super();
+    this.scriptExpanded = false;
+  }
 
   // ========================================
   // Styles
@@ -64,6 +72,52 @@ export class GraphNodeInfo extends LitElement {
       overflow-wrap: break-word;
       word-break: break-word;
     }
+
+    .script-block {
+      font-family: var(--fonts-mono);
+      font-size: var(--font-sizes-xs);
+      color: var(--colors-foreground);
+      background: var(--colors-muted);
+      border-radius: var(--radii-sm);
+      padding: var(--spacing-2);
+      margin-top: var(--spacing-2);
+      overflow: hidden;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 80px;
+      transition: max-height 0.2s ease;
+    }
+
+    .script-block.expanded {
+      max-height: none;
+    }
+
+    .expand-toggle {
+      display: inline-block;
+      margin-top: var(--spacing-1);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-xs);
+      color: var(--colors-primary);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .expand-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .input-badge {
+      display: inline-block;
+      font-family: var(--fonts-mono);
+      font-size: var(--font-sizes-xs);
+      color: var(--colors-muted-foreground);
+      background: var(--colors-muted);
+      border-radius: var(--radii-sm);
+      padding: 1px var(--spacing-1);
+      margin-left: var(--spacing-1);
+    }
   `;
 
   // ========================================
@@ -97,6 +151,7 @@ export class GraphNodeInfo extends LitElement {
     const showDeploymentTargets = this.hasDeploymentTargets || this.hasDestinations;
     const showSourceCount = this.node.sourceCount != null && this.node.sourceCount > 0;
     const showResourceCount = this.node.resourceCount != null && this.node.resourceCount > 0;
+    const fb = this.node.foreignBuild;
 
     return html`
       <!-- Basic Info Section -->
@@ -154,6 +209,34 @@ export class GraphNodeInfo extends LitElement {
                   : nothing
               }
             </div>
+          </div>
+        `
+          : nothing
+      }
+
+      <!-- Foreign Build Section -->
+      ${
+        fb
+          ? html`
+          <div class="section">
+            <div class="title">Foreign Build</div>
+            <div class="info-rows">
+              <graph-info-row label="Output" value=${fb.outputPath}></graph-info-row>
+              <graph-info-row label="Linking" value=${fb.outputLinking}></graph-info-row>
+              <graph-info-row label="Inputs">
+                ${String(fb.inputCount)}
+                ${fb.inputs.files.length > 0 ? html`<span class="input-badge">${fb.inputs.files.length} files</span>` : nothing}
+                ${fb.inputs.folders.length > 0 ? html`<span class="input-badge">${fb.inputs.folders.length} folders</span>` : nothing}
+                ${fb.inputs.scripts.length > 0 ? html`<span class="input-badge">${fb.inputs.scripts.length} scripts</span>` : nothing}
+              </graph-info-row>
+            </div>
+            <div class="script-block ${this.scriptExpanded ? 'expanded' : ''}">${fb.script}</div>
+            <button
+              class="expand-toggle"
+              @click=${() => {
+                this.scriptExpanded = !this.scriptExpanded;
+              }}
+            >${this.scriptExpanded ? 'Collapse' : 'Expand'} script</button>
           </div>
         `
           : nothing

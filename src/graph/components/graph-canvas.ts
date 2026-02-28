@@ -41,7 +41,6 @@ import {
   type InteractionState,
 } from './canvas/canvas-interaction-handler';
 import { renderNodes } from './canvas/canvas-node-renderer';
-import { Starfield } from './starfield';
 
 @customElement('graph-canvas')
 export class GraphCanvas extends LitElement {
@@ -148,14 +147,6 @@ export class GraphCanvas extends LitElement {
   // Fade-out animation for removed nodes
   private fadingOutNodes = new Map<string, { node: GraphNode; startTime: number }>();
   private static readonly FADE_OUT_DURATION = 250;
-
-  // Starfield background
-  private starfield = new Starfield();
-
-  // Cached background gradient (recreated on resize)
-  private bgGradient: CanvasGradient | null = null;
-  private bgGradientWidth = 0;
-  private bgGradientHeight = 0;
 
   constructor() {
     super();
@@ -468,14 +459,6 @@ export class GraphCanvas extends LitElement {
     this.canvas.style.width = `${rect.width}px`;
     this.canvas.style.height = `${rect.height}px`;
 
-    if (this.theme) {
-      this.starfield.setColors([
-        this.theme.starfieldWarm,
-        this.theme.starfieldGolden,
-        this.theme.starfieldCool,
-      ]);
-    }
-    this.starfield.generate(rect.width, rect.height);
     this.requestRender();
   }
 
@@ -646,23 +629,9 @@ export class GraphCanvas extends LitElement {
 
     this.ctx.clearRect(0, 0, width, height);
 
-    // Background radial gradient (slightly lighter center, darker edges)
-    if (!this.bgGradient || this.bgGradientWidth !== width || this.bgGradientHeight !== height) {
-      const cx = width / 2;
-      const cy = height / 2;
-      const outerRadius = Math.hypot(cx, cy);
-      const grad = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, outerRadius);
-      grad.addColorStop(0, this.theme.canvasBgCenter);
-      grad.addColorStop(1, this.theme.canvasBgEdge);
-      this.bgGradient = grad;
-      this.bgGradientWidth = width;
-      this.bgGradientHeight = height;
-    }
-    this.ctx.fillStyle = this.bgGradient;
+    // Flat background fill
+    this.ctx.fillStyle = this.theme.canvasBg;
     this.ctx.fillRect(0, 0, width, height);
-
-    this.starfield.render(this.ctx, pan.x, pan.y);
-    this.starfield.renderVignette(this.ctx);
 
     this.ctx.save();
     this.ctx.translate(pan.x, pan.y);

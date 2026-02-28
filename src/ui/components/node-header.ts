@@ -180,6 +180,17 @@ export class GraphNodeHeader extends LitElement {
             `
             : ''
         }
+        ${
+          this.node.foreignBuild
+            ? html`
+              <graph-badge
+                slot="badges"
+                label="Foreign Build"
+                color="var(--colors-warning)"
+              ></graph-badge>
+            `
+            : ''
+        }
       </graph-panel-header>
 
       <!-- Architecture Tags -->

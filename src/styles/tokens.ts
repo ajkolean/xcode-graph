@@ -80,10 +80,6 @@ export const colorTokens = {
   'sidebar-border': 'var(--colors-sidebar-border)',
   'sidebar-ring': 'var(--colors-sidebar-ring)',
 
-  // Stars
-  'stars-color': 'var(--colors-stars-color)',
-  'stars-glow': 'var(--colors-stars-glow)',
-
   // Warning colors
   warning: 'var(--colors-warning)',
   'warning-foreground': 'var(--colors-warning-foreground)',

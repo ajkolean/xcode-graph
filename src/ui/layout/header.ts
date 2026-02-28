@@ -32,21 +32,10 @@ export class GraphHeader extends LitElement {
       justify-content: space-between;
       flex-shrink: 0;
       position: relative;
-      background: var(--gradient-header);
+      background: var(--colors-card);
       border-bottom: var(--border-widths-thin) solid var(--colors-border);
       z-index: 50;
       overflow: hidden;
-    }
-
-
-    /* Subtle noise texture */
-    header::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: var(--effect-noise);
-      opacity: var(--opacity-2);
-      pointer-events: none;
     }
 
     .left-section {
@@ -69,17 +58,11 @@ export class GraphHeader extends LitElement {
         transform var(--durations-normal) var(--easings-out),
         box-shadow var(--durations-normal) var(--easings-out);
       background: var(--colors-primary);
-      box-shadow:
-        0 0 20px rgba(var(--colors-primary-rgb), var(--opacity-30)),
-        inset 0 1px 0 rgba(var(--colors-foreground-rgb), var(--opacity-20));
       cursor: pointer;
     }
 
     .logo:hover {
       transform: scale(1.05);
-      box-shadow:
-        0 0 30px rgba(var(--colors-primary-rgb), var(--opacity-50)),
-        inset 0 1px 0 rgba(var(--colors-foreground-rgb), var(--opacity-30));
     }
 
     .logo svg {

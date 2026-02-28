@@ -87,17 +87,6 @@ function drawClusterFillAndBorder(
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.lineDashOffset = 0;
-
-  // Hover glow border: soft ring outside the cluster
-  if (isActive) {
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius + 3, 0, Math.PI * 2);
-    ctx.strokeStyle = clusterColor;
-    ctx.lineWidth = 4;
-    ctx.globalAlpha = 0.08 * dimFactor;
-    ctx.setLineDash([]);
-    ctx.stroke();
-  }
 }
 
 function getAdaptiveClusterFontSize(targetScreenSize: number, zoom: number): number {
@@ -151,16 +140,6 @@ function drawCentroidDot(
 ) {
   const dotRadius = Math.sqrt(nodeCount) * 3;
   const dimFactor = shouldDim ? 0.3 : 1.0;
-
-  // Glow halo behind the dot
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, dotRadius * 2.5);
-  grad.addColorStop(0, hexToRgba(clusterColor, 0.4));
-  grad.addColorStop(1, hexToRgba(clusterColor, 0));
-  ctx.beginPath();
-  ctx.arc(cx, cy, dotRadius * 2.5, 0, Math.PI * 2);
-  ctx.fillStyle = grad;
-  ctx.globalAlpha = alpha * dimFactor;
-  ctx.fill();
 
   // Solid centroid dot
   ctx.beginPath();

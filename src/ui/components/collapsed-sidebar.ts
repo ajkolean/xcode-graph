@@ -137,7 +137,7 @@ export class GraphCollapsedSidebar extends LitElement {
       gap: var(--spacing-2);
       padding: var(--spacing-2);
       border-radius: var(--radii-sm);
-      background: var(--gradient-card);
+      background: var(--colors-card);
     }
 
     .stat-value {

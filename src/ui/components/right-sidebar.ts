@@ -160,30 +160,9 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      background: linear-gradient(180deg, var(--colors-sidebar) 0%, var(--colors-background) 100%);
+      background: var(--colors-sidebar);
       border-left: var(--border-widths-thin) solid var(--colors-sidebar-border);
-      box-shadow: -8px 0 24px rgba(var(--colors-background-rgb), var(--opacity-30)),
-                  inset 1px 0 0 rgba(var(--colors-foreground-rgb), var(--opacity-4));
       position: relative;
-    }
-
-    /* Noise texture overlay */
-    aside::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: var(--effect-noise);
-      opacity: var(--opacity-2);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-
-    @media (prefers-reduced-motion: reduce) {
-      aside::before,
-      aside::after {
-        animation: none;
-      }
     }
 
     .filter-content {
@@ -264,7 +243,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
     .section-divider {
       height: 1px;
-      background: linear-gradient(90deg, transparent 0%, rgba(var(--colors-primary-rgb), var(--opacity-20)) 50%, transparent 100%);
+      background: var(--colors-border);
       margin: var(--spacing-1) 0;
     }
 

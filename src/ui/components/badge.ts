@@ -170,9 +170,9 @@ export class GraphBadge extends LitElement {
       border-left-color: var(--badge-color);
     }
 
-    /* Glow effect on hover */
+    /* Subtle glow effect on hover */
     .badge.glow:hover {
-      box-shadow: 0 0 12px var(--badge-glow);
+      box-shadow: 0 0 6px var(--badge-glow);
     }
   `;
 

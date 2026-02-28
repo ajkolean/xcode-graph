@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ForeignBuildInfoSchema,
   GraphDataSchema,
   GraphEdgeSchema,
   GraphNodeSchema,
@@ -51,6 +52,46 @@ describe('OriginSchema', () => {
   it('should reject invalid origins', () => {
     expect(() => OriginSchema.parse('remote')).toThrow();
     expect(() => OriginSchema.parse('')).toThrow();
+  });
+});
+
+describe('ForeignBuildInfoSchema', () => {
+  it('should validate a correct foreign build info', () => {
+    const valid = {
+      script: 'gradle build',
+      outputPath: 'MyLib.xcframework',
+      outputLinking: 'static',
+      inputCount: 2,
+      inputs: { files: ['a.kt'], folders: ['src/'], scripts: [] },
+    };
+
+    const result = ForeignBuildInfoSchema.safeParse(valid);
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject missing script', () => {
+    const invalid = {
+      outputPath: 'MyLib.xcframework',
+      outputLinking: 'static',
+      inputCount: 0,
+      inputs: { files: [], folders: [], scripts: [] },
+    };
+
+    const result = ForeignBuildInfoSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject negative inputCount', () => {
+    const invalid = {
+      script: 'build',
+      outputPath: 'Lib.xcframework',
+      outputLinking: 'dynamic',
+      inputCount: -1,
+      inputs: { files: [], folders: [], scripts: [] },
+    };
+
+    const result = ForeignBuildInfoSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
   });
 });
 

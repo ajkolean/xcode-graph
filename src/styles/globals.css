@@ -1,243 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-:root {
-  --font-size: 16px;
-  /* Noora-Aligned Theme - Purple/blue palette */
-
-  /* The default background color for the application. */
-  --background: rgba(10, 10, 12, 1);
-  /* The default color for elements or text that appears on top of the background. */
-  --foreground: rgba(225, 228, 232, 1);
-  /* The background color for cards, modals, and other containers. */
-  --card: rgba(18, 18, 20, 1);
-  /* The default color for text or elements that appear on top of cards, modals and other background containers. */
-  --card-foreground: rgba(225, 228, 232, 1);
-  /* The background color for dropdowns and tooltips. */
-  --popover: rgba(24, 24, 28, 1);
-  /* The default color for text or elements that appear on top of dropdowns and tooltips. */
-  --popover-foreground: rgba(225, 228, 232, 1);
-  /* The primary color used for buttons, links, and other interactive elements - PURPLE */
-  --primary: rgba(124, 58, 237, 1);
-  --primary-rgb: 124, 58, 237;
-  /* The default color for text or elements that appear on top of primary colored elements. */
-  --primary-foreground: rgba(253, 253, 253, 1);
-  /* The secondary color used for secondary(but NOT-DESTRUCTIVE) buttons and interactive elements. */
-  --secondary: rgba(255, 255, 255, 0.05);
-  /* The default color for text or elements that appear on top of secondary colored elements. */
-  --secondary-foreground: rgba(225, 228, 232, 1);
-  /* The muted color used for less prominent elements, such as disabled buttons or disabled text. */
-  --muted: rgba(255, 255, 255, 0.05);
-  /* The default color for text or elements that appear on top of muted colored elements. */
-  --muted-foreground: rgba(225, 228, 232, 0.5);
-  /* The accent color used for highlights, links, and other interactive elements - BLUE */
-  --accent: rgba(59, 130, 246, 0.15);
-  --accent-rgb: 59, 130, 246;
-  --accent-solid: rgba(59, 130, 246, 1);
-  /* The default color for text or elements that appear on top of accent colored elements. */
-  --accent-foreground: rgba(225, 228, 232, 1);
-  /* The color used for background in destructive actions, such as delete buttons or error messages. */
-  --destructive: rgba(239, 68, 68, 1);
-  /* The default color for text or elements that appear on top of destructive colored elements. */
-  --destructive-foreground: rgba(253, 253, 253, 1);
-  /* The default border color for elements such as inputs, buttons, and other containers. */
-  --border: rgba(255, 255, 255, 0.08);
-  /* The default background color for input fields once the text has been filled. Should be either transparent or match the input-background. */
-  --input: rgba(255, 255, 255, 0.05);
-  /* The default background color for input fields, text areas, and other input elements. */
-  --input-background: rgba(255, 255, 255, 0.05);
-  /* The default font weight for medium text. */
-  --font-weight-medium: 500;
-  /* The default font weight for normal text. */
-  --font-weight-normal: 400;
-  /* The color for focus rings, outlines, and other focus indicators - PURPLE */
-  --ring: rgba(124, 58, 237, 1);
-  /* Shadow for small elevations, such as cards or modals. */
-  --elevation-sm: 0px 1px 1px 0px rgba(0,0,0,0.15), 0px 0px 0px 1px rgba(255,255,255,0.06), 0px 1px 1px 0px rgba(0,0,0,0.2);
-  /* The color for chart elements - Noora palette */
-  --chart-1: rgba(124, 58, 237, 1);
-  --chart-2: rgba(59, 130, 246, 1);
-  --chart-3: rgba(34, 197, 94, 1);
-  --chart-4: rgba(236, 72, 153, 1);
-  --chart-5: rgba(245, 158, 11, 1);
-  /* The default border radius for elements — Noora medium */
-  --radius: 0.375rem;
-  /* Border radius for cards and larger containers. */
-  --radius-card: 1rem;
-  /* Border radius specifically for button elements. */
-  --radius-button: 0.375rem;
-  /* The background color for sidebars, navigation menus, and other persistent elements. */
-  --sidebar: rgba(14, 14, 16, 1);
-  /* The default color for text or elements that appear on top of sidebars, navigation menus, and other persistent elements. */
-  --sidebar-foreground: rgba(225, 228, 232, 1);
-  /* The primary color used for buttons, links, and other interactive elements in sidebars and navigation menus - PURPLE */
-  --sidebar-primary: rgba(124, 58, 237, 1);
-  /* The default color for text or elements that appear on top of primary colored elements in sidebars and navigation menus. */
-  --sidebar-primary-foreground: rgba(253, 253, 253, 1);
-  /* The accent color used for highlights, links, and other interactive elements in sidebars and navigation menus. */
-  --sidebar-accent: rgba(124, 58, 237, 0.12);
-  /* The default color for text or elements that appear on top of accent colored elements in sidebars and navigation menus. */
-  --sidebar-accent-foreground: rgba(225, 228, 232, 1);
-  /* The default border color for elements in sidebars and navigation menus. */
-  --sidebar-border: rgba(255, 255, 255, 0.06);
-  /* The default color for focus rings, outlines, and other focus indicators in sidebars and navigation menus - PURPLE */
-  --sidebar-ring: rgba(124, 58, 237, 1);
-  /* Typography variables */
-  --text-h1: 40px;
-  --text-h2: 18px;
-  --text-h3: 16px;
-  --text-h4: 14px;
-  --text-base: 14px;
-  --text-label: 12px;
-  --text-xs: 10px;
-  --text-small: 11px;
-  --text-body: 13px;
-
-  /* Font families — Noora stack */
-  --font-family-heading: 'DM Sans', sans-serif;
-  --font-family-body: 'Inter', system-ui, sans-serif;
-  --font-family-mono: 'Geist Mono', 'JetBrains Mono', 'SF Mono', monospace;
-
-  /* Font weights */
-  --font-weight-regular: 400;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* Spacing scale */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-
-  /* Starfield effects */
-  --stars-count: 200;
-  --stars-opacity: 0.4;
-  --stars-color: rgba(225, 228, 232, 1);
-  --stars-glow-color: rgba(124, 58, 237, 1);
-
-  /* Success color */
-  --success: rgba(34, 197, 94, 1);
-  --success-rgb: 34, 197, 94;
-
-  /* Color aliases (for compatibility) */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-input-background: var(--input-background);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-
-  /* Radius aliases */
-  --radius-sm: 0.25rem;
-  --radius-md: var(--radius);
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
-}
-
-/* Base element styles */
-* {
-  border-color: var(--border);
-}
-
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-}
-
-/* Base typography */
-h1 {
-  font-family: var(--font-family-heading);
-  font-size: var(--text-h1);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-}
-
-h2 {
-  font-family: var(--font-family-heading);
-  font-size: var(--text-h2);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.4;
-  letter-spacing: -0.01em;
-}
-
-h3 {
-  font-family: var(--font-family-body);
-  font-size: var(--text-h3);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-h4 {
-  font-family: var(--font-family-body);
-  font-size: var(--text-h4);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-p {
-  font-family: var(--font-family-body);
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-normal);
-  line-height: 1.6;
-}
-
-label {
-  font-family: var(--font-family-mono);
-  font-size: var(--text-label);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-button {
-  font-family: var(--font-family-body);
-  font-size: var(--text-h4);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-}
-
-input {
-  font-family: var(--font-family-body);
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-normal);
-  line-height: 1.5;
-}
-
-html {
-  font-size: var(--font-size);
-}
-
 /* SVG animations for dependency graph */
-/* Flowing dashes for edges - flows from dependent to dependency (toward selected node) */
 @keyframes flowDashes {
   to {
     stroke-dashoffset: -12;
@@ -248,7 +9,6 @@ html {
   animation: flowDashes 1s linear infinite;
 }
 
-/* Subtle pulse for cluster borders on hover */
 @keyframes clusterPulse {
   0%, 100% {
     opacity: 0.6;
@@ -262,32 +22,25 @@ html {
   animation: clusterPulse 2s ease-in-out infinite;
 }
 
-/* Marching ants animation for cluster borders on hover */
 @keyframes marchingAnts {
   to {
-    stroke-dashoffset: -16; /* Negative for clockwise direction */
+    stroke-dashoffset: -16;
   }
 }
 
 /* UI Polish: Visual Depth & Shadows */
 .panel-shadow {
-  box-shadow: 
+  box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.3),
     0 2px 4px -2px rgba(0, 0, 0, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .panel-shadow-lg {
-  box-shadow: 
+  box-shadow:
     0 10px 15px -3px rgba(0, 0, 0, 0.4),
     0 4px 6px -4px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.08);
-}
-
-.glassmorphism {
-  background: rgba(18, 18, 22, 0.7);
-  backdrop-filter: blur(12px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* UI Polish: Smooth Transitions */
@@ -344,7 +97,7 @@ html {
 
 /* UI Polish: Focus Visible */
 :focus-visible {
-  outline: 2px solid var(--color-ring);
+  outline: 2px solid var(--colors-ring);
   outline-offset: 2px;
 }
 

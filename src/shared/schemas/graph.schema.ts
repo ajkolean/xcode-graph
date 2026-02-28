@@ -119,6 +119,24 @@ export interface BuildSettings {
   provisioningProfile?: string | undefined;
 }
 
+/** Foreign build info (non-Xcode build systems like KMP/Gradle, Bazel, CMake) */
+export interface ForeignBuildInfo {
+  /** Build script content */
+  script: string;
+  /** Output xcframework path */
+  outputPath: string;
+  /** Output linking type (static or dynamic) */
+  outputLinking: string;
+  /** Total number of inputs */
+  inputCount: number;
+  /** Input breakdown by type */
+  inputs: {
+    files: string[];
+    folders: string[];
+    scripts: string[];
+  };
+}
+
 /** Graph node structure */
 export interface GraphNode {
   /** Unique identifier for the node */
@@ -159,6 +177,8 @@ export interface GraphNode {
   resourceCount?: number | undefined;
   /** Notable resources (privacy manifests, storyboards, etc.) */
   notableResources?: string[] | undefined;
+  /** Foreign build info (non-Xcode build systems) */
+  foreignBuild?: ForeignBuildInfo | undefined;
 }
 
 /** Graph edge structure */
@@ -197,6 +217,18 @@ export const BuildSettingsSchema: z.ZodType<BuildSettings> = z.object({
   codeSignIdentity: z.string().optional(),
   developmentTeam: z.string().optional(),
   provisioningProfile: z.string().optional(),
+});
+
+export const ForeignBuildInfoSchema: z.ZodType<ForeignBuildInfo> = z.object({
+  script: z.string(),
+  outputPath: z.string(),
+  outputLinking: z.string(),
+  inputCount: z.number().int().nonnegative(),
+  inputs: z.object({
+    files: z.array(z.string()),
+    folders: z.array(z.string()),
+    scripts: z.array(z.string()),
+  }),
 });
 
 export const DeploymentTargetsSchema: z.ZodType<DeploymentTargets> = z.object({
@@ -242,6 +274,7 @@ export const GraphNodeSchema: z.ZodType<GraphNode> = z.object({
   sourceCount: z.number().int().nonnegative().optional(),
   resourceCount: z.number().int().nonnegative().optional(),
   notableResources: z.array(z.string()).optional(),
+  foreignBuild: ForeignBuildInfoSchema.optional(),
 });
 
 /**

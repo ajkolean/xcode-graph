@@ -103,8 +103,6 @@ export class GraphApp extends SignalWatcherLitElement {
     :host {
       display: flex;
       height: 100%;
-      background-color: var(--color-background);
-      color: var(--color-foreground);
       font-family: var(--fonts-body);
       overflow: hidden;
     }

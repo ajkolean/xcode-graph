@@ -83,16 +83,6 @@ export class GraphSidebar extends LitElement {
       width: 100%;
     }
 
-    /* Noise texture */
-    aside::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: var(--effect-noise);
-      opacity: var(--opacity-2);
-      pointer-events: none;
-    }
-
     nav {
       flex: 1;
       padding: var(--spacing-md) var(--spacing-3);

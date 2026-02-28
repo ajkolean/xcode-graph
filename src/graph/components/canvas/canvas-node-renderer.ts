@@ -47,12 +47,33 @@ function isSearchDimmed(node: GraphNode, searchQuery: string): boolean {
 }
 
 function isSelectionDimmed(
+  node: GraphNode,
   isSelected: boolean,
-  isConnected: boolean | GraphNode | null,
   isChainActive: boolean | GraphNode | null,
   selectedNode: GraphNode | null,
+  rc: NodeRenderContext,
 ): boolean {
-  return !isChainActive && !!selectedNode && !isSelected && !isConnected;
+  if (!selectedNode || isSelected) return false;
+  // When toggles are active, dim nodes not in any active chain
+  if (isChainActive) {
+    return !isNodeInActiveChain(node.id, rc);
+  }
+  // No toggles active: don't dim anything
+  return false;
+}
+
+/** Check if a node belongs to any currently-toggled chain.
+ *  Node depths: 0 = selected node itself, 1 = direct neighbor, >=2 = transitive */
+function isNodeInActiveChain(nodeId: string, rc: NodeRenderContext): boolean {
+  if (rc.transitiveDeps?.nodes.has(nodeId)) {
+    const depth = rc.transitiveDeps.nodeDepths?.get(nodeId) ?? 0;
+    if (depth <= 1 ? rc.showDirectDeps : rc.showTransitiveDeps) return true;
+  }
+  if (rc.transitiveDependents?.nodes.has(nodeId)) {
+    const depth = rc.transitiveDependents.nodeDepths?.get(nodeId) ?? 0;
+    if (depth <= 1 ? rc.showDirectDependents : rc.showTransitiveDependents) return true;
+  }
+  return false;
 }
 
 function isPreviewDimmed(node: GraphNode, previewFilter: PreviewFilter | undefined): boolean {
@@ -76,46 +97,16 @@ function isPreviewDimmed(node: GraphNode, previewFilter: PreviewFilter | undefin
 function isNodeDimmed(
   node: GraphNode,
   isSelected: boolean,
-  isConnected: boolean | GraphNode | null,
   isChainActive: boolean | GraphNode | null,
   clusterDim: boolean | '' | null,
   rc: NodeRenderContext,
 ): boolean {
   return (
     isSearchDimmed(node, rc.searchQuery) ||
-    isSelectionDimmed(isSelected, isConnected, isChainActive, rc.selectedNode) ||
+    isSelectionDimmed(node, isSelected, isChainActive, rc.selectedNode, rc) ||
     isPreviewDimmed(node, rc.previewFilter) ||
     !!clusterDim
   );
-}
-
-/** Cache for pre-rendered glow bitmaps keyed by color+size */
-const glowCache = new Map<string, OffscreenCanvas>();
-const GLOW_CACHE_MAX = 64;
-
-function getGlowBitmap(color: string, radius: number): OffscreenCanvas {
-  const key = `${color}:${Math.round(radius)}`;
-  let cached = glowCache.get(key);
-  if (cached) return cached;
-
-  // Evict oldest entries if cache is full
-  if (glowCache.size >= GLOW_CACHE_MAX) {
-    const firstKey = glowCache.keys().next().value;
-    if (firstKey) glowCache.delete(firstKey);
-  }
-
-  const dim = Math.ceil(radius * 2);
-  cached = new OffscreenCanvas(dim, dim);
-  const octx = cached.getContext('2d')!;
-  const cx = dim / 2;
-  const grad = octx.createRadialGradient(cx, cx, 0, cx, cx, radius);
-  grad.addColorStop(0, colorWithAlpha(color, 0.5));
-  grad.addColorStop(0.5, colorWithAlpha(color, 0.15));
-  grad.addColorStop(1, colorWithAlpha(color, 0));
-  octx.fillStyle = grad;
-  octx.fillRect(0, 0, dim, dim);
-  glowCache.set(key, cached);
-  return cached;
 }
 
 function drawNodeEffects(
@@ -146,30 +137,14 @@ function drawNodeEffects(
   }
 
   if (isSelected) {
-    const pulse1 = (Math.sin(time / 800) + 1) / 2;
-    const pulse3 = (Math.sin(time / 200) + 1) / 2;
-
-    // Combined outer+mid glow: single radial gradient with 3 stops
-    const outerRadius = size + 20 + pulse1 * 6;
-    const glowGrad = ctx.createRadialGradient(x, y, size * 0.3, x, y, outerRadius);
-    glowGrad.addColorStop(0, colorWithAlpha(adjustedColor, 0.25));
-    glowGrad.addColorStop(0.5, colorWithAlpha(adjustedColor, 0.12));
-    glowGrad.addColorStop(1, colorWithAlpha(adjustedColor, 0));
+    // Solid selection ring
+    const ringRadius = size + 5;
     ctx.beginPath();
-    ctx.arc(x, y, outerRadius, 0, Math.PI * 2);
-    ctx.fillStyle = glowGrad;
-    ctx.globalAlpha = alpha;
-    ctx.fill();
-
-    // Inner ring: thin stroke, higher opacity
-    const innerRadius = size + 5 + pulse3 * 2;
-    ctx.beginPath();
-    ctx.arc(x, y, innerRadius, 0, Math.PI * 2);
+    ctx.arc(x, y, ringRadius, 0, Math.PI * 2);
     ctx.strokeStyle = adjustedColor;
-    ctx.lineWidth = 1.5;
-    ctx.globalAlpha = alpha * (0.4 + pulse3 * 0.2);
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = alpha * 0.6;
     ctx.stroke();
-
     ctx.globalAlpha = alpha;
   }
 }
@@ -187,13 +162,6 @@ function drawNodeIcon(
   theme: CanvasTheme,
 ) {
   const scale = (size / 12) * (isHovered || isSelected ? 1.08 : 1.0);
-
-  // Draw pre-rendered glow behind the icon for hovered/selected nodes
-  if (isHovered || isSelected) {
-    const glowRadius = size * 2;
-    const glow = getGlowBitmap(adjustedColor, glowRadius);
-    ctx.drawImage(glow, x - glowRadius, y - glowRadius);
-  }
 
   ctx.translate(x, y);
   ctx.scale(scale, scale);
@@ -284,20 +252,13 @@ function shouldShowNodeLabel(
   isHovered: boolean,
   isSelected: boolean,
   isConnected: boolean | GraphNode | null,
-  isChainActive: boolean | GraphNode | null,
-  chainAlpha: number,
   nodeId: string,
   rc: NodeRenderContext,
 ): boolean {
   if (rc.zoom >= 0.3 || isHovered || isSelected || isConnected) return true;
   // Always show labels for hub nodes regardless of zoom
   if (isHubNode(nodeId, rc)) return true;
-  if (!isChainActive) return false;
-
-  const isInDepsChain = rc.transitiveDeps?.nodes.has(nodeId) ?? false;
-  const isInDependentsChain = rc.transitiveDependents?.nodes.has(nodeId) ?? false;
-  const isInChain = isSelected || isInDepsChain || isInDependentsChain;
-  return isInChain && chainAlpha > 0.3;
+  return false;
 }
 
 interface NodeVisualState {
@@ -332,7 +293,7 @@ function resolveNodeVisualState(
     (rc.hoveredCluster && clusterId !== rc.hoveredCluster) ||
     (rc.selectedCluster && clusterId !== rc.selectedCluster);
 
-  const isDimmed = isNodeDimmed(node, isSelected, isConnected, isChainActive, clusterDim, rc);
+  const isDimmed = isNodeDimmed(node, isSelected, isChainActive, clusterDim, rc);
   const dimAlpha = getAnimatedAlpha(rc.nodeAlphaMap, node.id);
   const alpha = dimAlpha * chainAlpha;
   const isCycleNode = rc.layout.cycleNodes?.has(node.id) ?? false;
@@ -395,17 +356,7 @@ function renderSingleNode(
     theme,
   );
 
-  if (
-    shouldShowNodeLabel(
-      vs.isHovered,
-      vs.isSelected,
-      vs.isConnected,
-      isChainActive,
-      chainAlpha,
-      node.id,
-      rc,
-    )
-  ) {
+  if (shouldShowNodeLabel(vs.isHovered, vs.isSelected, vs.isConnected, node.id, rc)) {
     drawNodeLabel(
       ctx,
       node,

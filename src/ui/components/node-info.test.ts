@@ -62,4 +62,69 @@ describe('graph-node-info', () => {
     // getNodeTypeLabel should return proper label
     expect(rows?.[2]?.getAttribute('value')).to.exist;
   });
+
+  it('should render foreign build section when foreignBuild is present', async () => {
+    const nodeWithForeignBuild = {
+      ...mockNode,
+      foreignBuild: {
+        script: 'gradle build',
+        outputPath: 'MyLib.xcframework',
+        outputLinking: 'static',
+        inputCount: 3,
+        inputs: { files: ['a.kt'], folders: ['src/'], scripts: [] },
+      },
+    };
+    const el = await fixture<GraphNodeInfo>(html`
+      <graph-node-info .node=${nodeWithForeignBuild}></graph-node-info>
+    `);
+
+    const titles = el.shadowRoot?.querySelectorAll('.title');
+    const titleTexts = Array.from(titles ?? []).map((t) => t.textContent);
+    expect(titleTexts).to.include('Foreign Build');
+
+    const scriptBlock = el.shadowRoot?.querySelector('.script-block');
+    expect(scriptBlock?.textContent).to.equal('gradle build');
+
+    const inputBadges = el.shadowRoot?.querySelectorAll('.input-badge');
+    expect(inputBadges?.length).to.equal(2); // files + folders, no scripts
+  });
+
+  it('should not render foreign build section when foreignBuild is absent', async () => {
+    const el = await fixture<GraphNodeInfo>(html`
+      <graph-node-info .node=${mockNode}></graph-node-info>
+    `);
+
+    const titles = el.shadowRoot?.querySelectorAll('.title');
+    const titleTexts = Array.from(titles ?? []).map((t) => t.textContent);
+    expect(titleTexts).to.not.include('Foreign Build');
+    expect(el.shadowRoot?.querySelector('.script-block')).to.be.null;
+  });
+
+  it('should toggle script expansion on click', async () => {
+    const nodeWithForeignBuild = {
+      ...mockNode,
+      foreignBuild: {
+        script: 'long script content',
+        outputPath: 'Lib.xcframework',
+        outputLinking: 'dynamic',
+        inputCount: 1,
+        inputs: { files: ['f.kt'], folders: [], scripts: [] },
+      },
+    };
+    const el = await fixture<GraphNodeInfo>(html`
+      <graph-node-info .node=${nodeWithForeignBuild}></graph-node-info>
+    `);
+
+    const scriptBlock = el.shadowRoot?.querySelector('.script-block');
+    expect(scriptBlock?.classList.contains('expanded')).to.be.false;
+
+    const toggle = el.shadowRoot?.querySelector('.expand-toggle') as HTMLButtonElement;
+    expect(toggle?.textContent).to.contain('Expand');
+    toggle.click();
+    await el.updateComplete;
+
+    expect(el.shadowRoot?.querySelector('.script-block')?.classList.contains('expanded')).to.be
+      .true;
+    expect(el.shadowRoot?.querySelector('.expand-toggle')?.textContent).to.contain('Collapse');
+  });
 });

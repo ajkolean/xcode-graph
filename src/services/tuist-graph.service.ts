@@ -9,12 +9,14 @@ import type {
   BuildSettings,
   DeploymentTargets,
   Destination,
+  ForeignBuildInfo,
   GraphData,
   GraphEdge,
   GraphNode,
 } from '@/shared/schemas/graph.schema';
 import { DependencyKind, NodeType, Origin, Platform } from '@/shared/schemas/graph.schema';
 import type {
+  ForeignBuild,
   Graph,
   GraphDependency,
   Project,
@@ -142,6 +144,32 @@ function extractBuildSettings(settings: RawSettings | undefined): BuildSettings 
   }
 
   return Object.keys(result).length > 0 ? result : undefined;
+}
+
+/** Extract foreign build info from target */
+function extractForeignBuild(foreignBuild: ForeignBuild | undefined): ForeignBuildInfo | undefined {
+  if (!foreignBuild) return undefined;
+
+  const files: string[] = [];
+  const folders: string[] = [];
+  const scripts: string[] = [];
+
+  for (const input of foreignBuild.inputs) {
+    if ('file' in input) files.push(input.file._0);
+    else if ('folder' in input) folders.push(input.folder._0);
+    else if ('script' in input) scripts.push(input.script._0);
+  }
+
+  const outputPath = foreignBuild.output.xcframework.path;
+  const outputFilename = outputPath.split('/').pop() ?? outputPath;
+
+  return {
+    script: foreignBuild.script,
+    outputPath: outputFilename,
+    outputLinking: foreignBuild.output.xcframework.linking,
+    inputCount: foreignBuild.inputs.length,
+    inputs: { files, folders, scripts },
+  };
 }
 
 /** Notable resource file patterns */
@@ -305,6 +333,10 @@ function populateOptionalMetadata(node: GraphNode, target: Target): void {
   }
   if (notableResources.length > 0) {
     node.notableResources = notableResources;
+  }
+  const foreignBuildInfo = extractForeignBuild(target.foreignBuild);
+  if (foreignBuildInfo) {
+    node.foreignBuild = foreignBuildInfo;
   }
 }
 

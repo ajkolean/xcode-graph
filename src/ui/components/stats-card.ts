@@ -70,41 +70,17 @@ export class GraphStatsCard extends LitElement {
       position: relative;
       padding: var(--spacing-3) var(--spacing-md);
       border-radius: var(--radii-sm);
-      background: var(--gradient-card);
+      background: var(--colors-card);
       border: var(--border-widths-thin) solid var(--colors-border);
       border-left: 4px solid var(--colors-primary);
-      box-shadow: inset 3px 0 8px -3px rgba(var(--colors-primary-rgb), var(--opacity-20));
       cursor: default;
       transition:
-        transform var(--durations-normal) var(--easings-out),
-        box-shadow var(--durations-normal) var(--easings-out),
         border-color var(--durations-normal) var(--easings-out);
       overflow: hidden;
     }
 
-    /* Noise texture overlay */
-    .container::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: var(--effect-noise);
-      opacity: var(--opacity-4);
-      pointer-events: none;
-      border-radius: inherit;
-    }
-
-    .container:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadows-glow-primary);
-      border-left-color: var(--colors-primary);
-    }
-
     .container.highlighted {
       border-left-color: var(--colors-accent);
-    }
-
-    .container.highlighted:hover {
-      box-shadow: var(--shadows-glow-accent);
     }
 
     /* Toggleable styles */
@@ -116,23 +92,11 @@ export class GraphStatsCard extends LitElement {
     /* Toggleable inactive: gray/muted appearance */
     .container.toggleable:not(.active) {
       border-left-color: rgba(var(--colors-muted-foreground-rgb, 148, 163, 184), 0.3);
-      box-shadow: none;
     }
 
-    .container.toggleable:not(.active):hover {
-      box-shadow: 0 0 12px rgba(var(--colors-muted-foreground-rgb, 148, 163, 184), 0.15);
-      transform: translateY(-2px);
-    }
-
-    /* Toggleable active: purple styling */
+    /* Toggleable active: primary styling */
     .container.toggleable.active {
       border-left-color: var(--colors-primary);
-      box-shadow: inset 3px 0 8px -3px rgba(var(--colors-primary-rgb), var(--opacity-20));
-    }
-
-    .container.toggleable.active:hover {
-      box-shadow: var(--shadows-glow-primary);
-      transform: translateY(-2px);
     }
 
     .label {
@@ -170,7 +134,6 @@ export class GraphStatsCard extends LitElement {
       font-variant-numeric: tabular-nums;
       color: var(--colors-foreground);
       line-height: var(--line-heights-none);
-      text-shadow: 0 0 30px rgba(var(--colors-primary-rgb), var(--opacity-10));
     }
 
     /* Compact mode for node detail metrics */
@@ -184,19 +147,11 @@ export class GraphStatsCard extends LitElement {
 
     .value.highlighted {
       color: var(--colors-accent);
-      text-shadow: 0 0 20px rgba(var(--colors-accent-rgb), var(--opacity-40));
     }
 
     /* Toggleable inactive value: muted */
     .container.toggleable:not(.active) .value {
       color: var(--colors-muted-foreground);
-      text-shadow: none;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .container:hover {
-        transform: none;
-      }
     }
   `;
 

@@ -105,10 +105,7 @@ export class GraphSearchBar extends LitElement {
 
     input:focus {
       border-color: var(--colors-primary);
-      box-shadow:
-        0 0 0 1px var(--colors-primary),
-        0 0 20px rgba(var(--colors-primary-rgb), var(--opacity-20)),
-        0 0 40px rgba(var(--colors-primary-rgb), var(--opacity-10));
+      box-shadow: 0 0 0 1px var(--colors-primary);
       background: linear-gradient(
         90deg,
         rgba(var(--colors-primary-rgb), var(--opacity-4)) 0%,
