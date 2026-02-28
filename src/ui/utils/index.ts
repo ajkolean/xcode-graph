@@ -34,7 +34,7 @@ export { getNodeTypeColor, getNodeTypeColorFromTheme, NODE_TYPE_COLORS } from '.
 // ==================== Icons ====================
 
 export { getNodeIconPath, getNodeTypeLabel } from './node-icons';
-export { getPlatformIconPath, PLATFORM_COLOR } from './platform-icons';
+export { getPlatformColor, getPlatformIconPath, PLATFORM_COLOR } from './platform-icons';
 
 // ==================== Sizing ====================
 

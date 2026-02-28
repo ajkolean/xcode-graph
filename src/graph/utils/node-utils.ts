@@ -199,17 +199,15 @@ export function computeClusterStats(
   );
   const filteredTargetsCount = filteredClusterNodeIds.size;
 
-  // Platforms
+  // Platforms — use deploymentTargets keys when available for multi-platform support
   const platforms = new Set<string>();
   clusterNodes.forEach((node) => {
-    if (node.platform) platforms.add(node.platform);
-
-    // Defensive: support future shape that may expose multiple platforms
-    const multiPlatform = (node as { platforms?: string[] }).platforms;
-    if (Array.isArray(multiPlatform)) {
-      multiPlatform.filter(Boolean).forEach((platform) => {
+    if (node.deploymentTargets) {
+      for (const platform of Object.keys(node.deploymentTargets)) {
         platforms.add(platform);
-      });
+      }
+    } else if (node.platform) {
+      platforms.add(node.platform);
     }
   });
 
@@ -248,7 +246,14 @@ export function computeFilters(allNodes: GraphNode[]): {
 
   const platformCounts = new Map<string, number>();
   allNodes.forEach((node) => {
-    platformCounts.set(node.platform, (platformCounts.get(node.platform) || 0) + 1);
+    // Count all platforms from deploymentTargets if available, otherwise fall back to single platform
+    if (node.deploymentTargets) {
+      for (const platform of Object.keys(node.deploymentTargets)) {
+        platformCounts.set(platform, (platformCounts.get(platform) || 0) + 1);
+      }
+    } else {
+      platformCounts.set(node.platform, (platformCounts.get(node.platform) || 0) + 1);
+    }
   });
 
   const projectCounts = new Map<string, number>();

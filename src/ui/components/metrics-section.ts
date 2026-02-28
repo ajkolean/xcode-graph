@@ -194,7 +194,7 @@ export class GraphMetricsSection extends LitElement {
             ></graph-stats-card>
 
             <graph-stats-card
-              label="Transitive Deps"
+              label="Transitive Dependencies"
               value="${this.transitiveDependenciesCount}"
               compact
               toggleable

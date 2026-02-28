@@ -70,6 +70,15 @@ export class GraphClusterComposition extends LitElement {
       user-select: none;
     }
 
+    .header:hover .title {
+      color: var(--colors-primary-text);
+    }
+
+    .header:hover .toggle-icon {
+      color: var(--colors-primary-text);
+      opacity: var(--opacity-80);
+    }
+
     .title {
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-label);
@@ -77,13 +86,15 @@ export class GraphClusterComposition extends LitElement {
       color: var(--colors-muted-foreground);
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
+      transition: color var(--durations-normal);
     }
 
     .toggle-icon {
       width: var(--sizes-icon-sm);
       height: var(--sizes-icon-sm);
       color: var(--colors-muted-foreground);
-      transition: transform var(--durations-fast) var(--easings-out);
+      opacity: var(--opacity-40);
+      transition: transform var(--durations-fast) var(--easings-out), color var(--durations-normal), opacity var(--durations-normal);
     }
 
     .toggle-icon.expanded {

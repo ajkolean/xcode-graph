@@ -23,7 +23,7 @@ import { type SidebarSection, sidebarMachine } from '@shared/machines/sidebar.ma
 import type { Cluster } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { PLATFORM_COLOR } from '@ui/utils/platform-icons';
+import { getPlatformColor } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './right-sidebar-header';
@@ -177,30 +177,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       z-index: 1;
     }
 
-    .filter-header {
-      flex-shrink: 0;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Subtle shadow at the bottom edge of the pinned header */
-    .filter-header::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 8px;
-      background: linear-gradient(
-        to bottom,
-        rgba(var(--colors-background-rgb), var(--opacity-40)) 0%,
-        rgba(var(--colors-background-rgb), 0) 100%
-      );
-      pointer-events: none;
-      z-index: 3;
-      transform: translateY(100%);
-    }
-
     .filter-scroll {
       flex: 1;
       min-height: 0;
@@ -253,7 +229,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--spacing-2) var(--spacing-md);
+      padding: var(--spacing-3) var(--spacing-md);
       border-bottom: var(--border-widths-thin) solid var(--colors-sidebar-border);
       flex-shrink: 0;
       position: relative;
@@ -529,7 +505,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
     return html`
       <div class="filter-content">
-        <div class="filter-header">
+        <div class="filter-scroll">
           <graph-search-bar
             search-query=${currentSearchQuery || ''}
             @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
@@ -553,9 +529,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
               ?highlighted=${edgesFiltered}
             ></graph-stats-card>
           </div>
-        </div>
-
-        <div class="filter-scroll">
           ${
             this.filteredNodes?.length === 0
               ? html`
@@ -748,13 +721,12 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       color: getNodeTypeColor(type),
     }));
 
-    const platformItems = Array.from(filterData.platformCounts.entries()).map(
-      ([platform, count]) => ({
-        key: platform,
-        count,
-        color: PLATFORM_COLOR,
-      }),
-    );
+    const ALL_PLATFORMS = ['iOS', 'macOS', 'tvOS', 'watchOS', 'visionOS'];
+    const platformItems = ALL_PLATFORMS.map((platform) => ({
+      key: platform,
+      count: filterData.platformCounts.get(platform) || 0,
+      color: getPlatformColor(platform),
+    }));
 
     const projectColors = generateColorMap(filterData.projectCounts.keys(), 'project');
     const packageColors = generateColorMap(filterData.packageCounts.keys(), 'package');

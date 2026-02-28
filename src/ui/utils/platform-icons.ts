@@ -2,8 +2,22 @@
  * Platform icon utilities for consistent platform representation
  */
 
-// Tuist/Noora purple for all platforms
+/** Per-platform colors for visual distinction */
+export const PLATFORM_COLORS: Record<string, string> = {
+  iOS: '#007AFF',
+  macOS: '#64D2FF',
+  tvOS: '#B87BFF',
+  watchOS: '#5AC8FA',
+  visionOS: '#7D7AFF',
+};
+
+/** Default fallback platform color */
 export const PLATFORM_COLOR = '#6F2CFF';
+
+/** Get the color for a specific platform */
+export function getPlatformColor(platform: string): string {
+  return PLATFORM_COLORS[platform] || PLATFORM_COLOR;
+}
 
 /**
  * Get the appropriate Lucide icon component name for a platform

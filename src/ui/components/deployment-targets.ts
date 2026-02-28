@@ -14,27 +14,19 @@
  */
 
 import type { DeploymentTargets, Destination } from '@shared/schemas/graph.schema';
+import { getPlatformColor } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './badge.js';
-
-/** Platform colors for visual distinction */
-const PLATFORM_COLORS: Record<string, string> = {
-  iOS: '#007AFF',
-  macOS: '#8E8E93',
-  tvOS: '#000000',
-  watchOS: '#5AC8FA',
-  visionOS: '#7D7AFF',
-};
 
 /** Destination display labels and colors */
 const DESTINATION_CONFIG: Record<string, { label: string; color: string }> = {
   iPhone: { label: 'iPhone', color: '#007AFF' },
   iPad: { label: 'iPad', color: '#5856D6' },
-  mac: { label: 'Mac', color: '#8E8E93' },
+  mac: { label: 'Mac', color: '#64D2FF' },
   macCatalyst: { label: 'Mac Catalyst', color: '#FF9500' },
   macWithiPadDesign: { label: 'Mac (iPad Design)', color: '#FF9500' },
-  appleTv: { label: 'Apple TV', color: '#000000' },
+  appleTv: { label: 'Apple TV', color: '#B87BFF' },
   appleWatch: { label: 'Apple Watch', color: '#5AC8FA' },
   appleVision: { label: 'Apple Vision', color: '#7D7AFF' },
   appleVisionWithiPadDesign: { label: 'Vision (iPad Design)', color: '#7D7AFF' },
@@ -150,7 +142,7 @@ export class GraphDeploymentTargets extends LitElement {
         ${!this.compact ? html`<div class="section-title">Min OS Versions</div>` : nothing}
         <div class="badges">
           ${platforms.map(([platform, version]) => {
-            const color = PLATFORM_COLORS[platform] || '#8E8E93';
+            const color = getPlatformColor(platform);
             return html`
               <span
                 class="platform-badge"

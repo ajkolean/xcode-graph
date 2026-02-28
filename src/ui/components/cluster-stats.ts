@@ -17,7 +17,7 @@
 
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
-import { getPlatformIconPath, PLATFORM_COLOR } from '@ui/utils/platform-icons';
+import { getPlatformColor, getPlatformIconPath } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import './badge.js';
@@ -91,6 +91,15 @@ export class GraphClusterStats extends LitElement {
       user-select: none;
     }
 
+    .header:hover .header-title {
+      color: var(--colors-primary-text);
+    }
+
+    .header:hover .toggle-icon {
+      color: var(--colors-primary-text);
+      opacity: var(--opacity-80);
+    }
+
     .header-title {
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-label);
@@ -98,13 +107,15 @@ export class GraphClusterStats extends LitElement {
       color: var(--colors-muted-foreground);
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
+      transition: color var(--durations-normal);
     }
 
     .toggle-icon {
       width: var(--sizes-icon-sm);
       height: var(--sizes-icon-sm);
       color: var(--colors-muted-foreground);
-      transition: transform var(--durations-fast) var(--easings-out);
+      opacity: var(--opacity-40);
+      transition: transform var(--durations-fast) var(--easings-out), color var(--durations-normal), opacity var(--durations-normal);
     }
 
     .toggle-icon.expanded {
@@ -265,7 +276,7 @@ export class GraphClusterStats extends LitElement {
                 <div class="section-title">Platforms (${platformCount})</div>
                 <div class="badges-grid">
                   ${Array.from(this.platforms).map((platform) => {
-                    const color = PLATFORM_COLOR;
+                    const color = getPlatformColor(platform);
                     const iconPath = getPlatformIconPath(platform);
 
                     return html`

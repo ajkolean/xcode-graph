@@ -53,8 +53,8 @@ export class GraphRightSidebarHeader extends LitElement {
     }
 
     .title {
-      font-family: var(--fonts-heading);
-      font-size: var(--font-sizes-h2);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
       font-weight: var(--font-weights-medium);
       color: var(--colors-foreground);
       transition: opacity var(--durations-normal) var(--easings-out);
@@ -77,8 +77,6 @@ export class GraphRightSidebarHeader extends LitElement {
 
     graph-icon-button {
       margin-left: auto;
-      min-width: 32px;
-      min-height: 32px;
     }
 
     graph-icon-button:hover {

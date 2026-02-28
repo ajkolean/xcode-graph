@@ -4,12 +4,23 @@
  */
 
 import type { FilterState } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.schema';
+import {
+  type GraphEdge,
+  type GraphNode,
+  NodeType,
+  type Platform,
+} from '@shared/schemas/graph.schema';
 import { matchesSearch } from './visibility';
 
 function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
   if (!filters.nodeTypes.has(node.type)) return false;
-  if (!filters.platforms.has(node.platform)) return false;
+  // Check if any of the node's platforms match the filter
+  if (node.deploymentTargets) {
+    const nodePlatforms = Object.keys(node.deploymentTargets);
+    if (!nodePlatforms.some((p) => filters.platforms.has(p as Platform))) return false;
+  } else {
+    if (!filters.platforms.has(node.platform)) return false;
+  }
   if (!filters.origins.has(node.origin)) return false;
 
   // Project filter: only applies to non-package nodes with a project
