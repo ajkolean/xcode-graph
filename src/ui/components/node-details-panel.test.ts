@@ -71,13 +71,11 @@ describe('graph-node-details-panel - Rendering', () => {
     // Check for all sub-components
     const header = el.shadowRoot?.querySelector('graph-node-header');
     const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
-    const actions = el.shadowRoot?.querySelector('graph-node-actions');
     const info = el.shadowRoot?.querySelector('graph-node-info');
     const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
 
     expect(header).to.exist;
     expect(metrics).to.exist;
-    expect(actions).to.exist;
     expect(info).to.exist;
     expect(lists?.length).to.equal(2); // Dependencies and Dependents
   });
@@ -361,7 +359,7 @@ describe('graph-node-details-panel - Event Bubbling', () => {
     expect((eventDetail as { clusterId: string }).clusterId).to.equal('MyApp');
   });
 
-  it('should bubble focus-node event', async () => {
+  it('should bubble toggle-direct-deps event from metrics section', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
       <graph-node-details-panel
         .node=${mockNode}
@@ -371,27 +369,22 @@ describe('graph-node-details-panel - Event Bubbling', () => {
     `);
 
     let eventFired = false;
-    let eventDetail: unknown = null;
-
-    el.addEventListener('focus-node', ((e: CustomEvent) => {
+    el.addEventListener('toggle-direct-deps', () => {
       eventFired = true;
-      eventDetail = e.detail;
-    }) as EventListener);
+    });
 
-    const actions = el.shadowRoot?.querySelector('graph-node-actions');
-    actions?.dispatchEvent(
-      new CustomEvent('focus-node', {
-        detail: { node: mockNode },
+    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    metrics?.dispatchEvent(
+      new CustomEvent('toggle-direct-deps', {
         bubbles: true,
         composed: true,
       }),
     );
 
     expect(eventFired).to.be.true;
-    expect((eventDetail as { node: GraphNode }).node).to.equal(mockNode);
   });
 
-  it('should bubble show-dependents event', async () => {
+  it('should bubble toggle-direct-dependents event from metrics section', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
       <graph-node-details-panel
         .node=${mockNode}
@@ -401,14 +394,13 @@ describe('graph-node-details-panel - Event Bubbling', () => {
     `);
 
     let eventFired = false;
-    el.addEventListener('show-dependents', () => {
+    el.addEventListener('toggle-direct-dependents', () => {
       eventFired = true;
     });
 
-    const actions = el.shadowRoot?.querySelector('graph-node-actions');
-    actions?.dispatchEvent(
-      new CustomEvent('show-dependents', {
-        detail: { node: mockNode },
+    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    metrics?.dispatchEvent(
+      new CustomEvent('toggle-direct-dependents', {
         bubbles: true,
         composed: true,
       }),
@@ -487,18 +479,18 @@ describe('graph-node-details-panel - Event Bubbling', () => {
 // ========================================
 
 describe('graph-node-details-panel - Props Propagation', () => {
-  it('should propagate viewMode to actions', async () => {
+  it('should propagate active toggle states to metrics section', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
       <graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-        view-mode="dependencies"
+        active-direct-deps
       ></graph-node-details-panel>
     `);
 
-    const actions = el.shadowRoot?.querySelector('graph-node-actions');
-    expect(actions?.getAttribute('view-mode')).to.equal('dependencies');
+    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    expect(metrics?.hasAttribute('active-direct-deps')).to.be.true;
   });
 
   it('should propagate zoom to node lists', async () => {

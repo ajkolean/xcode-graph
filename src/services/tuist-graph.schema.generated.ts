@@ -7,6 +7,7 @@
  */
 
 export type GraphDependency =
+  | { foreignBuildOutput: { _0: GraphDependency_ForeignBuildOutput } }
   | { xcframework: { _0: GraphDependency_XCFramework } }
   | {
       framework: {
@@ -215,6 +216,13 @@ export enum FileCodeGen {
 
 export type FileElement = { file: { path: string } } | { folderReference: { path: string } };
 
+export type ForeignBuild_Input =
+  | { file: { _0: string } }
+  | { folder: { _0: string } }
+  | { script: { _0: string } };
+
+export type ForeignBuild_Artifact = { xcframework: { path: string; linking: BinaryLinking } };
+
 export enum LaunchStyle {
   Automatically = 'automatically',
   WaitForExecutableToBeLaunched = 'waitForExecutableToBeLaunched',
@@ -294,8 +302,8 @@ export enum Product {
   DynamicLibrary = 'dynamicLibrary',
   Framework = 'framework',
   StaticFramework = 'staticFramework',
-  UnitTests = 'unit_tests',
-  UiTests = 'ui_tests',
+  UnitTests = 'unitTests',
+  UiTests = 'uiTests',
   Bundle = 'bundle',
   CommandLineTool = 'commandLineTool',
   AppExtension = 'appExtension',
@@ -603,6 +611,12 @@ export interface GraphDependency_XCFramework {
   expectedSignature?: string;
 }
 
+export interface GraphDependency_ForeignBuildOutput {
+  name: string;
+  path: string;
+  linking: BinaryLinking;
+}
+
 export interface GraphEdge {
   from: GraphDependency;
   to: GraphDependency;
@@ -673,6 +687,7 @@ export interface BuildableFolderException {
   compilerFlags: (string | string)[];
   publicHeaders: string[];
   privateHeaders: string[];
+  platformFilters: (string | PlatformCondition)[];
 }
 
 export interface BuildableFolderExceptions {
@@ -711,6 +726,12 @@ export interface ExecutionAction {
   target?: TargetReference;
   shellPath?: string;
   showEnvVarsInLog: boolean;
+}
+
+export interface ForeignBuild {
+  script: string;
+  inputs: ForeignBuild_Input[];
+  output: ForeignBuild_Artifact;
 }
 
 export interface Headers {
@@ -801,6 +822,7 @@ export interface ProfileAction {
   preActions: ExecutionAction[];
   postActions: ExecutionAction[];
   executable?: TargetReference;
+  askForAppToLaunch: boolean;
   arguments?: Arguments;
 }
 
@@ -878,6 +900,7 @@ export interface RunAction {
   diagnosticsOptions: SchemeDiagnosticsOptions;
   metalOptions?: MetalOptions;
   expandVariableFromTarget?: TargetReference;
+  askForAppToLaunch: boolean;
   launchStyle: LaunchStyle;
   appClipInvocationURL?: string;
   customWorkingDirectory?: string;
@@ -978,6 +1001,7 @@ export interface Target {
   type: TargetType;
   packages: string[];
   buildableFolders: BuildableFolder[];
+  foreignBuild?: ForeignBuild;
 }
 
 export interface TargetReference {
@@ -1080,6 +1104,7 @@ export interface PackageInfo {
   products: Product[];
   targets: Target[];
   traits?: PackageTrait[];
+  dependencies: PackageDependency[];
   platforms: Platform[];
   cLanguageStandard?: string;
   cxxLanguageStandard?: string;
@@ -1096,6 +1121,17 @@ export interface PackageInfo_Platform {
 export interface PackageInfo_PackageConditionDescription {
   platformNames: string[];
   config?: string;
+  traits?: string[];
+}
+
+export interface PackageDependencyTrait {
+  name: string;
+  condition?: string[];
+}
+
+export interface PackageDependency {
+  identity: string;
+  traits: PackageDependencyTrait[];
 }
 
 export interface PackageInfo_Dependency {

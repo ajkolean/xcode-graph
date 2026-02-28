@@ -36,7 +36,13 @@ export type HighlightCard =
 export function selectNode(node: GraphNode | null): void {
   selectedNode.set(node);
   selectedCluster.set(null);
-  if (!node) {
+  if (node) {
+    // Auto-enable direct deps/dependents when selecting a node
+    highlightDirectDeps.set(true);
+    highlightDirectDependents.set(true);
+    highlightTransitiveDeps.set(false);
+    highlightTransitiveDependents.set(false);
+  } else {
     resetHighlightToggles();
   }
 }

@@ -2,7 +2,7 @@
  * Graph Actions Tests
  *
  * Comprehensive tests for graph state mutation functions.
- * Tests selection, view mode, circular dependencies, and complex interactions.
+ * Tests selection, highlight toggles, circular dependencies, and complex interactions.
  */
 
 import { ViewMode } from '@shared/schemas/app.schema';
@@ -12,17 +12,20 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { SignalSnapshot } from '../../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
 import {
-  focusNode,
+  resetHighlightToggles,
   resetView,
   selectCluster,
   selectNode,
   setCircularDependencies,
   setHoveredNode,
-  setViewMode,
-  showDependents,
+  toggleHighlight,
 } from './graph.actions';
 import {
   circularDependencies,
+  highlightDirectDependents,
+  highlightDirectDeps,
+  highlightTransitiveDependents,
+  highlightTransitiveDeps,
   hoveredNode,
   selectedCluster,
   selectedNode,
@@ -48,7 +51,10 @@ describe('graph.actions', () => {
       selectedNode,
       selectedCluster,
       hoveredNode,
-      viewMode,
+      highlightDirectDeps,
+      highlightTransitiveDeps,
+      highlightDirectDependents,
+      highlightTransitiveDependents,
       circularDependencies,
     ]);
   });
@@ -77,23 +83,27 @@ describe('graph.actions', () => {
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should set view mode to Full when deselecting node', () => {
+    it('should reset highlight toggles when deselecting node', () => {
       const node = createTestNode('node-1');
       selectNode(node);
-      viewMode.set(ViewMode.Focused);
+      highlightDirectDeps.set(true);
 
       selectNode(null);
 
+      expect(highlightDirectDeps.get()).toBe(false);
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should not change view mode when selecting node', () => {
-      viewMode.set(ViewMode.Focused);
+    it('should auto-enable direct deps and dependents when selecting a node', () => {
       const node = createTestNode('node-1');
 
       selectNode(node);
 
-      expect(viewMode.get()).toBe(ViewMode.Focused);
+      expect(highlightDirectDeps.get()).toBe(true);
+      expect(highlightDirectDependents.get()).toBe(true);
+      expect(highlightTransitiveDeps.get()).toBe(false);
+      expect(highlightTransitiveDependents.get()).toBe(false);
+      expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
     it('should allow selecting null to deselect', () => {
@@ -122,20 +132,12 @@ describe('graph.actions', () => {
       expect(selectedNode.get()).toBeNull();
     });
 
-    it('should set view mode to Full when selecting cluster', () => {
-      viewMode.set(ViewMode.Focused);
+    it('should reset highlight toggles when selecting cluster', () => {
+      highlightDirectDeps.set(true);
 
       selectCluster('cluster-1');
 
-      expect(viewMode.get()).toBe(ViewMode.Full);
-    });
-
-    it('should set view mode to Full when deselecting cluster', () => {
-      selectCluster('cluster-1');
-      viewMode.set(ViewMode.Focused);
-
-      selectCluster(null);
-
+      expect(highlightDirectDeps.get()).toBe(false);
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
@@ -175,19 +177,6 @@ describe('graph.actions', () => {
     });
   });
 
-  describe('setViewMode', () => {
-    it('should allow changing view mode multiple times', () => {
-      setViewMode(ViewMode.Focused);
-      expect(viewMode.get()).toBe(ViewMode.Focused);
-
-      setViewMode(ViewMode.Dependents);
-      expect(viewMode.get()).toBe(ViewMode.Dependents);
-
-      setViewMode(ViewMode.Full);
-      expect(viewMode.get()).toBe(ViewMode.Full);
-    });
-  });
-
   describe('setCircularDependencies', () => {
     it('should replace previous circular dependencies', () => {
       setCircularDependencies([['node-1', 'node-2', 'node-1']]);
@@ -199,131 +188,101 @@ describe('graph.actions', () => {
     });
   });
 
-  // ==================== Complex Actions ====================
+  // ==================== Highlight Toggle Actions ====================
 
-  describe('focusNode', () => {
-    it('should select node and set view mode to Focused', () => {
-      const node = createTestNode('node-1');
+  describe('toggleHighlight', () => {
+    it('should toggle direct deps on and off', () => {
+      expect(highlightDirectDeps.get()).toBe(false);
 
-      focusNode(node);
+      toggleHighlight('direct-deps');
+      expect(highlightDirectDeps.get()).toBe(true);
 
-      expect(selectedNode.get()).toBe(node);
-      expect(viewMode.get()).toBe(ViewMode.Focused);
+      toggleHighlight('direct-deps');
+      expect(highlightDirectDeps.get()).toBe(false);
     });
 
-    it('should clear selected cluster when focusing node', () => {
-      selectedCluster.set('cluster-1');
-      const node = createTestNode('node-1');
+    it('should toggle transitive deps on and off', () => {
+      toggleHighlight('transitive-deps');
+      expect(highlightTransitiveDeps.get()).toBe(true);
 
-      focusNode(node);
-
-      expect(selectedCluster.get()).toBeNull();
+      toggleHighlight('transitive-deps');
+      expect(highlightTransitiveDeps.get()).toBe(false);
     });
 
-    it('should cycle from Focused to Full when clicking same node', () => {
-      const node = createTestNode('node-1');
-      focusNode(node);
-      expect(viewMode.get()).toBe(ViewMode.Focused);
+    it('should toggle direct dependents on and off', () => {
+      toggleHighlight('direct-dependents');
+      expect(highlightDirectDependents.get()).toBe(true);
 
-      focusNode(node);
-
-      expect(viewMode.get()).toBe(ViewMode.Full);
+      toggleHighlight('direct-dependents');
+      expect(highlightDirectDependents.get()).toBe(false);
     });
 
-    it('should cycle from Both to Dependents when clicking same node', () => {
-      const node = createTestNode('node-1');
-      selectedNode.set(node);
-      viewMode.set(ViewMode.Both);
+    it('should toggle transitive dependents on and off', () => {
+      toggleHighlight('transitive-dependents');
+      expect(highlightTransitiveDependents.get()).toBe(true);
 
-      focusNode(node);
-
-      expect(viewMode.get()).toBe(ViewMode.Dependents);
+      toggleHighlight('transitive-dependents');
+      expect(highlightTransitiveDependents.get()).toBe(false);
     });
 
-    it('should cycle from Dependents to Both when clicking same node', () => {
-      const node = createTestNode('node-1');
-      selectedNode.set(node);
-      viewMode.set(ViewMode.Dependents);
+    it('should allow multiple toggles active simultaneously', () => {
+      toggleHighlight('direct-deps');
+      toggleHighlight('direct-dependents');
 
-      focusNode(node);
-
-      expect(viewMode.get()).toBe(ViewMode.Both);
-    });
-
-    it('should reset to Focused when clicking different node', () => {
-      const node1 = createTestNode('node-1');
-      const node2 = createTestNode('node-2');
-
-      focusNode(node1);
-      viewMode.set(ViewMode.Full);
-
-      focusNode(node2);
-
-      expect(selectedNode.get()).toBe(node2);
-      expect(viewMode.get()).toBe(ViewMode.Focused);
+      expect(highlightDirectDeps.get()).toBe(true);
+      expect(highlightDirectDependents.get()).toBe(true);
+      expect(highlightTransitiveDeps.get()).toBe(false);
     });
   });
 
-  describe('showDependents', () => {
-    it('should select node and set view mode to Dependents', () => {
-      const node = createTestNode('node-1');
+  describe('resetHighlightToggles', () => {
+    it('should reset all toggles to false', () => {
+      highlightDirectDeps.set(true);
+      highlightTransitiveDeps.set(true);
+      highlightDirectDependents.set(true);
+      highlightTransitiveDependents.set(true);
 
-      showDependents(node);
+      resetHighlightToggles();
 
-      expect(selectedNode.get()).toBe(node);
-      expect(viewMode.get()).toBe(ViewMode.Dependents);
+      expect(highlightDirectDeps.get()).toBe(false);
+      expect(highlightTransitiveDeps.get()).toBe(false);
+      expect(highlightDirectDependents.get()).toBe(false);
+      expect(highlightTransitiveDependents.get()).toBe(false);
     });
+  });
 
-    it('should clear selected cluster when showing dependents', () => {
-      selectedCluster.set('cluster-1');
-      const node = createTestNode('node-1');
+  // ==================== Computed viewMode ====================
 
-      showDependents(node);
-
-      expect(selectedCluster.get()).toBeNull();
-    });
-
-    it('should cycle from Dependents to Full when clicking same node', () => {
-      const node = createTestNode('node-1');
-      showDependents(node);
-      expect(viewMode.get()).toBe(ViewMode.Dependents);
-
-      showDependents(node);
-
+  describe('viewMode (computed)', () => {
+    it('should be Full when no toggles active', () => {
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should cycle from Both to Focused when clicking same node', () => {
-      const node = createTestNode('node-1');
-      selectedNode.set(node);
-      viewMode.set(ViewMode.Both);
-
-      showDependents(node);
-
+    it('should be Focused when deps toggle active', () => {
+      highlightDirectDeps.set(true);
       expect(viewMode.get()).toBe(ViewMode.Focused);
     });
 
-    it('should cycle from Focused to Both when clicking same node', () => {
-      const node = createTestNode('node-1');
-      selectedNode.set(node);
-      viewMode.set(ViewMode.Focused);
+    it('should be Focused when transitive deps toggle active', () => {
+      highlightTransitiveDeps.set(true);
+      expect(viewMode.get()).toBe(ViewMode.Focused);
+    });
 
-      showDependents(node);
+    it('should be Dependents when dependents toggle active', () => {
+      highlightDirectDependents.set(true);
+      expect(viewMode.get()).toBe(ViewMode.Dependents);
+    });
 
+    it('should be Both when deps and dependents toggles active', () => {
+      highlightDirectDeps.set(true);
+      highlightDirectDependents.set(true);
       expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
-    it('should reset to Dependents when clicking different node', () => {
-      const node1 = createTestNode('node-1');
-      const node2 = createTestNode('node-2');
-
-      showDependents(node1);
-      viewMode.set(ViewMode.Full);
-
-      showDependents(node2);
-
-      expect(selectedNode.get()).toBe(node2);
-      expect(viewMode.get()).toBe(ViewMode.Dependents);
+    it('should be Both when transitive deps and transitive dependents active', () => {
+      highlightTransitiveDeps.set(true);
+      highlightTransitiveDependents.set(true);
+      expect(viewMode.get()).toBe(ViewMode.Both);
     });
   });
 
@@ -345,19 +304,20 @@ describe('graph.actions', () => {
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should set view mode to Full', () => {
-      viewMode.set(ViewMode.Focused);
+    it('should reset all highlight toggles', () => {
+      highlightDirectDeps.set(true);
+      highlightTransitiveDependents.set(true);
 
       resetView();
 
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
 
-    it('should clear all selections and reset view mode', () => {
+    it('should clear all selections and reset toggles', () => {
       const node = createTestNode('node-1');
       selectedNode.set(node);
       selectedCluster.set('cluster-1');
-      viewMode.set(ViewMode.Dependents);
+      highlightDirectDeps.set(true);
 
       resetView();
 
@@ -386,50 +346,14 @@ describe('graph.actions', () => {
       expect(selectedCluster.get()).toBeNull();
     });
 
-    it('should handle complex view mode cycling with focusNode', () => {
+    it('should reset toggles when switching from node to cluster', () => {
       const node = createTestNode('node-1');
-
-      // First click: Focused
-      focusNode(node);
-      expect(viewMode.get()).toBe(ViewMode.Focused);
-
-      // Second click: Full
-      focusNode(node);
-      expect(viewMode.get()).toBe(ViewMode.Full);
-
-      // Set to Both
-      viewMode.set(ViewMode.Both);
-
-      // Third click: Dependents
-      focusNode(node);
-      expect(viewMode.get()).toBe(ViewMode.Dependents);
-
-      // Fourth click: Both
-      focusNode(node);
+      selectNode(node);
+      // selectNode auto-enables direct deps + direct dependents = Both
       expect(viewMode.get()).toBe(ViewMode.Both);
-    });
 
-    it('should handle complex view mode cycling with showDependents', () => {
-      const node = createTestNode('node-1');
-
-      // First click: Dependents
-      showDependents(node);
-      expect(viewMode.get()).toBe(ViewMode.Dependents);
-
-      // Second click: Full
-      showDependents(node);
+      selectCluster('cluster-1');
       expect(viewMode.get()).toBe(ViewMode.Full);
-
-      // Set to Both
-      viewMode.set(ViewMode.Both);
-
-      // Third click: Focused
-      showDependents(node);
-      expect(viewMode.get()).toBe(ViewMode.Focused);
-
-      // Fourth click: Both
-      showDependents(node);
-      expect(viewMode.get()).toBe(ViewMode.Both);
     });
 
     it('should maintain hover state independently of selection', async () => {

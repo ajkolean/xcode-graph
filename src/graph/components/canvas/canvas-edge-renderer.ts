@@ -425,29 +425,53 @@ function renderSingleEdge(
   rc.ctx.lineDashOffset = 0;
 }
 
-export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): void {
-  const { ctx, edges, selectedNode, viewMode, transitiveDeps, transitiveDependents } = rc;
-  const selectedNodeId = selectedNode?.id;
+/** Check if a chain result matches a toggle pair (direct / transitive) */
+function matchesToggle(
+  chain: TransitiveResult | undefined,
+  edgeKey: string,
+  showDirect: boolean,
+  showTransitive: boolean,
+): boolean {
+  if (!chain?.edges.has(edgeKey)) return false;
+  const depth = chain.edgeDepths.get(edgeKey) ?? 0;
+  return depth === 0 ? showDirect : showTransitive;
+}
 
-  const isChainActive = selectedNode && viewMode !== 'full' && viewMode !== 'path';
+/** Check if a specific edge should be highlighted based on per-toggle logic */
+function isEdgeInActiveChain(edgeKey: string, rc: EdgeRenderContext): boolean {
+  return (
+    matchesToggle(rc.transitiveDeps, edgeKey, rc.showDirectDeps, rc.showTransitiveDeps) ||
+    matchesToggle(
+      rc.transitiveDependents,
+      edgeKey,
+      rc.showDirectDependents,
+      rc.showTransitiveDependents,
+    )
+  );
+}
+
+export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): void {
+  const { ctx, edges } = rc;
+
+  const isChainActive =
+    rc.showDirectDeps ||
+    rc.showTransitiveDeps ||
+    rc.showDirectDependents ||
+    rc.showTransitiveDependents;
 
   ctx.lineWidth = 1;
 
   for (const edge of edges) {
     const edgeKey = `${edge.source}->${edge.target}`;
-    const inDepsChain = transitiveDeps?.edges.has(edgeKey) ?? false;
-    const inDependentsChain = transitiveDependents?.edges.has(edgeKey) ?? false;
-    const inChain = inDepsChain || inDependentsChain;
-
-    const isConnectedToSelected = edge.source === selectedNodeId || edge.target === selectedNodeId;
+    const inChain = isChainActive && isEdgeInActiveChain(edgeKey, rc);
 
     const isConnectedToSelectedCluster =
       rc.selectedCluster != null &&
       (rc.nodeMap.get(edge.source)?.project === rc.selectedCluster ||
         rc.nodeMap.get(edge.target)?.project === rc.selectedCluster);
 
-    const isHighlighted = isConnectedToSelected || isConnectedToSelectedCluster;
+    const isHighlighted = isConnectedToSelectedCluster;
 
-    renderSingleEdge(edge, edgeKey, viewport, isHighlighted, !!isChainActive, inChain, rc);
+    renderSingleEdge(edge, edgeKey, viewport, isHighlighted, isChainActive, inChain, rc);
   }
 }

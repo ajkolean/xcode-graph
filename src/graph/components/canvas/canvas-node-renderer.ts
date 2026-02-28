@@ -36,6 +36,10 @@ export interface NodeRenderContext {
   connectedNodes: Set<string>;
   hubWeightThreshold: number;
   nodeAlphaMap: Map<string, AnimatedValue>;
+  showDirectDeps: boolean;
+  showTransitiveDeps: boolean;
+  showDirectDependents: boolean;
+  showTransitiveDependents: boolean;
 }
 
 function isSearchDimmed(node: GraphNode, searchQuery: string): boolean {
@@ -421,14 +425,18 @@ function renderSingleNode(
 }
 
 export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
-  const { ctx, nodes, edges, selectedNode, viewMode, nodeWeights, connectedNodes } = rc;
+  const { ctx, nodes, edges, selectedNode, nodeWeights, connectedNodes } = rc;
 
   // Skip individual node rendering at extreme zoom-out; centroid dots handle visibility
   if (rc.zoom < 0.15) {
     return;
   }
 
-  const isChainActive = selectedNode && viewMode !== 'full' && viewMode !== 'path';
+  const isChainActive =
+    rc.showDirectDeps ||
+    rc.showTransitiveDeps ||
+    rc.showDirectDependents ||
+    rc.showTransitiveDependents;
 
   for (const node of nodes) {
     const pos = resolveNodeWorldPosition(

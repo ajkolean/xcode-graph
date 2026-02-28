@@ -161,10 +161,6 @@ export class GraphNodeDetailsPanel extends LitElement {
         ?active-transitive-deps=${this.activeTransitiveDeps}
         ?active-direct-dependents=${this.activeDirectDependents}
         ?active-transitive-dependents=${this.activeTransitiveDependents}
-        @toggle-direct-deps=${() => this.bubbleEvent('toggle-direct-deps')}
-        @toggle-transitive-deps=${() => this.bubbleEvent('toggle-transitive-deps')}
-        @toggle-direct-dependents=${() => this.bubbleEvent('toggle-direct-dependents')}
-        @toggle-transitive-dependents=${() => this.bubbleEvent('toggle-transitive-dependents')}
       ></graph-metrics-section>
 
       <graph-node-info .node=${this.node}></graph-node-info>
