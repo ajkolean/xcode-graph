@@ -19,7 +19,7 @@ import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { getPlatformIconPath, PLATFORM_COLOR } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import './badge.js';
 import './stats-card';
 
@@ -55,6 +55,23 @@ export class GraphClusterStats extends LitElement {
   @property({ attribute: false })
   declare targetBreakdown: Record<string, number>;
 
+  @property({ type: Boolean })
+  declare expanded: boolean;
+
+  @state()
+  private declare isExpanded: boolean;
+
+  constructor() {
+    super();
+    this.expanded = true;
+    this.isExpanded = true;
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.isExpanded = this.expanded;
+  }
+
   // ========================================
   // Styles
   // ========================================
@@ -64,6 +81,36 @@ export class GraphClusterStats extends LitElement {
       display: block;
       padding: var(--spacing-md);
       border-bottom: var(--border-widths-thin) solid var(--colors-border);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .header-title {
+      font-family: var(--fonts-heading);
+      font-size: var(--font-sizes-base);
+      font-weight: var(--font-weights-semibold);
+      color: var(--colors-foreground);
+    }
+
+    .toggle-icon {
+      width: var(--sizes-icon-sm);
+      height: var(--sizes-icon-sm);
+      color: var(--colors-muted-foreground);
+      transition: transform var(--durations-fast) var(--easings-out);
+    }
+
+    .toggle-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    .content {
+      margin-top: var(--spacing-3);
     }
 
     .stats-grid {
@@ -128,6 +175,10 @@ export class GraphClusterStats extends LitElement {
   // Event Handlers
   // ========================================
 
+  private toggleExpanded() {
+    this.isExpanded = !this.isExpanded;
+  }
+
   private handleCardToggle(card: string) {
     this.dispatchEvent(
       new CustomEvent(card, {
@@ -178,72 +229,91 @@ export class GraphClusterStats extends LitElement {
     `;
   }
 
-  override render(): TemplateResult {
+  private renderExpandedContent(): TemplateResult {
     const platformCount = this.platforms?.size || 0;
 
     return html`
-      <div class="stats-grid">
-        <graph-stats-card
-          label="Dependencies"
-          value="${this.filteredDependencies}/${this.totalDependencies}"
-          compact
-          toggleable
-          ?active=${this.activeDirectDeps}
-          @card-toggle=${() => this.handleCardToggle('toggle-direct-deps')}
-        ></graph-stats-card>
+      <div class="content">
+        <div class="stats-grid">
+          <graph-stats-card
+            label="Dependencies"
+            value="${this.filteredDependencies}/${this.totalDependencies}"
+            compact
+            toggleable
+            ?active=${this.activeDirectDeps}
+            @card-toggle=${() => this.handleCardToggle('toggle-direct-deps')}
+          ></graph-stats-card>
 
-        <graph-stats-card
-          label="Dependents"
-          value="${this.filteredDependents}/${this.totalDependents}"
-          compact
-          toggleable
-          ?active=${this.activeDirectDependents}
-          @card-toggle=${() => this.handleCardToggle('toggle-direct-dependents')}
-        ></graph-stats-card>
+          <graph-stats-card
+            label="Dependents"
+            value="${this.filteredDependents}/${this.totalDependents}"
+            compact
+            toggleable
+            ?active=${this.activeDirectDependents}
+            @card-toggle=${() => this.handleCardToggle('toggle-direct-dependents')}
+          ></graph-stats-card>
+        </div>
+
+        ${this.renderTargetBreakdown()}
+
+        ${
+          platformCount > 0
+            ? html`
+              <div class="section">
+                <div class="section-title">Platforms (${platformCount})</div>
+                <div class="badges-grid">
+                  ${Array.from(this.platforms).map((platform) => {
+                    const color = PLATFORM_COLOR;
+                    const iconPath = getPlatformIconPath(platform);
+
+                    return html`
+                      <div
+                        class="platform-badge"
+                        style="
+                          background-color: color-mix(in srgb, ${color} 15%, transparent);
+                          border-color: color-mix(in srgb, ${color} 30%, transparent);
+                        "
+                      >
+                        ${
+                          iconPath
+                            ? svg`
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}">
+                                <path d="${iconPath}" />
+                              </svg>
+                            `
+                            : ''
+                        }
+                        <span class="platform-name" style="color: ${color}">
+                          ${platform}
+                        </span>
+                      </div>
+                    `;
+                  })}
+                </div>
+              </div>
+            `
+            : nothing
+        }
+      </div>
+    `;
+  }
+
+  override render(): TemplateResult {
+    return html`
+      <div class="header" @click=${this.toggleExpanded}>
+        <span class="header-title">Metrics</span>
+        <svg
+          class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
       </div>
 
-      <!-- Target Breakdown by Type -->
-      ${this.renderTargetBreakdown()}
-
-      <!-- Platforms Section -->
-      ${
-        platformCount > 0
-          ? html`
-            <div class="section">
-              <div class="section-title">Platforms (${platformCount})</div>
-              <div class="badges-grid">
-                ${Array.from(this.platforms).map((platform) => {
-                  const color = PLATFORM_COLOR;
-                  const iconPath = getPlatformIconPath(platform);
-
-                  return html`
-                    <div
-                      class="platform-badge"
-                      style="
-                        background-color: color-mix(in srgb, ${color} 15%, transparent);
-                        border-color: color-mix(in srgb, ${color} 30%, transparent);
-                      "
-                    >
-                      ${
-                        iconPath
-                          ? svg`
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}">
-                              <path d="${iconPath}" />
-                            </svg>
-                          `
-                          : ''
-                      }
-                      <span class="platform-name" style="color: ${color}">
-                        ${platform}
-                      </span>
-                    </div>
-                  `;
-                })}
-              </div>
-            </div>
-          `
-          : nothing
-      }
+      ${this.isExpanded ? this.renderExpandedContent() : nothing}
     `;
   }
 }

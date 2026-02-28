@@ -129,16 +129,16 @@ export class GraphClusterDetailsPanel extends LitElement {
     const isExternal = this.cluster.origin === 'external';
 
     return html`
-      <graph-cluster-header
-        cluster-name=${this.cluster.name}
-        cluster-type=${this.cluster.type}
-        cluster-color=${this.clusterColor}
-        cluster-path=${this.cluster.path || ''}
-        ?is-external=${isExternal}
-        @back=${() => this.bubbleEvent('close')}
-      ></graph-cluster-header>
-
       <div class="scrollable">
+        <graph-cluster-header
+          cluster-name=${this.cluster.name}
+          cluster-type=${this.cluster.type}
+          cluster-color=${this.clusterColor}
+          cluster-path=${this.cluster.path || ''}
+          ?is-external=${isExternal}
+          @back=${() => this.bubbleEvent('close')}
+        ></graph-cluster-header>
+
         <graph-cluster-stats
           filtered-dependencies=${this.stats.filteredDependencies}
           total-dependencies=${this.stats.totalDependencies}

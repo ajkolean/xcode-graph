@@ -108,7 +108,7 @@ export class GraphRightSidebarHeader extends LitElement {
     return html`
       <div class="container">
         ${
-          this.isCollapsed
+          this.isCollapsed || !this.title
             ? ''
             : html`
           <div class="title-wrapper">

@@ -27,6 +27,8 @@ import { PLATFORM_COLOR } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './right-sidebar-header';
+import './sidebar-collapse-icon';
+import './icon-button.js';
 import './collapsed-sidebar';
 import './node-details-panel';
 import './cluster-details-panel';
@@ -247,32 +249,39 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       margin: var(--spacing-1) 0;
     }
 
-    .breadcrumb-button {
-      display: block;
+    .details-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: var(--spacing-2) var(--spacing-md);
-      background: none;
-      border: none;
-      border-bottom: var(--border-widths-thin) solid var(--colors-border);
-      color: var(--colors-primary);
-      font-family: var(--fonts-body);
-      font-size: var(--font-sizes-label);
-      font-weight: var(--font-weights-medium);
-      cursor: pointer;
-      text-align: left;
-      width: 100%;
-      transition: background-color var(--durations-fast) var(--easings-default);
+      border-bottom: var(--border-widths-thin) solid var(--colors-sidebar-border);
       flex-shrink: 0;
       position: relative;
       z-index: 1;
     }
 
+    .breadcrumb-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 0;
+      background: none;
+      border: none;
+      color: var(--colors-primary);
+      font-family: var(--fonts-body);
+      font-size: var(--font-sizes-label);
+      font-weight: var(--font-weights-medium);
+      cursor: pointer;
+      transition: opacity var(--durations-fast) var(--easings-default);
+    }
+
     .breadcrumb-button:hover {
-      background-color: rgba(var(--colors-primary-rgb), var(--opacity-5));
+      opacity: 0.8;
     }
 
     .breadcrumb-button:focus-visible {
       outline: 2px solid var(--colors-primary);
-      outline-offset: -2px;
+      outline-offset: 2px;
+      border-radius: var(--radii-sm);
     }
 
     .filters-active-dot {
@@ -326,10 +335,8 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     return this.sidebar.matches('collapsed');
   }
 
-  private get headerTitle(): string {
-    if (selectedNode.get()) return 'Node Details';
-    if (selectedCluster.get()) return 'Cluster Details';
-    return 'Project Overview';
+  private get isViewingDetails(): boolean {
+    return !!selectedNode.get() || !!selectedCluster.get();
   }
 
   // ========================================
@@ -629,11 +636,21 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     selectCluster(null);
   }
 
-  private renderBreadcrumb() {
+  private renderDetailsToolbar() {
     return html`
-      <button class="breadcrumb-button" @click=${this.handleBackToFilters}>
-        ← Back to Filters
-      </button>
+      <div class="details-toolbar">
+        <button class="breadcrumb-button" @click=${this.handleBackToFilters}>
+          ← Back to Filters
+        </button>
+        <graph-icon-button
+          variant="ghost"
+          color="neutral"
+          title="Collapse sidebar"
+          @click=${this.handleToggleCollapse}
+        >
+          <graph-sidebar-collapse-icon></graph-sidebar-collapse-icon>
+        </graph-icon-button>
+      </div>
     `;
   }
 
@@ -655,7 +672,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
     if (selectedNode) {
       return html`
-        ${this.renderBreadcrumb()}
+        ${this.renderDetailsToolbar()}
         ${this.renderNodeDetails(selectedNode, currentZoom, {
           activeDirectDeps,
           activeTransitiveDeps,
@@ -666,7 +683,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     }
     if (selectedCluster) {
       return html`
-        ${this.renderBreadcrumb()}
+        ${this.renderDetailsToolbar()}
         ${this.renderClusterDetails(selectedCluster, currentZoom, {
           activeDirectDeps,
           activeDirectDependents,
@@ -757,12 +774,18 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
     return html`
       <aside>
-        <graph-right-sidebar-header
-          title=${this.headerTitle}
-          ?is-collapsed=${isCollapsed}
-          ?has-active-filters=${isFiltersActive}
-          @toggle-collapse=${this.handleToggleCollapse}
-        ></graph-right-sidebar-header>
+        ${
+          !this.isViewingDetails || isCollapsed
+            ? html`
+            <graph-right-sidebar-header
+              title="Project Overview"
+              ?is-collapsed=${isCollapsed}
+              ?has-active-filters=${isFiltersActive}
+              @toggle-collapse=${this.handleToggleCollapse}
+            ></graph-right-sidebar-header>
+          `
+            : ''
+        }
 
         ${sidebarContent}
       </aside>
