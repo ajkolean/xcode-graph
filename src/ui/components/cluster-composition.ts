@@ -91,14 +91,14 @@ export class GraphClusterComposition extends LitElement {
     }
 
     .content {
-      margin-top: var(--spacing-3);
+      margin-top: var(--spacing-2);
     }
 
     .stats-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: var(--spacing-1) 0;
+      padding: 2px 0;
     }
 
     .stat-label {
@@ -139,7 +139,7 @@ export class GraphClusterComposition extends LitElement {
     .section-divider {
       height: 1px;
       background-color: var(--colors-border);
-      margin: var(--spacing-3) 0;
+      margin: var(--spacing-2) 0;
     }
 
     .largest-targets {

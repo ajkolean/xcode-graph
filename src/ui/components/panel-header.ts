@@ -80,8 +80,8 @@ export class GraphPanelHeader extends LitElement {
     .header-row {
       display: flex;
       align-items: flex-start;
-      gap: var(--spacing-3);
-      margin-bottom: var(--spacing-3);
+      gap: var(--spacing-2);
+      margin-bottom: var(--spacing-2);
     }
 
     /* No badges margin adjustment */
@@ -102,7 +102,7 @@ export class GraphPanelHeader extends LitElement {
       color: var(--colors-muted-foreground);
       cursor: pointer;
       transition: background-color var(--durations-normal) var(--easings-out);
-      margin-top: var(--spacing-3);
+      margin-top: var(--spacing-1);
     }
 
     .back-button:hover {
@@ -128,8 +128,8 @@ export class GraphPanelHeader extends LitElement {
     }
 
     .icon-box {
-      width: var(--spacing-12);
-      height: var(--spacing-12);
+      width: var(--spacing-10);
+      height: var(--spacing-10);
       border-radius: var(--radii-xl);
       display: flex;
       align-items: center;
@@ -225,7 +225,7 @@ export class GraphPanelHeader extends LitElement {
             class="icon-box"
             style="
               background-color: ${color}15;
-              box-shadow: 0 0 20px ${color}30, 0 0 40px ${color}15;
+              box-shadow: 0 0 12px ${color}20;
             "
           >
             <slot name="icon"></slot>

@@ -143,14 +143,6 @@ export class GraphControls extends LitElement {
       color: var(--colors-primary-text);
     }
 
-    .hint {
-      font-family: var(--fonts-mono);
-      font-size: var(--font-sizes-xs);
-      letter-spacing: var(--letter-spacing-wide);
-      color: var(--colors-muted-foreground);
-      white-space: nowrap;
-    }
-
     .zoom-button.disabled {
       opacity: 0.3;
       cursor: not-allowed;
@@ -244,8 +236,6 @@ export class GraphControls extends LitElement {
             ${unsafeHTML(icons.Focus)}
           </button>
         </div>
-        <div class="divider"></div>
-        <span class="hint">Scroll zoom · Drag pan · Click select · ⇧Click clusters</span>
       </div>
     `;
   }

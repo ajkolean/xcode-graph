@@ -112,24 +112,24 @@ export class GraphClusterStats extends LitElement {
     }
 
     .content {
-      margin-top: var(--spacing-3);
+      margin-top: var(--spacing-2);
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-3);
+      gap: var(--spacing-2);
     }
 
     .section {
-      margin-top: var(--spacing-md);
+      margin-top: var(--spacing-3);
     }
 
     .section-title {
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-sm);
       color: var(--colors-muted-foreground);
-      margin-bottom: var(--spacing-sm);
+      margin-bottom: var(--spacing-1);
     }
 
     .badges-grid {

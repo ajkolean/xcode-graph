@@ -127,6 +127,15 @@ export class GraphNodeList extends NodeListEventsBase {
       user-select: none;
     }
 
+    .header:hover .header-title {
+      color: var(--colors-primary-text);
+    }
+
+    .header:hover .toggle-icon {
+      color: var(--colors-primary-text);
+      opacity: var(--opacity-80);
+    }
+
     .header-title {
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-label);
@@ -134,6 +143,7 @@ export class GraphNodeList extends NodeListEventsBase {
       color: var(--colors-muted-foreground);
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
+      transition: color var(--durations-normal);
     }
 
     .count {
@@ -148,7 +158,8 @@ export class GraphNodeList extends NodeListEventsBase {
       width: var(--sizes-icon-sm);
       height: var(--sizes-icon-sm);
       color: var(--colors-muted-foreground);
-      transition: transform var(--durations-fast) var(--easings-out);
+      opacity: var(--opacity-40);
+      transition: transform var(--durations-fast) var(--easings-out), color var(--durations-normal), opacity var(--durations-normal);
     }
 
     .toggle-icon.expanded {
@@ -156,7 +167,7 @@ export class GraphNodeList extends NodeListEventsBase {
     }
 
     .content {
-      margin-top: var(--spacing-3);
+      margin-top: var(--spacing-2);
     }
 
     .empty {

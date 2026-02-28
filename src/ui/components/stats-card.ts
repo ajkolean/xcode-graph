@@ -137,12 +137,16 @@ export class GraphStatsCard extends LitElement {
     }
 
     /* Compact mode for node detail metrics */
+    :host([compact]) .container {
+      padding: var(--spacing-2) var(--spacing-3);
+    }
+
     :host([compact]) .value {
       font-size: var(--font-sizes-h3);
     }
 
     :host([compact]) .label {
-      font-size: 12px;
+      font-size: var(--font-sizes-xs);
     }
 
     .value.highlighted {

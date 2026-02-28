@@ -65,6 +65,15 @@ export class GraphNodeInfo extends LitElement {
       user-select: none;
     }
 
+    .header:hover .header-title {
+      color: var(--colors-primary-text);
+    }
+
+    .header:hover .toggle-icon {
+      color: var(--colors-primary-text);
+      opacity: var(--opacity-80);
+    }
+
     .header-title {
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-label);
@@ -72,13 +81,15 @@ export class GraphNodeInfo extends LitElement {
       color: var(--colors-muted-foreground);
       letter-spacing: var(--letter-spacing-wider);
       text-transform: uppercase;
+      transition: color var(--durations-normal);
     }
 
     .toggle-icon {
       width: var(--sizes-icon-sm);
       height: var(--sizes-icon-sm);
       color: var(--colors-muted-foreground);
-      transition: transform var(--durations-fast) var(--easings-out);
+      opacity: var(--opacity-40);
+      transition: transform var(--durations-fast) var(--easings-out), color var(--durations-normal), opacity var(--durations-normal);
     }
 
     .toggle-icon.expanded {
@@ -86,11 +97,11 @@ export class GraphNodeInfo extends LitElement {
     }
 
     .content {
-      margin-top: var(--spacing-md);
+      margin-top: var(--spacing-3);
     }
 
     .section {
-      margin-bottom: var(--spacing-4);
+      margin-bottom: var(--spacing-3);
     }
 
     .section:last-child {
@@ -98,7 +109,7 @@ export class GraphNodeInfo extends LitElement {
     }
 
     .title {
-      margin-bottom: var(--spacing-3);
+      margin-bottom: var(--spacing-2);
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);
       color: var(--colors-muted-foreground);

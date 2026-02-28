@@ -75,7 +75,7 @@ export class GraphNodeDetailsPanel extends LitElement {
       flex-direction: column;
       height: 100%;
       overflow-y: auto;
-      padding-bottom: var(--spacing-xl);
+      padding-bottom: var(--spacing-lg);
       scrollbar-width: thin;
       scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
       animation: panelSlideIn var(--durations-slow) var(--easings-default);

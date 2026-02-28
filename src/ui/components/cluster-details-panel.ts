@@ -80,7 +80,7 @@ export class GraphClusterDetailsPanel extends LitElement {
     .scrollable {
       flex: 1;
       overflow-y: auto;
-      padding-bottom: var(--spacing-xl);
+      padding-bottom: var(--spacing-lg);
       scrollbar-width: thin;
       scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
     }

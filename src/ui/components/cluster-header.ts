@@ -93,8 +93,7 @@ export class GraphClusterHeader extends LitElement {
       display: flex;
       align-items: center;
       gap: var(--spacing-2);
-      padding: var(--spacing-2) var(--spacing-md);
-      margin-top: var(--spacing-1);
+      padding: var(--spacing-1) var(--spacing-md);
     }
 
     .path-text {
