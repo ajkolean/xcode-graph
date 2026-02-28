@@ -143,6 +143,34 @@ export class GraphNodeInfo extends LitElement {
   // Render
   // ========================================
 
+  private renderForeignBuild() {
+    const fb = this.node.foreignBuild;
+    if (!fb) return nothing;
+
+    return html`
+      <div class="section">
+        <div class="title">Foreign Build</div>
+        <div class="info-rows">
+          <graph-info-row label="Output" value=${fb.outputPath}></graph-info-row>
+          <graph-info-row label="Linking" value=${fb.outputLinking}></graph-info-row>
+          <graph-info-row label="Inputs">
+            ${String(fb.inputCount)}
+            ${fb.inputs.files.length > 0 ? html`<span class="input-badge">${fb.inputs.files.length} files</span>` : nothing}
+            ${fb.inputs.folders.length > 0 ? html`<span class="input-badge">${fb.inputs.folders.length} folders</span>` : nothing}
+            ${fb.inputs.scripts.length > 0 ? html`<span class="input-badge">${fb.inputs.scripts.length} scripts</span>` : nothing}
+          </graph-info-row>
+        </div>
+        <div class="script-block ${this.scriptExpanded ? 'expanded' : ''}">${fb.script}</div>
+        <button
+          class="expand-toggle"
+          @click=${() => {
+            this.scriptExpanded = !this.scriptExpanded;
+          }}
+        >${this.scriptExpanded ? 'Collapse' : 'Expand'} script</button>
+      </div>
+    `;
+  }
+
   override render(): TemplateResult {
     if (!this.node) return html``;
 
@@ -151,7 +179,6 @@ export class GraphNodeInfo extends LitElement {
     const showDeploymentTargets = this.hasDeploymentTargets || this.hasDestinations;
     const showSourceCount = this.node.sourceCount != null && this.node.sourceCount > 0;
     const showResourceCount = this.node.resourceCount != null && this.node.resourceCount > 0;
-    const fb = this.node.foreignBuild;
 
     return html`
       <!-- Basic Info Section -->
@@ -214,33 +241,7 @@ export class GraphNodeInfo extends LitElement {
           : nothing
       }
 
-      <!-- Foreign Build Section -->
-      ${
-        fb
-          ? html`
-          <div class="section">
-            <div class="title">Foreign Build</div>
-            <div class="info-rows">
-              <graph-info-row label="Output" value=${fb.outputPath}></graph-info-row>
-              <graph-info-row label="Linking" value=${fb.outputLinking}></graph-info-row>
-              <graph-info-row label="Inputs">
-                ${String(fb.inputCount)}
-                ${fb.inputs.files.length > 0 ? html`<span class="input-badge">${fb.inputs.files.length} files</span>` : nothing}
-                ${fb.inputs.folders.length > 0 ? html`<span class="input-badge">${fb.inputs.folders.length} folders</span>` : nothing}
-                ${fb.inputs.scripts.length > 0 ? html`<span class="input-badge">${fb.inputs.scripts.length} scripts</span>` : nothing}
-              </graph-info-row>
-            </div>
-            <div class="script-block ${this.scriptExpanded ? 'expanded' : ''}">${fb.script}</div>
-            <button
-              class="expand-toggle"
-              @click=${() => {
-                this.scriptExpanded = !this.scriptExpanded;
-              }}
-            >${this.scriptExpanded ? 'Collapse' : 'Expand'} script</button>
-          </div>
-        `
-          : nothing
-      }
+      ${this.renderForeignBuild()}
     `;
   }
 }

@@ -34,20 +34,27 @@ import { Product, TargetType } from './tuist-graph.schema.generated';
 // Type Mapping Functions
 // =============================================================================
 
-/** Map Tuist Product enum to our NodeType enum */
+/** Map Tuist Product enum to our NodeType enum.
+ * Handles both camelCase (generated schema) and snake_case (actual Tuist JSON output). */
 function productToNodeType(product: RawProduct): NodeType {
-  const appTypes = [Product.App, Product.AppClip];
-  if (appTypes.includes(product)) return NodeType.App;
+  const p = product as string;
 
-  const frameworkTypes = [Product.Framework, Product.StaticFramework];
-  if (frameworkTypes.includes(product)) return NodeType.Framework;
+  if (p === Product.App || p === Product.AppClip) return NodeType.App;
 
-  const libraryTypes = [Product.StaticLibrary, Product.DynamicLibrary];
-  if (libraryTypes.includes(product)) return NodeType.Library;
+  if (p === Product.Framework || p === Product.StaticFramework || p === 'static_framework')
+    return NodeType.Framework;
 
-  if (product === Product.UnitTests) return NodeType.TestUnit;
-  if (product === Product.UiTests) return NodeType.TestUi;
-  if (product === Product.CommandLineTool) return NodeType.Cli;
+  if (
+    p === Product.StaticLibrary ||
+    p === Product.DynamicLibrary ||
+    p === 'static_library' ||
+    p === 'dynamic_library'
+  )
+    return NodeType.Library;
+
+  if (p === Product.UnitTests || p === 'unit_tests') return NodeType.TestUnit;
+  if (p === Product.UiTests || p === 'ui_tests') return NodeType.TestUi;
+  if (p === Product.CommandLineTool || p === 'command_line_tool') return NodeType.Cli;
 
   return NodeType.Library;
 }
