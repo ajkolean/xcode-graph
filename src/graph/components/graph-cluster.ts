@@ -27,9 +27,22 @@
  * @fires cluster-click - Dispatched on click
  */
 
+import { resolveDefaults } from '@shared/collections';
 import { Origin } from '@shared/schemas/graph.types';
 import { LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+
+const CLUSTER_DEFAULTS = {
+  clusterId: '',
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  color: '#888',
+  nodeCount: 0,
+  origin: Origin.Local as Origin,
+  isHovered: false,
+};
 
 /**
  * SVG cluster container with background, border, and glow effects.
@@ -121,17 +134,7 @@ export class GraphCluster extends LitElement {
   // ========================================
 
   private resolveClusterProps() {
-    return {
-      clusterId: this.clusterId ?? '',
-      x: this.x ?? 0,
-      y: this.y ?? 0,
-      width: this.width ?? 0,
-      height: this.height ?? 0,
-      color: this.color ?? '#888',
-      nodeCount: this.nodeCount ?? 0,
-      origin: this.origin ?? Origin.Local,
-      isHovered: this.isHovered ?? false,
-    };
+    return resolveDefaults(this, CLUSTER_DEFAULTS);
   }
 
   override render(): TemplateResult {

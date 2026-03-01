@@ -20,10 +20,24 @@
  * ```
  */
 
+import { resolveDefaults } from '@shared/collections';
 import { generateBezierPath } from '@ui/utils/paths';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+
+const EDGE_DEFAULTS = {
+  x1: 0,
+  y1: 0,
+  x2: 0,
+  y2: 0,
+  color: '#888',
+  zoom: 1,
+  opacity: 1,
+  isDependent: false,
+  animated: false,
+  isHighlighted: false,
+};
 
 /**
  * SVG edge/connection between nodes in the graph visualization.
@@ -76,18 +90,7 @@ export class GraphEdge extends LitElement {
   // ========================================
 
   private resolveEdgeProps() {
-    return {
-      x1: this.x1 ?? 0,
-      y1: this.y1 ?? 0,
-      x2: this.x2 ?? 0,
-      y2: this.y2 ?? 0,
-      color: this.color ?? '#888',
-      zoom: this.zoom ?? 1,
-      opacity: this.opacity ?? 1,
-      isDependent: this.isDependent ?? false,
-      animated: this.animated ?? false,
-      isHighlighted: this.isHighlighted ?? false,
-    };
+    return resolveDefaults(this, EDGE_DEFAULTS);
   }
 
   override render(): TemplateResult {

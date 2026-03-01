@@ -61,46 +61,49 @@ class WarningCollector {
 // Type Mapping Functions
 // =============================================================================
 
+/** Product string → NodeType lookup (covers both camelCase and snake_case variants) */
+const PRODUCT_NODE_TYPE_MAP = new Map<string, NodeType>([
+  [Product.App, NodeType.App],
+  [Product.AppClip, NodeType.App],
+  [Product.Framework, NodeType.Framework],
+  [Product.StaticFramework, NodeType.Framework],
+  ['static_framework', NodeType.Framework],
+  [Product.StaticLibrary, NodeType.Library],
+  [Product.DynamicLibrary, NodeType.Library],
+  ['static_library', NodeType.Library],
+  ['dynamic_library', NodeType.Library],
+  [Product.UnitTests, NodeType.TestUnit],
+  ['unit_tests', NodeType.TestUnit],
+  [Product.UiTests, NodeType.TestUi],
+  ['ui_tests', NodeType.TestUi],
+  [Product.CommandLineTool, NodeType.Cli],
+  ['command_line_tool', NodeType.Cli],
+]);
+
+/** Known extension/bundle products that map to Library without warning */
+const KNOWN_EXTENSION_PRODUCTS = new Set<string>([
+  Product.AppExtension,
+  Product.Watch2App,
+  Product.Watch2Extension,
+  Product.TvTopShelfExtension,
+  Product.MessagesExtension,
+  Product.StickerPackExtension,
+  Product.Xpc,
+  Product.SystemExtension,
+  Product.ExtensionKitExtension,
+  Product.Macro,
+  Product.Bundle,
+]);
+
 /** Map Tuist Product enum to our NodeType enum.
  * Handles both camelCase (generated schema) and snake_case (actual Tuist JSON output).
  * Returns NodeType.Library as fallback for unknown products. */
 function productToNodeType(product: RawProduct, collector: WarningCollector): NodeType {
-  const p = product as string;
+  const mapped = PRODUCT_NODE_TYPE_MAP.get(product as string);
+  if (mapped) return mapped;
 
-  if (p === Product.App || p === Product.AppClip) return NodeType.App;
-
-  if (p === Product.Framework || p === Product.StaticFramework || p === 'static_framework')
-    return NodeType.Framework;
-
-  if (
-    p === Product.StaticLibrary ||
-    p === Product.DynamicLibrary ||
-    p === 'static_library' ||
-    p === 'dynamic_library'
-  )
-    return NodeType.Library;
-
-  if (p === Product.UnitTests || p === 'unit_tests') return NodeType.TestUnit;
-  if (p === Product.UiTests || p === 'ui_tests') return NodeType.TestUi;
-  if (p === Product.CommandLineTool || p === 'command_line_tool') return NodeType.Cli;
-
-  // Known extension/bundle types → Library fallback (no warning)
-  const knownExtensionProducts = new Set([
-    Product.AppExtension,
-    Product.Watch2App,
-    Product.Watch2Extension,
-    Product.TvTopShelfExtension,
-    Product.MessagesExtension,
-    Product.StickerPackExtension,
-    Product.Xpc,
-    Product.SystemExtension,
-    Product.ExtensionKitExtension,
-    Product.Macro,
-    Product.Bundle,
-  ]);
-
-  if (!knownExtensionProducts.has(product)) {
-    collector.warn(`Unknown product type "${p}", falling back to Library`);
+  if (!KNOWN_EXTENSION_PRODUCTS.has(product as string)) {
+    collector.warn(`Unknown product type "${product as string}", falling back to Library`);
   }
 
   return NodeType.Library;

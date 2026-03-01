@@ -20,11 +20,24 @@
  * @fires cluster-click - Dispatched when card is clicked
  */
 
+import { resolveDefaults } from '@shared/collections';
 import type { Cluster } from '@shared/schemas';
 import { generateColor } from '@ui/utils/color-generator';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { LitElement, type SVGTemplateResult, svg } from 'lit';
 import { property } from 'lit/decorators.js';
+
+const RENDER_PROP_DEFAULTS = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  zoom: 1,
+  isHighlighted: false,
+  isDimmed: false,
+  isSelected: false,
+  clickable: false,
+};
 
 /**
  * SVG card background for cluster visualization.
@@ -101,17 +114,7 @@ export class GraphClusterCard extends LitElement {
   // ========================================
 
   private resolveRenderProps() {
-    return {
-      x: this.x ?? 0,
-      y: this.y ?? 0,
-      width: this.width ?? 0,
-      height: this.height ?? 0,
-      zoom: this.zoom ?? 1,
-      isHighlighted: this.isHighlighted ?? false,
-      isDimmed: this.isDimmed ?? false,
-      isSelected: this.isSelected ?? false,
-      clickable: this.clickable ?? false,
-    };
+    return resolveDefaults(this, RENDER_PROP_DEFAULTS);
   }
 
   private computeCardStyles(

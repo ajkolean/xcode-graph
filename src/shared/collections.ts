@@ -44,3 +44,18 @@ export function addToMultiMap<K, V>(map: Map<K, V[]>, key: K, value: V): void {
 export function getOrDefault<K, V>(map: Map<K, V>, key: K, defaultValue: V): V {
   return map.get(key) ?? defaultValue;
 }
+
+/**
+ * Resolve optional/nullable values against a defaults object.
+ * For each key in defaults, uses the source value if non-nullish, otherwise the default.
+ */
+export function resolveDefaults<T extends Record<string, NonNullable<unknown>>>(
+  source: { readonly [K in keyof T]?: T[K] | null | undefined },
+  defaults: T,
+): T {
+  const result = {} as Record<string, unknown>;
+  for (const key in defaults) {
+    result[key] = source[key] ?? defaults[key];
+  }
+  return result as T;
+}
