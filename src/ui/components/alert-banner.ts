@@ -248,7 +248,7 @@ export class GraphAlertBanner extends LitElement {
     }
 
     return html`
-      <div class="banner">
+      <div class="banner" role="alert">
         <div class="icon">
           <slot name="icon"></slot>
         </div>
@@ -270,6 +270,7 @@ export class GraphAlertBanner extends LitElement {
                 class="close-btn"
                 @click=${this.handleDismiss}
                 title="Dismiss"
+                aria-label="Dismiss"
               >×</button>
             `
             : ''

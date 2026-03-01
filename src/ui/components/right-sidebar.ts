@@ -773,7 +773,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         });
 
     return html`
-      <aside>
+      <aside aria-label="Details and filters">
         ${when(
           !this.isViewingDetails || isCollapsed,
           () => html`
