@@ -122,14 +122,14 @@ export class GraphRightSidebarHeader extends LitElement {
           </div>
         `
         }
-        <xcode-xcode-graph-icon-button
+        <xcode-graph-icon-button
           variant="ghost"
           color="neutral"
           title="${this.isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}"
           @click=${this.handleToggle}
         >
           <xcode-graph-sidebar-collapse-icon ?is-collapsed=${this.isCollapsed}></xcode-graph-sidebar-collapse-icon>
-        </xcode-xcode-graph-icon-button>
+        </xcode-graph-icon-button>
       </div>
     `;
   }
