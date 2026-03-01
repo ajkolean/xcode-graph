@@ -52,10 +52,6 @@ export class GraphClusterCard extends LitElement {
     return this;
   }
 
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare cluster: Cluster | undefined;
 
@@ -86,10 +82,6 @@ export class GraphClusterCard extends LitElement {
   @property({ type: Boolean })
   declare clickable: boolean | undefined;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleClick() {
     if (this.clickable) {
       this.dispatchEvent(
@@ -108,10 +100,6 @@ export class GraphClusterCard extends LitElement {
       this.handleClick();
     }
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   private resolveRenderProps() {
     return resolveDefaults(this, RENDER_PROP_DEFAULTS);
@@ -228,7 +216,6 @@ export class GraphClusterCard extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster-card': GraphClusterCard;

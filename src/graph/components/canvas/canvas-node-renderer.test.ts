@@ -410,7 +410,7 @@ describe('canvas-node-renderer', () => {
       const rc = createRenderContext({
         nodes,
         layout: createMockLayout(nodePositions, clusterPositions),
-        selectedNode: nodes[0]!,
+        selectedNode: nodes[0] as GraphNode,
         showDirectDeps: true,
         transitiveDeps: {
           nodes: new Set(['selected']),
@@ -443,7 +443,7 @@ describe('canvas-node-renderer', () => {
       const rc = createRenderContext({
         nodes,
         layout: createMockLayout(nodePositions, clusterPositions),
-        selectedNode: nodes[0]!,
+        selectedNode: nodes[0] as GraphNode,
         showDirectDependents: true,
         transitiveDependents: {
           nodes: new Set(['selected', 'dep1']),

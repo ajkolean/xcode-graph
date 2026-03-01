@@ -185,7 +185,6 @@ export class GraphBadge extends LitElement {
   override render(): TemplateResult {
     const color = this.color || '#8B5CF6';
 
-    // Compute class list
     const classes = [
       'badge',
       `variant-${this.variant}`,

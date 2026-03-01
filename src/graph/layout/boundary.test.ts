@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import forceBoundary from './boundary';
 
-// ---------------------------------------------------------------------------
-// toAccessor (tested indirectly via forceBoundary setters)
-// ---------------------------------------------------------------------------
-
 describe('forceBoundary', () => {
   it('creates a force function with setter methods', () => {
     const force = forceBoundary(-100, -100, 100, 100);
@@ -65,10 +61,6 @@ describe('forceBoundary', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// isNearBorder (tested through force behavior)
-// ---------------------------------------------------------------------------
-
 describe('isNearBorder / force main loop', () => {
   it('applies velocity adjustments to nodes near the border', () => {
     const force = forceBoundary(-100, -100, 100, 100);
@@ -94,10 +86,6 @@ describe('isNearBorder / force main loop', () => {
     expect(node.vy).toBe(0);
   });
 });
-
-// ---------------------------------------------------------------------------
-// applyHardBoundary
-// ---------------------------------------------------------------------------
 
 describe('applyHardBoundary', () => {
   it('constrains node position when outside right boundary', () => {
@@ -168,10 +156,6 @@ describe('applyHardBoundary', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// initialize
-// ---------------------------------------------------------------------------
-
 describe('initialize', () => {
   it('handles empty node array', () => {
     const force = forceBoundary(-100, -100, 100, 100);
@@ -206,10 +190,6 @@ describe('initialize', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// toAccessor via null handling
-// ---------------------------------------------------------------------------
-
 describe('toAccessor null handling', () => {
   it('handles null values by using default', () => {
     // Passing null as boundary value (cast to number to match type)
@@ -225,10 +205,6 @@ describe('toAccessor null handling', () => {
     force(1.0);
   });
 });
-
-// ---------------------------------------------------------------------------
-// computeDefaultBorder
-// ---------------------------------------------------------------------------
 
 describe('computeDefaultBorder', () => {
   it('computes border as half of the smaller dimension', () => {

@@ -55,7 +55,6 @@ export class GraphSidebar extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    // Initialize collapsed state from attribute or defaultCollapsed prop
     if (this.defaultCollapsed || this.hasAttribute('collapsed')) {
       this.collapsed = true;
     }

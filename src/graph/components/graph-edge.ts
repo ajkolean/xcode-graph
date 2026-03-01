@@ -51,10 +51,6 @@ export class GraphEdge extends LitElement {
     return this;
   }
 
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ type: Number })
   declare x1: number | undefined;
 
@@ -84,10 +80,6 @@ export class GraphEdge extends LitElement {
 
   @property({ type: Boolean })
   declare animated: boolean | undefined;
-
-  // ========================================
-  // Render
-  // ========================================
 
   private resolveEdgeProps() {
     return resolveDefaults(this, EDGE_DEFAULTS);
@@ -151,7 +143,6 @@ export class GraphEdge extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-edge': GraphEdge;

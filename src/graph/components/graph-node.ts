@@ -70,10 +70,6 @@ export class GraphNode extends LitElement {
     return this;
   }
 
-  // ========================================
-  // Properties
-  // ========================================
-
   declare node: GraphNodeType | undefined;
   declare x: number | undefined;
   declare y: number | undefined;
@@ -83,10 +79,6 @@ export class GraphNode extends LitElement {
   declare isHovered: boolean | undefined;
   declare isDimmed: boolean | undefined;
   declare zoom: number | undefined;
-
-  // ========================================
-  // Event Handlers
-  // ========================================
 
   private handleMouseEnter() {
     this.dispatchEvent(
@@ -139,10 +131,6 @@ export class GraphNode extends LitElement {
     }
   }
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private getDisplayName(nodeName: string): string {
     const maxLabelLength = 20;
     return nodeName.length > maxLabelLength
@@ -153,10 +141,6 @@ export class GraphNode extends LitElement {
   private getShowTooltip(nodeName: string, isHovered: boolean): boolean {
     return isHovered && nodeName.length > 20;
   }
-
-  // ========================================
-  // Render Helpers
-  // ========================================
 
   private renderSonarPulses(x: number, y: number, size: number, color: string) {
     const pulseConfigs = [
@@ -382,10 +366,6 @@ export class GraphNode extends LitElement {
     return { x, y, size, color, zoom, isSelected, isHovered, isDimmed };
   }
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     if (!this.node) return svg``;
 
@@ -453,7 +433,6 @@ export class GraphNode extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-node': GraphNode;

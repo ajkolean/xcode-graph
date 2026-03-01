@@ -80,7 +80,6 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
   }
 
   override render(): TemplateResult | null {
-    // Get visible toasts from signal
     const toasts = getToastErrors();
 
     if (toasts.length === 0) {

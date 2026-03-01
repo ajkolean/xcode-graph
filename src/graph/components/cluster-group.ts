@@ -58,10 +58,6 @@ export class GraphClusterGroup extends LitElement {
     return this;
   }
 
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare cluster: Cluster | undefined;
 
@@ -129,10 +125,6 @@ export class GraphClusterGroup extends LitElement {
     }
   }
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleClusterMouseEnter() {
     this.scheduleHoverUpdate(true);
     this.dispatchEvent(new CustomEvent('cluster-mouseenter', { bubbles: true, composed: true }));
@@ -153,10 +145,6 @@ export class GraphClusterGroup extends LitElement {
       this.handleClusterClick();
     }
   }
-
-  // ========================================
-  // Lifecycle
-  // ========================================
 
   private hasSignificantZoomChange(changedProps: PropertyValues): boolean {
     if (!changedProps.has('zoom')) return false;
@@ -202,10 +190,6 @@ export class GraphClusterGroup extends LitElement {
     );
   }
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private get connectedNodes(): Set<string> {
     return this.selectedNode
       ? getConnectedNodes(this.selectedNode.id, this.edges ?? [])
@@ -215,10 +199,6 @@ export class GraphClusterGroup extends LitElement {
   private get clusterNodes(): GraphNodeType[] {
     return this.cluster?.nodes || [];
   }
-
-  // ========================================
-  // Render Helpers
-  // ========================================
 
   private isNodeDimmed(
     node: GraphNodeType,
@@ -250,10 +230,6 @@ export class GraphClusterGroup extends LitElement {
         return true;
     }
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     if (!this.cluster || !this.clusterPosition) return html``;
@@ -365,7 +341,6 @@ export class GraphClusterGroup extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster-group': GraphClusterGroup;

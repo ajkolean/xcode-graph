@@ -17,10 +17,6 @@ import {
 } from './layout-reporter';
 import type { HierarchicalLayoutResult } from './types';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function makeClusterPosition(
   overrides: Partial<ClusterPosition> & { id: string },
 ): ClusterPosition {
@@ -88,10 +84,6 @@ function makeLayoutResult(
 
   return { clusterPositions, nodePositions, clusters };
 }
-
-// ---------------------------------------------------------------------------
-// generatePositionReport
-// ---------------------------------------------------------------------------
 
 describe('generatePositionReport', () => {
   it('generates report with correct cluster and node counts', () => {
@@ -197,10 +189,6 @@ describe('generatePositionReport', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Export functions
-// ---------------------------------------------------------------------------
-
 describe('exportToJSON', () => {
   it('serializes report to JSON string', () => {
     const result = makeLayoutResult([
@@ -265,10 +253,6 @@ describe('exportNodesToCSV', () => {
     expect(lines).toHaveLength(2); // header + 1 row
   });
 });
-
-// ---------------------------------------------------------------------------
-// findHubClusters
-// ---------------------------------------------------------------------------
 
 describe('findHubClusters', () => {
   it('returns clusters with cross-stratum edges sorted by connectedStrata desc', () => {
@@ -357,10 +341,6 @@ describe('findHubClusters', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// findIsolatedClusters
-// ---------------------------------------------------------------------------
-
 describe('findIsolatedClusters', () => {
   it('returns all clusters sorted by connectionCount ascending', () => {
     const result = makeLayoutResult([
@@ -431,10 +411,6 @@ describe('findIsolatedClusters', () => {
     expect(isolated[0]?.connectionCount).toBe(0);
   });
 });
-
-// ---------------------------------------------------------------------------
-// Console output functions (smoke tests to ensure no errors)
-// ---------------------------------------------------------------------------
 
 describe('printClusterTable', () => {
   it('prints without throwing', () => {

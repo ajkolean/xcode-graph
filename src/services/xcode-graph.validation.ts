@@ -11,11 +11,9 @@
 
 import { z } from 'zod';
 
-// ==================== Raw Graph Schema ====================
-
 /**
  * Lenient schema for raw Tuist graph JSON.
- * Validates only the minimal required shape — unknown keys are preserved.
+ * Validates only the minimal required shape -- unknown keys are preserved.
  */
 interface RawGraphShape {
   name: string;
@@ -33,8 +31,6 @@ export const RawGraphSchema: z.ZodType<RawGraphShape> = z.looseObject({
 
 export type RawGraph = z.infer<typeof RawGraphSchema>;
 
-// ==================== Safe Parse Result ====================
-
 export interface SafeParseGraphResult {
   success: true;
   data: RawGraph;
@@ -48,8 +44,6 @@ export interface SafeParseGraphFailure {
 }
 
 export type SafeParseGraphReturn = SafeParseGraphResult | SafeParseGraphFailure;
-
-// ==================== Safe Parse Function ====================
 
 /**
  * Validate raw Tuist graph JSON at the boundary.

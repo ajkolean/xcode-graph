@@ -100,7 +100,6 @@ export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
 
 /** Simple luminance check to determine if a color is dark */
 function isDarkColor(color: string): boolean {
-  // Parse hex or rgba
   let r = 0;
   let g = 0;
   let b = 0;

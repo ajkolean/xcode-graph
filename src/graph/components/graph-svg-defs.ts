@@ -101,7 +101,6 @@ export class GraphSVGDefs extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-svg-defs': GraphSVGDefs;

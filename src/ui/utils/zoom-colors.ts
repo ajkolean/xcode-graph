@@ -48,7 +48,6 @@ export function adjustColorForZoom(color: string, zoom: number): string {
   const saturationMultiplier = getSaturationMultiplier(zoom);
   const lightnessAdjustment = getLightnessAdjustment(zoom);
 
-  // Handle rgba/rgb colors
   if (color.startsWith('rgba') || color.startsWith('rgb')) {
     const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/);
     if (!match) return color;
@@ -66,7 +65,6 @@ export function adjustColorForZoom(color: string, zoom: number): string {
     return `rgba(${Math.round(rgb.r * 255)}, ${Math.round(rgb.g * 255)}, ${Math.round(rgb.b * 255)}, ${a})`;
   }
 
-  // Handle hex colors
   const hsl = hexToHSL(color);
   const adjustedSaturation = hsl.s * saturationMultiplier;
   const adjustedLightness = Math.min(95, hsl.l + lightnessAdjustment);

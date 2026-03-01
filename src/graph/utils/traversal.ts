@@ -22,8 +22,6 @@ export interface TransitiveResult {
   maxDepth: number;
 }
 
-// ==================== Memoization Cache ====================
-
 interface CacheEntry {
   result: TransitiveResult;
   timestamp: number;
@@ -56,7 +54,6 @@ class TransitiveCache {
     const entry = this.cache.get(key);
     if (!entry) return null;
 
-    // Update timestamp for LRU
     entry.timestamp = Date.now();
     return entry.result;
   }
@@ -204,7 +201,6 @@ export function computeTransitiveDependencies(
   // Invalidate cache if edges changed
   transitiveCache.invalidateIfEdgesChanged(edges);
 
-  // Build adjacency only if we need to compute (not cached)
   let adjacencyBuilt = false;
   let outgoing = new Map<string, string[]>();
   let incoming = new Map<string, string[]>();

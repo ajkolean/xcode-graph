@@ -9,10 +9,6 @@ import {
 import { describe, expect, it } from 'vitest';
 import { analyzeCluster, assignLayers, determineRole, identifyAnchors } from './cluster-analysis';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function makeNode(overrides: Partial<GraphNode> & { id: string }): GraphNode {
   return {
     name: overrides.id,
@@ -38,10 +34,6 @@ function makeCluster(nodes: GraphNode[], id = 'cluster-1'): Cluster {
 function edge(source: string, target: string): GraphEdge {
   return { source, target };
 }
-
-// ---------------------------------------------------------------------------
-// determineRole
-// ---------------------------------------------------------------------------
 
 describe('determineRole', () => {
   it('returns Test when isTest is true', () => {
@@ -91,10 +83,6 @@ describe('determineRole', () => {
     expect(determineRole(node, true, true, 10)).toBe(NodeRole.Test);
   });
 });
-
-// ---------------------------------------------------------------------------
-// identifyAnchors
-// ---------------------------------------------------------------------------
 
 describe('identifyAnchors', () => {
   it('returns App nodes when present', () => {
@@ -174,10 +162,6 @@ describe('identifyAnchors', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// assignLayers
-// ---------------------------------------------------------------------------
-
 describe('assignLayers', () => {
   it('assigns layer 0 to anchors', () => {
     const anchor = makeNode({ id: 'anchor' });
@@ -213,10 +197,6 @@ describe('assignLayers', () => {
     expect(layers.size).toBe(0);
   });
 });
-
-// ---------------------------------------------------------------------------
-// analyzeCluster (integration)
-// ---------------------------------------------------------------------------
 
 describe('analyzeCluster', () => {
   it('populates anchors, metadata, roles, and layers', () => {

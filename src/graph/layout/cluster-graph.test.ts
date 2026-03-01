@@ -9,10 +9,6 @@ import {
 import { describe, expect, it } from 'vitest';
 import { buildClusterGraph } from './cluster-graph';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function makeNode(id: string): GraphNode {
   return {
     id,
@@ -38,10 +34,6 @@ function makeCluster(id: string, nodeIds: string[]): Cluster {
 function edge(source: string, target: string): GraphEdge {
   return { source, target };
 }
-
-// ---------------------------------------------------------------------------
-// buildClusterGraph
-// ---------------------------------------------------------------------------
 
 describe('buildClusterGraph', () => {
   it('builds nodeToCluster mapping correctly', () => {

@@ -86,7 +86,6 @@ export function isPointInViewport(point: Point, bounds: ViewportBounds): boolean
  * @returns `true` if the two rectangles overlap
  */
 export function isBoundingBoxInViewport(box: BoundingBox, bounds: ViewportBounds): boolean {
-  // Check if boxes overlap
   return !(
     box.maxX < bounds.minX ||
     box.minX > bounds.maxX ||
@@ -198,7 +197,6 @@ function cohenSutherlandIntersect(start: Point, end: Point, bounds: ViewportBoun
  * @returns `true` if the circle's bounding box intersects the viewport
  */
 export function isCircleInViewport(center: Point, radius: number, bounds: ViewportBounds): boolean {
-  // Check if circle's bounding box intersects viewport
   const circleBounds: BoundingBox = {
     minX: center.x - radius,
     maxX: center.x + radius,

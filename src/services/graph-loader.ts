@@ -1,15 +1,4 @@
-/**
- * Progressive Graph Loading Service
- *
- * Loads and renders large graphs incrementally to prevent UI blocking.
- * Uses chunking strategy to progressively build the graph.
- *
- * Benefits:
- * - Large graphs don't freeze the UI on load
- * - Users see partial graph immediately
- * - Better perceived performance
- * - Priority-based loading (visible clusters first)
- */
+/** Loads large graphs incrementally in priority-ordered chunks to avoid blocking the UI. */
 
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
@@ -20,13 +9,9 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 export interface LoadProgress {
   /** Whether this is a chunk update or completion */
   type: 'chunk' | 'complete';
-  /** Number of nodes loaded so far */
   loadedNodes: number;
-  /** Total nodes to load */
   totalNodes: number;
-  /** Number of edges loaded so far */
   loadedEdges: number;
-  /** Total edges to load */
   totalEdges: number;
   /** Loading percentage (0-100) */
   percentage: number;
@@ -74,9 +59,6 @@ export class GraphLoader {
     };
   }
 
-  /**
-   * Load graph progressively with callbacks for each chunk
-   */
   async loadGraphProgressive(
     nodes: GraphNode[],
     edges: GraphEdge[],
@@ -212,9 +194,6 @@ export class GraphLoader {
     return { nodes, edges };
   }
 
-  /**
-   * Estimate load time for a graph
-   */
   estimateLoadTime(nodeCount: number): {
     chunks: number;
     estimatedMs: number;
@@ -234,10 +213,6 @@ export class GraphLoader {
 
     return { chunks, estimatedMs, recommendation };
   }
-
-  // ========================================
-  // Private Helpers
-  // ========================================
 
   private prioritizeNodes(nodes: GraphNode[]): GraphNode[] {
     // Prioritize by:

@@ -239,16 +239,10 @@ export class GraphDataService {
     };
   }
 
-  /**
-   * Get all unique projects
-   */
   getAllProjects(): Set<string> {
     return this.projects;
   }
 
-  /**
-   * Get all unique packages
-   */
   getAllPackages(): Set<string> {
     return this.packages;
   }

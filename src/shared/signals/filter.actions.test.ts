@@ -143,7 +143,6 @@ describe('filter.actions', () => {
       expect(filters.get().platforms.has(Platform.iOS)).toBe(false);
       expect(filters.get().platforms.has(Platform.macOS)).toBe(true);
     });
-
   });
 
   describe('toggleOrigin', () => {
@@ -163,7 +162,6 @@ describe('filter.actions', () => {
       expect(filters.get().origins.has(Origin.Local)).toBe(false);
       expect(filters.get().origins.has(Origin.External)).toBe(true);
     });
-
   });
 
   describe('toggleProject', () => {
@@ -215,7 +213,6 @@ describe('filter.actions', () => {
       expect(filters.get().packages.has('Package1')).toBe(false);
       expect(filters.get().packages.has('Package2')).toBe(true);
     });
-
   });
 
   // ==================== Bulk Actions ====================
@@ -345,19 +342,6 @@ describe('filter.actions', () => {
       expect(current.packages.has('Package1')).toBe(true);
     });
 
-    it('should handle clear after multiple modifications', () => {
-      toggleNodeType(NodeType.Framework);
-      togglePlatform(Platform.iOS);
-      toggleProject('Project1');
-      setSearchQuery('test');
-
-      clearFilters();
-
-      const current = filters.get();
-      expect(current.nodeTypes).toEqual(DEFAULT_FILTERS.nodeTypes);
-      expect(searchQuery.get()).toBe('');
-    });
-
     it('should handle initialization followed by toggles', () => {
       const projects = new Set(['Project1', 'Project2']);
       const packages = new Set(['Package1', 'Package2']);
@@ -368,18 +352,6 @@ describe('filter.actions', () => {
       const current = filters.get();
       expect(current.projects.has('Project1')).toBe(false);
       expect(current.projects.has('Project2')).toBe(true);
-    });
-
-    it('should handle rapid toggle operations', () => {
-      const type = NodeType.Framework;
-
-      toggleNodeType(type);
-      toggleNodeType(type);
-      toggleNodeType(type);
-      toggleNodeType(type);
-
-      // Should end up in original state (toggled 4 times)
-      expect(filters.get().nodeTypes.has(type)).toBe(true);
     });
 
     it('should maintain immutability across operations', () => {

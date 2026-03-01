@@ -58,7 +58,6 @@ export class GraphHiddenDom extends LitElement {
 
   override willUpdate(changedProps: PropertyValues<this>): void {
     if (changedProps.has('nodes')) {
-      // Reset focus index if nodes change
       this.focusedIndex = 0;
     }
   }

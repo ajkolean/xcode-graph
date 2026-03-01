@@ -8,9 +8,6 @@
 import type { GraphDataService } from './graph-data-service';
 
 export const GraphStatsService = {
-  /**
-   * Get node statistics
-   */
   getNodeStats(
     service: GraphDataService,
     nodeId: string,
@@ -33,9 +30,6 @@ export const GraphStatsService = {
     };
   },
 
-  /**
-   * Get cluster statistics
-   */
   getClusterStats(
     service: GraphDataService,
     clusterId: string,
@@ -67,9 +61,6 @@ export const GraphStatsService = {
     };
   },
 
-  /**
-   * Get overall graph statistics
-   */
   getGraphStats(service: GraphDataService): {
     totalNodes: number;
     totalEdges: number;

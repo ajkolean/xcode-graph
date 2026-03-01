@@ -391,14 +391,11 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handleExpandToSection(section: SidebarSection) {
-    // Clear selections
     if (selectedNode.get()) selectNode(null);
     if (selectedCluster.get()) selectCluster(null);
 
-    // Expand to section
     this.sidebar.send({ type: 'EXPAND_TO_SECTION', section });
 
-    // Scroll to section
     setTimeout(() => {
       const element = this.shadowRoot?.getElementById(`filter-section-${section}`);
       element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -736,7 +733,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       color: packageColors.get(pkg) || '#FF9800',
     }));
 
-    // Update host attribute for CSS
     if (isCollapsed) {
       this.setAttribute('collapsed', '');
     } else {

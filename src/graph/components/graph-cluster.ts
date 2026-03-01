@@ -60,10 +60,6 @@ export class GraphCluster extends LitElement {
     return this;
   }
 
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ type: String, attribute: 'cluster-id' })
   declare clusterId: string | undefined;
 
@@ -90,10 +86,6 @@ export class GraphCluster extends LitElement {
 
   @property({ type: Boolean, attribute: 'is-hovered' })
   declare isHovered: boolean | undefined;
-
-  // ========================================
-  // Event Handlers
-  // ========================================
 
   private handleMouseEnter() {
     this.dispatchEvent(
@@ -128,10 +120,6 @@ export class GraphCluster extends LitElement {
       this.handleClick();
     }
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   private resolveClusterProps() {
     return resolveDefaults(this, CLUSTER_DEFAULTS);
@@ -269,7 +257,6 @@ export class GraphCluster extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster': GraphCluster;

@@ -33,19 +33,11 @@ import type {
 import { Product, TargetType } from './xcode-graph.schema.generated';
 import { safeParseGraph } from './xcode-graph.validation';
 
-// =============================================================================
-// Transform Result Type
-// =============================================================================
-
 /** Result of transforming a Tuist graph, including non-fatal warnings */
 export interface TransformResult {
   data: GraphData;
   warnings: string[];
 }
-
-// =============================================================================
-// Warning Collector
-// =============================================================================
 
 /** Mutable warning collector threaded through the transform */
 class WarningCollector {
@@ -65,11 +57,7 @@ interface ForeignBuildData {
   >;
 }
 
-// =============================================================================
-// Type Mapping Functions
-// =============================================================================
-
-/** Product string → NodeType lookup (covers both camelCase and snake_case variants) */
+/** Product string -> NodeType lookup (covers both camelCase and snake_case variants) */
 const PRODUCT_NODE_TYPE_MAP = new Map<string, NodeType>([
   [Product.App, NodeType.App],
   [Product.AppClip, NodeType.App],
@@ -327,10 +315,6 @@ function getOriginFromProject(projectPath: string, projectType: ProjectType): Or
   return Origin.Local;
 }
 
-// =============================================================================
-// Dependency Utilities
-// =============================================================================
-
 function getDependencyKey(dep: GraphDependency): string {
   if ('target' in dep) return `target:${dep.target.path}:${dep.target.name}`;
   if ('packageProduct' in dep)
@@ -387,10 +371,6 @@ function getDependencyKind(dep: GraphDependency): DependencyKind {
   if ('sdk' in dep || 'framework' in dep) return DependencyKind.Sdk;
   return DependencyKind.Target; // default for library, bundle, macro
 }
-
-// =============================================================================
-// Node Creation Helpers
-// =============================================================================
 
 interface TargetLookupData {
   target: Target;
@@ -496,10 +476,6 @@ function createNodeFromDependency(dep: GraphDependency, project?: string): Graph
   };
 }
 
-// =============================================================================
-// Transform Steps
-// =============================================================================
-
 /** Build lookup map and initial nodes from projects (flat alternating array) */
 function extractProjectTargets(
   projects: (string | Project)[],
@@ -598,10 +574,6 @@ function processDependencies(
 
   return edges;
 }
-
-// =============================================================================
-// Public API
-// =============================================================================
 
 /**
  * Transform a raw XcodeGraph JSON into our GraphData format.

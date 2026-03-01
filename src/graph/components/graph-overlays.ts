@@ -295,10 +295,6 @@ export class GraphEmptyStateOverlay extends LitElement {
   }
 }
 
-// ========================================
-// GraphInstructions
-// ========================================
-
 /**
  * Usage instructions overlay showing drag, click, and scroll hints.
  *
@@ -333,7 +329,6 @@ export class GraphInstructions extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-background': GraphBackground;

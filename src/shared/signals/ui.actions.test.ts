@@ -12,6 +12,7 @@ import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/si
 import {
   resetZoom,
   setActiveTab,
+  setBaseZoom,
   setEnableAnimation,
   setPreviewFilter,
   setZoom,
@@ -19,13 +20,13 @@ import {
   zoomIn,
   zoomOut,
 } from './ui.actions';
-import { activeTab, enableAnimation, previewFilter, zoom } from './ui.signals';
+import { activeTab, baseZoom, enableAnimation, previewFilter, zoom } from './ui.signals';
 
 describe('ui.actions', () => {
   let snapshot: SignalSnapshot;
 
   beforeEach(() => {
-    snapshot = createSignalSnapshot([activeTab, zoom, enableAnimation, previewFilter]);
+    snapshot = createSignalSnapshot([activeTab, zoom, baseZoom, enableAnimation, previewFilter]);
   });
 
   afterEach(() => {
@@ -167,6 +168,40 @@ describe('ui.actions', () => {
       zoomOut();
 
       expect(zoom.get()).toBeCloseTo(0.7, 1);
+    });
+  });
+
+  describe('resetZoom', () => {
+    it('should reset zoom to 1.0', () => {
+      zoom.set(2.5);
+
+      resetZoom();
+
+      expect(zoom.get()).toBe(1);
+    });
+
+    it('should reset zoom from minimum to 1.0', () => {
+      zoom.set(0.01);
+
+      resetZoom();
+
+      expect(zoom.get()).toBe(1);
+    });
+  });
+
+  describe('setBaseZoom', () => {
+    it('should set base zoom level', () => {
+      setBaseZoom(0.75);
+
+      expect(baseZoom.get()).toBe(0.75);
+    });
+
+    it('should allow setting base zoom to different values', () => {
+      setBaseZoom(1.5);
+      expect(baseZoom.get()).toBe(1.5);
+
+      setBaseZoom(0.3);
+      expect(baseZoom.get()).toBe(0.3);
     });
   });
 

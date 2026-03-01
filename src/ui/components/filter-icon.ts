@@ -1,18 +1,3 @@
-/**
- * FilterIcon Lit Component
- *
- * A unified icon component for filter sections.
- * Consolidates product-types, platforms, projects, and packages icons.
- *
- * @example
- * ```html
- * <xcode-graph-filter-icon name="product-types"></xcode-graph-filter-icon>
- * <xcode-graph-filter-icon name="platforms"></xcode-graph-filter-icon>
- * <xcode-graph-filter-icon name="projects"></xcode-graph-filter-icon>
- * <xcode-graph-filter-icon name="packages"></xcode-graph-filter-icon>
- * ```
- */
-
 import { FILTER_ICON_COLOR } from '@ui/utils/colors';
 import { type CSSResultGroup, css, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';

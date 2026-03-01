@@ -52,6 +52,10 @@ export const CLUSTER_LABEL_CONFIG = {
   MAX_FONT_SIZE: 800,
 } as const;
 
+/**
+ * Normalize a zoom value to the 0–1 range and clamp.
+ * 0 = fully zoomed out (MIN_ZOOM), 1 = fully zoomed in (MAX_ZOOM).
+ */
 export function normalizeZoom(zoom: number): number {
   const t = (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
   return Math.max(0, Math.min(1, t));

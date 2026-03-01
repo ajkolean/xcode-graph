@@ -40,11 +40,9 @@ function getPathCacheKey(x1: number, y1: number, x2: number, y2: number): string
 export function generateBezierPath(x1: number, y1: number, x2: number, y2: number): string {
   const cacheKey = getPathCacheKey(x1, y1, x2, y2);
 
-  // Check cache
   const cached = pathCache.get(cacheKey);
   if (cached) return cached;
 
-  // Generate path
   const dx = x2 - x1;
   const dy = y2 - y1;
 
@@ -68,8 +66,6 @@ export function generateBezierPath(x1: number, y1: number, x2: number, y2: numbe
   pathCache.set(cacheKey, path);
   return path;
 }
-
-// Port-Routed Path Generation
 
 interface Point {
   x: number;

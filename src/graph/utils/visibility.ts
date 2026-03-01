@@ -10,8 +10,6 @@
 import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/graph.types';
 import { getConnectedNodes } from './connections';
 
-// ==================== Search Matching ====================
-
 /**
  * Check if a node matches the search query
  *
@@ -33,8 +31,6 @@ export function matchesSearch(node: GraphNodeType, searchQuery: string): boolean
   );
 }
 
-// ==================== Connection Analysis ====================
-
 /**
  * Get IDs of all nodes connected to the selected node
  *
@@ -54,8 +50,6 @@ export function getConnectedNodeIds(
   connected.add(selectedNode.id);
   return connected;
 }
-
-// ==================== Visibility Logic ====================
 
 /**
  * Determine if a node should be dimmed (de-emphasized)
@@ -81,7 +75,6 @@ export function shouldDimNode(
     return true;
   }
 
-  // If a node is selected and this node is not connected, dim it
   if (selectedNode && !connectedNodes.has(node.id)) {
     return true;
   }
@@ -122,7 +115,6 @@ export function shouldShowEdge(
     return sourceMatches && targetMatches;
   }
 
-  // If a node is selected, only show edges connected to it
   if (selectedNode) {
     return edge.source === selectedNode.id || edge.target === selectedNode.id;
   }

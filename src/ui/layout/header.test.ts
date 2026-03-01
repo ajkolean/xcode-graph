@@ -66,4 +66,35 @@ describe('xcode-graph-header', () => {
     const firstText = breadcrumbs?.[0]?.textContent?.trim();
     expect(firstText).to.include('tuist');
   });
+
+  it('should render org avatar with initial inside first breadcrumb', async () => {
+    const el = await fixture<GraphHeader>(html`
+      <xcode-graph-header></xcode-graph-header>
+    `);
+
+    const avatar = el.shadowRoot?.querySelector('.breadcrumb-button .avatar');
+    expect(avatar).to.exist;
+    expect(avatar?.textContent).to.equal('T');
+  });
+
+  it('should render logo with SVG icon', async () => {
+    const el = await fixture<GraphHeader>(html`
+      <xcode-graph-header></xcode-graph-header>
+    `);
+
+    const logo = el.shadowRoot?.querySelector('.logo');
+    const svg = logo?.querySelector('svg');
+    expect(svg).to.exist;
+    expect(svg?.querySelector('path')).to.exist;
+  });
+
+  it('should render status dot with Connected title', async () => {
+    const el = await fixture<GraphHeader>(html`
+      <xcode-graph-header></xcode-graph-header>
+    `);
+
+    const statusDot = el.shadowRoot?.querySelector('.status-dot');
+    expect(statusDot).to.exist;
+    expect(statusDot?.getAttribute('title')).to.equal('Connected');
+  });
 });
