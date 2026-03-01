@@ -17,15 +17,18 @@ public final class GraphServer {
     private var channel: Channel?
     private let eventLoopGroup: MultiThreadedEventLoopGroup
     private let port: Int
+    private let shouldOpenBrowser: Bool
 
     /// Creates a server that serves the given pre-encoded JSON data.
     ///
     /// - Parameters:
     ///   - graphJSON: Pre-encoded JSON data of the XcodeGraph `Graph` object.
     ///   - port: Port to bind to (default: 8081).
-    public init(graphJSON: Data, port: Int = 8081) {
+    ///   - openBrowser: Whether to automatically open the browser (default: true).
+    public init(graphJSON: Data, port: Int = 8081, openBrowser: Bool = true) {
         self.graphJSON = graphJSON
         self.port = port
+        self.shouldOpenBrowser = openBrowser
         self.eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     }
 
@@ -34,10 +37,11 @@ public final class GraphServer {
     /// - Parameters:
     ///   - graph: Any `Encodable` graph object (e.g. `XcodeGraph.Graph`).
     ///   - port: Port to bind to (default: 8081).
-    public convenience init<T: Encodable>(graph: T, port: Int = 8081) throws {
+    ///   - openBrowser: Whether to automatically open the browser (default: true).
+    public convenience init<T: Encodable>(graph: T, port: Int = 8081, openBrowser: Bool = true) throws {
         let encoder = JSONEncoder()
         let data = try encoder.encode(graph)
-        self.init(graphJSON: data, port: port)
+        self.init(graphJSON: data, port: port, openBrowser: openBrowser)
     }
 
     /// Starts the HTTP server and opens the default browser.
@@ -59,7 +63,9 @@ public final class GraphServer {
 
         do {
             self.channel = try bootstrap.bind(host: "localhost", port: port).wait()
-            openBrowser(url: "http://localhost:\(port)")
+            if shouldOpenBrowser {
+                openBrowser(url: "http://localhost:\(port)")
+            }
             try self.channel?.closeFuture.wait()
         } catch {
             try shutdown()
