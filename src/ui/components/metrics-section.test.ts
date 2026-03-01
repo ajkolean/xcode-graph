@@ -140,4 +140,36 @@ describe('xcode-graph-metrics-section', () => {
     const cards = el.shadowRoot?.querySelectorAll('xcode-graph-stats-card');
     expect(cards?.length ?? 0).to.equal(0);
   });
+
+  it('should dispatch toggle-transitive-deps event', async () => {
+    const el = await fixture<GraphMetricsSection>(html`
+      <xcode-graph-metrics-section
+        transitive-dependencies-count="15"
+      ></xcode-graph-metrics-section>
+    `);
+
+    const cards = el.shadowRoot?.querySelectorAll('xcode-graph-stats-card');
+    const transitiveDepsCard = cards?.[2];
+    setTimeout(() =>
+      transitiveDepsCard?.dispatchEvent(new CustomEvent('card-toggle', { bubbles: true })),
+    );
+    const event = await oneEvent(el, 'toggle-transitive-deps');
+    expect(event).to.exist;
+  });
+
+  it('should dispatch toggle-transitive-dependents event', async () => {
+    const el = await fixture<GraphMetricsSection>(html`
+      <xcode-graph-metrics-section
+        transitive-dependents-count="12"
+      ></xcode-graph-metrics-section>
+    `);
+
+    const cards = el.shadowRoot?.querySelectorAll('xcode-graph-stats-card');
+    const transitiveDependentsCard = cards?.[3];
+    setTimeout(() =>
+      transitiveDependentsCard?.dispatchEvent(new CustomEvent('card-toggle', { bubbles: true })),
+    );
+    const event = await oneEvent(el, 'toggle-transitive-dependents');
+    expect(event).to.exist;
+  });
 });

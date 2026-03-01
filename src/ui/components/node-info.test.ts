@@ -127,4 +127,74 @@ describe('xcode-graph-node-info', () => {
       .true;
     expect(el.shadowRoot?.querySelector('.expand-toggle')?.textContent).to.contain('Collapse');
   });
+
+  it('should render deployment targets section when targets exist', async () => {
+    const nodeWithTargets = {
+      ...mockNode,
+      deploymentTargets: { iOS: '16.0', macOS: null },
+    };
+    const el = await fixture<GraphNodeInfo>(html`
+      <xcode-graph-node-info .node=${nodeWithTargets}></xcode-graph-node-info>
+    `);
+
+    const titles = el.shadowRoot?.querySelectorAll('.title');
+    const titleTexts = Array.from(titles ?? []).map((t) => t.textContent);
+    expect(titleTexts).to.include('Platform Support');
+  });
+
+  it('should render deployment targets section when destinations exist', async () => {
+    const nodeWithDestinations = {
+      ...mockNode,
+      destinations: [{ platform: 'iOS', variant: 'device' }],
+    };
+    const el = await fixture<GraphNodeInfo>(html`
+      <xcode-graph-node-info .node=${nodeWithDestinations}></xcode-graph-node-info>
+    `);
+
+    const titles = el.shadowRoot?.querySelectorAll('.title');
+    const titleTexts = Array.from(titles ?? []).map((t) => t.textContent);
+    expect(titleTexts).to.include('Platform Support');
+  });
+
+  it('should render source and resource counts', async () => {
+    const nodeWithCounts = {
+      ...mockNode,
+      sourceCount: 42,
+      resourceCount: 7,
+    };
+    const el = await fixture<GraphNodeInfo>(html`
+      <xcode-graph-node-info .node=${nodeWithCounts}></xcode-graph-node-info>
+    `);
+
+    const titles = el.shadowRoot?.querySelectorAll('.title');
+    const titleTexts = Array.from(titles ?? []).map((t) => t.textContent);
+    expect(titleTexts).to.include('Contents');
+  });
+
+  it('should render product name when different from node name', async () => {
+    const nodeWithProduct = {
+      ...mockNode,
+      productName: 'DifferentProductName',
+    };
+    const el = await fixture<GraphNodeInfo>(html`
+      <xcode-graph-node-info .node=${nodeWithProduct}></xcode-graph-node-info>
+    `);
+
+    const rows = el.shadowRoot?.querySelectorAll('xcode-graph-info-row');
+    const labels = Array.from(rows ?? []).map((r) => r.getAttribute('label'));
+    expect(labels).to.include('Product');
+  });
+
+  it('should render bundle ID when present', async () => {
+    const nodeWithBundle = {
+      ...mockNode,
+      bundleId: 'com.example.app',
+    };
+    const el = await fixture<GraphNodeInfo>(html`
+      <xcode-graph-node-info .node=${nodeWithBundle}></xcode-graph-node-info>
+    `);
+
+    const bundleId = el.shadowRoot?.querySelector('.bundle-id');
+    expect(bundleId?.textContent).to.equal('com.example.app');
+  });
 });

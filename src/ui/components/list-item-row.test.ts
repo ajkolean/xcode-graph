@@ -95,4 +95,13 @@ describe('xcode-graph-list-item-row', () => {
 
     expect(event).to.exist;
   });
+
+  it('should render empty when no node is set', async () => {
+    const el = await fixture<GraphListItemRow>(html`
+      <xcode-graph-list-item-row></xcode-graph-list-item-row>
+    `);
+
+    const button = el.shadowRoot?.querySelector('button');
+    expect(button).to.not.exist;
+  });
 });

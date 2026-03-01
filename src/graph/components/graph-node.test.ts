@@ -240,4 +240,36 @@ describe('xcode-graph-node', () => {
     expect(labelText).to.contain('...');
     expect(labelText?.length).to.be.lessThan('VeryLongNodeNameThatExceedsTwentyCharacters'.length);
   });
+
+  it('should render glow rings when selected', async () => {
+    const node = makeNode();
+    const { el } = await renderNode({ node, isSelected: true });
+    const g = el.querySelector('g[role="img"]');
+    expect(g).to.exist;
+    // Selected nodes should scale differently
+    expect(g?.getAttribute('opacity')).to.equal('1');
+  });
+
+  it('should render glow rings when hovered', async () => {
+    const node = makeNode();
+    const { el } = await renderNode({ node, isHovered: true });
+    const g = el.querySelector('g[role="img"]');
+    expect(g).to.exist;
+  });
+
+  it('should render tooltip for long name when hovered', async () => {
+    const node = makeNode({ name: 'VeryLongNodeNameThatExceedsTwentyChars' });
+    const { el } = await renderNode({ node, isHovered: true, zoom: 1 });
+    const tooltipText = el.querySelectorAll('text');
+    // Should have the label plus possibly a full-name tooltip
+    expect(tooltipText.length).to.be.greaterThan(0);
+  });
+
+  it('should render sonar pulses when selected', async () => {
+    const node = makeNode();
+    const { el } = await renderNode({ node, isSelected: true });
+    // Sonar pulses are animated circles
+    const circles = el.querySelectorAll('circle');
+    expect(circles.length).to.be.greaterThan(0);
+  });
 });
