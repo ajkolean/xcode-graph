@@ -105,4 +105,174 @@ describe('xcode-graph-cluster-header', () => {
     ) as GraphPanelHeader;
     expect(panelHeader.titleSize).to.equal('md');
   });
+
+  // ========================================
+  // getSourceType() branch coverage
+  // ========================================
+
+  describe('getSourceType()', () => {
+    it('should detect Registry source type from path', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/.build/registry/downloads/github.com/Alamofire"
+        ></xcode-graph-cluster-header>
+      `);
+
+      // Registry badge should be rendered
+      const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
+      const badgeLabels = Array.from(badges ?? []).map((b) => b.label);
+      expect(badgeLabels).to.include('Registry');
+    });
+
+    it('should detect Git source type from path', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/.build/checkouts/swift-argument-parser"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
+      const badgeLabels = Array.from(badges ?? []).map((b) => b.label);
+      expect(badgeLabels).to.include('Git');
+    });
+
+    it('should detect Local source type for regular paths', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/Projects/MyApp"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
+      const badgeLabels = Array.from(badges ?? []).map((b) => b.label);
+      expect(badgeLabels).to.include('Local');
+    });
+
+    it('should default to Local when clusterPath is empty', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
+      const badgeLabels = Array.from(badges ?? []).map((b) => b.label);
+      expect(badgeLabels).to.include('Local');
+    });
+  });
+
+  // ========================================
+  // getShortPath() branch coverage
+  // ========================================
+
+  describe('getShortPath()', () => {
+    it('should extract registry short path from registry downloads path', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/.build/registry/downloads/github.com/Alamofire"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const pathText = el.shadowRoot?.querySelector('.path-text');
+      expect(pathText).to.exist;
+      expect(pathText?.textContent).to.equal('github.com/Alamofire');
+    });
+
+    it('should extract checkout short path from checkouts path', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/.build/checkouts/swift-argument-parser"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const pathText = el.shadowRoot?.querySelector('.path-text');
+      expect(pathText).to.exist;
+      expect(pathText?.textContent).to.equal('swift-argument-parser');
+    });
+
+    it('should show last 3 path segments for local paths', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/Projects/MyApp/Sources"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const pathText = el.shadowRoot?.querySelector('.path-text');
+      expect(pathText).to.exist;
+      expect(pathText?.textContent).to.equal('Projects/MyApp/Sources');
+    });
+
+    it('should render no path row when clusterPath is empty', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const pathRow = el.shadowRoot?.querySelector('.path-row');
+      expect(pathRow).to.not.exist;
+    });
+  });
+
+  // ========================================
+  // Package vs Project icon
+  // ========================================
+
+  describe('icon rendering', () => {
+    it('should render Package icon for package cluster type', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestPkg"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const iconSpan = el.shadowRoot?.querySelector('.cluster-icon');
+      expect(iconSpan).to.exist;
+      // Package badge should show
+      const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
+      const badgeLabels = Array.from(badges ?? []).map((b) => b.label);
+      expect(badgeLabels).to.include('Package');
+    });
+
+    it('should render Folder icon for project cluster type', async () => {
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="TestProject"
+          cluster-type="project"
+          cluster-color="#8B5CF6"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const iconSpan = el.shadowRoot?.querySelector('.cluster-icon');
+      expect(iconSpan).to.exist;
+      // Project badge should show
+      const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
+      const badgeLabels = Array.from(badges ?? []).map((b) => b.label);
+      expect(badgeLabels).to.include('Project');
+    });
+  });
 });

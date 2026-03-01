@@ -52,4 +52,15 @@ describe('xcode-graph-info-row', () => {
     const value = el.shadowRoot?.querySelector('.value');
     expect(value?.textContent?.trim()).to.equal('Library');
   });
+
+  it('should render label with colon even when value is empty', async () => {
+    const el = await fixture<GraphInfoRow>(html`
+      <xcode-graph-info-row label="Status" value=""></xcode-graph-info-row>
+    `);
+
+    const label = el.shadowRoot?.querySelector('.label');
+    const value = el.shadowRoot?.querySelector('.value');
+    expect(label?.textContent).to.equal('Status:');
+    expect(value?.textContent?.trim()).to.equal('');
+  });
 });

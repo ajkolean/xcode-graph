@@ -43,7 +43,9 @@ export const GraphAnalysisService = {
     const visited = new Set<string>();
     const recStack = new Set<string>();
 
-    const dfs = (nodeId: string, path: string[]): void => {
+    const path: string[] = [];
+
+    const dfs = (nodeId: string): void => {
       visited.add(nodeId);
       recStack.add(nodeId);
       path.push(nodeId);
@@ -52,7 +54,7 @@ export const GraphAnalysisService = {
 
       for (const dep of deps) {
         if (!visited.has(dep.id)) {
-          dfs(dep.id, [...path]);
+          dfs(dep.id);
         } else if (recStack.has(dep.id)) {
           // Found a cycle
           const cycleStart = path.indexOf(dep.id);
@@ -61,12 +63,13 @@ export const GraphAnalysisService = {
         }
       }
 
+      path.pop();
       recStack.delete(nodeId);
     };
 
     service.getAllNodes().forEach((node) => {
       if (!visited.has(node.id)) {
-        dfs(node.id, []);
+        dfs(node.id);
       }
     });
 

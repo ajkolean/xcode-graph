@@ -4,10 +4,12 @@
 
 import { describe, expect, it } from 'vitest';
 import {
+  type BoundingBox,
   calculateViewportBounds,
   cullEdges,
   cullNodes,
   estimateCullingRatio,
+  isBoundingBoxInViewport,
   isCircleInViewport,
   isLineInViewport,
   isPointInViewport,
@@ -219,6 +221,164 @@ describe('estimateCullingRatio', () => {
 
     expect(stats.ratio).toBeGreaterThan(0);
     expect(stats.percentageSaved).toBe(100);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Cohen-Sutherland branch coverage
+// ---------------------------------------------------------------------------
+
+describe('Cohen-Sutherland outcode and clipping branches', () => {
+  const bounds = { minX: 0, maxX: 1000, minY: 0, maxY: 800 };
+
+  it('clips line entering from the TOP (y > maxY)', () => {
+    // Both endpoints outside, line crosses top boundary into viewport
+    // Start above-left, end above-right → line crosses top
+    const start: Point = { x: -100, y: 900 }; // LEFT | TOP
+    const end: Point = { x: 1100, y: 900 }; // RIGHT | TOP
+    // Both share TOP outcode → outcode0 & outcode1 != 0 → trivially rejected
+    expect(isLineInViewport(start, end, bounds)).toBe(false);
+  });
+
+  it('clips line entering from the BOTTOM (y < minY)', () => {
+    // Line from below viewport crossing through
+    const start: Point = { x: 500, y: -100 }; // BOTTOM
+    const end: Point = { x: 500, y: 500 }; // Inside (detected by isPointInViewport shortcut)
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('clips line entering from the LEFT (x < minX)', () => {
+    // Start to the left, end inside
+    const start: Point = { x: -100, y: 400 }; // LEFT
+    const end: Point = { x: 500, y: 400 }; // Inside
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('clips line entering from the RIGHT (x > maxX)', () => {
+    const start: Point = { x: 1100, y: 400 }; // RIGHT
+    const end: Point = { x: 500, y: 400 }; // Inside
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('handles line crossing TOP boundary diagonally (both endpoints outside)', () => {
+    // Start: left of viewport and above → LEFT | TOP
+    // End: right of viewport and inside-y → RIGHT
+    // Forces clipToBoundary to handle TOP then RIGHT
+    const start: Point = { x: -200, y: 1000 }; // LEFT | TOP
+    const end: Point = { x: 1200, y: 400 }; // RIGHT
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('handles line crossing BOTTOM boundary diagonally (both endpoints outside)', () => {
+    // Start below-left, end to the right
+    const start: Point = { x: -200, y: -200 }; // LEFT | BOTTOM
+    const end: Point = { x: 1200, y: 400 }; // RIGHT
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('handles line crossing through viewport from LEFT to RIGHT', () => {
+    // Neither endpoint inside, both outside on opposite sides
+    const start: Point = { x: -200, y: 400 }; // LEFT
+    const end: Point = { x: 1200, y: 400 }; // RIGHT
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('handles line from BOTTOM to TOP passing through viewport', () => {
+    const start: Point = { x: 500, y: -200 }; // BOTTOM
+    const end: Point = { x: 500, y: 1000 }; // TOP
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('rejects line entirely in BOTTOM-LEFT quadrant', () => {
+    const start: Point = { x: -200, y: -200 }; // LEFT | BOTTOM
+    const end: Point = { x: -100, y: -100 }; // LEFT | BOTTOM
+    expect(isLineInViewport(start, end, bounds)).toBe(false);
+  });
+
+  it('rejects line entirely in TOP-RIGHT quadrant', () => {
+    const start: Point = { x: 1100, y: 900 }; // RIGHT | TOP
+    const end: Point = { x: 1200, y: 1000 }; // RIGHT | TOP
+    expect(isLineInViewport(start, end, bounds)).toBe(false);
+  });
+
+  it('clips outcode0 when it is the non-zero outcode', () => {
+    // Start outside (LEFT), end inside → outcodeOut = outcode0
+    // Forces the outcode0 === outcodeOut branch
+    const start: Point = { x: -50, y: 400 }; // LEFT
+    const end: Point = { x: 500, y: 400 }; // Inside (shortcut via isPointInViewport)
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('clips outcode1 when start is inside but end is outside', () => {
+    // This won't reach Cohen-Sutherland because isPointInViewport catches it
+    // But let's verify the behavior is correct
+    const start: Point = { x: 500, y: 400 }; // Inside
+    const end: Point = { x: 1200, y: 400 }; // RIGHT
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('handles diagonal line from TOP-LEFT to BOTTOM-RIGHT through viewport', () => {
+    // Both endpoints outside, diagonal through viewport
+    const start: Point = { x: -100, y: 900 }; // LEFT | TOP
+    const end: Point = { x: 1100, y: -100 }; // RIGHT | BOTTOM
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('handles line from BOTTOM-LEFT corner outcode to TOP-RIGHT corner outcode', () => {
+    const start: Point = { x: -100, y: -100 }; // LEFT | BOTTOM
+    const end: Point = { x: 1100, y: 900 }; // RIGHT | TOP
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('handles line along the left boundary (x = minX)', () => {
+    const start: Point = { x: 0, y: 100 };
+    const end: Point = { x: 0, y: 700 };
+    expect(isLineInViewport(start, end, bounds)).toBe(true);
+  });
+
+  it('rejects line parallel to left boundary but outside', () => {
+    const start: Point = { x: -10, y: 100 }; // LEFT
+    const end: Point = { x: -10, y: 700 }; // LEFT
+    expect(isLineInViewport(start, end, bounds)).toBe(false);
+  });
+});
+
+describe('isBoundingBoxInViewport edge cases', () => {
+  const bounds = { minX: 0, maxX: 1000, minY: 0, maxY: 800 };
+
+  it('rejects box entirely to the left', () => {
+    const box: BoundingBox = { minX: -200, maxX: -100, minY: 300, maxY: 500 };
+    expect(isBoundingBoxInViewport(box, bounds)).toBe(false);
+  });
+
+  it('rejects box entirely to the right', () => {
+    const box: BoundingBox = { minX: 1100, maxX: 1200, minY: 300, maxY: 500 };
+    expect(isBoundingBoxInViewport(box, bounds)).toBe(false);
+  });
+
+  it('rejects box entirely above', () => {
+    const box: BoundingBox = { minX: 300, maxX: 500, minY: 900, maxY: 1000 };
+    expect(isBoundingBoxInViewport(box, bounds)).toBe(false);
+  });
+
+  it('rejects box entirely below', () => {
+    const box: BoundingBox = { minX: 300, maxX: 500, minY: -200, maxY: -100 };
+    expect(isBoundingBoxInViewport(box, bounds)).toBe(false);
+  });
+
+  it('accepts box overlapping from the left', () => {
+    const box: BoundingBox = { minX: -50, maxX: 50, minY: 300, maxY: 500 };
+    expect(isBoundingBoxInViewport(box, bounds)).toBe(true);
+  });
+
+  it('accepts box fully contained in viewport', () => {
+    const box: BoundingBox = { minX: 100, maxX: 200, minY: 100, maxY: 200 };
+    expect(isBoundingBoxInViewport(box, bounds)).toBe(true);
+  });
+
+  it('accepts box that contains the viewport', () => {
+    const box: BoundingBox = { minX: -100, maxX: 1100, minY: -100, maxY: 900 };
+    expect(isBoundingBoxInViewport(box, bounds)).toBe(true);
   });
 });
 

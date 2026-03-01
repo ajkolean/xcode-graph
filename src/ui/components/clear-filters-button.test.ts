@@ -104,4 +104,14 @@ describe('xcode-graph-clear-filters-button', () => {
 
     expect(eventFired).to.be.false;
   });
+
+  it('should be hidden when no filters are active', async () => {
+    const el = await fixture<GraphClearFiltersButton>(html`
+      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
+    `);
+
+    // Without is-active attribute, the host has max-height: 0 and opacity: 0
+    expect(el.isActive).to.not.be.true;
+    expect(el.hasAttribute('is-active')).to.be.false;
+  });
 });

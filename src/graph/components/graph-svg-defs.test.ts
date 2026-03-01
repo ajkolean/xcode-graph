@@ -73,4 +73,13 @@ describe('xcode-graph-svg-defs', () => {
     const actualIds = new Set(Array.from(iconPaths).map((p) => p.id));
     expect(actualIds).to.deep.equal(expectedIds);
   });
+
+  it('should render arrowhead markers with fill colors', async () => {
+    const el = await createFixture();
+    const arrowhead = el.querySelector('#arrowhead path');
+    const arrowheadHighlight = el.querySelector('#arrowhead-highlight path');
+
+    expect(arrowhead?.getAttribute('fill')).to.exist;
+    expect(arrowheadHighlight?.getAttribute('fill')).to.equal('#6F2CFF');
+  });
 });

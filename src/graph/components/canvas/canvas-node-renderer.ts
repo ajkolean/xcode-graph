@@ -217,21 +217,16 @@ function drawNodeLabel(
 
   const labelY = y + size + fontSize * 1.8;
 
-  // Dark halo pass: draw text in shadow color at small offsets for readability
-  ctx.globalAlpha = alpha * 0.7;
-  ctx.fillStyle = theme.shadowColor;
-  const offsets = [-1.5, 0, 1.5];
-  for (const ox of offsets) {
-    for (const oy of offsets) {
-      if (ox === 0 && oy === 0) continue;
-      ctx.fillText(labelText, x + ox, labelY + oy);
-    }
-  }
-
-  // Clean text on top
+  // Shadow halo for readability (single pass with canvas shadow)
+  ctx.save();
+  ctx.shadowColor = theme.shadowColor;
+  ctx.shadowBlur = 3;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
   ctx.globalAlpha = alpha;
   ctx.fillStyle = adjustedColor;
   ctx.fillText(labelText, x, labelY);
+  ctx.restore();
 }
 
 function isHubNode(nodeId: string, rc: NodeRenderContext): boolean {

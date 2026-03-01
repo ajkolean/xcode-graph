@@ -88,4 +88,21 @@ describe('xcode-graph-action-button', () => {
 
     expect(event).to.exist;
   });
+
+  it('should not fire click event when disabled', async () => {
+    const el = await fixture<GraphActionButton>(html`
+      <xcode-graph-action-button disabled>Disabled</xcode-graph-action-button>
+    `);
+
+    let clicked = false;
+    el.addEventListener('click', () => {
+      clicked = true;
+    });
+
+    const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
+    button.click();
+    await el.updateComplete;
+
+    expect(clicked).to.be.false;
+  });
 });

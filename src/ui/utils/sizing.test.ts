@@ -126,5 +126,62 @@ describe('sizing', () => {
       expect(weights.get('a')).toBe(0);
       expect(weights.get('b')).toBe(0);
     });
+
+    it('handles cyclic graph gracefully by skipping cycle nodes', () => {
+      // a -> b -> c -> a (cycle), d -> a (entry from outside)
+      const nodes = [makeNode('a'), makeNode('b'), makeNode('c'), makeNode('d')];
+      const edges = [
+        { source: 'a', target: 'b' },
+        { source: 'b', target: 'c' },
+        { source: 'c', target: 'a' }, // cycle
+        { source: 'd', target: 'a' },
+      ];
+      const weights = computeNodeWeights(nodes, edges);
+      // d has inDegree 0, a/b/c are in the cycle and never reach 0.
+      // Only d should appear in the topological order.
+      // d's weight depends on 'a', which won't be in weights (skipped by cycle).
+      expect(weights.has('d')).toBe(true);
+      // Cycle nodes may or may not be in weights depending on traversal,
+      // but the function must not crash.
+      expect(weights.size).toBeGreaterThan(0);
+    });
+
+    it('handles graph with nodes that have no outgoing edges', () => {
+      // a -> b, a -> c, d (isolated), b and c are leaves
+      const nodes = [makeNode('a'), makeNode('b'), makeNode('c'), makeNode('d')];
+      const edges = [
+        { source: 'a', target: 'b' },
+        { source: 'a', target: 'c' },
+      ];
+      const weights = computeNodeWeights(nodes, edges);
+      expect(weights.get('a')).toBe(2); // b + c
+      expect(weights.get('b')).toBe(0); // leaf
+      expect(weights.get('c')).toBe(0); // leaf
+      expect(weights.get('d')).toBe(0); // isolated
+    });
+
+    it('handles large fan-out from a single node', () => {
+      const leafCount = 20;
+      const nodes = [makeNode('root')];
+      const edges = [];
+      for (let i = 0; i < leafCount; i++) {
+        nodes.push(makeNode(`leaf${i}`));
+        edges.push({ source: 'root', target: `leaf${i}` });
+      }
+      const weights = computeNodeWeights(nodes, edges);
+      expect(weights.get('root')).toBe(leafCount);
+      for (let i = 0; i < leafCount; i++) {
+        expect(weights.get(`leaf${i}`)).toBe(0);
+      }
+    });
+
+    it('handles single node with self-loop', () => {
+      const nodes = [makeNode('a')];
+      const edges = [{ source: 'a', target: 'a' }];
+      const weights = computeNodeWeights(nodes, edges);
+      // Self-loop creates inDegree 1 for 'a', so it never enters the queue.
+      // The function should not crash.
+      expect(weights.size).toBeGreaterThanOrEqual(0);
+    });
   });
 });

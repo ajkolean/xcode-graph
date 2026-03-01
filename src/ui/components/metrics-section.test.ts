@@ -146,4 +146,18 @@ describe('xcode-graph-metrics-section', () => {
     expect(el.totalDependenciesCount).to.equal(10);
     expect(el.totalDependentsCount).to.equal(8);
   });
+
+  it('should render no stats cards when counts are zero and collapsed', async () => {
+    const el = await fixture<GraphMetricsSection>(html`
+      <xcode-graph-metrics-section></xcode-graph-metrics-section>
+    `);
+
+    // Collapse the section
+    const header = el.shadowRoot?.querySelector('.header') as HTMLButtonElement;
+    header.click();
+    await el.updateComplete;
+
+    const cards = el.shadowRoot?.querySelectorAll('xcode-graph-stats-card');
+    expect(cards?.length ?? 0).to.equal(0);
+  });
 });

@@ -54,4 +54,16 @@ describe('xcode-graph-header', () => {
     expect(avatar).to.exist;
     expect(avatar?.textContent).to.equal('A');
   });
+
+  it('should render default breadcrumb text when no title prop', async () => {
+    const el = await fixture<GraphHeader>(html`
+      <xcode-graph-header></xcode-graph-header>
+    `);
+
+    const breadcrumbs = el.shadowRoot?.querySelectorAll('.breadcrumb-button');
+    expect(breadcrumbs?.length).to.be.greaterThan(0);
+    // First breadcrumb should have default org text
+    const firstText = breadcrumbs?.[0]?.textContent?.trim();
+    expect(firstText).to.include('tuist');
+  });
 });

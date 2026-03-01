@@ -47,4 +47,41 @@ describe('canvas-theme', () => {
 
     document.body.removeChild(el);
   });
+
+  it('detects dark mode from rgba background color', () => {
+    const el = document.createElement('div');
+    // Set a dark rgba background value via CSS custom property
+    el.style.setProperty('--colors-background', 'rgba(22, 22, 23, 1)');
+    document.body.appendChild(el);
+
+    const theme = resolveCanvasTheme(el);
+    expect(theme.isDark).toBe(true);
+
+    document.body.removeChild(el);
+  });
+
+  it('detects light mode from a light hex background', () => {
+    const el = document.createElement('div');
+    // Set a light background: white
+    el.style.setProperty('--colors-background', '#ffffff');
+    document.body.appendChild(el);
+
+    const theme = resolveCanvasTheme(el);
+    expect(theme.isDark).toBe(false);
+
+    document.body.removeChild(el);
+  });
+
+  it('falls back to dark when background color has no parseable digits', () => {
+    const el = document.createElement('div');
+    // Set a color value that has no digit matches (edge case)
+    el.style.setProperty('--colors-background', 'transparent');
+    document.body.appendChild(el);
+
+    const theme = resolveCanvasTheme(el);
+    // 'transparent' → no match → r=0, g=0, b=0 → luminance=0 → isDark=true
+    expect(theme.isDark).toBe(true);
+
+    document.body.removeChild(el);
+  });
 });
