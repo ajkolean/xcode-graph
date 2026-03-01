@@ -4,10 +4,16 @@
  */
 
 import { bfsTraverseGraph, type TransitiveResult } from '@graph/utils/traversal';
-import { addToMultiMap } from '@shared/utils/collections';
 import type { Cluster } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
+import { addToMultiMap } from '@shared/utils/collections';
 
+/**
+ * Centralized data access layer providing indexed lookups over graph nodes and edges.
+ *
+ * Builds internal indices on construction for O(1) access by type, project,
+ * platform, origin, and edge direction. All query methods are read-only.
+ */
 export class GraphDataService {
   private readonly nodes: GraphNode[];
   private readonly edges: GraphEdge[];
@@ -27,6 +33,10 @@ export class GraphDataService {
   private readonly projects: Set<string> = new Set();
   private readonly packages: Set<string> = new Set();
 
+  /**
+   * @param nodes - All graph nodes to index
+   * @param edges - All graph edges to index
+   */
   constructor(nodes: GraphNode[], edges: GraphEdge[]) {
     this.nodes = nodes;
     this.edges = edges;
@@ -66,30 +76,57 @@ export class GraphDataService {
     }
   }
 
+  /** @returns All graph nodes */
   getAllNodes(): GraphNode[] {
     return this.nodes;
   }
 
+  /**
+   * @param id - Node identifier
+   * @returns The matching node, or undefined if not found
+   */
   getNodeById(id: string): GraphNode | undefined {
     return this.nodeMap.get(id);
   }
 
+  /**
+   * @param type - Node type string (e.g. `'app'`, `'framework'`)
+   * @returns All nodes matching the given type
+   */
   getNodesByType(type: string): GraphNode[] {
     return this.nodesByType.get(type) || [];
   }
 
+  /**
+   * @param project - Project name
+   * @returns All nodes belonging to the given project
+   */
   getNodesByProject(project: string): GraphNode[] {
     return this.nodesByProject.get(project) || [];
   }
 
+  /**
+   * @param platform - Platform string (e.g. `'iOS'`, `'macOS'`)
+   * @returns All nodes targeting the given platform
+   */
   getNodesByPlatform(platform: string): GraphNode[] {
     return this.nodesByPlatform.get(platform) || [];
   }
 
+  /**
+   * @param origin - Local or External origin
+   * @returns All nodes matching the given origin
+   */
   getNodesByOrigin(origin: Origin): GraphNode[] {
     return this.nodesByOrigin.get(origin) || [];
   }
 
+  /**
+   * Case-insensitive search across node name and project fields.
+   *
+   * @param query - Search string
+   * @returns Matching nodes
+   */
   searchNodes(query: string): GraphNode[] {
     const lowerQuery = query.toLowerCase();
     return this.nodes.filter(
@@ -98,10 +135,16 @@ export class GraphDataService {
     );
   }
 
+  /** @returns All graph edges */
   getAllEdges(): GraphEdge[] {
     return this.edges;
   }
 
+  /**
+   * @param source - Source node ID
+   * @param target - Target node ID
+   * @returns The edge between source and target, or undefined if none exists
+   */
   getEdge(source: string, target: string): GraphEdge | undefined {
     return this.edgeMap.get(`${source}->${target}`);
   }

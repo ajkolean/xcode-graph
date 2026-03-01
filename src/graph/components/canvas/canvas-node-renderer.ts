@@ -1,9 +1,9 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { TransitiveResult } from '@graph/utils';
 import { type AnimatedValue, getAnimatedAlpha } from '@graph/utils/canvas-animation';
-import { colorWithAlpha } from '@graph/utils/canvas-theme';
 import { resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
+import { colorWithAlpha } from '@graph/utils/canvas-theme';
 import type { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';

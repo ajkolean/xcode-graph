@@ -2,9 +2,9 @@
  * Graph structure fixtures - common graph patterns for testing
  */
 
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { range } from '@shared/utils/collections';
 import { adjacentPairs } from '@shared/utils/pairwise';
-import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { createNode } from './nodes';
 
 /**

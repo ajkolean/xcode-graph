@@ -15,8 +15,8 @@
  * @fires search-clear - Dispatched when clear button is clicked or Escape is pressed
  */
 
-import { icons } from '@shared/utils/icon-adapter';
 import { KeyboardShortcutController } from '@shared/controllers/keyboard-shortcut.controller';
+import { icons } from '@shared/utils/icon-adapter';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import './icon-button.js';

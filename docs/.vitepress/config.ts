@@ -7,6 +7,14 @@ export default defineConfig({
 	base: "/xcode-graph/",
 	ignoreDeadLinks: [/^\/api\//, /^\/templates\//, /^\/.claude\//],
 
+	vue: {
+		template: {
+			compilerOptions: {
+				isCustomElement: (tag: string) => tag.startsWith("xcode-graph-"),
+			},
+		},
+	},
+
 	head: [
 		[
 			"meta",
@@ -21,6 +29,7 @@ export default defineConfig({
 	themeConfig: {
 		nav: [
 			{ text: "Guide", link: "/guide/" },
+			{ text: "Demo", link: "/demo" },
 			{ text: "Maintaining", link: "/maintaining/" },
 			{ text: "Reference", link: "/reference/" },
 			{ text: "API", link: "/xcode-graph/api/", target: "_self" },

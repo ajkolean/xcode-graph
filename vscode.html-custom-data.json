@@ -32,10 +32,7 @@
     {
       "name": "xcode-graph-controls",
       "description": "Zoom controls overlay\n---\n\n\n### **Events:**\n - **zoom-step** - Dispatched when a zoom step button is clicked (detail: number)\n- **zoom-reset** - Dispatched when the fit-to-view button is clicked",
-      "attributes": [
-        { "name": "zoom", "values": [] },
-        { "name": "base-zoom", "values": [] }
-      ],
+      "attributes": [{ "name": "zoom", "values": [] }, { "name": "base-zoom", "values": [] }],
       "references": []
     },
     {

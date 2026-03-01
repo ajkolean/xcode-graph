@@ -3,7 +3,7 @@
  */
 
 import { expect, fixture, html, oneEvent } from '@open-wc/testing';
-import { describe, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, it, vi, expect as vitestExpect } from 'vitest';
 import { ErrorService } from '@/services/error-service';
 import type { GraphFileUpload } from './file-upload';
 import './file-upload';
@@ -45,9 +45,7 @@ describe('xcode-graph-file-upload', () => {
     const input = el.shadowRoot?.querySelector<HTMLInputElement>('input[type="file"]');
     expect(input).to.exist;
 
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-    Object.defineProperty(input!, 'files', { value: dataTransfer.files });
+    Object.defineProperty(input!, 'files', { value: [file], configurable: true });
 
     setTimeout(() => input?.dispatchEvent(new Event('change')));
     const event = await oneEvent(el, 'graph-file-loaded');
@@ -68,16 +66,14 @@ describe('xcode-graph-file-upload', () => {
     const input = el.shadowRoot?.querySelector<HTMLInputElement>('input[type="file"]');
     expect(input).to.exist;
 
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-    Object.defineProperty(input!, 'files', { value: dataTransfer.files });
+    Object.defineProperty(input!, 'files', { value: [file], configurable: true });
 
     input?.dispatchEvent(new Event('change'));
 
     // Wait for FileReader to complete
     await new Promise((resolve) => setTimeout(resolve, 50));
 
-    expect(handleErrorSpy).toHaveBeenCalled();
+    vitestExpect(handleErrorSpy).toHaveBeenCalled();
     const errorArg = handleErrorSpy.mock.calls[0]?.[0] as Error;
     expect(errorArg.message).to.include('Invalid JSON');
   });
@@ -91,14 +87,12 @@ describe('xcode-graph-file-upload', () => {
     expect(container).to.exist;
     expect(container?.classList.contains('drag-over')).to.be.false;
 
-    const dragOverEvent = new DragEvent('dragover', { bubbles: true, cancelable: true });
-    container?.dispatchEvent(dragOverEvent);
+    container?.dispatchEvent(new Event('dragover', { bubbles: true, cancelable: true }));
     await el.updateComplete;
 
     expect(container?.classList.contains('drag-over')).to.be.true;
 
-    const dragLeaveEvent = new DragEvent('dragleave', { bubbles: true });
-    container?.dispatchEvent(dragLeaveEvent);
+    container?.dispatchEvent(new Event('dragleave', { bubbles: true }));
     await el.updateComplete;
 
     expect(container?.classList.contains('drag-over')).to.be.false;
@@ -116,6 +110,6 @@ describe('xcode-graph-file-upload', () => {
     const container = el.shadowRoot?.querySelector('.container');
     container?.click();
 
-    expect(clickSpy).toHaveBeenCalled();
+    vitestExpect(clickSpy).toHaveBeenCalled();
   });
 });

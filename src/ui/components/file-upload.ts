@@ -8,16 +8,21 @@
  * @fires graph-file-loaded - Dispatched when a valid JSON file is loaded (detail: { raw: unknown })
  */
 
-import { icons } from '@shared/utils/icon-adapter';
 import { ErrorCategory } from '@shared/schemas/error.types';
-import { ErrorService } from '@/services/error-service';
+import { icons } from '@shared/utils/icon-adapter';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ErrorService } from '@/services/error-service';
 
 export class GraphFileUpload extends LitElement {
   @state()
-  private isDragOver = false;
+  private declare isDragOver: boolean;
+
+  constructor() {
+    super();
+    this.isDragOver = false;
+  }
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -123,24 +128,18 @@ export class GraphFileUpload extends LitElement {
           }),
         );
       } catch {
-        ErrorService.getInstance().handleError(
-          new Error(`Invalid JSON in file "${file.name}"`),
-          {
-            category: ErrorCategory.Data,
-            userMessage: `Could not parse "${file.name}" — the file does not contain valid JSON`,
-          },
-        );
+        ErrorService.getInstance().handleError(new Error(`Invalid JSON in file "${file.name}"`), {
+          category: ErrorCategory.Data,
+          userMessage: `Could not parse "${file.name}" — the file does not contain valid JSON`,
+        });
       }
     };
 
     reader.onerror = () => {
-      ErrorService.getInstance().handleError(
-        new Error(`Failed to read file "${file.name}"`),
-        {
-          category: ErrorCategory.Data,
-          userMessage: `Could not read "${file.name}" — please try again`,
-        },
-      );
+      ErrorService.getInstance().handleError(new Error(`Failed to read file "${file.name}"`), {
+        category: ErrorCategory.Data,
+        userMessage: `Could not read "${file.name}" — please try again`,
+      });
     };
 
     reader.readAsText(file);

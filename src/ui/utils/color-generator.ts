@@ -23,7 +23,15 @@ const baseColors = [
   { name: 'lime', rgb: [205, 220, 57] }, // #CDDC39 - Lime
 ];
 
-// Simple hash function to generate consistent index from string
+/**
+ * Compute a deterministic 32-bit integer hash from a string.
+ *
+ * Uses the djb2-style shift-and-subtract algorithm.
+ * The result is always non-negative.
+ *
+ * @param str - The input string to hash
+ * @returns A non-negative 32-bit integer
+ */
 function hashString(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -34,7 +42,17 @@ function hashString(str: string): number {
   return Math.abs(hash);
 }
 
-// Adjust color lightness/saturation for variation
+/**
+ * Shift the lightness and saturation of an RGB color and return a hex string.
+ *
+ * Converts the RGB triplet to HSL, applies additive shifts (clamped to 0-1),
+ * then converts back to a `#RRGGBB` hex string.
+ *
+ * @param rgb - RGB color as `[r, g, b]` where each channel is 0-255
+ * @param lightnessShift - Additive lightness offset (-1 to 1)
+ * @param saturationShift - Additive saturation offset (-1 to 1)
+ * @returns Hex color string (e.g., `"#7a38ff"`)
+ */
 function adjustColor(rgb: number[], lightnessShift: number, saturationShift: number): string {
   const rNorm = (rgb[0] ?? 0) / 255;
   const gNorm = (rgb[1] ?? 0) / 255;

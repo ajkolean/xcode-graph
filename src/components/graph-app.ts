@@ -192,11 +192,13 @@ export class GraphApp extends SignalWatcherLitElement {
         .transitiveDependents=${display.transitiveDependents}
       ></xcode-graph-tab>
 
-      ${this.showUpload
-        ? html`<xcode-graph-file-upload
+      ${
+        this.showUpload
+          ? html`<xcode-graph-file-upload
             @graph-file-loaded=${this.handleFileLoaded}
           ></xcode-graph-file-upload>`
-        : ''}
+          : ''
+      }
 
       <xcode-graph-error-notification-container></xcode-graph-error-notification-container>
     `;

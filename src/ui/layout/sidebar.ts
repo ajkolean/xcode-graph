@@ -14,8 +14,8 @@
  * @fires tab-change - Dispatched when tab is clicked (detail: { tab: string })
  */
 
-import { icons } from '@shared/utils/icon-adapter';
 import { ActiveTab, type ActiveTab as ActiveTabType } from '@shared/schemas';
+import { icons } from '@shared/utils/icon-adapter';
 
 export type { ActiveTab } from '@shared/schemas';
 

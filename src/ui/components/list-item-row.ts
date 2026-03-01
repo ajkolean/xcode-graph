@@ -19,8 +19,8 @@
  * @fires row-hover-end - Dispatched on mouse leave
  */
 
-import { icons } from '@shared/utils/icon-adapter';
 import type { GraphNode } from '@shared/schemas/graph.types';
+import { icons } from '@shared/utils/icon-adapter';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
