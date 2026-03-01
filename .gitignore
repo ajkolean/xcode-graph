@@ -45,6 +45,12 @@ lerna-debug.log*
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# Build caches and generated files
+.rollup.cache/
+tsconfig.tsbuildinfo
+custom-elements.json
+etc/
+
 # Playwright MCP
 .playwright-mcp/
 

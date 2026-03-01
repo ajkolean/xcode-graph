@@ -1,1 +1,0 @@
-{"version":3,"file":"simulation.schema.d.ts","sourceRoot":"","sources":["simulation.schema.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AAEH,OAAO,EAAE,CAAC,EAAE,MAAM,KAAK,CAAC;AACxB,OAAO,KAAK,EAAE,eAAe,EAAE,YAAY,EAAE,MAAM,oBAAoB,CAAC;AAGxE,cAAc,oBAAoB,CAAC;AAInC,eAAO,MAAM,kBAAkB,EAAE,CAAC,CAAC,OAAO,CAAC,YAAY,CAerD,CAAC;AAEH,eAAO,MAAM,qBAAqB,EAAE,CAAC,CAAC,OAAO,CAAC,eAAe,CAY3D,CAAC"}
