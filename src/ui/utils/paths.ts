@@ -11,8 +11,15 @@ const pathCache = new Map<string, string>();
 const MAX_CACHE_SIZE = 1000;
 
 /**
- * Generate cache key from coordinates
- * Rounds to nearest integer to improve cache hits
+ * Generate a cache key from four coordinates.
+ * Rounds to nearest integer to improve cache hit rate at the cost of
+ * sub-pixel precision.
+ *
+ * @param x1 - Start X coordinate
+ * @param y1 - Start Y coordinate
+ * @param x2 - End X coordinate
+ * @param y2 - End Y coordinate
+ * @returns String key in the format `"rx1,ry1-rx2,ry2"`
  */
 function getPathCacheKey(x1: number, y1: number, x2: number, y2: number): string {
   const rx1 = Math.round(x1);
@@ -82,6 +89,15 @@ interface Point {
  * @param waypoints - Intermediate points to pass through
  * @param end - Ending point
  * @returns SVG path string
+ */
+/**
+ * Build a single quadratic bezier segment in a waypoint path.
+ *
+ * @param curr - Current control point
+ * @param next - Next control point (used to compute midpoint target)
+ * @param end - Final endpoint of the full path
+ * @param isLast - Whether this is the last segment (targets `end` directly)
+ * @returns SVG `Q` command string
  */
 function buildSegment(curr: Point, next: Point, end: Point, isLast: boolean): string {
   const target = isLast ? end : { x: (curr.x + next.x) / 2, y: (curr.y + next.y) / 2 };

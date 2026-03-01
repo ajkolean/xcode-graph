@@ -1,6 +1,7 @@
 /**
- * Default layout configuration
- * Exported for parameter sweep testing
+ * Default layout configuration.
+ * Contains tuning parameters for ELK macro-layout, D3 micro-layout, edge routing, and clustering.
+ * Exported for parameter sweep testing.
  */
 export const DEFAULT_CONFIG = {
   // Node-level forces (D3 Legacy)
@@ -120,7 +121,8 @@ export interface ClusterElkOptions {
 export type LayoutConfig = typeof DEFAULT_CONFIG;
 
 /**
- * Options for layout computation
+ * Options passed to the main layout computation function.
+ * Allows overriding config values and hooking into layout lifecycle stages.
  */
 export interface LayoutOptions {
   /** Override specific config values */

@@ -47,29 +47,47 @@ export function colorWithAlpha(color: string, newAlpha: number): string {
 // Canvas Theme
 // ---------------------------------------------------------------------------
 
+/**
+ * Resolved theme values for Canvas2D rendering.
+ * All color strings are ready to use as fillStyle/strokeStyle values.
+ */
 export interface CanvasTheme {
-  // Node type colors (from --colors-node-*)
+  /** App node color (from `--colors-node-app`) */
   nodeApp: string;
+  /** Framework node color (from `--colors-node-framework`) */
   nodeFramework: string;
+  /** Library node color (from `--colors-node-library`) */
   nodeLibrary: string;
+  /** Test node color (from `--colors-node-test`) */
   nodeTest: string;
+  /** CLI node color (from `--colors-node-cli`) */
   nodeCli: string;
+  /** Package node color (from `--colors-node-package`) */
   nodePackage: string;
 
-  // Canvas background (flat fill)
+  /** Canvas background fill color */
   canvasBg: string;
 
-  // Canvas chrome colors
+  /** Tooltip background color */
   tooltipBg: string;
+  /** Shadow/drop-shadow color */
   shadowColor: string;
+  /** Cycle edge stroke color */
   cycleEdgeColor: string;
+  /** Cycle edge glow color */
   cycleGlowColor: string;
 
-  // Theme detection
+  /** Whether the resolved theme is dark (based on background luminance) */
   isDark: boolean;
 }
 
-/** Read CSS custom properties from an element's computed style */
+/**
+ * Read CSS custom properties from an element's computed style and build a CanvasTheme.
+ * Falls back to default palette values when properties are not set.
+ *
+ * @param el - The host element to read computed styles from
+ * @returns Resolved canvas theme with all color values
+ */
 export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
   const s = getComputedStyle(el);
   const get = (prop: string, fallback: string) => s.getPropertyValue(prop).trim() || fallback;

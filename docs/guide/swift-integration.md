@@ -56,8 +56,12 @@ npm publish               # publishes to xcode-graph
 
 ```
 swift/
-├── Package.swift                          # Reference SPM manifest
-├── Sources/XcodeGraphServer/
-│   ├── GraphServer.swift                  # SwiftNIO server + browser open
-│   └── GraphHTTPHandler.swift             # Routes: / (generated HTML), /graph.json
+├── Package.swift                          # SPM manifest
+├── Sources/
+│   ├── XcodeGraphServer/
+│   │   ├── GraphServer.swift              # SwiftNIO server + browser open
+│   │   └── GraphHTTPHandler.swift         # Routes: / (generated HTML), /graph.json
+│   ├── XcodeGraphCLI/
+│   │   └── XcodeGraphCLI.swift            # CLI entry point (xcodegraph command)
+│   └── TransformGraph/                    # Swift-to-TypeScript type generator
 ```

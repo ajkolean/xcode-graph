@@ -1700,16 +1700,28 @@
           "js": { "properties": [], "events": [] }
         },
         {
+          "name": "xcode-graph-file-upload",
+          "description": "\n---\n\n\n### **Events:**\n - **graph-file-loaded**",
+          "doc-url": "",
+          "attributes": [],
+          "events": [{ "name": "graph-file-loaded", "type": "CustomEvent" }],
+          "js": {
+            "properties": [],
+            "events": [{ "name": "graph-file-loaded", "type": "CustomEvent" }]
+          }
+        },
+        {
           "name": "xcode-graph",
           "description": "Embeddable graph visualization entry point\n---\n\n\n### **Methods:**\n - **loadRawGraph(raw: _unknown_): _void_** - Load raw Tuist graph JSON (the output of `tuist graph --format json`).\nTransforms it into GraphData and sets nodes/edges automatically.\nShows user-facing warnings/errors via ErrorService if the transform has issues.",
           "doc-url": "",
-          "attributes": [],
+          "attributes": [{ "name": "show-upload", "value": { "type": "boolean" } }],
           "events": [],
           "js": {
             "properties": [
               { "name": "nodes", "type": "GraphNode[]" },
               { "name": "edges", "type": "GraphEdge[]" },
-              { "name": "layoutOptions", "type": "LayoutOptions | undefined" }
+              { "name": "layoutOptions", "type": "LayoutOptions | undefined" },
+              { "name": "showUpload", "type": "boolean" }
             ],
             "events": []
           }
@@ -1941,17 +1953,6 @@
                 "description": "Dispatched when the warning is dismissed"
               }
             ]
-          }
-        },
-        {
-          "name": "xcode-graph-file-upload",
-          "description": "\n---\n\n\n### **Events:**\n - **graph-file-loaded**",
-          "doc-url": "",
-          "attributes": [],
-          "events": [{ "name": "graph-file-loaded", "type": "CustomEvent" }],
-          "js": {
-            "properties": [],
-            "events": [{ "name": "graph-file-loaded", "type": "CustomEvent" }]
           }
         },
         {

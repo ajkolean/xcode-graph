@@ -8,7 +8,12 @@ import { type GraphEdge, type GraphNode, Origin } from '@shared/schemas/graph.ty
 import { analyzeCluster } from './cluster-analysis';
 
 /**
- * Groups nodes into clusters by project/package
+ * Groups nodes into clusters by project or package name.
+ * Each cluster is analyzed for node roles, anchors, and layers.
+ *
+ * @param nodes - All graph nodes to group
+ * @param edges - All graph edges (used for cluster analysis)
+ * @returns Array of clusters with metadata populated
  */
 export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Cluster[] {
   const clusterMap = new Map<string, Cluster>();
@@ -47,7 +52,11 @@ export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Clust
 }
 
 /**
- * Arranges clusters in a grid layout
+ * Arrange clusters in a simple grid layout, sorted by origin (local first) and size.
+ *
+ * @param clusters - Clusters to arrange
+ * @param config - Layout config with spacing parameters
+ * @returns Map of cluster ID to grid position
  */
 export function arrangeClusterGrid(
   clusters: Cluster[],

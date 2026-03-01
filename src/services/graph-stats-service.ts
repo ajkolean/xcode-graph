@@ -37,6 +37,13 @@ export const GraphStatsService = {
     };
   },
 
+  /**
+   * Compute aggregate connectivity and platform stats for a cluster.
+   *
+   * @param service - Graph data service to query
+   * @param clusterId - Cluster to compute stats for
+   * @returns Node count, total dependencies/dependents, and platform set
+   */
   getClusterStats(
     service: GraphDataService,
     clusterId: string,
@@ -68,6 +75,12 @@ export const GraphStatsService = {
     };
   },
 
+  /**
+   * Compute whole-graph statistics including average/max dependency counts and isolated nodes.
+   *
+   * @param service - Graph data service to query
+   * @returns Summary statistics for the entire graph
+   */
   getGraphStats(service: GraphDataService): {
     totalNodes: number;
     totalEdges: number;

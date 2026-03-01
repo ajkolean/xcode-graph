@@ -1,11 +1,13 @@
 /**
- * Zoom configuration constants
- * Centralized zoom-related values to avoid duplication across the codebase
+ * Zoom Configuration Constants
+ *
+ * Centralized zoom-related values used by canvas rendering, color adjustment,
+ * and UI controls. Avoids duplication of magic numbers across the codebase.
+ *
+ * @module shared/utils/zoom-config
  */
 
-/**
- * Zoom level configuration
- */
+/** Zoom level bounds for the canvas viewport. */
 export const ZOOM_CONFIG = {
   /** Minimum zoom level (zoomed out) - allowing 1% for massive graphs */
   MIN_ZOOM: 0.01,
@@ -13,6 +15,7 @@ export const ZOOM_CONFIG = {
   MAX_ZOOM: 5.0,
 } as const;
 
+/** Saturation multiplier range applied to node colors at different zoom levels. */
 export const ZOOM_SATURATION = {
   /** Saturation multiplier at minimum zoom (very desaturated/pastel) */
   MIN: 0.25,
@@ -20,6 +23,7 @@ export const ZOOM_SATURATION = {
   MAX: 0.8,
 } as const;
 
+/** Lightness offset (in percentage points) added at different zoom levels. */
 export const ZOOM_LIGHTNESS_ADJUSTMENT = {
   /** Lightness increase at minimum zoom (lighter/softer) */
   AT_MIN_ZOOM: 15,
@@ -27,6 +31,7 @@ export const ZOOM_LIGHTNESS_ADJUSTMENT = {
   AT_MAX_ZOOM: 0,
 } as const;
 
+/** Opacity multiplier range for fade effects at different zoom levels. */
 export const ZOOM_OPACITY = {
   /** Opacity multiplier at minimum zoom */
   MIN_MULTIPLIER: 0.8,
@@ -34,6 +39,7 @@ export const ZOOM_OPACITY = {
   MAX_MULTIPLIER: 1,
 } as const;
 
+/** Stroke width multiplier range for edge rendering at different zoom levels. */
 export const ZOOM_STROKE_WIDTH = {
   /** Stroke width multiplier at minimum zoom */
   MIN_MULTIPLIER: 0.7,
@@ -53,8 +59,11 @@ export const CLUSTER_LABEL_CONFIG = {
 } as const;
 
 /**
- * Normalize a zoom value to the 0–1 range and clamp.
+ * Normalize a zoom value to the 0-1 range and clamp.
  * 0 = fully zoomed out (MIN_ZOOM), 1 = fully zoomed in (MAX_ZOOM).
+ *
+ * @param zoom - Raw zoom level
+ * @returns Normalized value between 0 and 1
  */
 export function normalizeZoom(zoom: number): number {
   const t = (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);

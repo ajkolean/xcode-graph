@@ -34,6 +34,12 @@ export interface ProgressiveLoadConfig {
   priorityClusterIds?: string[];
 }
 
+/**
+ * Loads large graphs incrementally in priority-ordered chunks.
+ *
+ * Nodes are sorted by cluster priority and type importance (apps first, tests last),
+ * then delivered in configurable chunks with delays between them to keep the UI responsive.
+ */
 export class GraphLoader {
   private readonly config: Required<ProgressiveLoadConfig>;
 
@@ -59,6 +65,14 @@ export class GraphLoader {
     };
   }
 
+  /**
+   * Load graph data progressively, emitting chunk updates via the callback.
+   *
+   * @param nodes - All graph nodes to load
+   * @param edges - All graph edges to load
+   * @param onProgress - Called for each chunk and on completion
+   * @returns The fully loaded graph data
+   */
   async loadGraphProgressive(
     nodes: GraphNode[],
     edges: GraphEdge[],
@@ -130,8 +144,13 @@ export class GraphLoader {
   }
 
   /**
-   * Load graph by cluster priority
-   * Loads priority clusters first, then others
+   * Load graph cluster-by-cluster, loading priority clusters first.
+   *
+   * @param clusters - All clusters to load
+   * @param nodes - All graph nodes
+   * @param edges - All graph edges
+   * @param onProgress - Called after each cluster is loaded and on completion
+   * @returns The fully loaded graph data
    */
   async loadByClusterPriority(
     clusters: Cluster[],
@@ -194,6 +213,12 @@ export class GraphLoader {
     return { nodes, edges };
   }
 
+  /**
+   * Estimate loading time and recommend a loading strategy.
+   *
+   * @param nodeCount - Number of nodes to load
+   * @returns Chunk count, estimated duration, and recommended strategy
+   */
   estimateLoadTime(nodeCount: number): {
     chunks: number;
     estimatedMs: number;

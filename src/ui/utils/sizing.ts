@@ -5,9 +5,7 @@
 import { buildAdjacency } from '@graph/utils/traversal';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
-/**
- * Base sizes for different node types
- */
+/** Base radii (in graph units) for each node type. Larger types are visually prominent. */
 const BASE_NODE_SIZES: Record<string, number> = {
   app: 18,
   framework: 14,
@@ -18,6 +16,7 @@ const BASE_NODE_SIZES: Record<string, number> = {
   'test-ui': 8,
 };
 
+/** Fallback radius used when the node type is not in the size map. */
 const DEFAULT_BASE_SIZE = 10;
 
 /**
@@ -62,6 +61,13 @@ export function getBaseNodeSize(type: string): number {
  * Each node's weight = total number of transitive dependencies.
  * O(n + e) time complexity, called once when graph data changes.
  */
+/**
+ * Build outgoing adjacency list and in-degree counts from nodes and edges.
+ *
+ * @param nodes - All graph nodes (ensures every node appears in the maps)
+ * @param edges - All graph edges
+ * @returns Outgoing adjacency list and in-degree map
+ */
 function buildAdjacencyData(
   nodes: GraphNode[],
   edges: GraphEdge[],
@@ -82,6 +88,13 @@ function buildAdjacencyData(
   return { outgoing, inDegree };
 }
 
+/**
+ * Perform Kahn's topological sort on a directed graph.
+ *
+ * @param outgoing - Outgoing adjacency list (node ID to neighbor IDs)
+ * @param inDegree - Mutable in-degree map (decremented during traversal)
+ * @returns Array of node IDs in topological order
+ */
 function topologicalSort(outgoing: Map<string, string[]>, inDegree: Map<string, number>): string[] {
   const queue: string[] = [];
   for (const [id, deg] of inDegree) {

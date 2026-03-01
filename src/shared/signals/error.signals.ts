@@ -18,14 +18,18 @@ export const errors: Signal.State<AppError[]> = signal<AppError[]>([]);
 export const maxVisibleToasts: Signal.State<number> = signal<number>(DEFAULT_MAX_VISIBLE_TOASTS);
 
 /**
- * Get visible (non-dismissed) errors
+ * Get visible (non-dismissed) errors.
+ *
+ * @returns Array of errors that have not been dismissed
  */
 export function getVisibleErrors(): AppError[] {
   return errors.get().filter((error) => !error.dismissed);
 }
 
 /**
- * Get errors to display in toast notifications (up to maxVisible)
+ * Get errors to display in toast notifications (up to `maxVisibleToasts`).
+ *
+ * @returns Array of non-dismissed errors, limited to the configured maximum
  */
 export function getToastErrors(): AppError[] {
   const visible = getVisibleErrors();
@@ -34,7 +38,10 @@ export function getToastErrors(): AppError[] {
 }
 
 /**
- * Get error by ID
+ * Get an error by its unique ID.
+ *
+ * @param id - The error ID to look up
+ * @returns The matching error, or `undefined` if not found
  */
 export function getErrorById(id: string): AppError | undefined {
   return errors.get().find((error) => error.id === id);

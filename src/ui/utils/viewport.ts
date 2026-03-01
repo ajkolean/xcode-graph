@@ -95,8 +95,13 @@ export function isBoundingBoxInViewport(box: BoundingBox, bounds: ViewportBounds
 }
 
 /**
- * Check if a line segment intersects with viewport
- * Uses line-box intersection test
+ * Check if a line segment intersects with the viewport.
+ * Uses bounding-box pre-rejection then Cohen-Sutherland line clipping.
+ *
+ * @param start - Start point of the line segment
+ * @param end - End point of the line segment
+ * @param bounds - The viewport bounds
+ * @returns `true` if any part of the segment is inside the viewport
  */
 export function isLineInViewport(start: Point, end: Point, bounds: ViewportBounds): boolean {
   // Quick check: if either endpoint is in viewport, line is visible
@@ -121,12 +126,23 @@ export function isLineInViewport(start: Point, end: Point, bounds: ViewportBound
   return cohenSutherlandIntersect(start, end, bounds);
 }
 
-// Cohen-Sutherland region codes
+/** @internal Cohen-Sutherland region code: left of viewport */
 const CS_LEFT = 1;
+/** @internal Cohen-Sutherland region code: right of viewport */
 const CS_RIGHT = 2;
+/** @internal Cohen-Sutherland region code: below viewport */
 const CS_BOTTOM = 4;
+/** @internal Cohen-Sutherland region code: above viewport */
 const CS_TOP = 8;
 
+/**
+ * Compute the Cohen-Sutherland outcode for a point relative to the viewport.
+ *
+ * @param x - X coordinate
+ * @param y - Y coordinate
+ * @param bounds - Viewport bounds
+ * @returns Bitmask of region codes
+ */
 function computeOutCode(x: number, y: number, bounds: ViewportBounds): number {
   let code = 0;
   if (x < bounds.minX) code |= CS_LEFT;
@@ -136,6 +152,17 @@ function computeOutCode(x: number, y: number, bounds: ViewportBounds): number {
   return code;
 }
 
+/**
+ * Clip a point to the nearest viewport boundary edge.
+ *
+ * @param outcodeOut - Region code indicating which boundary to clip against
+ * @param x0 - Start X of the line segment
+ * @param y0 - Start Y of the line segment
+ * @param x1 - End X of the line segment
+ * @param y1 - End Y of the line segment
+ * @param bounds - Viewport bounds
+ * @returns The intersection point on the boundary
+ */
 function clipToBoundary(
   outcodeOut: number,
   x0: number,
@@ -157,8 +184,13 @@ function clipToBoundary(
 }
 
 /**
- * Cohen-Sutherland line clipping algorithm
- * Returns true if line intersects the viewport rectangle
+ * Cohen-Sutherland line clipping algorithm.
+ * Tests whether a line segment intersects a rectangular viewport.
+ *
+ * @param start - Start point of the line segment
+ * @param end - End point of the line segment
+ * @param bounds - Viewport bounds
+ * @returns `true` if the line segment intersects the viewport rectangle
  */
 function cohenSutherlandIntersect(start: Point, end: Point, bounds: ViewportBounds): boolean {
   let x0 = start.x;
@@ -238,7 +270,11 @@ export function cullNodes<T extends Point>(
 }
 
 /**
- * Estimate the viewport culling performance improvement
+ * Estimate the performance improvement from viewport culling.
+ *
+ * @param totalElements - Total number of elements in the graph
+ * @param viewportElements - Number of elements visible in the viewport
+ * @returns Object with `ratio` (total / visible) and `percentageSaved` (0-100)
  */
 export function estimateCullingRatio(
   totalElements: number,

@@ -21,8 +21,11 @@ const SMARTPHONE_ICON_PATH = `
 `;
 
 /**
- * Get SVG path data for app nodes based on platform
- * Each platform has a distinctive icon shape
+ * Get SVG path data for app nodes based on platform.
+ * Each platform has a distinctive icon shape (smartphone, monitor, glasses, etc.).
+ *
+ * @param platform - Platform identifier (e.g., `Platform.iOS`, `Platform.macOS`)
+ * @returns SVG path `d` attribute string centered at (0, 0)
  */
 export function getAppIconPath(platform: Platform | string): string {
   switch (platform) {

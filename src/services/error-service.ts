@@ -102,11 +102,11 @@ export class ErrorService {
   }
 
   /**
-   * Handle an error and create a notification
+   * Handle an error and create a notification.
    *
-   * @param error
-   * @param options
-   * @returns The created AppError
+   * @param error - The caught error (Error, string, or unknown)
+   * @param options - Configuration for severity, category, and display
+   * @returns The created AppError dispatched to signals
    */
   public handleError(error: unknown, options: ErrorHandlingOptions = {}): AppError {
     const {
@@ -147,7 +147,11 @@ export class ErrorService {
   }
 
   /**
-   * Handle a critical error that cannot be dismissed
+   * Handle a critical error that cannot be dismissed.
+   *
+   * @param error - The caught error
+   * @param userMessage - Optional user-facing message override
+   * @returns The created AppError
    */
   public handleCriticalError(error: unknown, userMessage?: string): AppError {
     return this.handleError(error, {
@@ -159,7 +163,11 @@ export class ErrorService {
   }
 
   /**
-   * Handle a warning
+   * Handle a warning notification.
+   *
+   * @param message - Warning message to display
+   * @param category - Optional error category
+   * @returns The created AppError
    */
   public handleWarning(message: string, category?: ErrorCategory): AppError {
     return this.handleError(new Error(message), {
@@ -170,7 +178,10 @@ export class ErrorService {
   }
 
   /**
-   * Handle an info notification
+   * Handle an info notification (not logged to console).
+   *
+   * @param message - Info message to display
+   * @returns The created AppError
    */
   public handleInfo(message: string): AppError {
     return this.handleError(new Error(message), {
@@ -181,28 +192,28 @@ export class ErrorService {
   }
 
   /**
-   * Register an action handler for error actions
+   * Register an action handler for error actions.
    *
-   * @param actionType
-   * @param handler
+   * @param actionType - Unique identifier for the action (e.g. `'retry-fetch'`)
+   * @param handler - Callback invoked when the user triggers this action
    */
   public registerActionHandler(actionType: string, handler: ErrorActionHandler): void {
     this.actionHandlers.set(actionType, handler);
   }
 
   /**
-   * Unregister an action handler
+   * Unregister an action handler.
    *
-   * @param actionType
+   * @param actionType - The action type to remove
    */
   public unregisterActionHandler(actionType: string): void {
     this.actionHandlers.delete(actionType);
   }
 
   /**
-   * Execute an error action
+   * Execute the registered action handler for an error's action type.
    *
-   * @param error
+   * @param error - The error whose action to execute
    */
   public async executeAction(error: AppError): Promise<void> {
     if (!error.actionType) {
@@ -227,9 +238,10 @@ export class ErrorService {
   }
 
   /**
-   * Dismiss an error notification
+   * Dismiss an error notification. Clears any auto-dismiss timer
+   * and removes the error from state after a 1-second animation delay.
    *
-   * @param errorId
+   * @param errorId - ID of the error to dismiss
    */
   public dismiss(errorId: string): void {
     const timer = this.autoDismissTimers.get(errorId);

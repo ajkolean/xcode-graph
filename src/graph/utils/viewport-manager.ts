@@ -1,19 +1,29 @@
 import type { ClusterPosition } from '@shared/schemas';
 import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
 
+/** Input context for viewport fitting calculations */
 export interface ViewportContext {
+  /** Bounding rectangle of the canvas element */
   rect: DOMRect;
+  /** Current cluster positions in world coordinates */
   clusterPositions: Map<string, ClusterPosition>;
 }
 
+/** Result of a viewport fit calculation */
 export interface ViewportFitResult {
+  /** Computed zoom level */
   zoom: number;
+  /** Horizontal pan offset (pixels) */
   panX: number;
+  /** Vertical pan offset (pixels) */
   panY: number;
 }
 
 /**
  * Calculate the initial pan position to center the graph.
+ *
+ * @param rect - Canvas bounding rectangle
+ * @returns Center point of the rectangle
  */
 export function centerGraph(rect: DOMRect): { x: number; y: number } {
   return { x: rect.width / 2, y: rect.height / 2 };
@@ -22,6 +32,9 @@ export function centerGraph(rect: DOMRect): { x: number; y: number } {
 /**
  * Calculate zoom and pan to fit all clusters within the viewport.
  * Returns null if cluster positions are empty or contain non-finite values.
+ *
+ * @param ctx - Viewport context with canvas rect and cluster positions
+ * @returns Zoom and pan values to fit all clusters, or null if fitting is not possible
  */
 export function fitToViewport(ctx: ViewportContext): ViewportFitResult | null {
   if (!ctx.clusterPositions.size) return null;
@@ -67,6 +80,13 @@ export function fitToViewport(ctx: ViewportContext): ViewportFitResult | null {
 
 /**
  * Convert screen coordinates to world coordinates.
+ *
+ * @param screenX - Screen X position (pixels)
+ * @param screenY - Screen Y position (pixels)
+ * @param panX - Current horizontal pan offset
+ * @param panY - Current vertical pan offset
+ * @param zoom - Current zoom level
+ * @returns World coordinates
  */
 export function screenToWorld(
   screenX: number,
@@ -83,6 +103,10 @@ export function screenToWorld(
 
 /**
  * Get mouse position relative to a canvas element.
+ *
+ * @param e - Mouse event
+ * @param canvas - Canvas element to compute position relative to
+ * @returns Position in canvas-local coordinates
  */
 export function getMousePos(e: MouseEvent, canvas: HTMLCanvasElement): { x: number; y: number } {
   const rect = canvas.getBoundingClientRect();

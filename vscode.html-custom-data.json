@@ -514,9 +514,15 @@
       "references": []
     },
     {
+      "name": "xcode-graph-file-upload",
+      "description": "\n---\n\n\n### **Events:**\n - **graph-file-loaded**",
+      "attributes": [],
+      "references": []
+    },
+    {
       "name": "xcode-graph",
       "description": "Embeddable graph visualization entry point\n---\n\n\n### **Methods:**\n - **loadRawGraph(raw: _unknown_): _void_** - Load raw Tuist graph JSON (the output of `tuist graph --format json`).\nTransforms it into GraphData and sets nodes/edges automatically.\nShows user-facing warnings/errors via ErrorService if the transform has issues.",
-      "attributes": [],
+      "attributes": [{ "name": "show-upload", "values": [] }],
       "references": []
     },
     {
@@ -606,12 +612,6 @@
     {
       "name": "xcode-graph-cycle-warning",
       "description": "Dismissible circular dependency warning banner\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the warning is dismissed",
-      "attributes": [],
-      "references": []
-    },
-    {
-      "name": "xcode-graph-file-upload",
-      "description": "\n---\n\n\n### **Events:**\n - **graph-file-loaded**",
       "attributes": [],
       "references": []
     },

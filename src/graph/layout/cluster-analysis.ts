@@ -2,7 +2,11 @@ import { type Cluster, type ClusterNodeMetadata, NodeRole } from '@shared/schema
 import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
 
 /**
- * Analyzes a cluster to determine node roles, anchors, and layers
+ * Analyze a cluster to determine node roles, anchors, and layer assignments.
+ * Mutates the cluster in place by populating `cluster.anchors` and `cluster.metadata`.
+ *
+ * @param cluster - The cluster to analyze
+ * @param allEdges - All graph edges (includes cross-cluster edges for external dependent detection)
  */
 export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
   const nodeIds = new Set(cluster.nodes.map((n) => n.id));
@@ -82,8 +86,13 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
 }
 
 /**
- * Identifies anchor nodes (entry points) for a cluster
- * Priority: Apps > CLIs > Most-depended-upon frameworks/libs
+ * Identify anchor nodes (entry points) for a cluster.
+ * Priority: Apps > CLIs > Frameworks/libs with external dependents > Most-depended-upon node.
+ *
+ * @param nodes - Non-test nodes in the cluster
+ * @param dependents - Map of node ID to its internal dependent IDs
+ * @param externalDependents - Map of node ID to count of external dependents
+ * @returns Array of anchor nodes (typically one, but apps/CLIs may return multiple)
  */
 export function identifyAnchors(
   nodes: GraphNode[],
@@ -193,9 +202,15 @@ function distributeIntoLayers(sortedNodes: GraphNode[], layers: Map<string, numb
 }
 
 /**
- * Assigns layer numbers based on internal connectivity (edge count within cluster)
- * Nodes with more internal edges are placed in inner rings (lower layer numbers)
- * Nodes with fewer internal edges are placed in outer rings (higher layer numbers)
+ * Assign layer numbers based on internal connectivity (edge count within cluster).
+ * Anchors always get layer 0. Other nodes are sorted by connectivity and distributed
+ * into layers with ~4 nodes each.
+ *
+ * @param nodes - Non-test nodes in the cluster
+ * @param anchors - Identified anchor (entry point) nodes
+ * @param dependencies - Map of node ID to its dependency IDs within the cluster
+ * @param testNodes - Set of test node IDs to exclude from layering
+ * @returns Map of node ID to layer number (0 = innermost)
  */
 export function assignLayers(
   nodes: GraphNode[],
@@ -228,7 +243,13 @@ export function assignLayers(
 }
 
 /**
- * Determines the role of a node
+ * Determine the layout role of a node within its cluster.
+ *
+ * @param node - The graph node
+ * @param isTest - Whether this is a test node
+ * @param isAnchor - Whether this is an anchor (entry point) node
+ * @param dependentCount - Number of internal dependents
+ * @returns The assigned NodeRole
  */
 export function determineRole(
   node: GraphNode,
