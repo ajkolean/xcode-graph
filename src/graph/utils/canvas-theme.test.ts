@@ -1,6 +1,9 @@
-import { colord } from 'colord';
+import { colord, extend } from 'colord';
+import a11yPlugin from 'colord/plugins/a11y';
 import { describe, expect, it } from 'vitest';
 import { DARK_FALLBACKS, LIGHT_FALLBACKS, resolveCanvasTheme } from './canvas-theme';
+
+extend([a11yPlugin]);
 
 describe('canvas-theme', () => {
   it('resolves theme with fallback values when no CSS properties set', () => {
@@ -84,5 +87,57 @@ describe('canvas-theme', () => {
     expect(theme.isDark).toBe(true);
 
     document.body.removeChild(el);
+  });
+
+  describe('contrast validation', () => {
+    const MIN_CONTRAST = 3.0; // WCAG AA for graphical objects
+
+    it('dark fallback node colors have sufficient contrast against background', () => {
+      const bg = colord(DARK_FALLBACKS.canvasBg);
+      const nodeColors = [
+        DARK_FALLBACKS.nodeApp,
+        DARK_FALLBACKS.nodeFramework,
+        DARK_FALLBACKS.nodeLibrary,
+        DARK_FALLBACKS.nodeTest,
+        DARK_FALLBACKS.nodeCli,
+        DARK_FALLBACKS.nodePackage,
+      ];
+      for (const color of nodeColors) {
+        const ratio = colord(color).contrast(bg);
+        expect(ratio).toBeGreaterThanOrEqual(MIN_CONTRAST);
+      }
+    });
+
+    it('light fallback node colors have sufficient contrast against background', () => {
+      const bg = colord(LIGHT_FALLBACKS.canvasBg);
+      const nodeColors = [
+        LIGHT_FALLBACKS.nodeApp,
+        LIGHT_FALLBACKS.nodeFramework,
+        LIGHT_FALLBACKS.nodeLibrary,
+        LIGHT_FALLBACKS.nodeTest,
+        LIGHT_FALLBACKS.nodeCli,
+        LIGHT_FALLBACKS.nodePackage,
+      ];
+      for (const color of nodeColors) {
+        const ratio = colord(color).contrast(bg);
+        expect(ratio).toBeGreaterThanOrEqual(MIN_CONTRAST);
+      }
+    });
+
+    it('light fallback node colors have sufficient contrast against tooltip', () => {
+      const tooltipBg = colord(LIGHT_FALLBACKS.tooltipBg);
+      const nodeColors = [
+        LIGHT_FALLBACKS.nodeApp,
+        LIGHT_FALLBACKS.nodeFramework,
+        LIGHT_FALLBACKS.nodeLibrary,
+        LIGHT_FALLBACKS.nodeTest,
+        LIGHT_FALLBACKS.nodeCli,
+        LIGHT_FALLBACKS.nodePackage,
+      ];
+      for (const color of nodeColors) {
+        const ratio = colord(color).contrast(tooltipBg);
+        expect(ratio).toBeGreaterThanOrEqual(MIN_CONTRAST);
+      }
+    });
   });
 });

@@ -74,7 +74,7 @@ export class FocusTrapController implements ReactiveController {
       isActive: config.isActive,
       initialFocus: config.initialFocus,
       returnFocusOnDeactivate: config.returnFocusOnDeactivate ?? true,
-      onDeactivate: config.onDeactivate,
+      ...(config.onDeactivate ? { onDeactivate: config.onDeactivate } : {}),
       escapeDeactivates: config.escapeDeactivates ?? true,
       clickOutsideDeactivates: config.clickOutsideDeactivates ?? false,
     };

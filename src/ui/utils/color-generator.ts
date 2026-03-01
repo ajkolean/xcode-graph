@@ -82,7 +82,7 @@ export function generateColor(input: string, category?: string): string {
   const inputVariation = (hash % 20) / 100; // 0 to 0.20
   lightnessShift += inputVariation * 0.1;
 
-  const color = baseColor ?? baseColors[0];
+  const color = baseColor ?? baseColors[0]!;
   return adjustColor(color.rgb, lightnessShift, saturationShift);
 }
 

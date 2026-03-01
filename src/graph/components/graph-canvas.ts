@@ -1,22 +1,22 @@
+import { AnimationLoopController } from '@graph/controllers/animation-loop.controller';
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { RoutedEdge } from '@graph/layout/types';
 import type { TransitiveResult } from '@graph/utils';
-import {
-  type AnimatedValue,
-  setAnimatedTarget,
-  tickAnimationMap,
-} from '@graph/utils/canvas-animation';
-import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
+import { setAnimatedTarget } from '@graph/utils/canvas-animation';
+import { resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
+import {
+  fitToViewport as computeFitToViewport,
+  getMousePos,
+  screenToWorld,
+} from '@graph/utils/viewport-manager';
 import { IntersectionController } from '@lit-labs/observers/intersection-controller.js';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
 import { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
-import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
-import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { computeNodeWeights, getNodeSize } from '@ui/utils/sizing';
@@ -43,6 +43,7 @@ import {
   type InteractionState,
 } from './canvas/canvas-interaction-handler';
 import { renderNodes } from './canvas/canvas-node-renderer';
+import { renderClusterTooltip, renderNodeTooltip } from './canvas/canvas-tooltip-renderer';
 import './graph-hidden-dom';
 
 /**
@@ -125,12 +126,19 @@ export class GraphCanvas extends LitElement {
     animationTicks: 30,
   });
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: reactive controller runs as side-effect
   private readonly _resize = new ResizeController(this, {
     callback: () => this.resizeCanvas(),
   });
 
   private readonly _visibility = new IntersectionController(this, {
     callback: (entries) => entries.some((e) => e.isIntersecting),
+  });
+
+  private readonly animationLoop = new AnimationLoopController({
+    onRender: () => this.renderCanvas(),
+    shouldAnimate: () => this.computeAnimatingState(),
+    isVisible: () => this._visibility.value !== false,
   });
 
   // Interaction state (shared with interaction handler)
@@ -158,15 +166,7 @@ export class GraphCanvas extends LitElement {
   private lastRoutedEdgesRef: RoutedEdge[] | undefined = undefined;
   private theme: CanvasTheme | undefined;
 
-  // Animation & Render State
-  private animationFrameId: number | null = null;
-  private time = 0;
-  private lastFrameTime = 0;
   private didInitialFit = false;
-  private isAnimating = false;
-
-  // Smooth opacity transitions for selection/deselection
-  private nodeAlphaMap = new Map<string, AnimatedValue>();
 
   // Fade-out animation for removed nodes
   private fadingOutNodes = new Map<string, { node: GraphNode; startTime: number }>();
@@ -224,9 +224,10 @@ export class GraphCanvas extends LitElement {
     if (this.canvas) {
       this.ctx = this.canvas.getContext('2d', { alpha: true }) ?? undefined;
       this.resizeCanvas();
-      this.centerGraph();
-      this.isAnimating = true;
-      this.requestRender();
+      const rect = this.getBoundingClientRect();
+      this.interactionState.pan = { x: rect.width / 2, y: rect.height / 2 };
+      this.animationLoop.isAnimating = true;
+      this.animationLoop.requestRender();
     } else {
       console.error('Canvas element not found in firstUpdated');
     }
@@ -234,7 +235,7 @@ export class GraphCanvas extends LitElement {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    this.stopRenderLoop();
+    this.animationLoop.stop();
   }
 
   private trackRemovedNodesForFadeOut(changedProps: PropertyValues<this>) {
@@ -249,7 +250,7 @@ export class GraphCanvas extends LitElement {
       }
     }
     if (this.fadingOutNodes.size > 0) {
-      this.isAnimating = true;
+      this.animationLoop.isAnimating = true;
     }
   }
 
@@ -295,10 +296,10 @@ export class GraphCanvas extends LitElement {
       changedProps.has('selectedCluster') ||
       changedProps.has('viewMode')
     ) {
-      this.updateAnimatingState();
+      this.animationLoop.isAnimating = this.computeAnimatingState();
     }
 
-    this.requestRender();
+    this.animationLoop.requestRender();
   }
 
   override updated(changedProps: PropertyValues<this>): void {
@@ -336,12 +337,12 @@ export class GraphCanvas extends LitElement {
         (!!this.selectedNode && !isSelected && !isConnected) ||
         (!!this.selectedCluster && !isClusterSelected);
 
-      setAnimatedTarget(this.nodeAlphaMap, node.id, shouldDim ? 0.3 : 1.0);
+      setAnimatedTarget(this.animationLoop.nodeAlphaMap, node.id, shouldDim ? 0.3 : 1.0);
     }
     // Ensure animation loop runs to process the transitions
-    if (this.nodeAlphaMap.size > 0) {
-      this.isAnimating = true;
-      this.requestRender();
+    if (this.animationLoop.nodeAlphaMap.size > 0) {
+      this.animationLoop.isAnimating = true;
+      this.animationLoop.requestRender();
     }
   }
 
@@ -380,55 +381,32 @@ export class GraphCanvas extends LitElement {
     return this.pathCache.get(key) as Path2D;
   };
 
-  private centerGraph() {
-    const rect = this.getBoundingClientRect();
-    this.interactionState.pan = { x: rect.width / 2, y: rect.height / 2 };
-  }
-
   fitToViewport(): void {
-    if (!this.layout.clusterPositions.size) return;
-    const rect = this.getBoundingClientRect();
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minY = Infinity;
-    let maxY = -Infinity;
-
-    this.layout.clusterPositions.forEach((pos) => {
-      const halfW = pos.width / 2;
-      const halfH = pos.height / 2;
-      minX = Math.min(minX, pos.x - halfW);
-      maxX = Math.max(maxX, pos.x + halfW);
-      minY = Math.min(minY, pos.y - halfH);
-      maxY = Math.max(maxY, pos.y + halfH);
+    const result = computeFitToViewport({
+      rect: this.getBoundingClientRect(),
+      clusterPositions: this.layout.clusterPositions,
     });
+    if (!result) return;
 
-    if (
-      !Number.isFinite(minX) ||
-      !Number.isFinite(maxX) ||
-      !Number.isFinite(minY) ||
-      !Number.isFinite(maxY)
-    )
-      return;
-
-    const graphWidth = maxX - minX;
-    const graphHeight = maxY - minY;
-    const padding = 40;
-    const scaleX = (rect.width - padding * 2) / graphWidth;
-    const scaleY = (rect.height - padding * 2) / graphHeight;
-    const fitZoom = Math.max(ZOOM_CONFIG.MIN_ZOOM, Math.min(1.5, Math.min(scaleX, scaleY)));
-
-    this.zoom = fitZoom;
-    this.interactionState.zoom = fitZoom;
-    setBaseZoom(fitZoom);
-    const centerX = (minX + maxX) / 2;
-    const centerY = (minY + maxY) / 2;
-    this.interactionState.pan = {
-      x: rect.width / 2 - centerX * fitZoom,
-      y: rect.height / 2 - centerY * fitZoom,
-    };
+    this.zoom = result.zoom;
+    this.interactionState.zoom = result.zoom;
+    setBaseZoom(result.zoom);
+    this.interactionState.pan = { x: result.panX, y: result.panY };
 
     this.dispatchEvent(
       new CustomEvent('zoom-change', { detail: this.zoom, bubbles: true, composed: true }),
+    );
+  }
+
+  private computeAnimatingState(): boolean {
+    const hasSelectedNode = !!this.selectedNode;
+    const hasSelectedCluster = !!this.selectedCluster;
+    const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
+    const hasFadingNodes = this.fadingOutNodes.size > 0;
+    const hasAlphaAnimations = this.animationLoop.nodeAlphaMap.size > 0;
+
+    return (
+      hasSelectedNode || hasSelectedCluster || hasCycleNodes || hasFadingNodes || hasAlphaAnimations
     );
   }
 
@@ -446,8 +424,9 @@ export class GraphCanvas extends LitElement {
       nodeWeights: this.nodeWeights,
       manualNodePositions: this.manualNodePositions,
       manualClusterPositions: this.manualClusterPositions,
-      getMousePos: this.getMousePos,
-      screenToWorld: this.screenToWorld,
+      getMousePos: (e: MouseEvent) => getMousePos(e, this.canvas),
+      screenToWorld: (sx: number, sy: number) =>
+        screenToWorld(sx, sy, this.interactionState.pan.x, this.interactionState.pan.y, this.zoom),
       dispatchCanvasEvent: this.dispatchCanvasEvent,
       dispatchZoomChange: (zoom: number) => {
         this.zoom = zoom;
@@ -475,7 +454,7 @@ export class GraphCanvas extends LitElement {
     this.canvas.style.width = `${rect.width}px`;
     this.canvas.style.height = `${rect.height}px`;
 
-    this.requestRender();
+    this.animationLoop.requestRender();
   }
 
   private dispatchCanvasEvent = <K extends keyof CanvasEventMap>(
@@ -488,7 +467,7 @@ export class GraphCanvas extends LitElement {
   private handleCanvasMouseDown = (e: MouseEvent) => {
     this.interactionState.zoom = this.zoom;
     handleMouseDown(e, this.getInteractionContext());
-    this.requestRender();
+    this.animationLoop.requestRender();
   };
 
   private handleCanvasMouseMove = (e: MouseEvent) => {
@@ -506,20 +485,20 @@ export class GraphCanvas extends LitElement {
       }
     }
 
-    this.requestRender();
+    this.animationLoop.requestRender();
   };
 
   private handleCanvasMouseUp = (e?: MouseEvent) => {
     handleMouseUp(e, this.getInteractionContext());
     this.hoveredNode = this.interactionState.hoveredNode;
-    this.requestRender();
+    this.animationLoop.requestRender();
   };
 
   private handleCanvasWheel = (e: WheelEvent) => {
     this.interactionState.zoom = this.zoom;
     handleWheel(e, this.getInteractionContext());
     this.zoom = this.interactionState.zoom;
-    this.requestRender();
+    this.animationLoop.requestRender();
   };
 
   private handleCanvasKeyDown = (e: KeyboardEvent) => {
@@ -575,67 +554,12 @@ export class GraphCanvas extends LitElement {
       default:
         return;
     }
-    this.requestRender();
+    this.animationLoop.requestRender();
   };
 
   // ========================================
   // Rendering
   // ========================================
-
-  private requestRender() {
-    if (this._visibility.value === false) return;
-    if (this.animationFrameId === null) {
-      this.animationFrameId = requestAnimationFrame(this.renderLoop);
-    }
-  }
-
-  private renderLoop = (timestamp: number) => {
-    this.animationFrameId = null;
-    const dt = this.lastFrameTime > 0 ? timestamp - this.lastFrameTime : 16;
-    this.lastFrameTime = timestamp;
-    this.time = timestamp;
-
-    // Tick opacity transition animations
-    const alphaAnimating = tickAnimationMap(this.nodeAlphaMap, dt);
-    if (alphaAnimating && !this.isAnimating) {
-      this.isAnimating = true;
-    }
-
-    this.renderCanvas();
-
-    if (this.isAnimating) {
-      // Re-check: if only alpha was animating and it settled, stop
-      if (!alphaAnimating) {
-        this.updateAnimatingState();
-      }
-      if (this.isAnimating) {
-        this.animationFrameId = requestAnimationFrame(this.renderLoop);
-      }
-    }
-  };
-
-  private stopRenderLoop() {
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
-  }
-
-  private updateAnimatingState() {
-    const hasSelectedNode = !!this.selectedNode;
-    const hasSelectedCluster = !!this.selectedCluster;
-    const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
-    const hasFadingNodes = this.fadingOutNodes.size > 0;
-
-    const hasAlphaAnimations = this.nodeAlphaMap.size > 0;
-
-    this.isAnimating =
-      hasSelectedNode ||
-      hasSelectedCluster ||
-      hasCycleNodes ||
-      hasFadingNodes ||
-      hasAlphaAnimations;
-  }
 
   private renderCanvas() {
     if (!this.ctx || !this.canvas || !this.theme) return;
@@ -661,7 +585,7 @@ export class GraphCanvas extends LitElement {
         ctx: this.ctx,
         layout: this.layout,
         zoom: this.zoom,
-        time: this.time,
+        time: this.animationLoop.time,
         theme: this.theme,
         selectedCluster: this.selectedCluster,
         hoveredCluster: this.interactionState.hoveredCluster,
@@ -677,7 +601,7 @@ export class GraphCanvas extends LitElement {
         nodes: this.nodes,
         edges: this.edges,
         zoom: this.zoom,
-        time: this.time,
+        time: this.animationLoop.time,
         theme: this.theme,
         selectedNode: this.selectedNode,
         selectedCluster: this.selectedCluster,
@@ -708,7 +632,7 @@ export class GraphCanvas extends LitElement {
         nodes: this.nodes,
         edges: this.edges,
         zoom: this.zoom,
-        time: this.time,
+        time: this.animationLoop.time,
         theme: this.theme,
         selectedNode: this.selectedNode,
         selectedCluster: this.selectedCluster,
@@ -725,7 +649,7 @@ export class GraphCanvas extends LitElement {
         getPathForNode: this.getPathForNode,
         connectedNodes: this.getConnectedNodesSet(),
         hubWeightThreshold,
-        nodeAlphaMap: this.nodeAlphaMap,
+        nodeAlphaMap: this.animationLoop.nodeAlphaMap,
         showDirectDeps: this.showDirectDeps,
         showTransitiveDeps: this.showTransitiveDeps,
         showDirectDependents: this.showDirectDependents,
@@ -739,8 +663,23 @@ export class GraphCanvas extends LitElement {
 
     this.ctx.restore();
 
-    this.renderTooltip();
-    this.renderClusterTooltip();
+    // Tooltips render in screen space (after ctx.restore)
+    const tooltipCtx = {
+      ctx: this.ctx,
+      layout: this.layout,
+      nodes: this.nodes,
+      edges: this.edges,
+      zoom: this.zoom,
+      theme: this.theme,
+      hoveredNode: this.hoveredNode,
+      pan: this.interactionState.pan,
+      nodeWeights: this.nodeWeights,
+      manualNodePositions: this.manualNodePositions,
+      manualClusterPositions: this.manualClusterPositions,
+      hoveredCluster: this.interactionState.hoveredCluster,
+    };
+    renderNodeTooltip(tooltipCtx);
+    renderClusterTooltip(tooltipCtx);
   }
 
   private renderFadingNodes() {
@@ -794,141 +733,11 @@ export class GraphCanvas extends LitElement {
     }
 
     if (this.fadingOutNodes.size === 0) {
-      this.updateAnimatingState();
+      this.animationLoop.isAnimating = this.computeAnimatingState();
     }
 
     this.ctx.globalAlpha = 1.0;
   }
-
-  private renderTooltip() {
-    if (!this.hoveredNode) return;
-    const node = this.nodes.find((n) => n.id === this.hoveredNode);
-    if (!node) return;
-    // At low zoom, always show tooltip (labels are likely hidden).
-    // At higher zoom, only show if label would be truncated.
-    if (this.zoom >= 0.5 && node.name.length <= 20) return;
-
-    const worldPos = resolveNodeWorldPosition(
-      node.id,
-      node.project || 'External',
-      this.layout,
-      this.manualNodePositions,
-      this.manualClusterPositions,
-    );
-    if (!worldPos) return;
-
-    const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
-
-    const pan = this.interactionState.pan;
-    const screenX = worldPos.x * this.zoom + pan.x;
-    const screenY = worldPos.y * this.zoom + pan.y;
-
-    const text = node.name;
-    this.ctx.font = '12px var(--fonts-body, sans-serif)';
-    const padding = 8;
-    const metrics = this.ctx.measureText(text);
-    const tooltipWidth = metrics.width + padding * 2;
-    const tooltipHeight = 24;
-
-    const x = screenX - tooltipWidth / 2;
-    const y = screenY - size * this.zoom - 35;
-
-    this.ctx.save();
-    this.ctx.fillStyle = this.theme.tooltipBg;
-    this.ctx.strokeStyle = adjustColorForZoom(
-      getNodeTypeColorFromTheme(node.type, this.theme),
-      this.zoom,
-    );
-    this.ctx.lineWidth = 1;
-
-    this.ctx.beginPath();
-    this.ctx.roundRect(x, y, tooltipWidth, tooltipHeight, 4);
-    this.ctx.fill();
-    this.ctx.stroke();
-
-    this.ctx.fillStyle = this.ctx.strokeStyle;
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText(text, screenX, y + tooltipHeight / 2);
-    this.ctx.restore();
-  }
-
-  private renderClusterTooltip() {
-    const clusterId = this.interactionState.hoveredCluster;
-    if (!clusterId || this.hoveredNode) return;
-
-    const cluster = this.layout.clusters.find((c) => c.id === clusterId);
-    if (!cluster) return;
-    const layoutPos = this.layout.clusterPositions.get(clusterId);
-    if (!layoutPos) return;
-
-    const clusterWorldPos = resolveClusterPosition(
-      clusterId,
-      layoutPos,
-      this.manualClusterPositions,
-    );
-    const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
-
-    const pan = this.interactionState.pan;
-    const screenX = clusterWorldPos.x * this.zoom + pan.x;
-    const screenY = clusterWorldPos.y * this.zoom + pan.y;
-
-    const name = cluster.name;
-    const subtitle = `${cluster.nodes.length} targets`;
-    const padding = 10;
-
-    this.ctx.save();
-    this.ctx.font = '600 13px var(--fonts-body, sans-serif)';
-    const nameWidth = this.ctx.measureText(name).width;
-    this.ctx.font = '400 11px var(--fonts-body, sans-serif)';
-    const subtitleWidth = this.ctx.measureText(subtitle).width;
-
-    const tooltipWidth = Math.max(nameWidth, subtitleWidth) + padding * 2;
-    const tooltipHeight = 40;
-    const x = screenX - tooltipWidth / 2;
-    const y = screenY - radius * this.zoom - 20 - tooltipHeight;
-
-    const clusterColor = generateColor(cluster.name, cluster.type);
-
-    this.ctx.fillStyle = this.theme.tooltipBg;
-    this.ctx.strokeStyle = adjustColorForZoom(clusterColor, this.zoom);
-    this.ctx.lineWidth = 1;
-    this.ctx.beginPath();
-    this.ctx.roundRect(x, y, tooltipWidth, tooltipHeight, 4);
-    this.ctx.fill();
-    this.ctx.stroke();
-
-    this.ctx.textAlign = 'center';
-    this.ctx.fillStyle = this.ctx.strokeStyle;
-    this.ctx.font = '600 13px var(--fonts-body, sans-serif)';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText(name, screenX, y + 14);
-
-    this.ctx.globalAlpha = 0.7;
-    this.ctx.font = '400 11px var(--fonts-body, sans-serif)';
-    this.ctx.fillText(subtitle, screenX, y + 28);
-    this.ctx.restore();
-  }
-
-  // ========================================
-  // Utils
-  // ========================================
-
-  private getMousePos = (e: MouseEvent) => {
-    const rect = this.canvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
-  };
-
-  private screenToWorld = (screenX: number, screenY: number) => {
-    const pan = this.interactionState.pan;
-    return {
-      x: (screenX - pan.x) / this.zoom,
-      y: (screenY - pan.y) / this.zoom,
-    };
-  };
 
   override render(): TemplateResult {
     return html`

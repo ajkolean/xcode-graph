@@ -59,12 +59,12 @@ export const DARK_FALLBACKS: ThemeFallbacks = {
 };
 
 export const LIGHT_FALLBACKS: ThemeFallbacks = {
-  nodeApp: 'rgba(217, 145, 10, 1)',
+  nodeApp: 'rgba(166, 110, 0, 1)',
   nodeFramework: 'rgba(37, 99, 235, 1)',
-  nodeLibrary: 'rgba(22, 163, 74, 1)',
+  nodeLibrary: 'rgba(17, 138, 62, 1)',
   nodeTest: 'rgba(219, 39, 119, 1)',
   nodeCli: 'rgba(79, 70, 229, 1)',
-  nodePackage: 'rgba(202, 138, 4, 1)',
+  nodePackage: 'rgba(146, 100, 2, 1)',
   canvasBg: '#f5f5f7',
   tooltipBg: 'rgba(255, 255, 255, 0.95)',
   shadowColor: 'rgba(0, 0, 0, 0.1)',

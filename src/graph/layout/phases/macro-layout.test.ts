@@ -26,7 +26,7 @@ describe('macro-layout', () => {
       const positions = await computeMacroLayout(clusterGraph, microLayouts, DEFAULT_CONFIG);
 
       expect(positions.size).toBe(2);
-      for (const [id, pos] of positions) {
+      for (const [_id, pos] of positions) {
         expect(Number.isFinite(pos.x)).toBe(true);
         expect(Number.isFinite(pos.y)).toBe(true);
         expect(pos.width).toBeGreaterThan(0);

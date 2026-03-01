@@ -70,8 +70,10 @@ export function applyNodeMassage(
     maxY = -Infinity;
 
   for (const node of nodes) {
+    const existing = micro.relativePositions.get(node.id);
+    if (!existing) continue;
     newPositions.set(node.id, {
-      ...micro.relativePositions.get(node.id),
+      ...existing,
       x: node.x,
       y: node.y,
     });

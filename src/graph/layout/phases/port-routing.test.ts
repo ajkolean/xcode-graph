@@ -46,8 +46,10 @@ describe('port-routing', () => {
       const ports = computeClusterPorts(positions, clusterEdges, DEFAULT_CONFIG);
 
       // Both clusters should have ports
-      expect(ports.get('A')!.length).toBeGreaterThan(0);
-      expect(ports.get('B')!.length).toBeGreaterThan(0);
+      const portsA = ports.get('A') ?? [];
+      const portsB = ports.get('B') ?? [];
+      expect(portsA.length).toBeGreaterThan(0);
+      expect(portsB.length).toBeGreaterThan(0);
     });
 
     it('respects maxPortsPerSide limit', () => {
@@ -82,8 +84,8 @@ describe('port-routing', () => {
 
       const ports = computeClusterPorts(positions, [], DEFAULT_CONFIG);
 
-      expect(ports.get('A')!.length).toBe(0);
-      expect(ports.get('B')!.length).toBe(0);
+      expect(ports.get('A')?.length ?? 0).toBe(0);
+      expect(ports.get('B')?.length ?? 0).toBe(0);
     });
   });
 

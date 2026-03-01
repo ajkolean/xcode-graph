@@ -63,5 +63,7 @@ const THEME_KEY_MAP: Record<string, keyof CanvasTheme> = {
  */
 export function getNodeTypeColorFromTheme(type: string, theme: CanvasTheme): string {
   const key = THEME_KEY_MAP[type];
-  return key ? theme[key] : theme.nodeApp;
+  if (!key) return theme.nodeApp;
+  const color = theme[key];
+  return typeof color === 'string' ? color : theme.nodeApp;
 }

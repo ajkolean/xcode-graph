@@ -114,7 +114,7 @@ export class GraphHiddenDom extends LitElement {
   private getNodeDescription(node: GraphNode): string {
     const deps = this.edges.filter((e) => e.source === node.id).length;
     const dependents = this.edges.filter((e) => e.target === node.id).length;
-    const parts = [node.type];
+    const parts: string[] = [node.type];
     if (node.platform) parts.push(`platform ${node.platform}`);
     if (node.project) parts.push(`project ${node.project}`);
     parts.push(`${deps} dependencies`);

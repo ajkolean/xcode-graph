@@ -53,10 +53,12 @@ describe('force-massage', () => {
       const result = applyForceMassage(positions, clusterGraph, DEFAULT_CONFIG);
 
       // Clusters should not move too far from original positions
-      const posA = result.get('A')!;
-      const posB = result.get('B')!;
-      const driftA = Math.hypot(posA.x - 0, posA.y - 0);
-      const driftB = Math.hypot(posB.x - 600, posB.y - 0);
+      const posA = result.get('A');
+      const posB = result.get('B');
+      expect(posA).toBeDefined();
+      expect(posB).toBeDefined();
+      const driftA = Math.hypot((posA?.x ?? 0) - 0, (posA?.y ?? 0) - 0);
+      const driftB = Math.hypot((posB?.x ?? 0) - 600, (posB?.y ?? 0) - 0);
 
       // Should stay within a reasonable distance of originals
       expect(driftA).toBeLessThan(300);
@@ -93,10 +95,11 @@ describe('force-massage', () => {
 
       const result = applyForceMassage(positions, clusterGraph, DEFAULT_CONFIG);
 
-      const pos = result.get('only')!;
+      const pos = result.get('only');
+      expect(pos).toBeDefined();
       // With tethering and no other forces, should be very close to original
-      expect(Math.abs(pos.x - 100)).toBeLessThan(50);
-      expect(Math.abs(pos.y - 200)).toBeLessThan(50);
+      expect(Math.abs((pos?.x ?? 0) - 100)).toBeLessThan(50);
+      expect(Math.abs((pos?.y ?? 0) - 200)).toBeLessThan(50);
     });
   });
 });
