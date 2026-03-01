@@ -141,45 +141,46 @@ describe('shouldShowEdge', () => {
     createNode({ id: 'B', name: 'CoreLib', type: NodeType.Library }),
     createNode({ id: 'C', name: 'Utils', type: NodeType.Library }),
   ];
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
   const edge: GraphEdge = { source: 'A', target: 'B' };
 
   it('should show all edges when no search and no selection', () => {
-    expect(shouldShowEdge(edge, null, '', nodes)).toBe(true);
+    expect(shouldShowEdge(edge, null, '', nodeMap)).toBe(true);
   });
 
   it('should show edge when both nodes match search', () => {
-    // Both A (HomeFeature/framework) and B (CoreLib/library) contain 'lib' won't match
-    // But A is 'framework' and B is 'library', search for type 'library' -> only B matches
-    // Search for name partial that both share is tricky; let's use a broad query
     const nodeA = createNode({ id: 'A', name: 'FeatureLib', type: NodeType.Framework });
     const nodeB = createNode({ id: 'B', name: 'CoreLib', type: NodeType.Library });
-    const testNodes = [nodeA, nodeB];
+    const testNodeMap = new Map([
+      [nodeA.id, nodeA],
+      [nodeB.id, nodeB],
+    ]);
 
-    expect(shouldShowEdge(edge, null, 'Lib', testNodes)).toBe(true);
+    expect(shouldShowEdge(edge, null, 'Lib', testNodeMap)).toBe(true);
   });
 
   it('should hide edge when only source matches search', () => {
-    expect(shouldShowEdge(edge, null, 'Home', nodes)).toBe(false);
+    expect(shouldShowEdge(edge, null, 'Home', nodeMap)).toBe(false);
   });
 
   it('should hide edge when only target matches search', () => {
-    expect(shouldShowEdge(edge, null, 'CoreLib', nodes)).toBe(false);
+    expect(shouldShowEdge(edge, null, 'CoreLib', nodeMap)).toBe(false);
   });
 
   it('should show edge connected to selected node', () => {
     const selectedNode = nodes[0];
     if (!selectedNode) throw new Error('Node not found');
-    expect(shouldShowEdge(edge, selectedNode, '', nodes)).toBe(true);
+    expect(shouldShowEdge(edge, selectedNode, '', nodeMap)).toBe(true);
   });
 
   it('should hide edge not connected to selected node', () => {
     const selectedNode = nodes[2]; // C
     if (!selectedNode) throw new Error('Node C not found');
-    expect(shouldShowEdge(edge, selectedNode, '', nodes)).toBe(false);
+    expect(shouldShowEdge(edge, selectedNode, '', nodeMap)).toBe(false);
   });
 
   it('should hide edge when source or target node does not exist', () => {
     const orphanEdge: GraphEdge = { source: 'X', target: 'Y' };
-    expect(shouldShowEdge(orphanEdge, null, 'anything', nodes)).toBe(false);
+    expect(shouldShowEdge(orphanEdge, null, 'anything', nodeMap)).toBe(false);
   });
 });

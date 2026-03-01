@@ -32,7 +32,14 @@ export const DEFAULT_FILTERS: FilterState = {
 // ==================== State Signals ====================
 
 /** Current active filters */
-export const filters: Signal.State<FilterState> = signal<FilterState>({ ...DEFAULT_FILTERS });
+export const filters: Signal.State<FilterState> = signal<FilterState>({
+  ...DEFAULT_FILTERS,
+  nodeTypes: new Set(DEFAULT_FILTERS.nodeTypes),
+  platforms: new Set(DEFAULT_FILTERS.platforms),
+  origins: new Set(DEFAULT_FILTERS.origins),
+  projects: new Set(DEFAULT_FILTERS.projects),
+  packages: new Set(DEFAULT_FILTERS.packages),
+});
 
 /** Current search query */
 export const searchQuery: Signal.State<string> = signal<string>('');
@@ -78,7 +85,14 @@ export const hasActiveFilters: Signal.Computed<boolean> = new Signal.Computed(()
  * Useful for testing and cleanup.
  */
 export function resetFilterSignals(): void {
-  filters.set({ ...DEFAULT_FILTERS });
+  filters.set({
+    ...DEFAULT_FILTERS,
+    nodeTypes: new Set(DEFAULT_FILTERS.nodeTypes),
+    platforms: new Set(DEFAULT_FILTERS.platforms),
+    origins: new Set(DEFAULT_FILTERS.origins),
+    projects: new Set(DEFAULT_FILTERS.projects),
+    packages: new Set(DEFAULT_FILTERS.packages),
+  });
   searchQuery.set('');
   allProjects.set(new Set());
   allPackages.set(new Set());

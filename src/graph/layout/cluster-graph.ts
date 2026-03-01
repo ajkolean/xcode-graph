@@ -22,11 +22,7 @@ export interface ClusterGraph {
  * - Edges are aggregated dependencies between clusters
  * - Weights reflect the number of dependencies (strata/attraction)
  */
-export function buildClusterGraph(
-  _nodes: GraphNode[],
-  edges: GraphEdge[],
-  clusters: Cluster[],
-): ClusterGraph {
+export function buildClusterGraph(edges: GraphEdge[], clusters: Cluster[]): ClusterGraph {
   const nodeToCluster = new Map<string, string>();
   for (const cluster of clusters) {
     for (const node of cluster.nodes) {

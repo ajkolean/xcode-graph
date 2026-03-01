@@ -16,7 +16,6 @@
  * @module controllers/layout
  */
 
-import { analyzeCluster } from '@graph/layout/cluster-analysis';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
 import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
@@ -110,12 +109,7 @@ export class LayoutController implements ReactiveController {
       // Step 1: Group nodes into clusters
       const analyzedClusters = groupIntoClusters(nodes, edges);
 
-      // Step 2: Analyze each cluster for metadata
-      analyzedClusters.forEach((cluster) => {
-        analyzeCluster(cluster, edges);
-      });
-
-      // Step 3: Compute hierarchical layout positions using ELK (Async)
+      // Step 2: Compute hierarchical layout positions using ELK (Async)
       const {
         clusterPositions: initialClusterPos,
         nodePositions: initialNodePos,

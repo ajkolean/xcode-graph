@@ -234,15 +234,6 @@ function drawNodeLabel(
   ctx.fillText(labelText, x, labelY);
 }
 
-function resolveChainAlpha(
-  _node: GraphNode,
-  _isSelected: boolean,
-  _isChainActive: boolean | GraphNode | null,
-  _rc: NodeRenderContext,
-): number {
-  return 1.0;
-}
-
 function isHubNode(nodeId: string, rc: NodeRenderContext): boolean {
   const weight = rc.nodeWeights.get(nodeId) ?? 0;
   return weight >= rc.hubWeightThreshold && weight > 0;
@@ -278,7 +269,6 @@ function resolveNodeVisualState(
   size: number,
   isChainActive: boolean | GraphNode | null,
   connectedNodes: Set<string>,
-  chainAlpha: number,
   rc: NodeRenderContext,
 ): NodeVisualState {
   const { selectedNode, hoveredNode, zoom, theme } = rc;
@@ -294,8 +284,7 @@ function resolveNodeVisualState(
     (rc.selectedCluster && clusterId !== rc.selectedCluster);
 
   const isDimmed = isNodeDimmed(node, isSelected, isChainActive, clusterDim, rc);
-  const dimAlpha = getAnimatedAlpha(rc.nodeAlphaMap, node.id);
-  const alpha = dimAlpha * chainAlpha;
+  const alpha = getAnimatedAlpha(rc.nodeAlphaMap, node.id);
   const isCycleNode = rc.layout.cycleNodes?.has(node.id) ?? false;
   const isInChain =
     (rc.transitiveDeps?.nodes.has(node.id) ?? false) ||
@@ -322,11 +311,10 @@ function renderSingleNode(
   size: number,
   isChainActive: boolean | GraphNode | null,
   connectedNodes: Set<string>,
-  chainAlpha: number,
   rc: NodeRenderContext,
 ) {
   const { ctx, theme, time } = rc;
-  const vs = resolveNodeVisualState(node, size, isChainActive, connectedNodes, chainAlpha, rc);
+  const vs = resolveNodeVisualState(node, size, isChainActive, connectedNodes, rc);
   ctx.globalAlpha = vs.alpha;
 
   drawNodeEffects(
@@ -339,7 +327,7 @@ function renderSingleNode(
     vs.isSelected,
     vs.isCycleNode,
     vs.isDimmed,
-    chainAlpha,
+    1.0,
     time,
     theme,
   );
@@ -403,10 +391,7 @@ export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): vo
     const size = getNodeSize(node, edges, nodeWeights.get(node.id));
     if (!isCircleInViewport({ x, y }, size, viewport)) continue;
 
-    const isSelected = selectedNode?.id === node.id;
-    const chainAlpha = resolveChainAlpha(node, isSelected, isChainActive, rc);
-
-    renderSingleNode(node, x, y, size, isChainActive, connectedNodes, chainAlpha, rc);
+    renderSingleNode(node, x, y, size, isChainActive, connectedNodes, rc);
   }
   ctx.globalAlpha = 1.0;
 }

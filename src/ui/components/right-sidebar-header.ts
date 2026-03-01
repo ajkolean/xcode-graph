@@ -82,11 +82,11 @@ export class GraphRightSidebarHeader extends LitElement {
       box-shadow: 0 0 6px rgba(var(--colors-primary-rgb), 0.5);
     }
 
-    graph-icon-button {
+    xcode-graph-icon-button {
       margin-left: auto;
     }
 
-    graph-icon-button:hover {
+    xcode-graph-icon-button:hover {
       transform: scale(1.08);
       transition: transform var(--durations-fast) var(--easings-out);
     }
@@ -122,14 +122,14 @@ export class GraphRightSidebarHeader extends LitElement {
           </div>
         `
         }
-        <xcode-graph-icon-button
+        <xcode-xcode-graph-icon-button
           variant="ghost"
           color="neutral"
           title="${this.isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}"
           @click=${this.handleToggle}
         >
           <xcode-graph-sidebar-collapse-icon ?is-collapsed=${this.isCollapsed}></xcode-graph-sidebar-collapse-icon>
-        </xcode-graph-icon-button>
+        </xcode-xcode-graph-icon-button>
       </div>
     `;
   }

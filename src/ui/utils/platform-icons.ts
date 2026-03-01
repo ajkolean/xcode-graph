@@ -25,21 +25,6 @@ export function getPlatformColor(platform: string): string {
 }
 
 /**
- * Get the appropriate Lucide icon component name for a platform
- */
-export function getPlatformIconName(platform: string): string {
-  const iconMap: Record<string, string> = {
-    iOS: 'Smartphone',
-    macOS: 'Monitor',
-    visionOS: 'Glasses',
-    tvOS: 'Tv',
-    watchOS: 'Watch',
-  };
-
-  return iconMap[platform] || 'Store'; // Default to Store icon
-}
-
-/**
  * Get SVG path data for platform icons (for inline SVG rendering).
  * These are simplified versions of the Lucide icons.
  *
@@ -68,11 +53,4 @@ export function getPlatformIconPath(platform: string): string {
   };
 
   return pathMap[platform] || 'M12 2v20m10-10H2'; // Default to generic store icon
-}
-
-/**
- * Get a label for the platform
- */
-export function getPlatformLabel(platform: string): string {
-  return platform; // Platform names are already user-friendly
 }

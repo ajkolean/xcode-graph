@@ -26,7 +26,6 @@ import { repeat } from 'lit/directives/repeat.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { when } from 'lit/directives/when.js';
 import '@ui/components/sidebar-collapse-icon';
-import '@ui/components/sidebar-collapse-icon';
 
 interface NavItem {
   id: ActiveTabType;

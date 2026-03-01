@@ -159,46 +159,12 @@ export class GraphLayoutController implements ReactiveController {
     this.host.requestUpdate();
   }
 
-  /**
-   * Stop animation - no-op (D3 runs synchronously)
-   */
-  stopAnimation(): void {
-    // No-op
-  }
-
-  /**
-   * Get animation progress - always complete
-   */
-  getProgress(): number {
-    return 1;
-  }
-
-  /**
-   * Check if animation is active - always false
-   */
-  isAnimationActive(): boolean {
-    return false;
-  }
-
   // ========================================
   // Configuration
   // ========================================
 
   setEnableAnimation(enabled: boolean): void {
     this.enableAnimation = enabled;
-    // Ignored - animation always disabled with D3
-  }
-
-  setAnimationTicks(_ticks: number): void {
-    // No-op
-  }
-
-  setNodeCollisionStrength(_strength: number): void {
-    // No-op - D3 handles collision
-  }
-
-  setClusterCollisionStrength(_strength: number): void {
-    // No-op - D3 handles collision
   }
 
   // ========================================

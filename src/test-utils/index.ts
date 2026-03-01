@@ -8,8 +8,6 @@ export {
   MockAnimationFrame,
   uninstallAnimationFrameMock,
 } from './animation-mocks';
-// Comlink mocks
-export { createMockComlinkWrap, MockLayoutWorkerAPI } from './comlink-mocks';
 // Controller helpers
 export {
   type ControllerTestContext,
@@ -19,9 +17,3 @@ export {
   waitForNextUpdate,
   waitForUpdates,
 } from './controller-helpers';
-// Worker mocks
-export {
-  createMockWorkerClass,
-  MockLayoutWorker,
-  MockLayoutWorkerWithResults,
-} from './worker-mocks';

@@ -125,7 +125,6 @@ export function identifyAnchors(
 
 // Helper: Count internal dependencies for a node
 function countInternalDependencies(
-  _nodeId: string,
   deps: Set<string>,
   nodeIds: Set<string>,
   testNodes: Set<string>,
@@ -171,7 +170,7 @@ function calculateInternalEdgeCounts(
     if (testNodes.has(node.id)) continue;
 
     const deps = dependencies.get(node.id) || new Set();
-    const depsCount = countInternalDependencies(node.id, deps, nodeIds, testNodes);
+    const depsCount = countInternalDependencies(deps, nodeIds, testNodes);
     const dependentsCount = countInternalDependents(node.id, nodes, dependencies, testNodes);
     internalEdgeCounts.set(node.id, depsCount + dependentsCount);
   }

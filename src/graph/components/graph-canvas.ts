@@ -285,9 +285,7 @@ export class GraphCanvas extends LitElement {
 
     if (changedProps.has('enableAnimation')) {
       this.layout.enableAnimation = this.enableAnimation;
-      if (!this.enableAnimation) {
-        this.layout.stopAnimation();
-      } else if (this.nodes.length > 0) {
+      if (this.enableAnimation && this.nodes.length > 0) {
         this.layout.computeLayout(this.nodes, this.edges).catch(console.error);
       }
     }

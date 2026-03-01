@@ -142,6 +142,4 @@ export type LayoutConfig = typeof DEFAULT_CONFIG;
 export interface LayoutOptions {
   /** Override specific config values */
   configOverrides?: Partial<LayoutConfig>;
-  /** Function to compute Z-axis offset for a node (for 3D depth model) */
-  getNodeZOffset?: (nodeId: string) => number;
 }

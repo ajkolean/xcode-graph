@@ -21,7 +21,6 @@ export {
   createProjectGraph,
   createSingleNodeGraph,
 } from './graphs';
-export * from './largeGraph';
 export * from './mockClusters';
 export * from './mockEdges';
 export * from './mockFilters';

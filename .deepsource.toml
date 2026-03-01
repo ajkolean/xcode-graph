@@ -11,4 +11,4 @@ name = "javascript"
   ]
 
 [[code_formatters]]
-name = "prettier"
+name = "biome"

@@ -60,6 +60,9 @@ docs/.vitepress/cache/
 .typedoc-out/
 /temp
 
+# Graph data (contains local paths)
+/graph.json
+
 # Swift
 .build/
 .swiftpm/

@@ -66,11 +66,22 @@ export class GraphBuildSettings extends LitElement {
     }
 
     .header {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
       user-select: none;
+      background: none;
+      border: none;
+      padding: 0;
+      text-align: left;
+    }
+
+    .header:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+      border-radius: var(--radii-sm);
     }
 
     .header:hover .title {

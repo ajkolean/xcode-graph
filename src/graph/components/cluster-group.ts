@@ -265,6 +265,7 @@ export class GraphClusterGroup extends LitElement {
     const isSelected = this.isSelected ?? false;
     const finalNodePositions = this.finalNodePositions ?? new Map<string, NodePosition>();
     const edges = this.edges ?? [];
+    const connectedNodes = this.connectedNodes;
 
     return html`
       <g
@@ -314,7 +315,7 @@ export class GraphClusterGroup extends LitElement {
             if (!pos) return null;
 
             const isSelectedNode = this.selectedNode?.id === node.id;
-            const isConnected = this.selectedNode && this.connectedNodes.has(node.id);
+            const isConnected = this.selectedNode && connectedNodes.has(node.id);
 
             return html`
               <xcode-graph-node

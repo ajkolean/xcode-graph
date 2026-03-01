@@ -1,5 +1,4 @@
 import './components/graph-app';
-import './index.css';
 import './styles/tokens.css';
 import { xcodeGraphData } from '@/fixtures/xcode-graph-data';
 import type { GraphApp } from './components/graph-app';

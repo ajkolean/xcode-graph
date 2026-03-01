@@ -13,13 +13,11 @@
     "noUnusedParameters": false
   },
   "include": [
-    "src/schemas/**/*.ts",
-    "src/stores/**/*.ts",
     "src/services/**/*.ts",
-    "src/machines/**/*.ts",
-    "src/types/**/*.ts",
-    "src/utils/**/*.ts",
-    "src/lib/**/*.ts",
+    "src/shared/**/*.ts",
+    "src/graph/**/*.ts",
+    "src/ui/**/*.ts",
+    "src/components/**/*.ts",
     "src/api.ts"
   ],
   "exclude": ["src/**/*.test.ts", "node_modules"]

@@ -151,7 +151,6 @@ describe('GraphLayoutController', () => {
     it('should expose required methods and properties', () => {
       // Check all public methods exist
       expect(typeof controller.computeLayout).toBe('function');
-      expect(typeof controller.stopAnimation).toBe('function');
       expect(typeof controller.setEnableAnimation).toBe('function');
 
       // Check all public properties exist

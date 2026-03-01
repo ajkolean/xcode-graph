@@ -6,7 +6,6 @@
  */
 
 import type { Cluster } from '@shared/schemas';
-import { NodeRole } from '@shared/schemas/cluster.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { LayoutOptions } from './config';
 import { computeHierarchicalLayout as computeEngine } from './engine';
@@ -23,23 +22,10 @@ export * from './config';
 export * from './types';
 
 /**
- * Role-based Z-axis offsets (solar system depth model)
- * Preserved for backward compatibility via the default adapter below.
- */
-const ROLE_Z_OFFSET: Record<NodeRole, number> = {
-  [NodeRole.Entry]: -100,
-  [NodeRole.InternalFramework]: +50,
-  [NodeRole.InternalLib]: +20,
-  [NodeRole.Utility]: 0,
-  [NodeRole.Test]: -100,
-  [NodeRole.Tool]: -100,
-};
-
-/**
  * Main layout computation function.
- * Wraps the core engine with default Role-based Z-offset logic.
+ * Delegates to the core ELK-based engine.
  *
- * NOTE: This is now ASYNCHRONOUS as it uses ELK.
+ * NOTE: This is ASYNCHRONOUS as it uses ELK.
  */
 export async function computeHierarchicalLayout(
   nodes: GraphNode[],
@@ -47,27 +33,5 @@ export async function computeHierarchicalLayout(
   clusters: Cluster[],
   opts: LayoutOptions = {},
 ): Promise<HierarchicalLayoutResult> {
-  // Pre-compute role map for performance
-  const nodeRoles = new Map<string, NodeRole>();
-  for (const cluster of clusters) {
-    if (!cluster.metadata) continue;
-    for (const [nodeId, meta] of cluster.metadata) {
-      if (meta.role) {
-        nodeRoles.set(nodeId, meta.role);
-      }
-    }
-  }
-
-  // Inject default Z-offset resolver if not present
-  const options: LayoutOptions = {
-    ...opts,
-    getNodeZOffset:
-      opts.getNodeZOffset ??
-      ((nodeId: string) => {
-        const role = nodeRoles.get(nodeId);
-        return role ? (ROLE_Z_OFFSET[role] ?? 0) : 0;
-      }),
-  };
-
-  return computeEngine(nodes, edges, clusters, options);
+  return computeEngine(nodes, edges, clusters, opts);
 }

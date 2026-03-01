@@ -9,7 +9,6 @@ import {
   ZOOM_LIGHTNESS_ADJUSTMENT,
   ZOOM_OPACITY,
   ZOOM_SATURATION,
-  ZOOM_STROKE_WIDTH,
 } from '@shared/utils/zoom-constants';
 import { hexToHSL, hslToHex, hslToRgb, rgbToHsl } from './color-math';
 
@@ -84,17 +83,4 @@ export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number 
   const opacityMultiplier =
     ZOOM_OPACITY.MIN_MULTIPLIER + (ZOOM_OPACITY.MAX_MULTIPLIER - ZOOM_OPACITY.MIN_MULTIPLIER) * t;
   return baseOpacity * opacityMultiplier;
-}
-
-/**
- * Get stroke width that adapts to zoom
- * Thinner strokes when zoomed out for cleaner look
- */
-export function getZoomAwareStrokeWidth(baseWidth: number, zoom: number): number {
-  const t = normalizeZoom(zoom);
-  return (
-    baseWidth *
-    (ZOOM_STROKE_WIDTH.MIN_MULTIPLIER +
-      (ZOOM_STROKE_WIDTH.MAX_MULTIPLIER - ZOOM_STROKE_WIDTH.MIN_MULTIPLIER) * t)
-  );
 }

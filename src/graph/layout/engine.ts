@@ -36,7 +36,7 @@ export async function computeHierarchicalLayout(
     : DEFAULT_CONFIG;
 
   // 1. Build Cluster Graph (Meta-Graph)
-  const clusterGraph = buildClusterGraph(nodes, edges, clusters);
+  const clusterGraph = buildClusterGraph(edges, clusters);
 
   // 2. Micro-Layout: Compute dimensions and internal positions for each cluster
   // (Can run in parallel)

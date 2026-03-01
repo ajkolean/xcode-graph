@@ -74,7 +74,7 @@ describe('xcode-graph-edges', () => {
 
     // Should render edges (cross-cluster edges only by default)
     const renderedEdges = querySvgElements(svgEl, 'xcode-graph-edge');
-    expect(renderedEdges.length).to.be.greaterThanOrEqual(0);
+    expect(renderedEdges.length).to.be.greaterThan(0);
   });
 
   it('should filter intra-cluster edges when clusterId is not set', async () => {

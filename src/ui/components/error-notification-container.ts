@@ -59,7 +59,7 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
       max-width: 90vw;
     }
 
-    graph-error-toast {
+    xcode-graph-error-toast {
       pointer-events: auto;
     }
 
@@ -71,7 +71,7 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
         align-items: stretch;
       }
 
-      graph-error-toast {
+      xcode-graph-error-toast {
         max-width: 100%;
       }
     }
@@ -108,11 +108,11 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
         toasts,
         (error) => error.id,
         (error) => html`
-          <xcode-graph-error-toast
+          <xcode-xcode-graph-error-toast
             .error=${error}
             @dismiss=${this.handleDismiss}
             @action=${this.handleAction}
-          ></xcode-graph-error-toast>
+          ></xcode-xcode-graph-error-toast>
         `,
       )}
     `;

@@ -8,6 +8,9 @@ final class TypeExtractor: SyntaxVisitor {
     /// Stack of parent types for nested type resolution
     private var parentStack: [ExtractedType] = []
 
+    /// Tracks which extension declarations actually pushed to the parent stack
+    private var extensionDidPush = Set<SyntaxIdentifier>()
+
     /// Current parent (top of stack)
     private var currentParent: ExtractedType? { parentStack.last }
 
@@ -68,12 +71,13 @@ final class TypeExtractor: SyntaxVisitor {
         let extendedName = node.extendedType.flattenedName
         if let existingType = findType(named: extendedName) {
             parentStack.append(existingType)
+            extensionDidPush.insert(node.id)
         }
         return .visitChildren
     }
 
     override func visitPost(_ node: ExtensionDeclSyntax) {
-        if !parentStack.isEmpty {
+        if extensionDidPush.remove(node.id) != nil {
             parentStack.removeLast()
         }
     }

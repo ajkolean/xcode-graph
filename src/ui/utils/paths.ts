@@ -6,7 +6,7 @@
  * @module utils/rendering/paths
  */
 
-// LRU cache for bezier paths
+// FIFO cache for bezier paths
 const pathCache = new Map<string, string>();
 const MAX_CACHE_SIZE = 1000;
 
@@ -59,7 +59,7 @@ export function generateBezierPath(x1: number, y1: number, x2: number, y2: numbe
 
   const path = `M ${x1},${y1} C ${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`;
 
-  // LRU eviction if cache is full
+  // FIFO eviction if cache is full
   if (pathCache.size >= MAX_CACHE_SIZE) {
     const firstKey = pathCache.keys().next().value;
     if (firstKey) pathCache.delete(firstKey);
@@ -67,13 +67,6 @@ export function generateBezierPath(x1: number, y1: number, x2: number, y2: numbe
 
   pathCache.set(cacheKey, path);
   return path;
-}
-
-/**
- * Clear the path cache (useful for testing or memory management)
- */
-export function clearPathCache(): void {
-  pathCache.clear();
 }
 
 // ============================================================================

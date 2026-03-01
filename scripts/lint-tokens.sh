@@ -9,6 +9,10 @@
 
 set -e
 
+# Resolve project root portably
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # Colors for output
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -45,7 +49,7 @@ check_pattern() {
   fi
 
   local results
-  results=$(cd /Users/andykolean/Developer/tuistgraph && $grep_cmd --glob "*.ts" --glob "!**/tokens.ts" --glob "!**/node_modules/**" "$pattern" $COMPONENT_DIRS 2>/dev/null || true)
+  results=$(cd "$PROJECT_ROOT" && $grep_cmd --glob "*.ts" --glob "!**/tokens.ts" --glob "!**/node_modules/**" "$pattern" $COMPONENT_DIRS 2>/dev/null || true)
 
   if [[ -n "$results" ]]; then
     if [[ "$severity" = "error" ]]; then

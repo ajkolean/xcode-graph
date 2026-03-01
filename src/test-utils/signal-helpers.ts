@@ -7,7 +7,7 @@
  * @module test-utils/signal-helpers
  */
 
-import { Signal } from '@lit-labs/signals';
+import type { Signal } from '@lit-labs/signals';
 
 /**
  * Snapshot of signal values
@@ -69,74 +69,4 @@ export function restoreSignalSnapshot(snapshot: SignalSnapshot): void {
   for (const [sig, value] of snapshot.entries()) {
     (sig as Signal.State<unknown>).set(value);
   }
-}
-
-/**
- * Reset a signal to a specific value
- *
- * Simple helper to reset a signal to a known state.
- * Useful for setting up test preconditions.
- *
- * @param signal - The signal to reset
- * @param value - The value to set
- *
- * @example
- * ```ts
- * beforeEach(() => {
- *   resetSignal(selectedNode, null);
- *   resetSignal(viewMode, ViewMode.Full);
- * });
- * ```
- */
-export function resetSignal<T>(signal: Signal.State<T>, value: T): void {
-  signal.set(value);
-}
-
-/**
- * Spy on signal changes
- *
- * Creates a watcher that tracks all changes to a signal.
- * Returns a function to get the change history.
- *
- * @param signal - The signal to watch
- * @returns Object with get() to retrieve changes and cleanup()
- *
- * @example
- * ```ts
- * const spy = spyOnSignal(viewMode);
- * setViewMode(ViewMode.Focused);
- * setViewMode(ViewMode.Full);
- *
- * expect(spy.get()).toEqual([ViewMode.Focused, ViewMode.Full]);
- * spy.cleanup();
- * ```
- */
-export function spyOnSignal<T>(signal: Signal.State<T>): {
-  get: () => T[];
-  cleanup: () => void;
-} {
-  const changes: T[] = [];
-  let previousValue = signal.get();
-
-  // Use a computed signal to track changes
-  const watcher = new Signal.Computed(() => {
-    const currentValue = signal.get();
-    if (currentValue !== previousValue) {
-      changes.push(currentValue);
-      previousValue = currentValue;
-    }
-    return currentValue;
-  });
-
-  // Force initial computation
-  watcher.get();
-
-  return {
-    get: () => [...changes],
-    cleanup: () => {
-      // Computed signals don't have explicit cleanup in Lit signals
-      // Just clear the changes array
-      changes.length = 0;
-    },
-  };
 }

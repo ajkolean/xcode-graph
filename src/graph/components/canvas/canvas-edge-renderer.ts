@@ -327,7 +327,6 @@ function drawEdgePath(
   edgeKey: string,
   endpoints: NonNullable<ReturnType<typeof resolveEdgeEndpoints>>,
   isCrossCluster: boolean,
-  _isHighlighted: boolean,
   rc: EdgeRenderContext,
 ) {
   if (isCrossCluster) {
@@ -395,7 +394,7 @@ function renderSingleEdge(
     rc.ctx.globalAlpha = glowAlpha;
     rc.ctx.lineWidth = 6 / rc.zoom;
     rc.ctx.setLineDash([]);
-    drawEdgePath(edgeKey, endpoints, isCrossCluster, true, rc);
+    drawEdgePath(edgeKey, endpoints, isCrossCluster, rc);
     rc.ctx.restore();
   }
 
@@ -412,7 +411,7 @@ function renderSingleEdge(
     rc,
   );
 
-  drawEdgePath(edgeKey, endpoints, isCrossCluster, isEmphasized, rc);
+  drawEdgePath(edgeKey, endpoints, isCrossCluster, rc);
 
   // Draw arrowhead at target end for emphasized edges
   if (isEmphasized) {

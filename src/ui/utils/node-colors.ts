@@ -4,7 +4,6 @@
  */
 
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
-import { generateColor } from './color-generator';
 
 /**
  * Color mapping for different node types
@@ -65,23 +64,4 @@ const THEME_KEY_MAP: Record<string, keyof CanvasTheme> = {
 export function getNodeTypeColorFromTheme(type: string, theme: CanvasTheme): string {
   const key = THEME_KEY_MAP[type];
   return key ? theme[key] : theme.nodeApp;
-}
-
-/**
- * Gets a consistent color for a project name.
- *
- * @param projectName - The project name to derive a color from
- * @returns Hex color string
- */
-export function getProjectColor(projectName: string): string {
-  return generateColor(projectName, 'project');
-}
-
-/**
- * Gets all node type colors for legend display.
- *
- * @returns A shallow copy of the `NODE_TYPE_COLORS` record
- */
-export function getAllNodeTypeColors(): Record<string, string> {
-  return { ...NODE_TYPE_COLORS };
 }

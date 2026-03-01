@@ -63,7 +63,7 @@ export class GraphNodeHeader extends LitElement {
       display: block;
     }
 
-    graph-panel-header {
+    xcode-graph-panel-header {
       --panel-header-padding: var(--spacing-md);
     }
 

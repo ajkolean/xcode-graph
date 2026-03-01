@@ -74,12 +74,6 @@ export class GraphControls extends LitElement {
   @property({ type: Number, attribute: 'base-zoom' })
   declare baseZoom: number;
 
-  @property({ type: Number, attribute: 'node-count' })
-  declare nodeCount: number;
-
-  @property({ type: Number, attribute: 'edge-count' })
-  declare edgeCount: number;
-
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;

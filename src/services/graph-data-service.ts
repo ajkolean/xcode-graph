@@ -286,7 +286,9 @@ export class GraphDataService {
       type: clusterType,
       origin: clusterOrigin,
       nodes: clusterNodes,
-    } as Cluster;
+      metadata: new Map(),
+      anchors: [],
+    };
   }
 
   /**

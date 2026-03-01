@@ -42,6 +42,7 @@
     /* Path aliases */
     "paths": {
       "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
       "@graph/*": ["./src/graph/*"],
       "@ui/*": ["./src/ui/*"],
       "@shared/*": ["./src/shared/*"]

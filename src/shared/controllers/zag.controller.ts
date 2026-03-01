@@ -115,17 +115,11 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
   hostDisconnected(): void {
     try {
       this.unsubscribe?.();
-      this.unsubscribe = undefined;
       this.instance.stop();
-    } catch (error) {
-      console.error('[ZagController] Error during cleanup:', error);
-      // Ensure cleanup happens even if stop throws
+    } catch (e) {
+      console.warn('[ZagController] Error during cleanup:', e);
+    } finally {
       this.unsubscribe = undefined;
-      try {
-        this.instance.stop();
-      } catch {
-        // Silently fail on second attempt
-      }
     }
   }
 

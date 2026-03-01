@@ -186,18 +186,15 @@ export function computeClusterStats(
   filteredEdges?: GraphEdge[],
 ): ClusterStatsResult {
   const edgesToUse = filteredEdges || edges;
+  const clusterNodeIds = new Set(clusterNodes.map((n) => n.id));
 
   // Filtered stats
-  const filteredDependencies = edgesToUse.filter((e) =>
-    clusterNodes.some((n) => n.id === e.source),
-  ).length;
-  const filteredDependents = edgesToUse.filter((e) =>
-    clusterNodes.some((n) => n.id === e.target),
-  ).length;
+  const filteredDependencies = edgesToUse.filter((e) => clusterNodeIds.has(e.source)).length;
+  const filteredDependents = edgesToUse.filter((e) => clusterNodeIds.has(e.target)).length;
 
   // Total stats
-  const totalDependencies = edges.filter((e) => clusterNodes.some((n) => n.id === e.source)).length;
-  const totalDependents = edges.filter((e) => clusterNodes.some((n) => n.id === e.target)).length;
+  const totalDependencies = edges.filter((e) => clusterNodeIds.has(e.source)).length;
+  const totalDependents = edges.filter((e) => clusterNodeIds.has(e.target)).length;
 
   // Filtered targets count
   const filteredClusterNodeIds = new Set(

@@ -100,19 +100,19 @@ export function shouldDimNode(
  * @param edge - The edge to check
  * @param selectedNode - Currently selected node (or null)
  * @param searchQuery - Current search string
- * @param nodes - All graph nodes
+ * @param nodeMap - Map of node ID to node for O(1) lookups
  * @returns True if edge should be shown
  */
 export function shouldShowEdge(
   edge: GraphEdge,
   selectedNode: GraphNodeType | null,
   searchQuery: string,
-  nodes: GraphNodeType[],
+  nodeMap: Map<string, GraphNodeType>,
 ): boolean {
   // If there's a search query, only show edges where both nodes match
   if (searchQuery) {
-    const sourceNode = nodes.find((n) => n.id === edge.source);
-    const targetNode = nodes.find((n) => n.id === edge.target);
+    const sourceNode = nodeMap.get(edge.source);
+    const targetNode = nodeMap.get(edge.target);
 
     if (!sourceNode || !targetNode) return false;
 

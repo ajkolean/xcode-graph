@@ -25,7 +25,6 @@ export class MockGraphLayoutController implements ReactiveController {
 
   // Track method calls for testing
   computeLayoutCalls: Array<{ nodes: GraphNode[]; edges: GraphEdge[] }> = [];
-  stopAnimationCalls = 0;
 
   constructor(host: ReactiveControllerHost, config: GraphLayoutConfig = {}) {
     this.host = host;
@@ -97,14 +96,6 @@ export class MockGraphLayoutController implements ReactiveController {
     });
 
     this.host.requestUpdate();
-  }
-
-  /**
-   * Mock animation stop
-   */
-  stopAnimation(): void {
-    this.stopAnimationCalls++;
-    this.isSettling = false;
   }
 
   /**
