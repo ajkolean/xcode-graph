@@ -144,37 +144,6 @@ function drawClusterLabels(
   ctx.fillText(displayName, cx, nameY);
 }
 
-/** Draw a bright centroid dot representing the cluster at very low zoom levels */
-function drawCentroidDot(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  clusterColor: string,
-  nodeCount: number,
-  shouldDim: boolean,
-  alpha: number,
-) {
-  const dotRadius = Math.sqrt(nodeCount) * 3;
-  const dimFactor = shouldDim ? 0.3 : 1.0;
-
-  // Solid centroid dot
-  ctx.beginPath();
-  ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
-  ctx.fillStyle = clusterColor;
-  ctx.globalAlpha = alpha * dimFactor;
-  ctx.fill();
-}
-
-/** Compute crossfade alphas for the centroid-dot ↔ full-rendering transition */
-function getZoomCrossfade(zoom: number): { centroidAlpha: number; fullAlpha: number } {
-  if (zoom < 0.15) return { centroidAlpha: 1.0, fullAlpha: 0 };
-  if (zoom < 0.3) {
-    const t = (zoom - 0.15) / 0.15;
-    return { centroidAlpha: 1.0 - t, fullAlpha: t };
-  }
-  return { centroidAlpha: 0, fullAlpha: 1.0 };
-}
-
 function renderSingleCluster(
   rc: ClusterRenderContext,
   cx: number,
@@ -186,40 +155,30 @@ function renderSingleCluster(
   shouldDim: boolean,
   clusterType: string,
   nodeCount: number,
-  centroidAlpha: number,
-  fullAlpha: number,
   clusterId: string,
 ) {
   const { ctx, zoom, time } = rc;
 
-  if (centroidAlpha > 0) {
-    drawCentroidDot(ctx, cx, cy, clusterColor, nodeCount, shouldDim, centroidAlpha);
-  }
-
-  if (fullAlpha > 0) {
-    ctx.globalAlpha = fullAlpha;
-    drawClusterFillAndBorder(
-      ctx,
-      cx,
-      cy,
-      radius,
-      clusterColor,
-      isActive,
-      isSelected,
-      shouldDim,
-      clusterType,
-      zoom,
-      time,
-      nodeCount,
-      clusterId,
-    );
-  }
+  drawClusterFillAndBorder(
+    ctx,
+    cx,
+    cy,
+    radius,
+    clusterColor,
+    isActive,
+    isSelected,
+    shouldDim,
+    clusterType,
+    zoom,
+    time,
+    nodeCount,
+    clusterId,
+  );
 }
 
 export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds): void {
   const { ctx, layout, zoom, selectedCluster, hoveredCluster, manualClusterPositions } = rc;
   const activeClusterId = selectedCluster || hoveredCluster;
-  const { centroidAlpha, fullAlpha } = getZoomCrossfade(zoom);
 
   for (const cluster of layout.clusters) {
     const layoutPos = layout.clusterPositions.get(cluster.id);
@@ -247,8 +206,6 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
       shouldDim,
       cluster.type,
       cluster.nodes.length,
-      centroidAlpha,
-      fullAlpha,
       cluster.id,
     );
 
