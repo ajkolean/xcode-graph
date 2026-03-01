@@ -38,8 +38,8 @@ node -e "
   fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
 "
 
-# Update GraphValidator Package.swift
-PACKAGE_SWIFT="packages/GraphValidator/Package.swift"
+# Update swift Package.swift
+PACKAGE_SWIFT="swift/Package.swift"
 if [[ -f "${PACKAGE_SWIFT}" ]]; then
   sed -i.bak "s/exact: \"[0-9]*\.[0-9]*\.[0-9]*\"/exact: \"${XCGRAPH_VERSION}\"/" "${PACKAGE_SWIFT}" && rm -f "${PACKAGE_SWIFT}.bak"
   echo "Updated ${PACKAGE_SWIFT}"

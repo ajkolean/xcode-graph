@@ -74,9 +74,9 @@ jobs:
           XCGRAPH_SOURCE: ${{ steps.resolve-version.outputs.source }}
         run: echo "Testing against XcodeGraph ${XCGRAPH_VERSION} (source: ${XCGRAPH_SOURCE})"
 
-      # Update GraphValidator to use the target XcodeGraph version and regenerate types
+      # Update Package.swift to use the target XcodeGraph version and regenerate types
       - name: Update XcodeGraph dependency
-        working-directory: packages/GraphValidator
+        working-directory: swift
         env:
           XCGRAPH_VERSION: ${{ steps.resolve-version.outputs.version }}
         run: |
@@ -87,13 +87,13 @@ jobs:
           grep XcodeGraph Package.swift
 
       - name: Resolve Swift dependencies
-        working-directory: packages/GraphValidator
+        working-directory: swift
         run: swift package resolve
 
       # Find the checked-out XcodeGraph sources for type generation
       - name: Locate XcodeGraph sources
         id: xcodegraph-sources
-        working-directory: packages/GraphValidator
+        working-directory: swift
         run: |
           CHECKOUT_DIR=$(find .build -type d -name "XcodeGraph" -path "*/checkouts/*" | head -1)
           SOURCES_DIR="${CHECKOUT_DIR}/Sources/XcodeGraph"
@@ -106,13 +106,13 @@ jobs:
 
       # Regenerate TypeScript types from the new XcodeGraph version
       - name: Regenerate TypeScript types
-        working-directory: packages/GraphValidator
+        working-directory: swift
         env:
           XCODEGRAPH_SOURCES: ${{ steps.xcodegraph-sources.outputs.path }}
         run: |
           swift run transform-graph \
             --source-dir "${XCODEGRAPH_SOURCES}" \
-            --output ../../src/services/xcode-graph.schema.generated.ts
+            --output ../src/services/xcode-graph.schema.generated.ts
 
       # Show what changed in the generated types
       - name: Diff generated types

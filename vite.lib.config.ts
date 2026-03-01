@@ -25,7 +25,6 @@ export default defineConfig({
         composite: false,
         declaration: false,
         declarationMap: false,
-        isolatedDeclarations: false,
         importHelpers: false,
       },
       transformers: {

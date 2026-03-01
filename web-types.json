@@ -2463,9 +2463,7 @@
               "value": { "type": "boolean", "default": "true" }
             }
           ],
-          "slots": [
-            { "name": "", "description": "Default slot for section content" }
-          ],
+          "slots": [{ "name": "", "description": "Default slot for section content" }],
           "events": [],
           "js": {
             "properties": [

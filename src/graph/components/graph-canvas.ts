@@ -9,7 +9,8 @@ import {
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
-import { ResizeController } from '@shared/controllers/resize.controller';
+import { IntersectionController } from '@lit-labs/observers/intersection-controller.js';
+import { ResizeController } from '@lit-labs/observers/resize-controller.js';
 import { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
@@ -124,7 +125,13 @@ export class GraphCanvas extends LitElement {
     animationTicks: 30,
   });
 
-  readonly resize = new ResizeController(this, () => this.resizeCanvas());
+  private readonly _resize = new ResizeController(this, {
+    callback: () => this.resizeCanvas(),
+  });
+
+  private readonly _visibility = new IntersectionController(this, {
+    callback: (entries) => entries.some((e) => e.isIntersecting),
+  });
 
   // Interaction state (shared with interaction handler)
   private interactionState: InteractionState = {
@@ -578,6 +585,7 @@ export class GraphCanvas extends LitElement {
   // ========================================
 
   private requestRender() {
+    if (this._visibility.value === false) return;
     if (this.animationFrameId === null) {
       this.animationFrameId = requestAnimationFrame(this.renderLoop);
     }

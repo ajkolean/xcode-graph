@@ -59,3 +59,10 @@ docs/.vitepress/dist/
 docs/.vitepress/cache/
 .typedoc-out/
 /temp
+
+# Swift
+.build/
+.swiftpm/
+xcuserdata/
+DerivedData/
+*.xcodeproj/
