@@ -207,7 +207,5 @@ export const NODE_TYPE_VALUES: NodeType[] = Object.values(NodeType);
 export const PLATFORM_VALUES: Platform[] = Object.values(Platform);
 /** All origin values as array for iteration */
 export const ORIGIN_VALUES: Origin[] = Object.values(Origin);
-/** All dependency kind values as array for iteration */
-export const DEPENDENCY_KIND_VALUES: DependencyKind[] = Object.values(DependencyKind);
 /** All source type values as array for iteration */
 export const SOURCE_TYPE_VALUES: SourceType[] = Object.values(SourceType);

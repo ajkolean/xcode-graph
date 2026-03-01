@@ -32,7 +32,10 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
     const result = transformTuistGraph(raw);
 
     const widgetNode = result.data.nodes.find((n) => n.name === 'WidgetExtension');
-    if (!widgetNode) { expect.fail('expected WidgetExtension node'); return; }
+    if (!widgetNode) {
+      expect.fail('expected WidgetExtension node');
+      return;
+    }
     // Unknown product type should fall back to Library
     expect(widgetNode.type).toBe(NodeType.Library);
     expect(result.warnings.some((w) => w.includes('widgetExtension'))).toBe(true);
@@ -43,7 +46,10 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
     const result = transformTuistGraph(raw);
 
     const appNode = result.data.nodes.find((n) => n.name === 'FutureApp');
-    if (!appNode) { expect.fail('expected FutureApp node'); return; }
+    if (!appNode) {
+      expect.fail('expected FutureApp node');
+      return;
+    }
     // Should still detect iOS as the primary platform
     expect(appNode.platform).toBe(Platform.iOS);
   });
@@ -54,7 +60,10 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
 
     // Transform should still succeed with extra fields on targets
     const appNode = result.data.nodes.find((n) => n.name === 'FutureApp');
-    if (!appNode) { expect.fail('expected FutureApp node'); return; }
+    if (!appNode) {
+      expect.fail('expected FutureApp node');
+      return;
+    }
     expect(appNode.tags).toEqual(['future']);
   });
 
@@ -63,11 +72,17 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
     const result = transformTuistGraph(raw);
 
     const appNode = result.data.nodes.find((n) => n.name === 'FutureApp');
-    if (!appNode) { expect.fail('expected FutureApp node'); return; }
+    if (!appNode) {
+      expect.fail('expected FutureApp node');
+      return;
+    }
     expect(appNode.type).toBe(NodeType.App);
 
     const coreNode = result.data.nodes.find((n) => n.name === 'CoreLib');
-    if (!coreNode) { expect.fail('expected CoreLib node'); return; }
+    if (!coreNode) {
+      expect.fail('expected CoreLib node');
+      return;
+    }
     expect(coreNode.type).toBe(NodeType.Framework);
   });
 });

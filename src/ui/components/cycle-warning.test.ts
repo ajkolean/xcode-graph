@@ -208,7 +208,8 @@ describe('graph-cycle-warning', () => {
 
     it('should handle very long cycle paths', async () => {
       const longCycle = Array.from({ length: 20 }, (_, i) => `Node${i}`);
-      longCycle.push(longCycle[0]!); // Complete the cycle
+      const firstNode = longCycle[0] ?? 'Node0';
+      longCycle.push(firstNode); // Complete the cycle
       const cycles = [longCycle];
 
       const el = await fixture<GraphCycleWarning>(html`

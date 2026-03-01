@@ -86,7 +86,10 @@ describe('ErrorService', () => {
       const currentErrors = errors.get();
       expect(currentErrors).toHaveLength(1);
       const firstError = currentErrors[0];
-      if (!firstError) { expect.fail('expected error in list'); return; }
+      if (!firstError) {
+        expect.fail('expected error in list');
+        return;
+      }
       expect(firstError.message).toBe('Test');
     });
 
@@ -171,7 +174,10 @@ describe('ErrorService', () => {
       // Should be dismissed
       const currentErrors = errors.get();
       const infoError = currentErrors[0];
-      if (!infoError) { expect.fail('expected error'); return; }
+      if (!infoError) {
+        expect.fail('expected error');
+        return;
+      }
       expect(infoError.dismissed).toBe(true);
     });
 
@@ -184,7 +190,10 @@ describe('ErrorService', () => {
 
       const currentErrors = errors.get();
       const warnError = currentErrors[0];
-      if (!warnError) { expect.fail('expected error'); return; }
+      if (!warnError) {
+        expect.fail('expected error');
+        return;
+      }
       expect(warnError.dismissed).toBe(true);
     });
 
@@ -198,7 +207,10 @@ describe('ErrorService', () => {
 
       const currentErrors = errors.get();
       const errError = currentErrors[0];
-      if (!errError) { expect.fail('expected error'); return; }
+      if (!errError) {
+        expect.fail('expected error');
+        return;
+      }
       expect(errError.dismissed).toBe(true);
     });
 
@@ -211,7 +223,10 @@ describe('ErrorService', () => {
 
       const currentErrors = errors.get();
       const critError = currentErrors[0];
-      if (!critError) { expect.fail('expected error'); return; }
+      if (!critError) {
+        expect.fail('expected error');
+        return;
+      }
       expect(critError.dismissed).toBe(false);
     });
 
@@ -227,7 +242,10 @@ describe('ErrorService', () => {
 
       const currentErrors = errors.get();
       const customError = currentErrors[0];
-      if (!customError) { expect.fail('expected error'); return; }
+      if (!customError) {
+        expect.fail('expected error');
+        return;
+      }
       expect(customError.dismissed).toBe(true);
     });
   });
@@ -240,7 +258,10 @@ describe('ErrorService', () => {
 
       const currentErrors = errors.get();
       const dismissedError = currentErrors[0];
-      if (!dismissedError) { expect.fail('expected error'); return; }
+      if (!dismissedError) {
+        expect.fail('expected error');
+        return;
+      }
       expect(dismissedError.dismissed).toBe(true);
     });
 

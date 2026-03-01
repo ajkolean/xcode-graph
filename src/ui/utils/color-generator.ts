@@ -29,9 +29,9 @@ function hashString(str: string): number {
 
 // Adjust color lightness/saturation for variation
 function adjustColor(rgb: number[], lightnessShift: number, saturationShift: number): string {
-  const rNorm = rgb[0]! / 255;
-  const gNorm = rgb[1]! / 255;
-  const bNorm = rgb[2]! / 255;
+  const rNorm = (rgb[0] ?? 0) / 255;
+  const gNorm = (rgb[1] ?? 0) / 255;
+  const bNorm = (rgb[2] ?? 0) / 255;
 
   const { h, s, l } = rgbToHsl(rNorm, gNorm, bNorm);
 
@@ -67,7 +67,8 @@ export function generateColor(input: string, category?: string): string {
   const inputVariation = (hash % 20) / 100; // 0 to 0.20
   lightnessShift += inputVariation * 0.1;
 
-  return adjustColor(baseColor!.rgb, lightnessShift, saturationShift);
+  const color = baseColor ?? baseColors[0];
+  return adjustColor(color.rgb, lightnessShift, saturationShift);
 }
 
 /**

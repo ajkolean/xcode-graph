@@ -8,7 +8,7 @@
  * @module services
  */
 
+export { GraphAnalysisService } from './graph-analysis-service';
+export { GraphDataService } from './graph-data-service';
 export { GraphLoader, type LoadProgress, type ProgressiveLoadConfig } from './graph-loader';
-export { GraphAnalysisService } from './graphAnalysisService';
-export { GraphDataService } from './graphDataService';
-export { GraphStatsService } from './graphStatsService';
+export { GraphStatsService } from './graph-stats-service';

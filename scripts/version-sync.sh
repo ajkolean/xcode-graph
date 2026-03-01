@@ -41,7 +41,7 @@ node -e "
 # Update GraphValidator Package.swift
 PACKAGE_SWIFT="packages/GraphValidator/Package.swift"
 if [[ -f "${PACKAGE_SWIFT}" ]]; then
-  sed -i '' "s/exact: \"[0-9]*\.[0-9]*\.[0-9]*\"/exact: \"${XCGRAPH_VERSION}\"/" "${PACKAGE_SWIFT}"
+  sed -i.bak "s/exact: \"[0-9]*\.[0-9]*\.[0-9]*\"/exact: \"${XCGRAPH_VERSION}\"/" "${PACKAGE_SWIFT}" && rm -f "${PACKAGE_SWIFT}.bak"
   echo "Updated ${PACKAGE_SWIFT}"
 fi
 

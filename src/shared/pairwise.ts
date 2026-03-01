@@ -8,8 +8,12 @@
  */
 export function* pairwise<T>(items: T[]): Generator<readonly [T, T], void, unknown> {
   for (let i = 0; i < items.length; i++) {
+    const a = items[i];
+    if (a === undefined) continue;
     for (let j = i + 1; j < items.length; j++) {
-      yield [items[i]!, items[j]!] as const;
+      const b = items[j];
+      if (b === undefined) continue;
+      yield [a, b] as const;
     }
   }
 }
@@ -25,7 +29,10 @@ export function* pairwise<T>(items: T[]): Generator<readonly [T, T], void, unkno
 export function adjacentPairs<T>(items: T[]): Array<readonly [T, T]> {
   const pairs: Array<readonly [T, T]> = [];
   for (let i = 1; i < items.length; i++) {
-    pairs.push([items[i - 1]!, items[i]!] as const);
+    const prev = items[i - 1];
+    const curr = items[i];
+    if (prev === undefined || curr === undefined) continue;
+    pairs.push([prev, curr] as const);
   }
   return pairs;
 }

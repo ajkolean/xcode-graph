@@ -127,7 +127,7 @@ describe('GraphErrorToast', () => {
 
       expect(dismissSpy).toHaveBeenCalled();
       const firstCall = dismissSpy.mock.calls[0];
-      const event = (firstCall?.[0]) as CustomEvent;
+      const event = firstCall?.[0] as CustomEvent;
       expect(event.detail.errorId).toBe('test-123');
     });
 
@@ -221,7 +221,7 @@ describe('GraphErrorToast', () => {
 
       expect(actionSpy).toHaveBeenCalled();
       const firstCall = actionSpy.mock.calls[0];
-      const event = (firstCall?.[0]) as CustomEvent;
+      const event = firstCall?.[0] as CustomEvent;
       expect(event.detail.error).toEqual(error);
     });
   });

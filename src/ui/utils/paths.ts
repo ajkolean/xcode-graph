@@ -116,15 +116,15 @@ export function generateWaypointPath(start: Point, waypoints: Point[], end: Poin
     parts.push(`L ${end.x},${end.y}`);
   } else if (points.length === 3) {
     // One waypoint - use quadratic bezier
-    const wp = points[1]!;
+    const wp = points[1] ?? start;
     parts.push(`Q ${wp.x},${wp.y} ${end.x},${end.y}`);
   } else {
     // Multiple waypoints - chain quadratic curves
     // Use Catmull-Rom style: curve through midpoints, waypoints are control points
 
     for (let i = 1; i < points.length - 1; i++) {
-      const curr = points[i]!;
-      const next = points[i + 1]!;
+      const curr = points[i] ?? start;
+      const next = points[i + 1] ?? end;
 
       // Midpoint after current waypoint
       const midAfter = {

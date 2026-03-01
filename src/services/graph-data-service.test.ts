@@ -8,8 +8,8 @@ import {
   createNode,
   createProjectGraph,
 } from '../fixtures';
-import { GraphDataService } from './graphDataService';
-import { GraphStatsService } from './graphStatsService';
+import { GraphDataService } from './graph-data-service';
+import { GraphStatsService } from './graph-stats-service';
 
 describe('GraphDataService', () => {
   describe('getAllNodes', () => {

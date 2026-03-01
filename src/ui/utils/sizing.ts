@@ -82,7 +82,8 @@ function topologicalSort(outgoing: Map<string, string[]>, inDegree: Map<string, 
 
   const topoOrder: string[] = [];
   while (queue.length > 0) {
-    const id = queue.shift()!;
+    const id = queue.shift();
+    if (id === undefined) break;
     topoOrder.push(id);
     for (const neighbor of outgoing.get(id) ?? []) {
       const newDeg = (inDegree.get(neighbor) ?? 1) - 1;
@@ -102,7 +103,8 @@ export function computeNodeWeights(nodes: GraphNode[], edges: GraphEdge[]): Map<
   // weight = sum of (1 + child weight) for each outgoing edge
   const weights = new Map<string, number>();
   for (let i = topoOrder.length - 1; i >= 0; i--) {
-    const id = topoOrder[i]!;
+    const id = topoOrder[i];
+    if (id === undefined) continue;
     let weight = 0;
     for (const child of outgoing.get(id) ?? []) {
       weight += 1 + (weights.get(child) ?? 0);

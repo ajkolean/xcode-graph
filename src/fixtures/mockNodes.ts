@@ -250,12 +250,14 @@ export function getNodeWithDependencies(nodeId: string = 'app-main'): {
   dependencies: GraphNode[];
   dependents: GraphNode[];
 } {
-  const node = mockGraphNodes.find((n) => n.id === nodeId) || mockGraphNodes[0];
+  const found = mockGraphNodes.find((n) => n.id === nodeId) ?? mockGraphNodes[0];
+  const node = found ?? mockGraphNodes[0];
+  if (!node) throw new Error(`No mock node found for id: ${nodeId}`);
   const dependencies = mockGraphNodes.slice(2, 7); // Some frameworks and libraries
   const dependents = mockGraphNodes.slice(0, 2); // Some apps
 
   return {
-    node: node!,
+    node,
     dependencies: dependencies,
     dependents: dependents,
   };

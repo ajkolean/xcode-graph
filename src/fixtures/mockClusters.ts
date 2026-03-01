@@ -11,6 +11,12 @@ import {
 import { Origin } from '@shared/schemas/graph.types';
 import { mockGraphNodes } from './mockNodes';
 
+// Pre-extract node IDs used in cluster anchors to avoid non-null assertions
+const node0Id = mockGraphNodes[0]?.id ?? '';
+const node1Id = mockGraphNodes[1]?.id ?? '';
+const node2Id = mockGraphNodes[2]?.id ?? '';
+const node5Id = mockGraphNodes[5]?.id ?? '';
+
 // ========================================
 // Helper function to create cluster metadata
 // ========================================
@@ -49,7 +55,7 @@ export const mockClusterSmall: Cluster = {
   type: ClusterType.Project,
   origin: Origin.Local,
   nodes: mockGraphNodes.slice(0, 3),
-  anchors: [mockGraphNodes[0]!.id],
+  anchors: [node0Id],
   metadata: createClusterMetadata(mockGraphNodes.slice(0, 3).map((n) => n.id)),
   bounds: {
     x: 100,
@@ -65,7 +71,7 @@ export const mockClusterMedium: Cluster = {
   type: ClusterType.Project,
   origin: Origin.Local,
   nodes: mockGraphNodes.slice(0, 8),
-  anchors: [mockGraphNodes[0]!.id, mockGraphNodes[1]!.id],
+  anchors: [node0Id, node1Id],
   metadata: createClusterMetadata(mockGraphNodes.slice(0, 8).map((n) => n.id)),
   bounds: {
     x: 150,
@@ -81,7 +87,7 @@ export const mockClusterLarge: Cluster = {
   type: ClusterType.Project,
   origin: Origin.Local,
   nodes: mockGraphNodes.slice(0, 15),
-  anchors: [mockGraphNodes[0]!.id, mockGraphNodes[2]!.id],
+  anchors: [node0Id, node2Id],
   metadata: createClusterMetadata(mockGraphNodes.slice(0, 15).map((n) => n.id)),
   bounds: {
     x: 200,
@@ -97,7 +103,7 @@ export const mockClusterPackage: Cluster = {
   type: ClusterType.Package,
   origin: Origin.External,
   nodes: mockGraphNodes.slice(2, 7),
-  anchors: [mockGraphNodes[2]!.id],
+  anchors: [node2Id],
   metadata: createClusterMetadata(mockGraphNodes.slice(2, 7).map((n) => n.id)),
   bounds: {
     x: 500,
@@ -113,7 +119,7 @@ export const mockClusterExternal: Cluster = {
   type: ClusterType.Package,
   origin: Origin.External,
   nodes: mockGraphNodes.slice(5, 9),
-  anchors: [mockGraphNodes[5]!.id],
+  anchors: [node5Id],
   metadata: createClusterMetadata(mockGraphNodes.slice(5, 9).map((n) => n.id)),
   bounds: {
     x: 600,

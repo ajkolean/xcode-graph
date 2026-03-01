@@ -186,7 +186,7 @@ describe('cullNodes', () => {
     const visible = cullNodes(nodes, radius, bounds);
 
     expect(visible).toHaveLength(1);
-    expect(visible[0]!.id).toBe('1');
+    expect(visible[0]?.id).toBe('1');
   });
 
   it('should keep nodes partially in viewport', () => {

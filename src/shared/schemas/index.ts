@@ -60,8 +60,6 @@ export type { AppError, ErrorNotificationState } from './error.types';
 export {
   DEFAULT_MAX_VISIBLE_TOASTS,
   DEFAULT_TOAST_DURATION,
-  ERROR_CATEGORY_VALUES,
-  ERROR_SEVERITY_VALUES,
   ErrorCategory,
   ErrorSeverity,
 } from './error.types';

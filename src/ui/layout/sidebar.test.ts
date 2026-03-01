@@ -48,7 +48,7 @@ describe('graph-sidebar', () => {
     await el.updateComplete;
 
     expect(eventDetail).to.exist;
-    expect(eventDetail!.tab).to.equal('graph');
+    expect(eventDetail?.tab).to.equal('graph');
   });
 
   it('should update active state when activeTab changes', async () => {

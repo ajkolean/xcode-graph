@@ -5,7 +5,7 @@
  * Stateless service that operates on GraphDataService.
  */
 
-import type { GraphDataService } from './graphDataService';
+import type { GraphDataService } from './graph-data-service';
 
 export const GraphStatsService = {
   /**

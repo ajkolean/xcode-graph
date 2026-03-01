@@ -144,10 +144,12 @@ describe('computeHierarchicalLayout', () => {
       for (let i = 0; i < 4; i++) {
         const pos = result.clusterPositions.get(`Cluster${i}`);
         expect(pos).toBeDefined();
-        expect(Number.isFinite(pos!.x)).toBe(true);
-        expect(Number.isFinite(pos!.y)).toBe(true);
-        expect(pos!.width).toBeGreaterThan(0);
-        expect(pos!.height).toBeGreaterThan(0);
+        if (pos) {
+          expect(Number.isFinite(pos.x)).toBe(true);
+          expect(Number.isFinite(pos.y)).toBe(true);
+          expect(pos.width).toBeGreaterThan(0);
+          expect(pos.height).toBeGreaterThan(0);
+        }
       }
     });
   });
@@ -234,8 +236,10 @@ describe('computeHierarchicalLayout', () => {
       for (const node of nodes) {
         const pos = result.nodePositions.get(node.id);
         expect(pos).toBeDefined();
-        expect(Number.isFinite(pos!.x)).toBe(true);
-        expect(Number.isFinite(pos!.y)).toBe(true);
+        if (pos) {
+          expect(Number.isFinite(pos.x)).toBe(true);
+          expect(Number.isFinite(pos.y)).toBe(true);
+        }
       }
     });
 
@@ -250,8 +254,10 @@ describe('computeHierarchicalLayout', () => {
       for (const cluster of clusters) {
         const pos = result.clusterPositions.get(cluster.id);
         expect(pos).toBeDefined();
-        expect(pos!.width).toBeGreaterThan(0);
-        expect(pos!.height).toBeGreaterThan(0);
+        if (pos) {
+          expect(pos.width).toBeGreaterThan(0);
+          expect(pos.height).toBeGreaterThan(0);
+        }
       }
     });
   });

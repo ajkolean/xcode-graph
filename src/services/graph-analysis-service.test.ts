@@ -8,8 +8,8 @@ import {
   createNode,
   createProjectGraph,
 } from '../fixtures';
-import { GraphAnalysisService } from './graphAnalysisService';
-import { GraphDataService } from './graphDataService';
+import { GraphAnalysisService } from './graph-analysis-service';
+import { GraphDataService } from './graph-data-service';
 
 describe('GraphAnalysisService', () => {
   describe('hasPath', () => {

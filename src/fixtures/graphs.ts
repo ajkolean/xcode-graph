@@ -18,7 +18,7 @@ export function createLinearChain(length: number = 4): { nodes: GraphNode[]; edg
   // Generate node IDs - use letters for short chains, numbers for long ones
   const ids = range(length).map((i) => {
     if (length <= 26) {
-      return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[i]!;
+      return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[i] ?? `node-${i}`;
     }
     return `node-${i}`;
   });

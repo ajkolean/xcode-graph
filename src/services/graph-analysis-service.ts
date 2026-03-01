@@ -5,7 +5,7 @@
  * Stateless service that operates on GraphDataService.
  */
 
-import type { GraphDataService } from './graphDataService';
+import type { GraphDataService } from './graph-data-service';
 
 export const GraphAnalysisService = {
   /**
@@ -16,7 +16,8 @@ export const GraphAnalysisService = {
     const queue = [fromId];
 
     while (queue.length > 0) {
-      const currentId = queue.shift()!;
+      const currentId = queue.shift();
+      if (!currentId) break;
 
       if (currentId === toId) return true;
       if (visited.has(currentId)) continue;

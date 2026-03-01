@@ -54,13 +54,6 @@ export interface ErrorNotificationState {
   maxVisible: number;
 }
 
-// ==================== Value Arrays ====================
-
-/** All error severity values for iteration */
-export const ERROR_SEVERITY_VALUES: ErrorSeverity[] = Object.values(ErrorSeverity);
-/** All error category values for iteration */
-export const ERROR_CATEGORY_VALUES: ErrorCategory[] = Object.values(ErrorCategory);
-
 // ==================== Defaults ====================
 
 /** Default maximum visible toasts */

@@ -602,8 +602,10 @@ export function transformTuistGraph(raw: unknown): TransformResult {
     };
   }
 
-  // Use validated data — boundary validation passed
-  const graph = parseResult.data as unknown as Graph;
+  // Boundary validation ensures top-level shape; transform functions handle field-level mismatches.
+  // RawGraph (projects: unknown[], dependencies: unknown[]) is structurally incompatible with
+  // Graph (projects: (string | Project)[], dependencies: ...) — the double cast is intentional.
+  const graph: Graph = parseResult.data as never;
 
   const { nodes, lookup } = extractProjectTargets(graph.projects, collector);
   const edges = processDependencies(graph.dependencies, nodes, lookup, collector);

@@ -30,8 +30,8 @@ import {
 } from 'lit';
 import { property } from 'lit/decorators.js';
 import { ErrorService } from '@/services/error-service';
-import { GraphAnalysisService } from '@/services/graphAnalysisService';
-import { GraphDataService } from '@/services/graphDataService';
+import { GraphAnalysisService } from '@/services/graph-analysis-service';
+import { GraphDataService } from '@/services/graph-data-service';
 import { transformTuistGraph } from '@/services/tuist-graph.service';
 import '@ui/layout/graph-tab';
 import '@ui/components/error-notification-container';
