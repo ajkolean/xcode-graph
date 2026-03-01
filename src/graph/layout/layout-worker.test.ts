@@ -20,7 +20,6 @@ import {
 } from '../../fixtures';
 import { computeHierarchicalLayout } from './engine';
 
-// ==================== Helpers ====================
 
 /**
  * Build clusters from nodes based on their project property.
@@ -49,7 +48,6 @@ function createClustersFromNodes(nodes: GraphNode[]): Cluster[] {
 }
 
 describe('Layout Worker (direct function tests)', () => {
-  // ==================== Valid Graph Input ====================
 
   describe('valid graph input', () => {
     it('should produce layout with positions for a project graph', async () => {
@@ -100,7 +98,6 @@ describe('Layout Worker (direct function tests)', () => {
     });
   });
 
-  // ==================== Empty Graph ====================
 
   describe('empty graph', () => {
     it('should return empty valid result for empty graph', async () => {
@@ -120,7 +117,6 @@ describe('Layout Worker (direct function tests)', () => {
     });
   });
 
-  // ==================== Edge Cases ====================
 
   describe('edge cases', () => {
     it('should handle single node in a single cluster', async () => {

@@ -14,10 +14,6 @@ const sampleItems: FilterItem[] = [
 ];
 
 describe('xcode-graph-filter-section', () => {
-  // ========================================
-  // Rendering Tests
-  // ========================================
-
   it('should render with required properties', async () => {
     const el = await fixture<GraphFilterSection>(html`
       <xcode-graph-filter-section
@@ -45,10 +41,6 @@ describe('xcode-graph-filter-section', () => {
     const title = el.shadowRoot?.querySelector('.header-title');
     expect(title?.textContent?.trim()).to.equal('Product Types');
   });
-
-  // ========================================
-  // Expand/Collapse Tests
-  // ========================================
 
   it('should not show items when collapsed', async () => {
     const el = await fixture<GraphFilterSection>(html`
@@ -78,10 +70,6 @@ describe('xcode-graph-filter-section', () => {
     const items = el.shadowRoot?.querySelector('.items');
     expect(items).to.exist;
   });
-
-  // ========================================
-  // Event Tests
-  // ========================================
 
   it('should dispatch section-toggle event on header click', async () => {
     const el = await fixture<GraphFilterSection>(html`
@@ -118,10 +106,6 @@ describe('xcode-graph-filter-section', () => {
     expect(event).to.exist;
     expect(event.detail.key).to.equal('framework');
   });
-
-  // ========================================
-  // Item Rendering Tests
-  // ========================================
 
   it('should render correct number of items when expanded', async () => {
     const el = await fixture<GraphFilterSection>(html`

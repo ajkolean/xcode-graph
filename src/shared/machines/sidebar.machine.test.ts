@@ -11,7 +11,6 @@ import type { SidebarSection, SidebarTab } from './sidebar.machine';
 import { sidebarMachine } from './sidebar.machine';
 
 describe('sidebarMachine', () => {
-  // ==================== Initialization Tests ====================
 
   describe('initialization', () => {
     it('should initialize with expanded state by default', async () => {
@@ -63,7 +62,6 @@ describe('sidebarMachine', () => {
     });
   });
 
-  // ==================== State Transition Tests ====================
 
   describe('state transitions', () => {
     it('should transition from expanded to collapsed on TOGGLE', async () => {
@@ -147,7 +145,6 @@ describe('sidebarMachine', () => {
     });
   });
 
-  // ==================== Context Update Tests ====================
 
   describe('context updates', () => {
     it('should switch tab when SWITCH_TAB is sent', async () => {
@@ -227,7 +224,6 @@ describe('sidebarMachine', () => {
     });
   });
 
-  // ==================== Callback Tests ====================
 
   describe('callbacks', () => {
     it('should call onCollapseChange on initialization (expanded)', async () => {
@@ -305,7 +301,6 @@ describe('sidebarMachine', () => {
     });
   });
 
-  // ==================== Event Handling Tests ====================
 
   describe('event handling', () => {
     it('should handle multiple TOGGLE_SECTION events for different sections', async () => {

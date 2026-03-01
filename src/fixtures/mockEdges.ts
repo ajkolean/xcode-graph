@@ -4,9 +4,6 @@
 
 import type { GraphEdge } from '@shared/schemas/graph.types';
 
-// ========================================
-// Individual Edge Examples
-// ========================================
 
 export const mockEdge: GraphEdge = {
   source: 'app-1',
@@ -18,9 +15,6 @@ export const mockEdgeReverse: GraphEdge = {
   target: 'library-1',
 };
 
-// ========================================
-// Sample Graph Edges
-// ========================================
 
 export const mockGraphEdges: GraphEdge[] = [
   // MainApp dependencies
@@ -56,9 +50,6 @@ export const mockGraphEdges: GraphEdge[] = [
   { source: 'cli-codegen', target: 'lib-models' },
 ];
 
-// ========================================
-// Simple Edge Collections
-// ========================================
 
 export const fewEdges: GraphEdge[] = [
   { source: 'app-1', target: 'framework-1' },
@@ -68,9 +59,6 @@ export const fewEdges: GraphEdge[] = [
 
 export const manyEdges: GraphEdge[] = mockGraphEdges;
 
-// ========================================
-// Utility Functions
-// ========================================
 
 /**
  * Get edges for a specific source node

@@ -192,9 +192,7 @@ describe('canvas-node-renderer', () => {
     expect(rc.ctx.globalAlpha).to.equal(1.0);
   });
 
-  // ========================================
   // isPreviewDimmed() 5-way switch coverage
-  // ========================================
 
   describe('isPreviewDimmed via previewFilter', () => {
     it('should dim nodes not matching nodeType preview filter', () => {
@@ -350,9 +348,7 @@ describe('canvas-node-renderer', () => {
     });
   });
 
-  // ========================================
   // isSearchDimmed() coverage
-  // ========================================
 
   describe('isSearchDimmed via searchQuery', () => {
     it('should dim nodes not matching search query', () => {
@@ -391,9 +387,7 @@ describe('canvas-node-renderer', () => {
     });
   });
 
-  // ========================================
   // isSelectionDimmed() coverage
-  // ========================================
 
   describe('isSelectionDimmed via chain toggles', () => {
     it('should dim non-chain nodes when a chain toggle is active', () => {
@@ -465,9 +459,7 @@ describe('canvas-node-renderer', () => {
     });
   });
 
-  // ========================================
   // shouldShowNodeLabel() coverage
-  // ========================================
 
   describe('shouldShowNodeLabel via zoom and hub check', () => {
     it('should show labels when zoom >= 0.3', () => {
@@ -522,9 +514,7 @@ describe('canvas-node-renderer', () => {
     });
   });
 
-  // ========================================
   // drawNodeLabel() truncation coverage
-  // ========================================
 
   describe('drawNodeLabel truncation', () => {
     it('should truncate long names when not hovered or connected', () => {

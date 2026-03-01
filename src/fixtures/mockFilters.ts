@@ -4,9 +4,6 @@
 
 import type { FilterItem } from '@ui/components/filter-section';
 
-// ========================================
-// Node Type Filters
-// ========================================
 
 export const mockNodeTypeFilters: FilterItem[] = [
   { key: 'app', count: 5, color: '#3B82F6' }, // Blue
@@ -18,9 +15,6 @@ export const mockNodeTypeFilters: FilterItem[] = [
   { key: 'package', count: 4, color: '#EC4899' }, // Pink
 ];
 
-// ========================================
-// Platform Filters
-// ========================================
 
 export const mockPlatformFilters: FilterItem[] = [
   { key: 'iOS', count: 25, color: '#A8A29E' }, // Stone
@@ -30,9 +24,6 @@ export const mockPlatformFilters: FilterItem[] = [
   { key: 'visionOS', count: 3, color: '#A8A29E' },
 ];
 
-// ========================================
-// Project Filters
-// ========================================
 
 export const mockProjectFilters: FilterItem[] = [
   { key: 'MainApp', count: 15, color: '#94A3B8' }, // Slate
@@ -42,9 +33,6 @@ export const mockProjectFilters: FilterItem[] = [
   { key: 'Analytics', count: 4, color: '#94A3B8' },
 ];
 
-// ========================================
-// Package Filters
-// ========================================
 
 export const mockPackageFilters: FilterItem[] = [
   { key: 'Alamofire', count: 3, color: '#A78BFA' }, // Violet
@@ -54,9 +42,6 @@ export const mockPackageFilters: FilterItem[] = [
   { key: 'Kingfisher', count: 5, color: '#A78BFA' },
 ];
 
-// ========================================
-// Utility Collections
-// ========================================
 
 /**
  * All filter items organized by type

@@ -8,10 +8,6 @@ import type { GraphMetricsSection } from './metrics-section';
 import './metrics-section';
 
 describe('xcode-graph-metrics-section', () => {
-  // ========================================
-  // Rendering Tests
-  // ========================================
-
   it('should render with default properties', async () => {
     const el = await fixture<GraphMetricsSection>(html`
       <xcode-graph-metrics-section></xcode-graph-metrics-section>
@@ -29,10 +25,6 @@ describe('xcode-graph-metrics-section', () => {
     const title = el.shadowRoot?.querySelector('.title');
     expect(title?.textContent?.trim()).to.equal('Metrics');
   });
-
-  // ========================================
-  // Expand/Collapse Tests
-  // ========================================
 
   it('should start expanded by default', async () => {
     const el = await fixture<GraphMetricsSection>(html`
@@ -68,10 +60,6 @@ describe('xcode-graph-metrics-section', () => {
     await el.updateComplete;
     expect(header.getAttribute('aria-expanded')).to.equal('false');
   });
-
-  // ========================================
-  // Stats Cards Tests
-  // ========================================
 
   it('should render four stats cards when expanded', async () => {
     const el = await fixture<GraphMetricsSection>(html`

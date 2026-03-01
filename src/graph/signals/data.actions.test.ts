@@ -41,7 +41,6 @@ describe('data.actions', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-  // ==================== setGraphData Tests ====================
 
   describe('setGraphData', () => {
     it('should set nodes and edges', () => {
@@ -70,7 +69,6 @@ describe('data.actions', () => {
     });
   });
 
-  // ==================== clearGraphData Tests ====================
 
   describe('clearGraphData', () => {
     it('should clear nodes and edges', () => {

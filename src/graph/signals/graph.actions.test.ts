@@ -64,7 +64,6 @@ describe('graph.actions', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-  // ==================== Basic Actions ====================
 
   describe('selectNode', () => {
     it('should set selected node', () => {
@@ -200,7 +199,6 @@ describe('graph.actions', () => {
     });
   });
 
-  // ==================== Highlight Toggle Actions ====================
 
   describe('toggleHighlight', () => {
     it('should toggle direct deps on and off', () => {
@@ -263,7 +261,6 @@ describe('graph.actions', () => {
     });
   });
 
-  // ==================== Computed viewMode ====================
 
   describe('viewMode (computed)', () => {
     it('should be Full when no toggles active', () => {
@@ -339,7 +336,6 @@ describe('graph.actions', () => {
     });
   });
 
-  // ==================== Integration Tests ====================
 
   describe('integration scenarios', () => {
     it('should handle switching between node and cluster selection', () => {

@@ -106,10 +106,6 @@ describe('xcode-graph-cluster-header', () => {
     expect(panelHeader.titleSize).to.equal('md');
   });
 
-  // ========================================
-  // getSourceType() branch coverage
-  // ========================================
-
   describe('getSourceType()', () => {
     it('should detect Registry source type from path', async () => {
       const el = await fixture<GraphClusterHeader>(html`
@@ -172,10 +168,6 @@ describe('xcode-graph-cluster-header', () => {
     });
   });
 
-  // ========================================
-  // getShortPath() branch coverage
-  // ========================================
-
   describe('getShortPath()', () => {
     it('should extract registry short path from registry downloads path', async () => {
       const el = await fixture<GraphClusterHeader>(html`
@@ -235,10 +227,6 @@ describe('xcode-graph-cluster-header', () => {
       expect(pathRow).to.not.exist;
     });
   });
-
-  // ========================================
-  // Package vs Project icon
-  // ========================================
 
   describe('icon rendering', () => {
     it('should render Package icon for package cluster type', async () => {

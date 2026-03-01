@@ -34,7 +34,6 @@ describe('filter.actions', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-  // ==================== Basic Actions ====================
 
   describe('setFilters', () => {
     it('should replace all filters', () => {
@@ -91,7 +90,6 @@ describe('filter.actions', () => {
     });
   });
 
-  // ==================== Toggle Actions ====================
 
   describe('toggleNodeType', () => {
     it('should add node type when not present', () => {
@@ -215,7 +213,6 @@ describe('filter.actions', () => {
     });
   });
 
-  // ==================== Bulk Actions ====================
 
   describe('clearFilters', () => {
     it('should reset to default filters', () => {
@@ -320,7 +317,6 @@ describe('filter.actions', () => {
     });
   });
 
-  // ==================== Integration Tests ====================
 
   describe('integration scenarios', () => {
     it('should handle multiple filter toggles in sequence', () => {

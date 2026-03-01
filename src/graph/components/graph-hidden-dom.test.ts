@@ -234,9 +234,7 @@ describe('xcode-graph-hidden-dom', () => {
     expect(items?.length).to.equal(0);
   });
 
-  // ========================================
   // Edge relationship table tests
-  // ========================================
 
   it('should render edge table with correct number of rows', async () => {
     const nodes = [makeNode('a', 'NodeA'), makeNode('b', 'NodeB'), makeNode('c', 'NodeC')];
@@ -320,9 +318,7 @@ describe('xcode-graph-hidden-dom', () => {
     expect(rows?.length).to.equal(0);
   });
 
-  // ========================================
   // Enhanced live region tests
-  // ========================================
 
   it('should include node and edge counts in live region', async () => {
     const nodes = [makeNode('a', 'NodeA'), makeNode('b', 'NodeB')];
@@ -356,9 +352,7 @@ describe('xcode-graph-hidden-dom', () => {
     expect(live?.textContent).to.contain('1 edges');
   });
 
-  // ========================================
   // Cluster count tests
-  // ========================================
 
   it('should count clusters from unique project names', async () => {
     const nodeA = makeNode('a', 'NodeA');
@@ -377,9 +371,7 @@ describe('xcode-graph-hidden-dom', () => {
     expect(summary?.textContent).to.contain('2 clusters');
   });
 
-  // ========================================
   // aria-describedby linking tests
-  // ========================================
 
   it('should link tree nodes to related edge rows via aria-describedby', async () => {
     const nodes = [makeNode('a', 'NodeA'), makeNode('b', 'NodeB'), makeNode('c', 'NodeC')];
@@ -418,9 +410,7 @@ describe('xcode-graph-hidden-dom', () => {
     expect(items?.[0]?.hasAttribute('aria-describedby')).to.be.true;
   });
 
-  // ========================================
   // ARIA roles and labels tests
-  // ========================================
 
   it('should have proper ARIA roles and labels', async () => {
     const nodes = [makeNode('a', 'NodeA')];

@@ -20,10 +20,6 @@ function makeNode(overrides: Partial<GraphNode> = {}): GraphNode {
 }
 
 describe('xcode-graph-cluster-targets-list', () => {
-  // ========================================
-  // Rendering Tests
-  // ========================================
-
   it('should render with default properties', async () => {
     const el = await fixture<GraphClusterTargetsList>(html`
       <xcode-graph-cluster-targets-list
@@ -46,10 +42,6 @@ describe('xcode-graph-cluster-targets-list', () => {
     expect(el).to.exist;
   });
 
-  // ========================================
-  // Header Tests
-  // ========================================
-
   it('should show target counts in header', async () => {
     const el = await fixture<GraphClusterTargetsList>(html`
       <xcode-graph-cluster-targets-list
@@ -64,10 +56,6 @@ describe('xcode-graph-cluster-targets-list', () => {
     expect(mainTitle?.textContent).to.include('3');
     expect(mainTitle?.textContent).to.include('5');
   });
-
-  // ========================================
-  // Expand/Collapse Tests
-  // ========================================
 
   it('should start expanded by default', async () => {
     const el = await fixture<GraphClusterTargetsList>(html`
@@ -100,10 +88,6 @@ describe('xcode-graph-cluster-targets-list', () => {
     const content = el.shadowRoot?.querySelector('.content');
     expect(content).to.not.exist;
   });
-
-  // ========================================
-  // Content Tests
-  // ========================================
 
   it('should render type headers for each node type', async () => {
     const nodesByType = {

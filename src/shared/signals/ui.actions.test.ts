@@ -33,7 +33,6 @@ describe('ui.actions', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-  // ==================== Tab Actions ====================
 
   describe('setActiveTab', () => {
     it('should allow switching between tabs', () => {
@@ -53,7 +52,6 @@ describe('ui.actions', () => {
     });
   });
 
-  // ==================== Zoom Actions ====================
 
   describe('setZoom', () => {
     it('should set zoom level', () => {
@@ -205,7 +203,6 @@ describe('ui.actions', () => {
     });
   });
 
-  // ==================== Animation Actions ====================
 
   describe('toggleAnimation', () => {
     it('should toggle animation from false to true', () => {
@@ -243,7 +240,6 @@ describe('ui.actions', () => {
     });
   });
 
-  // ==================== Preview Filter Actions ====================
 
   describe('setPreviewFilter', () => {
     it('should clear preview filter with null', () => {
@@ -262,7 +258,6 @@ describe('ui.actions', () => {
     });
   });
 
-  // ==================== Integration Tests ====================
 
   describe('integration scenarios', () => {
     it('should handle zoom in and out sequence', () => {

@@ -18,7 +18,6 @@ import {
   type InteractionState,
 } from './canvas-interaction-handler';
 
-// ==================== Test Helpers ====================
 
 function createDefaultState(overrides: Partial<InteractionState> = {}): InteractionState {
   return {
@@ -116,7 +115,6 @@ function createWheelEvent(overrides: Partial<WheelEvent> = {}): WheelEvent {
   } as unknown as WheelEvent;
 }
 
-// ==================== Tests ====================
 
 describe('canvas-interaction-handler', () => {
   describe('handleMouseDown', () => {

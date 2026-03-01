@@ -263,9 +263,7 @@ describe('xcode-graph-edges', () => {
     expect(edgesComponent.zoom).to.equal(1.5);
   });
 
-  // ========================================
   // isEdgeVisibleForCluster() branch coverage
-  // ========================================
 
   describe('isEdgeVisibleForCluster()', () => {
     it('should accept clusterId and filter edges to intra-cluster only', async () => {
@@ -380,9 +378,7 @@ describe('xcode-graph-edges', () => {
     });
   });
 
-  // ========================================
   // renderEdge() null guard branch coverage
-  // ========================================
 
   describe('renderEdge() null guards', () => {
     it('should skip edges when cluster positions are missing', async () => {

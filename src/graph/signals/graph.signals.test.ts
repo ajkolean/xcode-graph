@@ -27,7 +27,6 @@ import {
   viewMode,
 } from './graph.signals';
 
-// ==================== Helpers ====================
 
 function createTestNode(id: string): GraphNode {
   return {
@@ -59,7 +58,6 @@ describe('graph.signals', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-  // ==================== viewMode Computed Signal ====================
 
   describe('viewMode', () => {
     it('should return Full when all toggles are off', () => {
@@ -156,7 +154,6 @@ describe('graph.signals', () => {
     });
   });
 
-  // ==================== hasSelection Computed Signal ====================
 
   describe('hasSelection', () => {
     it('should return false when nothing is selected', () => {
@@ -186,7 +183,6 @@ describe('graph.signals', () => {
     });
   });
 
-  // ==================== createIsNodeSelected Factory ====================
 
   describe('createIsNodeSelected', () => {
     it('should return false when no node is selected', () => {
@@ -226,7 +222,6 @@ describe('graph.signals', () => {
     });
   });
 
-  // ==================== resetGraphSignals ====================
 
   describe('resetGraphSignals', () => {
     it('should reset all signals to initial state', () => {
@@ -273,7 +268,6 @@ describe('graph.signals', () => {
     });
   });
 
-  // ==================== State Signal Defaults ====================
 
   describe('signal defaults', () => {
     it('should have null for selectedNode initially', () => {

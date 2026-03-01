@@ -18,7 +18,6 @@ import { createSignalSnapshot, restoreSignalSnapshot } from '../test-utils/signa
 import type { GraphApp } from './graph-app';
 import './graph-app';
 
-// ==================== Helpers ====================
 
 function createTestNode(id: string, overrides: Partial<GraphNode> = {}): GraphNode {
   return {
@@ -48,7 +47,6 @@ describe('xcode-graph (GraphApp)', () => {
     resetFilterSignals();
   });
 
-  // ==================== Rendering Tests ====================
 
   describe('rendering', () => {
     it('should render the element', async () => {
@@ -86,7 +84,6 @@ describe('xcode-graph (GraphApp)', () => {
     });
   });
 
-  // ==================== Property Tests ====================
 
   describe('properties', () => {
     it('should accept nodes and edges properties', async () => {
@@ -127,7 +124,6 @@ describe('xcode-graph (GraphApp)', () => {
     });
   });
 
-  // ==================== loadRawGraph Method ====================
 
   describe('loadRawGraph', () => {
     it('should have a loadRawGraph method', async () => {
@@ -150,7 +146,6 @@ describe('xcode-graph (GraphApp)', () => {
     });
   });
 
-  // ==================== Static Styles ====================
 
   describe('static styles', () => {
     it('should have static styles defined on the class', () => {

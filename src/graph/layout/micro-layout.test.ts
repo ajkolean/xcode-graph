@@ -20,7 +20,6 @@ import { DEFAULT_CONFIG } from './config';
 import { computeClusterInterior } from './phases/micro-layout';
 
 describe('computeClusterInterior', () => {
-  // ==================== Valid Results ====================
 
   describe('valid cluster input', () => {
     it('should produce a result with width and height greater than 0', () => {
@@ -69,7 +68,6 @@ describe('computeClusterInterior', () => {
     });
   });
 
-  // ==================== Various Cluster Sizes ====================
 
   describe('various cluster sizes', () => {
     it('should handle a cluster with a single node', () => {
@@ -119,7 +117,6 @@ describe('computeClusterInterior', () => {
     });
   });
 
-  // ==================== Empty Cluster ====================
 
   describe('empty cluster', () => {
     it('should handle an empty cluster gracefully', () => {
@@ -143,7 +140,6 @@ describe('computeClusterInterior', () => {
     });
   });
 
-  // ==================== Metadata Handling ====================
 
   describe('metadata and roles', () => {
     it('should handle nodes with different roles', () => {
@@ -200,7 +196,6 @@ describe('computeClusterInterior', () => {
     });
   });
 
-  // ==================== Position Bounds ====================
 
   describe('position bounds', () => {
     it('should keep all node positions within the cluster radius', () => {

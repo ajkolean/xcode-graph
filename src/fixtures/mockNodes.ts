@@ -4,9 +4,6 @@
 
 import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 
-// ========================================
-// Individual Node Type Examples
-// ========================================
 
 export const mockAppNode: GraphNode = {
   id: 'app-1',
@@ -77,9 +74,6 @@ export const mockPackageNode: GraphNode = {
   targetCount: 0,
 };
 
-// ========================================
-// Collections by Type
-// ========================================
 
 export const allNodeTypes: GraphNode[] = [
   mockAppNode,
@@ -91,9 +85,6 @@ export const allNodeTypes: GraphNode[] = [
   mockPackageNode,
 ];
 
-// ========================================
-// Collections by Platform
-// ========================================
 
 export const allPlatforms: GraphNode[] = [
   { ...mockAppNode, id: 'ios-node', name: 'iOS App', platform: Platform.iOS },
@@ -103,9 +94,6 @@ export const allPlatforms: GraphNode[] = [
   { ...mockAppNode, id: 'visionos-node', name: 'visionOS App', platform: Platform.visionOS },
 ];
 
-// ========================================
-// Sample Graph Data
-// ========================================
 
 export const mockGraphNodes: GraphNode[] = [
   // Apps
@@ -238,9 +226,6 @@ export const mockGraphNodes: GraphNode[] = [
   },
 ];
 
-// ========================================
-// Utility Functions
-// ========================================
 
 /**
  * Get mock nodes with dependencies
