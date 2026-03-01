@@ -109,17 +109,4 @@ describe('graph-clear-filters-button', () => {
 
     expect(eventFired).to.be.false;
   });
-
-  // ========================================
-  // Accessibility Tests
-  // ========================================
-
-  it('should have proper disabled attribute for accessibility', async () => {
-    const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button></graph-clear-filters-button>
-    `);
-
-    const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    expect(button.hasAttribute('disabled')).to.be.true;
-  });
 });

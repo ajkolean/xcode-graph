@@ -381,20 +381,6 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
     expect(header?.getAttribute('cluster-type')).to.equal('project');
   });
 
-  it('should propagate cluster type to header', async () => {
-    const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
-        .cluster=${mockCluster}
-        .clusterNodes=${mockClusterNodes}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-cluster-details-panel>
-    `);
-
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    expect(header?.getAttribute('cluster-type')).to.equal('project');
-  });
-
   it('should propagate cluster nodes to targets list', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
       <graph-cluster-details-panel

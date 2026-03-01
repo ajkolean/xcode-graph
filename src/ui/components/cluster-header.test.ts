@@ -9,18 +9,6 @@ import type { GraphPanelHeader } from './panel-header';
 import './cluster-header';
 
 describe('graph-cluster-header', () => {
-  it('should render', async () => {
-    const el = await fixture<GraphClusterHeader>(html`
-      <graph-cluster-header
-        cluster-name="MyCluster"
-        cluster-type="package"
-        cluster-color="#8B5CF6"
-      ></graph-cluster-header>
-    `);
-
-    expect(el).to.exist;
-  });
-
   it('should render cluster name via panel-header', async () => {
     const el = await fixture<GraphClusterHeader>(html`
       <graph-cluster-header

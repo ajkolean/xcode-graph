@@ -9,14 +9,6 @@ import type { GraphSidebar } from './sidebar';
 import './sidebar';
 
 describe('graph-sidebar', () => {
-  it('should render', async () => {
-    const el = await fixture<GraphSidebar>(html`
-      <graph-sidebar active-tab="graph"></graph-sidebar>
-    `);
-
-    expect(el).to.exist;
-  });
-
   it('should render all 9 navigation items', async () => {
     const el = await fixture<GraphSidebar>(html`
       <graph-sidebar active-tab="graph"></graph-sidebar>

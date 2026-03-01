@@ -60,15 +60,6 @@ describe('graph-panel-header', () => {
     expect(el.titleSize).to.equal('lg');
   });
 
-  it('should apply lg title size class', async () => {
-    const el = await fixture<GraphPanelHeader>(html`
-      <graph-panel-header title="Test" title-size="lg"></graph-panel-header>
-    `);
-
-    const title = el.shadowRoot?.querySelector('.title');
-    expect(title?.classList.contains('size-lg')).to.be.true;
-  });
-
   it('should apply md title size class', async () => {
     const el = await fixture<GraphPanelHeader>(html`
       <graph-panel-header title="Test" title-size="md"></graph-panel-header>

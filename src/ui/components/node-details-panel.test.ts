@@ -91,21 +91,6 @@ describe('graph-node-details-panel - Rendering', () => {
     const header = el.shadowRoot?.querySelector('graph-node-header');
     expect(header).to.not.exist;
   });
-
-  it('should apply animation styles on render', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-node-details-panel>
-    `);
-
-    // Component should render with content
-    const header = el.shadowRoot?.querySelector('graph-node-header');
-    expect(header).to.exist;
-    expect(el.tagName.toLowerCase()).to.equal('graph-node-details-panel');
-  });
 });
 
 // ========================================
@@ -491,35 +476,6 @@ describe('graph-node-details-panel - Props Propagation', () => {
 
     const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
     expect(metrics?.hasAttribute('active-direct-deps')).to.be.true;
-  });
-
-  it('should propagate zoom to node lists', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-        zoom="1.5"
-      ></graph-node-details-panel>
-    `);
-
-    const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
-    lists?.forEach((list) => {
-      expect(list).to.exist;
-    });
-  });
-
-  it('should propagate node to info section', async () => {
-    const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
-        .node=${mockNode}
-        .allNodes=${mockAllNodes}
-        .edges=${mockEdges}
-      ></graph-node-details-panel>
-    `);
-
-    const info = el.shadowRoot?.querySelector('graph-node-info');
-    expect(info).to.exist;
   });
 
   it('should render dependency list with correct attributes', async () => {

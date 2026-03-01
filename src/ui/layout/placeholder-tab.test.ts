@@ -8,14 +8,6 @@ import type { GraphPlaceholderTab } from './placeholder-tab';
 import './placeholder-tab';
 
 describe('graph-placeholder-tab', () => {
-  it('should render', async () => {
-    const el = await fixture<GraphPlaceholderTab>(html`
-      <graph-placeholder-tab title="Builds"></graph-placeholder-tab>
-    `);
-
-    expect(el).to.exist;
-  });
-
   it('should render title', async () => {
     const el = await fixture<GraphPlaceholderTab>(html`
       <graph-placeholder-tab title="Test Tab"></graph-placeholder-tab>

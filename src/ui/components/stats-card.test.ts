@@ -12,15 +12,6 @@ describe('graph-stats-card', () => {
   // Rendering Tests
   // ========================================
 
-  it('should render with default properties', async () => {
-    const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card></graph-stats-card>
-    `);
-
-    expect(el).to.exist;
-    expect(el.tagName.toLowerCase()).to.equal('graph-stats-card');
-  });
-
   it('should render with custom properties', async () => {
     const el = await fixture<GraphStatsCard>(html`
       <graph-stats-card

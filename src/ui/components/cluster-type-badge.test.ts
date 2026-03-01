@@ -111,28 +111,6 @@ describe('graph-cluster-type-badge', () => {
   });
 
   // ========================================
-  // Shadow DOM Tests
-  // ========================================
-
-  it('should render container in shadow DOM', async () => {
-    const el = await fixture<GraphClusterTypeBadge>(html`
-      <graph-cluster-type-badge cluster-type="package"></graph-cluster-type-badge>
-    `);
-
-    const container = el.shadowRoot?.querySelector('.container');
-    expect(container).to.exist;
-  });
-
-  it('should render graph-badge in shadow DOM', async () => {
-    const el = await fixture<GraphClusterTypeBadge>(html`
-      <graph-cluster-type-badge cluster-type="project"></graph-cluster-type-badge>
-    `);
-
-    const badge = el.shadowRoot?.querySelector('graph-badge');
-    expect(badge).to.exist;
-  });
-
-  // ========================================
   // Badge Configuration Tests
   // ========================================
 

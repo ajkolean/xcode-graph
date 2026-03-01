@@ -1,79 +1,17 @@
 /**
- * Simulation Schema - Physics simulation state validation
- *
- * Defines schemas for node and cluster positions during layout animation.
- * Tracks position, velocity, and physics properties.
+ * Simulation Schema - Zod validation schemas for physics simulation
  *
  * @module schemas/simulation
  */
 
 import { z } from 'zod';
+import type { ClusterPosition, NodePosition } from './simulation.types';
 
-// ==================== Type Definitions ====================
-
-/** Node position during simulation */
-export interface NodePosition {
-  /** Node identifier */
-  id: string;
-  /** X position in graph coordinates */
-  x: number;
-  /** Y position in graph coordinates */
-  y: number;
-  /** X velocity for physics animation */
-  vx: number;
-  /** Y velocity for physics animation */
-  vy: number;
-  /** Z position in 3D mode */
-  z?: number | undefined;
-  /** Z velocity in 3D mode */
-  vz?: number | undefined;
-  /** Parent cluster ID */
-  clusterId: string;
-  /** Visual radius of the node */
-  radius: number;
-  /** Target distance from cluster center */
-  targetRadius?: number | undefined;
-  /** Target angle in radians */
-  targetAngle?: number | undefined;
-  /** Whether this is an anchor/entry point */
-  isAnchor?: boolean | undefined;
-  /** Whether this is a test node */
-  isTest?: boolean | undefined;
-  /** For test nodes, the subject being tested */
-  testSubject?: string | undefined;
-}
-
-/** Cluster position during simulation */
-export interface ClusterPosition {
-  /** Cluster identifier */
-  id: string;
-  /** X position of cluster center */
-  x: number;
-  /** Y position of cluster center */
-  y: number;
-  /** X velocity for physics animation */
-  vx: number;
-  /** Y velocity for physics animation */
-  vy: number;
-  /** Z position of cluster center in 3D mode */
-  z?: number | undefined;
-  /** Z velocity in 3D mode */
-  vz?: number | undefined;
-  /** Width of cluster bounding box */
-  width: number;
-  /** Height of cluster bounding box */
-  height: number;
-  /** Depth of cluster bounding box in 3D mode */
-  depth?: number | undefined;
-  /** Number of nodes in this cluster */
-  nodeCount: number;
-}
+// Re-export all types for backward compatibility
+export * from './simulation.types';
 
 // ==================== Position Schemas ====================
 
-/**
- * Node position schema - tracks node state during simulation
- */
 export const NodePositionSchema: z.ZodType<NodePosition> = z.object({
   id: z.string(),
   x: z.number(),
@@ -91,9 +29,6 @@ export const NodePositionSchema: z.ZodType<NodePosition> = z.object({
   testSubject: z.string().optional(),
 });
 
-/**
- * Cluster position schema - tracks cluster state during simulation
- */
 export const ClusterPositionSchema: z.ZodType<ClusterPosition> = z.object({
   id: z.string(),
   x: z.number(),

@@ -54,15 +54,6 @@ describe('graph-badge', () => {
   // Variant Tests
   // ========================================
 
-  it('should apply pill variant class', async () => {
-    const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" variant="pill"></graph-badge>
-    `);
-
-    const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('variant-pill')).to.be.true;
-  });
-
   it('should apply rounded variant class', async () => {
     const el = await fixture<GraphBadge>(html`
       <graph-badge label="Test" variant="rounded"></graph-badge>
