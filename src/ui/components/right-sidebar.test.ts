@@ -18,10 +18,6 @@ import './right-sidebar';
 import { selectCluster, selectedCluster, selectedNode, selectNode } from '@graph/signals/index';
 import { setFilters, setSearchQuery } from '@shared/signals/index';
 
-// ========================================
-// Mock Data
-// ========================================
-
 const mockNodeCoreLib: GraphNode = {
   id: 'node1',
   name: 'CoreLib',
@@ -74,10 +70,6 @@ const mockCluster: Cluster = {
   anchors: ['node1'],
   metadata: new Map(),
 };
-
-// ========================================
-// Rendering Tests
-// ========================================
 
 describe('xcode-graph-right-sidebar - Rendering', () => {
   beforeEach(() => {
@@ -172,10 +164,6 @@ describe('xcode-graph-right-sidebar - Rendering', () => {
   });
 });
 
-// ========================================
-// Panel Switching Tests
-// ========================================
-
 describe('xcode-graph-right-sidebar - Panel Switching', () => {
   it('should show node details when node is selected', async () => {
     const el = await fixture<GraphRightSidebar>(html`
@@ -263,10 +251,6 @@ describe('xcode-graph-right-sidebar - Panel Switching', () => {
   });
 });
 
-// ========================================
-// State Management Tests
-// ========================================
-
 describe('xcode-graph-right-sidebar - State Management', () => {
   beforeEach(() => {
     selectNode(null);
@@ -292,10 +276,6 @@ describe('xcode-graph-right-sidebar - State Management', () => {
     expect(header).to.exist;
   });
 });
-
-// ========================================
-// Event Coordination Tests
-// ========================================
 
 describe('xcode-graph-right-sidebar - Event Coordination', () => {
   it('should show node details panel when node is selected', async () => {
@@ -337,10 +317,6 @@ describe('xcode-graph-right-sidebar - Event Coordination', () => {
   });
 });
 
-// ========================================
-// Filter Logic Tests
-// ========================================
-
 describe('xcode-graph-right-sidebar - Filter Logic', () => {
   it('should not render package filter when no packages exist', async () => {
     const noPackageNodes = mockNodes.filter((n) => n.type !== NodeType.Package);
@@ -374,10 +350,6 @@ describe('xcode-graph-right-sidebar - Filter Logic', () => {
     expect(el.filteredNodes.length).to.equal(0);
   });
 });
-
-// ========================================
-// Edge Cases
-// ========================================
 
 describe('xcode-graph-right-sidebar - Edge Cases', () => {
   beforeEach(() => {

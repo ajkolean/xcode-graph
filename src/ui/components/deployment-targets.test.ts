@@ -8,10 +8,6 @@ import type { GraphDeploymentTargets } from './deployment-targets';
 import './deployment-targets';
 
 describe('xcode-graph-deployment-targets', () => {
-  // ========================================
-  // Empty / No Data Tests
-  // ========================================
-
   it('should render nothing when no targets or destinations', async () => {
     const el = await fixture<GraphDeploymentTargets>(html`
       <xcode-graph-deployment-targets></xcode-graph-deployment-targets>
@@ -43,10 +39,6 @@ describe('xcode-graph-deployment-targets', () => {
     expect(sections?.length ?? 0).to.equal(0);
   });
 
-  // ========================================
-  // Platform Targets Rendering
-  // ========================================
-
   it('should render platform targets with versions', async () => {
     const el = await fixture<GraphDeploymentTargets>(html`
       <xcode-graph-deployment-targets
@@ -77,10 +69,6 @@ describe('xcode-graph-deployment-targets', () => {
     expect(badges?.length).to.equal(2);
   });
 
-  // ========================================
-  // Destinations Rendering
-  // ========================================
-
   it('should render destination badges', async () => {
     const el = await fixture<GraphDeploymentTargets>(html`
       <xcode-graph-deployment-targets
@@ -104,10 +92,6 @@ describe('xcode-graph-deployment-targets', () => {
     expect(badge?.getAttribute('label')).to.equal('unknownDevice');
     expect(badge?.getAttribute('color')).to.equal('#8E8E93');
   });
-
-  // ========================================
-  // Compact Mode
-  // ========================================
 
   it('should show section titles in non-compact mode', async () => {
     const el = await fixture<GraphDeploymentTargets>(html`
