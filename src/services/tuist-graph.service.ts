@@ -153,6 +153,22 @@ function mapDestinations(raw: unknown): Destination[] | undefined {
   return destinations.length > 0 ? destinations : undefined;
 }
 
+/** Read a string value from build settings base */
+function getBaseString(base: Record<string, unknown>, key: string): string | undefined {
+  const value = base[key];
+  return typeof value === 'string' ? value : undefined;
+}
+
+/** Parse compilation conditions from build settings */
+function parseCompilationConditions(base: Record<string, unknown>): string[] | undefined {
+  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
+  const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as string[] | string | undefined;
+  if (!conditions) return undefined;
+  if (Array.isArray(conditions)) return conditions.map(String);
+  if (typeof conditions === 'string') return conditions.split(' ').filter(Boolean);
+  return undefined;
+}
+
 /** Extract curated build settings from Release config (base settings) */
 function extractBuildSettings(
   settings: RawSettings | undefined,
@@ -164,44 +180,20 @@ function extractBuildSettings(
     const base = settings.base;
     const result: BuildSettings = {};
 
-    // Swift version
-    // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-    const swiftVersion = base['SWIFT_VERSION'];
-    if (swiftVersion && typeof swiftVersion === 'string') {
-      result.swiftVersion = swiftVersion;
-    }
+    const swiftVersion = getBaseString(base, 'SWIFT_VERSION');
+    if (swiftVersion) result.swiftVersion = swiftVersion;
 
-    // Compilation conditions (from SWIFT_ACTIVE_COMPILATION_CONDITIONS)
-    // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-    const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as string[] | string | undefined;
-    if (conditions) {
-      if (Array.isArray(conditions)) {
-        result.compilationConditions = conditions.map(String);
-      } else if (typeof conditions === 'string') {
-        result.compilationConditions = conditions.split(' ').filter(Boolean);
-      }
-    }
+    const compilationConditions = parseCompilationConditions(base);
+    if (compilationConditions) result.compilationConditions = compilationConditions;
 
-    // Code signing
-    // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-    const codeSign = base['CODE_SIGN_IDENTITY'];
-    if (codeSign && typeof codeSign === 'string') {
-      result.codeSignIdentity = codeSign;
-    }
+    const codeSign = getBaseString(base, 'CODE_SIGN_IDENTITY');
+    if (codeSign) result.codeSignIdentity = codeSign;
 
-    // Development team
-    // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-    const devTeam = base['DEVELOPMENT_TEAM'];
-    if (devTeam && typeof devTeam === 'string') {
-      result.developmentTeam = devTeam;
-    }
+    const devTeam = getBaseString(base, 'DEVELOPMENT_TEAM');
+    if (devTeam) result.developmentTeam = devTeam;
 
-    // Provisioning profile
-    // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-    const profile = base['PROVISIONING_PROFILE_SPECIFIER'];
-    if (profile && typeof profile === 'string') {
-      result.provisioningProfile = profile;
-    }
+    const profile = getBaseString(base, 'PROVISIONING_PROFILE_SPECIFIER');
+    if (profile) result.provisioningProfile = profile;
 
     return Object.keys(result).length > 0 ? result : undefined;
   } catch (error) {
@@ -212,6 +204,25 @@ function extractBuildSettings(
   }
 }
 
+/** Classify foreign build inputs by type */
+function classifyForeignInputs(inputs: ForeignBuild['inputs']): {
+  files: string[];
+  folders: string[];
+  scripts: string[];
+} {
+  const files: string[] = [];
+  const folders: string[] = [];
+  const scripts: string[] = [];
+
+  for (const input of inputs ?? []) {
+    if ('file' in input) files.push(input.file._0);
+    else if ('folder' in input) folders.push(input.folder._0);
+    else if ('script' in input) scripts.push(input.script._0);
+  }
+
+  return { files, folders, scripts };
+}
+
 /** Extract foreign build info from target */
 function extractForeignBuild(
   foreignBuild: ForeignBuild | undefined,
@@ -220,16 +231,6 @@ function extractForeignBuild(
   if (!foreignBuild) return undefined;
 
   try {
-    const files: string[] = [];
-    const folders: string[] = [];
-    const scripts: string[] = [];
-
-    for (const input of foreignBuild.inputs ?? []) {
-      if ('file' in input) files.push(input.file._0);
-      else if ('folder' in input) folders.push(input.folder._0);
-      else if ('script' in input) scripts.push(input.script._0);
-    }
-
     const outputPath = foreignBuild.output?.xcframework?.path ?? '';
     const outputFilename = outputPath.split('/').pop() ?? outputPath;
 
@@ -238,7 +239,7 @@ function extractForeignBuild(
       outputPath: outputFilename,
       outputLinking: foreignBuild.output?.xcframework?.linking ?? 'static',
       inputCount: foreignBuild.inputs?.length ?? 0,
-      inputs: { files, folders, scripts },
+      inputs: classifyForeignInputs(foreignBuild.inputs),
     };
   } catch (error) {
     collector.warn(
@@ -521,6 +522,28 @@ function extractProjectTargets(
   return { nodes, lookup };
 }
 
+/** Ensure a node exists for a dependency, creating it if missing */
+function ensureDependencyNode(
+  dep: GraphDependency,
+  nodes: Map<string, GraphNode>,
+  lookup: Map<string, TargetLookupData>,
+  fallbackProject: string | undefined,
+  collector: WarningCollector,
+): string {
+  const key = getDependencyKey(dep);
+  if (nodes.has(key)) return key;
+
+  const lookupData = lookup.get(key);
+  if (lookupData) {
+    const { target, projectName, projectPath, origin } = lookupData;
+    nodes.set(key, createNodeFromTarget(key, target, projectName, projectPath, origin, collector));
+  } else {
+    nodes.set(key, createNodeFromDependency(dep, fallbackProject));
+  }
+
+  return key;
+}
+
 /** Process dependencies (flat alternating array) to create edges and missing nodes */
 function processDependencies(
   dependencies: (GraphDependency | GraphDependency[])[],
@@ -540,38 +563,16 @@ function processDependencies(
       continue;
     }
 
-    const sourceKey = getDependencyKey(sourceDep);
-    const sourceProject = lookup.get(sourceKey)?.projectName ?? nodes.get(sourceKey)?.project;
+    // After the Array.isArray guard above, sourceDep is the single-object branch
+    const sourceDepObj = sourceDep as GraphDependency;
+    const sourceProject =
+      lookup.get(getDependencyKey(sourceDepObj))?.projectName ??
+      nodes.get(getDependencyKey(sourceDepObj))?.project;
+    const sourceKey = ensureDependencyNode(sourceDepObj, nodes, lookup, sourceProject, collector);
 
-    // Create source node if missing
-    if (!nodes.has(sourceKey)) {
-      nodes.set(sourceKey, createNodeFromDependency(sourceDep, sourceProject));
-    }
-
-    // Process target dependencies
     for (const targetDep of targetDeps) {
-      const targetKey = getDependencyKey(targetDep);
-
-      // Create target node if missing
-      if (!nodes.has(targetKey)) {
-        const lookupData = lookup.get(targetKey);
-        if (lookupData) {
-          const { target, projectName, projectPath, origin } = lookupData;
-          nodes.set(
-            targetKey,
-            createNodeFromTarget(targetKey, target, projectName, projectPath, origin, collector),
-          );
-        } else {
-          // Attach external dependencies to the same project as the source when possible
-          nodes.set(targetKey, createNodeFromDependency(targetDep, sourceProject));
-        }
-      }
-
-      edges.push({
-        source: sourceKey,
-        target: targetKey,
-        kind: getDependencyKind(targetDep),
-      });
+      const targetKey = ensureDependencyNode(targetDep, nodes, lookup, sourceProject, collector);
+      edges.push({ source: sourceKey, target: targetKey, kind: getDependencyKind(targetDep) });
     }
   }
 
@@ -602,7 +603,7 @@ export function transformTuistGraph(raw: unknown): TransformResult {
   }
 
   // Use validated data — boundary validation passed
-  const graph = parseResult.data as Graph;
+  const graph = parseResult.data as unknown as Graph;
 
   const { nodes, lookup } = extractProjectTargets(graph.projects, collector);
   const edges = processDependencies(graph.dependencies, nodes, lookup, collector);

@@ -3,6 +3,30 @@
 When the Tuist CLI bumps its XcodeGraph dependency, it should notify this repo
 to run the compatibility suite. This is done via GitHub's `repository_dispatch` API.
 
+## Versioning convention
+
+This package tracks XcodeGraph's version:
+
+- **major.minor** matches XcodeGraph (signals compatibility)
+- **patch** is ours (UI-only fixes within the same XcodeGraph version)
+
+For example, `@tuist/graph@1.35.2` means "compatible with XcodeGraph 1.35.x, second UI patch".
+
+The `xcodegraph` field in `package.json` records the exact XcodeGraph version
+that was tested against. The publish workflow enforces major.minor alignment.
+
+### Syncing versions
+
+```bash
+# Bump to XcodeGraph 1.35.0 (sets package to 1.35.0)
+pnpm version:sync 1.35.0
+
+# UI-only patch on XcodeGraph 1.35.x (sets package to 1.35.2)
+pnpm version:sync 1.35.0 2
+```
+
+This updates `package.json` (version + xcodegraph field) and `Package.swift`.
+
 ## Option 1: Add a step to Tuist's CI
 
 In the Tuist repo, add a step to the PR/merge workflow that bumps XcodeGraph:
@@ -47,3 +71,10 @@ No action needed — if it fails, an issue is automatically created.
 5. Runs the production build
 
 If any step fails, it creates a GitHub issue with the `compatibility` label.
+
+## Release workflow
+
+1. Compat check passes for new XcodeGraph version (or you've made UI changes)
+2. Run `pnpm version:sync <xcodegraph-version> [patch]`
+3. Commit, push, tag: `git tag v1.35.0 && git push --tags`
+4. The `publish.yml` workflow validates version alignment and publishes to npm

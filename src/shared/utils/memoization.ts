@@ -55,7 +55,7 @@ export function deepEqual<T>(a: T, b: T): boolean {
   if (a instanceof Set && b instanceof Set) return setsEqual(a, b);
   if (a instanceof Map && b instanceof Map) return mapsEqual(a, b);
 
-  return objectsEqual(a, b);
+  return objectsEqual(a as Record<string, unknown>, b as Record<string, unknown>);
 }
 
 /**
