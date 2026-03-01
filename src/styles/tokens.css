@@ -94,6 +94,22 @@
   --colors-node-cli: var(--graph-node-cli, rgba(120, 160, 246, 1));
   --colors-node-package: var(--graph-node-package, rgba(234, 196, 72, 1));
 
+  /* Platform colors — overridable via --graph-platform-* */
+  --colors-platform-ios: var(--graph-platform-ios, #007AFF);
+  --colors-platform-macos: var(--graph-platform-macos, #64D2FF);
+  --colors-platform-tvos: var(--graph-platform-tvos, #B87BFF);
+  --colors-platform-watchos: var(--graph-platform-watchos, #5AC8FA);
+  --colors-platform-visionos: var(--graph-platform-visionos, #7D7AFF);
+  --colors-platform-default: var(--graph-platform-default, #6F2CFF);
+
+  /* Filter icon color */
+  --colors-filter-icon: rgba(160, 140, 255, 0.7);
+
+  /* Starfield colors — decorative star palette */
+  --colors-starfield-warm: #f7f1da;
+  --colors-starfield-golden: #f5e0b5;
+  --colors-starfield-cool: #d6e0ff;
+
   /* Canvas rendering colors — flat background */
   --colors-canvas-bg: var(--graph-canvas-bg, var(--colors-background));
   --colors-canvas-tooltip-bg: rgba(24, 24, 28, 0.95);
@@ -359,6 +375,17 @@
     --colors-node-test: var(--graph-node-test, rgba(219, 39, 119, 1));
     --colors-node-cli: var(--graph-node-cli, rgba(79, 70, 229, 1));
     --colors-node-package: var(--graph-node-package, rgba(202, 138, 4, 1));
+
+    /* Platform colors — deeper for light backgrounds */
+    --colors-platform-ios: var(--graph-platform-ios, #0066DD);
+    --colors-platform-macos: var(--graph-platform-macos, #0099CC);
+    --colors-platform-tvos: var(--graph-platform-tvos, #9B51E0);
+    --colors-platform-watchos: var(--graph-platform-watchos, #0099CC);
+    --colors-platform-visionos: var(--graph-platform-visionos, #5856D6);
+    --colors-platform-default: var(--graph-platform-default, #5B18EB);
+
+    /* Filter icon color */
+    --colors-filter-icon: rgba(111, 44, 255, 0.7);
 
     /* Canvas rendering colors */
     --colors-canvas-bg: var(--graph-canvas-bg, var(--colors-background));

@@ -2,16 +2,20 @@
  * Platform icon utilities for consistent platform representation
  */
 
-/** Per-platform colors for visual distinction */
+/**
+ * Per-platform colors for visual distinction.
+ * These values match the --colors-platform-* tokens in tokens.css (dark mode).
+ * Kept as hex literals because callers use string interpolation (e.g. color-mix).
+ */
 export const PLATFORM_COLORS: Record<string, string> = {
-  iOS: '#007AFF',
-  macOS: '#64D2FF',
-  tvOS: '#B87BFF',
-  watchOS: '#5AC8FA',
-  visionOS: '#7D7AFF',
+  iOS: '#007AFF', // --colors-platform-ios
+  macOS: '#64D2FF', // --colors-platform-macos
+  tvOS: '#B87BFF', // --colors-platform-tvos
+  watchOS: '#5AC8FA', // --colors-platform-watchos
+  visionOS: '#7D7AFF', // --colors-platform-visionos
 };
 
-/** Default fallback platform color */
+/** Default fallback platform color — matches --colors-platform-default */
 export const PLATFORM_COLOR = '#6F2CFF';
 
 /**

@@ -34,6 +34,7 @@ export interface StarfieldOptions {
   spanMultiplier?: number;
 }
 
+// Values match --colors-starfield-warm, --colors-starfield-golden, --colors-starfield-cool
 const DEFAULT_STAR_PALETTE = [
   '#f7f1da', // soft warm off-white
   '#f5e0b5', // warmer, almost golden

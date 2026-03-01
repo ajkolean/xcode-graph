@@ -27,6 +27,12 @@ export default defineConfig({
         'src/fixtures/**',
         'src/vite-env.d.ts',
       ],
+      thresholds: {
+        statements: 70,
+        branches: 70,
+        functions: 70,
+        lines: 70,
+      },
     },
     projects: [
       {
@@ -50,6 +56,7 @@ export default defineConfig({
             'src/ui/utils/*.test.ts',
             'src/ui/components/*.test.ts',
             'src/ui/layout/*.test.ts',
+            'src/styles/*.test.ts',
           ],
         },
       },
