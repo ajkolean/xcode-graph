@@ -25,6 +25,7 @@ function createTestTheme(): CanvasTheme {
     shadowColor: 'rgba(24, 24, 28, 0.9)',
     cycleEdgeColor: 'rgba(239, 68, 68, 0.8)',
     cycleGlowColor: 'rgba(239, 68, 68, 0.6)',
+    isDark: true,
   };
 }
 
@@ -251,6 +252,7 @@ describe('canvas-edge-renderer', () => {
         ['direct', 1],
         ['transitive', 2],
       ]),
+      maxDepth: 1,
     };
 
     const rc = createEdgeRenderContext({
@@ -351,6 +353,7 @@ describe('canvas-edge-renderer', () => {
         ['dep', 1],
         ['trans', 2],
       ]),
+      maxDepth: 1,
     };
 
     // Only show direct deps, not transitive
@@ -446,6 +449,7 @@ describe('canvas-edge-renderer', () => {
         ['src', 0],
         ['tgt', 1],
       ]),
+      maxDepth: 1,
     };
 
     const rc = createEdgeRenderContext({

@@ -42,7 +42,6 @@ describe('GraphLoader', () => {
       const lastUpdate = progressUpdates.at(-1);
       if (!lastUpdate) {
         expect.fail('expected at least one progress update');
-        return;
       }
       expect(lastUpdate.type).toBe('complete');
       expect(lastUpdate.percentage).toBe(100);
@@ -64,7 +63,6 @@ describe('GraphLoader', () => {
       const firstUpdate = progressUpdates[0];
       if (!firstUpdate) {
         expect.fail('expected progress update');
-        return;
       }
       expect(firstUpdate.type).toBe('complete');
       expect(firstUpdate.loadedNodes).toBe(0);
@@ -89,7 +87,6 @@ describe('GraphLoader', () => {
         const prev = percentages[i - 1];
         if (prev === undefined) {
           expect.fail('expected previous percentage');
-          return;
         }
         expect(percentages[i]).toBeGreaterThanOrEqual(prev);
       }
@@ -116,12 +113,10 @@ describe('GraphLoader', () => {
       expect(firstChunk).not.toBeNull();
       if (!firstChunk) {
         expect.fail('expected first chunk');
-        return;
       }
       expect(firstChunk.chunk).toBeDefined();
       if (!firstChunk.chunk) {
         expect.fail('expected chunk data');
-        return;
       }
       expect(firstChunk.chunk.nodes.length).toBeLessThanOrEqual(20);
     });
@@ -172,7 +167,6 @@ describe('GraphLoader', () => {
       const firstProgress = progressUpdates[0];
       if (!firstProgress) {
         expect.fail('expected progress update');
-        return;
       }
       expect(firstProgress.chunk?.nodes.some((n) => n.project === 'App')).toBe(true);
     });

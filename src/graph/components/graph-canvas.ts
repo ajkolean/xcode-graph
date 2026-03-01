@@ -126,11 +126,6 @@ export class GraphCanvas extends LitElement {
     animationTicks: 30,
   });
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: reactive controller runs as side-effect
-  private readonly _resize = new ResizeController(this, {
-    callback: () => this.resizeCanvas(),
-  });
-
   private readonly _visibility = new IntersectionController(this, {
     callback: (entries) => entries.some((e) => e.isIntersecting),
   });
@@ -174,6 +169,8 @@ export class GraphCanvas extends LitElement {
 
   constructor() {
     super();
+    // Side-effect controller — triggers resizeCanvas on host resize
+    new ResizeController(this, { callback: () => this.resizeCanvas() });
     this.nodes = [];
     this.edges = [];
     this.selectedNode = null;
@@ -684,6 +681,7 @@ export class GraphCanvas extends LitElement {
 
   private renderFadingNodes() {
     if (this.fadingOutNodes.size === 0) return;
+    if (!this.ctx || !this.theme) return;
 
     const now = performance.now();
     const toRemove: string[] = [];

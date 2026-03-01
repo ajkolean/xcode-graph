@@ -88,7 +88,6 @@ describe('ErrorService', () => {
       const firstError = currentErrors[0];
       if (!firstError) {
         expect.fail('expected error in list');
-        return;
       }
       expect(firstError.message).toBe('Test');
     });
@@ -176,7 +175,6 @@ describe('ErrorService', () => {
       const infoError = currentErrors[0];
       if (!infoError) {
         expect.fail('expected error');
-        return;
       }
       expect(infoError.dismissed).toBe(true);
     });
@@ -192,7 +190,6 @@ describe('ErrorService', () => {
       const warnError = currentErrors[0];
       if (!warnError) {
         expect.fail('expected error');
-        return;
       }
       expect(warnError.dismissed).toBe(true);
     });
@@ -209,7 +206,6 @@ describe('ErrorService', () => {
       const errError = currentErrors[0];
       if (!errError) {
         expect.fail('expected error');
-        return;
       }
       expect(errError.dismissed).toBe(true);
     });
@@ -225,7 +221,6 @@ describe('ErrorService', () => {
       const critError = currentErrors[0];
       if (!critError) {
         expect.fail('expected error');
-        return;
       }
       expect(critError.dismissed).toBe(false);
     });
@@ -244,7 +239,6 @@ describe('ErrorService', () => {
       const customError = currentErrors[0];
       if (!customError) {
         expect.fail('expected error');
-        return;
       }
       expect(customError.dismissed).toBe(true);
     });
@@ -260,7 +254,6 @@ describe('ErrorService', () => {
       const dismissedError = currentErrors[0];
       if (!dismissedError) {
         expect.fail('expected error');
-        return;
       }
       expect(dismissedError.dismissed).toBe(true);
     });

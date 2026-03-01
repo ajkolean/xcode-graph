@@ -30,7 +30,7 @@ describe('filter.signals', () => {
   it('should return true when nodeTypes filter is restricted', () => {
     const current = filters.get();
     const restricted = new Set(current.nodeTypes);
-    restricted.delete(NODE_TYPE_VALUES[0]);
+    restricted.delete(NODE_TYPE_VALUES[0]!);
     filters.set({ ...current, nodeTypes: restricted });
 
     expect(hasActiveFilters.get()).to.equal(true);
@@ -39,7 +39,7 @@ describe('filter.signals', () => {
   it('should return true when platforms filter is restricted', () => {
     const current = filters.get();
     const restricted = new Set(current.platforms);
-    restricted.delete(PLATFORM_VALUES[0]);
+    restricted.delete(PLATFORM_VALUES[0]!);
     filters.set({ ...current, platforms: restricted });
 
     expect(hasActiveFilters.get()).to.equal(true);
@@ -48,7 +48,7 @@ describe('filter.signals', () => {
   it('should return true when origins filter is restricted', () => {
     const current = filters.get();
     const restricted = new Set(current.origins);
-    restricted.delete(ORIGIN_VALUES[0]);
+    restricted.delete(ORIGIN_VALUES[0]!);
     filters.set({ ...current, origins: restricted });
 
     expect(hasActiveFilters.get()).to.equal(true);
@@ -86,7 +86,7 @@ describe('filter.signals', () => {
     allPackages.set(new Set(['B']));
     const current = filters.get();
     const restricted = new Set(current.nodeTypes);
-    restricted.delete(NODE_TYPE_VALUES[0]);
+    restricted.delete(NODE_TYPE_VALUES[0]!);
     filters.set({ ...current, nodeTypes: restricted });
 
     resetFilterSignals();

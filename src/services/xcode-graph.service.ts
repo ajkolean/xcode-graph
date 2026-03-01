@@ -19,7 +19,6 @@ import type {
 } from '@/shared/schemas/graph.types';
 import { DependencyKind, NodeType, Origin, Platform } from '@/shared/schemas/graph.types';
 import type {
-  ForeignBuild,
   Graph,
   GraphDependency,
   Project,
@@ -55,6 +54,13 @@ class WarningCollector {
   warn(message: string): void {
     this.warnings.push(message);
   }
+}
+
+/** Forward-compatible type for newer XcodeGraph ForeignBuild field (not yet in generated schema) */
+interface ForeignBuildData {
+  script: string;
+  output?: { xcframework?: { path: string; linking?: string } };
+  inputs?: Array<{ file: { _0: string } } | { folder: { _0: string } } | { script: { _0: string } }>;
 }
 
 // =============================================================================
@@ -208,7 +214,7 @@ function extractBuildSettings(
 }
 
 /** Classify foreign build inputs by type */
-function classifyForeignInputs(inputs: ForeignBuild['inputs']): {
+function classifyForeignInputs(inputs: ForeignBuildData['inputs']): {
   files: string[];
   folders: string[];
   scripts: string[];
@@ -228,7 +234,7 @@ function classifyForeignInputs(inputs: ForeignBuild['inputs']): {
 
 /** Extract foreign build info from target */
 function extractForeignBuild(
-  foreignBuild: ForeignBuild | undefined,
+  foreignBuild: ForeignBuildData | undefined,
   collector: WarningCollector,
 ): ForeignBuildInfo | undefined {
   if (!foreignBuild) return undefined;
@@ -396,11 +402,15 @@ function populateSourcePaths(node: GraphNode, target: Target): void {
   if (target.sources?.length) {
     node.sourcePaths = target.sources.map((s) => s.path);
     node.sourceCount = target.sources.length;
-  } else if (target.buildableFolders?.length) {
-    const resolvedFiles = target.buildableFolders.flatMap((bf) => bf.resolvedFiles);
-    if (resolvedFiles.length > 0) {
-      node.sourcePaths = resolvedFiles.map((f) => f.path);
-      node.sourceCount = resolvedFiles.length;
+  } else if ('buildableFolders' in target) {
+    type BuildableFolder = { resolvedFiles: Array<{ path: string }> };
+    const folders = target.buildableFolders as BuildableFolder[] | undefined;
+    if (folders?.length) {
+      const resolvedFiles = folders.flatMap((bf) => bf.resolvedFiles);
+      if (resolvedFiles.length > 0) {
+        node.sourcePaths = resolvedFiles.map((f) => f.path);
+        node.sourceCount = resolvedFiles.length;
+      }
     }
   }
 }
@@ -428,9 +438,11 @@ function populateOptionalMetadata(
   if (notableResources.length > 0) {
     node.notableResources = notableResources;
   }
-  const foreignBuildInfo = extractForeignBuild(target.foreignBuild, collector);
-  if (foreignBuildInfo) {
-    node.foreignBuild = foreignBuildInfo;
+  if ('foreignBuild' in target) {
+    const foreignBuildInfo = extractForeignBuild(target.foreignBuild as ForeignBuildData | undefined, collector);
+    if (foreignBuildInfo) {
+      node.foreignBuild = foreignBuildInfo;
+    }
   }
 }
 

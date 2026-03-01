@@ -76,7 +76,8 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     const tree = el.shadowRoot?.querySelector('[role="tree"]') as HTMLElement;
-    tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    if (!tree) throw new Error('expected tree element');
+    tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
     vitestExpect(selectHandler).toHaveBeenCalledOnce();
     expect(selectHandler.mock.calls[0][0].detail.node.id).to.equal('a');
@@ -90,9 +91,10 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     const tree = el.shadowRoot?.querySelector('[role="tree"]') as HTMLElement;
+    if (!tree) throw new Error('expected tree element');
 
     // Navigate down
-    tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
     await el.updateComplete;
 
     const items = el.shadowRoot?.querySelectorAll('[role="treeitem"]');
@@ -108,9 +110,10 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     const tree = el.shadowRoot?.querySelector('[role="tree"]') as HTMLElement;
+    if (!tree) throw new Error('expected tree element');
 
     // Navigate up from first item should wrap to last
-    tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+    tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
     await el.updateComplete;
 
     const items = el.shadowRoot?.querySelectorAll('[role="treeitem"]');
@@ -163,7 +166,8 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     const tree = el.shadowRoot?.querySelector('[role="tree"]') as HTMLElement;
-    tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    if (!tree) throw new Error('expected tree element');
+    tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
     vitestExpect(selectHandler).toHaveBeenCalledOnce();
     expect(selectHandler.mock.calls[0][0].detail.node).to.be.null;
@@ -177,16 +181,17 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     const tree = el.shadowRoot?.querySelector('[role="tree"]') as HTMLElement;
+    if (!tree) throw new Error('expected tree element');
 
     // Press End to go to last item
-    tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+    tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
     await el.updateComplete;
 
     let items = el.shadowRoot?.querySelectorAll('[role="treeitem"]');
     expect(items?.[2]?.getAttribute('tabindex')).to.equal('0');
 
     // Press Home to go back to first
-    tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+    tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
     await el.updateComplete;
 
     items = el.shadowRoot?.querySelectorAll('[role="treeitem"]');

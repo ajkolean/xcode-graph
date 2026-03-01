@@ -308,7 +308,7 @@ describe('xcode-graph-edges', () => {
       await edgesComponent.updateComplete;
 
       // Change edges - triggers structural update
-      edgesComponent.edges = [edges[0]];
+      edgesComponent.edges = [edges[0]!];
       await edgesComponent.updateComplete;
 
       expect(edgesComponent.edges).to.have.length(1);
@@ -760,7 +760,7 @@ describe('xcode-graph-edges', () => {
           type: NodeType.Framework,
           platform: Platform.iOS,
           project: undefined as unknown as string,
-          origin: Origin.Remote,
+          origin: Origin.External,
         },
       ];
       const edges = [{ source: 'n1', target: 'n2' }];

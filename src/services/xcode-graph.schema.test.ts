@@ -99,7 +99,6 @@ describe('safeParseGraph boundary validation against real fixture', () => {
     expect(result.data).toBeDefined();
     if (!result.data) {
       expect.fail('result.data should be defined');
-      return;
     }
     expect(result.data.name).toBeTruthy();
     expect(result.data.projects.length).toBeGreaterThan(0);
@@ -115,7 +114,6 @@ describe('safeParseGraph boundary validation against real fixture', () => {
     expect(result.success).toBe(true);
     if (!result.data) {
       expect.fail('result.data should be defined');
-      return;
     }
     // Verify the parsed data has the same shape as the raw input
     expect(result.data.name).toBe(raw.name);

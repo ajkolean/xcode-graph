@@ -292,10 +292,11 @@ describe('computeFilters', () => {
     clearFn();
 
     expect(capturedFilters).not.toBeNull();
-    expect(capturedFilters?.nodeTypes.size).toBe(result.typeCounts.size);
-    expect(capturedFilters?.platforms.size).toBe(result.platformCounts.size);
-    expect(capturedFilters?.projects.size).toBe(result.projectCounts.size);
-    expect(capturedFilters?.packages.size).toBe(result.packageCounts.size);
+    if (!capturedFilters) throw new Error('expected filters');
+    expect(capturedFilters.nodeTypes.size).toBe(result.typeCounts.size);
+    expect(capturedFilters.platforms.size).toBe(result.platformCounts.size);
+    expect(capturedFilters.projects.size).toBe(result.projectCounts.size);
+    expect(capturedFilters.packages.size).toBe(result.packageCounts.size);
   });
 
   it('should handle empty node list', () => {

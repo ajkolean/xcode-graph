@@ -24,6 +24,7 @@ function createTestTheme(): CanvasTheme {
     shadowColor: 'rgba(24, 24, 28, 0.9)',
     cycleEdgeColor: 'rgba(239, 68, 68, 0.8)',
     cycleGlowColor: 'rgba(239, 68, 68, 0.6)',
+    isDark: true,
   };
 }
 
@@ -163,7 +164,7 @@ describe('canvas-node-renderer', () => {
   });
 
   it('should set globalAlpha based on node alpha map', () => {
-    const nodeAlphaMap = new Map([['node1', { current: 0.5, target: 0.5 }]]);
+    const nodeAlphaMap = new Map([['node1', { current: 0.5, target: 0.5, start: 0.5, progress: 0 }]]);
     const rc = createRenderContext({ nodeAlphaMap });
     const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
@@ -235,7 +236,7 @@ describe('canvas-node-renderer', () => {
 
     it('should dim nodes not matching origin preview filter', () => {
       const rc = createRenderContext({
-        previewFilter: { type: 'origin', value: Origin.Remote },
+        previewFilter: { type: 'origin', value: Origin.External },
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 

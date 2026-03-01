@@ -34,7 +34,6 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
     const widgetNode = result.data.nodes.find((n) => n.name === 'WidgetExtension');
     if (!widgetNode) {
       expect.fail('expected WidgetExtension node');
-      return;
     }
     // Unknown product type should fall back to Library
     expect(widgetNode.type).toBe(NodeType.Library);
@@ -48,7 +47,6 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
     const appNode = result.data.nodes.find((n) => n.name === 'FutureApp');
     if (!appNode) {
       expect.fail('expected FutureApp node');
-      return;
     }
     // Should still detect iOS as the primary platform
     expect(appNode.platform).toBe(Platform.iOS);
@@ -62,7 +60,6 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
     const appNode = result.data.nodes.find((n) => n.name === 'FutureApp');
     if (!appNode) {
       expect.fail('expected FutureApp node');
-      return;
     }
     expect(appNode.tags).toEqual(['future']);
   });
@@ -74,14 +71,12 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
     const appNode = result.data.nodes.find((n) => n.name === 'FutureApp');
     if (!appNode) {
       expect.fail('expected FutureApp node');
-      return;
     }
     expect(appNode.type).toBe(NodeType.App);
 
     const coreNode = result.data.nodes.find((n) => n.name === 'CoreLib');
     if (!coreNode) {
       expect.fail('expected CoreLib node');
-      return;
     }
     expect(coreNode.type).toBe(NodeType.Framework);
   });
@@ -112,7 +107,7 @@ describe('forward-compatibility: missing or empty sections', () => {
 
   it('should handle empty dependencies array', () => {
     const raw = loadFixture(FUTURE_FIXTURE_PATH) as Record<string, unknown>;
-    raw.dependencies = [];
+    raw['dependencies'] = [];
     const result = transformXcodeGraph(raw);
 
     expect(result.data.nodes.length).toBeGreaterThan(0);
