@@ -38,8 +38,8 @@ export class GraphSVGDefs extends LitElement {
       'framework',
       'library',
       'package',
-      'testUnit',
-      'testUi',
+      'test-unit',
+      'test-ui',
       'cli',
     ] as const;
     const platforms = ['iOS', 'macOS', 'tvOS', 'watchOS', 'visionOS'] as const;

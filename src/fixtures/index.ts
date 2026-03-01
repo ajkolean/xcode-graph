@@ -5,7 +5,7 @@
 // Cluster fixtures
 export { createCluster, createClusterWithNodes, createNodeMetadata } from './clusters';
 // Edge fixtures
-export { convertEdgeFormat, createFullyConnectedEdges } from './edges';
+export { convertEdgeFormat, createChainedEdges } from './edges';
 
 // Filter fixtures
 export { createAllInclusiveFilters, createEmptyFilters, createNodeTypeFilter } from './filters';

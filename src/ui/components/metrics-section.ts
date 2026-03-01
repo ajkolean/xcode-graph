@@ -101,11 +101,22 @@ export class GraphMetricsSection extends LitElement {
     }
 
     .header {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
       user-select: none;
+      background: none;
+      border: none;
+      padding: 0;
+      text-align: left;
+    }
+
+    .header:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+      border-radius: var(--radii-sm);
     }
 
     .header:hover .title {
@@ -170,7 +181,7 @@ export class GraphMetricsSection extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <div class="header" @click=${this.toggleExpanded}>
+      <button class="header" aria-expanded=${this.isExpanded} @click=${this.toggleExpanded}>
         <span class="title">Metrics</span>
         <svg
           class=${classMap({ 'toggle-icon': true, expanded: this.isExpanded })}
@@ -181,7 +192,7 @@ export class GraphMetricsSection extends LitElement {
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
-      </div>
+      </button>
 
       ${when(
         this.isExpanded,

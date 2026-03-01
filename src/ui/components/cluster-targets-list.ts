@@ -174,22 +174,32 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
 
   private get flatItems(): ClusterListItem[] {
     if (!this.nodesByType) return [];
+
+    // Pre-compute edge counts for O(1) lookups per node
+    const dependencyCount = new Map<string, number>();
+    const dependentCount = new Map<string, number>();
+    if (this.edges) {
+      for (const e of this.edges) {
+        dependencyCount.set(e.source, (dependencyCount.get(e.source) ?? 0) + 1);
+        dependentCount.set(e.target, (dependentCount.get(e.target) ?? 0) + 1);
+      }
+    }
+
     const items: ClusterListItem[] = [];
     for (const [type, nodes] of Object.entries(this.nodesByType)) {
       items.push({ kind: 'header', nodeType: type, count: nodes.length });
       for (const node of nodes) {
-        items.push({ kind: 'node', node, stats: this.getNodeStats(node.id) });
+        items.push({
+          kind: 'node',
+          node,
+          stats: {
+            dependencies: dependencyCount.get(node.id) ?? 0,
+            dependents: dependentCount.get(node.id) ?? 0,
+          },
+        });
       }
     }
     return items;
-  }
-
-  private getNodeStats(nodeId: string): { dependencies: number; dependents: number } {
-    if (!this.edges) return { dependencies: 0, dependents: 0 };
-
-    const dependencies = this.edges.filter((e) => e.source === nodeId).length;
-    const dependents = this.edges.filter((e) => e.target === nodeId).length;
-    return { dependencies, dependents };
   }
 
   private formatNodeStatsSubtitle(stats: {

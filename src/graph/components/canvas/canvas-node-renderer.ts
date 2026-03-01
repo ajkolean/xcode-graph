@@ -364,7 +364,7 @@ function renderSingleNode(
 }
 
 export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
-  const { ctx, nodes, edges, selectedNode, nodeWeights, connectedNodes } = rc;
+  const { ctx, nodes, edges, nodeWeights, connectedNodes } = rc;
 
   // Skip individual node rendering at extreme zoom-out; centroid dots handle visibility
   if (rc.zoom < 0.15) {

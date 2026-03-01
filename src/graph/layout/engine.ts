@@ -65,7 +65,7 @@ export async function computeHierarchicalLayout(
     if (!clusterPos || !micro) continue;
 
     for (const [nodeId, relPos] of micro.relativePositions) {
-      // Composition: Cluster World Center + Node Relative Offset
+      // Node position relative to cluster center
       // (Micro layout is already centered at 0,0)
       nodePositions.set(nodeId, {
         ...relPos,

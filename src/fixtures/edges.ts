@@ -13,9 +13,9 @@ export function convertEdgeFormat(edges: Array<{ from: string; to: string }>): G
 }
 
 /**
- * Create edges for a set of nodes (fully connected)
+ * Create a linear chain of edges between consecutive nodes (A->B, B->C, ...)
  */
-export function createFullyConnectedEdges(nodeIds: string[]): GraphEdge[] {
+export function createChainedEdges(nodeIds: string[]): GraphEdge[] {
   const edges: GraphEdge[] = [];
   for (const [source, target] of pairwise(nodeIds)) {
     edges.push({ source, target });

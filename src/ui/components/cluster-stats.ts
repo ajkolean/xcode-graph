@@ -93,11 +93,22 @@ export class GraphClusterStats extends LitElement {
     }
 
     .header {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
       user-select: none;
+      background: none;
+      border: none;
+      padding: 0;
+      text-align: left;
+    }
+
+    .header:focus-visible {
+      outline: 2px solid var(--colors-primary);
+      outline-offset: 2px;
+      border-radius: var(--radii-sm);
     }
 
     .header:hover .header-title {
@@ -322,7 +333,7 @@ export class GraphClusterStats extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <div class="header" @click=${this.toggleExpanded}>
+      <button class="header" aria-expanded=${this.isExpanded} @click=${this.toggleExpanded}>
         <span class="header-title">Metrics</span>
         <svg
           class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
@@ -333,7 +344,7 @@ export class GraphClusterStats extends LitElement {
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
-      </div>
+      </button>
 
       ${this.isExpanded ? this.renderExpandedContent() : nothing}
     `;

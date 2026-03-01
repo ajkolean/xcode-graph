@@ -275,7 +275,7 @@ export class GraphBuildSettings extends LitElement {
     if (!this.hasSettings) return nothing;
 
     return html`
-      <div class="header" @click=${this.toggleExpanded}>
+      <button class="header" aria-expanded=${this.isExpanded} @click=${this.toggleExpanded}>
         <span class="title">Build Settings</span>
         <svg
           class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
@@ -286,7 +286,7 @@ export class GraphBuildSettings extends LitElement {
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
-      </div>
+      </button>
 
       ${this.isExpanded ? this.renderExpandedContent() : nothing}
     `;
