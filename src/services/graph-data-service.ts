@@ -115,27 +115,18 @@ export class GraphDataService {
     return this.incomingEdges.get(nodeId) || [];
   }
 
-  /**
-   * Get all edges for a node (both directions)
-   */
   getNodeEdges(nodeId: string): GraphEdge[] {
     const outgoing = this.getOutgoingEdges(nodeId);
     const incoming = this.getIncomingEdges(nodeId);
     return [...outgoing, ...incoming];
   }
 
-  /**
-   * Get direct dependencies of a node
-   */
   getDirectDependencies(nodeId: string): GraphNode[] {
     const outgoing = this.getOutgoingEdges(nodeId);
     const depIds = outgoing.map((e) => e.target);
     return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
   }
 
-  /**
-   * Get direct dependents of a node
-   */
   getDirectDependents(nodeId: string): GraphNode[] {
     const incoming = this.getIncomingEdges(nodeId);
     const depIds = incoming.map((e) => e.source);
@@ -178,9 +169,6 @@ export class GraphDataService {
     return { nodes: visited, edges, depths };
   }
 
-  /**
-   * Get transitive dependencies (all levels)
-   */
   getTransitiveDependencies(nodeId: string): {
     nodes: Set<string>;
     edges: Set<string>;
@@ -194,9 +182,6 @@ export class GraphDataService {
     );
   }
 
-  /**
-   * Get transitive dependents (all levels)
-   */
   getTransitiveDependents(nodeId: string): {
     nodes: Set<string>;
     edges: Set<string>;
@@ -210,9 +195,6 @@ export class GraphDataService {
     );
   }
 
-  /**
-   * Get all nodes in a cluster
-   */
   getClusterNodes(clusterId: string): GraphNode[] {
     // Optimization: use indices
     const projectNodes = (this.nodesByProject.get(clusterId) || []).filter(

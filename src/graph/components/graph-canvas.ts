@@ -62,10 +62,6 @@ import './graph-hidden-dom';
  */
 @customElement('xcode-graph-canvas')
 export class GraphCanvas extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare nodes: GraphNode[];
 
@@ -113,10 +109,6 @@ export class GraphCanvas extends LitElement {
 
   @property({ type: Boolean, attribute: 'show-transitive-dependents' })
   declare showTransitiveDependents: boolean;
-
-  // ========================================
-  // Internal State & Controllers
-  // ========================================
 
   @query('canvas')
   private declare canvas: HTMLCanvasElement;
@@ -194,10 +186,6 @@ export class GraphCanvas extends LitElement {
     this.showTransitiveDependents = false;
   }
 
-  // ========================================
-  // Styles
-  // ========================================
-
   static override styles: CSSResultGroup = css`
     :host {
       display: block;
@@ -219,10 +207,6 @@ export class GraphCanvas extends LitElement {
       cursor: grabbing;
     }
   `;
-
-  // ========================================
-  // Lifecycle
-  // ========================================
 
   override firstUpdated(): void {
     this.theme = resolveCanvasTheme(this);
@@ -437,10 +421,6 @@ export class GraphCanvas extends LitElement {
     );
   }
 
-  // ========================================
-  // Interaction Context
-  // ========================================
-
   private getInteractionContext(): InteractionContext {
     return {
       state: this.interactionState,
@@ -462,10 +442,6 @@ export class GraphCanvas extends LitElement {
       },
     };
   }
-
-  // ========================================
-  // Event Handlers
-  // ========================================
 
   private resizeCanvas() {
     if (!this.canvas || !this.ctx) return;
@@ -582,10 +558,6 @@ export class GraphCanvas extends LitElement {
     }
     this.requestRender();
   };
-
-  // ========================================
-  // Rendering
-  // ========================================
 
   private requestRender() {
     this.animationLoop.requestRender();
@@ -900,10 +872,6 @@ export class GraphCanvas extends LitElement {
     this.ctx.fillText(subtitle, screenX, y + 28);
     this.ctx.restore();
   }
-
-  // ========================================
-  // Utils
-  // ========================================
 
   private getMousePos = (e: MouseEvent) => {
     const rect = this.canvas.getBoundingClientRect();
