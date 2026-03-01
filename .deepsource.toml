@@ -9,3 +9,8 @@ name = "javascript"
     "browser",
     "nodejs"
   ]
+
+[[analyzers]]
+name = "test-coverage"
+
+  [analyzers.meta]

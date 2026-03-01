@@ -7,7 +7,7 @@
 
 import { hslToRgb, rgbToHsl, toHex } from './color-math';
 
-// Base color palette from design system
+/** Base color palette from the design system, used as seed colors for deterministic generation. */
 const baseColors = [
   { name: 'primary', rgb: [111, 44, 255] }, // #6F2CFF - Purple
   { name: 'chart-2', rgb: [2, 128, 185] }, // #0280B9 - Blue

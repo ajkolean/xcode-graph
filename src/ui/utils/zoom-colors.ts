@@ -1,7 +1,14 @@
 /**
- * Utility functions for zoom-dependent color adjustments
- * Implements professional UX pattern: muted colors when zoomed out, vibrant when zoomed in
- * Similar to Figma, VSCode minimap, GitHub dependency graph, JetBrains tools
+ * Zoom-Dependent Color Adjustments
+ *
+ * Implements a professional UX pattern where colors are muted/pastel when
+ * zoomed out and become vibrant/neon when zoomed in. This reduces visual
+ * noise at overview levels while preserving detail at close range.
+ *
+ * Similar patterns are found in Figma, VS Code minimap, GitHub dependency
+ * graph, and JetBrains tools.
+ *
+ * @module ui/utils/zoom-colors
  */
 
 import {
@@ -23,8 +30,11 @@ function getSaturationMultiplier(zoom: number): number {
 }
 
 /**
- * Calculate lightness adjustment based on zoom level
- * When zoomed out, slightly increase lightness for better readability
+ * Calculate lightness adjustment based on zoom level.
+ * When zoomed out, slightly increase lightness for better readability.
+ *
+ * @param zoom - Current zoom level (0.5 to 2.0)
+ * @returns Lightness offset to add (higher when zoomed out, 0 when zoomed in)
  */
 function getLightnessAdjustment(zoom: number): number {
   return ZOOM_LIGHTNESS_ADJUSTMENT.AT_MIN_ZOOM * (1 - normalizeZoom(zoom));
@@ -73,8 +83,12 @@ export function adjustColorForZoom(color: string, zoom: number): string {
 }
 
 /**
- * Adjust opacity based on zoom level
- * Some elements should be more transparent when zoomed out
+ * Adjust opacity based on zoom level.
+ * Elements become more transparent when zoomed out to reduce visual clutter.
+ *
+ * @param baseOpacity - Base opacity value (0-1)
+ * @param zoom - Current zoom level
+ * @returns Adjusted opacity value (0-1)
  */
 export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number {
   const t = normalizeZoom(zoom);

@@ -16,6 +16,7 @@ No bundled static assets. No `Resources/` directory. The HTML is generated in-me
 ## Usage in Tuist CLI
 
 ```swift
+import XcodeGraphServer
 import XcodeGraph
 
 // In the `tuist graph` command handler:

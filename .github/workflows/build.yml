@@ -25,6 +25,13 @@ jobs:
 
       - run: pnpm test:coverage
 
+      - name: Report coverage to DeepSource
+        uses: deepsourcelabs/test-coverage-action@master
+        with:
+          key: javascript
+          coverage-file: coverage/lcov.info
+          dsn: ${{ secrets.DEEPSOURCE_DSN }}
+
       - run: pnpm build:lib
 
   verify:

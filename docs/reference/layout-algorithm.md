@@ -4,6 +4,15 @@ title: Layout Algorithm
 
 # Upgrading XcodeGrapher Layout: Solar Systems in Geological Strata
 
+::: warning Historical Document
+This document was written during an earlier version of the layout system. Some source file references point to files that have since been refactored or removed:
+- `src/graph/layout/graph-strata.ts` -- no longer exists; strata logic was folded into the hierarchical layout pipeline (`src/graph/layout/hierarchical-layout.ts` and phase modules under `src/graph/layout/phases/`).
+- `src/graph/layout/d3-layout.ts` -- no longer exists; replaced by the ELK.js-based `hierarchical-layout.ts` and phase-based pipeline.
+- `src/graph/layout/forces/cluster-boundary.ts` -- no longer exists; boundary logic now lives in `src/graph/layout/boundary.ts`.
+
+Files that still exist at the referenced paths: `cluster-grouping.ts`, `cluster-analysis.ts`, `layout.controller.ts`.
+:::
+
 ## Phase 0: Current Layout Pipeline Map
 
 **Input → Clustering:** When a new graph is loaded, the layout controller first groups nodes into **clusters**. Nodes with the same project (for local code) or same name (for external packages) are bundled into one cluster[\[1\]](https://github.com/ajkolean/xcode-graph/blob/b01ec8052a416ee6ee0c4eae4694b35b0f3cd870/src/graph/layout/cluster-grouping.ts#L16-L24). Each cluster is tagged with a type (Project for local code, Package for externals) and accumulates its member nodes[\[2\]](https://github.com/ajkolean/xcode-graph/blob/b01ec8052a416ee6ee0c4eae4694b35b0f3cd870/src/graph/layout/cluster-grouping.ts#L16-L25). After grouping, the code analyzes each cluster to assign internal metadata[\[3\]](https://github.com/ajkolean/xcode-graph/blob/b01ec8052a416ee6ee0c4eae4694b35b0f3cd870/src/graph/layout/cluster-grouping.ts#L34-L39). This analysis identifies **test nodes**, determines **anchor nodes** (entry points like apps/CLIs), distributes other nodes into **layers**, and assigns each node a **role**[\[4\]](https://github.com/ajkolean/xcode-graph/blob/b01ec8052a416ee6ee0c4eae4694b35b0f3cd870/src/graph/layout/cluster-analysis.ts#L34-L42)[\[5\]](https://github.com/ajkolean/xcode-graph/blob/b01ec8052a416ee6ee0c4eae4694b35b0f3cd870/src/graph/layout/cluster-analysis.ts#L62-L71). For example, in cluster analysis, apps are marked as anchors (role = Entry), frameworks/libraries with many dependents become InternalFramework or InternalLib, and tests get the Test role[\[5\]](https://github.com/ajkolean/xcode-graph/blob/b01ec8052a416ee6ee0c4eae4694b35b0f3cd870/src/graph/layout/cluster-analysis.ts#L62-L71). All these attributes (like isAnchor, layer, dependencyCount, etc.) are stored in cluster.metadata for each node[\[6\]](https://github.com/ajkolean/xcode-graph/blob/b01ec8052a416ee6ee0c4eae4694b35b0f3cd870/src/graph/layout/cluster-analysis.ts#L70-L79).

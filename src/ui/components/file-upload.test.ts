@@ -8,6 +8,12 @@ import { ErrorService } from '@/services/error-service';
 import type { GraphFileUpload } from './file-upload';
 import './file-upload';
 
+function getInput(el: GraphFileUpload): HTMLInputElement {
+  const input = el.shadowRoot?.querySelector<HTMLInputElement>('input[type="file"]');
+  if (!input) throw new Error('input not found');
+  return input;
+}
+
 describe('xcode-graph-file-upload', () => {
   beforeEach(() => {
     ErrorService.resetInstance();
@@ -41,13 +47,11 @@ describe('xcode-graph-file-upload', () => {
 
     const testData = { projects: [], dependencies: [] };
     const file = new File([JSON.stringify(testData)], 'graph.json', { type: 'application/json' });
+    const input = getInput(el);
 
-    const input = el.shadowRoot?.querySelector<HTMLInputElement>('input[type="file"]');
-    expect(input).to.exist;
+    Object.defineProperty(input, 'files', { value: [file], configurable: true });
 
-    Object.defineProperty(input!, 'files', { value: [file], configurable: true });
-
-    setTimeout(() => input?.dispatchEvent(new Event('change')));
+    setTimeout(() => input.dispatchEvent(new Event('change')));
     const event = await oneEvent(el, 'graph-file-loaded');
 
     expect(event).to.exist;
@@ -62,13 +66,11 @@ describe('xcode-graph-file-upload', () => {
     const handleErrorSpy = vi.spyOn(ErrorService.getInstance(), 'handleError');
 
     const file = new File(['not valid json'], 'bad.json', { type: 'application/json' });
+    const input = getInput(el);
 
-    const input = el.shadowRoot?.querySelector<HTMLInputElement>('input[type="file"]');
-    expect(input).to.exist;
+    Object.defineProperty(input, 'files', { value: [file], configurable: true });
 
-    Object.defineProperty(input!, 'files', { value: [file], configurable: true });
-
-    input?.dispatchEvent(new Event('change'));
+    input.dispatchEvent(new Event('change'));
 
     // Wait for FileReader to complete
     await new Promise((resolve) => setTimeout(resolve, 50));
@@ -103,10 +105,8 @@ describe('xcode-graph-file-upload', () => {
       <xcode-graph-file-upload></xcode-graph-file-upload>
     `);
 
-    const input = el.shadowRoot?.querySelector<HTMLInputElement>('input[type="file"]');
-    expect(input).to.exist;
-
-    const clickSpy = vi.spyOn(input!, 'click');
+    const input = getInput(el);
+    const clickSpy = vi.spyOn(input, 'click');
     const container = el.shadowRoot?.querySelector('.container');
     container?.click();
 

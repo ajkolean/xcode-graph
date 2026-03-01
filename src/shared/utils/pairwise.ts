@@ -1,10 +1,17 @@
 /**
- * Generates all unique unordered pairs from an array.
+ * Generate all unique unordered pairs (combinations of 2) from an array.
+ *
+ * Yields C(n, 2) = n*(n-1)/2 pairs. Skips undefined entries.
+ *
+ * @param items - Source array to pair from
+ * @returns Generator yielding `[a, b]` tuples where `a` precedes `b` in the original array
  *
  * @example
+ * ```ts
  * for (const [a, b] of pairwise([1, 2, 3])) {
  *   // [1,2], [1,3], [2,3]
  * }
+ * ```
  */
 export function* pairwise<T>(items: T[]): Generator<readonly [T, T], void, unknown> {
   for (let i = 0; i < items.length; i++) {
@@ -19,12 +26,18 @@ export function* pairwise<T>(items: T[]): Generator<readonly [T, T], void, unkno
 }
 
 /**
- * Generates consecutive adjacent pairs from an array.
+ * Generate consecutive adjacent pairs (sliding window of size 2) from an array.
+ *
+ * For an array of length `n`, returns `n - 1` pairs. Skips undefined entries.
+ *
+ * @param items - Source array
+ * @returns Array of `[prev, next]` tuples for each consecutive pair
  *
  * @example
- * for (const [prev, next] of adjacentPairs([1, 2, 3])) {
- *   // [1,2], [2,3]
- * }
+ * ```ts
+ * adjacentPairs([1, 2, 3]);
+ * // => [[1, 2], [2, 3]]
+ * ```
  */
 export function adjacentPairs<T>(items: T[]): Array<readonly [T, T]> {
   const pairs: Array<readonly [T, T]> = [];

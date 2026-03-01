@@ -59,7 +59,7 @@ app.loadRawGraph(xcodeGraphJson);
 | `kind`               | `DependencyKind?` | Dependency type (`target`, `project`, `sdk`, `xcframework`) |
 | `platformConditions` | `Platform[]?`     | Platform conditions for this edge          |
 
-See the full type definitions in the [API Reference](https://ajkolean.github.io/xcode-graph/api/).
+These are the core fields. See the full type definitions in the [API Reference](https://ajkolean.github.io/xcode-graph/api/) for all available properties.
 
 ## Documentation
 

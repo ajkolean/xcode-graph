@@ -8,6 +8,13 @@
 import type { GraphDataService } from './graph-data-service';
 
 export const GraphStatsService = {
+  /**
+   * Compute direct and transitive dependency/dependent counts for a single node.
+   *
+   * @param service - Graph data service to query
+   * @param nodeId - Node to compute stats for
+   * @returns Object with direct and transitive counts (self excluded from transitive)
+   */
   getNodeStats(
     service: GraphDataService,
     nodeId: string,

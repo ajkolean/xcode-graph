@@ -8,6 +8,10 @@ title: Migration Guide
 
 > **Status: Migration Complete** -- The migration from React/Zustand to Lit web components is fully complete. All 39 components have been migrated. This document is retained as historical reference for the patterns and processes used during the migration.
 
+::: warning Historical Document
+This guide was written during the React-to-Lit migration and references file paths from that era (e.g., `src/components-lit/`, `src/controllers/zustand.controller.ts`, `src/stores/`, `src/machines/`). These paths no longer exist in the current codebase. The patterns and concepts described here remain accurate, but the directory structure has since been reorganized. See the current source tree under `src/` for the actual file locations.
+:::
+
 This guide provides step-by-step instructions for migrating React components to Lit web components while maintaining full functionality and ensuring zero breaking changes.
 
 ## Table of Contents

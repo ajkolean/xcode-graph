@@ -9,7 +9,12 @@ import type { GraphDataService } from './graph-data-service';
 
 export const GraphAnalysisService = {
   /**
-   * Check if there's a path between two nodes
+   * Check if there is a directed path from one node to another via BFS.
+   *
+   * @param service - Graph data service to query
+   * @param fromId - Starting node ID
+   * @param toId - Destination node ID
+   * @returns `true` if a path exists from `fromId` to `toId`
    */
   hasPath(service: GraphDataService, fromId: string, toId: string): boolean {
     const visited = new Set<string>();
@@ -36,7 +41,10 @@ export const GraphAnalysisService = {
   },
 
   /**
-   * Detect circular dependencies in the graph
+   * Detect circular dependencies in the graph using DFS with a recursion stack.
+   *
+   * @param service - Graph data service to query
+   * @returns Array of cycles, where each cycle is a list of node IDs forming the loop
    */
   findCircularDependencies(service: GraphDataService): string[][] {
     const cycles: string[][] = [];

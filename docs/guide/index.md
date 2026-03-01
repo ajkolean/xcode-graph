@@ -63,4 +63,4 @@ app.loadRawGraph(xcodeGraphJson);
 | `kind`               | `DependencyKind?` | Dependency type (`target`, `project`, `sdk`, `xcframework`) |
 | `platformConditions` | `Platform[]?`     | Platform conditions for this edge                          |
 
-See the full type definitions in the [API Reference](/api/).
+These are the core fields. See the full type definitions in the [API Reference](/api/) for all available properties including `buildSettings`, `sourceType`, `dependencies`, and more.
