@@ -6,9 +6,9 @@
  *
  * @example
  * ```html
- * <graph-build-settings
+ * <xcode-graph-build-settings
  *   .settings=${{ swiftVersion: '5.9', compilationConditions: ['DEBUG'] }}
- * ></graph-build-settings>
+ * ></xcode-graph-build-settings>
  * ```
  */
 
@@ -193,30 +193,30 @@ export class GraphBuildSettings extends LitElement {
           ${
             settings.codeSignIdentity
               ? html`
-                <graph-info-row label="Identity">
+                <xcode-graph-info-row label="Identity">
                   <span class="truncated" title=${settings.codeSignIdentity}>
                     ${settings.codeSignIdentity}
                   </span>
-                </graph-info-row>
+                </xcode-graph-info-row>
               `
               : nothing
           }
           ${
             settings.developmentTeam
               ? html`
-                <graph-info-row label="Team" value=${settings.developmentTeam}>
-                </graph-info-row>
+                <xcode-graph-info-row label="Team" value=${settings.developmentTeam}>
+                </xcode-graph-info-row>
               `
               : nothing
           }
           ${
             settings.provisioningProfile
               ? html`
-                <graph-info-row label="Profile">
+                <xcode-graph-info-row label="Profile">
                   <span class="truncated" title=${settings.provisioningProfile}>
                     ${settings.provisioningProfile}
                   </span>
-                </graph-info-row>
+                </xcode-graph-info-row>
               `
               : nothing
           }
@@ -235,21 +235,21 @@ export class GraphBuildSettings extends LitElement {
           ${
             settings.swiftVersion
               ? html`
-                <graph-info-row label="Swift Version" value=${settings.swiftVersion}>
-                </graph-info-row>
+                <xcode-graph-info-row label="Swift Version" value=${settings.swiftVersion}>
+                </xcode-graph-info-row>
               `
               : nothing
           }
           ${
             settings.compilationConditions && settings.compilationConditions.length > 0
               ? html`
-                <graph-info-row label="Conditions">
+                <xcode-graph-info-row label="Conditions">
                   <div class="conditions">
                     ${settings.compilationConditions.map(
                       (condition) => html`<span class="condition-badge">${condition}</span>`,
                     )}
                   </div>
-                </graph-info-row>
+                </xcode-graph-info-row>
               `
               : nothing
           }
@@ -285,11 +285,11 @@ export class GraphBuildSettings extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-build-settings': GraphBuildSettings;
+    'xcode-graph-build-settings': GraphBuildSettings;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-build-settings')) {
-  customElements.define('graph-build-settings', GraphBuildSettings);
+if (!customElements.get('xcode-graph-build-settings')) {
+  customElements.define('xcode-graph-build-settings', GraphBuildSettings);
 }

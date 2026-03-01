@@ -7,8 +7,8 @@
  *
  * @example
  * ```html
- * <graph-stats-card label="Total" value="42"></graph-stats-card>
- * <graph-stats-card label="Deps" value="10" toggleable active></graph-stats-card>
+ * <xcode-graph-stats-card label="Total" value="42"></xcode-graph-stats-card>
+ * <xcode-graph-stats-card label="Deps" value="10" toggleable active></xcode-graph-stats-card>
  * ```
  */
 
@@ -210,11 +210,11 @@ export class GraphStatsCard extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-stats-card': GraphStatsCard;
+    'xcode-graph-stats-card': GraphStatsCard;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-stats-card')) {
-  customElements.define('graph-stats-card', GraphStatsCard);
+if (!customElements.get('xcode-graph-stats-card')) {
+  customElements.define('xcode-graph-stats-card', GraphStatsCard);
 }

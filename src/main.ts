@@ -7,7 +7,7 @@ import type { GraphApp } from './components/graph-app';
 // Render full Lit app with demo fixture data
 const root = document.getElementById('root');
 if (root) {
-  const app = document.createElement('graph-app') as GraphApp;
+  const app = document.createElement('xcode-graph') as GraphApp;
   app.nodes = tuistGraphData.nodes;
   app.edges = tuistGraphData.edges;
   root.appendChild(app);

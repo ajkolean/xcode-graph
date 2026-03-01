@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphSectionHeader } from './section-header';
 import './section-header';
 
-describe('graph-section-header', () => {
+describe('xcode-graph-section-header', () => {
   it('should render with title', async () => {
     const el = await fixture<GraphSectionHeader>(html`
-      <graph-section-header title="Dependencies"></graph-section-header>
+      <xcode-graph-section-header title="Dependencies"></xcode-graph-section-header>
     `);
 
     expect(el).to.exist;
@@ -20,7 +20,7 @@ describe('graph-section-header', () => {
 
   it('should render count', async () => {
     const el = await fixture<GraphSectionHeader>(html`
-      <graph-section-header title="Test" count="5"></graph-section-header>
+      <xcode-graph-section-header title="Test" count="5"></xcode-graph-section-header>
     `);
 
     const count = el.shadowRoot?.querySelector('.count');
@@ -29,7 +29,7 @@ describe('graph-section-header', () => {
 
   it('should render count with suffix', async () => {
     const el = await fixture<GraphSectionHeader>(html`
-      <graph-section-header title="Test" count="3" suffix="direct"></graph-section-header>
+      <xcode-graph-section-header title="Test" count="3" suffix="direct"></xcode-graph-section-header>
     `);
 
     const count = el.shadowRoot?.querySelector('.count');
@@ -38,7 +38,7 @@ describe('graph-section-header', () => {
 
   it('should default count to 0', async () => {
     const el = await fixture<GraphSectionHeader>(html`
-      <graph-section-header title="Test"></graph-section-header>
+      <xcode-graph-section-header title="Test"></xcode-graph-section-header>
     `);
 
     expect(el.count).to.equal(0);

@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphFilterIcon } from './filter-icon';
 import './filter-icon';
 
-describe('graph-filter-icon', () => {
+describe('xcode-graph-filter-icon', () => {
   it('should render with default properties', async () => {
     const el = await fixture<GraphFilterIcon>(html`
-      <graph-filter-icon></graph-filter-icon>
+      <xcode-graph-filter-icon></xcode-graph-filter-icon>
     `);
 
     expect(el).to.exist;
@@ -20,7 +20,7 @@ describe('graph-filter-icon', () => {
 
   it('should render product-types icon', async () => {
     const el = await fixture<GraphFilterIcon>(html`
-      <graph-filter-icon name="product-types"></graph-filter-icon>
+      <xcode-graph-filter-icon name="product-types"></xcode-graph-filter-icon>
     `);
 
     const svg = el.shadowRoot?.querySelector('svg');
@@ -31,7 +31,7 @@ describe('graph-filter-icon', () => {
 
   it('should render platforms icon', async () => {
     const el = await fixture<GraphFilterIcon>(html`
-      <graph-filter-icon name="platforms"></graph-filter-icon>
+      <xcode-graph-filter-icon name="platforms"></xcode-graph-filter-icon>
     `);
 
     const svg = el.shadowRoot?.querySelector('svg');
@@ -42,7 +42,7 @@ describe('graph-filter-icon', () => {
 
   it('should render projects icon', async () => {
     const el = await fixture<GraphFilterIcon>(html`
-      <graph-filter-icon name="projects"></graph-filter-icon>
+      <xcode-graph-filter-icon name="projects"></xcode-graph-filter-icon>
     `);
 
     const svg = el.shadowRoot?.querySelector('svg');
@@ -53,7 +53,7 @@ describe('graph-filter-icon', () => {
 
   it('should render packages icon', async () => {
     const el = await fixture<GraphFilterIcon>(html`
-      <graph-filter-icon name="packages"></graph-filter-icon>
+      <xcode-graph-filter-icon name="packages"></xcode-graph-filter-icon>
     `);
 
     const svg = el.shadowRoot?.querySelector('svg');
@@ -64,7 +64,7 @@ describe('graph-filter-icon', () => {
 
   it('should support size property', async () => {
     const el = await fixture<GraphFilterIcon>(html`
-      <graph-filter-icon size="24"></graph-filter-icon>
+      <xcode-graph-filter-icon size="24"></xcode-graph-filter-icon>
     `);
 
     expect(el.size).to.equal(24);

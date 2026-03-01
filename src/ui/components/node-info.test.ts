@@ -15,10 +15,10 @@ const mockNode = {
   origin: 'local' as const,
 };
 
-describe('graph-node-info', () => {
+describe('xcode-graph-node-info', () => {
   it('should render title', async () => {
     const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${mockNode}></graph-node-info>
+      <xcode-graph-node-info .node=${mockNode}></xcode-graph-node-info>
     `);
 
     const title = el.shadowRoot?.querySelector('.title');
@@ -27,38 +27,38 @@ describe('graph-node-info', () => {
 
   it('should render platform', async () => {
     const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${mockNode}></graph-node-info>
+      <xcode-graph-node-info .node=${mockNode}></xcode-graph-node-info>
     `);
 
-    const rows = el.shadowRoot?.querySelectorAll('graph-info-row');
+    const rows = el.shadowRoot?.querySelectorAll('xcode-graph-info-row');
     expect(rows?.[0]?.getAttribute('value')).to.equal('iOS');
   });
 
   it('should render origin as "Local Project" for local nodes', async () => {
     const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${mockNode}></graph-node-info>
+      <xcode-graph-node-info .node=${mockNode}></xcode-graph-node-info>
     `);
 
-    const rows = el.shadowRoot?.querySelectorAll('graph-info-row');
+    const rows = el.shadowRoot?.querySelectorAll('xcode-graph-info-row');
     expect(rows?.[1]?.getAttribute('value')).to.equal('Local Project');
   });
 
   it('should render origin as "External Package" for external nodes', async () => {
     const externalNode = { ...mockNode, origin: 'external' as const };
     const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${externalNode}></graph-node-info>
+      <xcode-graph-node-info .node=${externalNode}></xcode-graph-node-info>
     `);
 
-    const rows = el.shadowRoot?.querySelectorAll('graph-info-row');
+    const rows = el.shadowRoot?.querySelectorAll('xcode-graph-info-row');
     expect(rows?.[1]?.getAttribute('value')).to.equal('External Package');
   });
 
   it('should render node type', async () => {
     const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${mockNode}></graph-node-info>
+      <xcode-graph-node-info .node=${mockNode}></xcode-graph-node-info>
     `);
 
-    const rows = el.shadowRoot?.querySelectorAll('graph-info-row');
+    const rows = el.shadowRoot?.querySelectorAll('xcode-graph-info-row');
     // getNodeTypeLabel should return proper label
     expect(rows?.[2]?.getAttribute('value')).to.exist;
   });
@@ -75,7 +75,7 @@ describe('graph-node-info', () => {
       },
     };
     const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${nodeWithForeignBuild}></graph-node-info>
+      <xcode-graph-node-info .node=${nodeWithForeignBuild}></xcode-graph-node-info>
     `);
 
     const titles = el.shadowRoot?.querySelectorAll('.title');
@@ -91,7 +91,7 @@ describe('graph-node-info', () => {
 
   it('should not render foreign build section when foreignBuild is absent', async () => {
     const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${mockNode}></graph-node-info>
+      <xcode-graph-node-info .node=${mockNode}></xcode-graph-node-info>
     `);
 
     const titles = el.shadowRoot?.querySelectorAll('.title');
@@ -112,7 +112,7 @@ describe('graph-node-info', () => {
       },
     };
     const el = await fixture<GraphNodeInfo>(html`
-      <graph-node-info .node=${nodeWithForeignBuild}></graph-node-info>
+      <xcode-graph-node-info .node=${nodeWithForeignBuild}></xcode-graph-node-info>
     `);
 
     const scriptBlock = el.shadowRoot?.querySelector('.script-block');

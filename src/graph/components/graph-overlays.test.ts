@@ -15,16 +15,20 @@ import type {
 import './graph-overlays';
 import { querySvgElement } from './test-helpers/svg-assertions';
 
-describe('graph-background', () => {
+describe('xcode-graph-background', () => {
   it('should render SVG with grid pattern', async () => {
-    const el = await fixture<GraphBackground>(html`<graph-background></graph-background>`);
+    const el = await fixture<GraphBackground>(
+      html`<xcode-graph-background></xcode-graph-background>`,
+    );
 
     const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
     expect(svg).to.exist;
   });
 
   it('should define grid pattern in defs', async () => {
-    const el = await fixture<GraphBackground>(html`<graph-background></graph-background>`);
+    const el = await fixture<GraphBackground>(
+      html`<xcode-graph-background></xcode-graph-background>`,
+    );
 
     const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
     expect(svg).to.exist;
@@ -39,7 +43,9 @@ describe('graph-background', () => {
   });
 
   it('should have rect with grid pattern fill', async () => {
-    const el = await fixture<GraphBackground>(html`<graph-background></graph-background>`);
+    const el = await fixture<GraphBackground>(
+      html`<xcode-graph-background></xcode-graph-background>`,
+    );
 
     const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
     expect(svg).to.exist;
@@ -51,16 +57,20 @@ describe('graph-background', () => {
   });
 });
 
-describe('graph-controls', () => {
+describe('xcode-graph-controls', () => {
   it('should render with default zoom', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
+    const el = await fixture<GraphControls>(
+      html`<xcode-graph-controls zoom="1"></xcode-graph-controls>`,
+    );
 
     expect(el).to.exist;
     expect(el.zoom).to.equal(1);
   });
 
   it('should display zoom percentage correctly', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1.5"></graph-controls>`);
+    const el = await fixture<GraphControls>(
+      html`<xcode-graph-controls zoom="1.5"></xcode-graph-controls>`,
+    );
 
     await el.updateComplete;
 
@@ -69,7 +79,9 @@ describe('graph-controls', () => {
   });
 
   it('should render zoom buttons', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
+    const el = await fixture<GraphControls>(
+      html`<xcode-graph-controls zoom="1"></xcode-graph-controls>`,
+    );
 
     const zoomInBtn = el.shadowRoot?.querySelector('button[title="Zoom in"]');
     const zoomOutBtn = el.shadowRoot?.querySelector('button[title="Zoom out"]');
@@ -82,7 +94,7 @@ describe('graph-controls', () => {
 
   it('should dispatch zoom-step event when zoom in button clicked', async () => {
     const el = await fixture<GraphControls>(
-      html`<graph-controls zoom="1" base-zoom="1"></graph-controls>`,
+      html`<xcode-graph-controls zoom="1" base-zoom="1"></xcode-graph-controls>`,
     );
 
     let eventFired = false;
@@ -98,7 +110,7 @@ describe('graph-controls', () => {
 
   it('should dispatch zoom-step event when zoom out button clicked', async () => {
     const el = await fixture<GraphControls>(
-      html`<graph-controls zoom="1" base-zoom="1"></graph-controls>`,
+      html`<xcode-graph-controls zoom="1" base-zoom="1"></xcode-graph-controls>`,
     );
 
     let eventFired = false;
@@ -115,7 +127,9 @@ describe('graph-controls', () => {
   });
 
   it('should dispatch zoom-reset event when reset button clicked', async () => {
-    const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
+    const el = await fixture<GraphControls>(
+      html`<xcode-graph-controls zoom="1"></xcode-graph-controls>`,
+    );
 
     let eventFired = false;
     el.addEventListener('zoom-reset', () => {
@@ -131,10 +145,10 @@ describe('graph-controls', () => {
   });
 });
 
-describe('graph-visualization-empty-state', () => {
+describe('xcode-graph-visualization-empty-state', () => {
   it('should render empty state message', async () => {
     const el = await fixture<GraphEmptyStateOverlay>(
-      html`<graph-visualization-empty-state></graph-visualization-empty-state>`,
+      html`<xcode-graph-visualization-empty-state></xcode-graph-visualization-empty-state>`,
     );
 
     expect(el).to.exist;
@@ -145,7 +159,7 @@ describe('graph-visualization-empty-state', () => {
 
   it('should render hint text', async () => {
     const el = await fixture<GraphEmptyStateOverlay>(
-      html`<graph-visualization-empty-state></graph-visualization-empty-state>`,
+      html`<xcode-graph-visualization-empty-state></xcode-graph-visualization-empty-state>`,
     );
 
     const hint = el.shadowRoot?.querySelector('.hint');
@@ -154,9 +168,11 @@ describe('graph-visualization-empty-state', () => {
   });
 });
 
-describe('graph-instructions', () => {
+describe('xcode-graph-instructions', () => {
   it('should render instructions text', async () => {
-    const el = await fixture<GraphInstructions>(html`<graph-instructions></graph-instructions>`);
+    const el = await fixture<GraphInstructions>(
+      html`<xcode-graph-instructions></xcode-graph-instructions>`,
+    );
 
     expect(el).to.exist;
     const container = el.shadowRoot?.querySelector('.container');

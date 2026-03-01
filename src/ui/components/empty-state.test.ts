@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphEmptyState } from './empty-state';
 import './empty-state';
 
-describe('graph-empty-state', () => {
+describe('xcode-graph-empty-state', () => {
   it('should show title and description', async () => {
     const el = await fixture<GraphEmptyState>(html`
-      <graph-empty-state></graph-empty-state>
+      <xcode-graph-empty-state></xcode-graph-empty-state>
     `);
 
     const title = el.shadowRoot?.querySelector('.title');
@@ -22,7 +22,7 @@ describe('graph-empty-state', () => {
 
   it('should not show clear button when hasActiveFilters is false', async () => {
     const el = await fixture<GraphEmptyState>(html`
-      <graph-empty-state></graph-empty-state>
+      <xcode-graph-empty-state></xcode-graph-empty-state>
     `);
 
     const button = el.shadowRoot?.querySelector('.clear-button');
@@ -31,7 +31,7 @@ describe('graph-empty-state', () => {
 
   it('should show clear button when hasActiveFilters is true', async () => {
     const el = await fixture<GraphEmptyState>(html`
-      <graph-empty-state has-active-filters></graph-empty-state>
+      <xcode-graph-empty-state has-active-filters></xcode-graph-empty-state>
     `);
 
     const button = el.shadowRoot?.querySelector('.clear-button');
@@ -41,7 +41,7 @@ describe('graph-empty-state', () => {
 
   it('should dispatch clear-filters event when button clicked', async () => {
     const el = await fixture<GraphEmptyState>(html`
-      <graph-empty-state has-active-filters></graph-empty-state>
+      <xcode-graph-empty-state has-active-filters></xcode-graph-empty-state>
     `);
 
     let eventFired = false;
@@ -58,7 +58,7 @@ describe('graph-empty-state', () => {
 
   it('should toggle button visibility when hasActiveFilters changes', async () => {
     const el = await fixture<GraphEmptyState>(html`
-      <graph-empty-state></graph-empty-state>
+      <xcode-graph-empty-state></xcode-graph-empty-state>
     `);
 
     let button = el.shadowRoot?.querySelector('.clear-button');

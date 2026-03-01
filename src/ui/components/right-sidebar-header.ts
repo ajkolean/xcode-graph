@@ -6,10 +6,10 @@
  *
  * @example
  * ```html
- * <graph-right-sidebar-header
+ * <xcode-graph-right-sidebar-header
  *   title="Filters"
  *   is-collapsed
- * ></graph-right-sidebar-header>
+ * ></xcode-graph-right-sidebar-header>
  * ```
  *
  * @fires toggle-collapse - Dispatched when collapse button is clicked
@@ -122,14 +122,14 @@ export class GraphRightSidebarHeader extends LitElement {
           </div>
         `
         }
-        <graph-icon-button
+        <xcode-graph-icon-button
           variant="ghost"
           color="neutral"
           title="${this.isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}"
           @click=${this.handleToggle}
         >
-          <graph-sidebar-collapse-icon ?is-collapsed=${this.isCollapsed}></graph-sidebar-collapse-icon>
-        </graph-icon-button>
+          <xcode-graph-sidebar-collapse-icon ?is-collapsed=${this.isCollapsed}></xcode-graph-sidebar-collapse-icon>
+        </xcode-graph-icon-button>
       </div>
     `;
   }
@@ -138,11 +138,11 @@ export class GraphRightSidebarHeader extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-right-sidebar-header': GraphRightSidebarHeader;
+    'xcode-graph-right-sidebar-header': GraphRightSidebarHeader;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-right-sidebar-header')) {
-  customElements.define('graph-right-sidebar-header', GraphRightSidebarHeader);
+if (!customElements.get('xcode-graph-right-sidebar-header')) {
+  customElements.define('xcode-graph-right-sidebar-header', GraphRightSidebarHeader);
 }

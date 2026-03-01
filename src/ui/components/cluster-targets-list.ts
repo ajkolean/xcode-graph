@@ -6,12 +6,12 @@
  *
  * @example
  * ```html
- * <graph-cluster-targets-list
+ * <xcode-graph-cluster-targets-list
  *   .nodesByType=${nodesByType}
  *   .edges=${edges}
  *   filtered-targets-count="5"
  *   total-targets-count="10"
- * ></graph-cluster-targets-list>
+ * ></xcode-graph-cluster-targets-list>
  * ```
  *
  * @fires node-select - Dispatched when target is clicked (detail: { node })
@@ -239,14 +239,14 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
                         const subtitle = this.formatNodeStatsSubtitle(stats);
 
                         return html`
-                        <graph-list-item-row
+                        <xcode-graph-list-item-row
                           .node=${node}
                           subtitle=${subtitle || ''}
                           .zoom=${this.zoom}
                           @row-select=${this.handleNodeSelect}
                           @row-hover=${this.handleNodeHover}
                           @row-hover-end=${this.handleHoverEnd}
-                        ></graph-list-item-row>
+                        ></xcode-graph-list-item-row>
                       `;
                       },
                     )}
@@ -265,11 +265,11 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-targets-list': GraphClusterTargetsList;
+    'xcode-graph-cluster-targets-list': GraphClusterTargetsList;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-targets-list')) {
-  customElements.define('graph-cluster-targets-list', GraphClusterTargetsList);
+if (!customElements.get('xcode-graph-cluster-targets-list')) {
+  customElements.define('xcode-graph-cluster-targets-list', GraphClusterTargetsList);
 }

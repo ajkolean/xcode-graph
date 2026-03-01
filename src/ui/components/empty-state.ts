@@ -6,7 +6,7 @@
  *
  * @example
  * ```html
- * <graph-empty-state has-active-filters></graph-empty-state>
+ * <xcode-graph-empty-state has-active-filters></xcode-graph-empty-state>
  * ```
  *
  * @fires clear-filters - Dispatched when clear button is clicked
@@ -211,11 +211,11 @@ export class GraphEmptyState extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-empty-state': GraphEmptyState;
+    'xcode-graph-empty-state': GraphEmptyState;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-empty-state')) {
-  customElements.define('graph-empty-state', GraphEmptyState);
+if (!customElements.get('xcode-graph-empty-state')) {
+  customElements.define('xcode-graph-empty-state', GraphEmptyState);
 }

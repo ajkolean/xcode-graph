@@ -7,11 +7,11 @@
  * @example
  * ```html
  * <svg>
- *   <graph-edges
+ *   <xcode-graph-edges
  *     .edges=${edgesArray}
  *     .nodes=${nodesArray}
  *     .finalNodePositions=${positionsMap}
- *   ></graph-edges>
+ *   ></xcode-graph-edges>
  * </svg>
  * ```
  */
@@ -272,7 +272,7 @@ export class GraphEdges extends LitElement {
     );
 
     return html`
-      <graph-edge
+      <xcode-graph-edge
         .x1=${x1}
         .y1=${y1}
         .x2=${x2}
@@ -283,7 +283,7 @@ export class GraphEdges extends LitElement {
         .opacity=${opacity}
         .zoom=${zoom}
         .animated=${isFocused || isHighlighted}
-      ></graph-edge>
+      ></xcode-graph-edge>
     `;
   }
 
@@ -306,11 +306,11 @@ export class GraphEdges extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-edges': GraphEdges;
+    'xcode-graph-edges': GraphEdges;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-edges')) {
-  customElements.define('graph-edges', GraphEdges);
+if (!customElements.get('xcode-graph-edges')) {
+  customElements.define('xcode-graph-edges', GraphEdges);
 }

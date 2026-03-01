@@ -6,7 +6,7 @@
  *
  * @example
  * ```html
- * <graph-placeholder-tab title="Builds"></graph-placeholder-tab>
+ * <xcode-graph-placeholder-tab title="Builds"></xcode-graph-placeholder-tab>
  * ```
  */
 
@@ -80,11 +80,11 @@ export class GraphPlaceholderTab extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-placeholder-tab': GraphPlaceholderTab;
+    'xcode-graph-placeholder-tab': GraphPlaceholderTab;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-placeholder-tab')) {
-  customElements.define('graph-placeholder-tab', GraphPlaceholderTab);
+if (!customElements.get('xcode-graph-placeholder-tab')) {
+  customElements.define('xcode-graph-placeholder-tab', GraphPlaceholderTab);
 }

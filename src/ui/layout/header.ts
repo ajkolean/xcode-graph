@@ -6,7 +6,7 @@
  *
  * @example
  * ```html
- * <graph-header></graph-header>
+ * <xcode-graph-header></xcode-graph-header>
  * ```
  */
 
@@ -342,11 +342,11 @@ export class GraphHeader extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-header': GraphHeader;
+    'xcode-graph-header': GraphHeader;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-header')) {
-  customElements.define('graph-header', GraphHeader);
+if (!customElements.get('xcode-graph-header')) {
+  customElements.define('xcode-graph-header', GraphHeader);
 }

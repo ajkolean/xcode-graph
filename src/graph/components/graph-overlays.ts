@@ -9,9 +9,9 @@
  *
  * @example
  * ```html
- * <graph-background></graph-background>
- * <graph-controls zoom="1.0"></graph-controls>
- * <graph-visualization-empty-state></graph-visualization-empty-state>
+ * <xcode-graph-background></xcode-graph-background>
+ * <xcode-graph-controls zoom="1.0"></xcode-graph-controls>
+ * <xcode-graph-visualization-empty-state></xcode-graph-visualization-empty-state>
  * ```
  */
 
@@ -356,27 +356,27 @@ export class GraphInstructions extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-background': GraphBackground;
-    'graph-controls': GraphControls;
-    'graph-visualization-empty-state': GraphEmptyStateOverlay;
-    'graph-instructions': GraphInstructions;
+    'xcode-graph-background': GraphBackground;
+    'xcode-graph-controls': GraphControls;
+    'xcode-graph-visualization-empty-state': GraphEmptyStateOverlay;
+    'xcode-graph-instructions': GraphInstructions;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-background')) {
-  customElements.define('graph-background', GraphBackground);
+if (!customElements.get('xcode-graph-background')) {
+  customElements.define('xcode-graph-background', GraphBackground);
 }
 
-if (!customElements.get('graph-controls')) {
-  customElements.define('graph-controls', GraphControls);
+if (!customElements.get('xcode-graph-controls')) {
+  customElements.define('xcode-graph-controls', GraphControls);
 }
 
 // Use a unique tag to avoid clashing with the sidebar empty state component
-if (!customElements.get('graph-visualization-empty-state')) {
-  customElements.define('graph-visualization-empty-state', GraphEmptyStateOverlay);
+if (!customElements.get('xcode-graph-visualization-empty-state')) {
+  customElements.define('xcode-graph-visualization-empty-state', GraphEmptyStateOverlay);
 }
 
-if (!customElements.get('graph-instructions')) {
-  customElements.define('graph-instructions', GraphInstructions);
+if (!customElements.get('xcode-graph-instructions')) {
+  customElements.define('xcode-graph-instructions', GraphInstructions);
 }

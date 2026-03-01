@@ -7,7 +7,7 @@
  * @example
  * ```html
  * <svg>
- *   <graph-edge
+ *   <xcode-graph-edge
  *     x1="100"
  *     y1="100"
  *     x2="200"
@@ -15,7 +15,7 @@
  *     color="#8B5CF6"
  *     is-highlighted
  *     animated
- *   ></graph-edge>
+ *   ></xcode-graph-edge>
  * </svg>
  * ```
  */
@@ -144,11 +144,11 @@ export class GraphEdge extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-edge': GraphEdge;
+    'xcode-graph-edge': GraphEdge;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-edge')) {
-  customElements.define('graph-edge', GraphEdge);
+if (!customElements.get('xcode-graph-edge')) {
+  customElements.define('xcode-graph-edge', GraphEdge);
 }

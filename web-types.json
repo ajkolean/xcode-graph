@@ -1,13 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/JetBrains/web-types/master/schema/web-types.json",
-  "name": "@tuist/graph",
+  "name": "xcode-graph",
   "version": "1.34.0",
   "description-markup": "markdown",
   "contributions": {
     "html": {
       "elements": [
         {
-          "name": "graph-canvas",
+          "name": "xcode-graph-canvas",
           "description": "Canvas-based interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard",
           "doc-url": "",
           "attributes": [
@@ -136,7 +136,7 @@
           }
         },
         {
-          "name": "graph-background",
+          "name": "xcode-graph-background",
           "description": "Grid pattern background overlay\n---\n",
           "doc-url": "",
           "attributes": [],
@@ -144,7 +144,7 @@
           "js": { "properties": [], "events": [] }
         },
         {
-          "name": "graph-controls",
+          "name": "xcode-graph-controls",
           "description": "Zoom controls overlay\n---\n\n\n### **Events:**\n - **zoom-step** - Dispatched when a zoom step button is clicked (detail: number)\n- **zoom-reset** - Dispatched when the fit-to-view button is clicked",
           "doc-url": "",
           "attributes": [
@@ -187,7 +187,7 @@
           }
         },
         {
-          "name": "graph-visualization-empty-state",
+          "name": "xcode-graph-visualization-empty-state",
           "description": "Empty state message overlay\n---\n",
           "doc-url": "",
           "attributes": [],
@@ -195,7 +195,7 @@
           "js": { "properties": [], "events": [] }
         },
         {
-          "name": "graph-instructions",
+          "name": "xcode-graph-instructions",
           "description": "Usage instructions overlay\n---\n",
           "doc-url": "",
           "attributes": [],
@@ -203,7 +203,7 @@
           "js": { "properties": [], "events": [] }
         },
         {
-          "name": "graph-sidebar-collapse-icon",
+          "name": "xcode-graph-sidebar-collapse-icon",
           "description": "Animated collapse/expand chevron icon\n---\n",
           "doc-url": "",
           "attributes": [
@@ -226,7 +226,7 @@
           }
         },
         {
-          "name": "graph-icon-button",
+          "name": "xcode-graph-icon-button",
           "description": "Icon button with variant and color options\n---\n\n\n### **Slots:**\n - _default_ - Icon content (typically an SVG element)",
           "doc-url": "",
           "attributes": [
@@ -295,7 +295,7 @@
           }
         },
         {
-          "name": "graph-right-sidebar-header",
+          "name": "xcode-graph-right-sidebar-header",
           "description": "Right sidebar header with collapse toggle\n---\n\n\n### **Events:**\n - **toggle-collapse** - Dispatched when the collapse button is clicked",
           "doc-url": "",
           "attributes": [
@@ -326,7 +326,7 @@
           }
         },
         {
-          "name": "graph-collapsed-sidebar",
+          "name": "xcode-graph-collapsed-sidebar",
           "description": "Collapsed sidebar icon bar with filter badges\n---\n\n\n### **Events:**\n - **expand-to-section** - Dispatched when a section icon is clicked (detail: { section })",
           "doc-url": "",
           "attributes": [
@@ -365,7 +365,7 @@
           }
         },
         {
-          "name": "graph-info-row",
+          "name": "xcode-graph-info-row",
           "description": "Key-value pair display row\n---\n\n\n### **Slots:**\n - _default_ - Default slot for complex value content (overrides value prop)",
           "doc-url": "",
           "attributes": [
@@ -404,7 +404,7 @@
           }
         },
         {
-          "name": "graph-build-settings",
+          "name": "xcode-graph-build-settings",
           "description": "Collapsible build settings display for a node\n---\n",
           "doc-url": "",
           "attributes": [
@@ -432,7 +432,7 @@
           }
         },
         {
-          "name": "graph-stats-card",
+          "name": "xcode-graph-stats-card",
           "description": "Stats metric card with optional toggle behavior\n---\n\n\n### **Events:**\n - **card-toggle** - Dispatched when a toggleable card is clicked",
           "doc-url": "",
           "attributes": [
@@ -517,7 +517,7 @@
           }
         },
         {
-          "name": "graph-metrics-section",
+          "name": "xcode-graph-metrics-section",
           "description": "Metrics grid with toggleable stats cards\n---\n\n\n### **Events:**\n - **card**\n- **toggle-direct-deps** - Dispatched when direct dependencies card is toggled\n- **toggle-transitive-deps** - Dispatched when transitive dependencies card is toggled\n- **toggle-direct-dependents** - Dispatched when direct dependents card is toggled\n- **toggle-transitive-dependents** - Dispatched when transitive dependents card is toggled",
           "doc-url": "",
           "attributes": [
@@ -613,7 +613,7 @@
           }
         },
         {
-          "name": "graph-badge",
+          "name": "xcode-graph-badge",
           "description": "Color-themed badge with pill, rounded, and accent variants\n---\n\n\n### **CSS Properties:**\n - **--badge-bg** - Background color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-border** - Border color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-color** - Text color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-bg-hover** - Background color on hover (computed from color prop) _(default: undefined)_\n- **--badge-border-hover** - Border color on hover (computed from color prop) _(default: undefined)_\n- **--badge-glow** - Glow color on hover (computed from color prop) _(default: undefined)_",
           "doc-url": "",
           "attributes": [
@@ -686,7 +686,7 @@
           }
         },
         {
-          "name": "graph-panel-header",
+          "name": "xcode-graph-panel-header",
           "description": "Reusable panel header with back button and badge slots\n---\n\n\n### **Events:**\n - **back** - Dispatched when the back button is clicked\n\n### **Slots:**\n - **icon** - Icon content for the icon box (SVG or other element)\n- **badges** - Badge elements to display below the header",
           "doc-url": "",
           "attributes": [
@@ -761,7 +761,7 @@
           }
         },
         {
-          "name": "graph-tag-badge",
+          "name": "xcode-graph-tag-badge",
           "description": "Color-coded architecture tag badge\n---\n",
           "doc-url": "",
           "attributes": [
@@ -794,7 +794,7 @@
           }
         },
         {
-          "name": "graph-node-header",
+          "name": "xcode-graph-node-header",
           "description": "Node details header with icon, badges, and tags\n---\n\n\n### **Events:**\n - **cluster-click** - Dispatched when a cluster badge is clicked (detail: { clusterId })\n- **close** - Dispatched when the back/close button is clicked",
           "doc-url": "",
           "attributes": [
@@ -837,7 +837,7 @@
           }
         },
         {
-          "name": "graph-deployment-targets",
+          "name": "xcode-graph-deployment-targets",
           "description": "Platform deployment targets and destination badges\n---\n",
           "doc-url": "",
           "attributes": [
@@ -870,7 +870,7 @@
           }
         },
         {
-          "name": "graph-node-info",
+          "name": "xcode-graph-node-info",
           "description": "Collapsible node information details section\n---\n",
           "doc-url": "",
           "attributes": [
@@ -889,7 +889,7 @@
           }
         },
         {
-          "name": "graph-list-item-row",
+          "name": "xcode-graph-list-item-row",
           "description": "Node list row with icon, name, and chevron\n---\n\n\n### **Events:**\n - **row-select** - Dispatched when the row is clicked (detail: { node })\n- **row-hover** - Dispatched on mouse enter (detail: { nodeId })\n- **row-hover-end** - Dispatched on mouse leave",
           "doc-url": "",
           "attributes": [
@@ -941,7 +941,7 @@
           }
         },
         {
-          "name": "graph-node-list",
+          "name": "xcode-graph-node-list",
           "description": "Collapsible node list with section header and kind badges\n---\n\n\n### **Events:**\n - **node-select** - Dispatched when a node row is clicked (detail: { node })\n- **node-hover** - Dispatched on node row hover (detail: { nodeId })\n\n### **Methods:**\n \n\n",
           "doc-url": "",
           "attributes": [
@@ -1042,7 +1042,7 @@
           }
         },
         {
-          "name": "graph-node-details-panel",
+          "name": "xcode-graph-node-details-panel",
           "description": "Node details panel with metrics, info, and dependency lists\n---\n\n\n### **Events:**\n - **eventName**\n- **close** - Dispatched when the panel close/back button is clicked\n- **node-select** - Dispatched when a dependency or dependent node is clicked (detail: { node })\n- **cluster-select** - Dispatched when a cluster badge is clicked (detail: { clusterId })\n- **node-hover** - Dispatched when hovering a dependency or dependent node (detail: { nodeId })\n- **toggle-direct-deps** - Dispatched when the direct dependencies metric card is toggled\n- **toggle-transitive-deps** - Dispatched when the transitive dependencies metric card is toggled\n- **toggle-direct-dependents** - Dispatched when the direct dependents metric card is toggled\n- **toggle-transitive-dependents** - Dispatched when the transitive dependents metric card is toggled",
           "doc-url": "",
           "attributes": [
@@ -1147,7 +1147,7 @@
           }
         },
         {
-          "name": "graph-section-header",
+          "name": "xcode-graph-section-header",
           "description": "Section header with title and count display\n---\n",
           "doc-url": "",
           "attributes": [
@@ -1190,7 +1190,7 @@
           }
         },
         {
-          "name": "graph-cluster-composition",
+          "name": "xcode-graph-cluster-composition",
           "description": "Collapsible cluster composition statistics\n---\n",
           "doc-url": "",
           "attributes": [
@@ -1218,7 +1218,7 @@
           }
         },
         {
-          "name": "graph-cluster-header",
+          "name": "xcode-graph-cluster-header",
           "description": "Cluster details panel header with icon, badges, and path\n---\n\n\n### **Events:**\n - **back** - Dispatched when back button is clicked",
           "doc-url": "",
           "attributes": [
@@ -1254,7 +1254,7 @@
           }
         },
         {
-          "name": "graph-cluster-stats",
+          "name": "xcode-graph-cluster-stats",
           "description": "Collapsible cluster metrics with stats cards and breakdowns\n---\n\n\n### **Events:**\n - **card**\n- **toggle-direct-deps** - Dispatched when dependencies card is toggled\n- **toggle-direct-dependents** - Dispatched when dependents card is toggled",
           "doc-url": "",
           "attributes": [
@@ -1313,7 +1313,7 @@
           }
         },
         {
-          "name": "graph-cluster-targets-list",
+          "name": "xcode-graph-cluster-targets-list",
           "description": "Collapsible cluster targets list grouped by node type\n---\n\n\n### **Events:**\n - **node-select** - Dispatched when a target is clicked (detail: { node })\n- **node-hover** - Dispatched on hover (detail: { nodeId })\n\n### **Methods:**\n \n\n",
           "doc-url": "",
           "attributes": [
@@ -1367,7 +1367,7 @@
           }
         },
         {
-          "name": "graph-cluster-details-panel",
+          "name": "xcode-graph-cluster-details-panel",
           "description": "Cluster details panel with header, stats, and targets\n---\n\n\n### **Events:**\n - **eventName**\n- **close** - Dispatched when the back button is clicked\n- **node-select** - Dispatched when a target node is selected (detail: { node })\n- **node-hover** - Dispatched when a target node is hovered (detail: { nodeId })",
           "doc-url": "",
           "attributes": [
@@ -1422,7 +1422,7 @@
           }
         },
         {
-          "name": "graph-clear-filters-button",
+          "name": "xcode-graph-clear-filters-button",
           "description": "Button to clear all active filters\n---\n\n\n### **Events:**\n - **clear-filters** - Dispatched when button is clicked (only when active)",
           "doc-url": "",
           "attributes": [
@@ -1457,7 +1457,7 @@
           }
         },
         {
-          "name": "graph-search-bar",
+          "name": "xcode-graph-search-bar",
           "description": "Search input for filtering nodes\n---\n\n\n### **Events:**\n - **search-change** - Dispatched when the search query changes (detail: { query: string })\n- **search-clear** - Dispatched when the clear button is clicked or Escape is pressed",
           "doc-url": "",
           "attributes": [
@@ -1502,7 +1502,7 @@
           }
         },
         {
-          "name": "graph-filter-section",
+          "name": "xcode-graph-filter-section",
           "description": "Collapsible filter section with toggleable checkbox items\n---\n\n\n### **Events:**\n - **section-toggle** - Dispatched when the section header is clicked\n- **item-toggle** - Dispatched when an item checkbox is toggled (detail: { key, checked })\n- **preview-change** - Dispatched on item hover for filter preview (detail: { type, value } or null)\n\n### **Slots:**\n - **icon** - Icon to display in the section header",
           "doc-url": "",
           "attributes": [
@@ -1567,7 +1567,7 @@
           }
         },
         {
-          "name": "graph-empty-state",
+          "name": "xcode-graph-empty-state",
           "description": "Empty state message with optional clear filters action\n---\n\n\n### **Events:**\n - **clear-filters** - Dispatched when the clear filters button is clicked",
           "doc-url": "",
           "attributes": [
@@ -1602,7 +1602,7 @@
           }
         },
         {
-          "name": "graph-right-sidebar",
+          "name": "xcode-graph-right-sidebar",
           "description": "Right sidebar with filters, search, and detail panels\n---\n",
           "doc-url": "",
           "attributes": [],
@@ -1619,7 +1619,7 @@
           }
         },
         {
-          "name": "graph-tab",
+          "name": "xcode-graph-tab",
           "description": "Graph tab layout orchestrator\n---\n\n\n### **Slots:**\n - **filter-view** - Slot for injecting a custom filter view into the right sidebar",
           "doc-url": "",
           "attributes": [],
@@ -1646,7 +1646,7 @@
           }
         },
         {
-          "name": "graph-error-toast",
+          "name": "xcode-graph-error-toast",
           "description": "Individual error notification toast with severity styling\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the toast is dismissed (detail: { errorId })\n- **action** - Dispatched when the action button is clicked (detail: { error })",
           "doc-url": "",
           "attributes": [
@@ -1687,7 +1687,7 @@
           }
         },
         {
-          "name": "graph-error-notification-container",
+          "name": "xcode-graph-error-notification-container",
           "description": "Error toast notification stack manager\n---\n",
           "doc-url": "",
           "attributes": [],
@@ -1695,7 +1695,7 @@
           "js": { "properties": [], "events": [] }
         },
         {
-          "name": "graph-app",
+          "name": "xcode-graph",
           "description": "Embeddable graph visualization entry point\n---\n\n\n### **Methods:**\n - **loadRawGraph(raw: _unknown_): _void_** - Load raw Tuist graph JSON (the output of `tuist graph --format json`).\nTransforms it into GraphData and sets nodes/edges automatically.\nShows user-facing warnings/errors via ErrorService if the transform has issues.",
           "doc-url": "",
           "attributes": [],
@@ -1709,7 +1709,7 @@
           }
         },
         {
-          "name": "graph-cluster-card",
+          "name": "xcode-graph-cluster-card",
           "description": "SVG cluster card background\n---\n\n\n### **Events:**\n - **cluster-click** - Dispatched when the card is clicked (detail: { cluster })",
           "doc-url": "",
           "attributes": [
@@ -1759,7 +1759,7 @@
           }
         },
         {
-          "name": "graph-edge",
+          "name": "xcode-graph-edge",
           "description": "SVG edge connection between graph nodes\n---\n",
           "doc-url": "",
           "attributes": [
@@ -1798,7 +1798,7 @@
           }
         },
         {
-          "name": "graph-edges",
+          "name": "xcode-graph-edges",
           "description": "Collection renderer for all graph edges\n---\n",
           "doc-url": "",
           "attributes": [
@@ -1851,7 +1851,7 @@
           }
         },
         {
-          "name": "graph-node",
+          "name": "xcode-graph-node",
           "description": "SVG graph node with icon and label\n---\n\n\n### **Events:**\n - **node-mouseenter** - Dispatched on mouse enter\n- **node-mouseleave** - Dispatched on mouse leave\n- **node-mousedown** - Dispatched on mouse down (detail: { originalEvent })\n- **node-click** - Dispatched on click (detail: { originalEvent })",
           "doc-url": "",
           "attributes": [
@@ -1929,7 +1929,7 @@
           }
         },
         {
-          "name": "graph-cluster-group",
+          "name": "xcode-graph-cluster-group",
           "description": "Cluster group orchestrating card, edges, and nodes\n---\n\n\n### **Events:**\n - **cluster-mouseenter** - Dispatched when the cluster is hovered\n- **cluster-mouseleave** - Dispatched when the cluster hover ends\n- **cluster-click** - Dispatched when the cluster is clicked\n- **node-mouseenter** - Dispatched when a child node is hovered (detail: { nodeId })\n- **node-mouseleave** - Dispatched when a child node hover ends\n- **node-mousedown** - Dispatched on child node mouse down (detail: { nodeId, originalEvent })\n- **node-click** - Dispatched on child node click (detail: { node, originalEvent })",
           "doc-url": "",
           "attributes": [
@@ -2064,7 +2064,7 @@
           }
         },
         {
-          "name": "graph-cluster",
+          "name": "xcode-graph-cluster",
           "description": "SVG cluster container with label and glow effects\n---\n\n\n### **Events:**\n - **cluster-mouseenter** - Dispatched on mouse enter\n- **cluster-mouseleave** - Dispatched on mouse leave\n- **cluster-click** - Dispatched on click\n\n### **Slots:**\n - _default_ - Default slot for child nodes and edges",
           "doc-url": "",
           "attributes": [
@@ -2133,7 +2133,7 @@
           }
         },
         {
-          "name": "graph-svg-defs",
+          "name": "xcode-graph-svg-defs",
           "description": "Reusable SVG defs for graph filters, markers, and shapes\n---\n",
           "doc-url": "",
           "attributes": [],
@@ -2141,7 +2141,7 @@
           "js": { "properties": [], "events": [] }
         },
         {
-          "name": "graph-virtual-renderer",
+          "name": "xcode-graph-virtual-renderer",
           "description": "Viewport-culled virtual node renderer\n---\n\n\n### **Methods:**\n - **getVirtualRenderingStats(): _{\n    totalNodes: number;\n    visibleNodes: number;\n    culledNodes: number;\n    cullingRatio: number;\n    percentageCulled: number;\n    renderCount: number;\n  }_** - Get statistics about virtual rendering efficiency",
           "doc-url": "",
           "attributes": [
@@ -2177,7 +2177,7 @@
           }
         },
         {
-          "name": "graph-action-button",
+          "name": "xcode-graph-action-button",
           "description": "Action button with color variants and active states\n---\n\n\n### **Slots:**\n - **icon** - Optional icon to display before the text\n- _default_ - Button text content",
           "doc-url": "",
           "attributes": [
@@ -2237,7 +2237,7 @@
           }
         },
         {
-          "name": "graph-alert-banner",
+          "name": "xcode-graph-alert-banner",
           "description": "Dismissible alert banner with icon, message, and actions\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the banner is dismissed\n\n### **Slots:**\n - **icon** - Optional icon to display\n- **badge** - Optional badge to display next to the title\n- **actions** - Optional action buttons\n- _default_ - Default slot for additional content",
           "doc-url": "",
           "attributes": [
@@ -2311,7 +2311,7 @@
           }
         },
         {
-          "name": "graph-cluster-type-badge",
+          "name": "xcode-graph-cluster-type-badge",
           "description": "Cluster type badge showing package or project\n---\n",
           "doc-url": "",
           "attributes": [
@@ -2344,7 +2344,7 @@
           }
         },
         {
-          "name": "graph-collapsible-section",
+          "name": "xcode-graph-collapsible-section",
           "description": "Expandable/collapsible section with animated chevron\n---\n\n\n### **Events:**\n - **toggle** - Dispatched when the header is clicked\n\n### **Slots:**\n - **icon** - Optional icon to display before the title\n- _default_ - Default slot for expandable content",
           "doc-url": "",
           "attributes": [
@@ -2396,7 +2396,7 @@
           }
         },
         {
-          "name": "graph-cycle-warning",
+          "name": "xcode-graph-cycle-warning",
           "description": "Dismissible circular dependency warning banner\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the warning is dismissed",
           "doc-url": "",
           "attributes": [],
@@ -2419,7 +2419,7 @@
           }
         },
         {
-          "name": "graph-filter-icon",
+          "name": "xcode-graph-filter-icon",
           "description": "Filter section icon with multiple named variants\n---\n",
           "doc-url": "",
           "attributes": [
@@ -2455,7 +2455,7 @@
           }
         },
         {
-          "name": "graph-panel-section",
+          "name": "xcode-graph-panel-section",
           "description": "Panel section container with configurable padding and borders\n---\n\n\n### **Slots:**\n - _default_ - Default slot for section content",
           "doc-url": "",
           "attributes": [
@@ -2499,7 +2499,7 @@
           }
         },
         {
-          "name": "graph-header",
+          "name": "xcode-graph-header",
           "description": "Mission control themed header bar\n---\n",
           "doc-url": "",
           "attributes": [],
@@ -2507,7 +2507,7 @@
           "js": { "properties": [], "events": [] }
         },
         {
-          "name": "graph-placeholder-tab",
+          "name": "xcode-graph-placeholder-tab",
           "description": "Coming soon placeholder tab\n---\n",
           "doc-url": "",
           "attributes": [
@@ -2530,7 +2530,7 @@
           }
         },
         {
-          "name": "graph-sidebar",
+          "name": "xcode-graph-sidebar",
           "description": "Left sidebar navigation component\n---\n\n\n### **Events:**\n - **tab-change** - Dispatched when a tab is clicked (detail: { tab: string })",
           "doc-url": "",
           "attributes": [

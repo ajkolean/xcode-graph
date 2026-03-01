@@ -7,17 +7,17 @@ import { describe, it } from 'vitest';
 import type { GraphStatsCard } from './stats-card';
 import './stats-card';
 
-describe('graph-stats-card', () => {
+describe('xcode-graph-stats-card', () => {
   // ========================================
   // Rendering Tests
   // ========================================
 
   it('should render with custom properties', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card
+      <xcode-graph-stats-card
         label="Total Nodes"
         value="42"
-      ></graph-stats-card>
+      ></xcode-graph-stats-card>
     `);
 
     expect(el.label).to.equal('Total Nodes');
@@ -28,10 +28,10 @@ describe('graph-stats-card', () => {
 
   it('should accept number value', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card
+      <xcode-graph-stats-card
         label="Count"
         .value=${123}
-      ></graph-stats-card>
+      ></xcode-graph-stats-card>
     `);
 
     expect(el.value).to.equal(123);
@@ -39,11 +39,11 @@ describe('graph-stats-card', () => {
 
   it('should accept highlighted property', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card
+      <xcode-graph-stats-card
         label="Highlighted"
         value="100"
         highlighted
-      ></graph-stats-card>
+      ></xcode-graph-stats-card>
     `);
 
     expect(el.highlighted).to.be.true;
@@ -55,7 +55,7 @@ describe('graph-stats-card', () => {
 
   it('should render label in shadow DOM', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Test Label" value="42"></graph-stats-card>
+      <xcode-graph-stats-card label="Test Label" value="42"></xcode-graph-stats-card>
     `);
 
     const shadowRoot = el.shadowRoot;
@@ -68,7 +68,7 @@ describe('graph-stats-card', () => {
 
   it('should render value in shadow DOM', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Count" value="999"></graph-stats-card>
+      <xcode-graph-stats-card label="Count" value="999"></xcode-graph-stats-card>
     `);
 
     const value = el.shadowRoot?.querySelector('.value');
@@ -78,7 +78,7 @@ describe('graph-stats-card', () => {
 
   it('should apply highlighted class when highlighted prop is true', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Test" value="42" highlighted></graph-stats-card>
+      <xcode-graph-stats-card label="Test" value="42" highlighted></xcode-graph-stats-card>
     `);
 
     const value = el.shadowRoot?.querySelector('.value');
@@ -87,7 +87,7 @@ describe('graph-stats-card', () => {
 
   it('should not apply highlighted class when highlighted prop is false', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Test" value="42"></graph-stats-card>
+      <xcode-graph-stats-card label="Test" value="42"></xcode-graph-stats-card>
     `);
 
     const value = el.shadowRoot?.querySelector('.value');
@@ -100,7 +100,7 @@ describe('graph-stats-card', () => {
 
   it('should update label when property changes', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Initial" value="1"></graph-stats-card>
+      <xcode-graph-stats-card label="Initial" value="1"></xcode-graph-stats-card>
     `);
 
     const label = el.shadowRoot?.querySelector('.label');
@@ -115,7 +115,7 @@ describe('graph-stats-card', () => {
 
   it('should update value when property changes', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Count" value="1"></graph-stats-card>
+      <xcode-graph-stats-card label="Count" value="1"></xcode-graph-stats-card>
     `);
 
     const value = el.shadowRoot?.querySelector('.value');
@@ -130,7 +130,7 @@ describe('graph-stats-card', () => {
 
   it('should update highlighted state when property changes', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Test" value="1"></graph-stats-card>
+      <xcode-graph-stats-card label="Test" value="1"></xcode-graph-stats-card>
     `);
 
     const value = el.shadowRoot?.querySelector('.value');
@@ -149,7 +149,7 @@ describe('graph-stats-card', () => {
 
   it('should handle empty label gracefully', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card value="42"></graph-stats-card>
+      <xcode-graph-stats-card value="42"></xcode-graph-stats-card>
     `);
 
     expect(el).to.exist;
@@ -159,7 +159,7 @@ describe('graph-stats-card', () => {
 
   it('should handle empty value gracefully', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Count"></graph-stats-card>
+      <xcode-graph-stats-card label="Count"></xcode-graph-stats-card>
     `);
 
     expect(el).to.exist;
@@ -169,7 +169,7 @@ describe('graph-stats-card', () => {
 
   it('should handle zero value', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Count" .value=${0}></graph-stats-card>
+      <xcode-graph-stats-card label="Count" .value=${0}></xcode-graph-stats-card>
     `);
 
     const value = el.shadowRoot?.querySelector('.value');

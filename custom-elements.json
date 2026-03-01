@@ -168,6 +168,13 @@
             },
             {
               "kind": "field",
+              "name": "resize",
+              "privacy": "private",
+              "readonly": true,
+              "default": "new ResizeController(this, () => this.resizeCanvas())"
+            },
+            {
+              "kind": "field",
               "name": "interactionState",
               "type": {
                 "text": "InteractionState"
@@ -392,11 +399,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "handleResize",
-              "privacy": "private"
-            },
-            {
               "kind": "method",
               "name": "resizeCanvas",
               "privacy": "private"
@@ -589,7 +591,7 @@
             "package": "lit"
           },
           "summary": "Canvas-based interactive graph visualization",
-          "tagName": "graph-canvas",
+          "tagName": "xcode-graph-canvas",
           "customElement": true
         }
       ],
@@ -604,7 +606,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-canvas",
+          "name": "xcode-graph-canvas",
           "declaration": {
             "name": "GraphCanvas",
             "module": "src/graph/components/graph-canvas.ts"
@@ -626,7 +628,7 @@
             "package": "lit"
           },
           "summary": "Grid pattern background overlay",
-          "tagName": "graph-background",
+          "tagName": "xcode-graph-background",
           "customElement": true
         },
         {
@@ -797,7 +799,7 @@
             "package": "lit"
           },
           "summary": "Zoom controls overlay",
-          "tagName": "graph-controls",
+          "tagName": "xcode-graph-controls",
           "customElement": true
         },
         {
@@ -810,7 +812,7 @@
             "package": "lit"
           },
           "summary": "Empty state message overlay",
-          "tagName": "graph-visualization-empty-state",
+          "tagName": "xcode-graph-visualization-empty-state",
           "customElement": true
         },
         {
@@ -823,7 +825,7 @@
             "package": "lit"
           },
           "summary": "Usage instructions overlay",
-          "tagName": "graph-instructions",
+          "tagName": "xcode-graph-instructions",
           "customElement": true
         }
       ],
@@ -862,7 +864,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-background",
+          "name": "xcode-graph-background",
           "declaration": {
             "name": "GraphBackground",
             "module": "src/graph/components/graph-overlays.ts"
@@ -870,7 +872,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-controls",
+          "name": "xcode-graph-controls",
           "declaration": {
             "name": "GraphControls",
             "module": "src/graph/components/graph-overlays.ts"
@@ -878,7 +880,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-visualization-empty-state",
+          "name": "xcode-graph-visualization-empty-state",
           "declaration": {
             "name": "GraphEmptyStateOverlay",
             "module": "src/graph/components/graph-overlays.ts"
@@ -886,7 +888,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-instructions",
+          "name": "xcode-graph-instructions",
           "declaration": {
             "name": "GraphInstructions",
             "module": "src/graph/components/graph-overlays.ts"
@@ -928,7 +930,7 @@
             "package": "lit"
           },
           "summary": "Animated collapse/expand chevron icon",
-          "tagName": "graph-sidebar-collapse-icon",
+          "tagName": "xcode-graph-sidebar-collapse-icon",
           "customElement": true
         }
       ],
@@ -943,7 +945,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-sidebar-collapse-icon",
+          "name": "xcode-graph-sidebar-collapse-icon",
           "declaration": {
             "name": "GraphSidebarCollapseIcon",
             "module": "src/ui/components/sidebar-collapse-icon.ts"
@@ -1087,7 +1089,7 @@
             "package": "lit"
           },
           "summary": "Icon button with variant and color options",
-          "tagName": "graph-icon-button",
+          "tagName": "xcode-graph-icon-button",
           "customElement": true
         }
       ],
@@ -1102,7 +1104,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-icon-button",
+          "name": "xcode-graph-icon-button",
           "declaration": {
             "name": "GraphIconButton",
             "module": "src/ui/components/icon-button.ts"
@@ -1186,7 +1188,7 @@
             "package": "lit"
           },
           "summary": "Right sidebar header with collapse toggle",
-          "tagName": "graph-right-sidebar-header",
+          "tagName": "xcode-graph-right-sidebar-header",
           "customElement": true
         }
       ],
@@ -1201,7 +1203,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-right-sidebar-header",
+          "name": "xcode-graph-right-sidebar-header",
           "declaration": {
             "name": "GraphRightSidebarHeader",
             "module": "src/ui/components/right-sidebar-header.ts"
@@ -1370,7 +1372,7 @@
             "package": "lit"
           },
           "summary": "Collapsed sidebar icon bar with filter badges",
-          "tagName": "graph-collapsed-sidebar",
+          "tagName": "xcode-graph-collapsed-sidebar",
           "customElement": true
         }
       ],
@@ -1385,7 +1387,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-collapsed-sidebar",
+          "name": "xcode-graph-collapsed-sidebar",
           "declaration": {
             "name": "GraphCollapsedSidebar",
             "module": "src/ui/components/collapsed-sidebar.ts"
@@ -1454,7 +1456,7 @@
             "package": "lit"
           },
           "summary": "Key-value pair display row",
-          "tagName": "graph-info-row",
+          "tagName": "xcode-graph-info-row",
           "customElement": true
         }
       ],
@@ -1469,7 +1471,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-info-row",
+          "name": "xcode-graph-info-row",
           "declaration": {
             "name": "GraphInfoRow",
             "module": "src/ui/components/info-row.ts"
@@ -1573,7 +1575,7 @@
             "package": "lit"
           },
           "summary": "Collapsible build settings display for a node",
-          "tagName": "graph-build-settings",
+          "tagName": "xcode-graph-build-settings",
           "customElement": true
         }
       ],
@@ -1588,7 +1590,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-build-settings",
+          "name": "xcode-graph-build-settings",
           "declaration": {
             "name": "GraphBuildSettings",
             "module": "src/ui/components/build-settings.ts"
@@ -1729,7 +1731,7 @@
             "package": "lit"
           },
           "summary": "Stats metric card with optional toggle behavior",
-          "tagName": "graph-stats-card",
+          "tagName": "xcode-graph-stats-card",
           "customElement": true
         }
       ],
@@ -1744,7 +1746,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-stats-card",
+          "name": "xcode-graph-stats-card",
           "declaration": {
             "name": "GraphStatsCard",
             "module": "src/ui/components/stats-card.ts"
@@ -2017,7 +2019,7 @@
             "package": "lit"
           },
           "summary": "Metrics grid with toggleable stats cards",
-          "tagName": "graph-metrics-section",
+          "tagName": "xcode-graph-metrics-section",
           "customElement": true
         }
       ],
@@ -2032,7 +2034,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-metrics-section",
+          "name": "xcode-graph-metrics-section",
           "declaration": {
             "name": "GraphMetricsSection",
             "module": "src/ui/components/metrics-section.ts"
@@ -2205,7 +2207,7 @@
             "package": "lit"
           },
           "summary": "Color-themed badge with pill, rounded, and accent variants",
-          "tagName": "graph-badge",
+          "tagName": "xcode-graph-badge",
           "customElement": true
         }
       ],
@@ -2220,7 +2222,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-badge",
+          "name": "xcode-graph-badge",
           "declaration": {
             "name": "GraphBadge",
             "module": "src/ui/components/badge.ts"
@@ -2339,7 +2341,7 @@
             "package": "lit"
           },
           "summary": "Reusable panel header with back button and badge slots",
-          "tagName": "graph-panel-header",
+          "tagName": "xcode-graph-panel-header",
           "customElement": true
         }
       ],
@@ -2354,7 +2356,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-panel-header",
+          "name": "xcode-graph-panel-header",
           "declaration": {
             "name": "GraphPanelHeader",
             "module": "src/ui/components/panel-header.ts"
@@ -2425,7 +2427,7 @@
             "package": "lit"
           },
           "summary": "Color-coded architecture tag badge",
-          "tagName": "graph-tag-badge",
+          "tagName": "xcode-graph-tag-badge",
           "customElement": true
         }
       ],
@@ -2440,7 +2442,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-tag-badge",
+          "name": "xcode-graph-tag-badge",
           "declaration": {
             "name": "GraphTagBadge",
             "module": "src/ui/components/tag-badge.ts"
@@ -2525,7 +2527,7 @@
             "package": "lit"
           },
           "summary": "Node details header with icon, badges, and tags",
-          "tagName": "graph-node-header",
+          "tagName": "xcode-graph-node-header",
           "customElement": true
         }
       ],
@@ -2540,7 +2542,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-node-header",
+          "name": "xcode-graph-node-header",
           "declaration": {
             "name": "GraphNodeHeader",
             "module": "src/ui/components/node-header.ts"
@@ -2610,7 +2612,7 @@
             "package": "lit"
           },
           "summary": "Platform deployment targets and destination badges",
-          "tagName": "graph-deployment-targets",
+          "tagName": "xcode-graph-deployment-targets",
           "customElement": true
         }
       ],
@@ -2625,7 +2627,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-deployment-targets",
+          "name": "xcode-graph-deployment-targets",
           "declaration": {
             "name": "GraphDeploymentTargets",
             "module": "src/ui/components/deployment-targets.ts"
@@ -2739,7 +2741,7 @@
             "package": "lit"
           },
           "summary": "Collapsible node information details section",
-          "tagName": "graph-node-info",
+          "tagName": "xcode-graph-node-info",
           "customElement": true
         }
       ],
@@ -2754,7 +2756,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-node-info",
+          "name": "xcode-graph-node-info",
           "declaration": {
             "name": "GraphNodeInfo",
             "module": "src/ui/components/node-info.ts"
@@ -2879,7 +2881,7 @@
             "package": "lit"
           },
           "summary": "Node list row with icon, name, and chevron",
-          "tagName": "graph-list-item-row",
+          "tagName": "xcode-graph-list-item-row",
           "customElement": true
         }
       ],
@@ -2894,7 +2896,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-list-item-row",
+          "name": "xcode-graph-list-item-row",
           "declaration": {
             "name": "GraphListItemRow",
             "module": "src/ui/components/list-item-row.ts"
@@ -3279,7 +3281,7 @@
             "module": "/src/ui/components/node-list-events"
           },
           "summary": "Collapsible node list with section header and kind badges",
-          "tagName": "graph-node-list",
+          "tagName": "xcode-graph-node-list",
           "customElement": true
         }
       ],
@@ -3294,7 +3296,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-node-list",
+          "name": "xcode-graph-node-list",
           "declaration": {
             "name": "GraphNodeList",
             "module": "src/ui/components/node-list.ts"
@@ -3505,7 +3507,7 @@
             "package": "lit"
           },
           "summary": "Node details panel with metrics, info, and dependency lists",
-          "tagName": "graph-node-details-panel",
+          "tagName": "xcode-graph-node-details-panel",
           "customElement": true
         }
       ],
@@ -3520,7 +3522,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-node-details-panel",
+          "name": "xcode-graph-node-details-panel",
           "declaration": {
             "name": "GraphNodeDetailsPanel",
             "module": "src/ui/components/node-details-panel.ts"
@@ -3600,7 +3602,7 @@
             "package": "lit"
           },
           "summary": "Section header with title and count display",
-          "tagName": "graph-section-header",
+          "tagName": "xcode-graph-section-header",
           "customElement": true
         }
       ],
@@ -3615,7 +3617,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-section-header",
+          "name": "xcode-graph-section-header",
           "declaration": {
             "name": "GraphSectionHeader",
             "module": "src/ui/components/section-header.ts"
@@ -3736,7 +3738,7 @@
             "package": "lit"
           },
           "summary": "Collapsible cluster composition statistics",
-          "tagName": "graph-cluster-composition",
+          "tagName": "xcode-graph-cluster-composition",
           "customElement": true
         }
       ],
@@ -3751,7 +3753,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster-composition",
+          "name": "xcode-graph-cluster-composition",
           "declaration": {
             "name": "GraphClusterComposition",
             "module": "src/ui/components/cluster-composition.ts"
@@ -3891,7 +3893,7 @@
             "package": "lit"
           },
           "summary": "Cluster details panel header with icon, badges, and path",
-          "tagName": "graph-cluster-header",
+          "tagName": "xcode-graph-cluster-header",
           "customElement": true
         }
       ],
@@ -3906,7 +3908,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster-header",
+          "name": "xcode-graph-cluster-header",
           "declaration": {
             "name": "GraphClusterHeader",
             "module": "src/ui/components/cluster-header.ts"
@@ -4111,7 +4113,7 @@
             "package": "lit"
           },
           "summary": "Collapsible cluster metrics with stats cards and breakdowns",
-          "tagName": "graph-cluster-stats",
+          "tagName": "xcode-graph-cluster-stats",
           "customElement": true
         }
       ],
@@ -4126,7 +4128,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster-stats",
+          "name": "xcode-graph-cluster-stats",
           "declaration": {
             "name": "GraphClusterStats",
             "module": "src/ui/components/cluster-stats.ts"
@@ -4371,7 +4373,7 @@
             "module": "/src/ui/components/node-list-events"
           },
           "summary": "Collapsible cluster targets list grouped by node type",
-          "tagName": "graph-cluster-targets-list",
+          "tagName": "xcode-graph-cluster-targets-list",
           "customElement": true
         }
       ],
@@ -4386,7 +4388,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster-targets-list",
+          "name": "xcode-graph-cluster-targets-list",
           "declaration": {
             "name": "GraphClusterTargetsList",
             "module": "src/ui/components/cluster-targets-list.ts"
@@ -4552,7 +4554,7 @@
             "package": "lit"
           },
           "summary": "Cluster details panel with header, stats, and targets",
-          "tagName": "graph-cluster-details-panel",
+          "tagName": "xcode-graph-cluster-details-panel",
           "customElement": true
         }
       ],
@@ -4567,7 +4569,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster-details-panel",
+          "name": "xcode-graph-cluster-details-panel",
           "declaration": {
             "name": "GraphClusterDetailsPanel",
             "module": "src/ui/components/cluster-details-panel.ts"
@@ -4623,7 +4625,7 @@
             "package": "lit"
           },
           "summary": "Button to clear all active filters",
-          "tagName": "graph-clear-filters-button",
+          "tagName": "xcode-graph-clear-filters-button",
           "customElement": true
         }
       ],
@@ -4638,7 +4640,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-clear-filters-button",
+          "name": "xcode-graph-clear-filters-button",
           "declaration": {
             "name": "GraphClearFiltersButton",
             "module": "src/ui/components/clear-filters-button.ts"
@@ -4674,19 +4676,10 @@
             },
             {
               "kind": "field",
-              "name": "handleGlobalKeyDown",
+              "name": "shortcut",
               "privacy": "private",
-              "readonly": true
-            },
-            {
-              "kind": "method",
-              "name": "isInputFocused",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "boolean"
-                }
-              }
+              "readonly": true,
+              "default": "new KeyboardShortcutController(this, { key: '/', onTrigger: () => this.inputElement?.focus(), })"
             },
             {
               "kind": "method",
@@ -4751,7 +4744,7 @@
             "package": "lit"
           },
           "summary": "Search input for filtering nodes",
-          "tagName": "graph-search-bar",
+          "tagName": "xcode-graph-search-bar",
           "customElement": true
         }
       ],
@@ -4766,7 +4759,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-search-bar",
+          "name": "xcode-graph-search-bar",
           "declaration": {
             "name": "GraphSearchBar",
             "module": "src/ui/components/search-bar.ts"
@@ -5005,7 +4998,7 @@
             "package": "lit"
           },
           "summary": "Collapsible filter section with toggleable checkbox items",
-          "tagName": "graph-filter-section",
+          "tagName": "xcode-graph-filter-section",
           "customElement": true
         }
       ],
@@ -5020,7 +5013,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-filter-section",
+          "name": "xcode-graph-filter-section",
           "declaration": {
             "name": "GraphFilterSection",
             "module": "src/ui/components/filter-section.ts"
@@ -5086,7 +5079,7 @@
             "package": "lit"
           },
           "summary": "Empty state message with optional clear filters action",
-          "tagName": "graph-empty-state",
+          "tagName": "xcode-graph-empty-state",
           "customElement": true
         }
       ],
@@ -5101,7 +5094,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-empty-state",
+          "name": "xcode-graph-empty-state",
           "declaration": {
             "name": "GraphEmptyState",
             "module": "src/ui/components/empty-state.ts"
@@ -5434,7 +5427,7 @@
             "module": "src/ui/components/right-sidebar.ts"
           },
           "summary": "Right sidebar with filters, search, and detail panels",
-          "tagName": "graph-right-sidebar",
+          "tagName": "xcode-graph-right-sidebar",
           "customElement": true
         }
       ],
@@ -5449,7 +5442,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-right-sidebar",
+          "name": "xcode-graph-right-sidebar",
           "declaration": {
             "name": "GraphRightSidebar",
             "module": "src/ui/components/right-sidebar.ts"
@@ -5634,7 +5627,7 @@
             "module": "src/ui/layout/graph-tab.ts"
           },
           "summary": "Graph tab layout orchestrator",
-          "tagName": "graph-tab",
+          "tagName": "xcode-graph-tab",
           "customElement": true
         }
       ],
@@ -5649,7 +5642,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-tab",
+          "name": "xcode-graph-tab",
           "declaration": {
             "name": "GraphTab",
             "module": "src/ui/layout/graph-tab.ts"
@@ -5736,7 +5729,7 @@
             "package": "lit"
           },
           "summary": "Individual error notification toast with severity styling",
-          "tagName": "graph-error-toast",
+          "tagName": "xcode-graph-error-toast",
           "customElement": true
         }
       ],
@@ -5751,7 +5744,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-error-toast",
+          "name": "xcode-graph-error-toast",
           "declaration": {
             "name": "GraphErrorToast",
             "module": "src/ui/components/error-toast.ts"
@@ -5810,7 +5803,7 @@
             "module": "src/ui/components/error-notification-container.ts"
           },
           "summary": "Error toast notification stack manager",
-          "tagName": "graph-error-notification-container",
+          "tagName": "xcode-graph-error-notification-container",
           "customElement": true
         }
       ],
@@ -5825,7 +5818,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-error-notification-container",
+          "name": "xcode-graph-error-notification-container",
           "declaration": {
             "name": "GraphErrorNotificationContainer",
             "module": "src/ui/components/error-notification-container.ts"
@@ -5937,7 +5930,7 @@
             "module": "src/components/graph-app.ts"
           },
           "summary": "Embeddable graph visualization entry point",
-          "tagName": "graph-app",
+          "tagName": "xcode-graph",
           "customElement": true
         }
       ],
@@ -5952,7 +5945,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-app",
+          "name": "xcode-graph",
           "declaration": {
             "name": "GraphApp",
             "module": "src/components/graph-app.ts"
@@ -6180,7 +6173,7 @@
             "package": "lit"
           },
           "summary": "SVG cluster card background",
-          "tagName": "graph-cluster-card",
+          "tagName": "xcode-graph-cluster-card",
           "customElement": true
         }
       ],
@@ -6195,7 +6188,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster-card",
+          "name": "xcode-graph-cluster-card",
           "declaration": {
             "name": "GraphClusterCard",
             "module": "src/graph/components/cluster-card.ts"
@@ -6385,7 +6378,7 @@
             "package": "lit"
           },
           "summary": "SVG edge connection between graph nodes",
-          "tagName": "graph-edge",
+          "tagName": "xcode-graph-edge",
           "customElement": true
         }
       ],
@@ -6400,7 +6393,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-edge",
+          "name": "xcode-graph-edge",
           "declaration": {
             "name": "GraphEdge",
             "module": "src/graph/components/graph-edge.ts"
@@ -6728,7 +6721,7 @@
             "package": "lit"
           },
           "summary": "Collection renderer for all graph edges",
-          "tagName": "graph-edges",
+          "tagName": "xcode-graph-edges",
           "customElement": true
         }
       ],
@@ -6743,7 +6736,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-edges",
+          "name": "xcode-graph-edges",
           "declaration": {
             "name": "GraphEdges",
             "module": "src/graph/components/graph-edges.ts"
@@ -7226,7 +7219,7 @@
             "package": "lit"
           },
           "summary": "SVG graph node with icon and label",
-          "tagName": "graph-node",
+          "tagName": "xcode-graph-node",
           "customElement": true
         }
       ],
@@ -7241,7 +7234,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-node",
+          "name": "xcode-graph-node",
           "declaration": {
             "name": "GraphNode",
             "module": "src/graph/components/graph-node.ts"
@@ -7658,7 +7651,7 @@
             "package": "lit"
           },
           "summary": "Cluster group orchestrating card, edges, and nodes",
-          "tagName": "graph-cluster-group",
+          "tagName": "xcode-graph-cluster-group",
           "customElement": true
         }
       ],
@@ -7673,7 +7666,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster-group",
+          "name": "xcode-graph-cluster-group",
           "declaration": {
             "name": "GraphClusterGroup",
             "module": "src/graph/components/cluster-group.ts"
@@ -7904,7 +7897,7 @@
             "package": "lit"
           },
           "summary": "SVG cluster container with label and glow effects",
-          "tagName": "graph-cluster",
+          "tagName": "xcode-graph-cluster",
           "customElement": true
         }
       ],
@@ -7919,7 +7912,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster",
+          "name": "xcode-graph-cluster",
           "declaration": {
             "name": "GraphCluster",
             "module": "src/graph/components/graph-cluster.ts"
@@ -7941,7 +7934,7 @@
             "package": "lit"
           },
           "summary": "Reusable SVG defs for graph filters, markers, and shapes",
-          "tagName": "graph-svg-defs",
+          "tagName": "xcode-graph-svg-defs",
           "customElement": true
         }
       ],
@@ -7956,7 +7949,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-svg-defs",
+          "name": "xcode-graph-svg-defs",
           "declaration": {
             "name": "GraphSVGDefs",
             "module": "src/graph/components/graph-svg-defs.ts"
@@ -8455,7 +8448,7 @@
             "package": "lit"
           },
           "summary": "Viewport-culled virtual node renderer",
-          "tagName": "graph-virtual-renderer",
+          "tagName": "xcode-graph-virtual-renderer",
           "customElement": true
         }
       ],
@@ -8470,7 +8463,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-virtual-renderer",
+          "name": "xcode-graph-virtual-renderer",
           "declaration": {
             "name": "GraphVirtualRenderer",
             "module": "src/graph/components/virtual-renderer.ts"
@@ -8587,7 +8580,7 @@
             "package": "lit"
           },
           "summary": "Action button with color variants and active states",
-          "tagName": "graph-action-button",
+          "tagName": "xcode-graph-action-button",
           "customElement": true
         }
       ],
@@ -8602,7 +8595,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-action-button",
+          "name": "xcode-graph-action-button",
           "declaration": {
             "name": "GraphActionButton",
             "module": "src/ui/components/action-button.ts"
@@ -8750,7 +8743,7 @@
             "package": "lit"
           },
           "summary": "Dismissible alert banner with icon, message, and actions",
-          "tagName": "graph-alert-banner",
+          "tagName": "xcode-graph-alert-banner",
           "customElement": true
         }
       ],
@@ -8765,7 +8758,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-alert-banner",
+          "name": "xcode-graph-alert-banner",
           "declaration": {
             "name": "GraphAlertBanner",
             "module": "src/ui/components/alert-banner.ts"
@@ -8833,7 +8826,7 @@
             "package": "lit"
           },
           "summary": "Cluster type badge showing package or project",
-          "tagName": "graph-cluster-type-badge",
+          "tagName": "xcode-graph-cluster-type-badge",
           "customElement": true
         }
       ],
@@ -8848,7 +8841,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cluster-type-badge",
+          "name": "xcode-graph-cluster-type-badge",
           "declaration": {
             "name": "GraphClusterTypeBadge",
             "module": "src/ui/components/cluster-type-badge.ts"
@@ -8935,7 +8928,7 @@
             "package": "lit"
           },
           "summary": "Expandable/collapsible section with animated chevron",
-          "tagName": "graph-collapsible-section",
+          "tagName": "xcode-graph-collapsible-section",
           "customElement": true
         }
       ],
@@ -8950,7 +8943,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-collapsible-section",
+          "name": "xcode-graph-collapsible-section",
           "declaration": {
             "name": "GraphCollapsibleSection",
             "module": "src/ui/components/collapsible-section.ts"
@@ -9036,7 +9029,7 @@
             "package": "lit"
           },
           "summary": "Dismissible circular dependency warning banner",
-          "tagName": "graph-cycle-warning",
+          "tagName": "xcode-graph-cycle-warning",
           "customElement": true
         }
       ],
@@ -9051,7 +9044,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-cycle-warning",
+          "name": "xcode-graph-cycle-warning",
           "declaration": {
             "name": "GraphCycleWarning",
             "module": "src/ui/components/cycle-warning.ts"
@@ -9140,7 +9133,7 @@
             "package": "lit"
           },
           "summary": "Filter section icon with multiple named variants",
-          "tagName": "graph-filter-icon",
+          "tagName": "xcode-graph-filter-icon",
           "customElement": true
         }
       ],
@@ -9155,7 +9148,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-filter-icon",
+          "name": "xcode-graph-filter-icon",
           "declaration": {
             "name": "GraphFilterIcon",
             "module": "src/ui/components/filter-icon.ts"
@@ -9249,7 +9242,7 @@
             "package": "lit"
           },
           "summary": "Panel section container with configurable padding and borders",
-          "tagName": "graph-panel-section",
+          "tagName": "xcode-graph-panel-section",
           "customElement": true
         }
       ],
@@ -9264,7 +9257,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-panel-section",
+          "name": "xcode-graph-panel-section",
           "declaration": {
             "name": "GraphPanelSection",
             "module": "src/ui/components/panel-section.ts"
@@ -9297,7 +9290,7 @@
             "package": "lit"
           },
           "summary": "Mission control themed header bar",
-          "tagName": "graph-header",
+          "tagName": "xcode-graph-header",
           "customElement": true
         }
       ],
@@ -9312,7 +9305,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-header",
+          "name": "xcode-graph-header",
           "declaration": {
             "name": "GraphHeader",
             "module": "src/ui/layout/header.ts"
@@ -9354,7 +9347,7 @@
             "package": "lit"
           },
           "summary": "Coming soon placeholder tab",
-          "tagName": "graph-placeholder-tab",
+          "tagName": "xcode-graph-placeholder-tab",
           "customElement": true
         }
       ],
@@ -9369,7 +9362,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-placeholder-tab",
+          "name": "xcode-graph-placeholder-tab",
           "declaration": {
             "name": "GraphPlaceholderTab",
             "module": "src/ui/layout/placeholder-tab.ts"
@@ -9478,7 +9471,7 @@
             "package": "lit"
           },
           "summary": "Left sidebar navigation component",
-          "tagName": "graph-sidebar",
+          "tagName": "xcode-graph-sidebar",
           "customElement": true
         }
       ],
@@ -9501,7 +9494,7 @@
         },
         {
           "kind": "custom-element-definition",
-          "name": "graph-sidebar",
+          "name": "xcode-graph-sidebar",
           "declaration": {
             "name": "GraphSidebar",
             "module": "src/ui/layout/sidebar.ts"

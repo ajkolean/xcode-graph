@@ -29,11 +29,9 @@ import type { ReactiveController, ReactiveControllerHost } from 'lit';
  * Automatically adds the listener on connect and removes it on disconnect.
  */
 export class ResizeController implements ReactiveController {
-  private readonly host: ReactiveControllerHost;
   private readonly onResize: () => void;
 
   constructor(host: ReactiveControllerHost, onResize: () => void) {
-    this.host = host;
     this.onResize = onResize;
     host.addController(this);
   }

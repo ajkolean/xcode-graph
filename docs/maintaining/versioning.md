@@ -14,7 +14,7 @@ This package tracks XcodeGraph's version:
 - **major.minor** matches XcodeGraph (signals compatibility)
 - **patch** is ours (UI-only fixes within the same XcodeGraph version)
 
-For example, `@tuist/graph@1.35.2` means "compatible with XcodeGraph 1.35.x, second UI patch".
+For example, `xcode-graph@1.35.2` means "compatible with XcodeGraph 1.35.x, second UI patch".
 
 The `xcodegraph` field in `package.json` records the exact XcodeGraph version
 that was tested against. The publish workflow enforces major.minor alignment.

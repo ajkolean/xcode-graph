@@ -6,14 +6,14 @@
  *
  * @example
  * ```html
- * <graph-action-button
+ * <xcode-graph-action-button
  *   variant="primary"
  *   ?active=${isActive}
  *   ?full-width=${true}
  * >
  *   <span slot="icon">🎯</span>
  *   Show Dependency Chain
- * </graph-action-button>
+ * </xcode-graph-action-button>
  * ```
  *
  * @fires click - Native click event
@@ -225,11 +225,11 @@ export class GraphActionButton extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-action-button': GraphActionButton;
+    'xcode-graph-action-button': GraphActionButton;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-action-button')) {
-  customElements.define('graph-action-button', GraphActionButton);
+if (!customElements.get('xcode-graph-action-button')) {
+  customElements.define('xcode-graph-action-button', GraphActionButton);
 }

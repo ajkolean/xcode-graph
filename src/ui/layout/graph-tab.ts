@@ -6,11 +6,11 @@
  *
  * @example
  * ```html
- * <graph-tab
+ * <xcode-graph-tab
  *   .displayNodes=${nodes}
  *   .displayEdges=${edges}
  *   .allNodes=${allNodes}
- * ></graph-tab>
+ * ></xcode-graph-tab>
  * ```
  */
 
@@ -69,7 +69,7 @@ export class GraphTab extends SignalWatcherLitElement {
   // Properties
   // ========================================
 
-  @query('graph-canvas')
+  @query('xcode-graph-canvas')
   private declare canvasElement: GraphCanvas;
 
   @property({ attribute: false })
@@ -185,7 +185,7 @@ export class GraphTab extends SignalWatcherLitElement {
         <!-- Graph + Sidebar -->
         <div class="content">
           <div class="graph-container">
-            <graph-controls
+            <xcode-graph-controls
               .zoom=${watch(zoom)}
               .baseZoom=${watch(baseZoom)}
               .nodeCount=${this.displayNodes.length}
@@ -196,9 +196,9 @@ export class GraphTab extends SignalWatcherLitElement {
               @zoom-step=${this.handleZoomStep}
               @zoom-reset=${this.handleZoomReset}
               @toggle-animation=${this.handleToggleAnimation}
-            ></graph-controls>
+            ></xcode-graph-controls>
 
-            <graph-canvas
+            <xcode-graph-canvas
               .nodes=${this.displayNodes}
               .edges=${this.displayEdges}
               .selectedNode=${watch(selectedNode)}
@@ -223,11 +223,11 @@ export class GraphTab extends SignalWatcherLitElement {
               @zoom-reset=${this.handleZoomReset}
               @zoom-change=${this.handleZoomChange}
               @toggle-animation=${this.handleToggleAnimation}
-            ></graph-canvas>
+            ></xcode-graph-canvas>
           </div>
 
           <!-- Right Sidebar -->
-          <graph-right-sidebar
+          <xcode-graph-right-sidebar
             .allNodes=${this.allNodes}
             .allEdges=${this.allEdges}
             .filteredNodes=${this.filteredNodes}
@@ -236,7 +236,7 @@ export class GraphTab extends SignalWatcherLitElement {
             collapsed
           >
             <slot name="filter-view" slot="filter-view"></slot>
-          </graph-right-sidebar>
+          </xcode-graph-right-sidebar>
         </div>
       </div>
     `;
@@ -246,11 +246,11 @@ export class GraphTab extends SignalWatcherLitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-tab': GraphTab;
+    'xcode-graph-tab': GraphTab;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-tab')) {
-  customElements.define('graph-tab', GraphTab);
+if (!customElements.get('xcode-graph-tab')) {
+  customElements.define('xcode-graph-tab', GraphTab);
 }

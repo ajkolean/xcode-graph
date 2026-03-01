@@ -10,7 +10,7 @@
  * @example
  * ```html
  * <svg>
- *   <graph-svg-defs></graph-svg-defs>
+ *   <xcode-graph-svg-defs></xcode-graph-svg-defs>
  *   <!-- Other SVG content can reference the defined filters/markers/shapes -->
  * </svg>
  * ```
@@ -104,11 +104,11 @@ export class GraphSVGDefs extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-svg-defs': GraphSVGDefs;
+    'xcode-graph-svg-defs': GraphSVGDefs;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-svg-defs')) {
-  customElements.define('graph-svg-defs', GraphSVGDefs);
+if (!customElements.get('xcode-graph-svg-defs')) {
+  customElements.define('xcode-graph-svg-defs', GraphSVGDefs);
 }

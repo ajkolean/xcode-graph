@@ -15,11 +15,11 @@
  *
  * @example
  * ```html
- * <graph-error-toast
+ * <xcode-graph-error-toast
  *   .error=${error}
  *   @dismiss=${handleDismiss}
  *   @action=${handleAction}
- * ></graph-error-toast>
+ * ></xcode-graph-error-toast>
  * ```
  */
 
@@ -55,7 +55,7 @@ const SEVERITY_ICONS = {
  * @fires dismiss - Dispatched when the toast is dismissed (detail: { errorId })
  * @fires action - Dispatched when the action button is clicked (detail: { error })
  */
-@customElement('graph-error-toast')
+@customElement('xcode-graph-error-toast')
 export class GraphErrorToast extends LitElement {
   // ========================================
   // Properties
@@ -327,6 +327,6 @@ export class GraphErrorToast extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-error-toast': GraphErrorToast;
+    'xcode-graph-error-toast': GraphErrorToast;
   }
 }

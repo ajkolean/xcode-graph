@@ -6,12 +6,12 @@
  *
  * @example
  * ```html
- * <graph-right-sidebar
+ * <xcode-graph-right-sidebar
  *   .allNodes=${nodes}
  *   .allEdges=${edges}
  *   .filteredNodes=${filteredNodes}
  *   .filteredEdges=${filteredEdges}
- * ></graph-right-sidebar>
+ * ></xcode-graph-right-sidebar>
  * ```
  */
 
@@ -417,7 +417,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
   private renderCollapsedSidebar(currentFilters: ReturnType<typeof filters.get>) {
     return html`
-      <graph-collapsed-sidebar
+      <xcode-graph-collapsed-sidebar
         .filteredNodes=${this.filteredNodes}
         .filteredEdges=${this.filteredEdges}
         .typeCounts=${this.filterData.typeCounts}
@@ -430,7 +430,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         packages-filter-size=${currentFilters.packages.size}
         @expand-to-section=${(e: CustomEvent) =>
           this.handleExpandToSection(e.detail.section as SidebarSection)}
-      ></graph-collapsed-sidebar>
+      ></xcode-graph-collapsed-sidebar>
     `;
   }
 
@@ -445,7 +445,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     },
   ) {
     return html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${node}
         .allNodes=${this.allNodes}
         .edges=${this.allEdges}
@@ -464,7 +464,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         @toggle-transitive-deps=${() => toggleHighlight('transitive-deps')}
         @toggle-direct-dependents=${() => toggleHighlight('direct-dependents')}
         @toggle-transitive-dependents=${() => toggleHighlight('transitive-dependents')}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `;
   }
 
@@ -477,7 +477,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     },
   ) {
     return html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${this.findClusterById(clusterId)}
         .clusterNodes=${this.allNodes.filter(
           (n) => (n.type === NodeType.Package ? n.name : n.project) === clusterId,
@@ -493,7 +493,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         @node-hover=${(e: CustomEvent) => setHoveredNode(e.detail.nodeId)}
         @toggle-direct-deps=${() => toggleHighlight('direct-deps')}
         @toggle-direct-dependents=${() => toggleHighlight('direct-dependents')}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `;
   }
 
@@ -513,36 +513,36 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     return html`
       <div class="filter-content">
         <div class="filter-scroll">
-          <graph-search-bar
+          <xcode-graph-search-bar
             search-query=${currentSearchQuery || ''}
             @search-change=${(e: CustomEvent) => this.handleSearchChange(e.detail.query)}
             @search-clear=${() => this.handleSearchChange('')}
-          ></graph-search-bar>
+          ></xcode-graph-search-bar>
 
-          <graph-clear-filters-button
+          <xcode-graph-clear-filters-button
             ?is-active=${hasAnyFiltering}
             @clear-filters=${() => this.handleClearFilters()}
-          ></graph-clear-filters-button>
+          ></xcode-graph-clear-filters-button>
 
           <div class="stats-row">
-            <graph-stats-card
+            <xcode-graph-stats-card
               label="Nodes"
               value="${this.filteredNodes?.length ?? 0}/${this.allNodes?.length ?? 0}"
               ?highlighted=${nodesFiltered}
-            ></graph-stats-card>
-            <graph-stats-card
+            ></xcode-graph-stats-card>
+            <xcode-graph-stats-card
               label="Dependencies"
               value="${this.filteredEdges?.length ?? 0}/${this.allEdges?.length ?? 0}"
               ?highlighted=${edgesFiltered}
-            ></graph-stats-card>
+            ></xcode-graph-stats-card>
           </div>
           ${when(
             this.filteredNodes?.length === 0,
             () => html`
-                <graph-empty-state
+                <xcode-graph-empty-state
                   ?has-active-filters=${hasAnyFiltering}
                   @clear-filters=${() => this.handleClearFilters()}
-                ></graph-empty-state>
+                ></xcode-graph-empty-state>
               `,
           )}
 
@@ -563,7 +563,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     const { nodeTypeItems, platformItems, projectItems, packageItems } = items;
 
     return html`
-      <graph-filter-section
+      <xcode-graph-filter-section
         id="productTypes"
         title="Product Types"
         icon-name="product-types"
@@ -576,9 +576,9 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         @item-toggle=${(e: CustomEvent) =>
           this.handleItemToggle('nodeType', e.detail.key, e.detail.checked)}
         @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
-      ></graph-filter-section>
+      ></xcode-graph-filter-section>
 
-      <graph-filter-section
+      <xcode-graph-filter-section
         id="platforms"
         title="Platforms"
         icon-name="platforms"
@@ -591,9 +591,9 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         @item-toggle=${(e: CustomEvent) =>
           this.handleItemToggle('platform', e.detail.key, e.detail.checked)}
         @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
-      ></graph-filter-section>
+      ></xcode-graph-filter-section>
 
-      <graph-filter-section
+      <xcode-graph-filter-section
         id="projects"
         title="Projects"
         icon-name="projects"
@@ -606,14 +606,14 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         @item-toggle=${(e: CustomEvent) =>
           this.handleItemToggle('project', e.detail.key, e.detail.checked)}
         @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
-      ></graph-filter-section>
+      ></xcode-graph-filter-section>
 
       ${when(packageItems.length, () => html`<div class="section-divider"></div>`)}
 
       ${when(
         packageItems.length,
         () => html`
-            <graph-filter-section
+            <xcode-graph-filter-section
               id="packages"
               title="Packages"
               icon-name="packages"
@@ -626,7 +626,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
               @item-toggle=${(e: CustomEvent) =>
                 this.handleItemToggle('package', e.detail.key, e.detail.checked)}
               @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
-            ></graph-filter-section>
+            ></xcode-graph-filter-section>
           `,
       )}
     `;
@@ -643,14 +643,14 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         <button class="breadcrumb-button" @click=${this.handleBackToFilters}>
           ← Back to Filters
         </button>
-        <graph-icon-button
+        <xcode-graph-icon-button
           variant="ghost"
           color="neutral"
           title="Collapse sidebar"
           @click=${this.handleToggleCollapse}
         >
-          <graph-sidebar-collapse-icon></graph-sidebar-collapse-icon>
-        </graph-icon-button>
+          <xcode-graph-sidebar-collapse-icon></xcode-graph-sidebar-collapse-icon>
+        </xcode-graph-icon-button>
       </div>
     `;
   }
@@ -777,12 +777,12 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         ${when(
           !this.isViewingDetails || isCollapsed,
           () => html`
-            <graph-right-sidebar-header
+            <xcode-graph-right-sidebar-header
               title=${this.workspaceName}
               ?is-collapsed=${isCollapsed}
               ?has-active-filters=${isFiltersActive}
               @toggle-collapse=${this.handleToggleCollapse}
-            ></graph-right-sidebar-header>
+            ></xcode-graph-right-sidebar-header>
           `,
         )}
 
@@ -795,11 +795,11 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-right-sidebar': GraphRightSidebar;
+    'xcode-graph-right-sidebar': GraphRightSidebar;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-right-sidebar')) {
-  customElements.define('graph-right-sidebar', GraphRightSidebar);
+if (!customElements.get('xcode-graph-right-sidebar')) {
+  customElements.define('xcode-graph-right-sidebar', GraphRightSidebar);
 }

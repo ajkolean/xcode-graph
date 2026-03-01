@@ -6,10 +6,10 @@
  *
  * @example
  * ```html
- * <graph-node-header
+ * <xcode-graph-node-header
  *   .node=${nodeData}
  *   zoom="1.0"
- * ></graph-node-header>
+ * ></xcode-graph-node-header>
  * ```
  *
  * @fires close - Dispatched when back/close button clicked
@@ -139,7 +139,7 @@ export class GraphNodeHeader extends LitElement {
     const hasTags = this.node.tags && this.node.tags.length > 0;
 
     return html`
-      <graph-panel-header
+      <xcode-graph-panel-header
         title=${this.node.name}
         subtitle=${subtitle || ''}
         color=${nodeDisplayColor}
@@ -164,49 +164,49 @@ export class GraphNodeHeader extends LitElement {
         ${
           showClusterBadge
             ? html`
-              <graph-badge
+              <xcode-graph-badge
                 slot="badges"
                 label=${clusterBadgeLabel}
                 color=${clusterDisplayColor}
-              ></graph-badge>
+              ></xcode-graph-badge>
             `
             : ''
         }
-        <graph-badge
+        <xcode-graph-badge
           slot="badges"
           label=${getNodeTypeLabel(this.node.type)}
           color=${nodeDisplayColor}
-        ></graph-badge>
+        ></xcode-graph-badge>
         ${
           this.node.isRemote
             ? html`
-              <graph-badge
+              <xcode-graph-badge
                 slot="badges"
                 label="Remote"
                 color="var(--colors-warning)"
-              ></graph-badge>
+              ></xcode-graph-badge>
             `
             : ''
         }
         ${
           this.node.foreignBuild
             ? html`
-              <graph-badge
+              <xcode-graph-badge
                 slot="badges"
                 label="Foreign Build"
                 color="var(--colors-warning)"
-              ></graph-badge>
+              ></xcode-graph-badge>
             `
             : ''
         }
-      </graph-panel-header>
+      </xcode-graph-panel-header>
 
       <!-- Architecture Tags -->
       ${
         hasTags && this.node.tags
           ? html`
             <div class="tags-container">
-              ${this.node.tags.map((tag) => html`<graph-tag-badge tag=${tag}></graph-tag-badge>`)}
+              ${this.node.tags.map((tag) => html`<xcode-graph-tag-badge tag=${tag}></xcode-graph-tag-badge>`)}
             </div>
           `
           : nothing
@@ -218,11 +218,11 @@ export class GraphNodeHeader extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-node-header': GraphNodeHeader;
+    'xcode-graph-node-header': GraphNodeHeader;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-node-header')) {
-  customElements.define('graph-node-header', GraphNodeHeader);
+if (!customElements.get('xcode-graph-node-header')) {
+  customElements.define('xcode-graph-node-header', GraphNodeHeader);
 }

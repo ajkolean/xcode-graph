@@ -7,14 +7,14 @@ import { describe, it } from 'vitest';
 import type { GraphSidebarCollapseIcon } from './sidebar-collapse-icon';
 import './sidebar-collapse-icon';
 
-describe('graph-sidebar-collapse-icon', () => {
+describe('xcode-graph-sidebar-collapse-icon', () => {
   it('should render different chevron paths for collapsed and expanded states', async () => {
     const expanded = await fixture<GraphSidebarCollapseIcon>(html`
-      <graph-sidebar-collapse-icon></graph-sidebar-collapse-icon>
+      <xcode-graph-sidebar-collapse-icon></xcode-graph-sidebar-collapse-icon>
     `);
 
     const collapsed = await fixture<GraphSidebarCollapseIcon>(html`
-      <graph-sidebar-collapse-icon is-collapsed></graph-sidebar-collapse-icon>
+      <xcode-graph-sidebar-collapse-icon is-collapsed></xcode-graph-sidebar-collapse-icon>
     `);
 
     const expandedSvg = expanded.shadowRoot?.querySelector('svg');

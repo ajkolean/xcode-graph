@@ -6,11 +6,11 @@
  *
  * @example
  * ```html
- * <graph-metrics-section
+ * <xcode-graph-metrics-section
  *   dependencies-count="5"
  *   total-dependencies-count="10"
  *   active-direct-deps
- * ></graph-metrics-section>
+ * ></xcode-graph-metrics-section>
  * ```
  */
 
@@ -187,41 +187,41 @@ export class GraphMetricsSection extends LitElement {
         this.isExpanded,
         () => html`
           <div class="grid">
-            <graph-stats-card
+            <xcode-graph-stats-card
               label="Dependencies"
               value="${this.dependenciesCount}/${this.totalDependenciesCount}"
               compact
               toggleable
               ?active=${this.activeDirectDeps}
               @card-toggle=${() => this.handleCardToggle('toggle-direct-deps')}
-            ></graph-stats-card>
+            ></xcode-graph-stats-card>
 
-            <graph-stats-card
+            <xcode-graph-stats-card
               label="Dependents"
               value="${this.dependentsCount}/${this.totalDependentsCount}"
               compact
               toggleable
               ?active=${this.activeDirectDependents}
               @card-toggle=${() => this.handleCardToggle('toggle-direct-dependents')}
-            ></graph-stats-card>
+            ></xcode-graph-stats-card>
 
-            <graph-stats-card
+            <xcode-graph-stats-card
               label="Transitive Dependencies"
               value="${this.transitiveDependenciesCount}"
               compact
               toggleable
               ?active=${this.activeTransitiveDeps}
               @card-toggle=${() => this.handleCardToggle('toggle-transitive-deps')}
-            ></graph-stats-card>
+            ></xcode-graph-stats-card>
 
-            <graph-stats-card
+            <xcode-graph-stats-card
               label="Transitive Dependents"
               value="${this.transitiveDependentsCount}"
               compact
               toggleable
               ?active=${this.activeTransitiveDependents}
               @card-toggle=${() => this.handleCardToggle('toggle-transitive-dependents')}
-            ></graph-stats-card>
+            ></xcode-graph-stats-card>
           </div>
         `,
       )}
@@ -232,11 +232,11 @@ export class GraphMetricsSection extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-metrics-section': GraphMetricsSection;
+    'xcode-graph-metrics-section': GraphMetricsSection;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-metrics-section')) {
-  customElements.define('graph-metrics-section', GraphMetricsSection);
+if (!customElements.get('xcode-graph-metrics-section')) {
+  customElements.define('xcode-graph-metrics-section', GraphMetricsSection);
 }

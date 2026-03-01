@@ -7,13 +7,13 @@
  *
  * @example
  * ```html
- * <graph-node-list
+ * <xcode-graph-node-list
  *   title="Dependencies"
  *   .items=${dependencies}
  *   suffix="direct"
  *   empty-message="No dependencies"
  *   zoom="1.0"
- * ></graph-node-list>
+ * ></xcode-graph-node-list>
  * ```
  *
  * @fires node-select - Dispatched when node is clicked (detail: { node })
@@ -248,13 +248,13 @@ export class GraphNodeList extends NodeListEventsBase {
     };
 
     return html`
-      <graph-badge
+      <xcode-graph-badge
         class="kind-badge"
         label=${config.label}
         color=${config.color}
         variant="rounded"
         size="sm"
-      ></graph-badge>
+      ></xcode-graph-badge>
     `;
   }
 
@@ -299,14 +299,14 @@ export class GraphNodeList extends NodeListEventsBase {
                       (item) => html`
                         <div class="item-row">
                           <div class="item-content">
-                            <graph-list-item-row
+                            <xcode-graph-list-item-row
                               .node=${item.node}
                               subtitle=${this.getNodeSubtitle(item.node)}
                               .zoom=${this.zoom}
                               @row-select=${this.handleNodeSelect}
                               @row-hover=${this.handleNodeHover}
                               @row-hover-end=${this.handleHoverEnd}
-                            ></graph-list-item-row>
+                            ></xcode-graph-list-item-row>
                           </div>
                           ${this.renderKindBadge(item)}
                         </div>
@@ -325,11 +325,11 @@ export class GraphNodeList extends NodeListEventsBase {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-node-list': GraphNodeList;
+    'xcode-graph-node-list': GraphNodeList;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-node-list')) {
-  customElements.define('graph-node-list', GraphNodeList);
+if (!customElements.get('xcode-graph-node-list')) {
+  customElements.define('xcode-graph-node-list', GraphNodeList);
 }

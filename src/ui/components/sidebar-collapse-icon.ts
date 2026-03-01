@@ -6,8 +6,8 @@
  *
  * @example
  * ```html
- * <graph-sidebar-collapse-icon is-collapsed></graph-sidebar-collapse-icon>
- * <graph-sidebar-collapse-icon></graph-sidebar-collapse-icon>
+ * <xcode-graph-sidebar-collapse-icon is-collapsed></xcode-graph-sidebar-collapse-icon>
+ * <xcode-graph-sidebar-collapse-icon></xcode-graph-sidebar-collapse-icon>
  * ```
  */
 
@@ -82,11 +82,11 @@ export class GraphSidebarCollapseIcon extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-sidebar-collapse-icon': GraphSidebarCollapseIcon;
+    'xcode-graph-sidebar-collapse-icon': GraphSidebarCollapseIcon;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-sidebar-collapse-icon')) {
-  customElements.define('graph-sidebar-collapse-icon', GraphSidebarCollapseIcon);
+if (!customElements.get('xcode-graph-sidebar-collapse-icon')) {
+  customElements.define('xcode-graph-sidebar-collapse-icon', GraphSidebarCollapseIcon);
 }

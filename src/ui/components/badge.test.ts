@@ -7,23 +7,23 @@ import { describe, it } from 'vitest';
 import type { GraphBadge } from './badge';
 import './badge';
 
-describe('graph-badge', () => {
+describe('xcode-graph-badge', () => {
   // ========================================
   // Rendering Tests
   // ========================================
 
   it('should render with default properties', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test"></graph-badge>
+      <xcode-graph-badge label="Test"></xcode-graph-badge>
     `);
 
     expect(el).to.exist;
-    expect(el.tagName.toLowerCase()).to.equal('graph-badge');
+    expect(el.tagName.toLowerCase()).to.equal('xcode-graph-badge');
   });
 
   it('should render label text', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Package"></graph-badge>
+      <xcode-graph-badge label="Package"></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
@@ -36,7 +36,7 @@ describe('graph-badge', () => {
 
   it('should default to pill variant', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test"></graph-badge>
+      <xcode-graph-badge label="Test"></xcode-graph-badge>
     `);
 
     expect(el.variant).to.equal('pill');
@@ -44,7 +44,7 @@ describe('graph-badge', () => {
 
   it('should default to md size', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test"></graph-badge>
+      <xcode-graph-badge label="Test"></xcode-graph-badge>
     `);
 
     expect(el.size).to.equal('md');
@@ -56,7 +56,7 @@ describe('graph-badge', () => {
 
   it('should apply rounded variant class', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" variant="rounded"></graph-badge>
+      <xcode-graph-badge label="Test" variant="rounded"></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
@@ -65,7 +65,7 @@ describe('graph-badge', () => {
 
   it('should apply accent variant class', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" variant="accent"></graph-badge>
+      <xcode-graph-badge label="Test" variant="accent"></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
@@ -78,7 +78,7 @@ describe('graph-badge', () => {
 
   it('should apply sm size class', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" size="sm"></graph-badge>
+      <xcode-graph-badge label="Test" size="sm"></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
@@ -87,7 +87,7 @@ describe('graph-badge', () => {
 
   it('should apply md size class', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" size="md"></graph-badge>
+      <xcode-graph-badge label="Test" size="md"></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
@@ -100,7 +100,7 @@ describe('graph-badge', () => {
 
   it('should apply interactive class when interactive is true', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" interactive></graph-badge>
+      <xcode-graph-badge label="Test" interactive></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
@@ -109,7 +109,7 @@ describe('graph-badge', () => {
 
   it('should apply glow class when glow is true', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" glow></graph-badge>
+      <xcode-graph-badge label="Test" glow></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
@@ -122,7 +122,7 @@ describe('graph-badge', () => {
 
   it('should apply color via CSS custom properties', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" color="#8B5CF6"></graph-badge>
+      <xcode-graph-badge label="Test" color="#8B5CF6"></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
@@ -135,7 +135,7 @@ describe('graph-badge', () => {
 
   it('should use default color when not provided', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test"></graph-badge>
+      <xcode-graph-badge label="Test"></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
@@ -147,7 +147,7 @@ describe('graph-badge', () => {
 
   it('should update styles when color changes', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" color="#FF0000"></graph-badge>
+      <xcode-graph-badge label="Test" color="#FF0000"></xcode-graph-badge>
     `);
 
     let badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
@@ -166,14 +166,14 @@ describe('graph-badge', () => {
 
   it('should support all options combined', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge
+      <xcode-graph-badge
         label="Package"
         color="#10B981"
         variant="accent"
         size="sm"
         interactive
         glow
-      ></graph-badge>
+      ></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
@@ -190,7 +190,7 @@ describe('graph-badge', () => {
 
   it('should handle different color formats', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label="Test" color="rgb(255, 0, 0)"></graph-badge>
+      <xcode-graph-badge label="Test" color="rgb(255, 0, 0)"></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge') as HTMLElement;
@@ -199,7 +199,7 @@ describe('graph-badge', () => {
 
   it('should handle empty label', async () => {
     const el = await fixture<GraphBadge>(html`
-      <graph-badge label=""></graph-badge>
+      <xcode-graph-badge label=""></xcode-graph-badge>
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');

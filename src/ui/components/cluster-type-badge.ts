@@ -6,10 +6,10 @@
  *
  * @example
  * ```html
- * <graph-cluster-type-badge
+ * <xcode-graph-cluster-type-badge
  *   cluster-type="package"
  *   cluster-color="#F59E0B"
- * ></graph-cluster-type-badge>
+ * ></xcode-graph-cluster-type-badge>
  * ```
  */
 
@@ -76,14 +76,14 @@ export class GraphClusterTypeBadge extends LitElement {
 
     return html`
       <div class="container">
-        <graph-badge
+        <xcode-graph-badge
           label=${this.badgeLabel}
           color=${color}
           variant="accent"
           size="sm"
           interactive
           glow
-        ></graph-badge>
+        ></xcode-graph-badge>
       </div>
     `;
   }
@@ -92,11 +92,11 @@ export class GraphClusterTypeBadge extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-type-badge': GraphClusterTypeBadge;
+    'xcode-graph-cluster-type-badge': GraphClusterTypeBadge;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-type-badge')) {
-  customElements.define('graph-cluster-type-badge', GraphClusterTypeBadge);
+if (!customElements.get('xcode-graph-cluster-type-badge')) {
+  customElements.define('xcode-graph-cluster-type-badge', GraphClusterTypeBadge);
 }

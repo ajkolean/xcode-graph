@@ -16,7 +16,7 @@
  *
  * @example
  * ```html
- * <graph-error-notification-container></graph-error-notification-container>
+ * <xcode-graph-error-notification-container></xcode-graph-error-notification-container>
  * ```
  */
 
@@ -40,7 +40,7 @@ const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
  *
  * @summary Error toast notification stack manager
  */
-@customElement('graph-error-notification-container')
+@customElement('xcode-graph-error-notification-container')
 export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
   // ========================================
   // Styles
@@ -108,11 +108,11 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
         toasts,
         (error) => error.id,
         (error) => html`
-          <graph-error-toast
+          <xcode-graph-error-toast
             .error=${error}
             @dismiss=${this.handleDismiss}
             @action=${this.handleAction}
-          ></graph-error-toast>
+          ></xcode-graph-error-toast>
         `,
       )}
     `;
@@ -121,6 +121,6 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-error-notification-container': GraphErrorNotificationContainer;
+    'xcode-graph-error-notification-container': GraphErrorNotificationContainer;
   }
 }

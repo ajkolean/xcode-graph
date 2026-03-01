@@ -6,10 +6,10 @@
  *
  * @example
  * ```html
- * <graph-cycle-warning
+ * <xcode-graph-cycle-warning
  *   .cycles=${[['A', 'B', 'C', 'A'], ['X', 'Y', 'X']]}
  *   @dismiss=${handleDismiss}
- * ></graph-cycle-warning>
+ * ></xcode-graph-cycle-warning>
  * ```
  */
 
@@ -277,12 +277,12 @@ export class GraphCycleWarning extends LitElement {
 }
 
 // Register custom element
-if (!customElements.get('graph-cycle-warning')) {
-  customElements.define('graph-cycle-warning', GraphCycleWarning);
+if (!customElements.get('xcode-graph-cycle-warning')) {
+  customElements.define('xcode-graph-cycle-warning', GraphCycleWarning);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cycle-warning': GraphCycleWarning;
+    'xcode-graph-cycle-warning': GraphCycleWarning;
   }
 }

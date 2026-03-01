@@ -8,10 +8,10 @@ import { describe, it } from 'vitest';
 import type { GraphSidebar } from './sidebar';
 import './sidebar';
 
-describe('graph-sidebar', () => {
+describe('xcode-graph-sidebar', () => {
   it('should render all 9 navigation items', async () => {
     const el = await fixture<GraphSidebar>(html`
-      <graph-sidebar active-tab="graph"></graph-sidebar>
+      <xcode-graph-sidebar active-tab="graph"></xcode-graph-sidebar>
     `);
 
     const buttons = el.shadowRoot?.querySelectorAll('.nav-button');
@@ -20,7 +20,7 @@ describe('graph-sidebar', () => {
 
   it('should mark active tab with active class', async () => {
     const el = await fixture<GraphSidebar>(html`
-      <graph-sidebar active-tab="graph"></graph-sidebar>
+      <xcode-graph-sidebar active-tab="graph"></xcode-graph-sidebar>
     `);
 
     const buttons = el.shadowRoot?.querySelectorAll('.nav-button');
@@ -31,7 +31,7 @@ describe('graph-sidebar', () => {
 
   it('should dispatch tab-change event on click', async () => {
     const el = await fixture<GraphSidebar>(html`
-      <graph-sidebar active-tab="overview"></graph-sidebar>
+      <xcode-graph-sidebar active-tab="overview"></xcode-graph-sidebar>
     `);
 
     let eventDetail: { tab: string } | undefined;
@@ -53,7 +53,7 @@ describe('graph-sidebar', () => {
 
   it('should update active state when activeTab changes', async () => {
     const el = await fixture<GraphSidebar>(html`
-      <graph-sidebar active-tab="overview"></graph-sidebar>
+      <xcode-graph-sidebar active-tab="overview"></xcode-graph-sidebar>
     `);
 
     let activeButton = el.shadowRoot?.querySelector('.nav-button.active');

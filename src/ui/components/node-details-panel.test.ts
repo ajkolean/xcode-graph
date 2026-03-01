@@ -55,24 +55,24 @@ const mockEdges: GraphEdge[] = [
 // Rendering Tests
 // ========================================
 
-describe('graph-node-details-panel - Rendering', () => {
+describe('xcode-graph-node-details-panel - Rendering', () => {
   it('should render with all required sub-components', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
         zoom="1.0"
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
     expect(el).to.exist;
 
     // Check for all sub-components
-    const header = el.shadowRoot?.querySelector('graph-node-header');
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
-    const info = el.shadowRoot?.querySelector('graph-node-info');
-    const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
+    const header = el.shadowRoot?.querySelector('xcode-graph-node-header');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
+    const info = el.shadowRoot?.querySelector('xcode-graph-node-info');
+    const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
 
     expect(header).to.exist;
     expect(metrics).to.exist;
@@ -82,13 +82,13 @@ describe('graph-node-details-panel - Rendering', () => {
 
   it('should render empty when node is null', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-node-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-node-header');
     expect(header).to.not.exist;
   });
 });
@@ -97,17 +97,17 @@ describe('graph-node-details-panel - Rendering', () => {
 // Computed Properties Tests
 // ========================================
 
-describe('graph-node-details-panel - Computed Properties', () => {
+describe('xcode-graph-node-details-panel - Computed Properties', () => {
   it('should compute dependencies from edges', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
+    const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
     const depList = lists?.[0]; // First list is dependencies
 
     // Check that the dependency node is rendered
@@ -116,14 +116,14 @@ describe('graph-node-details-panel - Computed Properties', () => {
 
   it('should compute dependents from edges', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
+    const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
     const deptList = lists?.[1]; // Second list is dependents
 
     expect(deptList?.getAttribute('title')).to.equal('Dependents');
@@ -131,14 +131,14 @@ describe('graph-node-details-panel - Computed Properties', () => {
 
   it('should compute metrics correctly', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
 
     expect(metrics?.getAttribute('dependencies-count')).to.equal('1');
     expect(metrics?.getAttribute('dependents-count')).to.equal('1');
@@ -149,15 +149,15 @@ describe('graph-node-details-panel - Computed Properties', () => {
   it('should handle filtered edges in metrics', async () => {
     const filteredEdges = [mockEdges[0]]; // Only dependency edge
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
         .filteredEdges=${filteredEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
 
     // Filtered counts
     expect(metrics?.getAttribute('dependencies-count')).to.equal('1');
@@ -217,14 +217,14 @@ describe('graph-node-details-panel - Computed Properties', () => {
     ];
 
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${manyDependents}
         .edges=${manyEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     expect(metrics?.hasAttribute('is-high-fan-in')).to.be.true;
   });
 
@@ -277,14 +277,14 @@ describe('graph-node-details-panel - Computed Properties', () => {
     ];
 
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${manyDependencies}
         .edges=${manyEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     expect(metrics?.hasAttribute('is-high-fan-out')).to.be.true;
   });
 });
@@ -293,14 +293,14 @@ describe('graph-node-details-panel - Computed Properties', () => {
 // Event Bubbling Tests
 // ========================================
 
-describe('graph-node-details-panel - Event Bubbling', () => {
+describe('xcode-graph-node-details-panel - Event Bubbling', () => {
   it('should bubble close event from header', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
     let eventFired = false;
@@ -308,7 +308,7 @@ describe('graph-node-details-panel - Event Bubbling', () => {
       eventFired = true;
     });
 
-    const header = el.shadowRoot?.querySelector('graph-node-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-node-header');
     header?.dispatchEvent(new CustomEvent('close', { bubbles: true, composed: true }));
 
     expect(eventFired).to.be.true;
@@ -316,11 +316,11 @@ describe('graph-node-details-panel - Event Bubbling', () => {
 
   it('should bubble cluster-select event', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
     let eventFired = false;
@@ -331,7 +331,7 @@ describe('graph-node-details-panel - Event Bubbling', () => {
       eventDetail = e.detail;
     }) as EventListener);
 
-    const header = el.shadowRoot?.querySelector('graph-node-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-node-header');
     header?.dispatchEvent(
       new CustomEvent('cluster-click', {
         detail: { clusterId: 'MyApp' },
@@ -346,11 +346,11 @@ describe('graph-node-details-panel - Event Bubbling', () => {
 
   it('should bubble toggle-direct-deps event from metrics section', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
     let eventFired = false;
@@ -358,7 +358,7 @@ describe('graph-node-details-panel - Event Bubbling', () => {
       eventFired = true;
     });
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     metrics?.dispatchEvent(
       new CustomEvent('toggle-direct-deps', {
         bubbles: true,
@@ -371,11 +371,11 @@ describe('graph-node-details-panel - Event Bubbling', () => {
 
   it('should bubble toggle-direct-dependents event from metrics section', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
     let eventFired = false;
@@ -383,7 +383,7 @@ describe('graph-node-details-panel - Event Bubbling', () => {
       eventFired = true;
     });
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     metrics?.dispatchEvent(
       new CustomEvent('toggle-direct-dependents', {
         bubbles: true,
@@ -396,11 +396,11 @@ describe('graph-node-details-panel - Event Bubbling', () => {
 
   it('should bubble node-select event from dependency list', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
     let eventFired = false;
@@ -411,7 +411,7 @@ describe('graph-node-details-panel - Event Bubbling', () => {
       eventDetail = e.detail;
     }) as EventListener);
 
-    const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
+    const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
     const depList = lists?.[0];
 
     depList?.dispatchEvent(
@@ -428,11 +428,11 @@ describe('graph-node-details-panel - Event Bubbling', () => {
 
   it('should bubble node-hover event', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
     let eventFired = false;
@@ -443,7 +443,7 @@ describe('graph-node-details-panel - Event Bubbling', () => {
       eventDetail = e.detail;
     }) as EventListener);
 
-    const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
+    const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
     const depList = lists?.[0];
 
     depList?.dispatchEvent(
@@ -463,31 +463,31 @@ describe('graph-node-details-panel - Event Bubbling', () => {
 // Props Propagation Tests
 // ========================================
 
-describe('graph-node-details-panel - Props Propagation', () => {
+describe('xcode-graph-node-details-panel - Props Propagation', () => {
   it('should propagate active toggle states to metrics section', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
         active-direct-deps
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     expect(metrics?.hasAttribute('active-direct-deps')).to.be.true;
   });
 
   it('should render dependency list with correct attributes', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
+    const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
     const depList = lists?.[0];
 
     expect(depList?.getAttribute('title')).to.equal('Dependencies');
@@ -497,14 +497,14 @@ describe('graph-node-details-panel - Props Propagation', () => {
 
   it('should render dependent list with correct attributes', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const lists = el.shadowRoot?.querySelectorAll('graph-node-list');
+    const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
     const deptList = lists?.[1];
 
     expect(deptList?.getAttribute('title')).to.equal('Dependents');
@@ -517,7 +517,7 @@ describe('graph-node-details-panel - Props Propagation', () => {
 // Edge Cases
 // ========================================
 
-describe('graph-node-details-panel - Edge Cases', () => {
+describe('xcode-graph-node-details-panel - Edge Cases', () => {
   it('should handle node with no dependencies', async () => {
     const isolatedNode: GraphNode = {
       id: 'isolated',
@@ -528,60 +528,60 @@ describe('graph-node-details-panel - Edge Cases', () => {
     };
 
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${isolatedNode}
         .allNodes=${[isolatedNode]}
         .edges=${[]}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     expect(metrics?.getAttribute('dependencies-count')).to.equal('0');
     expect(metrics?.getAttribute('dependents-count')).to.equal('0');
   });
 
   it('should handle empty edges array', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${[]}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     expect(metrics?.getAttribute('dependencies-count')).to.equal('0');
   });
 
   it('should handle empty allNodes array', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${[]}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     expect(metrics).to.exist;
   });
 
   it('should update when node changes', async () => {
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    let header = el.shadowRoot?.querySelector('graph-node-header');
+    let header = el.shadowRoot?.querySelector('xcode-graph-node-header');
     expect(header).to.exist;
 
     el.node = mockDependency;
     await el.updateComplete;
 
-    header = el.shadowRoot?.querySelector('graph-node-header');
+    header = el.shadowRoot?.querySelector('xcode-graph-node-header');
     expect(header).to.exist;
   });
 
@@ -591,14 +591,14 @@ describe('graph-node-details-panel - Edge Cases', () => {
     ];
 
     const el = await fixture<GraphNodeDetailsPanel>(html`
-      <graph-node-details-panel
+      <xcode-graph-node-details-panel
         .node=${mockNode}
         .allNodes=${mockAllNodes}
         .edges=${selfEdges}
-      ></graph-node-details-panel>
+      ></xcode-graph-node-details-panel>
     `);
 
-    const metrics = el.shadowRoot?.querySelector('graph-metrics-section');
+    const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     expect(metrics).to.exist;
   });
 });

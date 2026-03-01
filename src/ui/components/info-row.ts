@@ -6,7 +6,7 @@
  *
  * @example
  * ```html
- * <graph-info-row label="Platform" value="iOS"></graph-info-row>
+ * <xcode-graph-info-row label="Platform" value="iOS"></xcode-graph-info-row>
  * ```
  *
  * @slot - Default slot for complex value content (overrides value prop)
@@ -87,11 +87,11 @@ export class GraphInfoRow extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-info-row': GraphInfoRow;
+    'xcode-graph-info-row': GraphInfoRow;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-info-row')) {
-  customElements.define('graph-info-row', GraphInfoRow);
+if (!customElements.get('xcode-graph-info-row')) {
+  customElements.define('xcode-graph-info-row', GraphInfoRow);
 }

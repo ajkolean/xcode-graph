@@ -9,14 +9,14 @@
  * @example
  * ```html
  * <svg>
- *   <graph-node
+ *   <xcode-graph-node
  *     .node=${nodeData}
  *     x="100"
  *     y="100"
  *     size="24"
  *     color="#F59E0B"
  *     is-selected
- *   ></graph-node>
+ *   ></xcode-graph-node>
  * </svg>
  * ```
  *
@@ -437,11 +437,11 @@ export class GraphNode extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-node': GraphNode;
+    'xcode-graph-node': GraphNode;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-node')) {
-  customElements.define('graph-node', GraphNode);
+if (!customElements.get('xcode-graph-node')) {
+  customElements.define('xcode-graph-node', GraphNode);
 }

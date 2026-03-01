@@ -7,15 +7,15 @@
  *
  * @example
  * ```html
- * <graph-panel-header
+ * <xcode-graph-panel-header
  *   title="MyTarget"
  *   subtitle="Framework"
  *   color="#10B981"
  *   @back=${handleBack}
  * >
  *   <svg slot="icon">...</svg>
- *   <graph-badge slot="badges" label="Target" color="#10B981"></graph-badge>
- * </graph-panel-header>
+ *   <xcode-graph-badge slot="badges" label="Target" color="#10B981"></xcode-graph-badge>
+ * </xcode-graph-panel-header>
  * ```
  *
  * @fires back - Dispatched when back button is clicked
@@ -259,11 +259,11 @@ export class GraphPanelHeader extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-panel-header': GraphPanelHeader;
+    'xcode-graph-panel-header': GraphPanelHeader;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-panel-header')) {
-  customElements.define('graph-panel-header', GraphPanelHeader);
+if (!customElements.get('xcode-graph-panel-header')) {
+  customElements.define('xcode-graph-panel-header', GraphPanelHeader);
 }

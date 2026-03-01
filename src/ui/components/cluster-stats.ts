@@ -6,12 +6,12 @@
  *
  * @example
  * ```html
- * <graph-cluster-stats
+ * <xcode-graph-cluster-stats
  *   filtered-dependencies="5"
  *   total-dependencies="10"
  *   .platforms=${platformsSet}
  *   .targetBreakdown=${{ framework: 3, library: 2, test: 1 }}
- * ></graph-cluster-stats>
+ * ></xcode-graph-cluster-stats>
  * ```
  */
 
@@ -257,23 +257,23 @@ export class GraphClusterStats extends LitElement {
     return html`
       <div class="content">
         <div class="stats-grid">
-          <graph-stats-card
+          <xcode-graph-stats-card
             label="Dependencies"
             value="${this.filteredDependencies}/${this.totalDependencies}"
             compact
             toggleable
             ?active=${this.activeDirectDeps}
             @card-toggle=${() => this.handleCardToggle('toggle-direct-deps')}
-          ></graph-stats-card>
+          ></xcode-graph-stats-card>
 
-          <graph-stats-card
+          <xcode-graph-stats-card
             label="Dependents"
             value="${this.filteredDependents}/${this.totalDependents}"
             compact
             toggleable
             ?active=${this.activeDirectDependents}
             @card-toggle=${() => this.handleCardToggle('toggle-direct-dependents')}
-          ></graph-stats-card>
+          ></xcode-graph-stats-card>
         </div>
 
         ${this.renderTargetBreakdown()}
@@ -343,11 +343,11 @@ export class GraphClusterStats extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-stats': GraphClusterStats;
+    'xcode-graph-cluster-stats': GraphClusterStats;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-stats')) {
-  customElements.define('graph-cluster-stats', GraphClusterStats);
+if (!customElements.get('xcode-graph-cluster-stats')) {
+  customElements.define('xcode-graph-cluster-stats', GraphClusterStats);
 }

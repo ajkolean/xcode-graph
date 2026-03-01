@@ -6,10 +6,10 @@
  *
  * @example
  * ```html
- * <graph-panel-section bordered shrink>
+ * <xcode-graph-panel-section bordered shrink>
  *   <h3>Section Title</h3>
  *   <p>Section content...</p>
- * </graph-panel-section>
+ * </xcode-graph-panel-section>
  * ```
  *
  * @slot - Default slot for section content
@@ -112,11 +112,11 @@ export class GraphPanelSection extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-panel-section': GraphPanelSection;
+    'xcode-graph-panel-section': GraphPanelSection;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-panel-section')) {
-  customElements.define('graph-panel-section', GraphPanelSection);
+if (!customElements.get('xcode-graph-panel-section')) {
+  customElements.define('xcode-graph-panel-section', GraphPanelSection);
 }

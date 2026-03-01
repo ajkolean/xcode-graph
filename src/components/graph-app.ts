@@ -10,10 +10,10 @@
  * @example
  * ```html
  * <!-- Standalone (uses built-in demo data) -->
- * <graph-app></graph-app>
+ * <xcode-graph></xcode-graph>
  *
  * <!-- Embedded with custom data -->
- * <graph-app .nodes=${myNodes} .edges=${myEdges}></graph-app>
+ * <xcode-graph .nodes=${myNodes} .edges=${myEdges}></xcode-graph>
  * ```
  */
 
@@ -189,7 +189,7 @@ export class GraphApp extends SignalWatcherLitElement {
     const filtered = filteredData.get();
 
     return html`
-      <graph-tab
+      <xcode-graph-tab
         .displayNodes=${display.filteredNodes}
         .displayEdges=${display.filteredEdges}
         .filteredNodes=${filtered.filteredNodes}
@@ -198,20 +198,20 @@ export class GraphApp extends SignalWatcherLitElement {
         .allEdges=${allEdges.get()}
         .transitiveDeps=${display.transitiveDeps}
         .transitiveDependents=${display.transitiveDependents}
-      ></graph-tab>
+      ></xcode-graph-tab>
 
-      <graph-error-notification-container></graph-error-notification-container>
+      <xcode-graph-error-notification-container></xcode-graph-error-notification-container>
     `;
   }
 }
 
 // Register custom element
-if (!customElements.get('graph-app')) {
-  customElements.define('graph-app', GraphApp);
+if (!customElements.get('xcode-graph')) {
+  customElements.define('xcode-graph', GraphApp);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-app': GraphApp;
+    'xcode-graph': GraphApp;
   }
 }

@@ -6,9 +6,9 @@
  *
  * @example
  * ```html
- * <graph-sidebar
+ * <xcode-graph-sidebar
  *   active-tab="graph"
- * ></graph-sidebar>
+ * ></xcode-graph-sidebar>
  * ```
  *
  * @fires tab-change - Dispatched when tab is clicked (detail: { tab: string })
@@ -341,7 +341,7 @@ export class GraphSidebar extends LitElement {
     return html`
       <aside>
         <button class="collapse-button" @click=${this.toggleCollapse} title="Toggle sidebar">
-          <graph-sidebar-collapse-icon ?is-collapsed=${this.collapsed}></graph-sidebar-collapse-icon>
+          <xcode-graph-sidebar-collapse-icon ?is-collapsed=${this.collapsed}></xcode-graph-sidebar-collapse-icon>
         </button>
         <nav>
           <div class="nav-items">
@@ -375,11 +375,11 @@ export class GraphSidebar extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-sidebar': GraphSidebar;
+    'xcode-graph-sidebar': GraphSidebar;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-sidebar')) {
-  customElements.define('graph-sidebar', GraphSidebar);
+if (!customElements.get('xcode-graph-sidebar')) {
+  customElements.define('xcode-graph-sidebar', GraphSidebar);
 }

@@ -6,11 +6,11 @@
  *
  * @example
  * ```html
- * <graph-collapsed-sidebar
+ * <xcode-graph-collapsed-sidebar
  *   .filteredNodes=${nodes}
  *   .filteredEdges=${edges}
  *   node-types-filter-size="3"
- * ></graph-collapsed-sidebar>
+ * ></xcode-graph-collapsed-sidebar>
  * ```
  *
  * @fires expand-to-section - Dispatched when section icon clicked (detail: { section })
@@ -293,11 +293,11 @@ export class GraphCollapsedSidebar extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-collapsed-sidebar': GraphCollapsedSidebar;
+    'xcode-graph-collapsed-sidebar': GraphCollapsedSidebar;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-collapsed-sidebar')) {
-  customElements.define('graph-collapsed-sidebar', GraphCollapsedSidebar);
+if (!customElements.get('xcode-graph-collapsed-sidebar')) {
+  customElements.define('xcode-graph-collapsed-sidebar', GraphCollapsedSidebar);
 }

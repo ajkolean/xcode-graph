@@ -49,12 +49,10 @@ export interface KeyboardShortcutConfig {
  * Automatically adds the listener on connect and removes it on disconnect.
  */
 export class KeyboardShortcutController implements ReactiveController {
-  private readonly host: ReactiveControllerHost;
   private readonly config: Required<KeyboardShortcutConfig>;
   private readonly handleKeyDown: (e: KeyboardEvent) => void;
 
   constructor(host: ReactiveControllerHost, config: KeyboardShortcutConfig) {
-    this.host = host;
     this.config = {
       key: config.key,
       onTrigger: config.onTrigger,
@@ -95,7 +93,13 @@ export class KeyboardShortcutController implements ReactiveController {
     const active = document.activeElement;
     if (!active) return false;
     const tag = active.tagName.toLowerCase();
-    if (tag === 'input' || tag === 'textarea' || (active as HTMLElement).isContentEditable) {
+    const el = active as HTMLElement;
+    if (
+      tag === 'input' ||
+      tag === 'textarea' ||
+      el.isContentEditable ||
+      el.contentEditable === 'true'
+    ) {
       return true;
     }
     const root = active.shadowRoot;

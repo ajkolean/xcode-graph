@@ -6,7 +6,7 @@
  *
  * @example
  * ```html
- * <graph-alert-banner
+ * <xcode-graph-alert-banner
  *   variant="warning"
  *   title="Warning Title"
  *   message="Description of the warning..."
@@ -16,7 +16,7 @@
  *   <div slot="actions">
  *     <button>Action</button>
  *   </div>
- * </graph-alert-banner>
+ * </xcode-graph-alert-banner>
  * ```
  *
  * @fires dismiss - Dispatched when the banner is dismissed
@@ -282,11 +282,11 @@ export class GraphAlertBanner extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-alert-banner': GraphAlertBanner;
+    'xcode-graph-alert-banner': GraphAlertBanner;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-alert-banner')) {
-  customElements.define('graph-alert-banner', GraphAlertBanner);
+if (!customElements.get('xcode-graph-alert-banner')) {
+  customElements.define('xcode-graph-alert-banner', GraphAlertBanner);
 }

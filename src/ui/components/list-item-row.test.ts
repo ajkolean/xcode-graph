@@ -14,10 +14,10 @@ const mockNode = {
   platform: 'iOS' as const,
 };
 
-describe('graph-list-item-row', () => {
+describe('xcode-graph-list-item-row', () => {
   it('should render node name', async () => {
     const el = await fixture<GraphListItemRow>(html`
-      <graph-list-item-row .node=${mockNode}></graph-list-item-row>
+      <xcode-graph-list-item-row .node=${mockNode}></xcode-graph-list-item-row>
     `);
 
     const name = el.shadowRoot?.querySelector('.name');
@@ -26,10 +26,10 @@ describe('graph-list-item-row', () => {
 
   it('should render subtitle when provided', async () => {
     const el = await fixture<GraphListItemRow>(html`
-      <graph-list-item-row
+      <xcode-graph-list-item-row
         .node=${mockNode}
         subtitle="Framework"
-      ></graph-list-item-row>
+      ></xcode-graph-list-item-row>
     `);
 
     const subtitle = el.shadowRoot?.querySelector('.subtitle');
@@ -39,7 +39,7 @@ describe('graph-list-item-row', () => {
 
   it('should not render subtitle when not provided', async () => {
     const el = await fixture<GraphListItemRow>(html`
-      <graph-list-item-row .node=${mockNode}></graph-list-item-row>
+      <xcode-graph-list-item-row .node=${mockNode}></xcode-graph-list-item-row>
     `);
 
     const subtitle = el.shadowRoot?.querySelector('.subtitle');
@@ -48,10 +48,10 @@ describe('graph-list-item-row', () => {
 
   it('should apply selected class when isSelected is true', async () => {
     const el = await fixture<GraphListItemRow>(html`
-      <graph-list-item-row
+      <xcode-graph-list-item-row
         .node=${mockNode}
         is-selected
-      ></graph-list-item-row>
+      ></xcode-graph-list-item-row>
     `);
 
     const button = el.shadowRoot?.querySelector('button');
@@ -60,7 +60,7 @@ describe('graph-list-item-row', () => {
 
   it('should dispatch row-select event on click', async () => {
     const el = await fixture<GraphListItemRow>(html`
-      <graph-list-item-row .node=${mockNode}></graph-list-item-row>
+      <xcode-graph-list-item-row .node=${mockNode}></xcode-graph-list-item-row>
     `);
 
     let eventDetail: { node: typeof mockNode } | undefined;
@@ -78,7 +78,7 @@ describe('graph-list-item-row', () => {
 
   it('should dispatch row-hover event on mouse enter', async () => {
     const el = await fixture<GraphListItemRow>(html`
-      <graph-list-item-row .node=${mockNode}></graph-list-item-row>
+      <xcode-graph-list-item-row .node=${mockNode}></xcode-graph-list-item-row>
     `);
 
     let eventDetail: { nodeId: string } | undefined;
@@ -97,7 +97,7 @@ describe('graph-list-item-row', () => {
 
   it('should dispatch row-hover-end event on mouse leave', async () => {
     const el = await fixture<GraphListItemRow>(html`
-      <graph-list-item-row .node=${mockNode}></graph-list-item-row>
+      <xcode-graph-list-item-row .node=${mockNode}></xcode-graph-list-item-row>
     `);
 
     let eventFired = false;

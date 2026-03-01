@@ -86,23 +86,23 @@ const mockExternalCluster: Cluster = {
 // Rendering Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Rendering', () => {
+describe('xcode-graph-cluster-details-panel - Rendering', () => {
   it('should render with all required sub-components', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
         zoom="1.0"
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
     expect(el).to.exist;
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
+    const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
+    const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
 
     expect(header).to.exist;
     expect(stats).to.exist;
@@ -111,25 +111,25 @@ describe('graph-cluster-details-panel - Rendering', () => {
 
   it('should render empty when cluster is null', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header).to.not.exist;
   });
 
   it('should render scrollable container', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
     const scrollable = el.shadowRoot?.querySelector('.scrollable');
@@ -141,18 +141,18 @@ describe('graph-cluster-details-panel - Rendering', () => {
 // Computed Properties Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Computed Properties', () => {
+describe('xcode-graph-cluster-details-panel - Computed Properties', () => {
   it('should compute cluster stats', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
     expect(stats).to.exist;
 
     // Should compute dependencies (outgoing edges from cluster nodes)
@@ -166,31 +166,31 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
 
   it('should compute platforms from cluster nodes', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
     expect(stats).to.exist;
   });
 
   it('should compute filtered stats when filteredEdges provided', async () => {
     const filteredEdges = [mockEdges[0]]; // Only first edge
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
         .filteredEdges=${filteredEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
 
     // Filtered counts
     expect(stats?.getAttribute('filtered-dependencies')).to.equal('1');
@@ -201,59 +201,59 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
 
   it('should detect external cluster origin', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockExternalCluster}
         .clusterNodes=${[]}
         .allNodes=${mockAllNodes}
         .edges=${[]}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header?.hasAttribute('is-external')).to.be.true;
   });
 
   it('should not mark local cluster as external', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header?.hasAttribute('is-external')).to.be.false;
   });
 
   it('should compute cluster color based on name and type', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
         zoom="1.0"
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header?.getAttribute('cluster-color')).to.exist;
   });
 
   it('should adjust cluster color based on zoom', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
         zoom="0.5"
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     const color = header?.getAttribute('cluster-color');
     expect(color).to.exist;
   });
@@ -263,15 +263,15 @@ describe('graph-cluster-details-panel - Computed Properties', () => {
 // Event Bubbling Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Event Bubbling', () => {
+describe('xcode-graph-cluster-details-panel - Event Bubbling', () => {
   it('should bubble close event from header', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
     let eventFired = false;
@@ -279,7 +279,7 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
       eventFired = true;
     });
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     header?.dispatchEvent(new CustomEvent('back', { bubbles: true, composed: true }));
 
     expect(eventFired).to.be.true;
@@ -287,12 +287,12 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
 
   it('should bubble node-select event from targets list', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
     let eventFired = false;
@@ -303,7 +303,7 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
       eventDetail = e.detail;
     }) as EventListener);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
     targetsList?.dispatchEvent(
       new CustomEvent('node-select', {
         detail: { node: mockClusterNodes[0] },
@@ -318,12 +318,12 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
 
   it('should bubble node-hover event from targets list', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
     let eventFired = false;
@@ -334,7 +334,7 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
       eventDetail = e.detail;
     }) as EventListener);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
     targetsList?.dispatchEvent(
       new CustomEvent('node-hover', {
         detail: { nodeId: 'node1' },
@@ -352,60 +352,60 @@ describe('graph-cluster-details-panel - Event Bubbling', () => {
 // Props Propagation Tests
 // ========================================
 
-describe('graph-cluster-details-panel - Props Propagation', () => {
+describe('xcode-graph-cluster-details-panel - Props Propagation', () => {
   it('should propagate cluster name to header', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header?.getAttribute('cluster-name')).to.equal('MyApp');
   });
 
   it('should propagate cluster type to header', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header?.getAttribute('cluster-type')).to.equal('project');
   });
 
   it('should propagate cluster nodes to targets list', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
     expect(targetsList?.getAttribute('total-targets-count')).to.equal('3');
   });
 
   it('should group nodes by type for targets list', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const targetsList = el.shadowRoot?.querySelector('graph-cluster-targets-list');
+    const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
     expect(targetsList).to.exist;
   });
 });
@@ -414,7 +414,7 @@ describe('graph-cluster-details-panel - Props Propagation', () => {
 // Edge Cases
 // ========================================
 
-describe('graph-cluster-details-panel - Edge Cases', () => {
+describe('xcode-graph-cluster-details-panel - Edge Cases', () => {
   it('should handle empty cluster nodes', async () => {
     const emptyCluster: Cluster = {
       ...mockCluster,
@@ -422,29 +422,29 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
     };
 
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${emptyCluster}
         .clusterNodes=${[]}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
     expect(stats).to.exist;
   });
 
   it('should handle empty edges array', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${[]}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
     expect(stats?.getAttribute('total-dependencies')).to.equal('0');
     expect(stats?.getAttribute('total-dependents')).to.equal('0');
   });
@@ -461,35 +461,35 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
     ];
 
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${noPlatformNodes}
         .allNodes=${noPlatformNodes}
         .edges=${[]}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const stats = el.shadowRoot?.querySelector('graph-cluster-stats');
+    const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
     expect(stats).to.exist;
   });
 
   it('should update when cluster changes', async () => {
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${mockCluster}
         .clusterNodes=${mockClusterNodes}
         .allNodes=${mockAllNodes}
         .edges=${mockEdges}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    let header = el.shadowRoot?.querySelector('graph-cluster-header');
+    let header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header?.getAttribute('cluster-name')).to.equal('MyApp');
 
     el.cluster = mockExternalCluster;
     await el.updateComplete;
 
-    header = el.shadowRoot?.querySelector('graph-cluster-header');
+    header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header?.getAttribute('cluster-name')).to.equal('ExternalPackage');
   });
 
@@ -505,15 +505,15 @@ describe('graph-cluster-details-panel - Edge Cases', () => {
     };
 
     const el = await fixture<GraphClusterDetailsPanel>(html`
-      <graph-cluster-details-panel
+      <xcode-graph-cluster-details-panel
         .cluster=${packageCluster}
         .clusterNodes=${[]}
         .allNodes=${mockAllNodes}
         .edges=${[]}
-      ></graph-cluster-details-panel>
+      ></xcode-graph-cluster-details-panel>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-cluster-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     expect(header?.getAttribute('cluster-type')).to.equal('package');
   });
 });

@@ -7,7 +7,7 @@
  * @example
  * ```html
  * <svg>
- *   <graph-cluster
+ *   <xcode-graph-cluster
  *     cluster-id="MyProject"
  *     x="100"
  *     y="100"
@@ -18,7 +18,7 @@
  *     origin="local"
  *   >
  *     <!-- child nodes and edges -->
- *   </graph-cluster>
+ *   </xcode-graph-cluster>
  * </svg>
  * ```
  *
@@ -263,11 +263,11 @@ export class GraphCluster extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster': GraphCluster;
+    'xcode-graph-cluster': GraphCluster;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster')) {
-  customElements.define('graph-cluster', GraphCluster);
+if (!customElements.get('xcode-graph-cluster')) {
+  customElements.define('xcode-graph-cluster', GraphCluster);
 }

@@ -7,7 +7,7 @@ title: Swift Integration
 ## How it works
 
 1. `GraphServer` starts a local HTTP server on `localhost:8081`
-2. `GET /` serves a generated HTML page that loads `<graph-app>` from the jsdelivr CDN
+2. `GET /` serves a generated HTML page that loads `<xcode-graph>` from the jsdelivr CDN
 3. `GET /graph.json` serves the raw XcodeGraph JSON
 4. The web component fetches `/graph.json`, transforms it client-side, and renders
 
@@ -27,11 +27,11 @@ func run(graph: XcodeGraph.Graph) throws {
 
 ## Web component CDN
 
-The `<graph-app>` web component is published to npm as `@tuist/graph`.
+The `<xcode-graph>` web component is published to npm as `@ajkolean/xcodegraph`.
 The server loads it from:
 
 ```
-https://cdn.jsdelivr.net/npm/@tuist/graph/dist/tuistgraph.js
+https://cdn.jsdelivr.net/npm/@ajkolean/xcodegraph/dist/tuistgraph.js
 ```
 
 To publish a new version:
@@ -39,7 +39,7 @@ To publish a new version:
 ```bash
 cd /path/to/tuistgraph
 pnpm build:lib            # produces dist/tuistgraph.js
-npm publish               # publishes to @tuist/graph
+npm publish               # publishes to @ajkolean/xcodegraph
 ```
 
 ## What changed from the Cytoscape version
@@ -47,7 +47,7 @@ npm publish               # publishes to @tuist/graph
 | Before | After |
 |--------|-------|
 | `CytoscapeGraph` + Swift-side transform | Raw `XcodeGraph.Graph` — no transform needed |
-| Bundled Cytoscape assets in Swift resources | HTML loads `<graph-app>` from CDN — no bundled assets |
+| Bundled Cytoscape assets in Swift resources | HTML loads `<xcode-graph>` from CDN — no bundled assets |
 | Basic node/edge display | Clustered layout, transitive chains, depth highlighting |
 | No filtering | Type, origin, platform, project, package filters |
 

@@ -121,7 +121,7 @@ function StatsCard({ label, value, highlighted = false }: StatsCardProps) {
 
 **Lit:**
 ```typescript
-@customElement('graph-stats-card')
+@customElement('xcode-graph-stats-card')
 export class GraphStatsCard extends LitElement {
   @property({ type: String })
   label = '';
@@ -164,7 +164,7 @@ private handleClick() {
 
 // In React wrapper:
 export const LitButtonElement = createComponent({
-  tagName: 'graph-button',
+  tagName: 'xcode-graph-button',
   elementClass: GraphButton,
   react: React,
   events: {
@@ -465,7 +465,7 @@ pnpm build
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-@customElement('graph-badge')
+@customElement('xcode-graph-badge')
 export class GraphBadge extends LitElement {
   @property({ type: String })
   label = '';
@@ -506,7 +506,7 @@ export class GraphBadge extends LitElement {
 ### Pattern 2: Component with Events
 
 ```typescript
-@customElement('graph-button')
+@customElement('xcode-graph-button')
 export class GraphButton extends LitElement {
   @property({ type: Boolean })
   disabled = false;
@@ -545,7 +545,7 @@ export class GraphButton extends LitElement {
 import { createStoreController } from '@/controllers/zustand.controller';
 import { useGraphStore } from '@/stores/graphStore';
 
-@customElement('graph-node-info')
+@customElement('xcode-graph-node-info')
 export class GraphNodeInfo extends LitElement {
   private selectedNode = createStoreController(
     this,
@@ -573,7 +573,7 @@ export class GraphNodeInfo extends LitElement {
 import { createMachineController } from '@/controllers/zag.controller';
 import { sidebarMachine } from '@/machines/sidebar.machine';
 
-@customElement('graph-accordion')
+@customElement('xcode-graph-accordion')
 export class GraphAccordion extends LitElement {
   @property({ type: String })
   id = 'accordion';
@@ -610,7 +610,7 @@ export class GraphAccordion extends LitElement {
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { icons } from '@/controllers/icon.adapter';
 
-@customElement('graph-search-bar')
+@customElement('xcode-graph-search-bar')
 export class GraphSearchBar extends LitElement {
   @property({ type: String })
   query = '';
@@ -703,9 +703,9 @@ this.dispatchEvent(
 **In Lit templates:**
 ```typescript
 html`
-  <graph-button @button-click=${this.handleButtonClick}>
+  <xcode-graph-button @button-click=${this.handleButtonClick}>
     Click Me
-  </graph-button>
+  </xcode-graph-button>
 `
 ```
 
@@ -806,10 +806,10 @@ import { describe, it } from 'vitest';
 import type { GraphStatsCard } from './stats-card';
 import './stats-card';
 
-describe('graph-stats-card', () => {
+describe('xcode-graph-stats-card', () => {
   it('should render', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Count" value="42"></graph-stats-card>
+      <xcode-graph-stats-card label="Count" value="42"></xcode-graph-stats-card>
     `);
 
     expect(el).to.exist;
@@ -817,7 +817,7 @@ describe('graph-stats-card', () => {
 
   it('should render label in shadow DOM', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Test" value="123"></graph-stats-card>
+      <xcode-graph-stats-card label="Test" value="123"></xcode-graph-stats-card>
     `);
 
     const label = el.shadowRoot?.querySelector('.label');
@@ -826,7 +826,7 @@ describe('graph-stats-card', () => {
 
   it('should update when property changes', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card label="Count" value="1"></graph-stats-card>
+      <xcode-graph-stats-card label="Count" value="1"></xcode-graph-stats-card>
     `);
 
     el.value = '2';
@@ -838,7 +838,7 @@ describe('graph-stats-card', () => {
 
   it('should dispatch event on click', async () => {
     const el = await fixture<GraphStatsCard>(html`
-      <graph-stats-card></graph-stats-card>
+      <xcode-graph-stats-card></xcode-graph-stats-card>
     `);
 
     let eventFired = false;

@@ -9,7 +9,7 @@ TuistGraph is a Lit web component for visualizing [Tuist](https://tuist.dev) dep
 ## Installation
 
 ```bash
-pnpm add @tuist/graph
+pnpm add xcode-graph
 ```
 
 ## Usage
@@ -20,13 +20,13 @@ Import the component and pass `GraphNode[]` / `GraphEdge[]` arrays as properties
 
 ```html
 <script type="module">
-  import '@tuist/graph';
+  import 'xcode-graph';
 </script>
 
-<graph-app
+<xcode-graph
   .nodes=${nodes}
   .edges=${edges}
-></graph-app>
+></xcode-graph>
 ```
 
 ### Raw Tuist JSON
@@ -34,7 +34,7 @@ Import the component and pass `GraphNode[]` / `GraphEdge[]` arrays as properties
 If you have the raw JSON output from `tuist graph`, use the convenience method:
 
 ```js
-const app = document.querySelector('graph-app');
+const app = document.querySelector('xcode-graph');
 app.loadRawGraph(tuistGraphJson);
 ```
 

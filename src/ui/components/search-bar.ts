@@ -6,9 +6,9 @@
  *
  * @example
  * ```html
- * <graph-search-bar
+ * <xcode-graph-search-bar
  *   search-query="React"
- * ></graph-search-bar>
+ * ></xcode-graph-search-bar>
  * ```
  *
  * @fires search-change - Dispatched when search query changes (detail: { query: string })
@@ -16,6 +16,7 @@
  */
 
 import { icons } from '@shared/controllers/icon.adapter';
+import { KeyboardShortcutController } from '@shared/controllers/keyboard-shortcut.controller';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
@@ -163,40 +164,13 @@ export class GraphSearchBar extends LitElement {
   `;
 
   // ========================================
-  // Lifecycle
+  // Controllers
   // ========================================
 
-  private readonly handleGlobalKeyDown = (e: KeyboardEvent) => {
-    if (e.key === '/' && !this.isInputFocused()) {
-      e.preventDefault();
-      this.inputElement?.focus();
-    }
-  };
-
-  private isInputFocused(): boolean {
-    const active = document.activeElement;
-    if (!active) return false;
-    const tag = active.tagName.toLowerCase();
-    if (tag === 'input' || tag === 'textarea' || (active as HTMLElement).isContentEditable) {
-      return true;
-    }
-    const root = active.shadowRoot;
-    if (root?.activeElement) {
-      const innerTag = root.activeElement.tagName.toLowerCase();
-      return innerTag === 'input' || innerTag === 'textarea';
-    }
-    return false;
-  }
-
-  override connectedCallback() {
-    super.connectedCallback();
-    window.addEventListener('keydown', this.handleGlobalKeyDown);
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    window.removeEventListener('keydown', this.handleGlobalKeyDown);
-  }
+  readonly shortcut = new KeyboardShortcutController(this, {
+    key: '/',
+    onTrigger: () => this.inputElement?.focus(),
+  });
 
   // ========================================
   // Event Handlers
@@ -250,7 +224,7 @@ export class GraphSearchBar extends LitElement {
           ${
             this.searchQuery
               ? html`
-                <graph-icon-button
+                <xcode-graph-icon-button
                   variant="subtle"
                   color="destructive"
                   size="sm"
@@ -258,7 +232,7 @@ export class GraphSearchBar extends LitElement {
                   @click=${this.handleClear}
                 >
                   ${unsafeHTML(icons.X)}
-                </graph-icon-button>
+                </xcode-graph-icon-button>
               `
               : html`
                 <div class="keyboard-hint">/</div>
@@ -273,11 +247,11 @@ export class GraphSearchBar extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-search-bar': GraphSearchBar;
+    'xcode-graph-search-bar': GraphSearchBar;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-search-bar')) {
-  customElements.define('graph-search-bar', GraphSearchBar);
+if (!customElements.get('xcode-graph-search-bar')) {
+  customElements.define('xcode-graph-search-bar', GraphSearchBar);
 }

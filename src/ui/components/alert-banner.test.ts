@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphAlertBanner } from './alert-banner';
 import './alert-banner';
 
-describe('graph-alert-banner', () => {
+describe('xcode-graph-alert-banner', () => {
   it('should render with default properties', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner></graph-alert-banner>
+      <xcode-graph-alert-banner></xcode-graph-alert-banner>
     `);
 
     expect(el).to.exist;
@@ -20,10 +20,10 @@ describe('graph-alert-banner', () => {
 
   it('should render title and message', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner
+      <xcode-graph-alert-banner
         title="Warning"
         message="Something happened"
-      ></graph-alert-banner>
+      ></xcode-graph-alert-banner>
     `);
 
     const title = el.shadowRoot?.querySelector('.title');
@@ -35,7 +35,7 @@ describe('graph-alert-banner', () => {
 
   it('should support variant property', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner variant="warning"></graph-alert-banner>
+      <xcode-graph-alert-banner variant="warning"></xcode-graph-alert-banner>
     `);
 
     expect(el.variant).to.equal('warning');
@@ -44,7 +44,7 @@ describe('graph-alert-banner', () => {
 
   it('should show close button when dismissible', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner dismissible></graph-alert-banner>
+      <xcode-graph-alert-banner dismissible></xcode-graph-alert-banner>
     `);
 
     const closeBtn = el.shadowRoot?.querySelector('.close-btn');
@@ -53,7 +53,7 @@ describe('graph-alert-banner', () => {
 
   it('should hide close button when not dismissible', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner></graph-alert-banner>
+      <xcode-graph-alert-banner></xcode-graph-alert-banner>
     `);
 
     const closeBtn = el.shadowRoot?.querySelector('.close-btn');
@@ -62,7 +62,7 @@ describe('graph-alert-banner', () => {
 
   it('should dispatch dismiss event when close button clicked', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner dismissible></graph-alert-banner>
+      <xcode-graph-alert-banner dismissible></xcode-graph-alert-banner>
     `);
 
     let eventFired = false;
@@ -78,7 +78,7 @@ describe('graph-alert-banner', () => {
 
   it('should hide content after dismiss', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner dismissible title="Test"></graph-alert-banner>
+      <xcode-graph-alert-banner dismissible title="Test"></xcode-graph-alert-banner>
     `);
 
     const closeBtn = el.shadowRoot?.querySelector('.close-btn') as HTMLButtonElement;
@@ -91,9 +91,9 @@ describe('graph-alert-banner', () => {
 
   it('should render icon slot', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner>
+      <xcode-graph-alert-banner>
         <span slot="icon">⚠️</span>
-      </graph-alert-banner>
+      </xcode-graph-alert-banner>
     `);
 
     const iconSlot = el.shadowRoot?.querySelector('slot[name="icon"]');
@@ -102,9 +102,9 @@ describe('graph-alert-banner', () => {
 
   it('should render actions slot', async () => {
     const el = await fixture<GraphAlertBanner>(html`
-      <graph-alert-banner>
+      <xcode-graph-alert-banner>
         <button slot="actions">Action</button>
-      </graph-alert-banner>
+      </xcode-graph-alert-banner>
     `);
 
     const actionsSlot = el.shadowRoot?.querySelector('slot[name="actions"]');

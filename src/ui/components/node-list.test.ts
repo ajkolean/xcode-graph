@@ -26,13 +26,13 @@ const mockNodes: GraphNode[] = [
   },
 ];
 
-describe('graph-node-list', () => {
+describe('xcode-graph-node-list', () => {
   it('should render with title', async () => {
     const el = await fixture<GraphNodeList>(html`
-      <graph-node-list
+      <xcode-graph-node-list
         title="Dependencies"
         .nodes=${mockNodes}
-      ></graph-node-list>
+      ></xcode-graph-node-list>
     `);
 
     expect(el).to.exist;
@@ -42,23 +42,23 @@ describe('graph-node-list', () => {
 
   it('should render list items for each node', async () => {
     const el = await fixture<GraphNodeList>(html`
-      <graph-node-list
+      <xcode-graph-node-list
         title="Dependencies"
         .nodes=${mockNodes}
-      ></graph-node-list>
+      ></xcode-graph-node-list>
     `);
 
-    const items = el.shadowRoot?.querySelectorAll('graph-list-item-row');
+    const items = el.shadowRoot?.querySelectorAll('xcode-graph-list-item-row');
     expect(items?.length).to.equal(2);
   });
 
   it('should show empty message when no nodes', async () => {
     const el = await fixture<GraphNodeList>(html`
-      <graph-node-list
+      <xcode-graph-node-list
         title="Dependencies"
         .nodes=${[]}
         empty-message="No dependencies"
-      ></graph-node-list>
+      ></xcode-graph-node-list>
     `);
 
     const empty = el.shadowRoot?.querySelector('.empty');
@@ -67,11 +67,11 @@ describe('graph-node-list', () => {
 
   it('should pass suffix to section header', async () => {
     const el = await fixture<GraphNodeList>(html`
-      <graph-node-list
+      <xcode-graph-node-list
         title="Dependents"
         .nodes=${mockNodes}
         suffix="direct"
-      ></graph-node-list>
+      ></xcode-graph-node-list>
     `);
 
     const countText = el.shadowRoot?.querySelector('.count');
@@ -80,10 +80,10 @@ describe('graph-node-list', () => {
 
   it('should dispatch node-select event', async () => {
     const el = await fixture<GraphNodeList>(html`
-      <graph-node-list
+      <xcode-graph-node-list
         title="Dependencies"
         .nodes=${mockNodes}
-      ></graph-node-list>
+      ></xcode-graph-node-list>
     `);
 
     let eventFired = false;
@@ -95,7 +95,7 @@ describe('graph-node-list', () => {
     }) as EventListener);
 
     // Trigger the row-select event on the list item
-    const row = el.shadowRoot?.querySelector('graph-list-item-row');
+    const row = el.shadowRoot?.querySelector('xcode-graph-list-item-row');
     row?.dispatchEvent(
       new CustomEvent('row-select', {
         detail: { node: mockNodes[0] },
@@ -110,25 +110,25 @@ describe('graph-node-list', () => {
 
   it('should format subtitle correctly for internal nodes', async () => {
     const el = await fixture<GraphNodeList>(html`
-      <graph-node-list
+      <xcode-graph-node-list
         title="Test"
         .nodes=${[mockNodes[0]]}
-      ></graph-node-list>
+      ></xcode-graph-node-list>
     `);
 
-    const row = el.shadowRoot?.querySelector('graph-list-item-row');
+    const row = el.shadowRoot?.querySelector('xcode-graph-list-item-row');
     expect(row?.getAttribute('subtitle')).to.equal('Framework');
   });
 
   it('should format subtitle correctly for external nodes', async () => {
     const el = await fixture<GraphNodeList>(html`
-      <graph-node-list
+      <xcode-graph-node-list
         title="Test"
         .nodes=${[mockNodes[1]]}
-      ></graph-node-list>
+      ></xcode-graph-node-list>
     `);
 
-    const row = el.shadowRoot?.querySelector('graph-list-item-row');
+    const row = el.shadowRoot?.querySelector('xcode-graph-list-item-row');
     expect(row?.getAttribute('subtitle')).to.equal('External Library');
   });
 });

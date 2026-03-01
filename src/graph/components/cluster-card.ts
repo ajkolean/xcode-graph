@@ -7,13 +7,13 @@
  * @example
  * ```html
  * <svg>
- *   <graph-cluster-card
+ *   <xcode-graph-cluster-card
  *     .cluster=${clusterData}
  *     x="100"
  *     y="100"
  *     width="200"
  *     height="150"
- *   ></graph-cluster-card>
+ *   ></xcode-graph-cluster-card>
  * </svg>
  * ```
  *
@@ -221,11 +221,11 @@ export class GraphClusterCard extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-card': GraphClusterCard;
+    'xcode-graph-cluster-card': GraphClusterCard;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-card')) {
-  customElements.define('graph-cluster-card', GraphClusterCard);
+if (!customElements.get('xcode-graph-cluster-card')) {
+  customElements.define('xcode-graph-cluster-card', GraphClusterCard);
 }

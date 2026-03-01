@@ -6,12 +6,12 @@
  *
  * @example
  * ```html
- * <graph-list-item-row
+ * <xcode-graph-list-item-row
  *   .node=${nodeData}
  *   subtitle="Framework"
  *   zoom="1.0"
  *   is-selected
- * ></graph-list-item-row>
+ * ></xcode-graph-list-item-row>
  * ```
  *
  * @fires row-select - Dispatched when row is clicked (detail: { node })
@@ -281,11 +281,11 @@ export class GraphListItemRow extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-list-item-row': GraphListItemRow;
+    'xcode-graph-list-item-row': GraphListItemRow;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-list-item-row')) {
-  customElements.define('graph-list-item-row', GraphListItemRow);
+if (!customElements.get('xcode-graph-list-item-row')) {
+  customElements.define('xcode-graph-list-item-row', GraphListItemRow);
 }

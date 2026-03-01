@@ -16,13 +16,13 @@ import {
   createViewportBounds,
 } from './test-helpers/graph-fixtures';
 
-describe('graph-virtual-renderer', () => {
+describe('xcode-graph-virtual-renderer', () => {
   it('should accept viewport dimensions', async () => {
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         viewportWidth="1920"
         viewportHeight="1080"
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     expect(el.viewportWidth).to.equal(1920);
@@ -31,11 +31,11 @@ describe('graph-virtual-renderer', () => {
 
   it('should accept pan and zoom properties', async () => {
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         panX="100"
         panY="200"
         zoom="1.5"
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     expect(el.panX).to.equal(100);
@@ -55,7 +55,7 @@ describe('graph-virtual-renderer', () => {
     ]);
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
         viewportWidth="1000"
@@ -63,7 +63,7 @@ describe('graph-virtual-renderer', () => {
         panX="0"
         panY="0"
         zoom="1"
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -85,7 +85,7 @@ describe('graph-virtual-renderer', () => {
     ]);
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
         viewportWidth="1000"
@@ -93,7 +93,7 @@ describe('graph-virtual-renderer', () => {
         panX="0"
         panY="0"
         zoom="1"
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -112,12 +112,12 @@ describe('graph-virtual-renderer', () => {
     const positions = new Map([['node1', pos1]]);
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
         viewportWidth="1000"
         viewportHeight="800"
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -144,11 +144,11 @@ describe('graph-virtual-renderer', () => {
     const positions = new Map([['node1', pos1]]);
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
         zoom="1"
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -170,11 +170,11 @@ describe('graph-virtual-renderer', () => {
     const positions = new Map([['node1', pos1]]);
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
         bufferMargin="200"
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     expect(el.bufferMargin).to.equal(200);
@@ -185,7 +185,7 @@ describe('graph-virtual-renderer', () => {
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
         viewportWidth="1000"
@@ -193,7 +193,7 @@ describe('graph-virtual-renderer', () => {
         panX="0"
         panY="0"
         zoom="1"
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -209,10 +209,10 @@ describe('graph-virtual-renderer', () => {
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -235,10 +235,10 @@ describe('graph-virtual-renderer', () => {
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -253,10 +253,10 @@ describe('graph-virtual-renderer', () => {
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -271,10 +271,10 @@ describe('graph-virtual-renderer', () => {
     const positions = createMockNodePositions(nodes.map((n) => n.id));
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;
@@ -295,10 +295,10 @@ describe('graph-virtual-renderer', () => {
     const positions = createMockNodePositions(['node0', 'node1', 'node2']);
 
     const el = await fixture<GraphVirtualRenderer>(
-      html`<graph-virtual-renderer
+      html`<xcode-graph-virtual-renderer
         .nodes=${nodes}
         .nodePositions=${positions}
-      ></graph-virtual-renderer>`,
+      ></xcode-graph-virtual-renderer>`,
     );
 
     await el.updateComplete;

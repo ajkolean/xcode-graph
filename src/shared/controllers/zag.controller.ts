@@ -13,7 +13,7 @@
  * import { createMachineController } from '@shared/controllers/zag.controller';
  * import { sidebarMachine } from '@shared/machines/sidebar.machine';
  *
- * @customElement('graph-sidebar')
+ * @customElement('xcode-graph-sidebar')
  * class GraphSidebar extends LitElement {
  *   private sidebar = createMachineController(this, sidebarMachine, {
  *     id: 'sidebar',

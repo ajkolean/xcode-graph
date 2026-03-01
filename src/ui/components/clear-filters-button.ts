@@ -6,7 +6,7 @@
  *
  * @example
  * ```html
- * <graph-clear-filters-button is-active></graph-clear-filters-button>
+ * <xcode-graph-clear-filters-button is-active></xcode-graph-clear-filters-button>
  * ```
  *
  * @fires clear-filters - Dispatched when button is clicked (only when active)
@@ -125,11 +125,11 @@ export class GraphClearFiltersButton extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-clear-filters-button': GraphClearFiltersButton;
+    'xcode-graph-clear-filters-button': GraphClearFiltersButton;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-clear-filters-button')) {
-  customElements.define('graph-clear-filters-button', GraphClearFiltersButton);
+if (!customElements.get('xcode-graph-clear-filters-button')) {
+  customElements.define('xcode-graph-clear-filters-button', GraphClearFiltersButton);
 }

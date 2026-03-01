@@ -79,7 +79,7 @@ const mockCluster: Cluster = {
 // Rendering Tests
 // ========================================
 
-describe('graph-right-sidebar - Rendering', () => {
+describe('xcode-graph-right-sidebar - Rendering', () => {
   beforeEach(() => {
     // Reset signals before each test
     selectNode(null);
@@ -95,31 +95,31 @@ describe('graph-right-sidebar - Rendering', () => {
   });
   it('should render with header', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     expect(el).to.exist;
-    const header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
     expect(header).to.exist;
   });
 
   it('should render filter view by default', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
-    const searchBar = el.shadowRoot?.querySelector('graph-search-bar');
-    const filterSections = el.shadowRoot?.querySelectorAll('graph-filter-section');
+    const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
+    const filterSections = el.shadowRoot?.querySelectorAll('xcode-graph-filter-section');
 
     expect(searchBar).to.exist;
     expect(filterSections?.length).to.be.greaterThan(0);
@@ -127,47 +127,47 @@ describe('graph-right-sidebar - Rendering', () => {
 
   it('should render stats cards in filter view', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
-    const statsCards = el.shadowRoot?.querySelectorAll('graph-stats-card');
+    const statsCards = el.shadowRoot?.querySelectorAll('xcode-graph-stats-card');
     expect(statsCards?.length).to.equal(2); // Nodes and Dependencies
   });
 
   it('should render clear filters button', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
-    const clearButton = el.shadowRoot?.querySelector('graph-clear-filters-button');
+    const clearButton = el.shadowRoot?.querySelector('xcode-graph-clear-filters-button');
     expect(clearButton).to.exist;
   });
 
   it('should render collapsed sidebar when collapsed', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     // Initially not collapsed
     expect(el.hasAttribute('collapsed')).to.be.false;
 
     // The component renders filter view when expanded
-    const searchBar = el.shadowRoot?.querySelector('graph-search-bar');
+    const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
     expect(searchBar).to.exist;
   });
 });
@@ -176,79 +176,79 @@ describe('graph-right-sidebar - Rendering', () => {
 // Panel Switching Tests
 // ========================================
 
-describe('graph-right-sidebar - Panel Switching', () => {
+describe('xcode-graph-right-sidebar - Panel Switching', () => {
   it('should show node details when node is selected', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     selectNode(mockNodeCoreLib);
     await el.updateComplete;
 
-    const nodePanel = el.shadowRoot?.querySelector('graph-node-details-panel');
+    const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
     expect(nodePanel).to.exist;
   });
 
   it('should show cluster details when cluster is selected', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
         .clusters=${[mockCluster]}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     selectCluster('MyApp');
     await el.updateComplete;
 
-    const clusterPanel = el.shadowRoot?.querySelector('graph-cluster-details-panel');
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
     expect(clusterPanel).to.exist;
   });
 
   it('should show filter view when nothing is selected', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     selectNode(null);
     selectCluster(null);
     await el.updateComplete;
 
-    const searchBar = el.shadowRoot?.querySelector('graph-search-bar');
+    const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
     expect(searchBar).to.exist;
   });
 
   it('should update header title based on selection', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     // Filter view shows workspace name derived from nodes
-    let header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
+    let header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
     expect(header?.getAttribute('title')).to.equal('MyApp');
 
     // Node details replaces header with details toolbar
     selectNode(mockNodeCoreLib);
     await el.updateComplete;
 
-    header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
+    header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
     expect(header).to.not.exist;
     const toolbar = el.shadowRoot?.querySelector('.details-toolbar');
     expect(toolbar).to.exist;
@@ -258,7 +258,7 @@ describe('graph-right-sidebar - Panel Switching', () => {
     selectCluster('MyApp');
     await el.updateComplete;
 
-    header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
+    header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
     expect(header).to.not.exist;
   });
 });
@@ -267,7 +267,7 @@ describe('graph-right-sidebar - Panel Switching', () => {
 // State Management Tests
 // ========================================
 
-describe('graph-right-sidebar - State Management', () => {
+describe('xcode-graph-right-sidebar - State Management', () => {
   beforeEach(() => {
     selectNode(null);
     selectCluster(null);
@@ -276,19 +276,19 @@ describe('graph-right-sidebar - State Management', () => {
 
   it('should track collapsed state', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     // Initially not collapsed
     expect(el.hasAttribute('collapsed')).to.be.false;
 
     // Header should exist
-    const header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
     expect(header).to.exist;
   });
 });
@@ -297,15 +297,15 @@ describe('graph-right-sidebar - State Management', () => {
 // Event Coordination Tests
 // ========================================
 
-describe('graph-right-sidebar - Event Coordination', () => {
+describe('xcode-graph-right-sidebar - Event Coordination', () => {
   it('should clear node selection when expanding to section', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     selectNode(mockNodeCoreLib);
@@ -314,18 +314,18 @@ describe('graph-right-sidebar - Event Coordination', () => {
     expect(selectedNode.get()).to.equal(mockNodes[0]);
 
     // Node details panel should be visible
-    const nodePanel = el.shadowRoot?.querySelector('graph-node-details-panel');
+    const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
     expect(nodePanel).to.exist;
   });
 
   it('should clear cluster selection when expanding to section', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     selectCluster('MyApp');
@@ -334,7 +334,7 @@ describe('graph-right-sidebar - Event Coordination', () => {
     expect(selectedCluster.get()).to.equal('MyApp');
 
     // Cluster details panel should be visible
-    const clusterPanel = el.shadowRoot?.querySelector('graph-cluster-details-panel');
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
     expect(clusterPanel).to.exist;
   });
 });
@@ -343,20 +343,20 @@ describe('graph-right-sidebar - Event Coordination', () => {
 // Filter Logic Tests
 // ========================================
 
-describe('graph-right-sidebar - Filter Logic', () => {
+describe('xcode-graph-right-sidebar - Filter Logic', () => {
   it('should not render package filter when no packages exist', async () => {
     const noPackageNodes = mockNodes.filter((n) => n.type !== NodeType.Package);
 
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${noPackageNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${noPackageNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
-    const filterSections = el.shadowRoot?.querySelectorAll('graph-filter-section');
+    const filterSections = el.shadowRoot?.querySelectorAll('xcode-graph-filter-section');
     const titles = Array.from(filterSections || []).map((section) => section.getAttribute('title'));
 
     expect(titles).to.not.include('Packages');
@@ -364,12 +364,12 @@ describe('graph-right-sidebar - Filter Logic', () => {
 
   it('should show empty state when no filtered nodes', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${[]}
         .filteredEdges=${[]}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     // Component should render with empty filtered nodes
@@ -381,7 +381,7 @@ describe('graph-right-sidebar - Filter Logic', () => {
 // Edge Cases
 // ========================================
 
-describe('graph-right-sidebar - Edge Cases', () => {
+describe('xcode-graph-right-sidebar - Edge Cases', () => {
   beforeEach(() => {
     selectNode(null);
     selectCluster(null);
@@ -390,44 +390,44 @@ describe('graph-right-sidebar - Edge Cases', () => {
 
   it('should handle empty nodes array', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${[]}
         .allEdges=${[]}
         .filteredNodes=${[]}
         .filteredEdges=${[]}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     // Should still render header and filter view
-    const header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
+    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
     expect(header).to.exist;
   });
 
   it('should create synthetic cluster when not in clusters list', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     selectCluster('MyApp');
     await el.updateComplete;
 
-    const clusterPanel = el.shadowRoot?.querySelector('graph-cluster-details-panel');
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
     expect(clusterPanel).to.exist;
   });
 
   it('should update when properties change', async () => {
     const el = await fixture<GraphRightSidebar>(html`
-      <graph-right-sidebar
+      <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
         .filteredNodes=${mockNodes}
         .filteredEdges=${mockEdges}
-      ></graph-right-sidebar>
+      ></xcode-graph-right-sidebar>
     `);
 
     const newNodes: GraphNode[] = [

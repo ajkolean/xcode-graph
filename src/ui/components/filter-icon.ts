@@ -6,10 +6,10 @@
  *
  * @example
  * ```html
- * <graph-filter-icon name="product-types"></graph-filter-icon>
- * <graph-filter-icon name="platforms"></graph-filter-icon>
- * <graph-filter-icon name="projects"></graph-filter-icon>
- * <graph-filter-icon name="packages"></graph-filter-icon>
+ * <xcode-graph-filter-icon name="product-types"></xcode-graph-filter-icon>
+ * <xcode-graph-filter-icon name="platforms"></xcode-graph-filter-icon>
+ * <xcode-graph-filter-icon name="projects"></xcode-graph-filter-icon>
+ * <xcode-graph-filter-icon name="packages"></xcode-graph-filter-icon>
  * ```
  */
 
@@ -168,11 +168,11 @@ export class GraphFilterIcon extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-filter-icon': GraphFilterIcon;
+    'xcode-graph-filter-icon': GraphFilterIcon;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-filter-icon')) {
-  customElements.define('graph-filter-icon', GraphFilterIcon);
+if (!customElements.get('xcode-graph-filter-icon')) {
+  customElements.define('xcode-graph-filter-icon', GraphFilterIcon);
 }

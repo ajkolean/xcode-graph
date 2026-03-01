@@ -7,12 +7,12 @@ import { describe, it } from 'vitest';
 import type { GraphCycleWarning } from './cycle-warning';
 import './cycle-warning';
 
-describe('graph-cycle-warning', () => {
+describe('xcode-graph-cycle-warning', () => {
   describe('Rendering', () => {
     it('should render when cycles are provided', async () => {
       const cycles = [['A', 'B', 'C', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       expect(el).to.exist;
@@ -22,7 +22,7 @@ describe('graph-cycle-warning', () => {
 
     it('should not render when cycles array is empty', async () => {
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${[]}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${[]}></xcode-graph-cycle-warning>
       `);
 
       const banner = el.shadowRoot?.querySelector('.warning-banner');
@@ -36,7 +36,7 @@ describe('graph-cycle-warning', () => {
         ['X', 'Y', 'X'],
       ];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const count = el.shadowRoot?.querySelector('.cycle-count');
@@ -46,7 +46,7 @@ describe('graph-cycle-warning', () => {
     it('should display warning title and icon', async () => {
       const cycles = [['A', 'B', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const title = el.shadowRoot?.querySelector('.warning-title');
@@ -61,7 +61,7 @@ describe('graph-cycle-warning', () => {
     it('should not show cycle list by default', async () => {
       const cycles = [['A', 'B', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const cycleList = el.shadowRoot?.querySelector('.cycle-list');
@@ -71,7 +71,7 @@ describe('graph-cycle-warning', () => {
     it('should show cycle list when expand button is clicked', async () => {
       const cycles = [['A', 'B', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;
@@ -87,7 +87,7 @@ describe('graph-cycle-warning', () => {
     it('should toggle button text when expanding/collapsing', async () => {
       const cycles = [['A', 'B', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;
@@ -111,7 +111,7 @@ describe('graph-cycle-warning', () => {
         ['X', 'Y', 'X'],
       ];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;
@@ -125,7 +125,7 @@ describe('graph-cycle-warning', () => {
     it('should format cycles correctly', async () => {
       const cycles = [['A', 'B', 'C', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;
@@ -141,7 +141,7 @@ describe('graph-cycle-warning', () => {
     it('should hide banner when dismiss button is clicked', async () => {
       const cycles = [['A', 'B', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       let banner = el.shadowRoot?.querySelector('.warning-banner');
@@ -158,7 +158,7 @@ describe('graph-cycle-warning', () => {
     it('should dispatch dismiss event when dismissed', async () => {
       const cycles = [['A', 'B', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       let eventFired = false;
@@ -176,7 +176,7 @@ describe('graph-cycle-warning', () => {
     it('should hide banner when close button (×) is clicked', async () => {
       const cycles = [['A', 'B', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const closeBtn = el.shadowRoot?.querySelector('.close-btn') as HTMLButtonElement;
@@ -192,7 +192,7 @@ describe('graph-cycle-warning', () => {
     it('should handle single node cycle', async () => {
       const cycles = [['A', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const count = el.shadowRoot?.querySelector('.cycle-count');
@@ -213,7 +213,7 @@ describe('graph-cycle-warning', () => {
       const cycles = [longCycle];
 
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;
@@ -232,7 +232,7 @@ describe('graph-cycle-warning', () => {
       const manyCycles = Array.from({ length: 50 }, (_, i) => [`A${i}`, `B${i}`, `A${i}`]);
 
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${manyCycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${manyCycles}></xcode-graph-cycle-warning>
       `);
 
       const count = el.shadowRoot?.querySelector('.cycle-count');
@@ -251,7 +251,7 @@ describe('graph-cycle-warning', () => {
     it('should have proper button labels', async () => {
       const cycles = [['A', 'B', 'A']];
       const el = await fixture<GraphCycleWarning>(html`
-        <graph-cycle-warning .cycles=${cycles}></graph-cycle-warning>
+        <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;

@@ -194,11 +194,11 @@ export class GraphVirtualRenderer extends LitElement {
 
         // Render node using graph-node component
         return svg`
-          <graph-node
+          <xcode-graph-node
             .node=${node}
             .position=${pos}
             .zoom=${this.zoom}
-          ></graph-node>
+          ></xcode-graph-node>
         `;
       })}
     `;
@@ -206,12 +206,12 @@ export class GraphVirtualRenderer extends LitElement {
 }
 
 // Register custom element
-if (!customElements.get('graph-virtual-renderer')) {
-  customElements.define('graph-virtual-renderer', GraphVirtualRenderer);
+if (!customElements.get('xcode-graph-virtual-renderer')) {
+  customElements.define('xcode-graph-virtual-renderer', GraphVirtualRenderer);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-virtual-renderer': GraphVirtualRenderer;
+    'xcode-graph-virtual-renderer': GraphVirtualRenderer;
   }
 }

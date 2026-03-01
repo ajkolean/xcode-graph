@@ -6,14 +6,14 @@
  *
  * @example
  * ```html
- * <graph-filter-section
+ * <xcode-graph-filter-section
  *   id="nodeTypes"
  *   title="Product Types"
  *   icon-name="product-types"
  *   .items=${items}
  *   .selectedItems=${selectedSet}
  *   is-expanded
- * ></graph-filter-section>
+ * ></xcode-graph-filter-section>
  * ```
  *
  * @fires section-toggle - Dispatched when header is clicked
@@ -493,11 +493,11 @@ export class GraphFilterSection extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-filter-section': GraphFilterSection;
+    'xcode-graph-filter-section': GraphFilterSection;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-filter-section')) {
-  customElements.define('graph-filter-section', GraphFilterSection);
+if (!customElements.get('xcode-graph-filter-section')) {
+  customElements.define('xcode-graph-filter-section', GraphFilterSection);
 }

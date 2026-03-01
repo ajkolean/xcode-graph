@@ -8,9 +8,9 @@
  *
  * @example
  * ```html
- * <graph-cluster-composition
+ * <xcode-graph-cluster-composition
  *   .nodes=${clusterNodes}
- * ></graph-cluster-composition>
+ * ></xcode-graph-cluster-composition>
  * ```
  */
 
@@ -319,11 +319,11 @@ export class GraphClusterComposition extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-composition': GraphClusterComposition;
+    'xcode-graph-cluster-composition': GraphClusterComposition;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-composition')) {
-  customElements.define('graph-cluster-composition', GraphClusterComposition);
+if (!customElements.get('xcode-graph-cluster-composition')) {
+  customElements.define('xcode-graph-cluster-composition', GraphClusterComposition);
 }

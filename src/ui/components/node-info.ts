@@ -6,7 +6,7 @@
  *
  * @example
  * ```html
- * <graph-node-info .node=${nodeData}></graph-node-info>
+ * <xcode-graph-node-info .node=${nodeData}></xcode-graph-node-info>
  * ```
  */
 
@@ -217,14 +217,14 @@ export class GraphNodeInfo extends LitElement {
       <div class="section">
         <div class="title">Foreign Build</div>
         <div class="info-rows">
-          <graph-info-row label="Output" value=${fb.outputPath}></graph-info-row>
-          <graph-info-row label="Linking" value=${fb.outputLinking}></graph-info-row>
-          <graph-info-row label="Inputs">
+          <xcode-graph-info-row label="Output" value=${fb.outputPath}></xcode-graph-info-row>
+          <xcode-graph-info-row label="Linking" value=${fb.outputLinking}></xcode-graph-info-row>
+          <xcode-graph-info-row label="Inputs">
             ${String(fb.inputCount)}
             ${fb.inputs.files.length > 0 ? html`<span class="input-badge">${fb.inputs.files.length} files</span>` : nothing}
             ${fb.inputs.folders.length > 0 ? html`<span class="input-badge">${fb.inputs.folders.length} folders</span>` : nothing}
             ${fb.inputs.scripts.length > 0 ? html`<span class="input-badge">${fb.inputs.scripts.length} scripts</span>` : nothing}
-          </graph-info-row>
+          </xcode-graph-info-row>
         </div>
         <div class="script-block ${this.scriptExpanded ? 'expanded' : ''}">${fb.script}</div>
         <button
@@ -249,19 +249,19 @@ export class GraphNodeInfo extends LitElement {
         <div class="section">
           <div class="title">Node Info</div>
           <div class="info-rows">
-            <graph-info-row label="Platform" value=${this.node.platform}></graph-info-row>
-            <graph-info-row label="Origin" value=${this.originLabel}></graph-info-row>
-            <graph-info-row label="Type" value=${getNodeTypeLabel(this.node.type)}></graph-info-row>
+            <xcode-graph-info-row label="Platform" value=${this.node.platform}></xcode-graph-info-row>
+            <xcode-graph-info-row label="Origin" value=${this.originLabel}></xcode-graph-info-row>
+            <xcode-graph-info-row label="Type" value=${getNodeTypeLabel(this.node.type)}></xcode-graph-info-row>
             ${
               showProductName && this.node.productName
-                ? html`<graph-info-row label="Product" value=${this.node.productName}></graph-info-row>`
+                ? html`<xcode-graph-info-row label="Product" value=${this.node.productName}></xcode-graph-info-row>`
                 : nothing
             }
             ${
               showBundleId
-                ? html`<graph-info-row label="Bundle ID">
+                ? html`<xcode-graph-info-row label="Bundle ID">
                   <span class="bundle-id">${this.node.bundleId}</span>
-                </graph-info-row>`
+                </xcode-graph-info-row>`
                 : nothing
             }
           </div>
@@ -272,10 +272,10 @@ export class GraphNodeInfo extends LitElement {
             ? html`
             <div class="section">
               <div class="title">Platform Support</div>
-              <graph-deployment-targets
+              <xcode-graph-deployment-targets
                 .deploymentTargets=${this.node.deploymentTargets}
                 .destinations=${this.node.destinations}
-              ></graph-deployment-targets>
+              ></xcode-graph-deployment-targets>
             </div>
           `
             : nothing
@@ -289,12 +289,12 @@ export class GraphNodeInfo extends LitElement {
               <div class="info-rows">
                 ${
                   showSourceCount
-                    ? html`<graph-info-row label="Source Files" value=${String(this.node.sourceCount)}></graph-info-row>`
+                    ? html`<xcode-graph-info-row label="Source Files" value=${String(this.node.sourceCount)}></xcode-graph-info-row>`
                     : nothing
                 }
                 ${
                   showResourceCount
-                    ? html`<graph-info-row label="Resources" value=${String(this.node.resourceCount)}></graph-info-row>`
+                    ? html`<xcode-graph-info-row label="Resources" value=${String(this.node.resourceCount)}></xcode-graph-info-row>`
                     : nothing
                 }
               </div>
@@ -333,11 +333,11 @@ export class GraphNodeInfo extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-node-info': GraphNodeInfo;
+    'xcode-graph-node-info': GraphNodeInfo;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-node-info')) {
-  customElements.define('graph-node-info', GraphNodeInfo);
+if (!customElements.get('xcode-graph-node-info')) {
+  customElements.define('xcode-graph-node-info', GraphNodeInfo);
 }

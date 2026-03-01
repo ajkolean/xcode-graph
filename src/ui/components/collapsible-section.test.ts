@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphCollapsibleSection } from './collapsible-section';
 import './collapsible-section';
 
-describe('graph-collapsible-section', () => {
+describe('xcode-graph-collapsible-section', () => {
   it('should render with title', async () => {
     const el = await fixture<GraphCollapsibleSection>(html`
-      <graph-collapsible-section title="Filters"></graph-collapsible-section>
+      <xcode-graph-collapsible-section title="Filters"></xcode-graph-collapsible-section>
     `);
 
     expect(el).to.exist;
@@ -20,9 +20,9 @@ describe('graph-collapsible-section', () => {
 
   it('should be collapsed by default', async () => {
     const el = await fixture<GraphCollapsibleSection>(html`
-      <graph-collapsible-section title="Test">
+      <xcode-graph-collapsible-section title="Test">
         <div class="content-inner">Content</div>
-      </graph-collapsible-section>
+      </xcode-graph-collapsible-section>
     `);
 
     expect(el.isExpanded).to.be.false;
@@ -32,9 +32,9 @@ describe('graph-collapsible-section', () => {
 
   it('should expand when is-expanded is true', async () => {
     const el = await fixture<GraphCollapsibleSection>(html`
-      <graph-collapsible-section title="Test" is-expanded>
+      <xcode-graph-collapsible-section title="Test" is-expanded>
         <div>Content</div>
-      </graph-collapsible-section>
+      </xcode-graph-collapsible-section>
     `);
 
     expect(el.isExpanded).to.be.true;
@@ -44,7 +44,7 @@ describe('graph-collapsible-section', () => {
 
   it('should rotate chevron when expanded', async () => {
     const el = await fixture<GraphCollapsibleSection>(html`
-      <graph-collapsible-section title="Test" is-expanded></graph-collapsible-section>
+      <xcode-graph-collapsible-section title="Test" is-expanded></xcode-graph-collapsible-section>
     `);
 
     const chevron = el.shadowRoot?.querySelector('.chevron');
@@ -53,7 +53,7 @@ describe('graph-collapsible-section', () => {
 
   it('should dispatch toggle event when header clicked', async () => {
     const el = await fixture<GraphCollapsibleSection>(html`
-      <graph-collapsible-section title="Test"></graph-collapsible-section>
+      <xcode-graph-collapsible-section title="Test"></xcode-graph-collapsible-section>
     `);
 
     let eventFired = false;
@@ -69,9 +69,9 @@ describe('graph-collapsible-section', () => {
 
   it('should render icon slot', async () => {
     const el = await fixture<GraphCollapsibleSection>(html`
-      <graph-collapsible-section title="Test">
+      <xcode-graph-collapsible-section title="Test">
         <span slot="icon">🔍</span>
-      </graph-collapsible-section>
+      </xcode-graph-collapsible-section>
     `);
 
     const iconSlot = el.shadowRoot?.querySelector('slot[name="icon"]');

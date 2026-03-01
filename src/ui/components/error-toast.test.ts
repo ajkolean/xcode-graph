@@ -27,7 +27,9 @@ describe('GraphErrorToast', () => {
   });
 
   beforeEach(async () => {
-    element = await fixture<GraphErrorToast>(html`<graph-error-toast></graph-error-toast>`);
+    element = await fixture<GraphErrorToast>(
+      html`<xcode-graph-error-toast></xcode-graph-error-toast>`,
+    );
   });
 
   describe('Rendering', () => {

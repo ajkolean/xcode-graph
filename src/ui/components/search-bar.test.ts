@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphSearchBar } from './search-bar';
 import './search-bar';
 
-describe('graph-search-bar', () => {
+describe('xcode-graph-search-bar', () => {
   it('should render', async () => {
     const el = await fixture<GraphSearchBar>(html`
-      <graph-search-bar></graph-search-bar>
+      <xcode-graph-search-bar></xcode-graph-search-bar>
     `);
 
     expect(el).to.exist;
@@ -20,7 +20,7 @@ describe('graph-search-bar', () => {
 
   it('should render with search query', async () => {
     const el = await fixture<GraphSearchBar>(html`
-      <graph-search-bar search-query="test"></graph-search-bar>
+      <xcode-graph-search-bar search-query="test"></xcode-graph-search-bar>
     `);
 
     const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
@@ -29,7 +29,7 @@ describe('graph-search-bar', () => {
 
   it('should show keyboard hint when empty', async () => {
     const el = await fixture<GraphSearchBar>(html`
-      <graph-search-bar></graph-search-bar>
+      <xcode-graph-search-bar></xcode-graph-search-bar>
     `);
 
     const hint = el.shadowRoot?.querySelector('.keyboard-hint');
@@ -39,16 +39,16 @@ describe('graph-search-bar', () => {
 
   it('should show clear button when has query', async () => {
     const el = await fixture<GraphSearchBar>(html`
-      <graph-search-bar search-query="test"></graph-search-bar>
+      <xcode-graph-search-bar search-query="test"></xcode-graph-search-bar>
     `);
 
-    const clearButton = el.shadowRoot?.querySelector('graph-icon-button');
+    const clearButton = el.shadowRoot?.querySelector('xcode-graph-icon-button');
     expect(clearButton).to.exist;
   });
 
   it('should dispatch search-change on input', async () => {
     const el = await fixture<GraphSearchBar>(html`
-      <graph-search-bar></graph-search-bar>
+      <xcode-graph-search-bar></xcode-graph-search-bar>
     `);
 
     let eventDetail: { query: string } | undefined;
@@ -67,7 +67,7 @@ describe('graph-search-bar', () => {
 
   it('should dispatch search-clear on clear button click', async () => {
     const el = await fixture<GraphSearchBar>(html`
-      <graph-search-bar search-query="test"></graph-search-bar>
+      <xcode-graph-search-bar search-query="test"></xcode-graph-search-bar>
     `);
 
     let eventFired = false;
@@ -75,7 +75,7 @@ describe('graph-search-bar', () => {
       eventFired = true;
     });
 
-    const clearButton = el.shadowRoot?.querySelector('graph-icon-button') as HTMLElement;
+    const clearButton = el.shadowRoot?.querySelector('xcode-graph-icon-button') as HTMLElement;
     clearButton.click();
     await el.updateComplete;
 
@@ -84,7 +84,7 @@ describe('graph-search-bar', () => {
 
   it('should dispatch search-clear on Escape key', async () => {
     const el = await fixture<GraphSearchBar>(html`
-      <graph-search-bar search-query="test"></graph-search-bar>
+      <xcode-graph-search-bar search-query="test"></xcode-graph-search-bar>
     `);
 
     let eventFired = false;

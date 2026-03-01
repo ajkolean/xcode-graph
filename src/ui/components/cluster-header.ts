@@ -7,13 +7,13 @@
  *
  * @example
  * ```html
- * <graph-cluster-header
+ * <xcode-graph-cluster-header
  *   cluster-name="MyPackage"
  *   cluster-type="package"
  *   cluster-color="#8B5CF6"
  *   cluster-path="/path/to/package"
  *   is-external
- * ></graph-cluster-header>
+ * ></xcode-graph-cluster-header>
  * ```
  *
  * @fires back - Dispatched when back button is clicked
@@ -207,7 +207,7 @@ export class GraphClusterHeader extends LitElement {
     const shortPath = this.getShortPath();
 
     return html`
-      <graph-panel-header
+      <xcode-graph-panel-header
         title=${this.clusterName}
         subtitle=${this.isExternal ? 'External' : 'Internal'}
         color=${color}
@@ -219,21 +219,21 @@ export class GraphClusterHeader extends LitElement {
         </span>
 
         <!-- Source Type and Type Badges -->
-        <graph-badge
+        <xcode-graph-badge
           slot="badges"
           label=${isPackage ? 'Package' : 'Project'}
           color=${color}
           variant="rounded"
           size="sm"
-        ></graph-badge>
-        <graph-badge
+        ></xcode-graph-badge>
+        <xcode-graph-badge
           slot="badges"
           label=${sourceConfig?.label ?? ''}
           color=${sourceConfig?.color ?? 'var(--colors-muted-foreground)'}
           variant="rounded"
           size="sm"
-        ></graph-badge>
-      </graph-panel-header>
+        ></xcode-graph-badge>
+      </xcode-graph-panel-header>
 
       <!-- Path with Copy Button -->
       ${
@@ -268,11 +268,11 @@ export class GraphClusterHeader extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-header': GraphClusterHeader;
+    'xcode-graph-cluster-header': GraphClusterHeader;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-header')) {
-  customElements.define('graph-cluster-header', GraphClusterHeader);
+if (!customElements.get('xcode-graph-cluster-header')) {
+  customElements.define('xcode-graph-cluster-header', GraphClusterHeader);
 }

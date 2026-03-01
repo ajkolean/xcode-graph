@@ -6,8 +6,8 @@
  *
  * @example
  * ```html
- * <graph-tag-badge tag="domain:infrastructure"></graph-tag-badge>
- * <graph-tag-badge tag="layer:feature" interactive></graph-tag-badge>
+ * <xcode-graph-tag-badge tag="domain:infrastructure"></xcode-graph-tag-badge>
+ * <xcode-graph-tag-badge tag="layer:feature" interactive></xcode-graph-tag-badge>
  * ```
  */
 
@@ -153,11 +153,11 @@ export class GraphTagBadge extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-tag-badge': GraphTagBadge;
+    'xcode-graph-tag-badge': GraphTagBadge;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-tag-badge')) {
-  customElements.define('graph-tag-badge', GraphTagBadge);
+if (!customElements.get('xcode-graph-tag-badge')) {
+  customElements.define('xcode-graph-tag-badge', GraphTagBadge);
 }

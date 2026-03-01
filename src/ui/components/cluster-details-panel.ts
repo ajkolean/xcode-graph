@@ -5,11 +5,11 @@
  *
  * @example
  * ```html
- * <graph-cluster-details-panel
+ * <xcode-graph-cluster-details-panel
  *   .cluster=${clusterData}
  *   .clusterNodes=${nodes}
  *   .edges=${edges}
- * ></graph-cluster-details-panel>
+ * ></xcode-graph-cluster-details-panel>
  * ```
  */
 
@@ -141,16 +141,16 @@ export class GraphClusterDetailsPanel extends LitElement {
 
     return html`
       <div class="scrollable">
-        <graph-cluster-header
+        <xcode-graph-cluster-header
           cluster-name=${this.cluster.name}
           cluster-type=${this.cluster.type}
           cluster-color=${this.clusterColor}
           cluster-path=${this.cluster.path || ''}
           ?is-external=${isExternal}
           @back=${() => this.bubbleEvent('close')}
-        ></graph-cluster-header>
+        ></xcode-graph-cluster-header>
 
-        <graph-cluster-stats
+        <xcode-graph-cluster-stats
           filtered-dependencies=${this.stats.filteredDependencies}
           total-dependencies=${this.stats.totalDependencies}
           filtered-dependents=${this.stats.filteredDependents}
@@ -159,13 +159,13 @@ export class GraphClusterDetailsPanel extends LitElement {
           ?active-direct-dependents=${this.activeDirectDependents}
           .platforms=${this.stats.platforms}
           .targetBreakdown=${this.targetBreakdown}
-        ></graph-cluster-stats>
+        ></xcode-graph-cluster-stats>
 
-        <graph-cluster-composition
+        <xcode-graph-cluster-composition
           .nodes=${this.clusterNodes}
-        ></graph-cluster-composition>
+        ></xcode-graph-cluster-composition>
 
-        <graph-cluster-targets-list
+        <xcode-graph-cluster-targets-list
           .clusterNodes=${this.clusterNodes}
           .nodesByType=${this.clusterNodes.reduce(
             (acc, node) => {
@@ -182,7 +182,7 @@ export class GraphClusterDetailsPanel extends LitElement {
           .zoom=${this.zoom}
           @node-select=${(e: CustomEvent<{ node: GraphNode | null }>) => this.bubbleEvent('node-select', e.detail)}
           @node-hover=${(e: CustomEvent<{ nodeId: string | null }>) => this.bubbleEvent('node-hover', e.detail)}
-        ></graph-cluster-targets-list>
+        ></xcode-graph-cluster-targets-list>
       </div>
     `;
   }
@@ -191,11 +191,11 @@ export class GraphClusterDetailsPanel extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-details-panel': GraphClusterDetailsPanel;
+    'xcode-graph-cluster-details-panel': GraphClusterDetailsPanel;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-details-panel')) {
-  customElements.define('graph-cluster-details-panel', GraphClusterDetailsPanel);
+if (!customElements.get('xcode-graph-cluster-details-panel')) {
+  customElements.define('xcode-graph-cluster-details-panel', GraphClusterDetailsPanel);
 }

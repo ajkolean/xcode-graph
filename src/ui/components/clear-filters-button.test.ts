@@ -7,23 +7,23 @@ import { describe, it } from 'vitest';
 import type { GraphClearFiltersButton } from './clear-filters-button';
 import './clear-filters-button';
 
-describe('graph-clear-filters-button', () => {
+describe('xcode-graph-clear-filters-button', () => {
   // ========================================
   // Rendering Tests
   // ========================================
 
   it('should render with default properties', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button></graph-clear-filters-button>
+      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
     `);
 
     expect(el).to.exist;
-    expect(el.tagName.toLowerCase()).to.equal('graph-clear-filters-button');
+    expect(el.tagName.toLowerCase()).to.equal('xcode-graph-clear-filters-button');
   });
 
   it('should render button in shadow DOM', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button></graph-clear-filters-button>
+      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
     `);
 
     const button = el.shadowRoot?.querySelector('button');
@@ -37,7 +37,7 @@ describe('graph-clear-filters-button', () => {
 
   it('should be disabled when not active', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button></graph-clear-filters-button>
+      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
     `);
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
@@ -46,7 +46,7 @@ describe('graph-clear-filters-button', () => {
 
   it('should be enabled when active', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button is-active></graph-clear-filters-button>
+      <xcode-graph-clear-filters-button is-active></xcode-graph-clear-filters-button>
     `);
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
@@ -55,7 +55,7 @@ describe('graph-clear-filters-button', () => {
 
   it('should update disabled state when isActive changes', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button></graph-clear-filters-button>
+      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
     `);
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
@@ -78,7 +78,7 @@ describe('graph-clear-filters-button', () => {
 
   it('should dispatch clear-filters event when clicked and active', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button is-active></graph-clear-filters-button>
+      <xcode-graph-clear-filters-button is-active></xcode-graph-clear-filters-button>
     `);
 
     let eventFired = false;
@@ -95,7 +95,7 @@ describe('graph-clear-filters-button', () => {
 
   it('should not dispatch event when clicked and disabled', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
-      <graph-clear-filters-button></graph-clear-filters-button>
+      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
     `);
 
     let eventFired = false;

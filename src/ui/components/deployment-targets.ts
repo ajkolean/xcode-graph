@@ -6,10 +6,10 @@
  *
  * @example
  * ```html
- * <graph-deployment-targets
+ * <xcode-graph-deployment-targets
  *   .deploymentTargets=${{ iOS: '14.0', macOS: '12.0' }}
  *   .destinations=${['iPhone', 'iPad', 'mac']}
- * ></graph-deployment-targets>
+ * ></xcode-graph-deployment-targets>
  * ```
  */
 
@@ -188,12 +188,12 @@ export class GraphDeploymentTargets extends LitElement {
             (dest) => {
               const config = DESTINATION_CONFIG[dest] || { label: dest, color: '#8E8E93' };
               return html`
-              <graph-badge
+              <xcode-graph-badge
                 label=${config.label}
                 color=${config.color}
                 variant="rounded"
                 size="sm"
-              ></graph-badge>
+              ></xcode-graph-badge>
             `;
             },
           )}
@@ -222,11 +222,11 @@ export class GraphDeploymentTargets extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-deployment-targets': GraphDeploymentTargets;
+    'xcode-graph-deployment-targets': GraphDeploymentTargets;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-deployment-targets')) {
-  customElements.define('graph-deployment-targets', GraphDeploymentTargets);
+if (!customElements.get('xcode-graph-deployment-targets')) {
+  customElements.define('xcode-graph-deployment-targets', GraphDeploymentTargets);
 }

@@ -6,12 +6,12 @@
  *
  * @example
  * ```html
- * <graph-node-details-panel
+ * <xcode-graph-node-details-panel
  *   .node=${nodeData}
  *   .allNodes=${nodes}
  *   .edges=${edges}
  *   zoom="1.0"
- * ></graph-node-details-panel>
+ * ></xcode-graph-node-details-panel>
  * ```
  */
 
@@ -154,14 +154,14 @@ export class GraphNodeDetailsPanel extends LitElement {
     const { dependencies, dependents, metrics } = this.nodeData;
 
     return html`
-      <graph-node-header
+      <xcode-graph-node-header
         .node=${this.node}
         .zoom=${this.zoom}
         @close=${() => this.bubbleEvent('close')}
         @cluster-click=${(e: CustomEvent) => this.bubbleEvent('cluster-select', e.detail)}
-      ></graph-node-header>
+      ></xcode-graph-node-header>
 
-      <graph-metrics-section
+      <xcode-graph-metrics-section
         dependencies-count=${metrics.dependencyCount}
         dependents-count=${metrics.dependentCount}
         total-dependencies-count=${metrics.totalDependencyCount}
@@ -174,11 +174,11 @@ export class GraphNodeDetailsPanel extends LitElement {
         ?active-transitive-deps=${this.activeTransitiveDeps}
         ?active-direct-dependents=${this.activeDirectDependents}
         ?active-transitive-dependents=${this.activeTransitiveDependents}
-      ></graph-metrics-section>
+      ></xcode-graph-metrics-section>
 
-      <graph-node-info .node=${this.node}></graph-node-info>
+      <xcode-graph-node-info .node=${this.node}></xcode-graph-node-info>
 
-      <graph-node-list
+      <xcode-graph-node-list
         title="Dependencies"
         .items=${dependencies}
         suffix="direct"
@@ -187,9 +187,9 @@ export class GraphNodeDetailsPanel extends LitElement {
         show-kind
         @node-select=${(e: CustomEvent<{ node: GraphNode | null }>) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent<{ nodeId: string | null }>) => this.bubbleEvent('node-hover', e.detail)}
-      ></graph-node-list>
+      ></xcode-graph-node-list>
 
-      <graph-node-list
+      <xcode-graph-node-list
         title="Dependents"
         .items=${dependents}
         suffix="direct"
@@ -198,14 +198,14 @@ export class GraphNodeDetailsPanel extends LitElement {
         show-kind
         @node-select=${(e: CustomEvent<{ node: GraphNode | null }>) => this.bubbleEvent('node-select', e.detail)}
         @node-hover=${(e: CustomEvent<{ nodeId: string | null }>) => this.bubbleEvent('node-hover', e.detail)}
-      ></graph-node-list>
+      ></xcode-graph-node-list>
 
       ${
         this.node.buildSettings
           ? html`
-            <graph-build-settings
+            <xcode-graph-build-settings
               .settings=${this.node.buildSettings}
-            ></graph-build-settings>
+            ></xcode-graph-build-settings>
           `
           : nothing
       }
@@ -216,11 +216,11 @@ export class GraphNodeDetailsPanel extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-node-details-panel': GraphNodeDetailsPanel;
+    'xcode-graph-node-details-panel': GraphNodeDetailsPanel;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-node-details-panel')) {
-  customElements.define('graph-node-details-panel', GraphNodeDetailsPanel);
+if (!customElements.get('xcode-graph-node-details-panel')) {
+  customElements.define('xcode-graph-node-details-panel', GraphNodeDetailsPanel);
 }

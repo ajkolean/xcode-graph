@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphHeader } from './header';
 import './header';
 
-describe('graph-header', () => {
+describe('xcode-graph-header', () => {
   it('should render', async () => {
     const el = await fixture<GraphHeader>(html`
-      <graph-header></graph-header>
+      <xcode-graph-header></xcode-graph-header>
     `);
 
     expect(el).to.exist;
@@ -20,7 +20,7 @@ describe('graph-header', () => {
 
   it('should render logo', async () => {
     const el = await fixture<GraphHeader>(html`
-      <graph-header></graph-header>
+      <xcode-graph-header></xcode-graph-header>
     `);
 
     const logo = el.shadowRoot?.querySelector('.logo');
@@ -29,7 +29,7 @@ describe('graph-header', () => {
 
   it('should render breadcrumbs', async () => {
     const el = await fixture<GraphHeader>(html`
-      <graph-header></graph-header>
+      <xcode-graph-header></xcode-graph-header>
     `);
 
     const breadcrumbs = el.shadowRoot?.querySelectorAll('.breadcrumb-button');
@@ -38,7 +38,7 @@ describe('graph-header', () => {
 
   it('should render docs button', async () => {
     const el = await fixture<GraphHeader>(html`
-      <graph-header></graph-header>
+      <xcode-graph-header></xcode-graph-header>
     `);
 
     const docsButton = el.shadowRoot?.querySelector('.action-button[title="Documentation"]');
@@ -47,7 +47,7 @@ describe('graph-header', () => {
 
   it('should render user avatar', async () => {
     const el = await fixture<GraphHeader>(html`
-      <graph-header></graph-header>
+      <xcode-graph-header></xcode-graph-header>
     `);
 
     const avatar = el.shadowRoot?.querySelector('.user-avatar');

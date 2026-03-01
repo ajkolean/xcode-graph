@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphActionButton } from './action-button';
 import './action-button';
 
-describe('graph-action-button', () => {
+describe('xcode-graph-action-button', () => {
   it('should render with default properties', async () => {
     const el = await fixture<GraphActionButton>(html`
-      <graph-action-button>Click Me</graph-action-button>
+      <xcode-graph-action-button>Click Me</xcode-graph-action-button>
     `);
 
     expect(el).to.exist;
@@ -22,7 +22,7 @@ describe('graph-action-button', () => {
 
   it('should render slotted content', async () => {
     const el = await fixture<GraphActionButton>(html`
-      <graph-action-button>Click Me</graph-action-button>
+      <xcode-graph-action-button>Click Me</xcode-graph-action-button>
     `);
 
     const slot = el.shadowRoot?.querySelector('slot:not([name])');
@@ -31,7 +31,7 @@ describe('graph-action-button', () => {
 
   it('should support variant property', async () => {
     const el = await fixture<GraphActionButton>(html`
-      <graph-action-button variant="primary">Primary</graph-action-button>
+      <xcode-graph-action-button variant="primary">Primary</xcode-graph-action-button>
     `);
 
     expect(el.variant).to.equal('primary');
@@ -40,7 +40,7 @@ describe('graph-action-button', () => {
 
   it('should support active state', async () => {
     const el = await fixture<GraphActionButton>(html`
-      <graph-action-button active>Active</graph-action-button>
+      <xcode-graph-action-button active>Active</xcode-graph-action-button>
     `);
 
     expect(el.active).to.be.true;
@@ -49,7 +49,7 @@ describe('graph-action-button', () => {
 
   it('should support full-width attribute', async () => {
     const el = await fixture<GraphActionButton>(html`
-      <graph-action-button full-width>Full Width</graph-action-button>
+      <xcode-graph-action-button full-width>Full Width</xcode-graph-action-button>
     `);
 
     expect(el.fullWidth).to.be.true;
@@ -58,7 +58,7 @@ describe('graph-action-button', () => {
 
   it('should support disabled state', async () => {
     const el = await fixture<GraphActionButton>(html`
-      <graph-action-button disabled>Disabled</graph-action-button>
+      <xcode-graph-action-button disabled>Disabled</xcode-graph-action-button>
     `);
 
     const button = el.shadowRoot?.querySelector('button');
@@ -67,10 +67,10 @@ describe('graph-action-button', () => {
 
   it('should render icon slot', async () => {
     const el = await fixture<GraphActionButton>(html`
-      <graph-action-button>
+      <xcode-graph-action-button>
         <span slot="icon">🎯</span>
         With Icon
-      </graph-action-button>
+      </xcode-graph-action-button>
     `);
 
     const iconSlot = el.shadowRoot?.querySelector('slot[name="icon"]');
@@ -79,7 +79,7 @@ describe('graph-action-button', () => {
 
   it('should fire click event when clicked', async () => {
     const el = await fixture<GraphActionButton>(html`
-      <graph-action-button>Click Me</graph-action-button>
+      <xcode-graph-action-button>Click Me</xcode-graph-action-button>
     `);
 
     let eventFired = false;

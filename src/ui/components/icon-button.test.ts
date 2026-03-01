@@ -7,12 +7,12 @@ import { describe, it } from 'vitest';
 import type { GraphIconButton } from './icon-button';
 import './icon-button';
 
-describe('graph-icon-button', () => {
+describe('xcode-graph-icon-button', () => {
   it('should render with default properties', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button>
+      <xcode-graph-icon-button>
         <svg><path d="M0 0"></path></svg>
-      </graph-icon-button>
+      </xcode-graph-icon-button>
     `);
 
     expect(el).to.exist;
@@ -24,9 +24,9 @@ describe('graph-icon-button', () => {
 
   it('should render slotted icon', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button>
+      <xcode-graph-icon-button>
         <svg data-testid="icon"><path d="M0 0"></path></svg>
-      </graph-icon-button>
+      </xcode-graph-icon-button>
     `);
 
     const slot = el.shadowRoot?.querySelector('slot');
@@ -35,7 +35,7 @@ describe('graph-icon-button', () => {
 
   it('should apply title attribute', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button title="Close"></graph-icon-button>
+      <xcode-graph-icon-button title="Close"></xcode-graph-icon-button>
     `);
 
     const button = el.shadowRoot?.querySelector('button');
@@ -44,7 +44,7 @@ describe('graph-icon-button', () => {
 
   it('should apply disabled state', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button disabled></graph-icon-button>
+      <xcode-graph-icon-button disabled></xcode-graph-icon-button>
     `);
 
     const button = el.shadowRoot?.querySelector('button');
@@ -53,7 +53,7 @@ describe('graph-icon-button', () => {
 
   it('should support variant property', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button variant="subtle"></graph-icon-button>
+      <xcode-graph-icon-button variant="subtle"></xcode-graph-icon-button>
     `);
 
     expect(el.variant).to.equal('subtle');
@@ -62,7 +62,7 @@ describe('graph-icon-button', () => {
 
   it('should support color property', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button color="destructive"></graph-icon-button>
+      <xcode-graph-icon-button color="destructive"></xcode-graph-icon-button>
     `);
 
     expect(el.color).to.equal('destructive');
@@ -71,7 +71,7 @@ describe('graph-icon-button', () => {
 
   it('should support size property', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button size="sm"></graph-icon-button>
+      <xcode-graph-icon-button size="sm"></xcode-graph-icon-button>
     `);
 
     expect(el.size).to.equal('sm');
@@ -80,7 +80,7 @@ describe('graph-icon-button', () => {
 
   it('should fire click event when clicked', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button></graph-icon-button>
+      <xcode-graph-icon-button></xcode-graph-icon-button>
     `);
 
     let eventFired = false;
@@ -96,7 +96,7 @@ describe('graph-icon-button', () => {
 
   it('should not fire click event when disabled', async () => {
     const el = await fixture<GraphIconButton>(html`
-      <graph-icon-button disabled></graph-icon-button>
+      <xcode-graph-icon-button disabled></xcode-graph-icon-button>
     `);
 
     let eventFired = false;

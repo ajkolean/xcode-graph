@@ -5,7 +5,7 @@
  * and returns a typed theme object for Canvas2D rendering.
  *
  * Host applications override colors by setting CSS custom properties
- * on <graph-canvas> or any ancestor element.
+ * on <xcode-graph-canvas> or any ancestor element.
  */
 
 export interface CanvasTheme {

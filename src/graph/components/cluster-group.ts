@@ -7,14 +7,14 @@
  * @example
  * ```html
  * <svg>
- *   <graph-cluster-group
+ *   <xcode-graph-cluster-group
  *     .cluster=${clusterData}
  *     .clusterPosition=${position}
  *     .nodes=${nodesArray}
  *     .edges=${edgesArray}
  *     .finalNodePositions=${positionsMap}
  *     zoom="1.0"
- *   ></graph-cluster-group>
+ *   ></xcode-graph-cluster-group>
  * </svg>
  * ```
  *
@@ -269,7 +269,7 @@ export class GraphClusterGroup extends LitElement {
         @keydown=${this.handleClusterKeyDown}
       >
         <!-- Cluster card background -->
-        <graph-cluster-card
+        <xcode-graph-cluster-card
           .cluster=${this.cluster}
           .x=${this.clusterPosition.x - this.clusterPosition.width / 2}
           .y=${this.clusterPosition.y - this.clusterPosition.height / 2}
@@ -280,11 +280,11 @@ export class GraphClusterGroup extends LitElement {
           .zoom=${zoom}
           .clickable=${true}
           @cluster-click=${this.handleClusterClick}
-        ></graph-cluster-card>
+        ></xcode-graph-cluster-card>
 
         <!-- Internal edges -->
         <g class="internal-edges">
-          <graph-edges
+          <xcode-graph-edges
             .edges=${edges}
             .nodes=${this.nodes}
             .finalNodePositions=${finalNodePositions}
@@ -297,7 +297,7 @@ export class GraphClusterGroup extends LitElement {
             .transitiveDeps=${this.transitiveDeps}
             .transitiveDependents=${this.transitiveDependents}
             .zoom=${zoom}
-          ></graph-edges>
+          ></xcode-graph-edges>
         </g>
 
         <!-- Nodes -->
@@ -310,7 +310,7 @@ export class GraphClusterGroup extends LitElement {
             const isConnected = this.selectedNode && this.connectedNodes.has(node.id);
 
             return html`
-              <graph-node
+              <xcode-graph-node
                 .node=${node}
                 .x=${(this.clusterPosition?.x ?? 0) + pos.x}
                 .y=${(this.clusterPosition?.y ?? 0) + pos.y}
@@ -348,7 +348,7 @@ export class GraphClusterGroup extends LitElement {
                       composed: true,
                     }),
                   )}
-              ></graph-node>
+              ></xcode-graph-node>
             `;
           })}
         </g>
@@ -360,11 +360,11 @@ export class GraphClusterGroup extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-cluster-group': GraphClusterGroup;
+    'xcode-graph-cluster-group': GraphClusterGroup;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-cluster-group')) {
-  customElements.define('graph-cluster-group', GraphClusterGroup);
+if (!customElements.get('xcode-graph-cluster-group')) {
+  customElements.define('xcode-graph-cluster-group', GraphClusterGroup);
 }

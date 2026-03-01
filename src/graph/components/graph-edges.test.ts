@@ -18,7 +18,7 @@ import {
 } from './test-helpers/graph-fixtures';
 import { countSvgElements, querySvgElements } from './test-helpers/svg-assertions';
 
-describe('graph-edges', () => {
+describe('xcode-graph-edges', () => {
   it('should render inside SVG context', async () => {
     const { nodes, edges } = createSmallTestGraph();
     const positions = createMockNodePositions(nodes.map((n) => n.id));
@@ -26,30 +26,30 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     expect(edgesComponent).to.exist;
   });
 
   it('should render nothing when edges or nodes are undefined', async () => {
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges></graph-edges>
+        <xcode-graph-edges></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
-    const renderedEdges = countSvgElements(svgEl, 'graph-edge');
+    const renderedEdges = countSvgElements(svgEl, 'xcode-graph-edge');
     expect(renderedEdges).to.equal(0);
   });
 
@@ -60,20 +60,20 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     // Should render edges (cross-cluster edges only by default)
-    const renderedEdges = querySvgElements(svgEl, 'graph-edge');
+    const renderedEdges = querySvgElements(svgEl, 'xcode-graph-edge');
     expect(renderedEdges.length).to.be.greaterThanOrEqual(0);
   });
 
@@ -86,16 +86,16 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     // Component should be configured to filter cross-cluster edges only
@@ -109,17 +109,17 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
           .clusterId=${'ProjectA'}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     // Component should accept clusterId property
@@ -141,20 +141,20 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${invalidEdges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     // Should not crash and only render valid edges
-    const renderedEdges = querySvgElements(svgEl, 'graph-edge');
+    const renderedEdges = querySvgElements(svgEl, 'xcode-graph-edge');
     expect(renderedEdges.length).to.be.lessThan(invalidEdges.length);
   });
 
@@ -167,20 +167,20 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     // Should skip edges without positions
-    const renderedEdges = querySvgElements(svgEl, 'graph-edge');
+    const renderedEdges = querySvgElements(svgEl, 'xcode-graph-edge');
     expect(renderedEdges.length).to.equal(0);
   });
 
@@ -191,17 +191,17 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
           .selectedNode=${nodes[0]}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     // Component should accept selectedNode
@@ -217,18 +217,18 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
           .transitiveDeps=${transitiveResult}
           .viewMode=${ViewMode.Focused}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     expect(edgesComponent.viewMode).to.equal(ViewMode.Focused);
@@ -242,17 +242,17 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
           .hoveredClusterId=${'ProjectA'}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     expect(edgesComponent.hoveredClusterId).to.equal('ProjectA');
@@ -265,17 +265,17 @@ describe('graph-edges', () => {
 
     const svgEl = await fixture(html`
       <svg>
-        <graph-edges
+        <xcode-graph-edges
           .edges=${edges}
           .nodes=${nodes}
           .finalNodePositions=${positions}
           .clusterPositions=${clusterPositions}
           .zoom=${1.5}
-        ></graph-edges>
+        ></xcode-graph-edges>
       </svg>
     `);
 
-    const edgesComponent = svgEl.querySelector('graph-edges') as GraphEdges;
+    const edgesComponent = svgEl.querySelector('xcode-graph-edges') as GraphEdges;
     await edgesComponent.updateComplete;
 
     expect(edgesComponent.zoom).to.equal(1.5);

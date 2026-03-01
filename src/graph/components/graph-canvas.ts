@@ -9,6 +9,7 @@ import {
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
+import { ResizeController } from '@shared/controllers/resize.controller';
 import { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
@@ -56,7 +57,7 @@ import { renderNodes } from './canvas/canvas-node-renderer';
  * @fires zoom-out - Dispatched when zoom out is requested via keyboard
  * @fires zoom-reset - Dispatched when zoom reset is requested via keyboard
  */
-@customElement('graph-canvas')
+@customElement('xcode-graph-canvas')
 export class GraphCanvas extends LitElement {
   // ========================================
   // Properties
@@ -122,6 +123,8 @@ export class GraphCanvas extends LitElement {
     enableAnimation: false,
     animationTicks: 30,
   });
+
+  readonly resize = new ResizeController(this, () => this.resizeCanvas());
 
   // Interaction state (shared with interaction handler)
   private interactionState: InteractionState = {
@@ -214,7 +217,6 @@ export class GraphCanvas extends LitElement {
     if (this.canvas) {
       this.ctx = this.canvas.getContext('2d', { alpha: true }) ?? undefined;
       this.resizeCanvas();
-      window.addEventListener('resize', this.handleResize);
       this.centerGraph();
       this.isAnimating = true;
       this.requestRender();
@@ -225,7 +227,6 @@ export class GraphCanvas extends LitElement {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    window.removeEventListener('resize', this.handleResize);
     this.stopRenderLoop();
   }
 
@@ -455,10 +456,6 @@ export class GraphCanvas extends LitElement {
   // ========================================
   // Event Handlers
   // ========================================
-
-  private handleResize = () => {
-    this.resizeCanvas();
-  };
 
   private resizeCanvas() {
     if (!this.canvas || !this.ctx) return;
@@ -946,6 +943,6 @@ export class GraphCanvas extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-canvas': GraphCanvas;
+    'xcode-graph-canvas': GraphCanvas;
   }
 }

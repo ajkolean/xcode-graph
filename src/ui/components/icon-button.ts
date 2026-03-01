@@ -6,13 +6,13 @@
  *
  * @example
  * ```html
- * <graph-icon-button
+ * <xcode-graph-icon-button
  *   title="Close"
  *   variant="ghost"
  *   color="neutral"
  * >
  *   <svg>...</svg>
- * </graph-icon-button>
+ * </xcode-graph-icon-button>
  * ```
  *
  * @fires click - Native click event (not prevented)
@@ -242,11 +242,11 @@ export class GraphIconButton extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-icon-button': GraphIconButton;
+    'xcode-graph-icon-button': GraphIconButton;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-icon-button')) {
-  customElements.define('graph-icon-button', GraphIconButton);
+if (!customElements.get('xcode-graph-icon-button')) {
+  customElements.define('xcode-graph-icon-button', GraphIconButton);
 }

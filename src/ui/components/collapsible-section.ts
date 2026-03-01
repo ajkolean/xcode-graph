@@ -6,13 +6,13 @@
  *
  * @example
  * ```html
- * <graph-collapsible-section
+ * <xcode-graph-collapsible-section
  *   title="Filters"
  *   ?is-expanded=${true}
  * >
  *   <span slot="icon">🔍</span>
  *   <div>Content here...</div>
- * </graph-collapsible-section>
+ * </xcode-graph-collapsible-section>
  * ```
  *
  * @fires toggle - Dispatched when header is clicked
@@ -199,11 +199,11 @@ export class GraphCollapsibleSection extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-collapsible-section': GraphCollapsibleSection;
+    'xcode-graph-collapsible-section': GraphCollapsibleSection;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-collapsible-section')) {
-  customElements.define('graph-collapsible-section', GraphCollapsibleSection);
+if (!customElements.get('xcode-graph-collapsible-section')) {
+  customElements.define('xcode-graph-collapsible-section', GraphCollapsibleSection);
 }

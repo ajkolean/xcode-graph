@@ -6,11 +6,11 @@
  *
  * @example
  * ```html
- * <graph-section-header
+ * <xcode-graph-section-header
  *   title="Dependencies"
  *   count="5"
  *   suffix="direct"
- * ></graph-section-header>
+ * ></xcode-graph-section-header>
  * ```
  */
 
@@ -98,11 +98,11 @@ export class GraphSectionHeader extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-section-header': GraphSectionHeader;
+    'xcode-graph-section-header': GraphSectionHeader;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-section-header')) {
-  customElements.define('graph-section-header', GraphSectionHeader);
+if (!customElements.get('xcode-graph-section-header')) {
+  customElements.define('xcode-graph-section-header', GraphSectionHeader);
 }

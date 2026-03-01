@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphPlaceholderTab } from './placeholder-tab';
 import './placeholder-tab';
 
-describe('graph-placeholder-tab', () => {
+describe('xcode-graph-placeholder-tab', () => {
   it('should render title', async () => {
     const el = await fixture<GraphPlaceholderTab>(html`
-      <graph-placeholder-tab title="Test Tab"></graph-placeholder-tab>
+      <xcode-graph-placeholder-tab title="Test Tab"></xcode-graph-placeholder-tab>
     `);
 
     const title = el.shadowRoot?.querySelector('.title');
@@ -19,7 +19,7 @@ describe('graph-placeholder-tab', () => {
 
   it('should render subtitle', async () => {
     const el = await fixture<GraphPlaceholderTab>(html`
-      <graph-placeholder-tab title="Builds"></graph-placeholder-tab>
+      <xcode-graph-placeholder-tab title="Builds"></xcode-graph-placeholder-tab>
     `);
 
     const subtitle = el.shadowRoot?.querySelector('.subtitle');
@@ -28,7 +28,7 @@ describe('graph-placeholder-tab', () => {
 
   it('should update when title changes', async () => {
     const el = await fixture<GraphPlaceholderTab>(html`
-      <graph-placeholder-tab title="Initial"></graph-placeholder-tab>
+      <xcode-graph-placeholder-tab title="Initial"></xcode-graph-placeholder-tab>
     `);
 
     const title = el.shadowRoot?.querySelector('.title');

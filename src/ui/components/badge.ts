@@ -8,26 +8,26 @@
  * @example
  * ```html
  * <!-- Pill badge (default) -->
- * <graph-badge
+ * <xcode-graph-badge
  *   label="Target"
  *   color="#10B981"
- * ></graph-badge>
+ * ></xcode-graph-badge>
  *
  * <!-- Rounded badge with accent border -->
- * <graph-badge
+ * <xcode-graph-badge
  *   label="Package"
  *   color="#8B5CF6"
  *   variant="accent"
  *   size="sm"
- * ></graph-badge>
+ * ></xcode-graph-badge>
  *
  * <!-- Interactive badge with glow -->
- * <graph-badge
+ * <xcode-graph-badge
  *   label="iOS"
  *   color="#3B82F6"
  *   interactive
  *   glow
- * ></graph-badge>
+ * ></xcode-graph-badge>
  * ```
  */
 
@@ -229,11 +229,11 @@ export class GraphBadge extends LitElement {
 // Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
-    'graph-badge': GraphBadge;
+    'xcode-graph-badge': GraphBadge;
   }
 }
 
 // Register custom element with HMR support
-if (!customElements.get('graph-badge')) {
-  customElements.define('graph-badge', GraphBadge);
+if (!customElements.get('xcode-graph-badge')) {
+  customElements.define('xcode-graph-badge', GraphBadge);
 }

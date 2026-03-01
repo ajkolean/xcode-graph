@@ -7,10 +7,10 @@ import { describe, it } from 'vitest';
 import type { GraphInfoRow } from './info-row';
 import './info-row';
 
-describe('graph-info-row', () => {
+describe('xcode-graph-info-row', () => {
   it('should render with label and value', async () => {
     const el = await fixture<GraphInfoRow>(html`
-      <graph-info-row label="Platform" value="iOS"></graph-info-row>
+      <xcode-graph-info-row label="Platform" value="iOS"></xcode-graph-info-row>
     `);
 
     expect(el).to.exist;
@@ -23,7 +23,7 @@ describe('graph-info-row', () => {
 
   it('should render with default empty values', async () => {
     const el = await fixture<GraphInfoRow>(html`
-      <graph-info-row></graph-info-row>
+      <xcode-graph-info-row></xcode-graph-info-row>
     `);
 
     expect(el.label).to.equal('');
@@ -32,9 +32,9 @@ describe('graph-info-row', () => {
 
   it('should support slotted content for value', async () => {
     const el = await fixture<GraphInfoRow>(html`
-      <graph-info-row label="Status">
+      <xcode-graph-info-row label="Status">
         <span class="custom-status">Active</span>
-      </graph-info-row>
+      </xcode-graph-info-row>
     `);
 
     const slot = el.shadowRoot?.querySelector('slot');
@@ -43,7 +43,7 @@ describe('graph-info-row', () => {
 
   it('should update when properties change', async () => {
     const el = await fixture<GraphInfoRow>(html`
-      <graph-info-row label="Type" value="Framework"></graph-info-row>
+      <xcode-graph-info-row label="Type" value="Framework"></xcode-graph-info-row>
     `);
 
     el.value = 'Library';
