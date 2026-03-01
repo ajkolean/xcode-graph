@@ -32,8 +32,6 @@
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
-// ==================== Type Definitions ====================
-
 /**
  * Render callback invoked each frame when rendering is needed.
  *
@@ -66,8 +64,6 @@ export interface AnimationLoopConfig {
   isVisible?: () => boolean;
 }
 
-// ==================== Controller Class ====================
-
 /**
  * Reactive controller for frame-skip optimized canvas rendering.
  *
@@ -94,10 +90,6 @@ export class AnimationLoopController implements ReactiveController {
     this.config = config;
     host.addController(this);
   }
-
-  // ========================================
-  // Public API
-  // ========================================
 
   /**
    * Mark the canvas as needing a redraw on the next frame.
@@ -158,10 +150,6 @@ export class AnimationLoopController implements ReactiveController {
     this._framesSkipped = 0;
   }
 
-  // ========================================
-  // Private Methods
-  // ========================================
-
   /**
    * Ensure the RAF loop is scheduled if not already running
    */
@@ -201,10 +189,6 @@ export class AnimationLoopController implements ReactiveController {
       this._running = false;
     }
   };
-
-  // ========================================
-  // Lifecycle
-  // ========================================
 
   hostConnected(): void {
     // Controller is passive until requestRender() is called
