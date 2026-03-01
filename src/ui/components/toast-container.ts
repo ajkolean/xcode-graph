@@ -12,7 +12,7 @@
  * - Handles dismiss and action events
  * - Fixed positioning in bottom-right corner
  *
- * @module components/error-notification-container
+ * @module components/toast-container
  *
  * @example
  * ```html

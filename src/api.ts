@@ -1,4 +1,15 @@
 /**
+ * Headless API entry point.
+ *
+ * Re-exports graph logic (layout algorithms, signals, utilities, services,
+ * schemas, and state machines) **without** any UI controllers or Lit
+ * components. Use this entry point when you need the data layer only --
+ * for example, in a web-worker, Node script, or custom renderer that
+ * doesn't depend on the DOM.
+ *
+ * For the full library entry point (includes UI controllers and
+ * interaction handling), see {@link ./index.ts | index.ts}.
+ *
  * @packageDocumentation
  */
 

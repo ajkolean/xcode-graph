@@ -8,7 +8,7 @@
  */
 
 import type { ActiveTab } from '@shared/schemas';
-import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
+import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
 import {
   activeTab,
   baseZoom,

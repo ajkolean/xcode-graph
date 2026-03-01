@@ -1,8 +1,8 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
-import { hexToRgba } from '@graph/utils/canvas-colors';
+import { hexToRgba } from '@graph/utils/canvas-theme';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
-import { prefersReducedMotion } from '@shared/signals/reduced-motion';
-import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-constants';
+import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
+import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-config';
 import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';

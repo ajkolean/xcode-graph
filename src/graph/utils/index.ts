@@ -17,7 +17,7 @@ export {
   getDependentCount,
 } from './connections';
 export { generateColorMap } from './filter-colors';
-export { applyGraphFilters } from './graph-filters';
+export { applyGraphFilters, matchesSearch } from './graph-filters';
 
 export {
   computeClusterStats,
@@ -31,4 +31,3 @@ export {
   type TransitiveResult,
   traverseGraph,
 } from './traversal';
-export { matchesSearch } from './visibility';

@@ -1,4 +1,4 @@
-import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
+import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
 import { describe, expect, it } from 'vitest';
 import { adjustColorForZoom, adjustOpacityForZoom } from './zoom-colors';
 

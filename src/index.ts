@@ -1,4 +1,15 @@
 /**
+ * Full library entry point.
+ *
+ * Re-exports everything from the headless API ({@link ./api.ts | api.ts})
+ * plus UI controllers (e.g. {@link GraphInteractionFullController},
+ * {@link GraphLayoutController}) and Lit-related helpers. Use this entry
+ * point when building a complete UI that renders and interacts with the
+ * graph in the browser.
+ *
+ * For a lighter, headless-only build (no UI controllers), import from
+ * {@link ./api.ts | api.ts} instead.
+ *
  * @packageDocumentation
  */
 

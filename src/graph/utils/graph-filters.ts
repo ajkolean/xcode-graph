@@ -10,7 +10,22 @@ import {
   NodeType,
   type Platform,
 } from '@shared/schemas/graph.types';
-import { matchesSearch } from './visibility';
+
+/**
+ * Check if a node matches the search query.
+ * Searches node name, type, and project fields (case-insensitive).
+ */
+export function matchesSearch(node: GraphNode, searchQuery: string): boolean {
+  if (!searchQuery) return true;
+
+  const query = searchQuery.toLowerCase();
+  return (
+    node.name.toLowerCase().includes(query) ||
+    node.type.toLowerCase().includes(query) ||
+    node.project?.toLowerCase().includes(query) ||
+    false
+  );
+}
 
 function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
   if (!filters.nodeTypes.has(node.type)) return false;

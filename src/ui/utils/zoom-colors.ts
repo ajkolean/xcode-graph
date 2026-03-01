@@ -9,7 +9,7 @@ import {
   ZOOM_LIGHTNESS_ADJUSTMENT,
   ZOOM_OPACITY,
   ZOOM_SATURATION,
-} from '@shared/utils/zoom-constants';
+} from '@shared/utils/zoom-config';
 import { hexToHSL, hslToHex, hslToRgb, rgbToHsl } from './color-math';
 
 /**

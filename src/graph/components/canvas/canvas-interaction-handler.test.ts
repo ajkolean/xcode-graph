@@ -7,7 +7,7 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
+import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
 import { describe, expect, it, vi } from 'vitest';
 import {
   handleMouseDown,

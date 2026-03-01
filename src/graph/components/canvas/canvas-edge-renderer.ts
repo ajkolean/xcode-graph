@@ -5,7 +5,7 @@ import { resolveClusterPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import { prefersReducedMotion } from '@shared/signals/reduced-motion';
+import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';

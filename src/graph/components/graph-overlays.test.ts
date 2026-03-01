@@ -13,7 +13,7 @@ import type {
   GraphInstructions,
 } from './graph-overlays';
 import './graph-overlays';
-import { querySvgElement } from './test-helpers/svg-assertions';
+import { querySvgElement } from '@graph/test-helpers/svg-assertions';
 
 describe('xcode-graph-background', () => {
   it('should render SVG with grid pattern', async () => {

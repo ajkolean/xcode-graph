@@ -4,7 +4,7 @@
  * Reactive signal that tracks the user's `prefers-reduced-motion` OS preference.
  * Canvas animations should check this signal and skip or simplify motion when enabled.
  *
- * @module shared/signals/reduced-motion
+ * @module shared/signals/reduced-motion.signals
  */
 
 import { signal } from '@lit-labs/signals';

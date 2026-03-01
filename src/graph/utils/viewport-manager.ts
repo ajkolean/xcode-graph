@@ -1,5 +1,5 @@
 import type { ClusterPosition } from '@shared/schemas';
-import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
+import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
 
 export interface ViewportContext {
   rect: DOMRect;

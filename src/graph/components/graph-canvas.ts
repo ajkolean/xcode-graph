@@ -16,7 +16,7 @@ import { ErrorCategory, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
-import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
+import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { computeNodeWeights, getNodeSize } from '@ui/utils/sizing';

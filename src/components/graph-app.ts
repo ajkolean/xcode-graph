@@ -35,7 +35,7 @@ import { GraphAnalysisService } from '@/services/graph-analysis-service';
 import { GraphDataService } from '@/services/graph-data-service';
 import { transformXcodeGraph } from '@/services/xcode-graph.service';
 import '@ui/layout/graph-tab';
-import '@ui/components/error-notification-container';
+import '@ui/components/toast-container';
 
 import {
   edges as allEdges,
