@@ -28,12 +28,15 @@ import './icon-button.js';
  * @fires toggle-collapse - Dispatched when the collapse button is clicked
  */
 export class GraphRightSidebarHeader extends LitElement {
+  /** Title text displayed in the header */
   @property({ type: String })
   declare title: string;
 
+  /** Whether the sidebar is currently collapsed */
   @property({ type: Boolean, attribute: 'is-collapsed' })
   declare isCollapsed: boolean;
 
+  /** Whether any filters are currently active (shows indicator dot) */
   @property({ type: Boolean, attribute: 'has-active-filters' })
   declare hasActiveFilters: boolean;
 

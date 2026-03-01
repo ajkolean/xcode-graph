@@ -14,14 +14,23 @@ export function clearGradientCache(): void {
   gradientCache.clear();
 }
 
+/** Context passed to cluster rendering functions each frame. */
 export interface ClusterRenderContext {
+  /** 2D rendering context of the canvas element */
   ctx: CanvasRenderingContext2D;
+  /** Layout controller providing cluster positions and metadata */
   layout: GraphLayoutController;
+  /** Current zoom level */
   zoom: number;
+  /** Current animation timestamp in milliseconds */
   time: number;
+  /** Resolved canvas theme colors */
   theme: CanvasTheme;
+  /** ID of the currently selected cluster, or null */
   selectedCluster: string | null;
+  /** ID of the currently hovered cluster, or null */
   hoveredCluster: string | null;
+  /** User-dragged cluster positions (world coordinates) */
   manualClusterPositions: Map<string, { x: number; y: number }>;
 }
 

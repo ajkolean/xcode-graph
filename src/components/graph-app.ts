@@ -59,15 +59,19 @@ const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
  * @summary Embeddable graph visualization entry point
  */
 export class GraphApp extends SignalWatcherLitElement {
+  /** Graph nodes to visualize */
   @property({ attribute: false })
   declare nodes: GraphNode[];
 
+  /** Graph edges connecting the nodes */
   @property({ attribute: false })
   declare edges: GraphEdge[];
 
+  /** Optional layout configuration for ELK hierarchical layout */
   @property({ attribute: false })
   declare layoutOptions: LayoutOptions | undefined;
 
+  /** Whether to show the file upload overlay for loading graph JSON */
   @property({ type: Boolean, attribute: 'show-upload' })
   declare showUpload: boolean;
 

@@ -48,6 +48,9 @@ export type SafeParseGraphReturn = SafeParseGraphResult | SafeParseGraphFailure;
 /**
  * Validate raw Tuist graph JSON at the boundary.
  * Returns warnings for unexpected shapes rather than throwing.
+ *
+ * @param raw - Raw JSON value to validate
+ * @returns Parse result with success flag, validated data (if successful), and warnings
  */
 export function safeParseGraph(raw: unknown): SafeParseGraphReturn {
   const warnings: string[] = [];

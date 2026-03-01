@@ -1,8 +1,12 @@
 /**
- * D3 boundary force - converted to TypeScript/ES6
- * Original: rectangular boundary force from d3-force-boundary
+ * Rectangular boundary force for D3 simulations.
+ * Keeps nodes within a defined rectangular region by applying
+ * corrective velocity near boundaries and optional hard clamping.
+ *
+ * Converted from d3-force-boundary to TypeScript/ES6.
  */
 
+/** Node with optional position and velocity fields (D3 simulation datum) */
 interface BoundaryNode {
   x?: number;
   y?: number;
@@ -12,15 +16,25 @@ interface BoundaryNode {
 
 type ValueOrAccessor<T> = T | ((node: BoundaryNode, index: number, nodes: BoundaryNode[]) => T);
 
+/** Configurable boundary force with chainable setters */
 export interface BoundaryForce {
+  /** Apply the force for a given alpha value */
   (alpha: number): void;
+  /** Initialize the force with the simulation's nodes */
   initialize: (_: BoundaryNode[]) => void;
+  /** Set the minimum X boundary */
   x0: (_: ValueOrAccessor<number>) => BoundaryForce;
+  /** Set the maximum X boundary */
   x1: (_: ValueOrAccessor<number>) => BoundaryForce;
+  /** Set the minimum Y boundary */
   y0: (_: ValueOrAccessor<number>) => BoundaryForce;
+  /** Set the maximum Y boundary */
   y1: (_: ValueOrAccessor<number>) => BoundaryForce;
+  /** Set the corrective force strength */
   strength: (_: ValueOrAccessor<number>) => BoundaryForce;
+  /** Set the border zone width where force begins */
   border: (_: ValueOrAccessor<number>) => BoundaryForce;
+  /** Enable hard clamping at boundaries */
   hardBoundary: (_: boolean) => BoundaryForce;
 }
 
@@ -49,6 +63,15 @@ function computeDefaultBorder(
   );
 }
 
+/**
+ * Create a rectangular boundary force for D3 simulations.
+ *
+ * @param x0 - Minimum X boundary (or accessor)
+ * @param y0 - Minimum Y boundary (or accessor)
+ * @param x1 - Maximum X boundary (or accessor)
+ * @param y1 - Maximum Y boundary (or accessor)
+ * @returns Configurable boundary force
+ */
 export default function forceBoundary(
   x0: ValueOrAccessor<number>,
   y0: ValueOrAccessor<number>,

@@ -12,14 +12,46 @@
       "name": "xcode-graph-canvas",
       "description": "Canvas-based interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard",
       "attributes": [
-        { "name": "search-query", "values": [] },
-        { "name": "view-mode", "values": [{ "name": "ViewMode" }] },
-        { "name": "zoom", "values": [] },
-        { "name": "enable-animation", "values": [] },
-        { "name": "show-direct-deps", "values": [] },
-        { "name": "show-transitive-deps", "values": [] },
-        { "name": "show-direct-dependents", "values": [] },
-        { "name": "show-transitive-dependents", "values": [] }
+        {
+          "name": "search-query",
+          "description": "Active search query for dimming non-matching nodes",
+          "values": []
+        },
+        {
+          "name": "view-mode",
+          "description": "Display mode affecting edge visibility",
+          "values": [{ "name": "ViewMode" }]
+        },
+        {
+          "name": "zoom",
+          "description": "Current zoom level (affects color saturation and label visibility)",
+          "values": []
+        },
+        {
+          "name": "enable-animation",
+          "description": "Whether physics animation is enabled for layout settling",
+          "values": []
+        },
+        {
+          "name": "show-direct-deps",
+          "description": "Whether to highlight direct dependency edges",
+          "values": []
+        },
+        {
+          "name": "show-transitive-deps",
+          "description": "Whether to highlight transitive dependency edges",
+          "values": []
+        },
+        {
+          "name": "show-direct-dependents",
+          "description": "Whether to highlight direct dependent edges",
+          "values": []
+        },
+        {
+          "name": "show-transitive-dependents",
+          "description": "Whether to highlight transitive dependent edges",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -91,9 +123,21 @@
       "name": "xcode-graph-right-sidebar-header",
       "description": "Right sidebar header with collapse toggle\n---\n\n\n### **Events:**\n - **toggle-collapse** - Dispatched when the collapse button is clicked",
       "attributes": [
-        { "name": "title", "values": [] },
-        { "name": "is-collapsed", "values": [] },
-        { "name": "has-active-filters", "values": [] }
+        {
+          "name": "title",
+          "description": "Title text displayed in the header",
+          "values": []
+        },
+        {
+          "name": "is-collapsed",
+          "description": "Whether the sidebar is currently collapsed",
+          "values": []
+        },
+        {
+          "name": "has-active-filters",
+          "description": "Whether any filters are currently active (shows indicator dot)",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -101,10 +145,26 @@
       "name": "xcode-graph-collapsed-sidebar",
       "description": "Collapsed sidebar icon bar with filter badges\n---\n\n\n### **Events:**\n - **expand-to-section** - Dispatched when a section icon is clicked (detail: { section })",
       "attributes": [
-        { "name": "node-types-filter-size", "values": [] },
-        { "name": "platforms-filter-size", "values": [] },
-        { "name": "projects-filter-size", "values": [] },
-        { "name": "packages-filter-size", "values": [] }
+        {
+          "name": "node-types-filter-size",
+          "description": "Number of currently selected node type filters",
+          "values": []
+        },
+        {
+          "name": "platforms-filter-size",
+          "description": "Number of currently selected platform filters",
+          "values": []
+        },
+        {
+          "name": "projects-filter-size",
+          "description": "Number of currently selected project filters",
+          "values": []
+        },
+        {
+          "name": "packages-filter-size",
+          "description": "Number of currently selected package filters",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -178,19 +238,71 @@
       "name": "xcode-graph-metrics-section",
       "description": "Metrics grid with toggleable stats cards\n---\n\n\n### **Events:**\n - **card**\n- **toggle-direct-deps** - Dispatched when direct dependencies card is toggled\n- **toggle-transitive-deps** - Dispatched when transitive dependencies card is toggled\n- **toggle-direct-dependents** - Dispatched when direct dependents card is toggled\n- **toggle-transitive-dependents** - Dispatched when transitive dependents card is toggled",
       "attributes": [
-        { "name": "dependencies-count", "values": [] },
-        { "name": "dependents-count", "values": [] },
-        { "name": "total-dependencies-count", "values": [] },
-        { "name": "total-dependents-count", "values": [] },
-        { "name": "transitive-dependencies-count", "values": [] },
-        { "name": "transitive-dependents-count", "values": [] },
-        { "name": "is-high-fan-in", "values": [] },
-        { "name": "is-high-fan-out", "values": [] },
-        { "name": "active-direct-deps", "values": [] },
-        { "name": "active-transitive-deps", "values": [] },
-        { "name": "active-direct-dependents", "values": [] },
-        { "name": "active-transitive-dependents", "values": [] },
-        { "name": "expanded", "values": [] }
+        {
+          "name": "dependencies-count",
+          "description": "Number of direct dependencies (filtered)",
+          "values": []
+        },
+        {
+          "name": "dependents-count",
+          "description": "Number of direct dependents (filtered)",
+          "values": []
+        },
+        {
+          "name": "total-dependencies-count",
+          "description": "Total number of direct dependencies (unfiltered)",
+          "values": []
+        },
+        {
+          "name": "total-dependents-count",
+          "description": "Total number of direct dependents (unfiltered)",
+          "values": []
+        },
+        {
+          "name": "transitive-dependencies-count",
+          "description": "Number of transitive dependencies",
+          "values": []
+        },
+        {
+          "name": "transitive-dependents-count",
+          "description": "Number of transitive dependents",
+          "values": []
+        },
+        {
+          "name": "is-high-fan-in",
+          "description": "Whether this node has high fan-in (many dependents)",
+          "values": []
+        },
+        {
+          "name": "is-high-fan-out",
+          "description": "Whether this node has high fan-out (many dependencies)",
+          "values": []
+        },
+        {
+          "name": "active-direct-deps",
+          "description": "Whether the direct dependencies card is toggled on",
+          "values": []
+        },
+        {
+          "name": "active-transitive-deps",
+          "description": "Whether the transitive dependencies card is toggled on",
+          "values": []
+        },
+        {
+          "name": "active-direct-dependents",
+          "description": "Whether the direct dependents card is toggled on",
+          "values": []
+        },
+        {
+          "name": "active-transitive-dependents",
+          "description": "Whether the transitive dependents card is toggled on",
+          "values": []
+        },
+        {
+          "name": "expanded",
+          "description": "Whether the section starts expanded",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -279,8 +391,16 @@
       "name": "xcode-graph-node-header",
       "description": "Node details header with icon, badges, and tags\n---\n\n\n### **Events:**\n - **cluster-click** - Dispatched when a cluster badge is clicked (detail: { clusterId })\n- **close** - Dispatched when the back/close button is clicked",
       "attributes": [
-        { "name": "zoom", "values": [] },
-        { "name": "show-cluster-link", "values": [] }
+        {
+          "name": "zoom",
+          "description": "Current canvas zoom level for color adjustments",
+          "values": []
+        },
+        {
+          "name": "show-cluster-link",
+          "description": "Whether clicking back navigates to the parent cluster instead of closing",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -299,16 +419,34 @@
     {
       "name": "xcode-graph-node-info",
       "description": "Collapsible node information details section\n---\n",
-      "attributes": [{ "name": "expanded", "values": [] }],
+      "attributes": [
+        {
+          "name": "expanded",
+          "description": "Whether the section starts expanded",
+          "values": []
+        }
+      ],
       "references": []
     },
     {
       "name": "xcode-graph-list-item-row",
       "description": "Node list row with icon, name, and chevron\n---\n\n\n### **Events:**\n - **row-select** - Dispatched when the row is clicked (detail: { node })\n- **row-hover** - Dispatched on mouse enter (detail: { nodeId })\n- **row-hover-end** - Dispatched on mouse leave",
       "attributes": [
-        { "name": "subtitle", "values": [] },
-        { "name": "zoom", "values": [] },
-        { "name": "is-selected", "values": [] }
+        {
+          "name": "subtitle",
+          "description": "Optional subtitle text shown below the node name",
+          "values": []
+        },
+        {
+          "name": "zoom",
+          "description": "Current canvas zoom level for color adjustments",
+          "values": []
+        },
+        {
+          "name": "is-selected",
+          "description": "Whether this row is currently selected",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -348,11 +486,31 @@
       "name": "xcode-graph-node-details-panel",
       "description": "Node details panel with metrics, info, and dependency lists\n---\n\n\n### **Events:**\n - **eventName**\n- **close** - Dispatched when the panel close/back button is clicked\n- **node-select** - Dispatched when a dependency or dependent node is clicked (detail: { node })\n- **cluster-select** - Dispatched when a cluster badge is clicked (detail: { clusterId })\n- **node-hover** - Dispatched when hovering a dependency or dependent node (detail: { nodeId })\n- **toggle-direct-deps** - Dispatched when the direct dependencies metric card is toggled\n- **toggle-transitive-deps** - Dispatched when the transitive dependencies metric card is toggled\n- **toggle-direct-dependents** - Dispatched when the direct dependents metric card is toggled\n- **toggle-transitive-dependents** - Dispatched when the transitive dependents metric card is toggled",
       "attributes": [
-        { "name": "active-direct-deps", "values": [] },
-        { "name": "active-transitive-deps", "values": [] },
-        { "name": "active-direct-dependents", "values": [] },
-        { "name": "active-transitive-dependents", "values": [] },
-        { "name": "zoom", "values": [] }
+        {
+          "name": "active-direct-deps",
+          "description": "Whether direct dependencies highlighting is active",
+          "values": []
+        },
+        {
+          "name": "active-transitive-deps",
+          "description": "Whether transitive dependencies highlighting is active",
+          "values": []
+        },
+        {
+          "name": "active-direct-dependents",
+          "description": "Whether direct dependents highlighting is active",
+          "values": []
+        },
+        {
+          "name": "active-transitive-dependents",
+          "description": "Whether transitive dependents highlighting is active",
+          "values": []
+        },
+        {
+          "name": "zoom",
+          "description": "Current canvas zoom level for color adjustments",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -390,14 +548,31 @@
       "name": "xcode-graph-cluster-header",
       "description": "Cluster details panel header with icon, badges, and path\n---\n\n\n### **Events:**\n - **back** - Dispatched when back button is clicked",
       "attributes": [
-        { "name": "cluster-name", "values": [] },
+        {
+          "name": "cluster-name",
+          "description": "Display name of the cluster",
+          "values": []
+        },
         {
           "name": "cluster-type",
+          "description": "Whether this cluster is a package or project",
           "values": [{ "name": "package" }, { "name": "project" }]
         },
-        { "name": "cluster-color", "values": [] },
-        { "name": "cluster-path", "values": [] },
-        { "name": "is-external", "values": [] }
+        {
+          "name": "cluster-color",
+          "description": "Accent color for the cluster icon and badges",
+          "values": []
+        },
+        {
+          "name": "cluster-path",
+          "description": "Filesystem path to the cluster source (used for source type detection and copy)",
+          "values": []
+        },
+        {
+          "name": "is-external",
+          "description": "Whether the cluster comes from an external dependency",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -405,13 +580,41 @@
       "name": "xcode-graph-cluster-stats",
       "description": "Collapsible cluster metrics with stats cards and breakdowns\n---\n\n\n### **Events:**\n - **card**\n- **toggle-direct-deps** - Dispatched when dependencies card is toggled\n- **toggle-direct-dependents** - Dispatched when dependents card is toggled",
       "attributes": [
-        { "name": "filtered-dependencies", "values": [] },
-        { "name": "total-dependencies", "values": [] },
-        { "name": "filtered-dependents", "values": [] },
-        { "name": "total-dependents", "values": [] },
-        { "name": "active-direct-deps", "values": [] },
-        { "name": "active-direct-dependents", "values": [] },
-        { "name": "expanded", "values": [] }
+        {
+          "name": "filtered-dependencies",
+          "description": "Number of dependencies visible after filtering",
+          "values": []
+        },
+        {
+          "name": "total-dependencies",
+          "description": "Total number of dependencies before filtering",
+          "values": []
+        },
+        {
+          "name": "filtered-dependents",
+          "description": "Number of dependents visible after filtering",
+          "values": []
+        },
+        {
+          "name": "total-dependents",
+          "description": "Total number of dependents before filtering",
+          "values": []
+        },
+        {
+          "name": "active-direct-deps",
+          "description": "Whether the direct dependencies card is toggled on",
+          "values": []
+        },
+        {
+          "name": "active-direct-dependents",
+          "description": "Whether the direct dependents card is toggled on",
+          "values": []
+        },
+        {
+          "name": "expanded",
+          "description": "Whether the section starts expanded",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -419,9 +622,21 @@
       "name": "xcode-graph-cluster-targets-list",
       "description": "Collapsible cluster targets list grouped by node type\n---\n\n\n### **Events:**\n - **node-select** - Dispatched when a target is clicked (detail: { node })\n- **node-hover** - Dispatched on hover (detail: { nodeId })\n\n### **Methods:**\n \n\n",
       "attributes": [
-        { "name": "filtered-targets-count", "values": [] },
-        { "name": "total-targets-count", "values": [] },
-        { "name": "zoom", "values": [] },
+        {
+          "name": "filtered-targets-count",
+          "description": "Number of targets visible after filtering",
+          "values": []
+        },
+        {
+          "name": "total-targets-count",
+          "description": "Total number of targets in the cluster",
+          "values": []
+        },
+        {
+          "name": "zoom",
+          "description": "Current canvas zoom level for color adjustments",
+          "values": []
+        },
         {
           "name": "expanded",
           "description": "Whether to start expanded (default: true)",
@@ -434,9 +649,21 @@
       "name": "xcode-graph-cluster-details-panel",
       "description": "Cluster details panel with header, stats, and targets\n---\n\n\n### **Events:**\n - **eventName**\n- **close** - Dispatched when the back button is clicked\n- **node-select** - Dispatched when a target node is selected (detail: { node })\n- **node-hover** - Dispatched when a target node is hovered (detail: { nodeId })",
       "attributes": [
-        { "name": "active-direct-deps", "values": [] },
-        { "name": "active-direct-dependents", "values": [] },
-        { "name": "zoom", "values": [] }
+        {
+          "name": "active-direct-deps",
+          "description": "Whether direct dependencies highlighting is active",
+          "values": []
+        },
+        {
+          "name": "active-direct-dependents",
+          "description": "Whether direct dependents highlighting is active",
+          "values": []
+        },
+        {
+          "name": "zoom",
+          "description": "Current canvas zoom level for color adjustments",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -468,12 +695,36 @@
       "name": "xcode-graph-filter-section",
       "description": "Collapsible filter section with toggleable checkbox items\n---\n\n\n### **Events:**\n - **section-toggle** - Dispatched when the section header is clicked\n- **item-toggle** - Dispatched when an item checkbox is toggled (detail: { key, checked })\n- **preview-change** - Dispatched on item hover for filter preview (detail: { type, value } or null)\n\n### **Slots:**\n - **icon** - Icon to display in the section header",
       "attributes": [
-        { "name": "id", "values": [] },
-        { "name": "title", "values": [] },
-        { "name": "icon-name", "values": [] },
-        { "name": "is-expanded", "values": [] },
-        { "name": "filter-type", "values": [{ "name": "FilterType" }] },
-        { "name": "zoom", "values": [] }
+        {
+          "name": "id",
+          "description": "Unique section identifier",
+          "values": []
+        },
+        {
+          "name": "title",
+          "description": "Display title for the section header",
+          "values": []
+        },
+        {
+          "name": "icon-name",
+          "description": "Icon name for the section header slot",
+          "values": []
+        },
+        {
+          "name": "is-expanded",
+          "description": "Whether the section is currently expanded",
+          "values": []
+        },
+        {
+          "name": "filter-type",
+          "description": "The type of filter this section controls",
+          "values": [{ "name": "FilterType" }]
+        },
+        {
+          "name": "zoom",
+          "description": "Current canvas zoom level for color adjustments",
+          "values": []
+        }
       ],
       "references": []
     },
@@ -504,7 +755,13 @@
     {
       "name": "xcode-graph-error-toast",
       "description": "Individual error notification toast with severity styling\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the toast is dismissed (detail: { errorId })\n- **action** - Dispatched when the action button is clicked (detail: { error })",
-      "attributes": [{ "name": "visible", "values": [] }],
+      "attributes": [
+        {
+          "name": "visible",
+          "description": "Whether the toast is currently visible (triggers slide-in animation)",
+          "values": []
+        }
+      ],
       "references": []
     },
     {
@@ -522,7 +779,13 @@
     {
       "name": "xcode-graph",
       "description": "Embeddable graph visualization entry point\n---\n\n\n### **Methods:**\n - **loadRawGraph(raw: _unknown_): _void_** - Load raw Tuist graph JSON (the output of `tuist graph --format json`).\nTransforms it into GraphData and sets nodes/edges automatically.\nShows user-facing warnings/errors via ErrorService if the transform has issues.",
-      "attributes": [{ "name": "show-upload", "values": [] }],
+      "attributes": [
+        {
+          "name": "show-upload",
+          "description": "Whether to show the file upload overlay for loading graph JSON",
+          "values": []
+        }
+      ],
       "references": []
     },
     {
@@ -650,8 +913,16 @@
       "name": "xcode-graph-sidebar",
       "description": "Left sidebar navigation component\n---\n\n\n### **Events:**\n - **tab-change** - Dispatched when a tab is clicked (detail: { tab: string })",
       "attributes": [
-        { "name": "collapsed", "values": [] },
-        { "name": "defaultCollapsed", "values": [] },
+        {
+          "name": "collapsed",
+          "description": "Whether the sidebar is currently collapsed",
+          "values": []
+        },
+        {
+          "name": "defaultCollapsed",
+          "description": "Whether the sidebar should start collapsed on first render",
+          "values": []
+        },
         {
           "name": "active-tab",
           "description": "The currently active tab",

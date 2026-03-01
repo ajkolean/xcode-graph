@@ -34,33 +34,39 @@ import './stats-card';
  * @fires toggle-direct-dependents - Dispatched when dependents card is toggled
  */
 export class GraphClusterStats extends LitElement {
+  /** Number of dependencies visible after filtering */
   @property({ type: Number, attribute: 'filtered-dependencies' })
   declare filteredDependencies: number;
 
+  /** Total number of dependencies before filtering */
   @property({ type: Number, attribute: 'total-dependencies' })
   declare totalDependencies: number;
 
+  /** Number of dependents visible after filtering */
   @property({ type: Number, attribute: 'filtered-dependents' })
   declare filteredDependents: number;
 
+  /** Total number of dependents before filtering */
   @property({ type: Number, attribute: 'total-dependents' })
   declare totalDependents: number;
 
+  /** Whether the direct dependencies card is toggled on */
   @property({ type: Boolean, attribute: 'active-direct-deps' })
   declare activeDirectDeps: boolean;
 
+  /** Whether the direct dependents card is toggled on */
   @property({ type: Boolean, attribute: 'active-direct-dependents' })
   declare activeDirectDependents: boolean;
 
+  /** Set of platform names present in this cluster */
   @property({ attribute: false })
   declare platforms: Set<string>;
 
-  /**
-   * Target breakdown by node type (e.g., { framework: 3, library: 2 })
-   */
+  /** Target breakdown by node type (e.g., { framework: 3, library: 2 }) */
   @property({ attribute: false })
   declare targetBreakdown: Record<string, number>;
 
+  /** Whether the section starts expanded */
   @property({ type: Boolean })
   declare expanded: boolean;
 

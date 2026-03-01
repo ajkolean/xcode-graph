@@ -40,15 +40,19 @@ import { when } from 'lit/directives/when.js';
  * @fires row-hover-end - Dispatched on mouse leave
  */
 export class GraphListItemRow extends LitElement {
+  /** The graph node to display in this row */
   @property({ attribute: false })
   declare node: GraphNode;
 
+  /** Optional subtitle text shown below the node name */
   @property({ type: String })
   declare subtitle: string;
 
+  /** Current canvas zoom level for color adjustments */
   @property({ type: Number })
   declare zoom: number;
 
+  /** Whether this row is currently selected */
   @property({ type: Boolean, attribute: 'is-selected' })
   declare isSelected: boolean;
 

@@ -9,12 +9,20 @@ import { computeClusterPorts, computeRoutedEdges } from './phases/port-routing';
 import type { HierarchicalLayoutResult, RoutedEdge } from './types';
 
 /**
- * Main layout computation - Hybrid ELK + D3 "Macro/Micro" Layout
+ * Main layout computation - Hybrid ELK + D3 "Macro/Micro" Layout.
  *
  * Orchestrates:
  * 1. Micro-Layout: Computes internal "Solar System" layout for each cluster (D3)
  * 2. Macro-Layout: Computes "Tectonic Plate" layout for clusters (ELK Layered)
- * 3. Composition: Combines results
+ * 3. Force Massage: Relaxes cluster positions to reduce overlaps
+ * 4. Composition: Combines cluster and node positions
+ * 5. Port Routing: Computes ports and routed edges for cross-cluster connections
+ *
+ * @param nodes - All graph nodes
+ * @param edges - All graph edges
+ * @param clusters - Pre-grouped clusters
+ * @param opts - Layout options with optional config overrides and lifecycle hooks
+ * @returns Complete layout result with node, cluster, and edge positions
  */
 export async function computeHierarchicalLayout(
   nodes: GraphNode[],

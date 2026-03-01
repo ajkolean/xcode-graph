@@ -37,12 +37,15 @@ import './tag-badge.js';
  * @fires cluster-click - Dispatched when a cluster badge is clicked (detail: { clusterId })
  */
 export class GraphNodeHeader extends LitElement {
+  /** The graph node to display in the header */
   @property({ attribute: false })
   declare node: GraphNode;
 
+  /** Current canvas zoom level for color adjustments */
   @property({ type: Number })
   declare zoom: number;
 
+  /** Whether clicking back navigates to the parent cluster instead of closing */
   @property({ type: Boolean, attribute: 'show-cluster-link' })
   declare showClusterLink: boolean;
 

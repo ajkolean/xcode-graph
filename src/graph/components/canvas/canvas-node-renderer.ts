@@ -13,34 +13,63 @@ import { getNodeSize } from '@ui/utils/sizing';
 import { isCircleInViewport, type ViewportBounds } from '@ui/utils/viewport';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 
+/** Context passed to node rendering functions each frame. */
 export interface NodeRenderContext {
+  /** 2D rendering context of the canvas element */
   ctx: CanvasRenderingContext2D;
+  /** Layout controller providing node/cluster positions */
   layout: GraphLayoutController;
+  /** Nodes to render */
   nodes: GraphNode[];
+  /** Edges used for weight and connectivity calculations */
   edges: GraphEdge[];
+  /** Current zoom level */
   zoom: number;
+  /** Current animation timestamp in milliseconds */
   time: number;
+  /** Resolved canvas theme colors */
   theme: CanvasTheme;
+  /** Currently selected node, or null */
   selectedNode: GraphNode | null;
+  /** ID of the currently selected cluster, or null */
   selectedCluster: string | null;
+  /** ID of the currently hovered node, or null */
   hoveredNode: string | null;
+  /** ID of the currently hovered cluster, or null */
   hoveredCluster: string | null;
+  /** Active search query string */
   searchQuery: string;
+  /** Current view mode (e.g. cluster or flat) */
   viewMode: ViewMode;
+  /** Transitive dependency chain from the selected node */
   transitiveDeps: TransitiveResult | undefined;
+  /** Transitive dependent chain from the selected node */
   transitiveDependents: TransitiveResult | undefined;
+  /** Preview filter being hovered in the sidebar */
   previewFilter: PreviewFilter | undefined;
+  /** Pre-computed set of node IDs that should appear dimmed */
   dimmedNodeIds: Set<string>;
+  /** Map of node ID to edge-count weight */
   nodeWeights: Map<string, number>;
+  /** User-dragged node positions (relative to cluster) */
   manualNodePositions: Map<string, { x: number; y: number }>;
+  /** User-dragged cluster positions (world coordinates) */
   manualClusterPositions: Map<string, { x: number; y: number }>;
+  /** Returns the cached Path2D icon shape for a node */
   getPathForNode: (node: GraphNode) => Path2D;
+  /** Set of node IDs connected to the selected node */
   connectedNodes: Set<string>;
+  /** Minimum weight for a node to be considered a hub */
   hubWeightThreshold: number;
+  /** Animated alpha values per node for fade transitions */
   nodeAlphaMap: Map<string, AnimatedValue>;
+  /** Whether direct dependencies are highlighted */
   showDirectDeps: boolean;
+  /** Whether transitive dependencies are highlighted */
   showTransitiveDeps: boolean;
+  /** Whether direct dependents are highlighted */
   showDirectDependents: boolean;
+  /** Whether transitive dependents are highlighted */
   showTransitiveDependents: boolean;
 }
 

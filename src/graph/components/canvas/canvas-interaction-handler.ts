@@ -4,38 +4,67 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
 import { getNodeSize } from '@ui/utils/sizing';
 
+/** Map of canvas custom event names to their detail payloads. */
 export interface CanvasEventMap {
+  /** Fired when a node is selected or deselected */
   'node-select': { node: GraphNode | null };
+  /** Fired when a cluster is selected or deselected */
   'cluster-select': { clusterId: string | null };
+  /** Fired when a node is hovered or unhovered */
   'node-hover': { nodeId: string | null };
+  /** Fired when a cluster is hovered or unhovered */
   'cluster-hover': { clusterId: string | null };
 }
 
+/** Mutable state tracking pan, zoom, drag, and hover for canvas interactions. */
 export interface InteractionState {
+  /** Current pan offset in screen pixels */
   pan: { x: number; y: number };
+  /** Current zoom level */
   zoom: number;
+  /** Whether the user is currently dragging (panning) */
   isDragging: boolean;
+  /** ID of the node being dragged, or null */
   draggedNodeId: string | null;
+  /** ID of the cluster being dragged, or null */
   draggedClusterId: string | null;
+  /** Last recorded mouse position in screen coordinates */
   lastMousePos: { x: number; y: number };
+  /** Whether the mousedown occurred on empty canvas space */
   clickedEmptySpace: boolean;
+  /** Whether the mouse has moved since the last mousedown */
   hasMoved: boolean;
+  /** ID of the currently hovered node, or null */
   hoveredNode: string | null;
+  /** ID of the currently hovered cluster, or null */
   hoveredCluster: string | null;
 }
 
+/** Dependencies and callbacks required by canvas interaction handlers. */
 export interface InteractionContext {
+  /** Mutable interaction state */
   state: InteractionState;
+  /** Layout controller for hit testing positions */
   layout: GraphLayoutController;
+  /** Current visible nodes */
   nodes: GraphNode[];
+  /** Current visible edges */
   edges: GraphEdge[];
+  /** Currently selected node, or null */
   selectedNode: GraphNode | null;
+  /** Map of node ID to edge-count weight */
   nodeWeights: Map<string, number>;
+  /** User-dragged node positions (relative to cluster) */
   manualNodePositions: Map<string, { x: number; y: number }>;
+  /** User-dragged cluster positions (world coordinates) */
   manualClusterPositions: Map<string, { x: number; y: number }>;
+  /** Converts a MouseEvent to canvas-relative screen coordinates */
   getMousePos: (e: MouseEvent) => { x: number; y: number };
+  /** Converts screen coordinates to world (graph) coordinates */
   screenToWorld: (screenX: number, screenY: number) => { x: number; y: number };
+  /** Dispatches a typed canvas custom event */
   dispatchCanvasEvent: <K extends keyof CanvasEventMap>(name: K, detail: CanvasEventMap[K]) => void;
+  /** Notifies the host of a zoom level change */
   dispatchZoomChange: (zoom: number) => void;
 }
 

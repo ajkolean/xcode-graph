@@ -36,8 +36,11 @@ import { when } from 'lit/directives/when.js';
 export type FilterType = 'nodeType' | 'platform' | 'project' | 'package';
 
 export interface FilterItem {
+  /** Unique identifier for the filter option (e.g., node type name, platform name) */
   key: string;
+  /** Number of nodes matching this filter option */
   count: number;
+  /** Accent color for the filter item icon and indicator */
   color: string;
 }
 
@@ -54,27 +57,35 @@ export interface FilterItem {
  * @slot icon - Icon to display in the section header
  */
 export class GraphFilterSection extends LitElement {
+  /** Unique section identifier */
   @property({ type: String })
   declare id: string;
 
+  /** Display title for the section header */
   @property({ type: String })
   declare title: string;
 
+  /** Icon name for the section header slot */
   @property({ type: String, attribute: 'icon-name' })
   declare iconName: string;
 
+  /** Whether the section is currently expanded */
   @property({ type: Boolean, attribute: 'is-expanded' })
   declare isExpanded: boolean;
 
+  /** Filter items to display as toggleable checkboxes */
   @property({ attribute: false })
   declare items: FilterItem[];
 
+  /** Set of currently selected item keys */
   @property({ attribute: false })
   declare selectedItems: Set<string>;
 
+  /** The type of filter this section controls */
   @property({ type: String, attribute: 'filter-type' })
   declare filterType: FilterType;
 
+  /** Current canvas zoom level for color adjustments */
   @property({ type: Number })
   declare zoom: number;
 

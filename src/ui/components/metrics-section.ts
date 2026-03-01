@@ -31,42 +31,55 @@ import './stats-card';
  * @fires toggle-transitive-dependents - Dispatched when transitive dependents card is toggled
  */
 export class GraphMetricsSection extends LitElement {
+  /** Number of direct dependencies (filtered) */
   @property({ type: Number, attribute: 'dependencies-count' })
   declare dependenciesCount: number;
 
+  /** Number of direct dependents (filtered) */
   @property({ type: Number, attribute: 'dependents-count' })
   declare dependentsCount: number;
 
+  /** Total number of direct dependencies (unfiltered) */
   @property({ type: Number, attribute: 'total-dependencies-count' })
   declare totalDependenciesCount: number;
 
+  /** Total number of direct dependents (unfiltered) */
   @property({ type: Number, attribute: 'total-dependents-count' })
   declare totalDependentsCount: number;
 
+  /** Number of transitive dependencies */
   @property({ type: Number, attribute: 'transitive-dependencies-count' })
   declare transitiveDependenciesCount: number;
 
+  /** Number of transitive dependents */
   @property({ type: Number, attribute: 'transitive-dependents-count' })
   declare transitiveDependentsCount: number;
 
+  /** Whether this node has high fan-in (many dependents) */
   @property({ type: Boolean, attribute: 'is-high-fan-in' })
   declare isHighFanIn: boolean;
 
+  /** Whether this node has high fan-out (many dependencies) */
   @property({ type: Boolean, attribute: 'is-high-fan-out' })
   declare isHighFanOut: boolean;
 
+  /** Whether the direct dependencies card is toggled on */
   @property({ type: Boolean, attribute: 'active-direct-deps' })
   declare activeDirectDeps: boolean;
 
+  /** Whether the transitive dependencies card is toggled on */
   @property({ type: Boolean, attribute: 'active-transitive-deps' })
   declare activeTransitiveDeps: boolean;
 
+  /** Whether the direct dependents card is toggled on */
   @property({ type: Boolean, attribute: 'active-direct-dependents' })
   declare activeDirectDependents: boolean;
 
+  /** Whether the transitive dependents card is toggled on */
   @property({ type: Boolean, attribute: 'active-transitive-dependents' })
   declare activeTransitiveDependents: boolean;
 
+  /** Whether the section starts expanded */
   @property({ type: Boolean })
   declare expanded: boolean;
 

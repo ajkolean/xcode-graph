@@ -1,26 +1,39 @@
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge } from '@shared/schemas/graph.types';
 
+/** Directed edge between two clusters in the meta-graph */
 export interface ClusterEdge {
+  /** Source cluster ID */
   source: string;
+  /** Target cluster ID */
   target: string;
-  weight: number; // W: Directed dependency count
-  tieStrength: number; // U: Total connection strength (undirected)
+  /** Directed dependency count (source -> target) */
+  weight: number;
+  /** Undirected tie strength: W(A->B) + W(B->A) */
+  tieStrength: number;
 }
 
+/** Meta-graph of clusters and their aggregated inter-cluster edges */
 export interface ClusterGraph {
+  /** All clusters as nodes */
   nodes: Cluster[];
+  /** Aggregated directed edges between clusters */
   edges: ClusterEdge[];
+  /** Lookup from node ID to its containing cluster ID */
   nodeToCluster: Map<string, string>;
 }
 
 /**
- * Build the weighted Cluster Meta-Graph
+ * Build the weighted Cluster Meta-Graph.
  *
  * Compresses the node graph into a cluster graph where:
  * - Nodes are Clusters
  * - Edges are aggregated dependencies between clusters
  * - Weights reflect the number of dependencies (strata/attraction)
+ *
+ * @param edges - All node-level graph edges
+ * @param clusters - All clusters to include
+ * @returns The cluster meta-graph with aggregated edges
  */
 export function buildClusterGraph(edges: GraphEdge[], clusters: Cluster[]): ClusterGraph {
   const nodeToCluster = new Map<string, string>();

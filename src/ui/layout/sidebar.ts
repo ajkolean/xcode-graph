@@ -50,8 +50,11 @@ interface NavItem {
  * @fires tab-change - Dispatched when a tab is clicked (detail: { tab: string })
  */
 export class GraphSidebar extends LitElement {
+  /** Whether the sidebar is currently collapsed */
   @property({ type: Boolean, reflect: true })
   declare collapsed: boolean;
+
+  /** Whether the sidebar should start collapsed on first render */
   @property({ type: Boolean })
   declare defaultCollapsed: boolean;
 

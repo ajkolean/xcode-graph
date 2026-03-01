@@ -42,18 +42,23 @@ const SOURCE_TYPE_CONFIG: Record<string, { label: string; color: string }> = {
  * @fires back - Dispatched when back button is clicked
  */
 export class GraphClusterHeader extends LitElement {
+  /** Display name of the cluster */
   @property({ type: String, attribute: 'cluster-name' })
   declare clusterName: string;
 
+  /** Whether this cluster is a package or project */
   @property({ type: String, attribute: 'cluster-type' })
   declare clusterType: 'package' | 'project';
 
+  /** Accent color for the cluster icon and badges */
   @property({ type: String, attribute: 'cluster-color' })
   declare clusterColor: string;
 
+  /** Filesystem path to the cluster source (used for source type detection and copy) */
   @property({ type: String, attribute: 'cluster-path' })
   declare clusterPath: string;
 
+  /** Whether the cluster comes from an external dependency */
   @property({ type: Boolean, attribute: 'is-external' })
   declare isExternal: boolean;
 

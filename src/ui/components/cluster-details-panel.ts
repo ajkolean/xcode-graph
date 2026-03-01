@@ -37,27 +37,35 @@ import './cluster-targets-list';
  * @fires node-hover - Dispatched when a target node is hovered (detail: { nodeId })
  */
 export class GraphClusterDetailsPanel extends LitElement {
+  /** The cluster to display details for */
   @property({ attribute: false })
   declare cluster: Cluster;
 
+  /** Nodes belonging to this cluster */
   @property({ attribute: false })
   declare clusterNodes: GraphNode[];
 
+  /** All nodes in the graph (for dependency resolution) */
   @property({ attribute: false })
   declare allNodes: GraphNode[];
 
+  /** All edges in the graph */
   @property({ attribute: false })
   declare edges: GraphEdge[];
 
+  /** Edges remaining after filter application */
   @property({ attribute: false })
   declare filteredEdges: GraphEdge[] | undefined;
 
+  /** Whether direct dependencies highlighting is active */
   @property({ type: Boolean, attribute: 'active-direct-deps' })
   declare activeDirectDeps: boolean;
 
+  /** Whether direct dependents highlighting is active */
   @property({ type: Boolean, attribute: 'active-direct-dependents' })
   declare activeDirectDependents: boolean;
 
+  /** Current canvas zoom level for color adjustments */
   @property({ type: Number })
   declare zoom: number;
 

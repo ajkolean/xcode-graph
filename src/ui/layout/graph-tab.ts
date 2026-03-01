@@ -67,30 +67,39 @@ export class GraphTab extends SignalWatcherLitElement {
   @query('xcode-graph-canvas')
   private declare canvasElement: GraphCanvas;
 
+  /** Nodes to render on the canvas (after search/filter/highlight processing) */
   @property({ attribute: false })
   declare displayNodes: GraphNode[];
 
+  /** Edges to render on the canvas (after search/filter/highlight processing) */
   @property({ attribute: false })
   declare displayEdges: GraphEdge[];
 
+  /** Nodes remaining after filter application (for sidebar stats) */
   @property({ attribute: false })
   declare filteredNodes: GraphNode[];
 
+  /** Edges remaining after filter application (for sidebar stats) */
   @property({ attribute: false })
   declare filteredEdges: GraphEdge[];
 
+  /** All nodes in the graph (unfiltered, for sidebar filter computation) */
   @property({ attribute: false })
   declare allNodes: GraphNode[];
 
+  /** All edges in the graph (unfiltered, for sidebar filter computation) */
   @property({ attribute: false })
   declare allEdges: GraphEdge[];
 
+  /** Available clusters from the layout engine */
   @property({ attribute: false })
   declare clusters: Cluster[] | undefined;
 
+  /** Transitive dependency chain for the selected node */
   @property({ attribute: false })
   declare transitiveDeps: TransitiveResult;
 
+  /** Transitive dependent chain for the selected node */
   @property({ attribute: false })
   declare transitiveDependents: TransitiveResult;
 

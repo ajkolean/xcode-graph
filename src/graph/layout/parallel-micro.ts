@@ -24,6 +24,12 @@ const MIN_CLUSTERS_FOR_WORKERS = 3;
 /** Maximum worker pool size */
 const MAX_WORKERS = 4;
 
+/**
+ * Serialize a Cluster for transfer to a web worker (converts Map to entries array).
+ *
+ * @param cluster - Cluster to serialize
+ * @returns Worker-safe serialized form
+ */
 export function serializeCluster(cluster: Cluster): SerializedMicroCluster {
   return {
     id: cluster.id,
@@ -37,6 +43,12 @@ export function serializeCluster(cluster: Cluster): SerializedMicroCluster {
   };
 }
 
+/**
+ * Deserialize a micro layout result from a web worker (converts entries array back to Map).
+ *
+ * @param sr - Serialized result from worker
+ * @returns Deserialized MicroLayoutResult with Map-based positions
+ */
 export function deserializeResult(sr: SerializedMicroResult): MicroLayoutResult {
   return {
     clusterId: sr.clusterId,
@@ -46,7 +58,14 @@ export function deserializeResult(sr: SerializedMicroResult): MicroLayoutResult 
   };
 }
 
-/** Compute micro layouts synchronously (fallback path) */
+/**
+ * Compute micro layouts synchronously (fallback path).
+ * Runs the Solar System interior layout and node massage for each cluster sequentially.
+ *
+ * @param clusters - All clusters to compute layouts for
+ * @param config - Layout configuration
+ * @returns Map of cluster ID to micro layout result
+ */
 export function computeMicroLayoutsSync(
   clusters: Cluster[],
   config: LayoutConfig,
@@ -62,7 +81,11 @@ export function computeMicroLayoutsSync(
 
 /**
  * Compute micro layouts for all clusters, using web workers when beneficial.
- * Falls back to synchronous for ≤2 clusters or when Worker is unavailable.
+ * Falls back to synchronous for small cluster counts or when Worker is unavailable.
+ *
+ * @param clusters - All clusters to compute layouts for
+ * @param config - Layout configuration
+ * @returns Map of cluster ID to micro layout result
  */
 export async function computeMicroLayoutsParallel(
   clusters: Cluster[],

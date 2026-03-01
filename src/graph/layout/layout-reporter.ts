@@ -9,6 +9,7 @@ import type { ClusterPosition } from '@shared/schemas';
 import type { GraphEdge } from '@shared/schemas/graph.types';
 import type { HierarchicalLayoutResult } from './types';
 
+/** Position report entry for a single cluster */
 export interface ClusterReport {
   id: string;
   stratum: number;
@@ -19,6 +20,7 @@ export interface ClusterReport {
   nodeCount: number;
 }
 
+/** Position report entry for a single node */
 export interface NodeReport {
   id: string;
   clusterId: string;
@@ -28,6 +30,7 @@ export interface NodeReport {
   absoluteY: number;
 }
 
+/** Aggregate statistics for the entire layout */
 export interface LayoutSummary {
   totalClusters: number;
   totalNodes: number;
@@ -43,6 +46,7 @@ export interface LayoutSummary {
   strataCount: number;
 }
 
+/** Complete position report with cluster, node, and summary data */
 export interface PositionReport {
   clusters: ClusterReport[];
   nodes: NodeReport[];
@@ -50,7 +54,11 @@ export interface PositionReport {
 }
 
 /**
- * Generate a complete position report from layout results
+ * Generate a complete position report from layout results.
+ *
+ * @param result - The hierarchical layout result to report on
+ * @param strataSpacing - Vertical spacing between strata (used to compute stratum index)
+ * @returns Position report with clusters sorted by position, nodes, and summary
  */
 export function generatePositionReport(
   result: HierarchicalLayoutResult,
@@ -129,7 +137,10 @@ function computeBoundingBox(clusters: ClusterPosition[]) {
 }
 
 /**
- * Print formatted cluster position table
+ * Print a formatted cluster position table to the console.
+ *
+ * @param result - The hierarchical layout result
+ * @param strataSpacing - Vertical spacing between strata
  */
 export function printClusterTable(result: HierarchicalLayoutResult, strataSpacing = 800): void {
   const clusters = Array.from(result.clusterPositions.entries())
@@ -178,7 +189,10 @@ export function printClusterTable(result: HierarchicalLayoutResult, strataSpacin
 }
 
 /**
- * Print nodes grouped by cluster
+ * Print nodes grouped by cluster to the console.
+ *
+ * @param result - The hierarchical layout result
+ * @param maxNodesPerCluster - Maximum nodes to show per cluster before truncating
  */
 export function printNodesByCluster(
   result: HierarchicalLayoutResult,
@@ -213,7 +227,10 @@ export function printNodesByCluster(
 }
 
 /**
- * Print ASCII visualization of cluster strata
+ * Print an ASCII visualization of cluster strata to the console.
+ *
+ * @param result - The hierarchical layout result
+ * @param strataSpacing - Vertical spacing between strata
  */
 export function printStrataVisualization(
   result: HierarchicalLayoutResult,
@@ -242,7 +259,9 @@ export function printStrataVisualization(
 }
 
 /**
- * Print layout summary
+ * Print a layout summary to the console.
+ *
+ * @param report - Position report containing the summary data
  */
 export function printLayoutSummary(report: PositionReport): void {
   const { summary } = report;
@@ -259,14 +278,20 @@ export function printLayoutSummary(report: PositionReport): void {
 }
 
 /**
- * Export position report to JSON string
+ * Export a position report to a JSON string.
+ *
+ * @param report - Position report to serialize
+ * @returns Pretty-printed JSON string
  */
 export function exportToJSON(report: PositionReport): string {
   return JSON.stringify(report, null, 2);
 }
 
 /**
- * Export cluster positions to CSV string
+ * Export cluster positions to a CSV string.
+ *
+ * @param report - Position report containing cluster data
+ * @returns CSV string with headers
  */
 export function exportClustersToCSV(report: PositionReport): string {
   const headers = 'id,stratum,x,y,width,height,nodeCount';
@@ -277,7 +302,10 @@ export function exportClustersToCSV(report: PositionReport): string {
 }
 
 /**
- * Export node positions to CSV string
+ * Export node positions to a CSV string.
+ *
+ * @param report - Position report containing node data
+ * @returns CSV string with headers
  */
 export function exportNodesToCSV(report: PositionReport): string {
   const headers = 'id,clusterId,relativeX,relativeY,absoluteX,absoluteY';
@@ -288,7 +316,13 @@ export function exportNodesToCSV(report: PositionReport): string {
 }
 
 /**
- * Find clusters with most cross-stratum edges (hub clusters)
+ * Find clusters with the most cross-stratum edges (hub clusters).
+ *
+ * @param result - The hierarchical layout result
+ * @param edges - All node-level graph edges
+ * @param nodeToCluster - Mapping from node ID to cluster ID
+ * @param strataSpacing - Vertical spacing between strata
+ * @returns Hub clusters sorted by connected strata count (descending)
  */
 export function findHubClusters(
   result: HierarchicalLayoutResult,
@@ -341,7 +375,12 @@ export function findHubClusters(
 }
 
 /**
- * Find isolated clusters (few or no cross-cluster connections)
+ * Find isolated clusters (few or no cross-cluster connections).
+ *
+ * @param result - The hierarchical layout result
+ * @param edges - All node-level graph edges
+ * @param nodeToCluster - Mapping from node ID to cluster ID
+ * @returns Clusters sorted by connection count (ascending, most isolated first)
  */
 export function findIsolatedClusters(
   result: HierarchicalLayoutResult,

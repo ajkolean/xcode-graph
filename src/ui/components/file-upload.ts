@@ -15,6 +15,12 @@ import { state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ErrorService } from '@/services/error-service';
 
+/**
+ * Overlay button for loading a Tuist graph JSON file via file picker or drag-and-drop.
+ *
+ * @summary File upload button with drag-and-drop support
+ * @fires graph-file-loaded - Dispatched when a valid JSON file is loaded (detail: { raw: unknown })
+ */
 export class GraphFileUpload extends LitElement {
   @state()
   private declare isDragOver: boolean;

@@ -579,6 +579,9 @@ function processDependencies(
  * Transform a raw XcodeGraph JSON into our GraphData format.
  * Extracts all rich metadata from projects, targets, and dependencies.
  * Returns warnings for non-fatal issues instead of throwing.
+ *
+ * @param raw - Raw JSON value from Tuist graph dump
+ * @returns Transformed graph data and any non-fatal warnings
  */
 export function transformXcodeGraph(raw: unknown): TransformResult {
   const parseResult = safeParseGraph(raw);
@@ -611,14 +614,24 @@ export function transformXcodeGraph(raw: unknown): TransformResult {
   };
 }
 
-/** Load and transform an XcodeGraph from a JSON file URL */
+/**
+ * Load and transform an XcodeGraph from a JSON file URL.
+ *
+ * @param jsonPath - URL or path to the JSON file
+ * @returns Transformed graph data and any non-fatal warnings
+ */
 export async function loadXcodeGraph(jsonPath: string): Promise<TransformResult> {
   const response = await fetch(jsonPath);
   const raw: unknown = await response.json();
   return transformXcodeGraph(raw);
 }
 
-/** Parse and transform an XcodeGraph from a JSON string */
+/**
+ * Parse and transform an XcodeGraph from a JSON string.
+ *
+ * @param jsonString - Raw JSON string to parse
+ * @returns Transformed graph data and any non-fatal warnings
+ */
 export function parseXcodeGraph(jsonString: string): TransformResult {
   const raw: unknown = JSON.parse(jsonString);
   return transformXcodeGraph(raw);

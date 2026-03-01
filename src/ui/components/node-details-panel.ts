@@ -54,24 +54,34 @@ export class GraphNodeDetailsPanel extends LitElement {
     zoom: { type: Number },
   };
 
+  /** The node to display details for */
   declare node: GraphNode;
 
+  /** All nodes in the graph (for dependency resolution) */
   declare allNodes: GraphNode[];
 
+  /** All edges in the graph */
   declare edges: GraphEdge[];
 
+  /** Edges remaining after filter application */
   declare filteredEdges: GraphEdge[] | undefined;
 
+  /** Available clusters for cluster navigation */
   declare clusters: Cluster[] | undefined;
 
+  /** Whether direct dependencies highlighting is active */
   declare activeDirectDeps: boolean;
 
+  /** Whether transitive dependencies highlighting is active */
   declare activeTransitiveDeps: boolean;
 
+  /** Whether direct dependents highlighting is active */
   declare activeDirectDependents: boolean;
 
+  /** Whether transitive dependents highlighting is active */
   declare activeTransitiveDependents: boolean;
 
+  /** Current canvas zoom level for color adjustments */
   declare zoom: number;
 
   private readonly focusTrap = new FocusTrapController(this, {

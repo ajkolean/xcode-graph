@@ -11,28 +11,51 @@ import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 
+/** Context passed to edge rendering functions each frame. */
 export interface EdgeRenderContext {
+  /** 2D rendering context of the canvas element */
   ctx: CanvasRenderingContext2D;
+  /** Layout controller providing node/cluster positions */
   layout: GraphLayoutController;
+  /** All visible nodes (for endpoint resolution) */
   nodes: GraphNode[];
+  /** All visible edges to render */
   edges: GraphEdge[];
+  /** Current zoom level */
   zoom: number;
+  /** Current animation timestamp in milliseconds */
   time: number;
+  /** Resolved canvas theme colors */
   theme: CanvasTheme;
+  /** Currently selected node, or null */
   selectedNode: GraphNode | null;
+  /** ID of the currently selected cluster, or null */
   selectedCluster: string | null;
+  /** ID of the currently hovered cluster, or null */
   hoveredCluster: string | null;
+  /** Current view mode (e.g. cluster or flat) */
   viewMode: ViewMode;
+  /** Transitive dependency chain from the selected node */
   transitiveDeps: TransitiveResult | undefined;
+  /** Transitive dependent chain from the selected node */
   transitiveDependents: TransitiveResult | undefined;
+  /** User-dragged node positions (relative to cluster) */
   manualNodePositions: Map<string, { x: number; y: number }>;
+  /** User-dragged cluster positions (world coordinates) */
   manualClusterPositions: Map<string, { x: number; y: number }>;
+  /** Fast lookup map from node ID to GraphNode */
   nodeMap: Map<string, GraphNode>;
+  /** ELK-routed edge paths for cross-cluster edges */
   routedEdgeMap: Map<string, RoutedEdge>;
+  /** Cached Path2D objects keyed by edge key */
   edgePathCache: Map<string, Path2D>;
+  /** Whether direct dependencies are highlighted */
   showDirectDeps: boolean;
+  /** Whether transitive dependencies are highlighted */
   showTransitiveDeps: boolean;
+  /** Whether direct dependents are highlighted */
   showDirectDependents: boolean;
+  /** Whether transitive dependents are highlighted */
   showTransitiveDependents: boolean;
 }
 

@@ -14,6 +14,12 @@ import type { ClusterPort, PortSide, RoutedEdge } from '../types';
 /**
  * Determine which side of a cluster a port should be on based on direction to target.
  * Uses the angle from source cluster center to target cluster center.
+ *
+ * @param sourceX - Source cluster center X
+ * @param sourceY - Source cluster center Y
+ * @param targetX - Target cluster center X
+ * @param targetY - Target cluster center Y
+ * @returns Cardinal direction for port placement
  */
 export function computePortSide(
   sourceX: number,
@@ -124,6 +130,16 @@ function collectPortRequirements(
   }
 }
 
+/**
+ * Compute port positions for all clusters based on their edges.
+ * Groups edges by direction, distributes ports along cluster boundaries,
+ * and orders them by edge weight.
+ *
+ * @param clusterPositions - Map of cluster ID to world-space position
+ * @param clusterEdges - Aggregated inter-cluster edges
+ * @param config - Layout configuration with port spacing parameters
+ * @returns Map of cluster ID to its boundary ports
+ */
 export function computeClusterPorts(
   clusterPositions: Map<string, ClusterPosition>,
   clusterEdges: ClusterEdge[],
@@ -317,6 +333,16 @@ function findBestPort(
 
 /**
  * Compute routed edges for all node-level edges that cross cluster boundaries.
+ * Each cross-cluster edge is assigned to source/target ports with orthogonal waypoints.
+ *
+ * @param edges - All node-level graph edges
+ * @param nodePositions - Node positions relative to cluster centers
+ * @param clusterPositions - Cluster world-space positions
+ * @param clusterPorts - Computed ports per cluster
+ * @param clusterEdges - Aggregated inter-cluster edges
+ * @param nodeToCluster - Mapping from node ID to cluster ID
+ * @param config - Layout configuration
+ * @returns Array of routed edges with port assignments and waypoints
  */
 export function computeRoutedEdges(
   edges: GraphEdge[],

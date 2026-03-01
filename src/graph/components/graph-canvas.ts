@@ -63,54 +63,71 @@ import './graph-hidden-dom';
  */
 @customElement('xcode-graph-canvas')
 export class GraphCanvas extends LitElement {
+  /** Graph nodes to render */
   @property({ attribute: false })
   declare nodes: GraphNode[];
 
+  /** Graph edges to render */
   @property({ attribute: false })
   declare edges: GraphEdge[];
 
+  /** Currently selected node (highlighted with ring and connected edges) */
   @property({ attribute: false })
   declare selectedNode: GraphNode | null;
 
+  /** Currently selected cluster ID (dims non-member nodes) */
   @property({ attribute: false })
   declare selectedCluster: string | null;
 
+  /** Currently hovered node ID (shows tooltip) */
   @property({ attribute: false })
   declare hoveredNode: string | null;
 
+  /** Active search query for dimming non-matching nodes */
   @property({ type: String, attribute: 'search-query' })
   declare searchQuery: string;
 
+  /** Display mode affecting edge visibility */
   @property({ type: String, attribute: 'view-mode' })
   declare viewMode: ViewMode;
 
+  /** Current zoom level (affects color saturation and label visibility) */
   @property({ type: Number })
   declare zoom: number;
 
+  /** Whether physics animation is enabled for layout settling */
   @property({ type: Boolean, attribute: 'enable-animation' })
   declare enableAnimation: boolean;
 
+  /** Transitive dependency chain for the selected node */
   @property({ attribute: false })
   declare transitiveDeps: TransitiveResult | undefined;
 
+  /** Transitive dependent chain for the selected node */
   @property({ attribute: false })
   declare transitiveDependents: TransitiveResult | undefined;
 
+  /** Active filter preview (dims non-matching nodes on hover) */
   @property({ attribute: false })
   declare previewFilter: PreviewFilter | undefined;
 
+  /** Whether to highlight direct dependency edges */
   @property({ type: Boolean, attribute: 'show-direct-deps' })
   declare showDirectDeps: boolean;
 
+  /** Whether to highlight transitive dependency edges */
   @property({ type: Boolean, attribute: 'show-transitive-deps' })
   declare showTransitiveDeps: boolean;
 
+  /** Whether to highlight direct dependent edges */
   @property({ type: Boolean, attribute: 'show-direct-dependents' })
   declare showDirectDependents: boolean;
 
+  /** Whether to highlight transitive dependent edges */
   @property({ type: Boolean, attribute: 'show-transitive-dependents' })
   declare showTransitiveDependents: boolean;
 
+  /** Set of node IDs that should be visually dimmed */
   @property({ attribute: false })
   declare dimmedNodeIds: Set<string>;
 

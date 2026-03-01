@@ -24,9 +24,11 @@ import './info-row.js';
  * @summary Collapsible node information details section
  */
 export class GraphNodeInfo extends LitElement {
+  /** The graph node to display information for */
   @property({ attribute: false })
   declare node: GraphNode;
 
+  /** Whether the section starts expanded */
   @property({ type: Boolean })
   declare expanded: boolean;
 

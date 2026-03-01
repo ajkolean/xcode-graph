@@ -42,21 +42,27 @@ type ClusterListItem =
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 export class GraphClusterTargetsList extends NodeListEventsBase {
+  /** All nodes belonging to this cluster */
   @property({ attribute: false })
   declare clusterNodes: GraphNode[];
 
+  /** Nodes grouped by their type (e.g., framework, library) */
   @property({ attribute: false })
   declare nodesByType: Record<string, GraphNode[]>;
 
+  /** Number of targets visible after filtering */
   @property({ type: Number, attribute: 'filtered-targets-count' })
   declare filteredTargetsCount: number;
 
+  /** Total number of targets in the cluster */
   @property({ type: Number, attribute: 'total-targets-count' })
   declare totalTargetsCount: number;
 
+  /** All edges in the graph (for dependency counting) */
   @property({ attribute: false })
   declare edges: GraphEdge[];
 
+  /** Current canvas zoom level for color adjustments */
   @property({ type: Number })
   declare zoom: number;
 

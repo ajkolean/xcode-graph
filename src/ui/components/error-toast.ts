@@ -53,9 +53,11 @@ const SEVERITY_ICONS = {
  * @fires action - Dispatched when the action button is clicked (detail: { error })
  */
 export class GraphErrorToast extends LitElement {
+  /** The error to display in this toast */
   @property({ attribute: false })
   declare error: AppError | null;
 
+  /** Whether the toast is currently visible (triggers slide-in animation) */
   @property({ type: Boolean, reflect: true })
   declare visible: boolean;
 

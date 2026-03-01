@@ -28,28 +28,42 @@
           "attributes": [
             {
               "name": "search-query",
+              "description": "Active search query for dimming non-matching nodes",
               "value": { "type": "string", "default": "''" }
             },
-            { "name": "view-mode", "value": { "type": "ViewMode" } },
-            { "name": "zoom", "value": { "type": "number", "default": "1" } },
+            {
+              "name": "view-mode",
+              "description": "Display mode affecting edge visibility",
+              "value": { "type": "ViewMode" }
+            },
+            {
+              "name": "zoom",
+              "description": "Current zoom level (affects color saturation and label visibility)",
+              "value": { "type": "number", "default": "1" }
+            },
             {
               "name": "enable-animation",
+              "description": "Whether physics animation is enabled for layout settling",
               "value": { "type": "boolean", "default": "false" }
             },
             {
               "name": "show-direct-deps",
+              "description": "Whether to highlight direct dependency edges",
               "value": { "type": "boolean", "default": "false" }
             },
             {
               "name": "show-transitive-deps",
+              "description": "Whether to highlight transitive dependency edges",
               "value": { "type": "boolean", "default": "false" }
             },
             {
               "name": "show-direct-dependents",
+              "description": "Whether to highlight direct dependent edges",
               "value": { "type": "boolean", "default": "false" }
             },
             {
               "name": "show-transitive-dependents",
+              "description": "Whether to highlight transitive dependent edges",
               "value": { "type": "boolean", "default": "false" }
             }
           ],
@@ -91,29 +105,91 @@
           ],
           "js": {
             "properties": [
-              { "name": "nodes", "type": "GraphNode[]" },
-              { "name": "edges", "type": "GraphEdge[]" },
-              { "name": "selectedNode", "type": "GraphNode | null" },
-              { "name": "selectedCluster", "type": "string | null" },
-              { "name": "hoveredNode", "type": "string | null" },
-              { "name": "searchQuery", "type": "string" },
-              { "name": "viewMode", "type": "ViewMode" },
-              { "name": "zoom", "type": "number" },
-              { "name": "enableAnimation", "type": "boolean" },
+              {
+                "name": "nodes",
+                "description": "Graph nodes to render",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "edges",
+                "description": "Graph edges to render",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "selectedNode",
+                "description": "Currently selected node (highlighted with ring and connected edges)",
+                "type": "GraphNode | null"
+              },
+              {
+                "name": "selectedCluster",
+                "description": "Currently selected cluster ID (dims non-member nodes)",
+                "type": "string | null"
+              },
+              {
+                "name": "hoveredNode",
+                "description": "Currently hovered node ID (shows tooltip)",
+                "type": "string | null"
+              },
+              {
+                "name": "searchQuery",
+                "description": "Active search query for dimming non-matching nodes",
+                "type": "string"
+              },
+              {
+                "name": "viewMode",
+                "description": "Display mode affecting edge visibility",
+                "type": "ViewMode"
+              },
+              {
+                "name": "zoom",
+                "description": "Current zoom level (affects color saturation and label visibility)",
+                "type": "number"
+              },
+              {
+                "name": "enableAnimation",
+                "description": "Whether physics animation is enabled for layout settling",
+                "type": "boolean"
+              },
               {
                 "name": "transitiveDeps",
+                "description": "Transitive dependency chain for the selected node",
                 "type": "TransitiveResult | undefined"
               },
               {
                 "name": "transitiveDependents",
+                "description": "Transitive dependent chain for the selected node",
                 "type": "TransitiveResult | undefined"
               },
-              { "name": "previewFilter", "type": "PreviewFilter | undefined" },
-              { "name": "showDirectDeps", "type": "boolean" },
-              { "name": "showTransitiveDeps", "type": "boolean" },
-              { "name": "showDirectDependents", "type": "boolean" },
-              { "name": "showTransitiveDependents", "type": "boolean" },
-              { "name": "dimmedNodeIds", "type": "Set<string>" }
+              {
+                "name": "previewFilter",
+                "description": "Active filter preview (dims non-matching nodes on hover)",
+                "type": "PreviewFilter | undefined"
+              },
+              {
+                "name": "showDirectDeps",
+                "description": "Whether to highlight direct dependency edges",
+                "type": "boolean"
+              },
+              {
+                "name": "showTransitiveDeps",
+                "description": "Whether to highlight transitive dependency edges",
+                "type": "boolean"
+              },
+              {
+                "name": "showDirectDependents",
+                "description": "Whether to highlight direct dependent edges",
+                "type": "boolean"
+              },
+              {
+                "name": "showTransitiveDependents",
+                "description": "Whether to highlight transitive dependent edges",
+                "type": "boolean"
+              },
+              {
+                "name": "dimmedNodeIds",
+                "description": "Set of node IDs that should be visually dimmed",
+                "type": "Set<string>"
+              }
             ],
             "events": [
               {
@@ -313,9 +389,21 @@
           "description": "Right sidebar header with collapse toggle\n---\n\n\n### **Events:**\n - **toggle-collapse** - Dispatched when the collapse button is clicked",
           "doc-url": "",
           "attributes": [
-            { "name": "title", "value": { "type": "string" } },
-            { "name": "is-collapsed", "value": { "type": "boolean" } },
-            { "name": "has-active-filters", "value": { "type": "boolean" } }
+            {
+              "name": "title",
+              "description": "Title text displayed in the header",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "is-collapsed",
+              "description": "Whether the sidebar is currently collapsed",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "has-active-filters",
+              "description": "Whether any filters are currently active (shows indicator dot)",
+              "value": { "type": "boolean" }
+            }
           ],
           "events": [
             {
@@ -326,9 +414,21 @@
           ],
           "js": {
             "properties": [
-              { "name": "title", "type": "string" },
-              { "name": "isCollapsed", "type": "boolean" },
-              { "name": "hasActiveFilters", "type": "boolean" }
+              {
+                "name": "title",
+                "description": "Title text displayed in the header",
+                "type": "string"
+              },
+              {
+                "name": "isCollapsed",
+                "description": "Whether the sidebar is currently collapsed",
+                "type": "boolean"
+              },
+              {
+                "name": "hasActiveFilters",
+                "description": "Whether any filters are currently active (shows indicator dot)",
+                "type": "boolean"
+              }
             ],
             "events": [
               {
@@ -344,10 +444,26 @@
           "description": "Collapsed sidebar icon bar with filter badges\n---\n\n\n### **Events:**\n - **expand-to-section** - Dispatched when a section icon is clicked (detail: { section })",
           "doc-url": "",
           "attributes": [
-            { "name": "node-types-filter-size", "value": { "type": "number" } },
-            { "name": "platforms-filter-size", "value": { "type": "number" } },
-            { "name": "projects-filter-size", "value": { "type": "number" } },
-            { "name": "packages-filter-size", "value": { "type": "number" } }
+            {
+              "name": "node-types-filter-size",
+              "description": "Number of currently selected node type filters",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "platforms-filter-size",
+              "description": "Number of currently selected platform filters",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "projects-filter-size",
+              "description": "Number of currently selected project filters",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "packages-filter-size",
+              "description": "Number of currently selected package filters",
+              "value": { "type": "number" }
+            }
           ],
           "events": [
             {
@@ -358,16 +474,56 @@
           ],
           "js": {
             "properties": [
-              { "name": "filteredNodes", "type": "GraphNode[]" },
-              { "name": "filteredEdges", "type": "GraphEdge[]" },
-              { "name": "typeCounts", "type": "Map<string, number>" },
-              { "name": "platformCounts", "type": "Map<string, number>" },
-              { "name": "projectCounts", "type": "Map<string, number>" },
-              { "name": "packageCounts", "type": "Map<string, number>" },
-              { "name": "nodeTypesFilterSize", "type": "number" },
-              { "name": "platformsFilterSize", "type": "number" },
-              { "name": "projectsFilterSize", "type": "number" },
-              { "name": "packagesFilterSize", "type": "number" }
+              {
+                "name": "filteredNodes",
+                "description": "Nodes remaining after filter application",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "filteredEdges",
+                "description": "Edges remaining after filter application",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "typeCounts",
+                "description": "Count of nodes per node type",
+                "type": "Map<string, number>"
+              },
+              {
+                "name": "platformCounts",
+                "description": "Count of nodes per platform",
+                "type": "Map<string, number>"
+              },
+              {
+                "name": "projectCounts",
+                "description": "Count of nodes per project",
+                "type": "Map<string, number>"
+              },
+              {
+                "name": "packageCounts",
+                "description": "Count of nodes per package",
+                "type": "Map<string, number>"
+              },
+              {
+                "name": "nodeTypesFilterSize",
+                "description": "Number of currently selected node type filters",
+                "type": "number"
+              },
+              {
+                "name": "platformsFilterSize",
+                "description": "Number of currently selected platform filters",
+                "type": "number"
+              },
+              {
+                "name": "projectsFilterSize",
+                "description": "Number of currently selected project filters",
+                "type": "number"
+              },
+              {
+                "name": "packagesFilterSize",
+                "description": "Number of currently selected package filters",
+                "type": "number"
+              }
             ],
             "events": [
               {
@@ -535,38 +691,69 @@
           "description": "Metrics grid with toggleable stats cards\n---\n\n\n### **Events:**\n - **card**\n- **toggle-direct-deps** - Dispatched when direct dependencies card is toggled\n- **toggle-transitive-deps** - Dispatched when transitive dependencies card is toggled\n- **toggle-direct-dependents** - Dispatched when direct dependents card is toggled\n- **toggle-transitive-dependents** - Dispatched when transitive dependents card is toggled",
           "doc-url": "",
           "attributes": [
-            { "name": "dependencies-count", "value": { "type": "number" } },
-            { "name": "dependents-count", "value": { "type": "number" } },
             {
-              "name": "total-dependencies-count",
+              "name": "dependencies-count",
+              "description": "Number of direct dependencies (filtered)",
               "value": { "type": "number" }
             },
-            { "name": "total-dependents-count", "value": { "type": "number" } },
+            {
+              "name": "dependents-count",
+              "description": "Number of direct dependents (filtered)",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "total-dependencies-count",
+              "description": "Total number of direct dependencies (unfiltered)",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "total-dependents-count",
+              "description": "Total number of direct dependents (unfiltered)",
+              "value": { "type": "number" }
+            },
             {
               "name": "transitive-dependencies-count",
+              "description": "Number of transitive dependencies",
               "value": { "type": "number" }
             },
             {
               "name": "transitive-dependents-count",
+              "description": "Number of transitive dependents",
               "value": { "type": "number" }
             },
-            { "name": "is-high-fan-in", "value": { "type": "boolean" } },
-            { "name": "is-high-fan-out", "value": { "type": "boolean" } },
-            { "name": "active-direct-deps", "value": { "type": "boolean" } },
+            {
+              "name": "is-high-fan-in",
+              "description": "Whether this node has high fan-in (many dependents)",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "is-high-fan-out",
+              "description": "Whether this node has high fan-out (many dependencies)",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "active-direct-deps",
+              "description": "Whether the direct dependencies card is toggled on",
+              "value": { "type": "boolean" }
+            },
             {
               "name": "active-transitive-deps",
+              "description": "Whether the transitive dependencies card is toggled on",
               "value": { "type": "boolean" }
             },
             {
               "name": "active-direct-dependents",
+              "description": "Whether the direct dependents card is toggled on",
               "value": { "type": "boolean" }
             },
             {
               "name": "active-transitive-dependents",
+              "description": "Whether the transitive dependents card is toggled on",
               "value": { "type": "boolean" }
             },
             {
               "name": "expanded",
+              "description": "Whether the section starts expanded",
               "value": { "type": "boolean", "default": "true" }
             }
           ],
@@ -591,19 +778,71 @@
           ],
           "js": {
             "properties": [
-              { "name": "dependenciesCount", "type": "number" },
-              { "name": "dependentsCount", "type": "number" },
-              { "name": "totalDependenciesCount", "type": "number" },
-              { "name": "totalDependentsCount", "type": "number" },
-              { "name": "transitiveDependenciesCount", "type": "number" },
-              { "name": "transitiveDependentsCount", "type": "number" },
-              { "name": "isHighFanIn", "type": "boolean" },
-              { "name": "isHighFanOut", "type": "boolean" },
-              { "name": "activeDirectDeps", "type": "boolean" },
-              { "name": "activeTransitiveDeps", "type": "boolean" },
-              { "name": "activeDirectDependents", "type": "boolean" },
-              { "name": "activeTransitiveDependents", "type": "boolean" },
-              { "name": "expanded", "type": "boolean" }
+              {
+                "name": "dependenciesCount",
+                "description": "Number of direct dependencies (filtered)",
+                "type": "number"
+              },
+              {
+                "name": "dependentsCount",
+                "description": "Number of direct dependents (filtered)",
+                "type": "number"
+              },
+              {
+                "name": "totalDependenciesCount",
+                "description": "Total number of direct dependencies (unfiltered)",
+                "type": "number"
+              },
+              {
+                "name": "totalDependentsCount",
+                "description": "Total number of direct dependents (unfiltered)",
+                "type": "number"
+              },
+              {
+                "name": "transitiveDependenciesCount",
+                "description": "Number of transitive dependencies",
+                "type": "number"
+              },
+              {
+                "name": "transitiveDependentsCount",
+                "description": "Number of transitive dependents",
+                "type": "number"
+              },
+              {
+                "name": "isHighFanIn",
+                "description": "Whether this node has high fan-in (many dependents)",
+                "type": "boolean"
+              },
+              {
+                "name": "isHighFanOut",
+                "description": "Whether this node has high fan-out (many dependencies)",
+                "type": "boolean"
+              },
+              {
+                "name": "activeDirectDeps",
+                "description": "Whether the direct dependencies card is toggled on",
+                "type": "boolean"
+              },
+              {
+                "name": "activeTransitiveDeps",
+                "description": "Whether the transitive dependencies card is toggled on",
+                "type": "boolean"
+              },
+              {
+                "name": "activeDirectDependents",
+                "description": "Whether the direct dependents card is toggled on",
+                "type": "boolean"
+              },
+              {
+                "name": "activeTransitiveDependents",
+                "description": "Whether the transitive dependents card is toggled on",
+                "type": "boolean"
+              },
+              {
+                "name": "expanded",
+                "description": "Whether the section starts expanded",
+                "type": "boolean"
+              }
             ],
             "events": [
               { "name": "card", "type": "CustomEvent" },
@@ -812,9 +1051,14 @@
           "description": "Node details header with icon, badges, and tags\n---\n\n\n### **Events:**\n - **cluster-click** - Dispatched when a cluster badge is clicked (detail: { clusterId })\n- **close** - Dispatched when the back/close button is clicked",
           "doc-url": "",
           "attributes": [
-            { "name": "zoom", "value": { "type": "number" } },
+            {
+              "name": "zoom",
+              "description": "Current canvas zoom level for color adjustments",
+              "value": { "type": "number" }
+            },
             {
               "name": "show-cluster-link",
+              "description": "Whether clicking back navigates to the parent cluster instead of closing",
               "value": { "type": "boolean", "default": "true" }
             }
           ],
@@ -832,9 +1076,21 @@
           ],
           "js": {
             "properties": [
-              { "name": "node", "type": "GraphNode" },
-              { "name": "zoom", "type": "number" },
-              { "name": "showClusterLink", "type": "boolean" }
+              {
+                "name": "node",
+                "description": "The graph node to display in the header",
+                "type": "GraphNode"
+              },
+              {
+                "name": "zoom",
+                "description": "Current canvas zoom level for color adjustments",
+                "type": "number"
+              },
+              {
+                "name": "showClusterLink",
+                "description": "Whether clicking back navigates to the parent cluster instead of closing",
+                "type": "boolean"
+              }
             ],
             "events": [
               {
@@ -890,14 +1146,23 @@
           "attributes": [
             {
               "name": "expanded",
+              "description": "Whether the section starts expanded",
               "value": { "type": "boolean", "default": "true" }
             }
           ],
           "events": [],
           "js": {
             "properties": [
-              { "name": "node", "type": "GraphNode" },
-              { "name": "expanded", "type": "boolean" }
+              {
+                "name": "node",
+                "description": "The graph node to display information for",
+                "type": "GraphNode"
+              },
+              {
+                "name": "expanded",
+                "description": "Whether the section starts expanded",
+                "type": "boolean"
+              }
             ],
             "events": []
           }
@@ -907,9 +1172,21 @@
           "description": "Node list row with icon, name, and chevron\n---\n\n\n### **Events:**\n - **row-select** - Dispatched when the row is clicked (detail: { node })\n- **row-hover** - Dispatched on mouse enter (detail: { nodeId })\n- **row-hover-end** - Dispatched on mouse leave",
           "doc-url": "",
           "attributes": [
-            { "name": "subtitle", "value": { "type": "string" } },
-            { "name": "zoom", "value": { "type": "number", "default": "1" } },
-            { "name": "is-selected", "value": { "type": "boolean" } }
+            {
+              "name": "subtitle",
+              "description": "Optional subtitle text shown below the node name",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "zoom",
+              "description": "Current canvas zoom level for color adjustments",
+              "value": { "type": "number", "default": "1" }
+            },
+            {
+              "name": "is-selected",
+              "description": "Whether this row is currently selected",
+              "value": { "type": "boolean" }
+            }
           ],
           "events": [
             {
@@ -930,10 +1207,26 @@
           ],
           "js": {
             "properties": [
-              { "name": "node", "type": "GraphNode" },
-              { "name": "subtitle", "type": "string" },
-              { "name": "zoom", "type": "number" },
-              { "name": "isSelected", "type": "boolean" }
+              {
+                "name": "node",
+                "description": "The graph node to display in this row",
+                "type": "GraphNode"
+              },
+              {
+                "name": "subtitle",
+                "description": "Optional subtitle text shown below the node name",
+                "type": "string"
+              },
+              {
+                "name": "zoom",
+                "description": "Current canvas zoom level for color adjustments",
+                "type": "number"
+              },
+              {
+                "name": "isSelected",
+                "description": "Whether this row is currently selected",
+                "type": "boolean"
+              }
             ],
             "events": [
               {
@@ -1050,20 +1343,31 @@
           "description": "Node details panel with metrics, info, and dependency lists\n---\n\n\n### **Events:**\n - **eventName**\n- **close** - Dispatched when the panel close/back button is clicked\n- **node-select** - Dispatched when a dependency or dependent node is clicked (detail: { node })\n- **cluster-select** - Dispatched when a cluster badge is clicked (detail: { clusterId })\n- **node-hover** - Dispatched when hovering a dependency or dependent node (detail: { nodeId })\n- **toggle-direct-deps** - Dispatched when the direct dependencies metric card is toggled\n- **toggle-transitive-deps** - Dispatched when the transitive dependencies metric card is toggled\n- **toggle-direct-dependents** - Dispatched when the direct dependents metric card is toggled\n- **toggle-transitive-dependents** - Dispatched when the transitive dependents metric card is toggled",
           "doc-url": "",
           "attributes": [
-            { "name": "active-direct-deps", "value": { "type": "boolean" } },
+            {
+              "name": "active-direct-deps",
+              "description": "Whether direct dependencies highlighting is active",
+              "value": { "type": "boolean" }
+            },
             {
               "name": "active-transitive-deps",
+              "description": "Whether transitive dependencies highlighting is active",
               "value": { "type": "boolean" }
             },
             {
               "name": "active-direct-dependents",
+              "description": "Whether direct dependents highlighting is active",
               "value": { "type": "boolean" }
             },
             {
               "name": "active-transitive-dependents",
+              "description": "Whether transitive dependents highlighting is active",
               "value": { "type": "boolean" }
             },
-            { "name": "zoom", "value": { "type": "number" } }
+            {
+              "name": "zoom",
+              "description": "Current canvas zoom level for color adjustments",
+              "value": { "type": "number" }
+            }
           ],
           "events": [
             { "name": "eventName", "type": "CustomEvent" },
@@ -1102,16 +1406,56 @@
           ],
           "js": {
             "properties": [
-              { "name": "node", "type": "GraphNode" },
-              { "name": "allNodes", "type": "GraphNode[]" },
-              { "name": "edges", "type": "GraphEdge[]" },
-              { "name": "filteredEdges", "type": "GraphEdge[] | undefined" },
-              { "name": "clusters", "type": "Cluster[] | undefined" },
-              { "name": "activeDirectDeps", "type": "boolean" },
-              { "name": "activeTransitiveDeps", "type": "boolean" },
-              { "name": "activeDirectDependents", "type": "boolean" },
-              { "name": "activeTransitiveDependents", "type": "boolean" },
-              { "name": "zoom", "type": "number" }
+              {
+                "name": "node",
+                "description": "The node to display details for",
+                "type": "GraphNode"
+              },
+              {
+                "name": "allNodes",
+                "description": "All nodes in the graph (for dependency resolution)",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "edges",
+                "description": "All edges in the graph",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "filteredEdges",
+                "description": "Edges remaining after filter application",
+                "type": "GraphEdge[] | undefined"
+              },
+              {
+                "name": "clusters",
+                "description": "Available clusters for cluster navigation",
+                "type": "Cluster[] | undefined"
+              },
+              {
+                "name": "activeDirectDeps",
+                "description": "Whether direct dependencies highlighting is active",
+                "type": "boolean"
+              },
+              {
+                "name": "activeTransitiveDeps",
+                "description": "Whether transitive dependencies highlighting is active",
+                "type": "boolean"
+              },
+              {
+                "name": "activeDirectDependents",
+                "description": "Whether direct dependents highlighting is active",
+                "type": "boolean"
+              },
+              {
+                "name": "activeTransitiveDependents",
+                "description": "Whether transitive dependents highlighting is active",
+                "type": "boolean"
+              },
+              {
+                "name": "zoom",
+                "description": "Current canvas zoom level for color adjustments",
+                "type": "number"
+              }
             ],
             "events": [
               { "name": "eventName", "type": "CustomEvent" },
@@ -1226,14 +1570,31 @@
           "description": "Cluster details panel header with icon, badges, and path\n---\n\n\n### **Events:**\n - **back** - Dispatched when back button is clicked",
           "doc-url": "",
           "attributes": [
-            { "name": "cluster-name", "value": { "type": "string" } },
+            {
+              "name": "cluster-name",
+              "description": "Display name of the cluster",
+              "value": { "type": "string" }
+            },
             {
               "name": "cluster-type",
+              "description": "Whether this cluster is a package or project",
               "value": { "type": "'package' | 'project'" }
             },
-            { "name": "cluster-color", "value": { "type": "string" } },
-            { "name": "cluster-path", "value": { "type": "string" } },
-            { "name": "is-external", "value": { "type": "boolean" } }
+            {
+              "name": "cluster-color",
+              "description": "Accent color for the cluster icon and badges",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "cluster-path",
+              "description": "Filesystem path to the cluster source (used for source type detection and copy)",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "is-external",
+              "description": "Whether the cluster comes from an external dependency",
+              "value": { "type": "boolean" }
+            }
           ],
           "events": [
             {
@@ -1243,11 +1604,31 @@
           ],
           "js": {
             "properties": [
-              { "name": "clusterName", "type": "string" },
-              { "name": "clusterType", "type": "'package' | 'project'" },
-              { "name": "clusterColor", "type": "string" },
-              { "name": "clusterPath", "type": "string" },
-              { "name": "isExternal", "type": "boolean" }
+              {
+                "name": "clusterName",
+                "description": "Display name of the cluster",
+                "type": "string"
+              },
+              {
+                "name": "clusterType",
+                "description": "Whether this cluster is a package or project",
+                "type": "'package' | 'project'"
+              },
+              {
+                "name": "clusterColor",
+                "description": "Accent color for the cluster icon and badges",
+                "type": "string"
+              },
+              {
+                "name": "clusterPath",
+                "description": "Filesystem path to the cluster source (used for source type detection and copy)",
+                "type": "string"
+              },
+              {
+                "name": "isExternal",
+                "description": "Whether the cluster comes from an external dependency",
+                "type": "boolean"
+              }
             ],
             "events": [
               {
@@ -1262,17 +1643,39 @@
           "description": "Collapsible cluster metrics with stats cards and breakdowns\n---\n\n\n### **Events:**\n - **card**\n- **toggle-direct-deps** - Dispatched when dependencies card is toggled\n- **toggle-direct-dependents** - Dispatched when dependents card is toggled",
           "doc-url": "",
           "attributes": [
-            { "name": "filtered-dependencies", "value": { "type": "number" } },
-            { "name": "total-dependencies", "value": { "type": "number" } },
-            { "name": "filtered-dependents", "value": { "type": "number" } },
-            { "name": "total-dependents", "value": { "type": "number" } },
-            { "name": "active-direct-deps", "value": { "type": "boolean" } },
+            {
+              "name": "filtered-dependencies",
+              "description": "Number of dependencies visible after filtering",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "total-dependencies",
+              "description": "Total number of dependencies before filtering",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "filtered-dependents",
+              "description": "Number of dependents visible after filtering",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "total-dependents",
+              "description": "Total number of dependents before filtering",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "active-direct-deps",
+              "description": "Whether the direct dependencies card is toggled on",
+              "value": { "type": "boolean" }
+            },
             {
               "name": "active-direct-dependents",
+              "description": "Whether the direct dependents card is toggled on",
               "value": { "type": "boolean" }
             },
             {
               "name": "expanded",
+              "description": "Whether the section starts expanded",
               "value": { "type": "boolean", "default": "true" }
             }
           ],
@@ -1289,19 +1692,51 @@
           ],
           "js": {
             "properties": [
-              { "name": "filteredDependencies", "type": "number" },
-              { "name": "totalDependencies", "type": "number" },
-              { "name": "filteredDependents", "type": "number" },
-              { "name": "totalDependents", "type": "number" },
-              { "name": "activeDirectDeps", "type": "boolean" },
-              { "name": "activeDirectDependents", "type": "boolean" },
-              { "name": "platforms", "type": "Set<string>" },
+              {
+                "name": "filteredDependencies",
+                "description": "Number of dependencies visible after filtering",
+                "type": "number"
+              },
+              {
+                "name": "totalDependencies",
+                "description": "Total number of dependencies before filtering",
+                "type": "number"
+              },
+              {
+                "name": "filteredDependents",
+                "description": "Number of dependents visible after filtering",
+                "type": "number"
+              },
+              {
+                "name": "totalDependents",
+                "description": "Total number of dependents before filtering",
+                "type": "number"
+              },
+              {
+                "name": "activeDirectDeps",
+                "description": "Whether the direct dependencies card is toggled on",
+                "type": "boolean"
+              },
+              {
+                "name": "activeDirectDependents",
+                "description": "Whether the direct dependents card is toggled on",
+                "type": "boolean"
+              },
+              {
+                "name": "platforms",
+                "description": "Set of platform names present in this cluster",
+                "type": "Set<string>"
+              },
               {
                 "name": "targetBreakdown",
                 "description": "Target breakdown by node type (e.g., { framework: 3, library: 2 })",
                 "type": "Record<string, number>"
               },
-              { "name": "expanded", "type": "boolean" }
+              {
+                "name": "expanded",
+                "description": "Whether the section starts expanded",
+                "type": "boolean"
+              }
             ],
             "events": [
               { "name": "card", "type": "CustomEvent" },
@@ -1321,9 +1756,21 @@
           "description": "Collapsible cluster targets list grouped by node type\n---\n\n\n### **Events:**\n - **node-select** - Dispatched when a target is clicked (detail: { node })\n- **node-hover** - Dispatched on hover (detail: { nodeId })\n\n### **Methods:**\n \n\n",
           "doc-url": "",
           "attributes": [
-            { "name": "filtered-targets-count", "value": { "type": "number" } },
-            { "name": "total-targets-count", "value": { "type": "number" } },
-            { "name": "zoom", "value": { "type": "number" } },
+            {
+              "name": "filtered-targets-count",
+              "description": "Number of targets visible after filtering",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "total-targets-count",
+              "description": "Total number of targets in the cluster",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "zoom",
+              "description": "Current canvas zoom level for color adjustments",
+              "value": { "type": "number" }
+            },
             {
               "name": "expanded",
               "description": "Whether to start expanded (default: true)",
@@ -1344,12 +1791,36 @@
           ],
           "js": {
             "properties": [
-              { "name": "clusterNodes", "type": "GraphNode[]" },
-              { "name": "nodesByType", "type": "Record<string, GraphNode[]>" },
-              { "name": "filteredTargetsCount", "type": "number" },
-              { "name": "totalTargetsCount", "type": "number" },
-              { "name": "edges", "type": "GraphEdge[]" },
-              { "name": "zoom", "type": "number" },
+              {
+                "name": "clusterNodes",
+                "description": "All nodes belonging to this cluster",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "nodesByType",
+                "description": "Nodes grouped by their type (e.g., framework, library)",
+                "type": "Record<string, GraphNode[]>"
+              },
+              {
+                "name": "filteredTargetsCount",
+                "description": "Number of targets visible after filtering",
+                "type": "number"
+              },
+              {
+                "name": "totalTargetsCount",
+                "description": "Total number of targets in the cluster",
+                "type": "number"
+              },
+              {
+                "name": "edges",
+                "description": "All edges in the graph (for dependency counting)",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "zoom",
+                "description": "Current canvas zoom level for color adjustments",
+                "type": "number"
+              },
               {
                 "name": "expanded",
                 "description": "Whether to start expanded (default: true)",
@@ -1375,12 +1846,21 @@
           "description": "Cluster details panel with header, stats, and targets\n---\n\n\n### **Events:**\n - **eventName**\n- **close** - Dispatched when the back button is clicked\n- **node-select** - Dispatched when a target node is selected (detail: { node })\n- **node-hover** - Dispatched when a target node is hovered (detail: { nodeId })",
           "doc-url": "",
           "attributes": [
-            { "name": "active-direct-deps", "value": { "type": "boolean" } },
             {
-              "name": "active-direct-dependents",
+              "name": "active-direct-deps",
+              "description": "Whether direct dependencies highlighting is active",
               "value": { "type": "boolean" }
             },
-            { "name": "zoom", "value": { "type": "number" } }
+            {
+              "name": "active-direct-dependents",
+              "description": "Whether direct dependents highlighting is active",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "zoom",
+              "description": "Current canvas zoom level for color adjustments",
+              "value": { "type": "number" }
+            }
           ],
           "events": [
             { "name": "eventName", "type": "CustomEvent" },
@@ -1399,14 +1879,46 @@
           ],
           "js": {
             "properties": [
-              { "name": "cluster", "type": "Cluster" },
-              { "name": "clusterNodes", "type": "GraphNode[]" },
-              { "name": "allNodes", "type": "GraphNode[]" },
-              { "name": "edges", "type": "GraphEdge[]" },
-              { "name": "filteredEdges", "type": "GraphEdge[] | undefined" },
-              { "name": "activeDirectDeps", "type": "boolean" },
-              { "name": "activeDirectDependents", "type": "boolean" },
-              { "name": "zoom", "type": "number" }
+              {
+                "name": "cluster",
+                "description": "The cluster to display details for",
+                "type": "Cluster"
+              },
+              {
+                "name": "clusterNodes",
+                "description": "Nodes belonging to this cluster",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "allNodes",
+                "description": "All nodes in the graph (for dependency resolution)",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "edges",
+                "description": "All edges in the graph",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "filteredEdges",
+                "description": "Edges remaining after filter application",
+                "type": "GraphEdge[] | undefined"
+              },
+              {
+                "name": "activeDirectDeps",
+                "description": "Whether direct dependencies highlighting is active",
+                "type": "boolean"
+              },
+              {
+                "name": "activeDirectDependents",
+                "description": "Whether direct dependents highlighting is active",
+                "type": "boolean"
+              },
+              {
+                "name": "zoom",
+                "description": "Current canvas zoom level for color adjustments",
+                "type": "number"
+              }
             ],
             "events": [
               { "name": "eventName", "type": "CustomEvent" },
@@ -1511,12 +2023,36 @@
           "description": "Collapsible filter section with toggleable checkbox items\n---\n\n\n### **Events:**\n - **section-toggle** - Dispatched when the section header is clicked\n- **item-toggle** - Dispatched when an item checkbox is toggled (detail: { key, checked })\n- **preview-change** - Dispatched on item hover for filter preview (detail: { type, value } or null)\n\n### **Slots:**\n - **icon** - Icon to display in the section header",
           "doc-url": "",
           "attributes": [
-            { "name": "id", "value": { "type": "string" } },
-            { "name": "title", "value": { "type": "string" } },
-            { "name": "icon-name", "value": { "type": "string" } },
-            { "name": "is-expanded", "value": { "type": "boolean" } },
-            { "name": "filter-type", "value": { "type": "FilterType" } },
-            { "name": "zoom", "value": { "type": "number" } }
+            {
+              "name": "id",
+              "description": "Unique section identifier",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "title",
+              "description": "Display title for the section header",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "icon-name",
+              "description": "Icon name for the section header slot",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "is-expanded",
+              "description": "Whether the section is currently expanded",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "filter-type",
+              "description": "The type of filter this section controls",
+              "value": { "type": "FilterType" }
+            },
+            {
+              "name": "zoom",
+              "description": "Current canvas zoom level for color adjustments",
+              "value": { "type": "number" }
+            }
           ],
           "slots": [
             {
@@ -1543,14 +2079,46 @@
           ],
           "js": {
             "properties": [
-              { "name": "id", "type": "string" },
-              { "name": "title", "type": "string" },
-              { "name": "iconName", "type": "string" },
-              { "name": "isExpanded", "type": "boolean" },
-              { "name": "items", "type": "FilterItem[]" },
-              { "name": "selectedItems", "type": "Set<string>" },
-              { "name": "filterType", "type": "FilterType" },
-              { "name": "zoom", "type": "number" }
+              {
+                "name": "id",
+                "description": "Unique section identifier",
+                "type": "string"
+              },
+              {
+                "name": "title",
+                "description": "Display title for the section header",
+                "type": "string"
+              },
+              {
+                "name": "iconName",
+                "description": "Icon name for the section header slot",
+                "type": "string"
+              },
+              {
+                "name": "isExpanded",
+                "description": "Whether the section is currently expanded",
+                "type": "boolean"
+              },
+              {
+                "name": "items",
+                "description": "Filter items to display as toggleable checkboxes",
+                "type": "FilterItem[]"
+              },
+              {
+                "name": "selectedItems",
+                "description": "Set of currently selected item keys",
+                "type": "Set<string>"
+              },
+              {
+                "name": "filterType",
+                "description": "The type of filter this section controls",
+                "type": "FilterType"
+              },
+              {
+                "name": "zoom",
+                "description": "Current canvas zoom level for color adjustments",
+                "type": "number"
+              }
             ],
             "events": [
               {
@@ -1614,11 +2182,31 @@
           "events": [],
           "js": {
             "properties": [
-              { "name": "allNodes", "type": "GraphNode[]" },
-              { "name": "allEdges", "type": "GraphEdge[]" },
-              { "name": "filteredNodes", "type": "GraphNode[]" },
-              { "name": "filteredEdges", "type": "GraphEdge[]" },
-              { "name": "clusters", "type": "Cluster[] | undefined" }
+              {
+                "name": "allNodes",
+                "description": "All nodes in the graph (unfiltered)",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "allEdges",
+                "description": "All edges in the graph (unfiltered)",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "filteredNodes",
+                "description": "Nodes remaining after filter and search application",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "filteredEdges",
+                "description": "Edges remaining after filter and search application",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "clusters",
+                "description": "Available clusters from the layout engine",
+                "type": "Cluster[] | undefined"
+              }
             ],
             "events": []
           }
@@ -1637,15 +2225,51 @@
           "events": [],
           "js": {
             "properties": [
-              { "name": "displayNodes", "type": "GraphNode[]" },
-              { "name": "displayEdges", "type": "GraphEdge[]" },
-              { "name": "filteredNodes", "type": "GraphNode[]" },
-              { "name": "filteredEdges", "type": "GraphEdge[]" },
-              { "name": "allNodes", "type": "GraphNode[]" },
-              { "name": "allEdges", "type": "GraphEdge[]" },
-              { "name": "clusters", "type": "Cluster[] | undefined" },
-              { "name": "transitiveDeps", "type": "TransitiveResult" },
-              { "name": "transitiveDependents", "type": "TransitiveResult" }
+              {
+                "name": "displayNodes",
+                "description": "Nodes to render on the canvas (after search/filter/highlight processing)",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "displayEdges",
+                "description": "Edges to render on the canvas (after search/filter/highlight processing)",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "filteredNodes",
+                "description": "Nodes remaining after filter application (for sidebar stats)",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "filteredEdges",
+                "description": "Edges remaining after filter application (for sidebar stats)",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "allNodes",
+                "description": "All nodes in the graph (unfiltered, for sidebar filter computation)",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "allEdges",
+                "description": "All edges in the graph (unfiltered, for sidebar filter computation)",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "clusters",
+                "description": "Available clusters from the layout engine",
+                "type": "Cluster[] | undefined"
+              },
+              {
+                "name": "transitiveDeps",
+                "description": "Transitive dependency chain for the selected node",
+                "type": "TransitiveResult"
+              },
+              {
+                "name": "transitiveDependents",
+                "description": "Transitive dependent chain for the selected node",
+                "type": "TransitiveResult"
+              }
             ],
             "events": []
           }
@@ -1657,6 +2281,7 @@
           "attributes": [
             {
               "name": "visible",
+              "description": "Whether the toast is currently visible (triggers slide-in animation)",
               "value": { "type": "boolean", "default": "false" }
             }
           ],
@@ -1674,8 +2299,16 @@
           ],
           "js": {
             "properties": [
-              { "name": "error", "type": "AppError | null" },
-              { "name": "visible", "type": "boolean" }
+              {
+                "name": "error",
+                "description": "The error to display in this toast",
+                "type": "AppError | null"
+              },
+              {
+                "name": "visible",
+                "description": "Whether the toast is currently visible (triggers slide-in animation)",
+                "type": "boolean"
+              }
             ],
             "events": [
               {
@@ -1714,14 +2347,36 @@
           "name": "xcode-graph",
           "description": "Embeddable graph visualization entry point\n---\n\n\n### **Methods:**\n - **loadRawGraph(raw: _unknown_): _void_** - Load raw Tuist graph JSON (the output of `tuist graph --format json`).\nTransforms it into GraphData and sets nodes/edges automatically.\nShows user-facing warnings/errors via ErrorService if the transform has issues.",
           "doc-url": "",
-          "attributes": [{ "name": "show-upload", "value": { "type": "boolean" } }],
+          "attributes": [
+            {
+              "name": "show-upload",
+              "description": "Whether to show the file upload overlay for loading graph JSON",
+              "value": { "type": "boolean" }
+            }
+          ],
           "events": [],
           "js": {
             "properties": [
-              { "name": "nodes", "type": "GraphNode[]" },
-              { "name": "edges", "type": "GraphEdge[]" },
-              { "name": "layoutOptions", "type": "LayoutOptions | undefined" },
-              { "name": "showUpload", "type": "boolean" }
+              {
+                "name": "nodes",
+                "description": "Graph nodes to visualize",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "edges",
+                "description": "Graph edges connecting the nodes",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "layoutOptions",
+                "description": "Optional layout configuration for ELK hierarchical layout",
+                "type": "LayoutOptions | undefined"
+              },
+              {
+                "name": "showUpload",
+                "description": "Whether to show the file upload overlay for loading graph JSON",
+                "type": "boolean"
+              }
             ],
             "events": []
           }
@@ -1945,7 +2600,13 @@
             }
           ],
           "js": {
-            "properties": [{ "name": "cycles", "type": "string[][]" }],
+            "properties": [
+              {
+                "name": "cycles",
+                "description": "Array of circular dependency cycles, each cycle is a list of node names",
+                "type": "string[][]"
+              }
+            ],
             "events": [
               {
                 "name": "dismiss",
@@ -2027,8 +2688,16 @@
           "description": "Left sidebar navigation component\n---\n\n\n### **Events:**\n - **tab-change** - Dispatched when a tab is clicked (detail: { tab: string })",
           "doc-url": "",
           "attributes": [
-            { "name": "collapsed", "value": { "type": "boolean" } },
-            { "name": "defaultCollapsed", "value": { "type": "boolean" } },
+            {
+              "name": "collapsed",
+              "description": "Whether the sidebar is currently collapsed",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "defaultCollapsed",
+              "description": "Whether the sidebar should start collapsed on first render",
+              "value": { "type": "boolean" }
+            },
             {
               "name": "active-tab",
               "description": "The currently active tab",
@@ -2044,8 +2713,16 @@
           ],
           "js": {
             "properties": [
-              { "name": "collapsed", "type": "boolean" },
-              { "name": "defaultCollapsed", "type": "boolean" },
+              {
+                "name": "collapsed",
+                "description": "Whether the sidebar is currently collapsed",
+                "type": "boolean"
+              },
+              {
+                "name": "defaultCollapsed",
+                "description": "Whether the sidebar should start collapsed on first render",
+                "type": "boolean"
+              },
               {
                 "name": "activeTab",
                 "description": "The currently active tab",

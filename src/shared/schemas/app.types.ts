@@ -54,7 +54,10 @@ export interface FilterState {
 }
 
 /**
- * Serialize FilterState back to arrays for persistence
+ * Serialize FilterState back to arrays for persistence.
+ *
+ * @param state - Runtime filter state with Sets
+ * @returns Serializable filter state with arrays
  */
 export function serializeFilterState(state: FilterState): FilterStateInput {
   return {

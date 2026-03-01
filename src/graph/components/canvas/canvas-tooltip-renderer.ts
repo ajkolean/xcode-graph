@@ -7,18 +7,31 @@ import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 
+/** Context passed to tooltip rendering functions. */
 export interface TooltipContext {
+  /** 2D rendering context of the canvas element */
   ctx: CanvasRenderingContext2D;
+  /** Layout controller providing node/cluster positions */
   layout: GraphLayoutController;
+  /** All visible nodes (for name lookup) */
   nodes: GraphNode[];
+  /** All visible edges (for sizing calculations) */
   edges: GraphEdge[];
+  /** Current zoom level */
   zoom: number;
+  /** Resolved canvas theme colors */
   theme: CanvasTheme;
+  /** ID of the currently hovered node, or null */
   hoveredNode: string | null;
+  /** Current pan offset in screen pixels */
   pan: { x: number; y: number };
+  /** Map of node ID to edge-count weight */
   nodeWeights: Map<string, number>;
+  /** User-dragged node positions (relative to cluster) */
   manualNodePositions: Map<string, { x: number; y: number }>;
+  /** User-dragged cluster positions (world coordinates) */
   manualClusterPositions: Map<string, { x: number; y: number }>;
+  /** ID of the currently hovered cluster, or null */
   hoveredCluster: string | null;
 }
 

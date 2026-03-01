@@ -26,6 +26,7 @@ import { property, state } from 'lit/decorators.js';
  * @fires dismiss - Dispatched when the warning is dismissed
  */
 export class GraphCycleWarning extends LitElement {
+  /** Array of circular dependency cycles, each cycle is a list of node names */
   @property({ attribute: false })
   declare cycles: string[][];
 

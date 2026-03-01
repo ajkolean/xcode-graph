@@ -15,10 +15,15 @@ interface MicroSimNode extends SimulationNodeDatum {
   radius: number;
 }
 
+/** Result of computing the internal layout for a single cluster */
 export interface MicroLayoutResult {
+  /** ID of the cluster this layout belongs to */
   clusterId: string;
+  /** Computed cluster width (pixels) */
   width: number;
+  /** Computed cluster height (pixels) */
   height: number;
+  /** Node positions relative to cluster center (0,0) */
   relativePositions: Map<string, NodePosition>;
 }
 
@@ -35,7 +40,13 @@ const ROLE_ORDER = [
 ];
 
 /**
- * Compute micro-layout for a single cluster using "Solar System" physics
+ * Compute micro-layout for a single cluster using "Solar System" physics.
+ * Nodes are placed in concentric bands based on their role, with anchors at the center.
+ * Uses D3 force simulation with orbit, collision, center gravity, and charge forces.
+ *
+ * @param cluster - The cluster to compute interior layout for
+ * @param config - Layout configuration with force parameters
+ * @returns Micro layout result with cluster dimensions and relative node positions
  */
 export function computeClusterInterior(cluster: Cluster, config: LayoutConfig): MicroLayoutResult {
   const nodes = cluster.nodes;

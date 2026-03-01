@@ -14,12 +14,15 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('xcode-graph-hidden-dom')
 export class GraphHiddenDom extends LitElement {
+  /** All graph nodes to expose for screen reader navigation */
   @property({ attribute: false })
   declare nodes: GraphNode[];
 
+  /** All graph edges to expose as an accessible table */
   @property({ attribute: false })
   declare edges: GraphEdge[];
 
+  /** Currently selected node for aria-selected state */
   @property({ attribute: false })
   declare selectedNode: GraphNode | null;
 

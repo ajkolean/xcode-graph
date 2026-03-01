@@ -17,7 +17,13 @@ import { NODE_PALETTE } from '@/shared/constants/node-palette.ts';
 // Color manipulation helpers (merged from canvas-colors.ts)
 // ---------------------------------------------------------------------------
 
-/** Convert a hex color (#RRGGBB) to an rgba() string */
+/**
+ * Convert a hex color (#RRGGBB) to an rgba() string.
+ *
+ * @param hex - Hex color string (e.g. `'#FF0000'`)
+ * @param alpha - Alpha value (0-1)
+ * @returns CSS rgba() color string
+ */
 export function hexToRgba(hex: string, alpha: number): string {
   const r = Number.parseInt(hex.slice(1, 3), 16);
   const g = Number.parseInt(hex.slice(3, 5), 16);
@@ -25,7 +31,14 @@ export function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-/** Parse an rgba/rgb/hex color string and return it with a new alpha value */
+/**
+ * Parse an rgba/rgb/hex color string and return it with a new alpha value.
+ * Returns the original string unchanged if parsing fails.
+ *
+ * @param color - CSS color string (rgba, rgb, or hex)
+ * @param newAlpha - New alpha value (0-1)
+ * @returns CSS rgba() color string with the new alpha
+ */
 export function colorWithAlpha(color: string, newAlpha: number): string {
   const rgbaMatch = color.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*[\d.]+\s*)?\)$/);
   if (rgbaMatch) {

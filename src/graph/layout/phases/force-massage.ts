@@ -29,8 +29,13 @@ interface ClusterSimLink extends SimulationLinkDatum<ClusterSimNode> {
 
 /**
  * Apply a short force-directed simulation to "massage" cluster positions.
- * This helps to relax the rigid grid/layer structure from ELK and reduce
- * overlaps or awkward gaps while maintaining the general relative positions.
+ * This relaxes the rigid grid/layer structure from ELK to reduce
+ * overlaps or awkward gaps while preserving the general topology.
+ *
+ * @param clusterPositions - Initial cluster positions from ELK macro-layout
+ * @param clusterGraph - Cluster meta-graph (used for link forces)
+ * @param config - Layout configuration with spacing parameters
+ * @returns Updated cluster positions after force relaxation
  */
 export function applyForceMassage(
   clusterPositions: Map<string, ClusterPosition>,

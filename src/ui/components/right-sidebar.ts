@@ -123,18 +123,23 @@ const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
  * @summary Right sidebar with filters, search, and detail panels
  */
 export class GraphRightSidebar extends SignalWatcherLitElement {
+  /** All nodes in the graph (unfiltered) */
   @property({ attribute: false })
   declare allNodes: GraphNode[];
 
+  /** All edges in the graph (unfiltered) */
   @property({ attribute: false })
   declare allEdges: GraphEdge[];
 
+  /** Nodes remaining after filter and search application */
   @property({ attribute: false })
   declare filteredNodes: GraphNode[];
 
+  /** Edges remaining after filter and search application */
   @property({ attribute: false })
   declare filteredEdges: GraphEdge[];
 
+  /** Available clusters from the layout engine */
   @property({ attribute: false })
   declare clusters: Cluster[] | undefined;
 

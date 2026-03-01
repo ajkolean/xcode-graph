@@ -25,8 +25,12 @@ interface MassageSimNode extends SimulationNodeDatum {
 
 /**
  * Apply a gentle force-directed "massage" to nodes within a cluster.
- * This runs after the main "Solar System" layout to improve spacing
- * and resolve any local congestions while preserving the overall structure.
+ * Runs after the main "Solar System" layout to improve spacing and resolve
+ * local congestions while preserving the overall band structure.
+ *
+ * @param micro - Micro layout result from `computeClusterInterior`
+ * @param config - Layout configuration with collision and charge parameters
+ * @returns Updated micro layout with refined node positions and possibly expanded dimensions
  */
 export function applyNodeMassage(
   micro: MicroLayoutResult,

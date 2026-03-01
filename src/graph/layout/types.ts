@@ -2,7 +2,7 @@ import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type * as d3Force2D from 'd3-force';
 
-/** Interface for simulation nodes */
+/** D3 simulation node extended with cluster membership */
 export interface SimNode extends d3Force2D.SimulationNodeDatum {
   id: string;
   clusterId?: string;
@@ -12,7 +12,7 @@ export interface SimNode extends d3Force2D.SimulationNodeDatum {
   vy: number;
 }
 
-/** Interface for simulation links */
+/** D3 simulation link with intra/inter-cluster flag */
 export interface SimLink extends d3Force2D.SimulationLinkDatum<SimNode> {
   source: string | SimNode;
   target: string | SimNode;

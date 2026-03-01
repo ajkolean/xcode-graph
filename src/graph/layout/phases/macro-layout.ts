@@ -210,8 +210,13 @@ function extractPositions(layoutChildren: ElkNode[]): Map<string, ClusterPositio
 }
 
 /**
- * Compute macro-layout (inter-cluster) using ELK Layered algorithm
- * "Tectonic Plates" stage
+ * Compute macro-layout (inter-cluster positioning) using ELK Layered algorithm.
+ * This is the "Tectonic Plates" stage where clusters are placed relative to each other.
+ *
+ * @param clusterGraph - The cluster meta-graph with aggregated edges
+ * @param microLayouts - Per-cluster micro layout results (used for cluster sizing)
+ * @param config - Layout configuration
+ * @returns Map of cluster ID to world-space position
  */
 export async function computeMacroLayout(
   clusterGraph: ClusterGraph,

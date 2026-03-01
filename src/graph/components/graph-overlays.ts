@@ -59,9 +59,11 @@ export class GraphBackground extends LitElement {
  * @fires zoom-reset - Dispatched when the fit-to-view button is clicked
  */
 export class GraphControls extends LitElement {
+  /** Current absolute zoom level */
   @property({ type: Number })
   declare zoom: number;
 
+  /** Baseline zoom level used for ratio display (fit-to-view = 1x) */
   @property({ type: Number, attribute: 'base-zoom' })
   declare baseZoom: number;
 

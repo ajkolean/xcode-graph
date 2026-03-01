@@ -30,33 +30,43 @@ import { when } from 'lit/directives/when.js';
  * @fires expand-to-section - Dispatched when a section icon is clicked (detail: { section })
  */
 export class GraphCollapsedSidebar extends LitElement {
+  /** Nodes remaining after filter application */
   @property({ attribute: false })
   declare filteredNodes: GraphNode[];
 
+  /** Edges remaining after filter application */
   @property({ attribute: false })
   declare filteredEdges: GraphEdge[];
 
+  /** Count of nodes per node type */
   @property({ attribute: false })
   declare typeCounts: Map<string, number>;
 
+  /** Count of nodes per platform */
   @property({ attribute: false })
   declare platformCounts: Map<string, number>;
 
+  /** Count of nodes per project */
   @property({ attribute: false })
   declare projectCounts: Map<string, number>;
 
+  /** Count of nodes per package */
   @property({ attribute: false })
   declare packageCounts: Map<string, number>;
 
+  /** Number of currently selected node type filters */
   @property({ type: Number, attribute: 'node-types-filter-size' })
   declare nodeTypesFilterSize: number;
 
+  /** Number of currently selected platform filters */
   @property({ type: Number, attribute: 'platforms-filter-size' })
   declare platformsFilterSize: number;
 
+  /** Number of currently selected project filters */
   @property({ type: Number, attribute: 'projects-filter-size' })
   declare projectsFilterSize: number;
 
+  /** Number of currently selected package filters */
   @property({ type: Number, attribute: 'packages-filter-size' })
   declare packagesFilterSize: number;
 
