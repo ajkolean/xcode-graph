@@ -179,7 +179,6 @@ export class GraphFilterSection extends LitElement {
                   opacity var(--durations-fast) var(--easings-default);
       position: relative;
       border-radius: var(--radii-md);
-      margin-bottom: var(--border-widths-thin);
     }
 
     .item-button.deselected {
