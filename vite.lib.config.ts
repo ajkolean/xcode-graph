@@ -18,6 +18,8 @@ import { defineConfig } from 'vite';
  *   <script type="module" src="https://cdn.jsdelivr.net/npm/xcode-graph/dist/xcodegraph.js"></script>
  */
 export default defineConfig({
+  // Use relative paths so worker URLs resolve correctly when consumed as an npm package
+  base: './',
   plugins: [
     typescript({
       exclude: ['**/*.test.ts', '**/*.spec.ts'],

@@ -13,6 +13,7 @@ import type {
 } from '@graph/workers/micro-layout.worker';
 import type { Cluster } from '@shared/schemas';
 import * as Comlink from 'comlink';
+import MicroLayoutWorker from '../workers/micro-layout.worker.ts?worker&inline';
 import type { LayoutConfig } from './config';
 import { computeClusterInterior, type MicroLayoutResult } from './phases/micro-layout';
 import { applyNodeMassage } from './phases/node-massage';
@@ -82,9 +83,7 @@ export async function computeMicroLayoutsParallel(
 
   try {
     for (let i = 0; i < poolSize; i++) {
-      const worker = new Worker(new URL('../workers/micro-layout.worker.ts', import.meta.url), {
-        type: 'module',
-      });
+      const worker = new MicroLayoutWorker();
       workers.push(worker);
       apis.push(Comlink.wrap<MicroLayoutWorkerAPI>(worker));
     }

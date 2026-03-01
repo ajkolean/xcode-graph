@@ -36,6 +36,7 @@ import { GraphDataService } from '@/services/graph-data-service';
 import { transformXcodeGraph } from '@/services/xcode-graph.service';
 import '@ui/layout/graph-tab';
 import '@ui/components/toast-container';
+import '@ui/components/file-upload';
 
 import {
   edges as allEdges,
@@ -66,6 +67,9 @@ export class GraphApp extends SignalWatcherLitElement {
 
   @property({ attribute: false })
   declare layoutOptions: LayoutOptions | undefined;
+
+  @property({ type: Boolean, attribute: 'show-upload' })
+  declare showUpload: boolean;
 
   private graphDataService: GraphDataService | null = null;
   private dataFingerprint: string | null = null;
@@ -101,6 +105,7 @@ export class GraphApp extends SignalWatcherLitElement {
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
+      position: relative;
       height: 100%;
       font-family: var(--fonts-body);
       overflow: hidden;
@@ -167,6 +172,10 @@ export class GraphApp extends SignalWatcherLitElement {
     }
   }
 
+  private handleFileLoaded(e: CustomEvent<{ raw: unknown }>) {
+    this.loadRawGraph(e.detail.raw);
+  }
+
   override render(): TemplateResult {
     const display = displayData.get();
     const filtered = filteredData.get();
@@ -182,6 +191,12 @@ export class GraphApp extends SignalWatcherLitElement {
         .transitiveDeps=${display.transitiveDeps}
         .transitiveDependents=${display.transitiveDependents}
       ></xcode-graph-tab>
+
+      ${this.showUpload
+        ? html`<xcode-graph-file-upload
+            @graph-file-loaded=${this.handleFileLoaded}
+          ></xcode-graph-file-upload>`
+        : ''}
 
       <xcode-graph-error-notification-container></xcode-graph-error-notification-container>
     `;

@@ -23,19 +23,31 @@ jobs:
 
       - run: pnpm check
 
-      - run: pnpm test:run
+      - run: pnpm test:coverage
 
       - run: pnpm build:lib
 
-  sonarqube:
-    name: SonarQube
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: CEM manifest check
+        run: pnpm analyze:check
+
+      - name: API surface check
+        run: pnpm docs:api:extract:ci
+
