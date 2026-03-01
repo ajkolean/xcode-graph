@@ -90,7 +90,7 @@ export async function computeMicroLayoutsParallel(
     }
 
     const tasks = clusters.map((cluster, i) => {
-      const api = apis[i % poolSize];
+      const api = apis[i % poolSize]!;
       const serialized = serializeCluster(cluster);
       return api.computeMicro(serialized, config).then(deserializeResult);
     });

@@ -72,7 +72,7 @@ export class FocusTrapController implements ReactiveController {
     this.host = host;
     this.config = {
       isActive: config.isActive,
-      initialFocus: config.initialFocus,
+      ...(config.initialFocus != null ? { initialFocus: config.initialFocus } : {}),
       returnFocusOnDeactivate: config.returnFocusOnDeactivate ?? true,
       ...(config.onDeactivate ? { onDeactivate: config.onDeactivate } : {}),
       escapeDeactivates: config.escapeDeactivates ?? true,

@@ -167,6 +167,46 @@ describe('xcode-graph-stats-card', () => {
     expect(value?.textContent?.trim()).to.equal('');
   });
 
+  it('should dispatch card-toggle when toggleable card is clicked', async () => {
+    const el = await fixture<GraphStatsCard>(html`
+      <xcode-graph-stats-card label="Test" value="1" toggleable></xcode-graph-stats-card>
+    `);
+
+    let fired = false;
+    el.addEventListener('card-toggle', () => {
+      fired = true;
+    });
+
+    const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
+    container.click();
+    expect(fired).to.be.true;
+  });
+
+  it('should not dispatch card-toggle when non-toggleable card is clicked', async () => {
+    const el = await fixture<GraphStatsCard>(html`
+      <xcode-graph-stats-card label="Test" value="1"></xcode-graph-stats-card>
+    `);
+
+    let fired = false;
+    el.addEventListener('card-toggle', () => {
+      fired = true;
+    });
+
+    const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
+    container.click();
+    expect(fired).to.be.false;
+  });
+
+  it('should apply toggleable and active classes', async () => {
+    const el = await fixture<GraphStatsCard>(html`
+      <xcode-graph-stats-card label="Test" value="1" toggleable active></xcode-graph-stats-card>
+    `);
+
+    const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
+    expect(container.classList.contains('toggleable')).to.be.true;
+    expect(container.classList.contains('active')).to.be.true;
+  });
+
   it('should handle zero value', async () => {
     const el = await fixture<GraphStatsCard>(html`
       <xcode-graph-stats-card label="Count" .value=${0}></xcode-graph-stats-card>

@@ -80,7 +80,7 @@ describe('xcode-graph-hidden-dom', () => {
     tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
     vitestExpect(selectHandler).toHaveBeenCalledOnce();
-    expect(selectHandler.mock.calls[0][0].detail.node.id).to.equal('a');
+    expect(selectHandler.mock.calls[0]![0].detail.node.id).to.equal('a');
   });
 
   it('should navigate with arrow keys', async () => {
@@ -170,7 +170,7 @@ describe('xcode-graph-hidden-dom', () => {
     tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
     vitestExpect(selectHandler).toHaveBeenCalledOnce();
-    expect(selectHandler.mock.calls[0][0].detail.node).to.be.null;
+    expect(selectHandler.mock.calls[0]![0].detail.node).to.be.null;
   });
 
   it('should handle Home and End keys', async () => {
