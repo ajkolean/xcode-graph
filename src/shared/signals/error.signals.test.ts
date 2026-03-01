@@ -2,14 +2,14 @@
  * Error Signals tests - branch coverage for computed functions
  */
 
-import { afterEach, describe, expect, it } from 'vitest';
 import type { AppError } from '@shared/schemas/error.types';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
   errors,
-  maxVisibleToasts,
-  getVisibleErrors,
-  getToastErrors,
   getErrorById,
+  getToastErrors,
+  getVisibleErrors,
+  maxVisibleToasts,
   resetErrorSignals,
 } from './error.signals';
 
@@ -50,21 +50,14 @@ describe('error.signals', () => {
 
   describe('getToastErrors', () => {
     it('returns up to maxVisibleToasts', () => {
-      errors.set([
-        makeError({ id: 'e1' }),
-        makeError({ id: 'e2' }),
-        makeError({ id: 'e3' }),
-      ]);
+      errors.set([makeError({ id: 'e1' }), makeError({ id: 'e2' }), makeError({ id: 'e3' })]);
       maxVisibleToasts.set(2);
       const toasts = getToastErrors();
       expect(toasts).toHaveLength(2);
     });
 
     it('excludes dismissed from toast count', () => {
-      errors.set([
-        makeError({ id: 'e1', dismissed: true }),
-        makeError({ id: 'e2' }),
-      ]);
+      errors.set([makeError({ id: 'e1', dismissed: true }), makeError({ id: 'e2' })]);
       maxVisibleToasts.set(5);
       expect(getToastErrors()).toHaveLength(1);
     });

@@ -1,7 +1,7 @@
 import type { ClusterPosition, NodePosition } from '@shared/schemas';
 import { describe, expect, it } from 'vitest';
 import type { ClusterEdge } from '../cluster-graph';
-import { DEFAULT_CONFIG } from '../config';
+import { DEFAULT_CONFIG, type LayoutConfig } from '../config';
 import { computeClusterPorts, computePortSide, computeRoutedEdges } from './port-routing';
 
 describe('port-routing', () => {
@@ -62,12 +62,12 @@ describe('port-routing', () => {
       // Many edges from A going east
       const clusterEdges: ClusterEdge[] = Array.from({ length: 20 }, (_, i) => ({
         source: 'A',
-        target: ['B', 'C', 'D'][i % 3],
+        target: ['B', 'C', 'D'][i % 3]!,
         weight: 1,
         tieStrength: 1,
       }));
 
-      const config = { ...DEFAULT_CONFIG, maxPortsPerSide: 3 };
+      const config = { ...DEFAULT_CONFIG, maxPortsPerSide: 3 } as unknown as LayoutConfig;
       const ports = computeClusterPorts(positions, clusterEdges, config);
 
       // Cluster A's east side should have at most 3 ports
@@ -107,7 +107,7 @@ describe('port-routing', () => {
         ['n2', 'A'],
       ]);
 
-      const config = { ...DEFAULT_CONFIG, portRoutingEnabled: true };
+      const config = { ...DEFAULT_CONFIG, portRoutingEnabled: true } as LayoutConfig;
       const clusterPorts = new Map([['A', []]]);
 
       const routed = computeRoutedEdges(
@@ -124,7 +124,7 @@ describe('port-routing', () => {
     });
 
     it('returns empty result for empty edge list', () => {
-      const config = { ...DEFAULT_CONFIG, portRoutingEnabled: true };
+      const config = { ...DEFAULT_CONFIG, portRoutingEnabled: true } as LayoutConfig;
 
       const routed = computeRoutedEdges([], new Map(), new Map(), new Map(), [], new Map(), config);
 
@@ -132,7 +132,7 @@ describe('port-routing', () => {
     });
 
     it('returns empty result when port routing is disabled', () => {
-      const config = { ...DEFAULT_CONFIG, portRoutingEnabled: false };
+      const config = { ...DEFAULT_CONFIG, portRoutingEnabled: false } as unknown as LayoutConfig;
 
       const routed = computeRoutedEdges(
         [{ source: 'n1', target: 'n2' }],

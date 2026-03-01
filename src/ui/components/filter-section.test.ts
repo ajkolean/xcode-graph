@@ -170,6 +170,93 @@ describe('xcode-graph-filter-section', () => {
     expect(itemButtons?.[1]?.classList.contains('deselected')).to.be.true;
   });
 
+  it('should render platform filter type icons', async () => {
+    const platformItems: FilterItem[] = [{ key: 'iOS', count: 3, color: '#007AFF' }];
+    const el = await fixture<GraphFilterSection>(html`
+      <xcode-graph-filter-section
+        title="Platforms"
+        filter-type="platform"
+        is-expanded
+        .items=${platformItems}
+        .selectedItems=${new Set(['iOS'])}
+        .zoom=${1}
+      ></xcode-graph-filter-section>
+    `);
+
+    const itemButton = el.shadowRoot?.querySelector('.item-button');
+    expect(itemButton).to.exist;
+  });
+
+  it('should render project filter type with color swatch', async () => {
+    const projectItems: FilterItem[] = [{ key: 'MyApp', count: 5, color: '#F59E0B' }];
+    const el = await fixture<GraphFilterSection>(html`
+      <xcode-graph-filter-section
+        title="Projects"
+        filter-type="project"
+        is-expanded
+        .items=${projectItems}
+        .selectedItems=${new Set(['MyApp'])}
+        .zoom=${1}
+      ></xcode-graph-filter-section>
+    `);
+
+    const itemButton = el.shadowRoot?.querySelector('.item-button');
+    expect(itemButton).to.exist;
+  });
+
+  it('should render package filter type with package icon', async () => {
+    const packageItems: FilterItem[] = [{ key: 'swift-log', count: 1, color: '#10B981' }];
+    const el = await fixture<GraphFilterSection>(html`
+      <xcode-graph-filter-section
+        title="Packages"
+        filter-type="package"
+        is-expanded
+        .items=${packageItems}
+        .selectedItems=${new Set(['swift-log'])}
+        .zoom=${1}
+      ></xcode-graph-filter-section>
+    `);
+
+    const itemButton = el.shadowRoot?.querySelector('.item-button');
+    expect(itemButton).to.exist;
+  });
+
+  it('should dispatch preview-change with item on hover', async () => {
+    const el = await fixture<GraphFilterSection>(html`
+      <xcode-graph-filter-section
+        title="Types"
+        filter-type="nodeType"
+        is-expanded
+        .items=${sampleItems}
+        .selectedItems=${new Set(['framework'])}
+        .zoom=${1}
+      ></xcode-graph-filter-section>
+    `);
+
+    const itemButton = el.shadowRoot?.querySelector('.item-button') as HTMLButtonElement;
+    setTimeout(() => itemButton.dispatchEvent(new MouseEvent('mouseenter')));
+    const event = await oneEvent(el, 'preview-change');
+    expect(event.detail).to.deep.equal({ type: 'nodeType', value: 'framework' });
+  });
+
+  it('should dispatch preview-change with null on mouseleave', async () => {
+    const el = await fixture<GraphFilterSection>(html`
+      <xcode-graph-filter-section
+        title="Types"
+        filter-type="nodeType"
+        is-expanded
+        .items=${sampleItems}
+        .selectedItems=${new Set(['framework'])}
+        .zoom=${1}
+      ></xcode-graph-filter-section>
+    `);
+
+    const itemButton = el.shadowRoot?.querySelector('.item-button') as HTMLButtonElement;
+    setTimeout(() => itemButton.dispatchEvent(new MouseEvent('mouseleave')));
+    const event = await oneEvent(el, 'preview-change');
+    expect(event.detail).to.be.null;
+  });
+
   it('should set aria-expanded on header button', async () => {
     const el = await fixture<GraphFilterSection>(html`
       <xcode-graph-filter-section

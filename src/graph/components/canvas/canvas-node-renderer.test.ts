@@ -164,7 +164,9 @@ describe('canvas-node-renderer', () => {
   });
 
   it('should set globalAlpha based on node alpha map', () => {
-    const nodeAlphaMap = new Map([['node1', { current: 0.5, target: 0.5, start: 0.5, progress: 0 }]]);
+    const nodeAlphaMap = new Map([
+      ['node1', { current: 0.5, target: 0.5, start: 0.5, progress: 0 }],
+    ]);
     const rc = createRenderContext({ nodeAlphaMap });
     const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 

@@ -19,7 +19,7 @@ describe('force-massage', () => {
       clusterB.id = 'B';
       clusterB.name = 'ClusterB';
 
-      const edges = [{ source: clusterA.nodes[0].id, target: clusterB.nodes[0].id }];
+      const edges = [{ source: clusterA.nodes[0]!.id, target: clusterB.nodes[0]!.id }];
       const clusterGraph = buildClusterGraph(edges, [clusterA, clusterB]);
 
       const positions = new Map<string, ClusterPosition>([
@@ -42,7 +42,7 @@ describe('force-massage', () => {
       clusterB.id = 'B';
       clusterB.name = 'ClusterB';
 
-      const edges = [{ source: clusterA.nodes[0].id, target: clusterB.nodes[0].id }];
+      const edges = [{ source: clusterA.nodes[0]!.id, target: clusterB.nodes[0]!.id }];
       const clusterGraph = buildClusterGraph(edges, [clusterA, clusterB]);
 
       const positions = new Map<string, ClusterPosition>([

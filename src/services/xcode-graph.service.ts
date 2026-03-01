@@ -60,7 +60,9 @@ class WarningCollector {
 interface ForeignBuildData {
   script: string;
   output?: { xcframework?: { path: string; linking?: string } };
-  inputs?: Array<{ file: { _0: string } } | { folder: { _0: string } } | { script: { _0: string } }>;
+  inputs?: Array<
+    { file: { _0: string } } | { folder: { _0: string } } | { script: { _0: string } }
+  >;
 }
 
 // =============================================================================
@@ -439,7 +441,10 @@ function populateOptionalMetadata(
     node.notableResources = notableResources;
   }
   if ('foreignBuild' in target) {
-    const foreignBuildInfo = extractForeignBuild(target.foreignBuild as ForeignBuildData | undefined, collector);
+    const foreignBuildInfo = extractForeignBuild(
+      target.foreignBuild as ForeignBuildData | undefined,
+      collector,
+    );
     if (foreignBuildInfo) {
       node.foreignBuild = foreignBuildInfo;
     }

@@ -1,3 +1,5 @@
+import type {} from 'vitest';
+
 interface AxeCustomMatchers<R = unknown> {
   toHaveNoViolations(): R;
 }

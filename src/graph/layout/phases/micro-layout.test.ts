@@ -21,7 +21,7 @@ describe('micro-layout', () => {
 
       expect(result.relativePositions.size).toBe(1);
 
-      const pos = result.relativePositions.values().next().value;
+      const pos = result.relativePositions.values().next().value!;
       const halfW = result.width / 2;
       const halfH = result.height / 2;
 
@@ -49,8 +49,8 @@ describe('micro-layout', () => {
 
       for (let i = 0; i < positions.length; i++) {
         for (let j = i + 1; j < positions.length; j++) {
-          const a = positions[i];
-          const b = positions[j];
+          const a = positions[i]!;
+          const b = positions[j]!;
           const dist = Math.hypot(a.x - b.x, a.y - b.y);
           // Nodes should not overlap (at least 2 * nodeRadius apart)
           expect(dist).toBeGreaterThan(DEFAULT_CONFIG.nodeRadius * 2);

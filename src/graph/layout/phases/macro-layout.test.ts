@@ -16,7 +16,7 @@ describe('macro-layout', () => {
       clusterB.name = 'ClusterB';
       const clusters = [clusterA, clusterB];
 
-      const edges = [{ source: clusterA.nodes[0].id, target: clusterB.nodes[0].id }];
+      const edges = [{ source: clusterA.nodes[0]!.id, target: clusterB.nodes[0]!.id }];
       const clusterGraph = buildClusterGraph(edges, clusters);
 
       const microLayouts = new Map(
@@ -47,8 +47,8 @@ describe('macro-layout', () => {
       const clusters = [clusterA, clusterB, clusterC];
 
       const edges = [
-        { source: clusterA.nodes[0].id, target: clusterB.nodes[0].id },
-        { source: clusterB.nodes[0].id, target: clusterC.nodes[0].id },
+        { source: clusterA.nodes[0]!.id, target: clusterB.nodes[0]!.id },
+        { source: clusterB.nodes[0]!.id, target: clusterC.nodes[0]!.id },
       ];
       const clusterGraph = buildClusterGraph(edges, clusters);
 
@@ -62,8 +62,8 @@ describe('macro-layout', () => {
       // Check no bounding box overlaps (center-to-center distance > sum of half-sizes)
       for (let i = 0; i < posArray.length; i++) {
         for (let j = i + 1; j < posArray.length; j++) {
-          const a = posArray[i];
-          const b = posArray[j];
+          const a = posArray[i]!;
+          const b = posArray[j]!;
           const dx = Math.abs(a.x - b.x);
           const dy = Math.abs(a.y - b.y);
           const minSepX = (a.width + b.width) / 2;
@@ -85,7 +85,7 @@ describe('macro-layout', () => {
       const positions = await computeMacroLayout(clusterGraph, microLayouts, DEFAULT_CONFIG);
 
       expect(positions.size).toBe(1);
-      const pos = positions.values().next().value;
+      const pos = positions.values().next().value!;
       expect(Number.isFinite(pos.x)).toBe(true);
       expect(Number.isFinite(pos.y)).toBe(true);
     });
