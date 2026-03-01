@@ -7,8 +7,8 @@
  * @module signals/filter.actions
  */
 
-import type { FilterState } from '@shared/schemas/app.schema';
-import type { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import type { FilterState } from '@shared/schemas/app.types';
+import type { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { allPackages, allProjects, DEFAULT_FILTERS, filters, searchQuery } from './filter.signals';
 
 // ==================== Helper Functions ====================

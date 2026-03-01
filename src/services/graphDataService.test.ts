@@ -1,5 +1,5 @@
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { Origin, Platform } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
+import { Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import {
   createDiamondGraph,

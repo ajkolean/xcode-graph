@@ -1,5 +1,5 @@
 import { type Cluster, type ClusterNodeMetadata, NodeRole } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
 
 /**
  * Analyzes a cluster to determine node roles, anchors, and layers

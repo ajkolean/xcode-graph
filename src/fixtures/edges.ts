@@ -3,7 +3,7 @@
  */
 
 import { pairwise } from '@shared/pairwise';
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.types';
 
 /**
  * Convert edges from {from, to} format to {source, target} format

@@ -1,29 +1,25 @@
 /**
- * Schema Module - Zod validation schemas
+ * Schema Module - Type exports
  *
- * Centralized exports for all validation schemas used throughout the app.
- * Provides type-safe validation for graph data, app state, clusters, and simulation.
+ * Centralized exports for all types, enums, and constants used throughout the app.
+ * Zod validation schemas are available via direct imports from individual .schema files.
  *
  * @module schemas
  */
 
-// ==================== App Schemas ====================
+// ==================== App Types ====================
 
-export type { FilterState, FilterStateInput } from './app.schema';
+export type { FilterState, FilterStateInput } from './app.types';
 export {
   ACTIVE_TAB_VALUES,
   ActiveTab,
-  ActiveTabSchema,
   DEFAULT_ACTIVE_TAB,
-  FilterStateInputSchema,
-  FilterStateSchema,
   serializeFilterState,
   VIEW_MODE_VALUES,
   ViewMode,
-  ViewModeSchema,
-} from './app.schema';
+} from './app.types';
 
-// ==================== Cluster Schemas ====================
+// ==================== Cluster Types ====================
 
 export type {
   Cluster,
@@ -33,58 +29,39 @@ export type {
   ClusterSerialized,
   ForceStrength,
   PositionedNode,
-} from './cluster.schema';
+} from './cluster.types';
 export {
   CLUSTER_TYPE_VALUES,
-  ClusterBoundsSchema,
-  ClusterLayoutConfigSchema,
-  ClusterNodeMetadataSchema,
-  ClusterSchema,
   ClusterType,
-  ClusterTypeSchema,
   DEFAULT_CLUSTER_CONFIG,
-  ForceStrengthSchema,
   NODE_ROLE_VALUES,
   NodeRole,
-  NodeRoleSchema,
-  PositionedNodeSchema,
-} from './cluster.schema';
+} from './cluster.types';
 
-// ==================== Graph Schemas ====================
+// ==================== Graph Types ====================
 
-export type { GraphData, GraphEdge, GraphNode } from './graph.schema';
+export type { GraphData, GraphEdge, GraphNode } from './graph.types';
 export {
-  GraphDataSchema,
-  GraphEdgeSchema,
-  GraphNodeSchema,
   NODE_TYPE_VALUES,
   NodeType,
-  NodeTypeSchema,
   ORIGIN_VALUES,
   Origin,
-  OriginSchema,
   PLATFORM_VALUES,
   Platform,
-  PlatformSchema,
-} from './graph.schema';
+} from './graph.types';
 
-// ==================== Simulation Schemas ====================
+// ==================== Simulation Types ====================
 
-export type { ClusterPosition, NodePosition } from './simulation.schema';
-export { ClusterPositionSchema, NodePositionSchema } from './simulation.schema';
+export type { ClusterPosition, NodePosition } from './simulation.types';
 
-// ==================== Error Schemas ====================
+// ==================== Error Types ====================
 
-export type { AppError, ErrorNotificationState } from './error.schema';
+export type { AppError, ErrorNotificationState } from './error.types';
 export {
-  AppErrorSchema,
   DEFAULT_MAX_VISIBLE_TOASTS,
   DEFAULT_TOAST_DURATION,
   ERROR_CATEGORY_VALUES,
   ERROR_SEVERITY_VALUES,
   ErrorCategory,
-  ErrorCategorySchema,
-  ErrorNotificationStateSchema,
   ErrorSeverity,
-  ErrorSeveritySchema,
-} from './error.schema';
+} from './error.types';

@@ -3,7 +3,7 @@
  */
 
 import type { FilterState } from '@shared/schemas';
-import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 
 /**
  * Create a FilterState that includes everything

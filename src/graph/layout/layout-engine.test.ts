@@ -4,9 +4,9 @@
  */
 
 import type { Cluster } from '@shared/schemas';
-import { ClusterType } from '@shared/schemas/cluster.schema';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import { ClusterType } from '@shared/schemas/cluster.types';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import {
   createLayeredGraph,

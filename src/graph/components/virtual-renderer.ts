@@ -12,7 +12,7 @@
  */
 
 import type { NodePosition } from '@shared/schemas';
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphNode } from '@shared/schemas/graph.types';
 import { calculateViewportBounds, isCircleInViewport } from '@ui/utils/viewport';
 import {
   type CSSResultGroup,

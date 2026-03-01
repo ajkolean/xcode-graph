@@ -1,5 +1,5 @@
 import type { Cluster, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { buildClusterGraph } from './cluster-graph';
 import { DEFAULT_CONFIG, type LayoutOptions } from './config';
 import { applyForceMassage } from './phases/force-massage';

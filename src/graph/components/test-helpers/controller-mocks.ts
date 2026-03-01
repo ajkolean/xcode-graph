@@ -6,8 +6,8 @@
  */
 
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import { ClusterType } from '@shared/schemas/cluster.schema';
-import { type GraphEdge, type GraphNode, Origin } from '@shared/schemas/graph.schema';
+import { ClusterType } from '@shared/schemas/cluster.types';
+import { type GraphEdge, type GraphNode, Origin } from '@shared/schemas/graph.types';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { GraphInteractionConfig } from '../../../graph/controllers/graph-interaction-full.controller';
 import type { GraphLayoutConfig } from '../../../graph/controllers/graph-layout.controller';

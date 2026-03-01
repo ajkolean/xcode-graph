@@ -8,7 +8,7 @@
  */
 
 import { Signal } from '@lit-labs/signals';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { filters, searchQuery } from '@shared/signals/filter.signals';
 import { applyGraphFilters } from '../utils/graph-filters';
 import { computeTransitiveDependencies, type TransitiveResult } from '../utils/traversal';

@@ -14,7 +14,7 @@
  * ```
  */
 
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphNode } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import './section-header.js';

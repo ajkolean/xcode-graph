@@ -1,6 +1,6 @@
 import type { FilterState } from '@shared/schemas';
-import type { GraphEdge } from '@shared/schemas/graph.schema';
-import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.types';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import {
   createDiamondGraph,

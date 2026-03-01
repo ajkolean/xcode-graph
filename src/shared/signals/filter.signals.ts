@@ -8,7 +8,7 @@
  */
 
 import { Signal, signal } from '@lit-labs/signals';
-import type { FilterState } from '@shared/schemas/app.schema';
+import type { FilterState } from '@shared/schemas/app.types';
 import {
   NODE_TYPE_VALUES,
   type NodeType,
@@ -16,7 +16,7 @@ import {
   type Origin,
   PLATFORM_VALUES,
   type Platform,
-} from '@shared/schemas/graph.schema';
+} from '@shared/schemas/graph.types';
 
 // ==================== Default Values ====================
 

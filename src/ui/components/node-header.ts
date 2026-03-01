@@ -16,7 +16,7 @@
  * @fires cluster-click - Dispatched when cluster badge clicked (detail: { clusterId })
  */
 
-import { type GraphNode, NodeType } from '@shared/schemas/graph.schema';
+import { type GraphNode, NodeType } from '@shared/schemas/graph.types';
 import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';

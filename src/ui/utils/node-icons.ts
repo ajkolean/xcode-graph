@@ -2,7 +2,7 @@
  * Node icon utilities for consistent node type representation
  */
 
-import { NodeType, Platform } from '@shared/schemas/graph.schema';
+import { NodeType, Platform } from '@shared/schemas/graph.types';
 
 // Smartphone icon path (iOS / default)
 const SMARTPHONE_ICON_PATH = `

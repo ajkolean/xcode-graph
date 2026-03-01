@@ -5,7 +5,7 @@
  * Tests error handling, notifications, actions, and recovery.
  */
 
-import { ErrorCategory, ErrorSeverity } from '@shared/schemas/error.schema';
+import { ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
 import { errors, resetErrorSignals } from '@shared/signals/error.signals';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ErrorService } from './error-service';

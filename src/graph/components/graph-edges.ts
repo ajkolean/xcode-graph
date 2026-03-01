@@ -17,7 +17,7 @@
  */
 
 import { type ClusterPosition, type NodePosition, ViewMode } from '@shared/schemas';
-import type { GraphEdge as GraphEdgeType, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge as GraphEdgeType, GraphNode } from '@shared/schemas/graph.types';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import {
   html,

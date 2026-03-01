@@ -1,5 +1,5 @@
 // Re-export types from schemas for backwards compatibility
-export type { GraphData, GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+export type { GraphData, GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
 import {
   type GraphData,
@@ -8,7 +8,7 @@ import {
   NodeType,
   Origin,
   Platform,
-} from '@shared/schemas/graph.schema';
+} from '@shared/schemas/graph.types';
 
 // Helper to add targets to nodes array with common properties
 function addTargetsToNodes(

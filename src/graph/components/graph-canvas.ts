@@ -10,7 +10,7 @@ import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/c
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
 import { ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
 import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';

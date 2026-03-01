@@ -29,12 +29,12 @@
  * ```
  */
 
-import type { AppError, ErrorCategory, ErrorSeverity } from '@shared/schemas/error.schema';
+import type { AppError, ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
 import {
   DEFAULT_TOAST_DURATION,
   ErrorCategory as ErrorCategoryEnum,
   ErrorSeverity as ErrorSeverityEnum,
-} from '@shared/schemas/error.schema';
+} from '@shared/schemas/error.types';
 import { addError, dismissError, removeError } from '@shared/signals/error.actions';
 
 // ==================== Type Definitions ====================

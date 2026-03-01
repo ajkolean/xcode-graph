@@ -12,7 +12,7 @@
  * ```
  */
 
-import type { BuildSettings } from '@shared/schemas/graph.schema';
+import type { BuildSettings } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import './info-row.js';

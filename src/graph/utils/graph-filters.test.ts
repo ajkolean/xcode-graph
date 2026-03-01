@@ -1,6 +1,6 @@
-import type { FilterState } from '@shared/schemas/app.schema';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import type { FilterState } from '@shared/schemas/app.types';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import { applyGraphFilters } from './graph-filters';
 

@@ -111,3 +111,45 @@ export const GraphDataSchema: z.ZodType<GraphData> = z
     },
     { error: 'All edge endpoints must reference existing nodes' },
   );
+
+// ==================== Lenient Schemas (Boundary Validation) ====================
+
+export const LenientNodeTypeSchema = z.enum(NodeType).catch(NodeType.Library);
+export const LenientPlatformSchema = z.enum(Platform).catch(Platform.macOS);
+export const LenientOriginSchema = z.enum(Origin).catch(Origin.Local);
+export const LenientDependencyKindSchema = z.enum(DependencyKind).catch(DependencyKind.Target);
+
+const LenientGraphNodeSchema = z.object({
+  id: z.string().min(1, 'Node ID is required'),
+  name: z.string().min(1, 'Node name is required'),
+  type: LenientNodeTypeSchema,
+  platform: LenientPlatformSchema,
+  origin: LenientOriginSchema,
+  project: z.string().optional(),
+  targetCount: z.number().int().nonnegative().optional(),
+  bundleId: z.string().optional(),
+  productName: z.string().optional(),
+  deploymentTargets: DeploymentTargetsSchema.optional(),
+  destinations: z.array(DestinationSchema).optional(),
+  sourcePaths: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
+  path: z.string().optional(),
+  isRemote: z.boolean().optional(),
+  buildSettings: BuildSettingsSchema.optional(),
+  sourceCount: z.number().int().nonnegative().optional(),
+  resourceCount: z.number().int().nonnegative().optional(),
+  notableResources: z.array(z.string()).optional(),
+  foreignBuild: ForeignBuildInfoSchema.optional(),
+});
+
+const LenientGraphEdgeSchema = z.object({
+  source: z.string().min(1, 'Edge source is required'),
+  target: z.string().min(1, 'Edge target is required'),
+  kind: LenientDependencyKindSchema.optional(),
+  platformConditions: z.array(LenientPlatformSchema).optional(),
+});
+
+export const LenientGraphDataSchema = z.object({
+  nodes: z.array(LenientGraphNodeSchema),
+  edges: z.array(LenientGraphEdgeSchema),
+});

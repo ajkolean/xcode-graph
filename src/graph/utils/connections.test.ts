@@ -1,4 +1,4 @@
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import {
   getConnectedNodes,

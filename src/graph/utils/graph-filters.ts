@@ -9,7 +9,7 @@ import {
   type GraphNode,
   NodeType,
   type Platform,
-} from '@shared/schemas/graph.schema';
+} from '@shared/schemas/graph.types';
 import { matchesSearch } from './visibility';
 
 function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {

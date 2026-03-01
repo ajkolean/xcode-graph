@@ -21,7 +21,7 @@
  */
 
 import { SignalWatcher } from '@lit-labs/signals';
-import type { AppError } from '@shared/schemas/error.schema';
+import type { AppError } from '@shared/schemas/error.types';
 import { getToastErrors } from '@shared/signals/error.signals';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';

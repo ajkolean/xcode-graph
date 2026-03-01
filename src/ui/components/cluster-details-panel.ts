@@ -15,7 +15,7 @@
 
 import { computeClusterStats } from '@graph/utils/node-utils';
 import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { generateColor } from '@ui/utils/color-generator';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';

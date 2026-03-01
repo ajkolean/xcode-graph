@@ -18,7 +18,7 @@ import type { GraphCanvas } from '@graph/components/graph-canvas';
 import type { TransitiveResult } from '@graph/utils';
 import { computed, Signal, SignalWatcher, watch } from '@lit-labs/signals';
 import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import '@graph/components/graph-canvas';

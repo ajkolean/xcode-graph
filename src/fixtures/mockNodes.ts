@@ -2,7 +2,7 @@
  * Mock GraphNode data for tests and fixtures
  */
 
-import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 
 // ========================================
 // Individual Node Type Examples

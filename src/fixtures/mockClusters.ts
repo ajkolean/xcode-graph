@@ -7,8 +7,8 @@ import {
   type ClusterNodeMetadata,
   ClusterType,
   NodeRole,
-} from '@shared/schemas/cluster.schema';
-import { Origin } from '@shared/schemas/graph.schema';
+} from '@shared/schemas/cluster.types';
+import { Origin } from '@shared/schemas/graph.types';
 import { mockGraphNodes } from './mockNodes';
 
 // ========================================

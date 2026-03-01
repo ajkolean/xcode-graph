@@ -1,5 +1,5 @@
 import { ViewMode } from '@shared/schemas';
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import { createDiamondGraph, createEmptyGraph, createLinearChain } from '../../fixtures';
 import {

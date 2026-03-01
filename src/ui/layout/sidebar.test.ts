@@ -3,7 +3,7 @@
  */
 
 import { expect, fixture, html } from '@open-wc/testing';
-import { ActiveTab } from '@shared/schemas/app.schema';
+import { ActiveTab } from '@shared/schemas/app.types';
 import { describe, it } from 'vitest';
 import type { GraphSidebar } from './sidebar';
 import './sidebar';

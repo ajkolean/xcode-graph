@@ -2,7 +2,7 @@
  * Mock GraphEdge data for tests and fixtures
  */
 
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.types';
 
 // ========================================
 // Individual Edge Examples

@@ -27,7 +27,7 @@
  * @fires cluster-click - Dispatched on click
  */
 
-import { Origin } from '@shared/schemas/graph.schema';
+import { Origin } from '@shared/schemas/graph.types';
 import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
 
 export class GraphCluster extends LitElement {

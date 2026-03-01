@@ -18,7 +18,7 @@
  */
 
 import { computeNodeDependencies } from '@graph/utils/node-utils';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import './build-settings.js';
 import './metrics-section';

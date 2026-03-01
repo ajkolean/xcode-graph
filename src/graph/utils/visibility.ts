@@ -7,7 +7,7 @@
  * @module utils/graph/visibility
  */
 
-import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode as GraphNodeType } from '@shared/schemas/graph.types';
 import { getConnectedNodes } from './connections';
 
 // ==================== Search Matching ====================

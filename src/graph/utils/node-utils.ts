@@ -14,7 +14,7 @@ import {
   NodeType,
   Origin,
   type Platform,
-} from '@shared/schemas/graph.schema';
+} from '@shared/schemas/graph.types';
 import { buildAdjacency, traverseGraph } from './traversal';
 
 // ==================== Type Definitions ====================

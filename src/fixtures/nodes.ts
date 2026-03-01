@@ -2,7 +2,7 @@
  * Node fixture builders
  */
 
-import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 
 /**
  * Create a single test node with sensible defaults

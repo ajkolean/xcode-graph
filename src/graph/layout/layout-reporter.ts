@@ -6,7 +6,7 @@
  */
 
 import type { ClusterPosition } from '@shared/schemas';
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.types';
 import type { HierarchicalLayoutResult } from './types';
 
 // ============================================================================

@@ -8,8 +8,8 @@
  */
 
 import { type Signal, signal } from '@lit-labs/signals';
-import type { AppError } from '@shared/schemas/error.schema';
-import { DEFAULT_MAX_VISIBLE_TOASTS } from '@shared/schemas/error.schema';
+import type { AppError } from '@shared/schemas/error.types';
+import { DEFAULT_MAX_VISIBLE_TOASTS } from '@shared/schemas/error.types';
 
 // ==================== State Signals ====================
 

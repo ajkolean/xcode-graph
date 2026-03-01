@@ -18,7 +18,7 @@
  */
 
 import { SignalWatcher } from '@lit-labs/signals';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import {
   type CSSResultGroup,
   css,

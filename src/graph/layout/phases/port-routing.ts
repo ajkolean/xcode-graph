@@ -6,7 +6,7 @@
  */
 
 import type { ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.types';
 import type { ClusterEdge } from '../cluster-graph';
 import type { LayoutConfig } from '../config';
 import type { ClusterPort, PortSide, RoutedEdge } from '../types';

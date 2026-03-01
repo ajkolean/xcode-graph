@@ -7,7 +7,7 @@
  * @module signals/graph.actions
  */
 
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphNode } from '@shared/schemas/graph.types';
 import {
   circularDependencies,
   highlightDirectDependents,

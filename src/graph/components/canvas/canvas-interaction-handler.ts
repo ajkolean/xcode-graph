@@ -1,6 +1,6 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
 import { getNodeSize } from '@ui/utils/sizing';
 

@@ -3,8 +3,8 @@
  */
 
 import { expect, fixture, html } from '@open-wc/testing';
-import type { GraphNode } from '@shared/schemas/graph.schema';
-import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import type { GraphNode } from '@shared/schemas/graph.types';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, it } from 'vitest';
 import type { GraphNodeList } from './node-list';
 import './node-list';

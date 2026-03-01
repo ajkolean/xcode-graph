@@ -1,5 +1,5 @@
 import type { Cluster } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
 export interface ClusterEdge {
   source: string;

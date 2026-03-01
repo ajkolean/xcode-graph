@@ -4,7 +4,7 @@ import type { TransitiveResult } from '@graph/utils';
 import { resolveClusterPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { NodePosition, ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';

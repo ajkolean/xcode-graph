@@ -3,7 +3,7 @@
  */
 
 import { buildAdjacency } from '@graph/utils/traversal';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
 /**
  * Base sizes for different node types

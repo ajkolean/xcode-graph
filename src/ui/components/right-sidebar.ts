@@ -21,7 +21,7 @@ import { SignalWatcher } from '@lit-labs/signals';
 import { createMachineController } from '@shared/controllers/zag.controller';
 import { type SidebarSection, sidebarMachine } from '@shared/machines/sidebar.machine';
 import type { Cluster } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getPlatformColor } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';

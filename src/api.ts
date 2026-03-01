@@ -26,8 +26,8 @@ export * from './shared/machines';
 
 // ==================== Types ====================
 
-export type { FilterState, FilterStateInput, ViewMode } from './shared/schemas/app.schema';
-export { serializeFilterState, VIEW_MODE_VALUES } from './shared/schemas/app.schema';
+export type { FilterState, FilterStateInput, ViewMode } from './shared/schemas/app.types';
+export { serializeFilterState, VIEW_MODE_VALUES } from './shared/schemas/app.types';
 export type {
   Cluster,
   ClusterBounds,
@@ -37,8 +37,8 @@ export type {
   ForceStrength,
   NodeRole,
   PositionedNode,
-} from './shared/schemas/cluster.schema';
-export type { ClusterPosition, NodePosition } from './shared/schemas/simulation.schema';
+} from './shared/schemas/cluster.types';
+export type { ClusterPosition, NodePosition } from './shared/schemas/simulation.types';
 
 // ==================== Utility Modules ====================
 

@@ -4,7 +4,7 @@
 
 import { range } from '@shared/collections';
 import { adjacentPairs } from '@shared/pairwise';
-import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { createNode } from './nodes';
 
 /**

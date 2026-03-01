@@ -7,7 +7,7 @@
  * @module signals/error.actions
  */
 
-import type { AppError, ErrorCategory, ErrorSeverity } from '@shared/schemas/error.schema';
+import type { AppError, ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
 import { errors, maxVisibleToasts } from './error.signals';
 
 // ==================== Error Management Actions ====================

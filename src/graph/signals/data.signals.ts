@@ -8,7 +8,7 @@
  */
 
 import { type Signal, signal } from '@lit-labs/signals';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
 // ==================== State Signals ====================
 

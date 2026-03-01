@@ -10,7 +10,7 @@
  * ```
  */
 
-import { type GraphNode, Origin } from '@shared/schemas/graph.schema';
+import { type GraphNode, Origin } from '@shared/schemas/graph.types';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';

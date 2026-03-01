@@ -5,7 +5,7 @@
 
 import { addToMultiMap } from '@shared/collections';
 import type { Cluster } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 
 export class GraphDataService {
   private readonly nodes: GraphNode[];

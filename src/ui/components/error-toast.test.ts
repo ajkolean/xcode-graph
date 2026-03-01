@@ -9,8 +9,8 @@ import { fixture, html } from '@open-wc/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GraphErrorToast } from './error-toast';
 import './error-toast';
-import type { AppError } from '@shared/schemas/error.schema';
-import { ErrorCategory, ErrorSeverity } from '@shared/schemas/error.schema';
+import type { AppError } from '@shared/schemas/error.types';
+import { ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
 
 describe('GraphErrorToast', () => {
   let element: GraphErrorToast;

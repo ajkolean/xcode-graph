@@ -18,7 +18,7 @@
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { type CSSResultGroup, css, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';

@@ -1,5 +1,5 @@
 import type { Cluster, NodePosition } from '@shared/schemas';
-import { NodeRole } from '@shared/schemas/cluster.schema';
+import { NodeRole } from '@shared/schemas/cluster.types';
 import type { SimulationNodeDatum } from 'd3-force';
 import * as d3 from 'd3-force';
 import type { LayoutConfig } from '../config';

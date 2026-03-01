@@ -7,7 +7,7 @@
  * @module utils/graph/connections
  */
 
-import type { GraphEdge } from '@shared/schemas/graph.schema';
+import type { GraphEdge } from '@shared/schemas/graph.types';
 
 // ==================== Connection Analysis ====================
 

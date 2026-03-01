@@ -7,7 +7,7 @@
  * @module components/ui/node-list-events
  */
 
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphNode } from '@shared/schemas/graph.types';
 import { LitElement } from 'lit';
 
 /**

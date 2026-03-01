@@ -22,7 +22,7 @@
  */
 
 import { icons } from '@shared/controllers/icon.adapter';
-import { NodeType, Platform } from '@shared/schemas/graph.schema';
+import { NodeType, Platform } from '@shared/schemas/graph.types';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
 import { getPlatformIconPath } from '@ui/utils/platform-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';

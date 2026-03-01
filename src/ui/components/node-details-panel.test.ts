@@ -6,8 +6,8 @@
  */
 
 import { expect, fixture, html } from '@open-wc/testing';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
-import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, it } from 'vitest';
 import type { GraphNodeDetailsPanel } from './node-details-panel';
 import './node-details-panel';

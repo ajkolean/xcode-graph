@@ -5,7 +5,7 @@ import { colorWithAlpha } from '@graph/utils/canvas-colors';
 import { resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { ViewMode } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';

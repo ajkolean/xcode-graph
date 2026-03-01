@@ -23,8 +23,8 @@
  * ```
  */
 
-import type { AppError } from '@shared/schemas/error.schema';
-import { ErrorSeverity } from '@shared/schemas/error.schema';
+import type { AppError } from '@shared/schemas/error.types';
+import { ErrorSeverity } from '@shared/schemas/error.types';
 import {
   type CSSResultGroup,
   css,

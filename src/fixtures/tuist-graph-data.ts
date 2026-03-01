@@ -7,7 +7,7 @@
 
 import type { Graph } from '@/services/tuist-graph.schema.generated';
 import { transformTuistGraph } from '@/services/tuist-graph.service';
-import type { GraphData } from '@/shared/schemas/graph.schema';
+import type { GraphData } from '@/shared/schemas/graph.types';
 import graphJson from './tuist-graph.json';
 
 /** Raw Tuist graph JSON (real data from tuist CLI) */

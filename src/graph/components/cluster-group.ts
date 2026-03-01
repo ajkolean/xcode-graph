@@ -29,7 +29,7 @@ import {
   type GraphEdge,
   type GraphNode as GraphNodeType,
   NodeType,
-} from '@shared/schemas/graph.schema';
+} from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';

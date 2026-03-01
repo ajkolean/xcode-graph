@@ -5,8 +5,8 @@
  * Tests filter toggles, bulk operations, and initialization.
  */
 
-import type { FilterState } from '@shared/schemas/app.schema';
-import { NodeType, Origin, Platform } from '@shared/schemas/graph.schema';
+import type { FilterState } from '@shared/schemas/app.types';
+import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { SignalSnapshot } from '../../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';

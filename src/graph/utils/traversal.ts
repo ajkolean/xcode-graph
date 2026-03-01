@@ -7,7 +7,7 @@
  */
 
 import type { ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
 export interface TransitiveResult {
   nodes: Set<string>;

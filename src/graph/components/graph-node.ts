@@ -26,7 +26,7 @@
  * @fires node-click - Dispatched on click
  */
 
-import type { GraphNode as GraphNodeType } from '@shared/schemas/graph.schema';
+import type { GraphNode as GraphNodeType } from '@shared/schemas/graph.types';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';

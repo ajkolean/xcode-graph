@@ -7,7 +7,7 @@
  * @module signals/data.actions
  */
 
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { edges, nodes } from './data.signals';
 
 /**

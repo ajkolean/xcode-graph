@@ -36,7 +36,7 @@
 
 import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.schema';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import { LayoutController } from './layout.controller';
 

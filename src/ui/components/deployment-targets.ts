@@ -13,7 +13,7 @@
  * ```
  */
 
-import type { DeploymentTargets, Destination } from '@shared/schemas/graph.schema';
+import type { DeploymentTargets, Destination } from '@shared/schemas/graph.types';
 import { getPlatformColor } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';

@@ -8,8 +8,8 @@
  */
 
 import { Signal, signal } from '@lit-labs/signals';
-import { ViewMode } from '@shared/schemas/app.schema';
-import type { GraphNode } from '@shared/schemas/graph.schema';
+import { ViewMode } from '@shared/schemas/app.types';
+import type { GraphNode } from '@shared/schemas/graph.types';
 
 // ==================== State Signals ====================
 

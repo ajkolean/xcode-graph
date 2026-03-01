@@ -4,7 +4,7 @@ import {
   ClusterType,
   DEFAULT_CLUSTER_CONFIG,
 } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, Origin } from '@shared/schemas/graph.schema';
+import { type GraphEdge, type GraphNode, Origin } from '@shared/schemas/graph.types';
 import { analyzeCluster } from './cluster-analysis';
 
 /**
