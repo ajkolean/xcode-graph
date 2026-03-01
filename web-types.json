@@ -1,0 +1,2603 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JetBrains/web-types/master/schema/web-types.json",
+  "name": "@tuist/graph",
+  "version": "1.34.0",
+  "description-markup": "markdown",
+  "contributions": {
+    "html": {
+      "elements": [
+        {
+          "name": "graph-canvas",
+          "description": "Canvas-based interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "search-query",
+              "value": { "type": "string", "default": "''" }
+            },
+            { "name": "view-mode", "value": { "type": "ViewMode" } },
+            { "name": "zoom", "value": { "type": "number", "default": "1" } },
+            {
+              "name": "enable-animation",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "show-direct-deps",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "show-transitive-deps",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "show-direct-dependents",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "show-transitive-dependents",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "events": [
+            {
+              "name": "zoom-change",
+              "type": "CustomEvent",
+              "description": "Dispatched when the zoom level changes (detail: number)"
+            },
+            {
+              "name": "node-select",
+              "description": "Dispatched when a node is selected or deselected (detail: { node })"
+            },
+            {
+              "name": "node-hover",
+              "description": "Dispatched when a node is hovered (detail: { nodeId })"
+            },
+            {
+              "name": "cluster-select",
+              "description": "Dispatched when a cluster is selected or deselected (detail: { clusterId })"
+            },
+            {
+              "name": "cluster-hover",
+              "description": "Dispatched when a cluster is hovered (detail: { clusterId })"
+            },
+            {
+              "name": "zoom-in",
+              "description": "Dispatched when zoom in is requested via keyboard"
+            },
+            {
+              "name": "zoom-out",
+              "description": "Dispatched when zoom out is requested via keyboard"
+            },
+            {
+              "name": "zoom-reset",
+              "description": "Dispatched when zoom reset is requested via keyboard"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "nodes", "type": "GraphNode[]" },
+              { "name": "edges", "type": "GraphEdge[]" },
+              { "name": "selectedNode", "type": "GraphNode | null" },
+              { "name": "selectedCluster", "type": "string | null" },
+              { "name": "hoveredNode", "type": "string | null" },
+              { "name": "searchQuery", "type": "string" },
+              { "name": "viewMode", "type": "ViewMode" },
+              { "name": "zoom", "type": "number" },
+              { "name": "enableAnimation", "type": "boolean" },
+              {
+                "name": "transitiveDeps",
+                "type": "TransitiveResult | undefined"
+              },
+              {
+                "name": "transitiveDependents",
+                "type": "TransitiveResult | undefined"
+              },
+              { "name": "previewFilter", "type": "PreviewFilter | undefined" },
+              { "name": "showDirectDeps", "type": "boolean" },
+              { "name": "showTransitiveDeps", "type": "boolean" },
+              { "name": "showDirectDependents", "type": "boolean" },
+              { "name": "showTransitiveDependents", "type": "boolean" }
+            ],
+            "events": [
+              {
+                "name": "zoom-change",
+                "type": "CustomEvent",
+                "description": "Dispatched when the zoom level changes (detail: number)"
+              },
+              {
+                "name": "node-select",
+                "description": "Dispatched when a node is selected or deselected (detail: { node })"
+              },
+              {
+                "name": "node-hover",
+                "description": "Dispatched when a node is hovered (detail: { nodeId })"
+              },
+              {
+                "name": "cluster-select",
+                "description": "Dispatched when a cluster is selected or deselected (detail: { clusterId })"
+              },
+              {
+                "name": "cluster-hover",
+                "description": "Dispatched when a cluster is hovered (detail: { clusterId })"
+              },
+              {
+                "name": "zoom-in",
+                "description": "Dispatched when zoom in is requested via keyboard"
+              },
+              {
+                "name": "zoom-out",
+                "description": "Dispatched when zoom out is requested via keyboard"
+              },
+              {
+                "name": "zoom-reset",
+                "description": "Dispatched when zoom reset is requested via keyboard"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-background",
+          "description": "Grid pattern background overlay\n---\n",
+          "doc-url": "",
+          "attributes": [],
+          "events": [],
+          "js": { "properties": [], "events": [] }
+        },
+        {
+          "name": "graph-controls",
+          "description": "Zoom controls overlay\n---\n\n\n### **Events:**\n - **zoom-step** - Dispatched when a zoom step button is clicked (detail: number)\n- **zoom-reset** - Dispatched when the fit-to-view button is clicked",
+          "doc-url": "",
+          "attributes": [
+            { "name": "zoom", "value": { "type": "number" } },
+            { "name": "base-zoom", "value": { "type": "number" } },
+            { "name": "node-count", "value": { "type": "number" } },
+            { "name": "edge-count", "value": { "type": "number" } }
+          ],
+          "events": [
+            {
+              "name": "zoom-step",
+              "type": "CustomEvent",
+              "description": "Dispatched when a zoom step button is clicked (detail: number)"
+            },
+            {
+              "name": "zoom-reset",
+              "type": "CustomEvent",
+              "description": "Dispatched when the fit-to-view button is clicked"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "zoom", "type": "number" },
+              { "name": "baseZoom", "type": "number" },
+              { "name": "nodeCount", "type": "number" },
+              { "name": "edgeCount", "type": "number" }
+            ],
+            "events": [
+              {
+                "name": "zoom-step",
+                "type": "CustomEvent",
+                "description": "Dispatched when a zoom step button is clicked (detail: number)"
+              },
+              {
+                "name": "zoom-reset",
+                "type": "CustomEvent",
+                "description": "Dispatched when the fit-to-view button is clicked"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-visualization-empty-state",
+          "description": "Empty state message overlay\n---\n",
+          "doc-url": "",
+          "attributes": [],
+          "events": [],
+          "js": { "properties": [], "events": [] }
+        },
+        {
+          "name": "graph-instructions",
+          "description": "Usage instructions overlay\n---\n",
+          "doc-url": "",
+          "attributes": [],
+          "events": [],
+          "js": { "properties": [], "events": [] }
+        },
+        {
+          "name": "graph-sidebar-collapse-icon",
+          "description": "Animated collapse/expand chevron icon\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "is-collapsed",
+              "description": "Whether the sidebar is collapsed",
+              "value": { "type": "boolean" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "isCollapsed",
+                "description": "Whether the sidebar is collapsed",
+                "type": "boolean"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-icon-button",
+          "description": "Icon button with variant and color options\n---\n\n\n### **Slots:**\n - _default_ - Icon content (typically an SVG element)",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "variant",
+              "description": "Button variant style",
+              "value": { "type": "IconButtonVariant", "default": "'ghost'" }
+            },
+            {
+              "name": "color",
+              "description": "Button color scheme",
+              "value": { "type": "IconButtonColor", "default": "'neutral'" }
+            },
+            {
+              "name": "size",
+              "description": "Button size",
+              "value": { "type": "IconButtonSize", "default": "'md'" }
+            },
+            {
+              "name": "disabled",
+              "description": "Whether the button is disabled",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "title",
+              "description": "Tooltip text",
+              "value": { "type": "string", "default": "''" }
+            }
+          ],
+          "slots": [
+            {
+              "name": "",
+              "description": "Icon content (typically an SVG element)"
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "variant",
+                "description": "Button variant style",
+                "type": "IconButtonVariant"
+              },
+              {
+                "name": "color",
+                "description": "Button color scheme",
+                "type": "IconButtonColor"
+              },
+              {
+                "name": "size",
+                "description": "Button size",
+                "type": "IconButtonSize"
+              },
+              {
+                "name": "disabled",
+                "description": "Whether the button is disabled",
+                "type": "boolean"
+              },
+              {
+                "name": "title",
+                "description": "Tooltip text",
+                "type": "string"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-right-sidebar-header",
+          "description": "Right sidebar header with collapse toggle\n---\n\n\n### **Events:**\n - **toggle-collapse** - Dispatched when the collapse button is clicked",
+          "doc-url": "",
+          "attributes": [
+            { "name": "title", "value": { "type": "string" } },
+            { "name": "is-collapsed", "value": { "type": "boolean" } },
+            { "name": "has-active-filters", "value": { "type": "boolean" } }
+          ],
+          "events": [
+            {
+              "name": "toggle-collapse",
+              "type": "CustomEvent",
+              "description": "Dispatched when the collapse button is clicked"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "title", "type": "string" },
+              { "name": "isCollapsed", "type": "boolean" },
+              { "name": "hasActiveFilters", "type": "boolean" }
+            ],
+            "events": [
+              {
+                "name": "toggle-collapse",
+                "type": "CustomEvent",
+                "description": "Dispatched when the collapse button is clicked"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-collapsed-sidebar",
+          "description": "Collapsed sidebar icon bar with filter badges\n---\n\n\n### **Events:**\n - **expand-to-section** - Dispatched when a section icon is clicked (detail: { section })",
+          "doc-url": "",
+          "attributes": [
+            { "name": "node-types-filter-size", "value": { "type": "number" } },
+            { "name": "platforms-filter-size", "value": { "type": "number" } },
+            { "name": "projects-filter-size", "value": { "type": "number" } },
+            { "name": "packages-filter-size", "value": { "type": "number" } }
+          ],
+          "events": [
+            {
+              "name": "expand-to-section",
+              "type": "CustomEvent",
+              "description": "Dispatched when a section icon is clicked (detail: { section })"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "filteredNodes", "type": "GraphNode[]" },
+              { "name": "filteredEdges", "type": "GraphEdge[]" },
+              { "name": "typeCounts", "type": "Map<string, number>" },
+              { "name": "platformCounts", "type": "Map<string, number>" },
+              { "name": "projectCounts", "type": "Map<string, number>" },
+              { "name": "packageCounts", "type": "Map<string, number>" },
+              { "name": "nodeTypesFilterSize", "type": "number" },
+              { "name": "platformsFilterSize", "type": "number" },
+              { "name": "projectsFilterSize", "type": "number" },
+              { "name": "packagesFilterSize", "type": "number" }
+            ],
+            "events": [
+              {
+                "name": "expand-to-section",
+                "type": "CustomEvent",
+                "description": "Dispatched when a section icon is clicked (detail: { section })"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-info-row",
+          "description": "Key-value pair display row\n---\n\n\n### **Slots:**\n - _default_ - Default slot for complex value content (overrides value prop)",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "label",
+              "description": "The label text (left side)",
+              "value": { "type": "string", "default": "''" }
+            },
+            {
+              "name": "value",
+              "description": "The value text (right side) - can be overridden by slot",
+              "value": { "type": "string", "default": "''" }
+            }
+          ],
+          "slots": [
+            {
+              "name": "",
+              "description": "Default slot for complex value content (overrides value prop)"
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "label",
+                "description": "The label text (left side)",
+                "type": "string"
+              },
+              {
+                "name": "value",
+                "description": "The value text (right side) - can be overridden by slot",
+                "type": "string"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-build-settings",
+          "description": "Collapsible build settings display for a node\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "expanded",
+              "description": "Whether to start expanded (default: collapsed)",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "settings",
+                "description": "Curated build settings to display",
+                "type": "BuildSettings | undefined"
+              },
+              {
+                "name": "expanded",
+                "description": "Whether to start expanded (default: collapsed)",
+                "type": "boolean"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-stats-card",
+          "description": "Stats metric card with optional toggle behavior\n---\n\n\n### **Events:**\n - **card-toggle** - Dispatched when a toggleable card is clicked",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "label",
+              "description": "The label text displayed above the value",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "value",
+              "description": "The value to display (can be string or number)",
+              "value": { "type": "string | number" }
+            },
+            {
+              "name": "highlighted",
+              "description": "Whether to highlight the value with accent color",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "compact",
+              "description": "Whether to use compact sizing (smaller fonts for node detail metrics)",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "toggleable",
+              "description": "Whether this card is a clickable toggle",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "active",
+              "description": "Whether this toggleable card is currently active (on)",
+              "value": { "type": "boolean" }
+            }
+          ],
+          "events": [
+            {
+              "name": "card-toggle",
+              "type": "CustomEvent",
+              "description": "Dispatched when a toggleable card is clicked"
+            }
+          ],
+          "js": {
+            "properties": [
+              {
+                "name": "label",
+                "description": "The label text displayed above the value",
+                "type": "string"
+              },
+              {
+                "name": "value",
+                "description": "The value to display (can be string or number)",
+                "type": "string | number"
+              },
+              {
+                "name": "highlighted",
+                "description": "Whether to highlight the value with accent color",
+                "type": "boolean"
+              },
+              {
+                "name": "compact",
+                "description": "Whether to use compact sizing (smaller fonts for node detail metrics)",
+                "type": "boolean"
+              },
+              {
+                "name": "toggleable",
+                "description": "Whether this card is a clickable toggle",
+                "type": "boolean"
+              },
+              {
+                "name": "active",
+                "description": "Whether this toggleable card is currently active (on)",
+                "type": "boolean"
+              }
+            ],
+            "events": [
+              {
+                "name": "card-toggle",
+                "type": "CustomEvent",
+                "description": "Dispatched when a toggleable card is clicked"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-metrics-section",
+          "description": "Metrics grid with toggleable stats cards\n---\n\n\n### **Events:**\n - **card**\n- **toggle-direct-deps** - Dispatched when direct dependencies card is toggled\n- **toggle-transitive-deps** - Dispatched when transitive dependencies card is toggled\n- **toggle-direct-dependents** - Dispatched when direct dependents card is toggled\n- **toggle-transitive-dependents** - Dispatched when transitive dependents card is toggled",
+          "doc-url": "",
+          "attributes": [
+            { "name": "dependencies-count", "value": { "type": "number" } },
+            { "name": "dependents-count", "value": { "type": "number" } },
+            {
+              "name": "total-dependencies-count",
+              "value": { "type": "number" }
+            },
+            { "name": "total-dependents-count", "value": { "type": "number" } },
+            {
+              "name": "transitive-dependencies-count",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "transitive-dependents-count",
+              "value": { "type": "number" }
+            },
+            { "name": "is-high-fan-in", "value": { "type": "boolean" } },
+            { "name": "is-high-fan-out", "value": { "type": "boolean" } },
+            { "name": "active-direct-deps", "value": { "type": "boolean" } },
+            {
+              "name": "active-transitive-deps",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "active-direct-dependents",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "active-transitive-dependents",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "expanded",
+              "value": { "type": "boolean", "default": "true" }
+            }
+          ],
+          "events": [
+            { "name": "card", "type": "CustomEvent" },
+            {
+              "name": "toggle-direct-deps",
+              "description": "Dispatched when direct dependencies card is toggled"
+            },
+            {
+              "name": "toggle-transitive-deps",
+              "description": "Dispatched when transitive dependencies card is toggled"
+            },
+            {
+              "name": "toggle-direct-dependents",
+              "description": "Dispatched when direct dependents card is toggled"
+            },
+            {
+              "name": "toggle-transitive-dependents",
+              "description": "Dispatched when transitive dependents card is toggled"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "dependenciesCount", "type": "number" },
+              { "name": "dependentsCount", "type": "number" },
+              { "name": "totalDependenciesCount", "type": "number" },
+              { "name": "totalDependentsCount", "type": "number" },
+              { "name": "transitiveDependenciesCount", "type": "number" },
+              { "name": "transitiveDependentsCount", "type": "number" },
+              { "name": "isHighFanIn", "type": "boolean" },
+              { "name": "isHighFanOut", "type": "boolean" },
+              { "name": "activeDirectDeps", "type": "boolean" },
+              { "name": "activeTransitiveDeps", "type": "boolean" },
+              { "name": "activeDirectDependents", "type": "boolean" },
+              { "name": "activeTransitiveDependents", "type": "boolean" },
+              { "name": "expanded", "type": "boolean" }
+            ],
+            "events": [
+              { "name": "card", "type": "CustomEvent" },
+              {
+                "name": "toggle-direct-deps",
+                "description": "Dispatched when direct dependencies card is toggled"
+              },
+              {
+                "name": "toggle-transitive-deps",
+                "description": "Dispatched when transitive dependencies card is toggled"
+              },
+              {
+                "name": "toggle-direct-dependents",
+                "description": "Dispatched when direct dependents card is toggled"
+              },
+              {
+                "name": "toggle-transitive-dependents",
+                "description": "Dispatched when transitive dependents card is toggled"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-badge",
+          "description": "Color-themed badge with pill, rounded, and accent variants\n---\n\n\n### **CSS Properties:**\n - **--badge-bg** - Background color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-border** - Border color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-color** - Text color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-bg-hover** - Background color on hover (computed from color prop) _(default: undefined)_\n- **--badge-border-hover** - Border color on hover (computed from color prop) _(default: undefined)_\n- **--badge-glow** - Glow color on hover (computed from color prop) _(default: undefined)_",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "label",
+              "description": "The text to display in the badge",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "color",
+              "description": "The color for the badge (hex or CSS color)",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "variant",
+              "description": "Badge shape variant\n- 'pill': Fully rounded (radii-full)\n- 'rounded': Small border radius (radii-sm)\n- 'accent': Small radius with left accent border",
+              "value": { "type": "BadgeVariant", "default": "'pill'" }
+            },
+            {
+              "name": "size",
+              "description": "Badge size\n- 'sm': Smaller text (xs), monospace font\n- 'md': Medium text (sm), body font",
+              "value": { "type": "BadgeSize", "default": "'md'" }
+            },
+            {
+              "name": "interactive",
+              "description": "Whether the badge has interactive hover states",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "glow",
+              "description": "Whether to show glow effect on hover",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "label",
+                "description": "The text to display in the badge",
+                "type": "string"
+              },
+              {
+                "name": "color",
+                "description": "The color for the badge (hex or CSS color)",
+                "type": "string"
+              },
+              {
+                "name": "variant",
+                "description": "Badge shape variant\n- 'pill': Fully rounded (radii-full)\n- 'rounded': Small border radius (radii-sm)\n- 'accent': Small radius with left accent border",
+                "type": "BadgeVariant"
+              },
+              {
+                "name": "size",
+                "description": "Badge size\n- 'sm': Smaller text (xs), monospace font\n- 'md': Medium text (sm), body font",
+                "type": "BadgeSize"
+              },
+              {
+                "name": "interactive",
+                "description": "Whether the badge has interactive hover states",
+                "type": "boolean"
+              },
+              {
+                "name": "glow",
+                "description": "Whether to show glow effect on hover",
+                "type": "boolean"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-panel-header",
+          "description": "Reusable panel header with back button and badge slots\n---\n\n\n### **Events:**\n - **back** - Dispatched when the back button is clicked\n\n### **Slots:**\n - **icon** - Icon content for the icon box (SVG or other element)\n- **badges** - Badge elements to display below the header",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "title",
+              "description": "The main title/name to display",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "subtitle",
+              "description": "Optional subtitle text",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "color",
+              "description": "Theme color for the icon box glow",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "title-size",
+              "description": "Title size variant\n- 'lg': Larger heading (h2 size) - for node details\n- 'md': Medium heading (h3 size) - for cluster details",
+              "value": { "type": "'lg' | 'md'", "default": "'lg'" }
+            }
+          ],
+          "slots": [
+            {
+              "name": "icon",
+              "description": "Icon content for the icon box (SVG or other element)"
+            },
+            {
+              "name": "badges",
+              "description": "Badge elements to display below the header"
+            }
+          ],
+          "events": [
+            {
+              "name": "back",
+              "type": "CustomEvent",
+              "description": "Dispatched when the back button is clicked"
+            }
+          ],
+          "js": {
+            "properties": [
+              {
+                "name": "title",
+                "description": "The main title/name to display",
+                "type": "string"
+              },
+              {
+                "name": "subtitle",
+                "description": "Optional subtitle text",
+                "type": "string"
+              },
+              {
+                "name": "color",
+                "description": "Theme color for the icon box glow",
+                "type": "string"
+              },
+              {
+                "name": "titleSize",
+                "description": "Title size variant\n- 'lg': Larger heading (h2 size) - for node details\n- 'md': Medium heading (h3 size) - for cluster details",
+                "type": "'lg' | 'md'"
+              }
+            ],
+            "events": [
+              {
+                "name": "back",
+                "type": "CustomEvent",
+                "description": "Dispatched when the back button is clicked"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-tag-badge",
+          "description": "Color-coded architecture tag badge\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "tag",
+              "description": "The full tag string (e.g., \"domain:infrastructure\")",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "interactive",
+              "description": "Whether the badge has interactive hover states",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "tag",
+                "description": "The full tag string (e.g., \"domain:infrastructure\")",
+                "type": "string"
+              },
+              {
+                "name": "interactive",
+                "description": "Whether the badge has interactive hover states",
+                "type": "boolean"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-node-header",
+          "description": "Node details header with icon, badges, and tags\n---\n\n\n### **Events:**\n - **cluster-click** - Dispatched when a cluster badge is clicked (detail: { clusterId })\n- **close** - Dispatched when the back/close button is clicked",
+          "doc-url": "",
+          "attributes": [
+            { "name": "zoom", "value": { "type": "number" } },
+            {
+              "name": "show-cluster-link",
+              "value": { "type": "boolean", "default": "true" }
+            }
+          ],
+          "events": [
+            {
+              "name": "cluster-click",
+              "type": "CustomEvent",
+              "description": "Dispatched when a cluster badge is clicked (detail: { clusterId })"
+            },
+            {
+              "name": "close",
+              "type": "CustomEvent",
+              "description": "Dispatched when the back/close button is clicked"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "node", "type": "GraphNode" },
+              { "name": "zoom", "type": "number" },
+              { "name": "showClusterLink", "type": "boolean" }
+            ],
+            "events": [
+              {
+                "name": "cluster-click",
+                "type": "CustomEvent",
+                "description": "Dispatched when a cluster badge is clicked (detail: { clusterId })"
+              },
+              {
+                "name": "close",
+                "type": "CustomEvent",
+                "description": "Dispatched when the back/close button is clicked"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-deployment-targets",
+          "description": "Platform deployment targets and destination badges\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "compact",
+              "description": "Whether to show in compact mode (badges only, no labels)",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "deploymentTargets",
+                "description": "Deployment targets with minimum OS versions per platform",
+                "type": "DeploymentTargets | undefined"
+              },
+              {
+                "name": "destinations",
+                "description": "Supported destinations (device types)",
+                "type": "Destination[] | undefined"
+              },
+              {
+                "name": "compact",
+                "description": "Whether to show in compact mode (badges only, no labels)",
+                "type": "boolean"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-node-info",
+          "description": "Collapsible node information details section\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "expanded",
+              "value": { "type": "boolean", "default": "true" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              { "name": "node", "type": "GraphNode" },
+              { "name": "expanded", "type": "boolean" }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-list-item-row",
+          "description": "Node list row with icon, name, and chevron\n---\n\n\n### **Events:**\n - **row-select** - Dispatched when the row is clicked (detail: { node })\n- **row-hover** - Dispatched on mouse enter (detail: { nodeId })\n- **row-hover-end** - Dispatched on mouse leave",
+          "doc-url": "",
+          "attributes": [
+            { "name": "subtitle", "value": { "type": "string" } },
+            { "name": "zoom", "value": { "type": "number", "default": "1" } },
+            { "name": "is-selected", "value": { "type": "boolean" } }
+          ],
+          "events": [
+            {
+              "name": "row-select",
+              "type": "CustomEvent",
+              "description": "Dispatched when the row is clicked (detail: { node })"
+            },
+            {
+              "name": "row-hover",
+              "type": "CustomEvent",
+              "description": "Dispatched on mouse enter (detail: { nodeId })"
+            },
+            {
+              "name": "row-hover-end",
+              "type": "CustomEvent",
+              "description": "Dispatched on mouse leave"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "node", "type": "GraphNode" },
+              { "name": "subtitle", "type": "string" },
+              { "name": "zoom", "type": "number" },
+              { "name": "isSelected", "type": "boolean" }
+            ],
+            "events": [
+              {
+                "name": "row-select",
+                "type": "CustomEvent",
+                "description": "Dispatched when the row is clicked (detail: { node })"
+              },
+              {
+                "name": "row-hover",
+                "type": "CustomEvent",
+                "description": "Dispatched on mouse enter (detail: { nodeId })"
+              },
+              {
+                "name": "row-hover-end",
+                "type": "CustomEvent",
+                "description": "Dispatched on mouse leave"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-node-list",
+          "description": "Collapsible node list with section header and kind badges\n---\n\n\n### **Events:**\n - **node-select** - Dispatched when a node row is clicked (detail: { node })\n- **node-hover** - Dispatched on node row hover (detail: { nodeId })\n\n### **Methods:**\n \n\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "title",
+              "description": "Section title (e.g., \"Dependencies\", \"Dependents\")",
+              "value": { "type": "string", "default": "''" }
+            },
+            {
+              "name": "suffix",
+              "description": "Suffix for count display (e.g., \"direct\")",
+              "value": { "type": "string", "default": "''" }
+            },
+            {
+              "name": "empty-message",
+              "description": "Message to show when list is empty",
+              "value": { "type": "string", "default": "'No items'" }
+            },
+            {
+              "name": "zoom",
+              "description": "Zoom level for color adjustments",
+              "value": { "type": "number", "default": "1" }
+            },
+            {
+              "name": "show-kind",
+              "description": "Whether to show dependency kind badges",
+              "value": { "type": "boolean", "default": "true" }
+            },
+            {
+              "name": "expanded",
+              "description": "Whether to start expanded (default: true)",
+              "value": { "type": "boolean", "default": "true" }
+            }
+          ],
+          "events": [
+            {
+              "name": "node-select",
+              "type": "CustomEvent",
+              "description": "Dispatched when a node row is clicked (detail: { node })"
+            },
+            {
+              "name": "node-hover",
+              "type": "CustomEvent",
+              "description": "Dispatched on node row hover (detail: { nodeId })"
+            }
+          ],
+          "js": {
+            "properties": [
+              {
+                "name": "title",
+                "description": "Section title (e.g., \"Dependencies\", \"Dependents\")",
+                "type": "string"
+              },
+              {
+                "name": "items",
+                "description": "Array of nodes with edge info to display",
+                "type": "NodeWithEdge[]"
+              },
+              { "name": "nodes", "type": "GraphNode[]" },
+              {
+                "name": "suffix",
+                "description": "Suffix for count display (e.g., \"direct\")",
+                "type": "string"
+              },
+              {
+                "name": "emptyMessage",
+                "description": "Message to show when list is empty",
+                "type": "string"
+              },
+              {
+                "name": "zoom",
+                "description": "Zoom level for color adjustments",
+                "type": "number"
+              },
+              {
+                "name": "showKind",
+                "description": "Whether to show dependency kind badges",
+                "type": "boolean"
+              },
+              {
+                "name": "expanded",
+                "description": "Whether to start expanded (default: true)",
+                "type": "boolean"
+              }
+            ],
+            "events": [
+              {
+                "name": "node-select",
+                "type": "CustomEvent",
+                "description": "Dispatched when a node row is clicked (detail: { node })"
+              },
+              {
+                "name": "node-hover",
+                "type": "CustomEvent",
+                "description": "Dispatched on node row hover (detail: { nodeId })"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-node-details-panel",
+          "description": "Node details panel with metrics, info, and dependency lists\n---\n\n\n### **Events:**\n - **eventName**\n- **close** - Dispatched when the panel close/back button is clicked\n- **node-select** - Dispatched when a dependency or dependent node is clicked (detail: { node })\n- **cluster-select** - Dispatched when a cluster badge is clicked (detail: { clusterId })\n- **node-hover** - Dispatched when hovering a dependency or dependent node (detail: { nodeId })\n- **toggle-direct-deps** - Dispatched when the direct dependencies metric card is toggled\n- **toggle-transitive-deps** - Dispatched when the transitive dependencies metric card is toggled\n- **toggle-direct-dependents** - Dispatched when the direct dependents metric card is toggled\n- **toggle-transitive-dependents** - Dispatched when the transitive dependents metric card is toggled",
+          "doc-url": "",
+          "attributes": [
+            { "name": "active-direct-deps", "value": { "type": "boolean" } },
+            {
+              "name": "active-transitive-deps",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "active-direct-dependents",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "active-transitive-dependents",
+              "value": { "type": "boolean" }
+            },
+            { "name": "zoom", "value": { "type": "number" } }
+          ],
+          "events": [
+            { "name": "eventName", "type": "CustomEvent" },
+            {
+              "name": "close",
+              "description": "Dispatched when the panel close/back button is clicked"
+            },
+            {
+              "name": "node-select",
+              "description": "Dispatched when a dependency or dependent node is clicked (detail: { node })"
+            },
+            {
+              "name": "cluster-select",
+              "description": "Dispatched when a cluster badge is clicked (detail: { clusterId })"
+            },
+            {
+              "name": "node-hover",
+              "description": "Dispatched when hovering a dependency or dependent node (detail: { nodeId })"
+            },
+            {
+              "name": "toggle-direct-deps",
+              "description": "Dispatched when the direct dependencies metric card is toggled"
+            },
+            {
+              "name": "toggle-transitive-deps",
+              "description": "Dispatched when the transitive dependencies metric card is toggled"
+            },
+            {
+              "name": "toggle-direct-dependents",
+              "description": "Dispatched when the direct dependents metric card is toggled"
+            },
+            {
+              "name": "toggle-transitive-dependents",
+              "description": "Dispatched when the transitive dependents metric card is toggled"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "node", "type": "GraphNode" },
+              { "name": "allNodes", "type": "GraphNode[]" },
+              { "name": "edges", "type": "GraphEdge[]" },
+              { "name": "filteredEdges", "type": "GraphEdge[] | undefined" },
+              { "name": "clusters", "type": "Cluster[] | undefined" },
+              { "name": "activeDirectDeps", "type": "boolean" },
+              { "name": "activeTransitiveDeps", "type": "boolean" },
+              { "name": "activeDirectDependents", "type": "boolean" },
+              { "name": "activeTransitiveDependents", "type": "boolean" },
+              { "name": "zoom", "type": "number" }
+            ],
+            "events": [
+              { "name": "eventName", "type": "CustomEvent" },
+              {
+                "name": "close",
+                "description": "Dispatched when the panel close/back button is clicked"
+              },
+              {
+                "name": "node-select",
+                "description": "Dispatched when a dependency or dependent node is clicked (detail: { node })"
+              },
+              {
+                "name": "cluster-select",
+                "description": "Dispatched when a cluster badge is clicked (detail: { clusterId })"
+              },
+              {
+                "name": "node-hover",
+                "description": "Dispatched when hovering a dependency or dependent node (detail: { nodeId })"
+              },
+              {
+                "name": "toggle-direct-deps",
+                "description": "Dispatched when the direct dependencies metric card is toggled"
+              },
+              {
+                "name": "toggle-transitive-deps",
+                "description": "Dispatched when the transitive dependencies metric card is toggled"
+              },
+              {
+                "name": "toggle-direct-dependents",
+                "description": "Dispatched when the direct dependents metric card is toggled"
+              },
+              {
+                "name": "toggle-transitive-dependents",
+                "description": "Dispatched when the transitive dependents metric card is toggled"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-section-header",
+          "description": "Section header with title and count display\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "title",
+              "description": "The section title",
+              "value": { "type": "string" }
+            },
+            {
+              "name": "count",
+              "description": "The count to display",
+              "value": { "type": "number", "default": "0" }
+            },
+            {
+              "name": "suffix",
+              "description": "Optional suffix after count (e.g., \"direct\", \"targets\")",
+              "value": { "type": "string", "default": "''" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "title",
+                "description": "The section title",
+                "type": "string"
+              },
+              {
+                "name": "count",
+                "description": "The count to display",
+                "type": "number"
+              },
+              {
+                "name": "suffix",
+                "description": "Optional suffix after count (e.g., \"direct\", \"targets\")",
+                "type": "string"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-cluster-composition",
+          "description": "Collapsible cluster composition statistics\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "expanded",
+              "description": "Whether to start expanded (default: collapsed)",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "nodes",
+                "description": "Nodes in the cluster",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "expanded",
+                "description": "Whether to start expanded (default: collapsed)",
+                "type": "boolean"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-cluster-header",
+          "description": "Cluster details panel header with icon, badges, and path\n---\n\n\n### **Events:**\n - **back** - Dispatched when back button is clicked",
+          "doc-url": "",
+          "attributes": [
+            { "name": "cluster-name", "value": { "type": "string" } },
+            {
+              "name": "cluster-type",
+              "value": { "type": "'package' | 'project'" }
+            },
+            { "name": "cluster-color", "value": { "type": "string" } },
+            { "name": "cluster-path", "value": { "type": "string" } },
+            { "name": "is-external", "value": { "type": "boolean" } }
+          ],
+          "events": [
+            {
+              "name": "back",
+              "description": "Dispatched when back button is clicked"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "clusterName", "type": "string" },
+              { "name": "clusterType", "type": "'package' | 'project'" },
+              { "name": "clusterColor", "type": "string" },
+              { "name": "clusterPath", "type": "string" },
+              { "name": "isExternal", "type": "boolean" }
+            ],
+            "events": [
+              {
+                "name": "back",
+                "description": "Dispatched when back button is clicked"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-cluster-stats",
+          "description": "Collapsible cluster metrics with stats cards and breakdowns\n---\n\n\n### **Events:**\n - **card**\n- **toggle-direct-deps** - Dispatched when dependencies card is toggled\n- **toggle-direct-dependents** - Dispatched when dependents card is toggled",
+          "doc-url": "",
+          "attributes": [
+            { "name": "filtered-dependencies", "value": { "type": "number" } },
+            { "name": "total-dependencies", "value": { "type": "number" } },
+            { "name": "filtered-dependents", "value": { "type": "number" } },
+            { "name": "total-dependents", "value": { "type": "number" } },
+            { "name": "active-direct-deps", "value": { "type": "boolean" } },
+            {
+              "name": "active-direct-dependents",
+              "value": { "type": "boolean" }
+            },
+            {
+              "name": "expanded",
+              "value": { "type": "boolean", "default": "true" }
+            }
+          ],
+          "events": [
+            { "name": "card", "type": "CustomEvent" },
+            {
+              "name": "toggle-direct-deps",
+              "description": "Dispatched when dependencies card is toggled"
+            },
+            {
+              "name": "toggle-direct-dependents",
+              "description": "Dispatched when dependents card is toggled"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "filteredDependencies", "type": "number" },
+              { "name": "totalDependencies", "type": "number" },
+              { "name": "filteredDependents", "type": "number" },
+              { "name": "totalDependents", "type": "number" },
+              { "name": "activeDirectDeps", "type": "boolean" },
+              { "name": "activeDirectDependents", "type": "boolean" },
+              { "name": "platforms", "type": "Set<string>" },
+              {
+                "name": "targetBreakdown",
+                "description": "Target breakdown by node type (e.g., { framework: 3, library: 2 })",
+                "type": "Record<string, number>"
+              },
+              { "name": "expanded", "type": "boolean" }
+            ],
+            "events": [
+              { "name": "card", "type": "CustomEvent" },
+              {
+                "name": "toggle-direct-deps",
+                "description": "Dispatched when dependencies card is toggled"
+              },
+              {
+                "name": "toggle-direct-dependents",
+                "description": "Dispatched when dependents card is toggled"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-cluster-targets-list",
+          "description": "Collapsible cluster targets list grouped by node type\n---\n\n\n### **Events:**\n - **node-select** - Dispatched when a target is clicked (detail: { node })\n- **node-hover** - Dispatched on hover (detail: { nodeId })\n\n### **Methods:**\n \n\n",
+          "doc-url": "",
+          "attributes": [
+            { "name": "filtered-targets-count", "value": { "type": "number" } },
+            { "name": "total-targets-count", "value": { "type": "number" } },
+            { "name": "zoom", "value": { "type": "number" } },
+            {
+              "name": "expanded",
+              "description": "Whether to start expanded (default: true)",
+              "value": { "type": "boolean", "default": "true" }
+            }
+          ],
+          "events": [
+            {
+              "name": "node-select",
+              "type": "CustomEvent",
+              "description": "Dispatched when a target is clicked (detail: { node })"
+            },
+            {
+              "name": "node-hover",
+              "type": "CustomEvent",
+              "description": "Dispatched on hover (detail: { nodeId })"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "clusterNodes", "type": "GraphNode[]" },
+              { "name": "nodesByType", "type": "Record<string, GraphNode[]>" },
+              { "name": "filteredTargetsCount", "type": "number" },
+              { "name": "totalTargetsCount", "type": "number" },
+              { "name": "edges", "type": "GraphEdge[]" },
+              { "name": "zoom", "type": "number" },
+              {
+                "name": "expanded",
+                "description": "Whether to start expanded (default: true)",
+                "type": "boolean"
+              }
+            ],
+            "events": [
+              {
+                "name": "node-select",
+                "type": "CustomEvent",
+                "description": "Dispatched when a target is clicked (detail: { node })"
+              },
+              {
+                "name": "node-hover",
+                "type": "CustomEvent",
+                "description": "Dispatched on hover (detail: { nodeId })"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-cluster-details-panel",
+          "description": "Cluster details panel with header, stats, and targets\n---\n\n\n### **Events:**\n - **eventName**\n- **close** - Dispatched when the back button is clicked\n- **node-select** - Dispatched when a target node is selected (detail: { node })\n- **node-hover** - Dispatched when a target node is hovered (detail: { nodeId })",
+          "doc-url": "",
+          "attributes": [
+            { "name": "active-direct-deps", "value": { "type": "boolean" } },
+            {
+              "name": "active-direct-dependents",
+              "value": { "type": "boolean" }
+            },
+            { "name": "zoom", "value": { "type": "number" } }
+          ],
+          "events": [
+            { "name": "eventName", "type": "CustomEvent" },
+            {
+              "name": "close",
+              "description": "Dispatched when the back button is clicked"
+            },
+            {
+              "name": "node-select",
+              "description": "Dispatched when a target node is selected (detail: { node })"
+            },
+            {
+              "name": "node-hover",
+              "description": "Dispatched when a target node is hovered (detail: { nodeId })"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "cluster", "type": "Cluster" },
+              { "name": "clusterNodes", "type": "GraphNode[]" },
+              { "name": "allNodes", "type": "GraphNode[]" },
+              { "name": "edges", "type": "GraphEdge[]" },
+              { "name": "filteredEdges", "type": "GraphEdge[] | undefined" },
+              { "name": "activeDirectDeps", "type": "boolean" },
+              { "name": "activeDirectDependents", "type": "boolean" },
+              { "name": "zoom", "type": "number" }
+            ],
+            "events": [
+              { "name": "eventName", "type": "CustomEvent" },
+              {
+                "name": "close",
+                "description": "Dispatched when the back button is clicked"
+              },
+              {
+                "name": "node-select",
+                "description": "Dispatched when a target node is selected (detail: { node })"
+              },
+              {
+                "name": "node-hover",
+                "description": "Dispatched when a target node is hovered (detail: { nodeId })"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-clear-filters-button",
+          "description": "Button to clear all active filters\n---\n\n\n### **Events:**\n - **clear-filters** - Dispatched when button is clicked (only when active)",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "is-active",
+              "description": "Whether the button is active (has filters to clear)",
+              "value": { "type": "boolean" }
+            }
+          ],
+          "events": [
+            {
+              "name": "clear-filters",
+              "type": "CustomEvent",
+              "description": "Dispatched when button is clicked (only when active)"
+            }
+          ],
+          "js": {
+            "properties": [
+              {
+                "name": "isActive",
+                "description": "Whether the button is active (has filters to clear)",
+                "type": "boolean"
+              }
+            ],
+            "events": [
+              {
+                "name": "clear-filters",
+                "type": "CustomEvent",
+                "description": "Dispatched when button is clicked (only when active)"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-search-bar",
+          "description": "Search input for filtering nodes\n---\n\n\n### **Events:**\n - **search-change** - Dispatched when the search query changes (detail: { query: string })\n- **search-clear** - Dispatched when the clear button is clicked or Escape is pressed",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "search-query",
+              "description": "The current search query",
+              "value": { "type": "string" }
+            }
+          ],
+          "events": [
+            {
+              "name": "search-change",
+              "type": "CustomEvent",
+              "description": "Dispatched when the search query changes (detail: { query: string })"
+            },
+            {
+              "name": "search-clear",
+              "type": "CustomEvent",
+              "description": "Dispatched when the clear button is clicked or Escape is pressed"
+            }
+          ],
+          "js": {
+            "properties": [
+              {
+                "name": "searchQuery",
+                "description": "The current search query",
+                "type": "string"
+              }
+            ],
+            "events": [
+              {
+                "name": "search-change",
+                "type": "CustomEvent",
+                "description": "Dispatched when the search query changes (detail: { query: string })"
+              },
+              {
+                "name": "search-clear",
+                "type": "CustomEvent",
+                "description": "Dispatched when the clear button is clicked or Escape is pressed"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-filter-section",
+          "description": "Collapsible filter section with toggleable checkbox items\n---\n\n\n### **Events:**\n - **section-toggle** - Dispatched when the section header is clicked\n- **item-toggle** - Dispatched when an item checkbox is toggled (detail: { key, checked })\n- **preview-change** - Dispatched on item hover for filter preview (detail: { type, value } or null)\n\n### **Slots:**\n - **icon** - Icon to display in the section header",
+          "doc-url": "",
+          "attributes": [
+            { "name": "id", "value": { "type": "string" } },
+            { "name": "title", "value": { "type": "string" } },
+            { "name": "icon-name", "value": { "type": "string" } },
+            { "name": "is-expanded", "value": { "type": "boolean" } },
+            { "name": "filter-type", "value": { "type": "FilterType" } },
+            { "name": "zoom", "value": { "type": "number" } }
+          ],
+          "slots": [
+            {
+              "name": "icon",
+              "description": "Icon to display in the section header"
+            }
+          ],
+          "events": [
+            {
+              "name": "section-toggle",
+              "type": "CustomEvent",
+              "description": "Dispatched when the section header is clicked"
+            },
+            {
+              "name": "item-toggle",
+              "type": "CustomEvent",
+              "description": "Dispatched when an item checkbox is toggled (detail: { key, checked })"
+            },
+            {
+              "name": "preview-change",
+              "type": "CustomEvent",
+              "description": "Dispatched on item hover for filter preview (detail: { type, value } or null)"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "id", "type": "string" },
+              { "name": "title", "type": "string" },
+              { "name": "iconName", "type": "string" },
+              { "name": "isExpanded", "type": "boolean" },
+              { "name": "items", "type": "FilterItem[]" },
+              { "name": "selectedItems", "type": "Set<string>" },
+              { "name": "filterType", "type": "FilterType" },
+              { "name": "zoom", "type": "number" }
+            ],
+            "events": [
+              {
+                "name": "section-toggle",
+                "type": "CustomEvent",
+                "description": "Dispatched when the section header is clicked"
+              },
+              {
+                "name": "item-toggle",
+                "type": "CustomEvent",
+                "description": "Dispatched when an item checkbox is toggled (detail: { key, checked })"
+              },
+              {
+                "name": "preview-change",
+                "type": "CustomEvent",
+                "description": "Dispatched on item hover for filter preview (detail: { type, value } or null)"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-empty-state",
+          "description": "Empty state message with optional clear filters action\n---\n\n\n### **Events:**\n - **clear-filters** - Dispatched when the clear filters button is clicked",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "has-active-filters",
+              "description": "Whether there are active filters that can be cleared",
+              "value": { "type": "boolean" }
+            }
+          ],
+          "events": [
+            {
+              "name": "clear-filters",
+              "type": "CustomEvent",
+              "description": "Dispatched when the clear filters button is clicked"
+            }
+          ],
+          "js": {
+            "properties": [
+              {
+                "name": "hasActiveFilters",
+                "description": "Whether there are active filters that can be cleared",
+                "type": "boolean"
+              }
+            ],
+            "events": [
+              {
+                "name": "clear-filters",
+                "type": "CustomEvent",
+                "description": "Dispatched when the clear filters button is clicked"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-right-sidebar",
+          "description": "Right sidebar with filters, search, and detail panels\n---\n",
+          "doc-url": "",
+          "attributes": [],
+          "events": [],
+          "js": {
+            "properties": [
+              { "name": "allNodes", "type": "GraphNode[]" },
+              { "name": "allEdges", "type": "GraphEdge[]" },
+              { "name": "filteredNodes", "type": "GraphNode[]" },
+              { "name": "filteredEdges", "type": "GraphEdge[]" },
+              { "name": "clusters", "type": "Cluster[] | undefined" }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-tab",
+          "description": "Graph tab layout orchestrator\n---\n\n\n### **Slots:**\n - **filter-view** - Slot for injecting a custom filter view into the right sidebar",
+          "doc-url": "",
+          "attributes": [],
+          "slots": [
+            {
+              "name": "filter-view",
+              "description": "Slot for injecting a custom filter view into the right sidebar"
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              { "name": "displayNodes", "type": "GraphNode[]" },
+              { "name": "displayEdges", "type": "GraphEdge[]" },
+              { "name": "filteredNodes", "type": "GraphNode[]" },
+              { "name": "filteredEdges", "type": "GraphEdge[]" },
+              { "name": "allNodes", "type": "GraphNode[]" },
+              { "name": "allEdges", "type": "GraphEdge[]" },
+              { "name": "clusters", "type": "Cluster[] | undefined" },
+              { "name": "transitiveDeps", "type": "TransitiveResult" },
+              { "name": "transitiveDependents", "type": "TransitiveResult" }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-error-toast",
+          "description": "Individual error notification toast with severity styling\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the toast is dismissed (detail: { errorId })\n- **action** - Dispatched when the action button is clicked (detail: { error })",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "visible",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "events": [
+            {
+              "name": "dismiss",
+              "type": "CustomEvent",
+              "description": "Dispatched when the toast is dismissed (detail: { errorId })"
+            },
+            {
+              "name": "action",
+              "type": "CustomEvent",
+              "description": "Dispatched when the action button is clicked (detail: { error })"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "error", "type": "AppError | null" },
+              { "name": "visible", "type": "boolean" }
+            ],
+            "events": [
+              {
+                "name": "dismiss",
+                "type": "CustomEvent",
+                "description": "Dispatched when the toast is dismissed (detail: { errorId })"
+              },
+              {
+                "name": "action",
+                "type": "CustomEvent",
+                "description": "Dispatched when the action button is clicked (detail: { error })"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-error-notification-container",
+          "description": "Error toast notification stack manager\n---\n",
+          "doc-url": "",
+          "attributes": [],
+          "events": [],
+          "js": { "properties": [], "events": [] }
+        },
+        {
+          "name": "graph-app",
+          "description": "Embeddable graph visualization entry point\n---\n\n\n### **Methods:**\n - **loadRawGraph(raw: _unknown_): _void_** - Load raw Tuist graph JSON (the output of `tuist graph --format json`).\nTransforms it into GraphData and sets nodes/edges automatically.\nShows user-facing warnings/errors via ErrorService if the transform has issues.",
+          "doc-url": "",
+          "attributes": [],
+          "events": [],
+          "js": {
+            "properties": [
+              { "name": "nodes", "type": "GraphNode[]" },
+              { "name": "edges", "type": "GraphEdge[]" }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-cluster-card",
+          "description": "SVG cluster card background\n---\n\n\n### **Events:**\n - **cluster-click** - Dispatched when the card is clicked (detail: { cluster })",
+          "doc-url": "",
+          "attributes": [
+            { "name": "x", "value": { "type": "number | undefined" } },
+            { "name": "y", "value": { "type": "number | undefined" } },
+            { "name": "width", "value": { "type": "number | undefined" } },
+            { "name": "height", "value": { "type": "number | undefined" } },
+            {
+              "name": "is-highlighted",
+              "value": { "type": "boolean | undefined" }
+            },
+            { "name": "is-dimmed", "value": { "type": "boolean | undefined" } },
+            {
+              "name": "is-selected",
+              "value": { "type": "boolean | undefined" }
+            },
+            { "name": "zoom", "value": { "type": "number | undefined" } },
+            { "name": "clickable", "value": { "type": "boolean | undefined" } }
+          ],
+          "events": [
+            {
+              "name": "cluster-click",
+              "type": "CustomEvent",
+              "description": "Dispatched when the card is clicked (detail: { cluster })"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "cluster", "type": "Cluster | undefined" },
+              { "name": "x", "type": "number | undefined" },
+              { "name": "y", "type": "number | undefined" },
+              { "name": "width", "type": "number | undefined" },
+              { "name": "height", "type": "number | undefined" },
+              { "name": "isHighlighted", "type": "boolean | undefined" },
+              { "name": "isDimmed", "type": "boolean | undefined" },
+              { "name": "isSelected", "type": "boolean | undefined" },
+              { "name": "zoom", "type": "number | undefined" },
+              { "name": "clickable", "type": "boolean | undefined" }
+            ],
+            "events": [
+              {
+                "name": "cluster-click",
+                "type": "CustomEvent",
+                "description": "Dispatched when the card is clicked (detail: { cluster })"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-edge",
+          "description": "SVG edge connection between graph nodes\n---\n",
+          "doc-url": "",
+          "attributes": [
+            { "name": "x1", "value": { "type": "number | undefined" } },
+            { "name": "y1", "value": { "type": "number | undefined" } },
+            { "name": "x2", "value": { "type": "number | undefined" } },
+            { "name": "y2", "value": { "type": "number | undefined" } },
+            { "name": "color", "value": { "type": "string | undefined" } },
+            {
+              "name": "is-highlighted",
+              "value": { "type": "boolean | undefined" }
+            },
+            {
+              "name": "is-dependent",
+              "value": { "type": "boolean | undefined" }
+            },
+            { "name": "opacity", "value": { "type": "number | undefined" } },
+            { "name": "zoom", "value": { "type": "number | undefined" } },
+            { "name": "animated", "value": { "type": "boolean | undefined" } }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              { "name": "x1", "type": "number | undefined" },
+              { "name": "y1", "type": "number | undefined" },
+              { "name": "x2", "type": "number | undefined" },
+              { "name": "y2", "type": "number | undefined" },
+              { "name": "color", "type": "string | undefined" },
+              { "name": "isHighlighted", "type": "boolean | undefined" },
+              { "name": "isDependent", "type": "boolean | undefined" },
+              { "name": "opacity", "type": "number | undefined" },
+              { "name": "zoom", "type": "number | undefined" },
+              { "name": "animated", "type": "boolean | undefined" }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-edges",
+          "description": "Collection renderer for all graph edges\n---\n",
+          "doc-url": "",
+          "attributes": [
+            { "name": "cluster-id", "value": { "type": "string | undefined" } },
+            {
+              "name": "hovered-cluster-id",
+              "value": { "type": "string | null | undefined" }
+            },
+            {
+              "name": "view-mode",
+              "value": { "type": "ViewMode | undefined" }
+            },
+            { "name": "zoom", "value": { "type": "number | undefined" } }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              { "name": "edges", "type": "GraphEdgeType[] | undefined" },
+              { "name": "nodes", "type": "GraphNode[] | undefined" },
+              {
+                "name": "finalNodePositions",
+                "type": "Map<string, NodePosition> | undefined"
+              },
+              {
+                "name": "clusterPositions",
+                "type": "Map<string, ClusterPosition> | undefined"
+              },
+              {
+                "name": "selectedNode",
+                "type": "GraphNode | null | undefined"
+              },
+              { "name": "hoveredNode", "type": "string | null | undefined" },
+              { "name": "clusterId", "type": "string | undefined" },
+              {
+                "name": "hoveredClusterId",
+                "type": "string | null | undefined"
+              },
+              { "name": "viewMode", "type": "ViewMode | undefined" },
+              {
+                "name": "transitiveDeps",
+                "type": "| {\n        nodes: Set<string>;\n        edges: Set<string>;\n        edgeDepths: Map<string, number>;\n        maxDepth: number;\n      }\n    | undefined"
+              },
+              {
+                "name": "transitiveDependents",
+                "type": "| {\n        nodes: Set<string>;\n        edges: Set<string>;\n        edgeDepths: Map<string, number>;\n        maxDepth: number;\n      }\n    | undefined"
+              },
+              { "name": "zoom", "type": "number | undefined" }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-node",
+          "description": "SVG graph node with icon and label\n---\n\n\n### **Events:**\n - **node-mouseenter** - Dispatched on mouse enter\n- **node-mouseleave** - Dispatched on mouse leave\n- **node-mousedown** - Dispatched on mouse down (detail: { originalEvent })\n- **node-click** - Dispatched on click (detail: { originalEvent })",
+          "doc-url": "",
+          "attributes": [
+            { "name": "x", "value": { "type": "number | undefined" } },
+            { "name": "y", "value": { "type": "number | undefined" } },
+            { "name": "size", "value": { "type": "number | undefined" } },
+            { "name": "color", "value": { "type": "string | undefined" } },
+            {
+              "name": "is-selected",
+              "value": { "type": "boolean | undefined" }
+            },
+            {
+              "name": "is-hovered",
+              "value": { "type": "boolean | undefined" }
+            },
+            { "name": "is-dimmed", "value": { "type": "boolean | undefined" } },
+            { "name": "zoom", "value": { "type": "number | undefined" } }
+          ],
+          "events": [
+            {
+              "name": "node-mouseenter",
+              "type": "CustomEvent",
+              "description": "Dispatched on mouse enter"
+            },
+            {
+              "name": "node-mouseleave",
+              "type": "CustomEvent",
+              "description": "Dispatched on mouse leave"
+            },
+            {
+              "name": "node-mousedown",
+              "type": "CustomEvent",
+              "description": "Dispatched on mouse down (detail: { originalEvent })"
+            },
+            {
+              "name": "node-click",
+              "type": "CustomEvent",
+              "description": "Dispatched on click (detail: { originalEvent })"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "node", "type": "GraphNodeType | undefined" },
+              { "name": "x", "type": "number | undefined" },
+              { "name": "y", "type": "number | undefined" },
+              { "name": "size", "type": "number | undefined" },
+              { "name": "color", "type": "string | undefined" },
+              { "name": "isSelected", "type": "boolean | undefined" },
+              { "name": "isHovered", "type": "boolean | undefined" },
+              { "name": "isDimmed", "type": "boolean | undefined" },
+              { "name": "zoom", "type": "number | undefined" }
+            ],
+            "events": [
+              {
+                "name": "node-mouseenter",
+                "type": "CustomEvent",
+                "description": "Dispatched on mouse enter"
+              },
+              {
+                "name": "node-mouseleave",
+                "type": "CustomEvent",
+                "description": "Dispatched on mouse leave"
+              },
+              {
+                "name": "node-mousedown",
+                "type": "CustomEvent",
+                "description": "Dispatched on mouse down (detail: { originalEvent })"
+              },
+              {
+                "name": "node-click",
+                "type": "CustomEvent",
+                "description": "Dispatched on click (detail: { originalEvent })"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-cluster-group",
+          "description": "Cluster group orchestrating card, edges, and nodes\n---\n\n\n### **Events:**\n - **cluster-mouseenter** - Dispatched when the cluster is hovered\n- **cluster-mouseleave** - Dispatched when the cluster hover ends\n- **cluster-click** - Dispatched when the cluster is clicked\n- **node-mouseenter** - Dispatched when a child node is hovered (detail: { nodeId })\n- **node-mouseleave** - Dispatched when a child node hover ends\n- **node-mousedown** - Dispatched on child node mouse down (detail: { nodeId, originalEvent })\n- **node-click** - Dispatched on child node click (detail: { node, originalEvent })",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "search-query",
+              "value": { "type": "string | undefined" }
+            },
+            { "name": "zoom", "value": { "type": "number | undefined" } },
+            {
+              "name": "view-mode",
+              "value": { "type": "ViewMode | undefined" }
+            },
+            {
+              "name": "is-selected",
+              "value": { "type": "boolean | undefined" }
+            },
+            {
+              "name": "isClusterHovered",
+              "value": { "type": "boolean | undefined" }
+            }
+          ],
+          "events": [
+            {
+              "name": "cluster-mouseenter",
+              "type": "CustomEvent",
+              "description": "Dispatched when the cluster is hovered"
+            },
+            {
+              "name": "cluster-mouseleave",
+              "type": "CustomEvent",
+              "description": "Dispatched when the cluster hover ends"
+            },
+            {
+              "name": "cluster-click",
+              "type": "CustomEvent",
+              "description": "Dispatched when the cluster is clicked"
+            },
+            {
+              "name": "node-mouseenter",
+              "type": "CustomEvent",
+              "description": "Dispatched when a child node is hovered (detail: { nodeId })"
+            },
+            {
+              "name": "node-mouseleave",
+              "type": "CustomEvent",
+              "description": "Dispatched when a child node hover ends"
+            },
+            {
+              "name": "node-mousedown",
+              "type": "CustomEvent",
+              "description": "Dispatched on child node mouse down (detail: { nodeId, originalEvent })"
+            },
+            {
+              "name": "node-click",
+              "type": "CustomEvent",
+              "description": "Dispatched on child node click (detail: { node, originalEvent })"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "cluster", "type": "Cluster | undefined" },
+              {
+                "name": "clusterPosition",
+                "type": "ClusterPosition | undefined"
+              },
+              { "name": "nodes", "type": "GraphNodeType[] | undefined" },
+              { "name": "edges", "type": "GraphEdge[] | undefined" },
+              {
+                "name": "finalNodePositions",
+                "type": "Map<string, NodePosition> | undefined"
+              },
+              {
+                "name": "selectedNode",
+                "type": "GraphNodeType | null | undefined"
+              },
+              { "name": "hoveredNode", "type": "string | null | undefined" },
+              {
+                "name": "hoveredClusterId",
+                "type": "string | null | undefined"
+              },
+              { "name": "searchQuery", "type": "string | undefined" },
+              { "name": "zoom", "type": "number | undefined" },
+              { "name": "viewMode", "type": "ViewMode | undefined" },
+              {
+                "name": "transitiveDeps",
+                "type": "TransitiveResult | undefined"
+              },
+              {
+                "name": "transitiveDependents",
+                "type": "TransitiveResult | undefined"
+              },
+              { "name": "isSelected", "type": "boolean | undefined" },
+              { "name": "previewFilter", "type": "PreviewFilter | undefined" }
+            ],
+            "events": [
+              {
+                "name": "cluster-mouseenter",
+                "type": "CustomEvent",
+                "description": "Dispatched when the cluster is hovered"
+              },
+              {
+                "name": "cluster-mouseleave",
+                "type": "CustomEvent",
+                "description": "Dispatched when the cluster hover ends"
+              },
+              {
+                "name": "cluster-click",
+                "type": "CustomEvent",
+                "description": "Dispatched when the cluster is clicked"
+              },
+              {
+                "name": "node-mouseenter",
+                "type": "CustomEvent",
+                "description": "Dispatched when a child node is hovered (detail: { nodeId })"
+              },
+              {
+                "name": "node-mouseleave",
+                "type": "CustomEvent",
+                "description": "Dispatched when a child node hover ends"
+              },
+              {
+                "name": "node-mousedown",
+                "type": "CustomEvent",
+                "description": "Dispatched on child node mouse down (detail: { nodeId, originalEvent })"
+              },
+              {
+                "name": "node-click",
+                "type": "CustomEvent",
+                "description": "Dispatched on child node click (detail: { node, originalEvent })"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-cluster",
+          "description": "SVG cluster container with label and glow effects\n---\n\n\n### **Events:**\n - **cluster-mouseenter** - Dispatched on mouse enter\n- **cluster-mouseleave** - Dispatched on mouse leave\n- **cluster-click** - Dispatched on click\n\n### **Slots:**\n - _default_ - Default slot for child nodes and edges",
+          "doc-url": "",
+          "attributes": [
+            { "name": "cluster-id", "value": { "type": "string | undefined" } },
+            { "name": "x", "value": { "type": "number | undefined" } },
+            { "name": "y", "value": { "type": "number | undefined" } },
+            { "name": "width", "value": { "type": "number | undefined" } },
+            { "name": "height", "value": { "type": "number | undefined" } },
+            { "name": "color", "value": { "type": "string | undefined" } },
+            { "name": "node-count", "value": { "type": "number | undefined" } },
+            { "name": "origin", "value": { "type": "Origin | undefined" } },
+            { "name": "is-hovered", "value": { "type": "boolean | undefined" } }
+          ],
+          "slots": [
+            {
+              "name": "",
+              "description": "Default slot for child nodes and edges"
+            }
+          ],
+          "events": [
+            {
+              "name": "cluster-mouseenter",
+              "type": "CustomEvent",
+              "description": "Dispatched on mouse enter"
+            },
+            {
+              "name": "cluster-mouseleave",
+              "type": "CustomEvent",
+              "description": "Dispatched on mouse leave"
+            },
+            {
+              "name": "cluster-click",
+              "type": "CustomEvent",
+              "description": "Dispatched on click"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "clusterId", "type": "string | undefined" },
+              { "name": "x", "type": "number | undefined" },
+              { "name": "y", "type": "number | undefined" },
+              { "name": "width", "type": "number | undefined" },
+              { "name": "height", "type": "number | undefined" },
+              { "name": "color", "type": "string | undefined" },
+              { "name": "nodeCount", "type": "number | undefined" },
+              { "name": "origin", "type": "Origin | undefined" },
+              { "name": "isHovered", "type": "boolean | undefined" }
+            ],
+            "events": [
+              {
+                "name": "cluster-mouseenter",
+                "type": "CustomEvent",
+                "description": "Dispatched on mouse enter"
+              },
+              {
+                "name": "cluster-mouseleave",
+                "type": "CustomEvent",
+                "description": "Dispatched on mouse leave"
+              },
+              {
+                "name": "cluster-click",
+                "type": "CustomEvent",
+                "description": "Dispatched on click"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-svg-defs",
+          "description": "Reusable SVG defs for graph filters, markers, and shapes\n---\n",
+          "doc-url": "",
+          "attributes": [],
+          "events": [],
+          "js": { "properties": [], "events": [] }
+        },
+        {
+          "name": "graph-virtual-renderer",
+          "description": "Viewport-culled virtual node renderer\n---\n\n\n### **Methods:**\n - **getVirtualRenderingStats(): _{\n    totalNodes: number;\n    visibleNodes: number;\n    culledNodes: number;\n    cullingRatio: number;\n    percentageCulled: number;\n    renderCount: number;\n  }_** - Get statistics about virtual rendering efficiency",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "viewportWidth",
+              "value": { "type": "number", "default": "1000" }
+            },
+            {
+              "name": "viewportHeight",
+              "value": { "type": "number", "default": "800" }
+            },
+            { "name": "panX", "value": { "type": "number", "default": "0" } },
+            { "name": "panY", "value": { "type": "number", "default": "0" } },
+            { "name": "zoom", "value": { "type": "number", "default": "1" } },
+            {
+              "name": "bufferMargin",
+              "value": { "type": "number", "default": "200" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              { "name": "nodes", "type": "GraphNode[]" },
+              { "name": "nodePositions", "type": "Map<string, NodePosition>" },
+              { "name": "viewportWidth", "type": "number" },
+              { "name": "viewportHeight", "type": "number" },
+              { "name": "panX", "type": "number" },
+              { "name": "panY", "type": "number" },
+              { "name": "zoom", "type": "number" },
+              { "name": "bufferMargin", "type": "number" }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-action-button",
+          "description": "Action button with color variants and active states\n---\n\n\n### **Slots:**\n - **icon** - Optional icon to display before the text\n- _default_ - Button text content",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "variant",
+              "description": "Button color variant",
+              "value": { "type": "ActionButtonVariant", "default": "'neutral'" }
+            },
+            {
+              "name": "active",
+              "description": "Whether the button is in active state",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "full-width",
+              "description": "Whether the button should be full width",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "disabled",
+              "description": "Whether the button is disabled",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "slots": [
+            {
+              "name": "icon",
+              "description": "Optional icon to display before the text"
+            },
+            { "name": "", "description": "Button text content" }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "variant",
+                "description": "Button color variant",
+                "type": "ActionButtonVariant"
+              },
+              {
+                "name": "active",
+                "description": "Whether the button is in active state",
+                "type": "boolean"
+              },
+              {
+                "name": "fullWidth",
+                "description": "Whether the button should be full width",
+                "type": "boolean"
+              },
+              {
+                "name": "disabled",
+                "description": "Whether the button is disabled",
+                "type": "boolean"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-alert-banner",
+          "description": "Dismissible alert banner with icon, message, and actions\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the banner is dismissed\n\n### **Slots:**\n - **icon** - Optional icon to display\n- **badge** - Optional badge to display next to the title\n- **actions** - Optional action buttons\n- _default_ - Default slot for additional content",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "variant",
+              "description": "Alert variant (determines color scheme)",
+              "value": { "type": "AlertBannerVariant", "default": "'info'" }
+            },
+            {
+              "name": "title",
+              "description": "Alert title",
+              "value": { "type": "string", "default": "''" }
+            },
+            {
+              "name": "message",
+              "description": "Alert message/description",
+              "value": { "type": "string", "default": "''" }
+            },
+            {
+              "name": "dismissible",
+              "description": "Whether the alert can be dismissed",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "slots": [
+            { "name": "icon", "description": "Optional icon to display" },
+            {
+              "name": "badge",
+              "description": "Optional badge to display next to the title"
+            },
+            { "name": "actions", "description": "Optional action buttons" },
+            { "name": "", "description": "Default slot for additional content" }
+          ],
+          "events": [
+            {
+              "name": "dismiss",
+              "type": "CustomEvent",
+              "description": "Dispatched when the banner is dismissed"
+            }
+          ],
+          "js": {
+            "properties": [
+              {
+                "name": "variant",
+                "description": "Alert variant (determines color scheme)",
+                "type": "AlertBannerVariant"
+              },
+              {
+                "name": "title",
+                "description": "Alert title",
+                "type": "string"
+              },
+              {
+                "name": "message",
+                "description": "Alert message/description",
+                "type": "string"
+              },
+              {
+                "name": "dismissible",
+                "description": "Whether the alert can be dismissed",
+                "type": "boolean"
+              }
+            ],
+            "events": [
+              {
+                "name": "dismiss",
+                "type": "CustomEvent",
+                "description": "Dispatched when the banner is dismissed"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-cluster-type-badge",
+          "description": "Cluster type badge showing package or project\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "cluster-type",
+              "description": "The type of cluster (package or project)",
+              "value": { "type": "'package' | 'project'" }
+            },
+            {
+              "name": "cluster-color",
+              "description": "The color to use for the badge (hex or CSS color)",
+              "value": { "type": "string" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "clusterType",
+                "description": "The type of cluster (package or project)",
+                "type": "'package' | 'project'"
+              },
+              {
+                "name": "clusterColor",
+                "description": "The color to use for the badge (hex or CSS color)",
+                "type": "string"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-collapsible-section",
+          "description": "Expandable/collapsible section with animated chevron\n---\n\n\n### **Events:**\n - **toggle** - Dispatched when the header is clicked\n\n### **Slots:**\n - **icon** - Optional icon to display before the title\n- _default_ - Default slot for expandable content",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "title",
+              "description": "The section title",
+              "value": { "type": "string", "default": "''" }
+            },
+            {
+              "name": "is-expanded",
+              "description": "Whether the section is expanded",
+              "value": { "type": "boolean", "default": "false" }
+            }
+          ],
+          "slots": [
+            {
+              "name": "icon",
+              "description": "Optional icon to display before the title"
+            },
+            { "name": "", "description": "Default slot for expandable content" }
+          ],
+          "events": [
+            {
+              "name": "toggle",
+              "type": "CustomEvent",
+              "description": "Dispatched when the header is clicked"
+            }
+          ],
+          "js": {
+            "properties": [
+              {
+                "name": "title",
+                "description": "The section title",
+                "type": "string"
+              },
+              {
+                "name": "isExpanded",
+                "description": "Whether the section is expanded",
+                "type": "boolean"
+              }
+            ],
+            "events": [
+              {
+                "name": "toggle",
+                "type": "CustomEvent",
+                "description": "Dispatched when the header is clicked"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-cycle-warning",
+          "description": "Dismissible circular dependency warning banner\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the warning is dismissed",
+          "doc-url": "",
+          "attributes": [],
+          "events": [
+            {
+              "name": "dismiss",
+              "type": "CustomEvent",
+              "description": "Dispatched when the warning is dismissed"
+            }
+          ],
+          "js": {
+            "properties": [{ "name": "cycles", "type": "string[][]" }],
+            "events": [
+              {
+                "name": "dismiss",
+                "type": "CustomEvent",
+                "description": "Dispatched when the warning is dismissed"
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph-filter-icon",
+          "description": "Filter section icon with multiple named variants\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "name",
+              "description": "The icon name to render",
+              "value": {
+                "type": "FilterIconName",
+                "default": "'product-types'"
+              }
+            },
+            {
+              "name": "size",
+              "description": "Icon size in pixels",
+              "value": { "type": "number", "default": "18" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "name",
+                "description": "The icon name to render",
+                "type": "FilterIconName"
+              },
+              {
+                "name": "size",
+                "description": "Icon size in pixels",
+                "type": "number"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-panel-section",
+          "description": "Panel section container with configurable padding and borders\n---\n\n\n### **Slots:**\n - _default_ - Default slot for section content",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "bordered",
+              "description": "Whether to show a bottom border",
+              "value": { "type": "boolean", "default": "false" }
+            },
+            {
+              "name": "padding",
+              "description": "Padding size",
+              "value": { "type": "PanelSectionPadding", "default": "'md'" }
+            },
+            {
+              "name": "shrink",
+              "description": "Whether to prevent shrinking (flex-shrink: 0)",
+              "value": { "type": "boolean", "default": "true" }
+            }
+          ],
+          "slots": [{ "name": "", "description": "Default slot for section content" }],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "bordered",
+                "description": "Whether to show a bottom border",
+                "type": "boolean"
+              },
+              {
+                "name": "padding",
+                "description": "Padding size",
+                "type": "PanelSectionPadding"
+              },
+              {
+                "name": "shrink",
+                "description": "Whether to prevent shrinking (flex-shrink: 0)",
+                "type": "boolean"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-header",
+          "description": "Mission control themed header bar\n---\n",
+          "doc-url": "",
+          "attributes": [],
+          "events": [],
+          "js": { "properties": [], "events": [] }
+        },
+        {
+          "name": "graph-placeholder-tab",
+          "description": "Coming soon placeholder tab\n---\n",
+          "doc-url": "",
+          "attributes": [
+            {
+              "name": "title",
+              "description": "The title of the tab section",
+              "value": { "type": "string" }
+            }
+          ],
+          "events": [],
+          "js": {
+            "properties": [
+              {
+                "name": "title",
+                "description": "The title of the tab section",
+                "type": "string"
+              }
+            ],
+            "events": []
+          }
+        },
+        {
+          "name": "graph-sidebar",
+          "description": "Left sidebar navigation component\n---\n\n\n### **Events:**\n - **tab-change** - Dispatched when a tab is clicked (detail: { tab: string })",
+          "doc-url": "",
+          "attributes": [
+            { "name": "collapsed", "value": { "type": "boolean" } },
+            { "name": "defaultCollapsed", "value": { "type": "boolean" } },
+            {
+              "name": "active-tab",
+              "description": "The currently active tab",
+              "value": { "type": "ActiveTabType" }
+            }
+          ],
+          "events": [
+            {
+              "name": "tab-change",
+              "type": "CustomEvent",
+              "description": "Dispatched when a tab is clicked (detail: { tab: string })"
+            }
+          ],
+          "js": {
+            "properties": [
+              { "name": "collapsed", "type": "boolean" },
+              { "name": "defaultCollapsed", "type": "boolean" },
+              {
+                "name": "activeTab",
+                "description": "The currently active tab",
+                "type": "ActiveTabType"
+              }
+            ],
+            "events": [
+              {
+                "name": "tab-change",
+                "type": "CustomEvent",
+                "description": "Dispatched when a tab is clicked (detail: { tab: string })"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "css": {
+      "properties": [
+        {
+          "name": "--badge-bg",
+          "description": "Background color of the badge (computed from color prop)"
+        },
+        {
+          "name": "--badge-border",
+          "description": "Border color of the badge (computed from color prop)"
+        },
+        {
+          "name": "--badge-color",
+          "description": "Text color of the badge (computed from color prop)"
+        },
+        {
+          "name": "--badge-bg-hover",
+          "description": "Background color on hover (computed from color prop)"
+        },
+        {
+          "name": "--badge-border-hover",
+          "description": "Border color on hover (computed from color prop)"
+        },
+        {
+          "name": "--badge-glow",
+          "description": "Glow color on hover (computed from color prop)"
+        }
+      ],
+      "pseudo-elements": []
+    }
+  }
+}

@@ -47,6 +47,7 @@
     "rollup-plugin-visualizer": "^7.0.0",
     "typedoc": "^0.28.17",
     "vite": "7.3.1",
+    "vitepress": "^1.6.4",
     "vitest": "^4.0.18"
   },
   "scripts": {
@@ -65,9 +66,12 @@
     "test:coverage": "vitest run --coverage",
     "analyze": "cem analyze",
     "analyze:check": "cem analyze && git diff --exit-code custom-elements.json vscode.html-custom-data.json vscode.css-custom-data.json web-types.json",
-    "docs": "typedoc",
-    "docs:api": "pnpm build:api && api-extractor run --local --verbose",
-    "docs:api:ci": "pnpm build:api && api-extractor run",
+    "docs:dev": "vitepress dev docs --port 5174",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs --port 5174",
+    "docs:api": "typedoc",
+    "docs:api:extract": "pnpm build:api && api-extractor run --local --verbose",
+    "docs:api:extract:ci": "pnpm build:api && api-extractor run",
     "depcheck": "depcheck",
     "version:sync": "./scripts/version-sync.sh"
   },

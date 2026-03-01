@@ -1,3 +1,7 @@
+---
+title: Swift Integration
+---
+
 # Tuist CLI Integration
 
 ## How it works

@@ -59,11 +59,16 @@ app.loadRawGraph(tuistGraphJson);
 | `kind`               | `DependencyKind?` | Dependency type (`target`, `project`, `sdk`, `xcframework`) |
 | `platformConditions` | `Platform[]?`     | Platform conditions for this edge          |
 
-See the full type definitions in the [API Reference](docs/api/).
+See the full type definitions in the [API Reference](https://ajkolean.github.io/xcodegrapher/api/).
 
-## API Reference
+## Documentation
 
-Generated TypeDoc documentation is available at [`docs/api/`](docs/api/).
+Full documentation is available at **[ajkolean.github.io/xcodegrapher](https://ajkolean.github.io/xcodegrapher/)**.
+
+- [Getting Started](https://ajkolean.github.io/xcodegrapher/guide/) — installation, usage, data shape
+- [Swift Integration](https://ajkolean.github.io/xcodegrapher/guide/swift-integration) — how the Tuist CLI serves the component
+- [Maintaining](https://ajkolean.github.io/xcodegrapher/maintaining/) — versioning, migration guide
+- [Reference](https://ajkolean.github.io/xcodegrapher/reference/) — layout algorithm, API reference
 
 ## Development
 
@@ -72,15 +77,10 @@ pnpm install          # Install dependencies
 pnpm dev              # Start dev server
 pnpm test:run         # Run tests
 pnpm check            # Lint + format (Biome)
-pnpm docs             # Generate TypeDoc → docs/api/
+pnpm docs:dev         # Start docs dev server
+pnpm docs:api         # Generate TypeDoc → .typedoc-out/
 pnpm analyze          # Regenerate Custom Elements Manifest
 ```
-
-## Maintaining
-
-- [XcodeGraph version syncing & release workflow](.github/TUIST_CLI_INTEGRATION.md) — how versioning tracks XcodeGraph, compatibility checks, and publishing
-- [Tuist CLI integration](swift/INTEGRATION.md) — how GraphServer serves the component, CDN delivery, and the Swift ↔ TypeScript boundary
-- [Migration guide](docs/MIGRATION-GUIDE.md) — patterns used when porting from React to Lit
 
 ## License
 

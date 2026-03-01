@@ -1,0 +1,37 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vscode-css-languageservice/main/docs/customData.schema.json",
+  "version": 1.1,
+  "properties": [
+    {
+      "name": "--badge-bg",
+      "description": "Background color of the badge (computed from color prop)",
+      "values": []
+    },
+    {
+      "name": "--badge-border",
+      "description": "Border color of the badge (computed from color prop)",
+      "values": []
+    },
+    {
+      "name": "--badge-color",
+      "description": "Text color of the badge (computed from color prop)",
+      "values": []
+    },
+    {
+      "name": "--badge-bg-hover",
+      "description": "Background color on hover (computed from color prop)",
+      "values": []
+    },
+    {
+      "name": "--badge-border-hover",
+      "description": "Border color on hover (computed from color prop)",
+      "values": []
+    },
+    {
+      "name": "--badge-glow",
+      "description": "Glow color on hover (computed from color prop)",
+      "values": []
+    }
+  ],
+  "pseudoElements": []
+}

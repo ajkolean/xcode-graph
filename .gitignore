@@ -51,6 +51,8 @@ vite.config.ts.timestamp-*
 test-results/
 playwright-report/
 
-# Documentation
-/docs
+# Documentation build output
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+.typedoc-out/
 /temp

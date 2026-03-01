@@ -1,3 +1,9 @@
+---
+title: Migration Guide
+---
+
+<div v-pre>
+
 # React to Lit Migration Guide
 
 This guide provides step-by-step instructions for migrating React components to Lit web components while maintaining full functionality and ensuring zero breaking changes.
@@ -976,3 +982,5 @@ All 39 components awaiting migration
 - [Test Template](/templates/lit-component.test.template.ts)
 - [Story Template](/templates/component-story.template.tsx)
 - [Migration Plan](/.claude/plans/quizzical-seeking-clock.md)
+
+</div>
