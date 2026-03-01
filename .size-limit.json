@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Main bundle",
+    "path": "dist/xcodegraph.js",
+    "limit": "205 kB",
+    "gzip": true
+  },
+  {
+    "name": "All chunks",
+    "path": "dist/*.js",
+    "limit": "785 kB",
+    "gzip": true
+  }
+]

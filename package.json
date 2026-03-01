@@ -27,9 +27,11 @@
     "@lit-labs/virtualizer": "^2.1.1",
     "@zag-js/core": "^1.35.2",
     "@zag-js/vanilla": "^1.35.2",
+    "colord": "^2.9.3",
     "d3-ease": "^3.0.1",
     "d3-force": "^3.0.0",
     "elkjs": "^0.11.0",
+    "focus-trap": "^8.0.0",
     "lit": "^3.3.2",
     "lit-html": "^3.3.2",
     "zod": "^4.3.6"
@@ -42,6 +44,7 @@
     "@microsoft/api-extractor": "^7.57.6",
     "@open-wc/testing": "^4.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
+    "@size-limit/file": "^12.0.0",
     "@types/d3-ease": "^3.0.2",
     "@types/d3-force": "^3.0.10",
     "@types/node": "^25.3.3",
@@ -54,11 +57,14 @@
     "jsdom": "^28.1.0",
     "rollup-plugin-minify-template-literals": "^1.1.7",
     "rollup-plugin-visualizer": "^7.0.0",
+    "size-limit": "^12.0.0",
     "ts-lit-plugin": "^2.0.2",
     "typedoc": "^0.28.17",
     "vite": "7.3.1",
     "vitepress": "^1.6.4",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "vitest-axe": "^0.1.0",
+    "vitest-canvas-mock": "^1.1.3"
   },
   "scripts": {
     "dev": "vite",
@@ -83,6 +89,8 @@
     "docs:api:extract": "pnpm build:api && api-extractor run --local --verbose",
     "docs:api:extract:ci": "pnpm build:api && api-extractor run",
     "depcheck": "depcheck",
+    "size": "size-limit",
+    "size:why": "size-limit --why",
     "version:sync": "./scripts/version-sync.sh"
   },
   "customElements": "custom-elements.json",

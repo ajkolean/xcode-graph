@@ -1,0 +1,60 @@
+/**
+ * SearchBar Accessibility Tests
+ *
+ * Uses vitest-axe to verify the search bar has no accessibility violations.
+ */
+
+import { expect as chaiExpect, fixture, html } from '@open-wc/testing';
+import { describe, expect, it } from 'vitest';
+import { axe } from 'vitest-axe';
+import type { GraphSearchBar } from './search-bar';
+import './search-bar';
+
+describe('xcode-graph-search-bar a11y', () => {
+  it('should have no accessibility violations when empty', async () => {
+    const el = await fixture<GraphSearchBar>(html`
+      <xcode-graph-search-bar></xcode-graph-search-bar>
+    `);
+
+    const results = await axe(el);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('should have no accessibility violations with a search query', async () => {
+    const el = await fixture<GraphSearchBar>(html`
+      <xcode-graph-search-bar search-query="React"></xcode-graph-search-bar>
+    `);
+
+    const results = await axe(el);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('should have an aria-label on the input', async () => {
+    const el = await fixture<GraphSearchBar>(html`
+      <xcode-graph-search-bar></xcode-graph-search-bar>
+    `);
+
+    const input = el.shadowRoot?.querySelector('input');
+    chaiExpect(input).to.exist;
+    chaiExpect(input?.getAttribute('aria-label')).to.equal('Filter nodes');
+  });
+
+  it('should clear search on Escape key and blur input', async () => {
+    const el = await fixture<GraphSearchBar>(html`
+      <xcode-graph-search-bar search-query="test"></xcode-graph-search-bar>
+    `);
+
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+    input.focus();
+    chaiExpect(el.shadowRoot?.activeElement).to.equal(input);
+
+    let clearFired = false;
+    el.addEventListener('search-clear', () => {
+      clearFired = true;
+    });
+
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    chaiExpect(clearFired).to.be.true;
+  });
+});

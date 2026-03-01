@@ -3,6 +3,8 @@
  * Consolidates duplicate logic from color-generator.ts and zoom-colors.ts
  */
 
+import { colord } from 'colord';
+
 /**
  * HSL color representation with normalized values (0-1)
  */
@@ -123,21 +125,8 @@ export function hslToRgb(h: number, s: number, l: number): RGBNormalized {
  * @returns HSL with h: 0-360, s: 0-100, l: 0-100
  */
 export function hexToHSL(hex: string): HSLDegrees {
-  // Remove # if present
-  const cleanHex = hex.replace('#', '');
-
-  // Parse hex values
-  const r = Number.parseInt(cleanHex.substring(0, 2), 16) / 255;
-  const g = Number.parseInt(cleanHex.substring(2, 4), 16) / 255;
-  const b = Number.parseInt(cleanHex.substring(4, 6), 16) / 255;
-
-  const normalized = rgbToHsl(r, g, b);
-
-  return {
-    h: normalized.h * 360,
-    s: normalized.s * 100,
-    l: normalized.l * 100,
-  };
+  const { h, s, l } = colord(hex).toHsl();
+  return { h, s, l };
 }
 
 /**
@@ -148,12 +137,5 @@ export function hexToHSL(hex: string): HSLDegrees {
  * @returns Hex color string with #
  */
 export function hslToHex(h: number, s: number, l: number): string {
-  // Normalize to 0-1 range
-  const hNorm = h / 360;
-  const sNorm = s / 100;
-  const lNorm = l / 100;
-
-  const rgb = hslToRgb(hNorm, sNorm, lNorm);
-
-  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+  return colord({ h, s, l }).toHex();
 }

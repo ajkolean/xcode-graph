@@ -2,7 +2,12 @@
  * Vitest setup for jsdom environment.
  * Polyfills browser APIs not available in jsdom.
  */
-import { vi } from 'vitest';
+import 'vitest-canvas-mock';
+import { expect, vi } from 'vitest';
+import 'vitest-axe/extend-expect';
+import * as vitestAxeMatchers from 'vitest-axe/matchers';
+
+expect.extend(vitestAxeMatchers);
 
 // @lit-labs/virtualizer requires ResizeObserver which jsdom doesn't provide
 if (typeof globalThis.ResizeObserver === 'undefined') {

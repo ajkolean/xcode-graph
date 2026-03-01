@@ -16,6 +16,8 @@
  */
 
 import { computeNodeDependencies } from '@graph/utils/node-utils';
+import { FocusTrapController } from '@shared/controllers/focus-trap.controller';
+import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import './build-settings.js';
@@ -23,7 +25,6 @@ import './metrics-section';
 import './node-header';
 import './node-info';
 import './node-list.js';
-import type { Cluster } from '@shared/schemas';
 
 /**
  * Full node details panel orchestrating all node detail sub-components.
@@ -76,6 +77,17 @@ export class GraphNodeDetailsPanel extends LitElement {
   declare activeTransitiveDependents: boolean;
 
   declare zoom: number;
+
+  // ========================================
+  // Controllers
+  // ========================================
+
+  private readonly focusTrap = new FocusTrapController(this, {
+    isActive: () => !!this.node,
+    onDeactivate: () => this.bubbleEvent('close'),
+    escapeDeactivates: true,
+    clickOutsideDeactivates: true,
+  });
 
   // ========================================
   // Styles
@@ -149,6 +161,8 @@ export class GraphNodeDetailsPanel extends LitElement {
   // ========================================
 
   override render(): TemplateResult {
+    // Reference focusTrap to ensure controller is not tree-shaken
+    const _trapActive = this.focusTrap.active;
     if (!this.node) return html``;
 
     const { dependencies, dependents, metrics } = this.nodeData;

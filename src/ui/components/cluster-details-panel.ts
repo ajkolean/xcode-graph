@@ -14,6 +14,7 @@
  */
 
 import { computeClusterStats } from '@graph/utils/node-utils';
+import { FocusTrapController } from '@shared/controllers/focus-trap.controller';
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { generateColor } from '@ui/utils/color-generator';
@@ -63,6 +64,17 @@ export class GraphClusterDetailsPanel extends LitElement {
 
   @property({ type: Number })
   declare zoom: number;
+
+  // ========================================
+  // Controllers
+  // ========================================
+
+  private readonly focusTrap = new FocusTrapController(this, {
+    isActive: () => !!this.cluster,
+    onDeactivate: () => this.bubbleEvent('close'),
+    escapeDeactivates: true,
+    clickOutsideDeactivates: true,
+  });
 
   // ========================================
   // Styles
@@ -135,6 +147,8 @@ export class GraphClusterDetailsPanel extends LitElement {
   // ========================================
 
   override render(): TemplateResult {
+    // Reference focusTrap to ensure controller is not tree-shaken
+    const _trapActive = this.focusTrap.active;
     if (!this.cluster) return html``;
 
     const isExternal = this.cluster.origin === 'external';

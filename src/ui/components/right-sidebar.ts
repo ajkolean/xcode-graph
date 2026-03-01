@@ -18,6 +18,7 @@
 import { generateColorMap } from '@graph/utils/filters';
 import { computeFilters } from '@graph/utils/node-utils';
 import { SignalWatcher } from '@lit-labs/signals';
+import { FocusTrapController } from '@shared/controllers/focus-trap.controller';
 import { createMachineController } from '@shared/controllers/zag.controller';
 import { type SidebarSection, sidebarMachine } from '@shared/machines/sidebar.machine';
 import type { Cluster } from '@shared/schemas';
@@ -143,6 +144,13 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   private readonly sidebar = createMachineController(this, sidebarMachine, {
     id: 'right-sidebar',
     defaultCollapsed: false,
+  });
+
+  // Focus trap for details panels (auto-activates via hostUpdated)
+  private readonly focusTrap = new FocusTrapController(this, {
+    isActive: () => this.isViewingDetails && !this.isCollapsed,
+    onDeactivate: () => this.handleBackToFilters(),
+    initialFocus: '.breadcrumb-button',
   });
 
   // ========================================
@@ -707,6 +715,8 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
   override render(): TemplateResult {
     const isCollapsed = this.isCollapsed;
+    // Reference focusTrap to ensure controller is not tree-shaken
+    const _trapActive = this.focusTrap.active;
     const expandedSections = this.sidebar.get('expandedSections');
     const filterData = this.filterData;
     const currentFilters = filters.get();

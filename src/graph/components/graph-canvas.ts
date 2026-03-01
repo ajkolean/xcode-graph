@@ -43,6 +43,7 @@ import {
   type InteractionState,
 } from './canvas/canvas-interaction-handler';
 import { renderNodes } from './canvas/canvas-node-renderer';
+import './graph-hidden-dom';
 
 /**
  * Canvas-based graph visualization component. Renders nodes, edges, and clusters
@@ -933,8 +934,9 @@ export class GraphCanvas extends LitElement {
   override render(): TemplateResult {
     return html`
       <canvas
-        tabindex="0"
-        role="application"
+        tabindex="-1"
+        role="img"
+        aria-hidden="true"
         aria-label="Dependency graph visualization"
         @mousedown=${this.handleCanvasMouseDown}
         @mousemove=${this.handleCanvasMouseMove}
@@ -943,6 +945,19 @@ export class GraphCanvas extends LitElement {
         @wheel=${this.handleCanvasWheel}
         @keydown=${this.handleCanvasKeyDown}
       ></canvas>
+      <xcode-graph-hidden-dom
+        .nodes=${this.nodes}
+        .edges=${this.edges}
+        .selectedNode=${this.selectedNode}
+        @node-select=${(e: CustomEvent) =>
+          this.dispatchEvent(
+            new CustomEvent('node-select', {
+              detail: e.detail,
+              bubbles: true,
+              composed: true,
+            }),
+          )}
+      ></xcode-graph-hidden-dom>
     `;
   }
 }
