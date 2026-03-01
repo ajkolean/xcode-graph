@@ -1,4 +1,6 @@
 import path from 'node:path';
+import { compileLitTemplates } from '@lit-labs/compiler';
+import typescript from '@rollup/plugin-typescript';
 import { minifyTemplateLiterals } from 'rollup-plugin-minify-template-literals';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
@@ -17,6 +19,20 @@ import { defineConfig } from 'vite';
  */
 export default defineConfig({
   plugins: [
+    typescript({
+      exclude: ['**/*.test.ts', '**/*.spec.ts'],
+      compilerOptions: {
+        noCheck: true,
+        composite: false,
+        declaration: false,
+        declarationMap: false,
+        isolatedDeclarations: false,
+        importHelpers: false,
+      },
+      transformers: {
+        before: [compileLitTemplates()],
+      },
+    }),
     minifyTemplateLiterals(),
     visualizer({
       filename: 'dist/bundle-stats.html',
@@ -24,15 +40,9 @@ export default defineConfig({
       brotliSize: true,
     }),
   ],
-  esbuild: {
-    target: 'esnext',
-    tsconfigRaw: {
-      compilerOptions: {
-        experimentalDecorators: true,
-        useDefineForClassFields: true,
-      },
-    },
-  },
+  // Disable esbuild — TypeScript compilation is handled by @rollup/plugin-typescript
+  // with @lit-labs/compiler for pre-compiled Lit templates
+  esbuild: false,
   resolve: {
     extensions: ['.js', '.ts', '.json'],
     alias: {

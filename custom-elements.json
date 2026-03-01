@@ -169,7 +169,6 @@
             {
               "kind": "field",
               "name": "resize",
-              "privacy": "private",
               "readonly": true,
               "default": "new ResizeController(this, () => this.resizeCanvas())"
             },
@@ -3072,16 +3071,6 @@
             },
             {
               "kind": "field",
-              "name": "expanded",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "Whether to start expanded (default: true)",
-              "default": "true",
-              "attribute": "expanded"
-            },
-            {
-              "kind": "field",
               "name": "isExpanded",
               "type": {
                 "text": "boolean"
@@ -3265,15 +3254,6 @@
               "description": "Whether to show dependency kind badges",
               "default": "true",
               "fieldName": "showKind"
-            },
-            {
-              "name": "expanded",
-              "type": {
-                "text": "boolean"
-              },
-              "description": "Whether to start expanded (default: true)",
-              "default": "true",
-              "fieldName": "expanded"
             }
           ],
           "superclass": {
@@ -4215,6 +4195,15 @@
               "privacy": "private"
             },
             {
+              "kind": "field",
+              "name": "flatItems",
+              "type": {
+                "text": "ClusterListItem[]"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
               "kind": "method",
               "name": "getNodeStats",
               "privacy": "private",
@@ -4677,7 +4666,6 @@
             {
               "kind": "field",
               "name": "shortcut",
-              "privacy": "private",
               "readonly": true,
               "default": "new KeyboardShortcutController(this, { key: '/', onTrigger: () => this.inputElement?.focus(), })"
             },
@@ -5965,7 +5953,6 @@
             {
               "kind": "field",
               "name": "cluster",
-              "privacy": "public",
               "type": {
                 "text": "Cluster | undefined"
               }
@@ -5973,7 +5960,6 @@
             {
               "kind": "field",
               "name": "x",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -5982,7 +5968,6 @@
             {
               "kind": "field",
               "name": "y",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -5991,7 +5976,6 @@
             {
               "kind": "field",
               "name": "width",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6000,7 +5984,6 @@
             {
               "kind": "field",
               "name": "height",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6009,7 +5992,6 @@
             {
               "kind": "field",
               "name": "isHighlighted",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },
@@ -6018,7 +6000,6 @@
             {
               "kind": "field",
               "name": "isDimmed",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },
@@ -6027,7 +6008,6 @@
             {
               "kind": "field",
               "name": "isSelected",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },
@@ -6036,7 +6016,6 @@
             {
               "kind": "field",
               "name": "zoom",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6045,7 +6024,6 @@
             {
               "kind": "field",
               "name": "clickable",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },
@@ -6208,7 +6186,6 @@
             {
               "kind": "field",
               "name": "x1",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6217,7 +6194,6 @@
             {
               "kind": "field",
               "name": "y1",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6226,7 +6202,6 @@
             {
               "kind": "field",
               "name": "x2",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6235,7 +6210,6 @@
             {
               "kind": "field",
               "name": "y2",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6244,7 +6218,6 @@
             {
               "kind": "field",
               "name": "color",
-              "privacy": "public",
               "type": {
                 "text": "string | undefined"
               },
@@ -6253,7 +6226,6 @@
             {
               "kind": "field",
               "name": "isHighlighted",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },
@@ -6262,7 +6234,6 @@
             {
               "kind": "field",
               "name": "isDependent",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },
@@ -6271,7 +6242,6 @@
             {
               "kind": "field",
               "name": "opacity",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6280,7 +6250,6 @@
             {
               "kind": "field",
               "name": "zoom",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6289,7 +6258,6 @@
             {
               "kind": "field",
               "name": "animated",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },
@@ -6413,7 +6381,6 @@
             {
               "kind": "field",
               "name": "edges",
-              "privacy": "public",
               "type": {
                 "text": "GraphEdgeType[] | undefined"
               }
@@ -6421,7 +6388,6 @@
             {
               "kind": "field",
               "name": "nodes",
-              "privacy": "public",
               "type": {
                 "text": "GraphNode[] | undefined"
               }
@@ -6429,7 +6395,6 @@
             {
               "kind": "field",
               "name": "finalNodePositions",
-              "privacy": "public",
               "type": {
                 "text": "Map<string, NodePosition> | undefined"
               }
@@ -6437,7 +6402,6 @@
             {
               "kind": "field",
               "name": "clusterPositions",
-              "privacy": "public",
               "type": {
                 "text": "Map<string, ClusterPosition> | undefined"
               }
@@ -6445,7 +6409,6 @@
             {
               "kind": "field",
               "name": "selectedNode",
-              "privacy": "public",
               "type": {
                 "text": "GraphNode | null | undefined"
               }
@@ -6453,7 +6416,6 @@
             {
               "kind": "field",
               "name": "hoveredNode",
-              "privacy": "public",
               "type": {
                 "text": "string | null | undefined"
               }
@@ -6461,7 +6423,6 @@
             {
               "kind": "field",
               "name": "clusterId",
-              "privacy": "public",
               "type": {
                 "text": "string | undefined"
               },
@@ -6470,7 +6431,6 @@
             {
               "kind": "field",
               "name": "hoveredClusterId",
-              "privacy": "public",
               "type": {
                 "text": "string | null | undefined"
               },
@@ -6479,7 +6439,6 @@
             {
               "kind": "field",
               "name": "viewMode",
-              "privacy": "public",
               "type": {
                 "text": "ViewMode | undefined"
               },
@@ -6488,7 +6447,6 @@
             {
               "kind": "field",
               "name": "transitiveDeps",
-              "privacy": "public",
               "type": {
                 "text": "| {\n        nodes: Set<string>;\n        edges: Set<string>;\n        edgeDepths: Map<string, number>;\n        maxDepth: number;\n      }\n    | undefined"
               },
@@ -6499,7 +6457,6 @@
             {
               "kind": "field",
               "name": "transitiveDependents",
-              "privacy": "public",
               "type": {
                 "text": "| {\n        nodes: Set<string>;\n        edges: Set<string>;\n        edgeDepths: Map<string, number>;\n        maxDepth: number;\n      }\n    | undefined"
               },
@@ -6510,7 +6467,6 @@
             {
               "kind": "field",
               "name": "zoom",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -6865,6 +6821,19 @@
                   "name": "e",
                   "type": {
                     "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyDown",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "e",
+                  "type": {
+                    "text": "KeyboardEvent"
                   }
                 }
               ]
@@ -7254,7 +7223,6 @@
             {
               "kind": "field",
               "name": "cluster",
-              "privacy": "public",
               "type": {
                 "text": "Cluster | undefined"
               }
@@ -7262,7 +7230,6 @@
             {
               "kind": "field",
               "name": "clusterPosition",
-              "privacy": "public",
               "type": {
                 "text": "ClusterPosition | undefined"
               }
@@ -7270,7 +7237,6 @@
             {
               "kind": "field",
               "name": "nodes",
-              "privacy": "public",
               "type": {
                 "text": "GraphNodeType[] | undefined"
               }
@@ -7278,7 +7244,6 @@
             {
               "kind": "field",
               "name": "edges",
-              "privacy": "public",
               "type": {
                 "text": "GraphEdge[] | undefined"
               }
@@ -7286,7 +7251,6 @@
             {
               "kind": "field",
               "name": "finalNodePositions",
-              "privacy": "public",
               "type": {
                 "text": "Map<string, NodePosition> | undefined"
               }
@@ -7294,7 +7258,6 @@
             {
               "kind": "field",
               "name": "selectedNode",
-              "privacy": "public",
               "type": {
                 "text": "GraphNodeType | null | undefined"
               }
@@ -7302,7 +7265,6 @@
             {
               "kind": "field",
               "name": "hoveredNode",
-              "privacy": "public",
               "type": {
                 "text": "string | null | undefined"
               }
@@ -7310,7 +7272,6 @@
             {
               "kind": "field",
               "name": "hoveredClusterId",
-              "privacy": "public",
               "type": {
                 "text": "string | null | undefined"
               }
@@ -7318,7 +7279,6 @@
             {
               "kind": "field",
               "name": "searchQuery",
-              "privacy": "public",
               "type": {
                 "text": "string | undefined"
               },
@@ -7327,7 +7287,6 @@
             {
               "kind": "field",
               "name": "zoom",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -7336,7 +7295,6 @@
             {
               "kind": "field",
               "name": "viewMode",
-              "privacy": "public",
               "type": {
                 "text": "ViewMode | undefined"
               },
@@ -7345,7 +7303,6 @@
             {
               "kind": "field",
               "name": "transitiveDeps",
-              "privacy": "public",
               "type": {
                 "text": "TransitiveResult | undefined"
               }
@@ -7353,7 +7310,6 @@
             {
               "kind": "field",
               "name": "transitiveDependents",
-              "privacy": "public",
               "type": {
                 "text": "TransitiveResult | undefined"
               }
@@ -7361,7 +7317,6 @@
             {
               "kind": "field",
               "name": "isSelected",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },
@@ -7370,7 +7325,6 @@
             {
               "kind": "field",
               "name": "previewFilter",
-              "privacy": "public",
               "type": {
                 "text": "PreviewFilter | undefined"
               }
@@ -7378,11 +7332,10 @@
             {
               "kind": "field",
               "name": "isClusterHovered",
-              "privacy": "private",
               "type": {
                 "text": "boolean | undefined"
               },
-              "attribute": "isClusterHovered"
+              "privacy": "private"
             },
             {
               "kind": "field",
@@ -7637,13 +7590,6 @@
                 "text": "boolean | undefined"
               },
               "fieldName": "isSelected"
-            },
-            {
-              "name": "isClusterHovered",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "fieldName": "isClusterHovered"
             }
           ],
           "superclass": {
@@ -7692,7 +7638,6 @@
             {
               "kind": "field",
               "name": "clusterId",
-              "privacy": "public",
               "type": {
                 "text": "string | undefined"
               },
@@ -7701,7 +7646,6 @@
             {
               "kind": "field",
               "name": "x",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -7710,7 +7654,6 @@
             {
               "kind": "field",
               "name": "y",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -7719,7 +7662,6 @@
             {
               "kind": "field",
               "name": "width",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -7728,7 +7670,6 @@
             {
               "kind": "field",
               "name": "height",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -7737,7 +7678,6 @@
             {
               "kind": "field",
               "name": "color",
-              "privacy": "public",
               "type": {
                 "text": "string | undefined"
               },
@@ -7746,7 +7686,6 @@
             {
               "kind": "field",
               "name": "nodeCount",
-              "privacy": "public",
               "type": {
                 "text": "number | undefined"
               },
@@ -7755,7 +7694,6 @@
             {
               "kind": "field",
               "name": "origin",
-              "privacy": "public",
               "type": {
                 "text": "Origin | undefined"
               },
@@ -7764,7 +7702,6 @@
             {
               "kind": "field",
               "name": "isHovered",
-              "privacy": "public",
               "type": {
                 "text": "boolean | undefined"
               },

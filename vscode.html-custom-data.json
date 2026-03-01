@@ -339,11 +339,6 @@
           "name": "show-kind",
           "description": "Whether to show dependency kind badges",
           "values": []
-        },
-        {
-          "name": "expanded",
-          "description": "Whether to start expanded (default: true)",
-          "values": []
         }
       ],
       "references": []
@@ -589,8 +584,7 @@
         { "name": "search-query", "values": [] },
         { "name": "zoom", "values": [] },
         { "name": "view-mode", "values": [{ "name": "ViewMode" }] },
-        { "name": "is-selected", "values": [] },
-        { "name": "isClusterHovered", "values": [] }
+        { "name": "is-selected", "values": [] }
       ],
       "references": []
     },

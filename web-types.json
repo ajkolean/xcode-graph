@@ -96,7 +96,8 @@
               { "name": "showDirectDeps", "type": "boolean" },
               { "name": "showTransitiveDeps", "type": "boolean" },
               { "name": "showDirectDependents", "type": "boolean" },
-              { "name": "showTransitiveDependents", "type": "boolean" }
+              { "name": "showTransitiveDependents", "type": "boolean" },
+              { "name": "resize" }
             ],
             "events": [
               {
@@ -969,11 +970,6 @@
               "name": "show-kind",
               "description": "Whether to show dependency kind badges",
               "value": { "type": "boolean", "default": "true" }
-            },
-            {
-              "name": "expanded",
-              "description": "Whether to start expanded (default: true)",
-              "value": { "type": "boolean", "default": "true" }
             }
           ],
           "events": [
@@ -1019,11 +1015,6 @@
               {
                 "name": "showKind",
                 "description": "Whether to show dependency kind badges",
-                "type": "boolean"
-              },
-              {
-                "name": "expanded",
-                "description": "Whether to start expanded (default: true)",
                 "type": "boolean"
               }
             ],
@@ -1485,7 +1476,8 @@
                 "name": "searchQuery",
                 "description": "The current search query",
                 "type": "string"
-              }
+              },
+              { "name": "shortcut" }
             ],
             "events": [
               {
@@ -1944,10 +1936,6 @@
             },
             {
               "name": "is-selected",
-              "value": { "type": "boolean | undefined" }
-            },
-            {
-              "name": "isClusterHovered",
               "value": { "type": "boolean | undefined" }
             }
           ],
@@ -2475,7 +2463,9 @@
               "value": { "type": "boolean", "default": "true" }
             }
           ],
-          "slots": [{ "name": "", "description": "Default slot for section content" }],
+          "slots": [
+            { "name": "", "description": "Default slot for section content" }
+          ],
           "events": [],
           "js": {
             "properties": [

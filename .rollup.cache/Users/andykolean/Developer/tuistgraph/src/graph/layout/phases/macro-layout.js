@@ -1,0 +1,189 @@
+// ============================================================================
+// ELK Graph Construction Helpers
+// ============================================================================
+function buildElkChildren(clusterGraph, microLayouts, config) {
+    return clusterGraph.nodes.map((cluster) => {
+        const micro = microLayouts.get(cluster.id);
+        const hierarchyHandling = cluster.elkOptions?.hierarchyHandling ?? config.elkHierarchyHandling;
+        return {
+            id: cluster.id,
+            width: micro?.width ?? config.minClusterSize,
+            height: micro?.height ?? config.minClusterSize,
+            layoutOptions: {
+                'org.eclipse.elk.nodeLabels.placement': 'OUTSIDE V_TOP H_CENTER',
+                'elk.hierarchyHandling': hierarchyHandling,
+            },
+        };
+    });
+}
+function buildElkEdges(clusterGraph) {
+    return clusterGraph.edges.map((e) => ({
+        id: `e_${e.source}_${e.target}`,
+        sources: [e.source],
+        targets: [e.target],
+        layoutOptions: {
+            'elk.layered.priority.direction': String(Math.min(10, 1 + Math.log2(e.weight ?? 1))),
+            'elk.layered.priority.shortness': String(Math.min(10, 1 + Math.log2(e.weight ?? 1))),
+            'elk.edge.thickness': String(1 + Math.log2(e.weight ?? 1)),
+        },
+    }));
+}
+function buildElkRoot(children, edges, config, elkWidthHint) {
+    return {
+        id: 'root',
+        width: elkWidthHint,
+        height: config.elkMaxHeight,
+        children,
+        edges,
+        layoutOptions: {
+            'elk.algorithm': 'layered',
+            'elk.direction': config.elkDirection,
+            'elk.spacing.nodeNode': String(config.elkNodeSpacing),
+            'elk.layered.spacing.nodeNodeBetweenLayers': String(config.elkLayerSpacing),
+            'elk.edgeRouting': 'POLYLINE',
+            'elk.hierarchyHandling': config.elkHierarchyHandling,
+            'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
+            'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+            'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
+            'elk.layered.layering.strategy': 'MIN_WIDTH',
+            'elk.layered.layering.minWidth.upperBoundOnWidth': String(elkWidthHint),
+            'org.eclipse.elk.layered.generatePositionAndLayerIds': 'true',
+        },
+    };
+}
+// ============================================================================
+// Post-Compaction Helpers
+// ============================================================================
+function groupIntoBands(layoutChildren, ySnap) {
+    const bands = new Map();
+    for (const node of layoutChildren) {
+        let bandIndex = node['org.eclipse.elk.layered.layering.layerId'];
+        if (typeof bandIndex !== 'number') {
+            const cy = (node.y ?? 0) + (node.height ?? 0) / 2;
+            bandIndex = Math.floor(cy / ySnap);
+        }
+        if (!bands.has(bandIndex))
+            bands.set(bandIndex, []);
+        bands.get(bandIndex)?.push(node);
+    }
+    return bands;
+}
+function sortBandNodes(nodes) {
+    nodes.sort((a, b) => {
+        const posA = a['org.eclipse.elk.layered.crossingMinimization.positionId'];
+        const posB = b['org.eclipse.elk.layered.crossingMinimization.positionId'];
+        if (typeof posA === 'number' && typeof posB === 'number') {
+            return posA - posB;
+        }
+        return (a.x ?? 0) - (b.x ?? 0);
+    });
+}
+function getEffectiveDiameter(node) {
+    return Math.max(node.width ?? 100, node.height ?? 100) + 60;
+}
+function wrapNodesIntoRows(nodes, spacing, maxWidth) {
+    const rows = [[]];
+    let currentRowWidth = 0;
+    for (const node of nodes) {
+        const wEff = getEffectiveDiameter(node);
+        const currentRow = rows[rows.length - 1];
+        const nextWidth = currentRow && currentRow.length === 0 ? wEff : currentRowWidth + spacing + wEff;
+        if (nextWidth > maxWidth && currentRow && currentRow.length > 0) {
+            rows.push([]);
+            currentRowWidth = wEff;
+        }
+        else {
+            currentRowWidth = nextWidth;
+        }
+        const lastRow = rows[rows.length - 1];
+        if (lastRow)
+            lastRow.push(node);
+    }
+    return rows;
+}
+function layoutRow(row, spacing, currentY) {
+    const rowItems = row.map((n) => ({
+        node: n,
+        r: getEffectiveDiameter(n) / 2,
+    }));
+    const totalWidth = rowItems.reduce((sum, item, i) => {
+        return sum + item.r * 2 + (i < rowItems.length - 1 ? spacing : 0);
+    }, 0);
+    let currentCX = -totalWidth / 2 + (rowItems[0]?.r ?? 0);
+    for (let i = 0; i < rowItems.length; i++) {
+        const item = rowItems[i];
+        if (!item)
+            continue;
+        const { node, r } = item;
+        node.x = currentCX - (node.width ?? 0) / 2;
+        node.y = currentY - (node.height ?? 0) / 2;
+        if (i < rowItems.length - 1) {
+            const nextItem = rowItems[i + 1];
+            const nextR = nextItem ? nextItem.r : 0;
+            currentCX += r + spacing + nextR;
+        }
+    }
+}
+function compactBands(layoutChildren, config, packMaxWidth) {
+    const bands = groupIntoBands(layoutChildren, config.elkLayerSpacing);
+    const sortedBands = Array.from(bands.entries()).sort((a, b) => a[0] - b[0]);
+    let yCursor = 0;
+    for (const [_, nodes] of sortedBands) {
+        sortBandNodes(nodes);
+        const rows = wrapNodesIntoRows(nodes, config.elkNodeSpacing, packMaxWidth);
+        let currentY = yCursor;
+        for (const row of rows) {
+            const maxRowH = row.reduce((max, n) => Math.max(max, n.height ?? 100), 0);
+            const rowGap = 100;
+            layoutRow(row, config.elkNodeSpacing, currentY);
+            currentY += maxRowH + rowGap;
+        }
+        yCursor = currentY + (config.elkLayerSpacing - 100);
+    }
+}
+// ============================================================================
+// Position Extraction
+// ============================================================================
+function extractPositions(layoutChildren) {
+    const positions = new Map();
+    for (const node of layoutChildren) {
+        const cx = (node.x ?? 0) + (node.width ?? 0) / 2;
+        const cy = (node.y ?? 0) + (node.height ?? 0) / 2;
+        positions.set(node.id, {
+            id: node.id,
+            x: cx,
+            y: cy,
+            width: node.width ?? 100,
+            height: node.height ?? 100,
+            nodeCount: 0,
+            vx: 0,
+            vy: 0,
+        });
+    }
+    return positions;
+}
+// ============================================================================
+// Public API
+// ============================================================================
+/**
+ * Compute macro-layout (inter-cluster) using ELK Layered algorithm
+ * "Tectonic Plates" stage
+ */
+export async function computeMacroLayout(clusterGraph, microLayouts, config) {
+    const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
+    const elk = new ELK();
+    const elkWidthHint = 10000;
+    // 1. Build ELK Graph
+    const children = buildElkChildren(clusterGraph, microLayouts, config);
+    const edges = buildElkEdges(clusterGraph);
+    const root = buildElkRoot(children, edges, config, elkWidthHint);
+    // 2. Run Layout
+    const layout = await elk.layout(root);
+    // 3. Post-Compaction & Centering
+    if (layout.children) {
+        compactBands(layout.children, config, elkWidthHint);
+    }
+    // 4. Extract Positions
+    return layout.children ? extractPositions(layout.children) : new Map();
+}
+//# sourceMappingURL=macro-layout.js.map

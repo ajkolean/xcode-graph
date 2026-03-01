@@ -1,0 +1,185 @@
+/**
+ * Progressive Graph Loading Service
+ *
+ * Loads and renders large graphs incrementally to prevent UI blocking.
+ * Uses chunking strategy to progressively build the graph.
+ *
+ * Benefits:
+ * - Large graphs don't freeze the UI on load
+ * - Users see partial graph immediately
+ * - Better perceived performance
+ * - Priority-based loading (visible clusters first)
+ */
+export class GraphLoader {
+    config;
+    /**
+     * Priority ordering for node types during loading
+     * Lower numbers are loaded first
+     */
+    static TYPE_PRIORITY = {
+        app: 1,
+        framework: 2,
+        library: 3,
+        cli: 4,
+        package: 5,
+        'test-unit': 6,
+        'test-ui': 7,
+    };
+    constructor(config = {}) {
+        this.config = {
+            chunkSize: config.chunkSize ?? 100,
+            delayBetweenChunks: config.delayBetweenChunks ?? 10,
+            priorityClusterIds: config.priorityClusterIds ?? [],
+        };
+    }
+    /**
+     * Load graph progressively with callbacks for each chunk
+     */
+    async loadGraphProgressive(nodes, edges, onProgress) {
+        if (nodes.length === 0) {
+            onProgress({
+                type: 'complete',
+                loadedNodes: 0,
+                totalNodes: 0,
+                loadedEdges: 0,
+                totalEdges: 0,
+                percentage: 100,
+            });
+            return { nodes: [], edges: [] };
+        }
+        // Prioritize nodes by cluster
+        const prioritizedNodes = this.prioritizeNodes(nodes);
+        const loadedNodes = [];
+        const loadedNodeIds = new Set();
+        // Load nodes in chunks
+        for (let i = 0; i < prioritizedNodes.length; i += this.config.chunkSize) {
+            const chunk = prioritizedNodes.slice(i, i + this.config.chunkSize);
+            loadedNodes.push(...chunk);
+            chunk.forEach((node) => {
+                loadedNodeIds.add(node.id);
+            });
+            // Find edges for this chunk
+            const chunkEdges = edges.filter((edge) => loadedNodeIds.has(edge.source) && loadedNodeIds.has(edge.target));
+            // Send progress update
+            onProgress({
+                type: 'chunk',
+                loadedNodes: loadedNodes.length,
+                totalNodes: nodes.length,
+                loadedEdges: chunkEdges.length,
+                totalEdges: edges.length,
+                percentage: (loadedNodes.length / nodes.length) * 100,
+                chunk: {
+                    nodes: chunk,
+                    edges: chunkEdges,
+                },
+            });
+            // Yield to UI thread
+            if (i + this.config.chunkSize < prioritizedNodes.length) {
+                await this.delay(this.config.delayBetweenChunks);
+            }
+        }
+        // Final complete message
+        onProgress({
+            type: 'complete',
+            loadedNodes: nodes.length,
+            totalNodes: nodes.length,
+            loadedEdges: edges.length,
+            totalEdges: edges.length,
+            percentage: 100,
+        });
+        return { nodes, edges };
+    }
+    /**
+     * Load graph by cluster priority
+     * Loads priority clusters first, then others
+     */
+    async loadByClusterPriority(clusters, nodes, edges, onProgress) {
+        const priorityClusters = clusters.filter((c) => this.config.priorityClusterIds.includes(c.id));
+        const otherClusters = clusters.filter((c) => !this.config.priorityClusterIds.includes(c.id));
+        const orderedClusters = [...priorityClusters, ...otherClusters];
+        const loadedNodes = [];
+        const loadedNodeIds = new Set();
+        // Load cluster by cluster
+        for (let i = 0; i < orderedClusters.length; i++) {
+            const cluster = orderedClusters[i];
+            if (!cluster)
+                continue;
+            const clusterNodes = cluster.nodes;
+            loadedNodes.push(...clusterNodes);
+            clusterNodes.forEach((node) => {
+                loadedNodeIds.add(node.id);
+            });
+            // Find edges for loaded nodes so far
+            const currentEdges = edges.filter((edge) => loadedNodeIds.has(edge.source) && loadedNodeIds.has(edge.target));
+            onProgress({
+                type: 'chunk',
+                loadedNodes: loadedNodes.length,
+                totalNodes: nodes.length,
+                loadedEdges: currentEdges.length,
+                totalEdges: edges.length,
+                percentage: (loadedNodes.length / nodes.length) * 100,
+                chunk: {
+                    nodes: clusterNodes,
+                    edges: currentEdges,
+                },
+            });
+            // Yield to UI
+            if (i + 1 < orderedClusters.length) {
+                await this.delay(this.config.delayBetweenChunks);
+            }
+        }
+        onProgress({
+            type: 'complete',
+            loadedNodes: nodes.length,
+            totalNodes: nodes.length,
+            loadedEdges: edges.length,
+            totalEdges: edges.length,
+            percentage: 100,
+        });
+        return { nodes, edges };
+    }
+    /**
+     * Estimate load time for a graph
+     */
+    estimateLoadTime(nodeCount) {
+        const chunks = Math.ceil(nodeCount / this.config.chunkSize);
+        const estimatedMs = chunks * this.config.delayBetweenChunks;
+        let recommendation;
+        if (nodeCount < 100) {
+            recommendation = 'instant';
+        }
+        else if (nodeCount < 500) {
+            recommendation = 'fast';
+        }
+        else {
+            recommendation = 'progressive';
+        }
+        return { chunks, estimatedMs, recommendation };
+    }
+    // ========================================
+    // Private Helpers
+    // ========================================
+    prioritizeNodes(nodes) {
+        // Prioritize by:
+        // 1. Priority clusters (if specified)
+        // 2. Node type (apps/frameworks first, tests last)
+        // 3. Number of dependencies (hubs first)
+        return nodes.slice().sort((a, b) => {
+            // Priority clusters
+            const aIsPriority = this.config.priorityClusterIds.includes(a.project || '');
+            const bIsPriority = this.config.priorityClusterIds.includes(b.project || '');
+            if (aIsPriority && !bIsPriority)
+                return -1;
+            if (!aIsPriority && bIsPriority)
+                return 1;
+            // Node type priority
+            const aPriority = GraphLoader.TYPE_PRIORITY[a.type] || 10;
+            const bPriority = GraphLoader.TYPE_PRIORITY[b.type] || 10;
+            return aPriority - bPriority;
+        });
+    }
+    delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+}
+//# sourceMappingURL=graph-loader.js.map

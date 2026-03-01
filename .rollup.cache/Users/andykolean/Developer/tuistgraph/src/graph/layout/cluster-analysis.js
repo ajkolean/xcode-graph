@@ -1,0 +1,185 @@
+import { NodeRole } from '@shared/schemas';
+import { NodeType } from '@shared/schemas/graph.types';
+/**
+ * Analyzes a cluster to determine node roles, anchors, and layers
+ */
+export function analyzeCluster(cluster, allEdges) {
+    const nodeIds = new Set(cluster.nodes.map((n) => n.id));
+    // Build dependency maps
+    const dependents = new Map();
+    const dependencies = new Map();
+    cluster.nodes.forEach((node) => {
+        dependents.set(node.id, new Set());
+        dependencies.set(node.id, new Set());
+    });
+    allEdges.forEach((edge) => {
+        if (nodeIds.has(edge.source) && nodeIds.has(edge.target)) {
+            dependencies.get(edge.source)?.add(edge.target);
+            dependents.get(edge.target)?.add(edge.source);
+        }
+    });
+    // Count external dependents
+    const externalDependents = new Map();
+    cluster.nodes.forEach((node) => {
+        const count = allEdges.filter((e) => e.target === node.id && !nodeIds.has(e.source)).length;
+        externalDependents.set(node.id, count);
+    });
+    // 1. Identify test nodes and their subjects
+    const testNodes = new Set();
+    const testSubjects = new Map();
+    cluster.nodes.forEach((node) => {
+        if (node.type === NodeType.TestUnit || node.type === NodeType.TestUi) {
+            testNodes.add(node.id);
+            // Find what this test depends on (its subjects)
+            const subjects = Array.from(dependencies.get(node.id) || []).filter((depId) => {
+                const depNode = cluster.nodes.find((n) => n.id === depId);
+                return depNode && depNode.type !== NodeType.TestUnit && depNode.type !== NodeType.TestUi;
+            });
+            if (subjects.length > 0) {
+                testSubjects.set(node.id, subjects);
+            }
+        }
+    });
+    // 2. Identify anchors (entry points)
+    const nonTestNodes = cluster.nodes.filter((n) => !testNodes.has(n.id));
+    const anchors = identifyAnchors(nonTestNodes, dependents, externalDependents);
+    cluster.anchors = anchors.map((n) => n.id);
+    // 3. Assign layers based on internal connectivity (edge count within cluster)
+    const layers = assignLayers(nonTestNodes, anchors, dependencies, testNodes);
+    // 4. Determine roles and create metadata
+    cluster.nodes.forEach((node) => {
+        const role = determineRole(node, testNodes.has(node.id), cluster.anchors.includes(node.id), dependents.get(node.id)?.size || 0);
+        const metadata = {
+            nodeId: node.id,
+            role,
+            layer: testNodes.has(node.id) ? -1 : layers.get(node.id) || 0,
+            isAnchor: cluster.anchors.includes(node.id),
+            hasExternalDependents: (externalDependents.get(node.id) || 0) > 0,
+            testSubjects: testSubjects.get(node.id),
+            dependencyCount: dependents.get(node.id)?.size || 0,
+            dependsOnCount: dependencies.get(node.id)?.size || 0,
+        };
+        cluster.metadata.set(node.id, metadata);
+    });
+}
+/**
+ * Identifies anchor nodes (entry points) for a cluster
+ * Priority: Apps > CLIs > Most-depended-upon frameworks/libs
+ */
+export function identifyAnchors(nodes, dependents, externalDependents) {
+    // 1. Try apps first
+    const apps = nodes.filter((n) => n.type === NodeType.App);
+    if (apps.length > 0)
+        return apps;
+    // 2. Try CLIs
+    const clis = nodes.filter((n) => n.type === NodeType.Cli);
+    if (clis.length > 0)
+        return clis;
+    // 3. Try frameworks/libs with external dependents
+    const externalEntryPoints = nodes.filter((n) => (n.type === NodeType.Framework || n.type === NodeType.Library) &&
+        (externalDependents.get(n.id) || 0) > 0);
+    if (externalEntryPoints.length > 0) {
+        // Return the one with most external dependents
+        const sorted = externalEntryPoints.toSorted((a, b) => (externalDependents.get(b.id) || 0) - (externalDependents.get(a.id) || 0));
+        const top = sorted[0];
+        return top ? [top] : [];
+    }
+    // 4. Fallback: most-depended-upon node
+    const sorted = nodes.toSorted((a, b) => (dependents.get(b.id)?.size || 0) - (dependents.get(a.id)?.size || 0));
+    const first = sorted[0];
+    return first ? [first] : [];
+}
+// Helper: Count internal dependencies for a node
+function countInternalDependencies(_nodeId, deps, nodeIds, testNodes) {
+    let count = 0;
+    for (const depId of deps) {
+        if (nodeIds.has(depId) && !testNodes.has(depId)) {
+            count++;
+        }
+    }
+    return count;
+}
+// Helper: Count internal dependents for a node
+function countInternalDependents(nodeId, nodes, dependencies, testNodes) {
+    let count = 0;
+    for (const otherNode of nodes) {
+        if (otherNode.id !== nodeId && !testNodes.has(otherNode.id)) {
+            const otherDeps = dependencies.get(otherNode.id) || new Set();
+            if (otherDeps.has(nodeId)) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+// Helper: Calculate internal edge counts for all nodes
+function calculateInternalEdgeCounts(nodes, dependencies, testNodes) {
+    const internalEdgeCounts = new Map();
+    const nodeIds = new Set(nodes.map((n) => n.id));
+    for (const node of nodes) {
+        if (testNodes.has(node.id))
+            continue;
+        const deps = dependencies.get(node.id) || new Set();
+        const depsCount = countInternalDependencies(node.id, deps, nodeIds, testNodes);
+        const dependentsCount = countInternalDependents(node.id, nodes, dependencies, testNodes);
+        internalEdgeCounts.set(node.id, depsCount + dependentsCount);
+    }
+    return internalEdgeCounts;
+}
+// Helper: Distribute nodes into layers
+function distributeIntoLayers(sortedNodes, layers) {
+    if (sortedNodes.length === 0)
+        return;
+    const targetNodesPerLayer = 4;
+    const numLayers = Math.max(2, Math.ceil(sortedNodes.length / targetNodesPerLayer));
+    const nodesPerLayer = Math.ceil(sortedNodes.length / numLayers);
+    for (let index = 0; index < sortedNodes.length; index++) {
+        const node = sortedNodes[index];
+        if (!node)
+            continue;
+        const layer = Math.min(numLayers, Math.floor(index / nodesPerLayer) + 1);
+        layers.set(node.id, layer);
+    }
+}
+/**
+ * Assigns layer numbers based on internal connectivity (edge count within cluster)
+ * Nodes with more internal edges are placed in inner rings (lower layer numbers)
+ * Nodes with fewer internal edges are placed in outer rings (higher layer numbers)
+ */
+export function assignLayers(nodes, anchors, dependencies, testNodes) {
+    const layers = new Map();
+    const internalEdgeCounts = calculateInternalEdgeCounts(nodes, dependencies, testNodes);
+    // Anchors always get layer 0
+    for (const anchor of anchors) {
+        layers.set(anchor.id, 0);
+    }
+    // Sort remaining nodes by internal edge count (descending)
+    const nonAnchorNodes = nodes.filter((n) => !anchors.some((a) => a.id === n.id) && !testNodes.has(n.id));
+    const sortedByConnectivity = [...nonAnchorNodes].sort((a, b) => {
+        const countA = internalEdgeCounts.get(a.id) || 0;
+        const countB = internalEdgeCounts.get(b.id) || 0;
+        return countB - countA;
+    });
+    distributeIntoLayers(sortedByConnectivity, layers);
+    return layers;
+}
+/**
+ * Determines the role of a node
+ */
+export function determineRole(node, isTest, isAnchor, dependentCount) {
+    if (isTest)
+        return NodeRole.Test;
+    if (isAnchor)
+        return NodeRole.Entry;
+    if (node.type === NodeType.Cli)
+        return NodeRole.Tool;
+    // Frameworks and packages are always internal-framework
+    if (node.type === NodeType.Framework || node.type === NodeType.Package) {
+        return NodeRole.InternalFramework;
+    }
+    if (node.type === NodeType.Library) {
+        return dependentCount >= 2 ? NodeRole.InternalLib : NodeRole.Utility;
+    }
+    return NodeRole.Utility;
+}
+//# sourceMappingURL=cluster-analysis.js.map

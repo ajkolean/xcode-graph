@@ -29,14 +29,17 @@
     "d3-force": "^3.0.0",
     "elkjs": "^0.11.0",
     "lit": "^3.3.2",
+    "lit-html": "^3.3.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.4",
     "@custom-elements-manifest/analyzer": "^0.11.0",
+    "@lit-labs/compiler": "^1.1.2",
     "@lit-labs/signals": "^0.2.0",
     "@microsoft/api-extractor": "^7.57.5",
     "@open-wc/testing": "^4.0.0",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@types/d3-force": "^3.0.10",
     "@types/node": "^25.3.0",
     "@vitest/browser-playwright": "^4.0.18",
