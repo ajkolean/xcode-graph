@@ -16,7 +16,7 @@
       "complexity": {
         "noUselessFragments": "warn",
         "useOptionalChain": "warn",
-        "noBannedTypes": "off",
+        "noBannedTypes": "warn",
         "noExcessiveCognitiveComplexity": {
           "level": "warn",
           "options": {
@@ -25,16 +25,16 @@
         }
       },
       "correctness": {
-        "noUnusedImports": "warn",
-        "noUnusedVariables": "warn"
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
       },
       "style": {
-        "noNonNullAssertion": "off",
+        "noNonNullAssertion": "warn",
         "useConst": "warn",
         "useImportType": "warn"
       },
       "suspicious": {
-        "noExplicitAny": "warn",
+        "noExplicitAny": "error",
         "noArrayIndexKey": "warn"
       }
     }
