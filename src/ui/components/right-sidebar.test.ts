@@ -308,21 +308,26 @@ describe('graph-right-sidebar - Panel Switching', () => {
       ></graph-right-sidebar>
     `);
 
+    // Filter view shows workspace name derived from nodes
     let header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
-    expect(header?.getAttribute('title')).to.equal('Project Overview');
+    expect(header?.getAttribute('title')).to.equal('MyApp');
 
+    // Node details replaces header with details toolbar
     selectNode(mockNodes[0]!);
     await el.updateComplete;
 
     header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
-    expect(header?.getAttribute('title')).to.equal('Node Details');
+    expect(header).to.not.exist;
+    const toolbar = el.shadowRoot?.querySelector('.details-toolbar');
+    expect(toolbar).to.exist;
 
+    // Cluster details also uses toolbar instead of header
     selectNode(null);
     selectCluster('MyApp');
     await el.updateComplete;
 
     header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
-    expect(header?.getAttribute('title')).to.equal('Cluster Details');
+    expect(header).to.not.exist;
   });
 });
 
@@ -331,6 +336,12 @@ describe('graph-right-sidebar - Panel Switching', () => {
 // ========================================
 
 describe('graph-right-sidebar - State Management', () => {
+  beforeEach(() => {
+    selectNode(null);
+    selectCluster(null);
+    setSearchQuery('');
+  });
+
   it('should track collapsed state', async () => {
     const el = await fixture<GraphRightSidebar>(html`
       <graph-right-sidebar
@@ -439,6 +450,12 @@ describe('graph-right-sidebar - Filter Logic', () => {
 // ========================================
 
 describe('graph-right-sidebar - Edge Cases', () => {
+  beforeEach(() => {
+    selectNode(null);
+    selectCluster(null);
+    setSearchQuery('');
+  });
+
   it('should handle empty nodes array', async () => {
     const el = await fixture<GraphRightSidebar>(html`
       <graph-right-sidebar

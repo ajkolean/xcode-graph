@@ -34,7 +34,5 @@ export default defineConfig({
     format: 'es',
     plugins: () => [],
   },
-  optimizeDeps: {
-    exclude: ['comlink'],
-  },
+  optimizeDeps: {},
 });

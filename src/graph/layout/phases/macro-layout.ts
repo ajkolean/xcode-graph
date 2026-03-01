@@ -1,5 +1,5 @@
 import type { ClusterPosition } from '@shared/schemas';
-import ELK, { type ElkExtendedEdge, type ElkNode } from 'elkjs/lib/elk.bundled.js';
+import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk-api.js';
 import type { ClusterGraph } from '../cluster-graph';
 import type { LayoutConfig } from '../config';
 import type { MicroLayoutResult } from './micro-layout';
@@ -228,6 +228,7 @@ export async function computeMacroLayout(
   microLayouts: Map<string, MicroLayoutResult>,
   config: LayoutConfig,
 ): Promise<Map<string, ClusterPosition>> {
+  const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
   const elk = new ELK();
   const elkWidthHint = 10000;
 

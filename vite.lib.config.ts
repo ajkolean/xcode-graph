@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 /**
@@ -14,7 +15,13 @@ import { defineConfig } from 'vite';
  *   <script type="module" src="https://cdn.jsdelivr.net/npm/@tuist/graph/dist/tuistgraph.js"></script>
  */
 export default defineConfig({
-  plugins: [],
+  plugins: [
+    visualizer({
+      filename: 'dist/bundle-stats.html',
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   esbuild: {
     target: 'esnext',
     tsconfigRaw: {
@@ -44,6 +51,9 @@ export default defineConfig({
     rollupOptions: {
       // Bundle everything — no externals for CDN usage
       external: [],
+      output: {
+        chunkFileNames: '[name].js',
+      },
     },
     cssCodeSplit: false,
     // Inline CSS into JS so consumers only need one <script> tag

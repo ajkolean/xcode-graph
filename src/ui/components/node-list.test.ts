@@ -36,7 +36,7 @@ describe('graph-node-list', () => {
     `);
 
     expect(el).to.exist;
-    const header = el.shadowRoot?.querySelector('graph-section-header');
+    const header = el.shadowRoot?.querySelector('.header');
     expect(header).to.exist;
   });
 
@@ -74,8 +74,8 @@ describe('graph-node-list', () => {
       ></graph-node-list>
     `);
 
-    const header = el.shadowRoot?.querySelector('graph-section-header');
-    expect(header?.getAttribute('suffix')).to.equal('direct');
+    const countText = el.shadowRoot?.querySelector('.count');
+    expect(countText?.textContent).to.contain('direct');
   });
 
   it('should dispatch node-select event', async () => {
