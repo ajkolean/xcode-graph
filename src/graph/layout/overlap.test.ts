@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { xcodeGraphData } from '@/fixtures/xcode-graph-data';
 import { analyzeCluster } from './cluster-analysis';
 import { groupIntoClusters } from './cluster-grouping';
-import { computeHierarchicalLayout } from './engine';
+import { computeHierarchicalLayout } from './hierarchical-layout';
 
 function checkCircularOverlap(
   c1: ClusterPosition,

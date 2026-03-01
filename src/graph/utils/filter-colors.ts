@@ -3,7 +3,7 @@
  *
  * Color generation utilities for filtering graph nodes.
  *
- * @module utils/graph/filters
+ * @module utils/graph/filter-colors
  */
 
 import { generateColor } from '@ui/utils/color-generator';

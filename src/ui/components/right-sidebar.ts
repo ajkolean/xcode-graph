@@ -15,7 +15,7 @@
  * ```
  */
 
-import { generateColorMap } from '@graph/utils/filters';
+import { generateColorMap } from '@graph/utils/filter-colors';
 import { computeFilters } from '@graph/utils/node-utils';
 import { SignalWatcher } from '@lit-labs/signals';
 import { FocusTrapController } from '@shared/controllers/focus-trap.controller';

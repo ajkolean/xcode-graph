@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generateColorMap } from './filters';
+import { generateColorMap } from './filter-colors';
 
 describe('filterHelpers', () => {
   describe('generateColorMap', () => {

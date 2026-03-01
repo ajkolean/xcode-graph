@@ -8,7 +8,7 @@
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { LayoutOptions } from './config';
-import { computeHierarchicalLayout as computeEngine } from './engine';
+import { computeHierarchicalLayout as computeEngine } from './hierarchical-layout';
 import type { HierarchicalLayoutResult } from './types';
 
 export {

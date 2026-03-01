@@ -29,7 +29,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
 import './badge.js';
 import './list-item-row.js';
-import { NodeListEventsBase } from './node-list-events';
+import { NodeListEventsBase } from './node-list-base';
 
 /** Dependency kind colors and labels */
 const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> = {

@@ -72,6 +72,16 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
-    plugins: () => [],
+    plugins: () => [
+      typescript({
+        exclude: ['**/*.test.ts', '**/*.spec.ts'],
+        compilerOptions: {
+          composite: false,
+          declaration: false,
+          declarationMap: false,
+          importHelpers: false,
+        },
+      }),
+    ],
   },
 });

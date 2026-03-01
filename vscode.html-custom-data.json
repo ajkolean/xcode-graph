@@ -3,6 +3,12 @@
   "version": 1.1,
   "tags": [
     {
+      "name": "xcode-graph-hidden-dom",
+      "description": "\n---\n\n\n### **Events:**\n - **node-select**",
+      "attributes": [],
+      "references": []
+    },
+    {
       "name": "xcode-graph-canvas",
       "description": "Canvas-based interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard",
       "attributes": [
@@ -26,12 +32,7 @@
     {
       "name": "xcode-graph-controls",
       "description": "Zoom controls overlay\n---\n\n\n### **Events:**\n - **zoom-step** - Dispatched when a zoom step button is clicked (detail: number)\n- **zoom-reset** - Dispatched when the fit-to-view button is clicked",
-      "attributes": [
-        { "name": "zoom", "values": [] },
-        { "name": "base-zoom", "values": [] },
-        { "name": "node-count", "values": [] },
-        { "name": "edge-count", "values": [] }
-      ],
+      "attributes": [{ "name": "zoom", "values": [] }, { "name": "base-zoom", "values": [] }],
       "references": []
     },
     {
@@ -519,22 +520,6 @@
       "references": []
     },
     {
-      "name": "xcode-graph-cluster-card",
-      "description": "SVG cluster card background\n---\n\n\n### **Events:**\n - **cluster-click** - Dispatched when the card is clicked (detail: { cluster })",
-      "attributes": [
-        { "name": "x", "values": [] },
-        { "name": "y", "values": [] },
-        { "name": "width", "values": [] },
-        { "name": "height", "values": [] },
-        { "name": "is-highlighted", "values": [] },
-        { "name": "is-dimmed", "values": [] },
-        { "name": "is-selected", "values": [] },
-        { "name": "zoom", "values": [] },
-        { "name": "clickable", "values": [] }
-      ],
-      "references": []
-    },
-    {
       "name": "xcode-graph-edge",
       "description": "SVG edge connection between graph nodes\n---\n",
       "attributes": [
@@ -548,78 +533,6 @@
         { "name": "opacity", "values": [] },
         { "name": "zoom", "values": [] },
         { "name": "animated", "values": [] }
-      ],
-      "references": []
-    },
-    {
-      "name": "xcode-graph-edges",
-      "description": "Collection renderer for all graph edges\n---\n",
-      "attributes": [
-        { "name": "cluster-id", "values": [] },
-        { "name": "hovered-cluster-id", "values": [] },
-        { "name": "view-mode", "values": [{ "name": "ViewMode" }] },
-        { "name": "zoom", "values": [] }
-      ],
-      "references": []
-    },
-    {
-      "name": "xcode-graph-node",
-      "description": "SVG graph node with icon and label\n---\n\n\n### **Events:**\n - **node-mouseenter** - Dispatched on mouse enter\n- **node-mouseleave** - Dispatched on mouse leave\n- **node-mousedown** - Dispatched on mouse down (detail: { originalEvent })\n- **node-click** - Dispatched on click (detail: { originalEvent })",
-      "attributes": [
-        { "name": "x", "values": [] },
-        { "name": "y", "values": [] },
-        { "name": "size", "values": [] },
-        { "name": "color", "values": [] },
-        { "name": "is-selected", "values": [] },
-        { "name": "is-hovered", "values": [] },
-        { "name": "is-dimmed", "values": [] },
-        { "name": "zoom", "values": [] }
-      ],
-      "references": []
-    },
-    {
-      "name": "xcode-graph-cluster-group",
-      "description": "Cluster group orchestrating card, edges, and nodes\n---\n\n\n### **Events:**\n - **cluster-mouseenter** - Dispatched when the cluster is hovered\n- **cluster-mouseleave** - Dispatched when the cluster hover ends\n- **cluster-click** - Dispatched when the cluster is clicked\n- **node-mouseenter** - Dispatched when a child node is hovered (detail: { nodeId })\n- **node-mouseleave** - Dispatched when a child node hover ends\n- **node-mousedown** - Dispatched on child node mouse down (detail: { nodeId, originalEvent })\n- **node-click** - Dispatched on child node click (detail: { node, originalEvent })",
-      "attributes": [
-        { "name": "search-query", "values": [] },
-        { "name": "zoom", "values": [] },
-        { "name": "view-mode", "values": [{ "name": "ViewMode" }] },
-        { "name": "is-selected", "values": [] }
-      ],
-      "references": []
-    },
-    {
-      "name": "xcode-graph-cluster",
-      "description": "SVG cluster container with label and glow effects\n---\n\n\n### **Events:**\n - **cluster-mouseenter** - Dispatched on mouse enter\n- **cluster-mouseleave** - Dispatched on mouse leave\n- **cluster-click** - Dispatched on click\n\n### **Slots:**\n - _default_ - Default slot for child nodes and edges",
-      "attributes": [
-        { "name": "cluster-id", "values": [] },
-        { "name": "x", "values": [] },
-        { "name": "y", "values": [] },
-        { "name": "width", "values": [] },
-        { "name": "height", "values": [] },
-        { "name": "color", "values": [] },
-        { "name": "node-count", "values": [] },
-        { "name": "origin", "values": [{ "name": "Origin" }] },
-        { "name": "is-hovered", "values": [] }
-      ],
-      "references": []
-    },
-    {
-      "name": "xcode-graph-svg-defs",
-      "description": "Reusable SVG defs for graph filters, markers, and shapes\n---\n",
-      "attributes": [],
-      "references": []
-    },
-    {
-      "name": "xcode-graph-virtual-renderer",
-      "description": "Viewport-culled virtual node renderer\n---\n\n\n### **Methods:**\n - **getVirtualRenderingStats(): _{\n    totalNodes: number;\n    visibleNodes: number;\n    culledNodes: number;\n    cullingRatio: number;\n    percentageCulled: number;\n    renderCount: number;\n  }_** - Get statistics about virtual rendering efficiency",
-      "attributes": [
-        { "name": "viewportWidth", "values": [] },
-        { "name": "viewportHeight", "values": [] },
-        { "name": "panX", "values": [] },
-        { "name": "panY", "values": [] },
-        { "name": "zoom", "values": [] },
-        { "name": "bufferMargin", "values": [] }
       ],
       "references": []
     },
@@ -691,19 +604,6 @@
       "references": []
     },
     {
-      "name": "xcode-graph-collapsible-section",
-      "description": "Expandable/collapsible section with animated chevron\n---\n\n\n### **Events:**\n - **toggle** - Dispatched when the header is clicked\n\n### **Slots:**\n - **icon** - Optional icon to display before the title\n- _default_ - Default slot for expandable content",
-      "attributes": [
-        { "name": "title", "description": "The section title", "values": [] },
-        {
-          "name": "is-expanded",
-          "description": "Whether the section is expanded",
-          "values": []
-        }
-      ],
-      "references": []
-    },
-    {
       "name": "xcode-graph-cycle-warning",
       "description": "Dismissible circular dependency warning banner\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the warning is dismissed",
       "attributes": [],
@@ -719,28 +619,6 @@
           "values": [{ "name": "FilterIconName" }]
         },
         { "name": "size", "description": "Icon size in pixels", "values": [] }
-      ],
-      "references": []
-    },
-    {
-      "name": "xcode-graph-panel-section",
-      "description": "Panel section container with configurable padding and borders\n---\n\n\n### **Slots:**\n - _default_ - Default slot for section content",
-      "attributes": [
-        {
-          "name": "bordered",
-          "description": "Whether to show a bottom border",
-          "values": []
-        },
-        {
-          "name": "padding",
-          "description": "Padding size",
-          "values": [{ "name": "PanelSectionPadding" }]
-        },
-        {
-          "name": "shrink",
-          "description": "Whether to prevent shrinking (flex-shrink: 0)",
-          "values": []
-        }
       ],
       "references": []
     },

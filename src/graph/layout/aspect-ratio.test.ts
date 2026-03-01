@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { xcodeGraphData } from '@/fixtures/xcode-graph-data';
 import { analyzeCluster } from './cluster-analysis';
 import { groupIntoClusters } from './cluster-grouping';
-import { computeHierarchicalLayout } from './engine';
+import { computeHierarchicalLayout } from './hierarchical-layout';
 
 describe('Layout Aspect Ratio', () => {
   it('should produce a roughly square layout (between 3:4 and 4:3)', async () => {

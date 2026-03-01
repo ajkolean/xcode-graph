@@ -5,7 +5,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import type { GraphNode } from '@shared/schemas/graph.types';
 import { describe, it } from 'vitest';
-import { NodeListEventsBase } from './node-list-events';
+import { NodeListEventsBase } from './node-list-base';
 
 // Create a concrete subclass for testing since NodeListEventsBase is abstract-like
 class TestNodeList extends NodeListEventsBase {

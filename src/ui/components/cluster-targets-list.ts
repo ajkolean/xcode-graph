@@ -25,7 +25,7 @@ import { type CSSResultGroup, css, html, type PropertyValues, type TemplateResul
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
-import { NodeListEventsBase } from './node-list-events';
+import { NodeListEventsBase } from './node-list-base';
 import './list-item-row';
 
 type ClusterListItem =

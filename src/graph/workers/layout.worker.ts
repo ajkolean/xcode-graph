@@ -9,7 +9,7 @@
  */
 
 import type { LayoutOptions } from '@graph/layout/config';
-import { computeHierarchicalLayout } from '@graph/layout/engine';
+import { computeHierarchicalLayout } from '@graph/layout/hierarchical-layout';
 import type { HierarchicalLayoutResult } from '@graph/layout/types';
 import type { Cluster } from '@shared/schemas';
 import type { ClusterNodeMetadata } from '@shared/schemas/cluster.types';

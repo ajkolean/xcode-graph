@@ -18,7 +18,7 @@ import {
   createMultiClusterGraph,
   createProjectGraph,
 } from '../../fixtures';
-import { computeHierarchicalLayout } from './engine';
+import { computeHierarchicalLayout } from './hierarchical-layout';
 
 /**
  * Build clusters from nodes based on their project property.

@@ -1,11 +1,26 @@
 {
   "$schema": "https://raw.githubusercontent.com/JetBrains/web-types/master/schema/web-types.json",
   "name": "xcode-graph",
-  "version": "1.34.0",
+  "version": "1.34.5",
   "description-markup": "markdown",
   "contributions": {
     "html": {
       "elements": [
+        {
+          "name": "xcode-graph-hidden-dom",
+          "description": "\n---\n\n\n### **Events:**\n - **node-select**",
+          "doc-url": "",
+          "attributes": [],
+          "events": [{ "name": "node-select", "type": "CustomEvent" }],
+          "js": {
+            "properties": [
+              { "name": "nodes", "type": "GraphNode[]" },
+              { "name": "edges", "type": "GraphEdge[]" },
+              { "name": "selectedNode", "type": "GraphNode | null" }
+            ],
+            "events": [{ "name": "node-select", "type": "CustomEvent" }]
+          }
+        },
         {
           "name": "xcode-graph-canvas",
           "description": "Canvas-based interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard",
@@ -46,6 +61,7 @@
             },
             {
               "name": "node-select",
+              "type": "CustomEvent",
               "description": "Dispatched when a node is selected or deselected (detail: { node })"
             },
             {
@@ -97,7 +113,7 @@
               { "name": "showTransitiveDeps", "type": "boolean" },
               { "name": "showDirectDependents", "type": "boolean" },
               { "name": "showTransitiveDependents", "type": "boolean" },
-              { "name": "resize" }
+              { "name": "dimmedNodeIds", "type": "Set<string>" }
             ],
             "events": [
               {
@@ -107,6 +123,7 @@
               },
               {
                 "name": "node-select",
+                "type": "CustomEvent",
                 "description": "Dispatched when a node is selected or deselected (detail: { node })"
               },
               {
@@ -150,9 +167,7 @@
           "doc-url": "",
           "attributes": [
             { "name": "zoom", "value": { "type": "number" } },
-            { "name": "base-zoom", "value": { "type": "number" } },
-            { "name": "node-count", "value": { "type": "number" } },
-            { "name": "edge-count", "value": { "type": "number" } }
+            { "name": "base-zoom", "value": { "type": "number" } }
           ],
           "events": [
             {
@@ -169,9 +184,7 @@
           "js": {
             "properties": [
               { "name": "zoom", "type": "number" },
-              { "name": "baseZoom", "type": "number" },
-              { "name": "nodeCount", "type": "number" },
-              { "name": "edgeCount", "type": "number" }
+              { "name": "baseZoom", "type": "number" }
             ],
             "events": [
               {
@@ -1477,7 +1490,7 @@
                 "description": "The current search query",
                 "type": "string"
               },
-              { "name": "shortcut" }
+              { "name": "shortcut", "type": "KeyboardShortcutController" }
             ],
             "events": [
               {
@@ -1695,59 +1708,10 @@
           "js": {
             "properties": [
               { "name": "nodes", "type": "GraphNode[]" },
-              { "name": "edges", "type": "GraphEdge[]" }
+              { "name": "edges", "type": "GraphEdge[]" },
+              { "name": "layoutOptions", "type": "LayoutOptions | undefined" }
             ],
             "events": []
-          }
-        },
-        {
-          "name": "xcode-graph-cluster-card",
-          "description": "SVG cluster card background\n---\n\n\n### **Events:**\n - **cluster-click** - Dispatched when the card is clicked (detail: { cluster })",
-          "doc-url": "",
-          "attributes": [
-            { "name": "x", "value": { "type": "number | undefined" } },
-            { "name": "y", "value": { "type": "number | undefined" } },
-            { "name": "width", "value": { "type": "number | undefined" } },
-            { "name": "height", "value": { "type": "number | undefined" } },
-            {
-              "name": "is-highlighted",
-              "value": { "type": "boolean | undefined" }
-            },
-            { "name": "is-dimmed", "value": { "type": "boolean | undefined" } },
-            {
-              "name": "is-selected",
-              "value": { "type": "boolean | undefined" }
-            },
-            { "name": "zoom", "value": { "type": "number | undefined" } },
-            { "name": "clickable", "value": { "type": "boolean | undefined" } }
-          ],
-          "events": [
-            {
-              "name": "cluster-click",
-              "type": "CustomEvent",
-              "description": "Dispatched when the card is clicked (detail: { cluster })"
-            }
-          ],
-          "js": {
-            "properties": [
-              { "name": "cluster", "type": "Cluster | undefined" },
-              { "name": "x", "type": "number | undefined" },
-              { "name": "y", "type": "number | undefined" },
-              { "name": "width", "type": "number | undefined" },
-              { "name": "height", "type": "number | undefined" },
-              { "name": "isHighlighted", "type": "boolean | undefined" },
-              { "name": "isDimmed", "type": "boolean | undefined" },
-              { "name": "isSelected", "type": "boolean | undefined" },
-              { "name": "zoom", "type": "number | undefined" },
-              { "name": "clickable", "type": "boolean | undefined" }
-            ],
-            "events": [
-              {
-                "name": "cluster-click",
-                "type": "CustomEvent",
-                "description": "Dispatched when the card is clicked (detail: { cluster })"
-              }
-            ]
           }
         },
         {
@@ -1785,381 +1749,6 @@
               { "name": "opacity", "type": "number | undefined" },
               { "name": "zoom", "type": "number | undefined" },
               { "name": "animated", "type": "boolean | undefined" }
-            ],
-            "events": []
-          }
-        },
-        {
-          "name": "xcode-graph-edges",
-          "description": "Collection renderer for all graph edges\n---\n",
-          "doc-url": "",
-          "attributes": [
-            { "name": "cluster-id", "value": { "type": "string | undefined" } },
-            {
-              "name": "hovered-cluster-id",
-              "value": { "type": "string | null | undefined" }
-            },
-            {
-              "name": "view-mode",
-              "value": { "type": "ViewMode | undefined" }
-            },
-            { "name": "zoom", "value": { "type": "number | undefined" } }
-          ],
-          "events": [],
-          "js": {
-            "properties": [
-              { "name": "edges", "type": "GraphEdgeType[] | undefined" },
-              { "name": "nodes", "type": "GraphNode[] | undefined" },
-              {
-                "name": "finalNodePositions",
-                "type": "Map<string, NodePosition> | undefined"
-              },
-              {
-                "name": "clusterPositions",
-                "type": "Map<string, ClusterPosition> | undefined"
-              },
-              {
-                "name": "selectedNode",
-                "type": "GraphNode | null | undefined"
-              },
-              { "name": "hoveredNode", "type": "string | null | undefined" },
-              { "name": "clusterId", "type": "string | undefined" },
-              {
-                "name": "hoveredClusterId",
-                "type": "string | null | undefined"
-              },
-              { "name": "viewMode", "type": "ViewMode | undefined" },
-              {
-                "name": "transitiveDeps",
-                "type": "| {\n        nodes: Set<string>;\n        edges: Set<string>;\n        edgeDepths: Map<string, number>;\n        maxDepth: number;\n      }\n    | undefined"
-              },
-              {
-                "name": "transitiveDependents",
-                "type": "| {\n        nodes: Set<string>;\n        edges: Set<string>;\n        edgeDepths: Map<string, number>;\n        maxDepth: number;\n      }\n    | undefined"
-              },
-              { "name": "zoom", "type": "number | undefined" }
-            ],
-            "events": []
-          }
-        },
-        {
-          "name": "xcode-graph-node",
-          "description": "SVG graph node with icon and label\n---\n\n\n### **Events:**\n - **node-mouseenter** - Dispatched on mouse enter\n- **node-mouseleave** - Dispatched on mouse leave\n- **node-mousedown** - Dispatched on mouse down (detail: { originalEvent })\n- **node-click** - Dispatched on click (detail: { originalEvent })",
-          "doc-url": "",
-          "attributes": [
-            { "name": "x", "value": { "type": "number | undefined" } },
-            { "name": "y", "value": { "type": "number | undefined" } },
-            { "name": "size", "value": { "type": "number | undefined" } },
-            { "name": "color", "value": { "type": "string | undefined" } },
-            {
-              "name": "is-selected",
-              "value": { "type": "boolean | undefined" }
-            },
-            {
-              "name": "is-hovered",
-              "value": { "type": "boolean | undefined" }
-            },
-            { "name": "is-dimmed", "value": { "type": "boolean | undefined" } },
-            { "name": "zoom", "value": { "type": "number | undefined" } }
-          ],
-          "events": [
-            {
-              "name": "node-mouseenter",
-              "type": "CustomEvent",
-              "description": "Dispatched on mouse enter"
-            },
-            {
-              "name": "node-mouseleave",
-              "type": "CustomEvent",
-              "description": "Dispatched on mouse leave"
-            },
-            {
-              "name": "node-mousedown",
-              "type": "CustomEvent",
-              "description": "Dispatched on mouse down (detail: { originalEvent })"
-            },
-            {
-              "name": "node-click",
-              "type": "CustomEvent",
-              "description": "Dispatched on click (detail: { originalEvent })"
-            }
-          ],
-          "js": {
-            "properties": [
-              { "name": "node", "type": "GraphNodeType | undefined" },
-              { "name": "x", "type": "number | undefined" },
-              { "name": "y", "type": "number | undefined" },
-              { "name": "size", "type": "number | undefined" },
-              { "name": "color", "type": "string | undefined" },
-              { "name": "isSelected", "type": "boolean | undefined" },
-              { "name": "isHovered", "type": "boolean | undefined" },
-              { "name": "isDimmed", "type": "boolean | undefined" },
-              { "name": "zoom", "type": "number | undefined" }
-            ],
-            "events": [
-              {
-                "name": "node-mouseenter",
-                "type": "CustomEvent",
-                "description": "Dispatched on mouse enter"
-              },
-              {
-                "name": "node-mouseleave",
-                "type": "CustomEvent",
-                "description": "Dispatched on mouse leave"
-              },
-              {
-                "name": "node-mousedown",
-                "type": "CustomEvent",
-                "description": "Dispatched on mouse down (detail: { originalEvent })"
-              },
-              {
-                "name": "node-click",
-                "type": "CustomEvent",
-                "description": "Dispatched on click (detail: { originalEvent })"
-              }
-            ]
-          }
-        },
-        {
-          "name": "xcode-graph-cluster-group",
-          "description": "Cluster group orchestrating card, edges, and nodes\n---\n\n\n### **Events:**\n - **cluster-mouseenter** - Dispatched when the cluster is hovered\n- **cluster-mouseleave** - Dispatched when the cluster hover ends\n- **cluster-click** - Dispatched when the cluster is clicked\n- **node-mouseenter** - Dispatched when a child node is hovered (detail: { nodeId })\n- **node-mouseleave** - Dispatched when a child node hover ends\n- **node-mousedown** - Dispatched on child node mouse down (detail: { nodeId, originalEvent })\n- **node-click** - Dispatched on child node click (detail: { node, originalEvent })",
-          "doc-url": "",
-          "attributes": [
-            {
-              "name": "search-query",
-              "value": { "type": "string | undefined" }
-            },
-            { "name": "zoom", "value": { "type": "number | undefined" } },
-            {
-              "name": "view-mode",
-              "value": { "type": "ViewMode | undefined" }
-            },
-            {
-              "name": "is-selected",
-              "value": { "type": "boolean | undefined" }
-            }
-          ],
-          "events": [
-            {
-              "name": "cluster-mouseenter",
-              "type": "CustomEvent",
-              "description": "Dispatched when the cluster is hovered"
-            },
-            {
-              "name": "cluster-mouseleave",
-              "type": "CustomEvent",
-              "description": "Dispatched when the cluster hover ends"
-            },
-            {
-              "name": "cluster-click",
-              "type": "CustomEvent",
-              "description": "Dispatched when the cluster is clicked"
-            },
-            {
-              "name": "node-mouseenter",
-              "type": "CustomEvent",
-              "description": "Dispatched when a child node is hovered (detail: { nodeId })"
-            },
-            {
-              "name": "node-mouseleave",
-              "type": "CustomEvent",
-              "description": "Dispatched when a child node hover ends"
-            },
-            {
-              "name": "node-mousedown",
-              "type": "CustomEvent",
-              "description": "Dispatched on child node mouse down (detail: { nodeId, originalEvent })"
-            },
-            {
-              "name": "node-click",
-              "type": "CustomEvent",
-              "description": "Dispatched on child node click (detail: { node, originalEvent })"
-            }
-          ],
-          "js": {
-            "properties": [
-              { "name": "cluster", "type": "Cluster | undefined" },
-              {
-                "name": "clusterPosition",
-                "type": "ClusterPosition | undefined"
-              },
-              { "name": "nodes", "type": "GraphNodeType[] | undefined" },
-              { "name": "edges", "type": "GraphEdge[] | undefined" },
-              {
-                "name": "finalNodePositions",
-                "type": "Map<string, NodePosition> | undefined"
-              },
-              {
-                "name": "selectedNode",
-                "type": "GraphNodeType | null | undefined"
-              },
-              { "name": "hoveredNode", "type": "string | null | undefined" },
-              {
-                "name": "hoveredClusterId",
-                "type": "string | null | undefined"
-              },
-              { "name": "searchQuery", "type": "string | undefined" },
-              { "name": "zoom", "type": "number | undefined" },
-              { "name": "viewMode", "type": "ViewMode | undefined" },
-              {
-                "name": "transitiveDeps",
-                "type": "TransitiveResult | undefined"
-              },
-              {
-                "name": "transitiveDependents",
-                "type": "TransitiveResult | undefined"
-              },
-              { "name": "isSelected", "type": "boolean | undefined" },
-              { "name": "previewFilter", "type": "PreviewFilter | undefined" }
-            ],
-            "events": [
-              {
-                "name": "cluster-mouseenter",
-                "type": "CustomEvent",
-                "description": "Dispatched when the cluster is hovered"
-              },
-              {
-                "name": "cluster-mouseleave",
-                "type": "CustomEvent",
-                "description": "Dispatched when the cluster hover ends"
-              },
-              {
-                "name": "cluster-click",
-                "type": "CustomEvent",
-                "description": "Dispatched when the cluster is clicked"
-              },
-              {
-                "name": "node-mouseenter",
-                "type": "CustomEvent",
-                "description": "Dispatched when a child node is hovered (detail: { nodeId })"
-              },
-              {
-                "name": "node-mouseleave",
-                "type": "CustomEvent",
-                "description": "Dispatched when a child node hover ends"
-              },
-              {
-                "name": "node-mousedown",
-                "type": "CustomEvent",
-                "description": "Dispatched on child node mouse down (detail: { nodeId, originalEvent })"
-              },
-              {
-                "name": "node-click",
-                "type": "CustomEvent",
-                "description": "Dispatched on child node click (detail: { node, originalEvent })"
-              }
-            ]
-          }
-        },
-        {
-          "name": "xcode-graph-cluster",
-          "description": "SVG cluster container with label and glow effects\n---\n\n\n### **Events:**\n - **cluster-mouseenter** - Dispatched on mouse enter\n- **cluster-mouseleave** - Dispatched on mouse leave\n- **cluster-click** - Dispatched on click\n\n### **Slots:**\n - _default_ - Default slot for child nodes and edges",
-          "doc-url": "",
-          "attributes": [
-            { "name": "cluster-id", "value": { "type": "string | undefined" } },
-            { "name": "x", "value": { "type": "number | undefined" } },
-            { "name": "y", "value": { "type": "number | undefined" } },
-            { "name": "width", "value": { "type": "number | undefined" } },
-            { "name": "height", "value": { "type": "number | undefined" } },
-            { "name": "color", "value": { "type": "string | undefined" } },
-            { "name": "node-count", "value": { "type": "number | undefined" } },
-            { "name": "origin", "value": { "type": "Origin | undefined" } },
-            { "name": "is-hovered", "value": { "type": "boolean | undefined" } }
-          ],
-          "slots": [
-            {
-              "name": "",
-              "description": "Default slot for child nodes and edges"
-            }
-          ],
-          "events": [
-            {
-              "name": "cluster-mouseenter",
-              "type": "CustomEvent",
-              "description": "Dispatched on mouse enter"
-            },
-            {
-              "name": "cluster-mouseleave",
-              "type": "CustomEvent",
-              "description": "Dispatched on mouse leave"
-            },
-            {
-              "name": "cluster-click",
-              "type": "CustomEvent",
-              "description": "Dispatched on click"
-            }
-          ],
-          "js": {
-            "properties": [
-              { "name": "clusterId", "type": "string | undefined" },
-              { "name": "x", "type": "number | undefined" },
-              { "name": "y", "type": "number | undefined" },
-              { "name": "width", "type": "number | undefined" },
-              { "name": "height", "type": "number | undefined" },
-              { "name": "color", "type": "string | undefined" },
-              { "name": "nodeCount", "type": "number | undefined" },
-              { "name": "origin", "type": "Origin | undefined" },
-              { "name": "isHovered", "type": "boolean | undefined" }
-            ],
-            "events": [
-              {
-                "name": "cluster-mouseenter",
-                "type": "CustomEvent",
-                "description": "Dispatched on mouse enter"
-              },
-              {
-                "name": "cluster-mouseleave",
-                "type": "CustomEvent",
-                "description": "Dispatched on mouse leave"
-              },
-              {
-                "name": "cluster-click",
-                "type": "CustomEvent",
-                "description": "Dispatched on click"
-              }
-            ]
-          }
-        },
-        {
-          "name": "xcode-graph-svg-defs",
-          "description": "Reusable SVG defs for graph filters, markers, and shapes\n---\n",
-          "doc-url": "",
-          "attributes": [],
-          "events": [],
-          "js": { "properties": [], "events": [] }
-        },
-        {
-          "name": "xcode-graph-virtual-renderer",
-          "description": "Viewport-culled virtual node renderer\n---\n\n\n### **Methods:**\n - **getVirtualRenderingStats(): _{\n    totalNodes: number;\n    visibleNodes: number;\n    culledNodes: number;\n    cullingRatio: number;\n    percentageCulled: number;\n    renderCount: number;\n  }_** - Get statistics about virtual rendering efficiency",
-          "doc-url": "",
-          "attributes": [
-            {
-              "name": "viewportWidth",
-              "value": { "type": "number", "default": "1000" }
-            },
-            {
-              "name": "viewportHeight",
-              "value": { "type": "number", "default": "800" }
-            },
-            { "name": "panX", "value": { "type": "number", "default": "0" } },
-            { "name": "panY", "value": { "type": "number", "default": "0" } },
-            { "name": "zoom", "value": { "type": "number", "default": "1" } },
-            {
-              "name": "bufferMargin",
-              "value": { "type": "number", "default": "200" }
-            }
-          ],
-          "events": [],
-          "js": {
-            "properties": [
-              { "name": "nodes", "type": "GraphNode[]" },
-              { "name": "nodePositions", "type": "Map<string, NodePosition>" },
-              { "name": "viewportWidth", "type": "number" },
-              { "name": "viewportHeight", "type": "number" },
-              { "name": "panX", "type": "number" },
-              { "name": "panY", "type": "number" },
-              { "name": "zoom", "type": "number" },
-              { "name": "bufferMargin", "type": "number" }
             ],
             "events": []
           }
@@ -2332,58 +1921,6 @@
           }
         },
         {
-          "name": "xcode-graph-collapsible-section",
-          "description": "Expandable/collapsible section with animated chevron\n---\n\n\n### **Events:**\n - **toggle** - Dispatched when the header is clicked\n\n### **Slots:**\n - **icon** - Optional icon to display before the title\n- _default_ - Default slot for expandable content",
-          "doc-url": "",
-          "attributes": [
-            {
-              "name": "title",
-              "description": "The section title",
-              "value": { "type": "string", "default": "''" }
-            },
-            {
-              "name": "is-expanded",
-              "description": "Whether the section is expanded",
-              "value": { "type": "boolean", "default": "false" }
-            }
-          ],
-          "slots": [
-            {
-              "name": "icon",
-              "description": "Optional icon to display before the title"
-            },
-            { "name": "", "description": "Default slot for expandable content" }
-          ],
-          "events": [
-            {
-              "name": "toggle",
-              "type": "CustomEvent",
-              "description": "Dispatched when the header is clicked"
-            }
-          ],
-          "js": {
-            "properties": [
-              {
-                "name": "title",
-                "description": "The section title",
-                "type": "string"
-              },
-              {
-                "name": "isExpanded",
-                "description": "Whether the section is expanded",
-                "type": "boolean"
-              }
-            ],
-            "events": [
-              {
-                "name": "toggle",
-                "type": "CustomEvent",
-                "description": "Dispatched when the header is clicked"
-              }
-            ]
-          }
-        },
-        {
           "name": "xcode-graph-cycle-warning",
           "description": "Dismissible circular dependency warning banner\n---\n\n\n### **Events:**\n - **dismiss** - Dispatched when the warning is dismissed",
           "doc-url": "",
@@ -2437,50 +1974,6 @@
                 "name": "size",
                 "description": "Icon size in pixels",
                 "type": "number"
-              }
-            ],
-            "events": []
-          }
-        },
-        {
-          "name": "xcode-graph-panel-section",
-          "description": "Panel section container with configurable padding and borders\n---\n\n\n### **Slots:**\n - _default_ - Default slot for section content",
-          "doc-url": "",
-          "attributes": [
-            {
-              "name": "bordered",
-              "description": "Whether to show a bottom border",
-              "value": { "type": "boolean", "default": "false" }
-            },
-            {
-              "name": "padding",
-              "description": "Padding size",
-              "value": { "type": "PanelSectionPadding", "default": "'md'" }
-            },
-            {
-              "name": "shrink",
-              "description": "Whether to prevent shrinking (flex-shrink: 0)",
-              "value": { "type": "boolean", "default": "true" }
-            }
-          ],
-          "slots": [{ "name": "", "description": "Default slot for section content" }],
-          "events": [],
-          "js": {
-            "properties": [
-              {
-                "name": "bordered",
-                "description": "Whether to show a bottom border",
-                "type": "boolean"
-              },
-              {
-                "name": "padding",
-                "description": "Padding size",
-                "type": "PanelSectionPadding"
-              },
-              {
-                "name": "shrink",
-                "description": "Whether to prevent shrinking (flex-shrink: 0)",
-                "type": "boolean"
               }
             ],
             "events": []

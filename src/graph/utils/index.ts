@@ -16,7 +16,7 @@ export {
   getDependencyCount,
   getDependentCount,
 } from './connections';
-export { generateColorMap } from './filters';
+export { generateColorMap } from './filter-colors';
 export { applyGraphFilters } from './graph-filters';
 
 export {

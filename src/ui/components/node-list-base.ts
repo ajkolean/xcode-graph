@@ -4,7 +4,7 @@
  * Provides shared event forwarding logic for node list components.
  * Used by GraphNodeList, GraphClusterTargetsList, and similar components.
  *
- * @module components/ui/node-list-events
+ * @module components/ui/node-list-base
  */
 
 import type { GraphNode } from '@shared/schemas/graph.types';
