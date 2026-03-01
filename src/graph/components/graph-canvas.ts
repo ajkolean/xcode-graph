@@ -7,7 +7,7 @@ import {
   setAnimatedTarget,
   tickAnimationMap,
 } from '@graph/utils/canvas-animation';
-import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
+import { resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
 import { IntersectionController } from '@lit-labs/observers/intersection-controller.js';
@@ -17,7 +17,6 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
 import { ZOOM_CONFIG } from '@shared/utils/zoom-constants';
-import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { computeNodeWeights, getNodeSize } from '@ui/utils/sizing';
@@ -45,6 +44,7 @@ import {
   type InteractionState,
 } from './canvas/canvas-interaction-handler';
 import { renderNodes } from './canvas/canvas-node-renderer';
+import { renderClusterTooltip, renderNodeTooltip } from './canvas/canvas-tooltip-renderer';
 import './graph-hidden-dom';
 
 /**
@@ -716,8 +716,22 @@ export class GraphCanvas extends LitElement {
 
     this.ctx.restore();
 
-    this.renderTooltip();
-    this.renderClusterTooltip();
+    const tooltipCtx = {
+      ctx: this.ctx,
+      layout: this.layout,
+      nodes: this.nodes,
+      edges: this.edges,
+      zoom: this.zoom,
+      theme: this.theme,
+      hoveredNode: this.hoveredNode,
+      pan: this.interactionState.pan,
+      nodeWeights: this.nodeWeights,
+      manualNodePositions: this.manualNodePositions,
+      manualClusterPositions: this.manualClusterPositions,
+      hoveredCluster: this.interactionState.hoveredCluster,
+    };
+    renderNodeTooltip(tooltipCtx);
+    renderClusterTooltip(tooltipCtx);
   }
 
   private renderFadingNodes() {
@@ -775,116 +789,6 @@ export class GraphCanvas extends LitElement {
     }
 
     this.ctx.globalAlpha = 1.0;
-  }
-
-  private renderTooltip() {
-    if (!this.hoveredNode) return;
-    const node = this.nodes.find((n) => n.id === this.hoveredNode);
-    if (!node) return;
-    // At low zoom, always show tooltip (labels are likely hidden).
-    // At higher zoom, only show if label would be truncated.
-    if (this.zoom >= 0.5 && node.name.length <= 20) return;
-
-    const worldPos = resolveNodeWorldPosition(
-      node.id,
-      node.project || 'External',
-      this.layout,
-      this.manualNodePositions,
-      this.manualClusterPositions,
-    );
-    if (!worldPos) return;
-
-    const size = getNodeSize(node, this.edges, this.nodeWeights.get(node.id));
-
-    const pan = this.interactionState.pan;
-    const screenX = worldPos.x * this.zoom + pan.x;
-    const screenY = worldPos.y * this.zoom + pan.y;
-
-    const text = node.name;
-    this.ctx.font = '12px var(--fonts-body, sans-serif)';
-    const padding = 8;
-    const metrics = this.ctx.measureText(text);
-    const tooltipWidth = metrics.width + padding * 2;
-    const tooltipHeight = 24;
-
-    const x = screenX - tooltipWidth / 2;
-    const y = screenY - size * this.zoom - 35;
-
-    this.ctx.save();
-    this.ctx.fillStyle = this.theme.tooltipBg;
-    this.ctx.strokeStyle = adjustColorForZoom(
-      getNodeTypeColorFromTheme(node.type, this.theme),
-      this.zoom,
-    );
-    this.ctx.lineWidth = 1;
-
-    this.ctx.beginPath();
-    this.ctx.roundRect(x, y, tooltipWidth, tooltipHeight, 4);
-    this.ctx.fill();
-    this.ctx.stroke();
-
-    this.ctx.fillStyle = this.ctx.strokeStyle;
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText(text, screenX, y + tooltipHeight / 2);
-    this.ctx.restore();
-  }
-
-  private renderClusterTooltip() {
-    const clusterId = this.interactionState.hoveredCluster;
-    if (!clusterId || this.hoveredNode) return;
-
-    const cluster = this.layout.clusters.find((c) => c.id === clusterId);
-    if (!cluster) return;
-    const layoutPos = this.layout.clusterPositions.get(clusterId);
-    if (!layoutPos) return;
-
-    const clusterWorldPos = resolveClusterPosition(
-      clusterId,
-      layoutPos,
-      this.manualClusterPositions,
-    );
-    const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
-
-    const pan = this.interactionState.pan;
-    const screenX = clusterWorldPos.x * this.zoom + pan.x;
-    const screenY = clusterWorldPos.y * this.zoom + pan.y;
-
-    const name = cluster.name;
-    const subtitle = `${cluster.nodes.length} targets`;
-    const padding = 10;
-
-    this.ctx.save();
-    this.ctx.font = '600 13px var(--fonts-body, sans-serif)';
-    const nameWidth = this.ctx.measureText(name).width;
-    this.ctx.font = '400 11px var(--fonts-body, sans-serif)';
-    const subtitleWidth = this.ctx.measureText(subtitle).width;
-
-    const tooltipWidth = Math.max(nameWidth, subtitleWidth) + padding * 2;
-    const tooltipHeight = 40;
-    const x = screenX - tooltipWidth / 2;
-    const y = screenY - radius * this.zoom - 20 - tooltipHeight;
-
-    const clusterColor = generateColor(cluster.name, cluster.type);
-
-    this.ctx.fillStyle = this.theme.tooltipBg;
-    this.ctx.strokeStyle = adjustColorForZoom(clusterColor, this.zoom);
-    this.ctx.lineWidth = 1;
-    this.ctx.beginPath();
-    this.ctx.roundRect(x, y, tooltipWidth, tooltipHeight, 4);
-    this.ctx.fill();
-    this.ctx.stroke();
-
-    this.ctx.textAlign = 'center';
-    this.ctx.fillStyle = this.ctx.strokeStyle;
-    this.ctx.font = '600 13px var(--fonts-body, sans-serif)';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText(name, screenX, y + 14);
-
-    this.ctx.globalAlpha = 0.7;
-    this.ctx.font = '400 11px var(--fonts-body, sans-serif)';
-    this.ctx.fillText(subtitle, screenX, y + 28);
-    this.ctx.restore();
   }
 
   private getMousePos = (e: MouseEvent) => {
