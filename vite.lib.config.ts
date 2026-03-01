@@ -12,7 +12,7 @@ import { defineConfig } from 'vite';
  *   pnpm build:lib
  *
  * Output:
- *   dist/xcodegraph.js  — ES module, registers <graph-app> custom element
+ *   dist/xcodegraph.js  — ES module, registers <xcode-graph> custom element
  *
  * Consumers load it via:
  *   <script type="module" src="https://cdn.jsdelivr.net/npm/xcode-graph/dist/xcodegraph.js"></script>
@@ -57,7 +57,7 @@ export default defineConfig({
     target: 'esnext',
     outDir: 'dist',
     lib: {
-      entry: path.resolve(__dirname, './src/components/graph-app.ts'),
+      entry: path.resolve(__dirname, './src/components/xcode-graph.ts'),
       formats: ['es'],
       fileName: () => 'xcodegraph.js',
     },

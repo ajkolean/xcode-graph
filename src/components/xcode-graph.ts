@@ -5,7 +5,7 @@
  * Accepts graph data via `.nodes` and `.edges` properties, making it a
  * self-contained web component that can be embedded in any host application.
  *
- * @module components/graph-app
+ * @module components/xcode-graph
  *
  * @example
  * ```html

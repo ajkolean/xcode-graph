@@ -15,8 +15,8 @@ import { resetFilterSignals } from '@shared/signals/filter.signals';
 import { afterEach, beforeEach, describe, it, expect as vitestExpect } from 'vitest';
 import type { SignalSnapshot } from '../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../test-utils/signal-helpers';
-import type { GraphApp } from './graph-app';
-import './graph-app';
+import type { GraphApp } from './xcode-graph';
+import './xcode-graph';
 
 function createTestNode(id: string, overrides: Partial<GraphNode> = {}): GraphNode {
   return {

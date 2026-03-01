@@ -7,9 +7,9 @@ import { onMounted } from 'vue'
 
 onMounted(async () => {
   await import('../src/styles/tokens.css')
-  await import('../src/components/graph-app')
+  await import('../src/components/xcode-graph')
 
-  const container = document.getElementById('graph-demo')
+  const container = document.getElementById('xcode-graph-demo')
   if (!container) return
 
   const app = document.createElement('xcode-graph')
@@ -32,4 +32,4 @@ onMounted(async () => {
 
 Try the `<xcode-graph>` component live. The example below loads a real Tuist dependency graph. Use the **Load graph JSON** button in the bottom-left corner to load your own `tuist graph --format json` output.
 
-<div id="graph-demo" style="width: 100%; height: calc(100vh - 200px); min-height: 500px; border: 1px solid var(--vp-c-border); border-radius: 8px; overflow: hidden;"></div>
+<div id="xcode-graph-demo" style="width: 100%; height: calc(100vh - 200px); min-height: 500px; border: 1px solid var(--vp-c-border); border-radius: 8px; overflow: hidden;"></div>

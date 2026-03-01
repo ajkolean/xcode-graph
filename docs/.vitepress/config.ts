@@ -1,4 +1,7 @@
+import path from "node:path";
 import { defineConfig } from "vitepress";
+
+const root = path.resolve(__dirname, "../..");
 
 export default defineConfig({
 	title: "XcodeGraph",
@@ -11,6 +14,18 @@ export default defineConfig({
 		template: {
 			compilerOptions: {
 				isCustomElement: (tag: string) => tag.startsWith("xcode-graph-"),
+			},
+		},
+	},
+
+	vite: {
+		resolve: {
+			alias: {
+				"@/": `${path.resolve(root, "src")}/`,
+				"@components/": `${path.resolve(root, "src/components")}/`,
+				"@graph/": `${path.resolve(root, "src/graph")}/`,
+				"@ui/": `${path.resolve(root, "src/ui")}/`,
+				"@shared/": `${path.resolve(root, "src/shared")}/`,
 			},
 		},
 	},

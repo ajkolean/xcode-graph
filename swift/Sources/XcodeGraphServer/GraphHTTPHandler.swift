@@ -5,7 +5,7 @@ import NIOHTTP1
 /// Handles HTTP requests for the graph visualization server.
 ///
 /// Routes:
-/// - `GET /`           → generated HTML page that loads `<graph-app>` from CDN
+/// - `GET /`           → generated HTML page that loads `<xcode-graph>` from CDN
 /// - `GET /graph.json` → the raw XcodeGraph JSON
 final class GraphHTTPHandler: ChannelInboundHandler {
     typealias InboundIn = HTTPServerRequestPart

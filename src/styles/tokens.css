@@ -1,7 +1,7 @@
 /**
  * Design Tokens — Themeable via --graph-* CSS Custom Properties
  *
- * Host applications set --graph-* properties on <graph-app> or an ancestor.
+ * Host applications set --graph-* properties on <xcode-graph> or an ancestor.
  * All internal tokens derive from --graph-* via var() fallbacks.
  *
  * Available in both Light DOM (:root) and Shadow DOM (:host) contexts.
