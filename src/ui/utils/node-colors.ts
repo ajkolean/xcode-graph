@@ -34,7 +34,10 @@ export const NODE_TYPE_COLORS: Record<string, string> = {
 const DEFAULT_NODE_COLOR = '#F59E0B';
 
 /**
- * Gets the color for a node type (static fallback for DOM-based components)
+ * Gets the color for a node type (static fallback for DOM-based components).
+ *
+ * @param type - The node type string (e.g., `'app'`, `'framework'`)
+ * @returns Hex color string from the Noora palette
  */
 export function getNodeTypeColor(type: string): string {
   return NODE_TYPE_COLORS[type] ?? DEFAULT_NODE_COLOR;
@@ -54,6 +57,10 @@ const THEME_KEY_MAP: Record<string, keyof CanvasTheme> = {
 /**
  * Gets the color for a node type from a resolved CanvasTheme.
  * Use this in Canvas2D rendering to respect CSS custom property overrides.
+ *
+ * @param type - The node type string
+ * @param theme - A resolved {@link CanvasTheme} object
+ * @returns The themed color string for the given type
  */
 export function getNodeTypeColorFromTheme(type: string, theme: CanvasTheme): string {
   const key = THEME_KEY_MAP[type];
@@ -61,14 +68,19 @@ export function getNodeTypeColorFromTheme(type: string, theme: CanvasTheme): str
 }
 
 /**
- * Gets a consistent color for a project name
+ * Gets a consistent color for a project name.
+ *
+ * @param projectName - The project name to derive a color from
+ * @returns Hex color string
  */
 export function getProjectColor(projectName: string): string {
   return generateColor(projectName, 'project');
 }
 
 /**
- * Gets all node type colors for legend display
+ * Gets all node type colors for legend display.
+ *
+ * @returns A shallow copy of the `NODE_TYPE_COLORS` record
  */
 export function getAllNodeTypeColors(): Record<string, string> {
   return { ...NODE_TYPE_COLORS };

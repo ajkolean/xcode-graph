@@ -42,7 +42,7 @@ export interface ClusterStatsResult {
 // ==================== Dependency Analysis ====================
 
 /**
- * Compute dependencies and dependents for a node
+ * Compute dependencies and dependents for a node.
  *
  * Analyzes both filtered and total edge counts for metrics.
  * Returns nodes with their associated edge information for displaying dependency kinds.
@@ -52,6 +52,16 @@ export interface ClusterStatsResult {
  * @param edges - All graph edges
  * @param filteredEdges - Optional filtered edges for metrics
  * @returns Dependencies, dependents (with edge info), and connection metrics
+ *
+ * @example
+ * ```ts
+ * const { dependencies, dependents, metrics } = computeNodeDependencies(
+ *   selectedNode,
+ *   allNodes,
+ *   edges,
+ * );
+ * console.log(`${metrics.transitiveDependencyCount} transitive deps`);
+ * ```
  */
 export function computeNodeDependencies(
   node: GraphNode | null,

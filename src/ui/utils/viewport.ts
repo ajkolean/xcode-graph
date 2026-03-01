@@ -26,7 +26,24 @@ export interface BoundingBox {
 }
 
 /**
- * Calculate viewport bounds based on SVG dimensions, pan, and zoom
+ * Calculate viewport bounds based on SVG dimensions, pan, and zoom.
+ *
+ * Transforms screen-space coordinates into graph-space, adding a margin
+ * so that elements just outside the viewport are pre-rendered for smooth panning.
+ *
+ * @param svgWidth - Width of the SVG element in pixels
+ * @param svgHeight - Height of the SVG element in pixels
+ * @param panX - Horizontal pan offset in pixels
+ * @param panY - Vertical pan offset in pixels
+ * @param zoom - Current zoom level (1 = 100%)
+ * @param margin - Extra graph-space padding around the viewport (default 200)
+ * @returns Viewport bounds in graph-space coordinates
+ *
+ * @example
+ * ```ts
+ * const bounds = calculateViewportBounds(1920, 1080, 0, 0, 1);
+ * // bounds.minX === -200, bounds.maxX === 2120
+ * ```
  */
 export function calculateViewportBounds(
   svgWidth: number,
@@ -46,7 +63,11 @@ export function calculateViewportBounds(
 }
 
 /**
- * Check if a point is within viewport bounds
+ * Check if a point is within viewport bounds.
+ *
+ * @param point - The point to test
+ * @param bounds - The viewport bounds
+ * @returns `true` if the point lies inside the bounds
  */
 export function isPointInViewport(point: Point, bounds: ViewportBounds): boolean {
   return (
@@ -58,7 +79,11 @@ export function isPointInViewport(point: Point, bounds: ViewportBounds): boolean
 }
 
 /**
- * Check if a bounding box intersects with viewport
+ * Check if a bounding box intersects with the viewport.
+ *
+ * @param box - The axis-aligned bounding box to test
+ * @param bounds - The viewport bounds
+ * @returns `true` if the two rectangles overlap
  */
 export function isBoundingBoxInViewport(box: BoundingBox, bounds: ViewportBounds): boolean {
   // Check if boxes overlap
@@ -165,7 +190,12 @@ function cohenSutherlandIntersect(start: Point, end: Point, bounds: ViewportBoun
 }
 
 /**
- * Check if a circle (node) is within viewport
+ * Check if a circle (node) is within viewport.
+ *
+ * @param center - Center point of the circle
+ * @param radius - Radius of the circle
+ * @param bounds - The viewport bounds
+ * @returns `true` if the circle's bounding box intersects the viewport
  */
 export function isCircleInViewport(center: Point, radius: number, bounds: ViewportBounds): boolean {
   // Check if circle's bounding box intersects viewport
@@ -180,8 +210,11 @@ export function isCircleInViewport(center: Point, radius: number, bounds: Viewpo
 }
 
 /**
- * Filter edges to only those visible in viewport
- * Returns array of visible edge indices for performance
+ * Filter edges to only those visible in the viewport.
+ *
+ * @param edges - Array of edges with `source` and `target` point properties
+ * @param bounds - The viewport bounds used for culling
+ * @returns Subset of edges whose line segments intersect the viewport
  */
 export function cullEdges<T extends { source: Point; target: Point }>(
   edges: T[],
@@ -191,7 +224,12 @@ export function cullEdges<T extends { source: Point; target: Point }>(
 }
 
 /**
- * Filter nodes to only those visible in viewport
+ * Filter nodes to only those visible in the viewport.
+ *
+ * @param nodes - Array of node positions (must have `x` and `y`)
+ * @param radius - Node radius used for bounding-box intersection
+ * @param bounds - The viewport bounds used for culling
+ * @returns Subset of nodes whose bounding circles intersect the viewport
  */
 export function cullNodes<T extends Point>(
   nodes: T[],

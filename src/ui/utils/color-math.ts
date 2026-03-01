@@ -31,8 +31,13 @@ export interface RGBNormalized {
 }
 
 /**
- * Convert hue component to RGB value
- * Shared helper for HSL to RGB conversion
+ * Convert hue component to RGB value.
+ * Shared helper for HSL to RGB conversion.
+ *
+ * @param p - First linear interpolation parameter
+ * @param q - Second linear interpolation parameter
+ * @param t - Hue fraction (0–1, will be wrapped)
+ * @returns RGB channel value (0–1)
  */
 export function hue2rgb(p: number, q: number, t: number): number {
   let adjustedT = t;
@@ -45,7 +50,10 @@ export function hue2rgb(p: number, q: number, t: number): number {
 }
 
 /**
- * Convert number (0-1) to hex string
+ * Convert a number (0–1) to a two-character hex string.
+ *
+ * @param n - Normalized value between 0 and 1
+ * @returns Two-character hex string (e.g., `"ff"`)
  */
 export function toHex(n: number): string {
   const hex = Math.round(n * 255).toString(16);
@@ -53,7 +61,12 @@ export function toHex(n: number): string {
 }
 
 /**
- * Convert RGB (0-1 normalized) to HSL (0-1 normalized)
+ * Convert RGB (0–1 normalized) to HSL (0–1 normalized).
+ *
+ * @param r - Red channel (0–1)
+ * @param g - Green channel (0–1)
+ * @param b - Blue channel (0–1)
+ * @returns HSL color with all channels normalized to 0–1
  */
 export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
   const max = Math.max(r, g, b);
@@ -83,7 +96,12 @@ export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
 }
 
 /**
- * Convert HSL (0-1 normalized) to RGB (0-1 normalized)
+ * Convert HSL (0–1 normalized) to RGB (0–1 normalized).
+ *
+ * @param h - Hue (0–1)
+ * @param s - Saturation (0–1)
+ * @param l - Lightness (0–1)
+ * @returns RGB color with all channels normalized to 0–1
  */
 export function hslToRgb(h: number, s: number, l: number): RGBNormalized {
   if (s === 0) {

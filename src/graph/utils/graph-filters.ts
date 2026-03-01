@@ -33,6 +33,28 @@ function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
   return true;
 }
 
+/**
+ * Filter graph nodes and edges by active filter criteria and an optional search query.
+ *
+ * Nodes are tested against node type, platform, origin, project, and package filters.
+ * Edges are kept only when both endpoints survive filtering.
+ *
+ * @param nodes - All graph nodes
+ * @param edges - All graph edges
+ * @param filters - Active filter state (node types, platforms, origins, projects, packages)
+ * @param searchQuery - Free-text search string (case-insensitive, matched against node name)
+ * @returns Filtered nodes, filtered edges, and a search result count (`null` when no query is active)
+ *
+ * @example
+ * ```ts
+ * const { filteredNodes, filteredEdges, searchResults } = applyGraphFilters(
+ *   nodes,
+ *   edges,
+ *   filters,
+ *   'MyFramework',
+ * );
+ * ```
+ */
 export function applyGraphFilters(
   nodes: GraphNode[],
   edges: GraphEdge[],

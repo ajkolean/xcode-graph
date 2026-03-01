@@ -14,7 +14,12 @@ export const PLATFORM_COLORS: Record<string, string> = {
 /** Default fallback platform color */
 export const PLATFORM_COLOR = '#6F2CFF';
 
-/** Get the color for a specific platform */
+/**
+ * Get the color for a specific platform.
+ *
+ * @param platform - Platform name (e.g., `'iOS'`, `'macOS'`)
+ * @returns Hex color string
+ */
 export function getPlatformColor(platform: string): string {
   return PLATFORM_COLORS[platform] || PLATFORM_COLOR;
 }
@@ -35,8 +40,11 @@ export function getPlatformIconName(platform: string): string {
 }
 
 /**
- * Get SVG path data for platform icons (for inline SVG rendering)
- * These are simplified versions of the lucide icons
+ * Get SVG path data for platform icons (for inline SVG rendering).
+ * These are simplified versions of the Lucide icons.
+ *
+ * @param platform - Platform name (e.g., `'iOS'`, `'macOS'`)
+ * @returns SVG path `d` attribute string
  */
 export function getPlatformIconPath(platform: string): string {
   const pathMap: Record<string, string> = {
