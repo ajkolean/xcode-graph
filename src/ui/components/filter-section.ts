@@ -21,6 +21,7 @@
  * @fires preview-change - Dispatched on hover (detail: { type, value } or null)
  */
 
+import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import { icons } from '@shared/controllers/icon.adapter';
 import { NodeType, Platform } from '@shared/schemas/graph.types';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
@@ -29,7 +30,6 @@ import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { repeat } from 'lit/directives/repeat.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { when } from 'lit/directives/when.js';
@@ -159,9 +159,10 @@ export class GraphFilterSection extends LitElement {
     }
 
     .items {
-      display: flex;
-      flex-direction: column;
-      gap: var(--border-widths-thin);
+      display: block;
+      max-height: 240px;
+      overflow-y: auto;
+      scrollbar-width: thin;
     }
 
     .item-button {
@@ -178,34 +179,7 @@ export class GraphFilterSection extends LitElement {
                   opacity var(--durations-fast) var(--easings-default);
       position: relative;
       border-radius: var(--radii-md);
-      /* Staggered animation */
-      animation: filterItemFadeIn var(--durations-slow) var(--easings-default) both;
-    }
-
-    .item-button:nth-child(1) { animation-delay: 0.02s; }
-    .item-button:nth-child(2) { animation-delay: 0.04s; }
-    .item-button:nth-child(3) { animation-delay: 0.06s; }
-    .item-button:nth-child(4) { animation-delay: 0.08s; }
-    .item-button:nth-child(5) { animation-delay: 0.10s; }
-    .item-button:nth-child(6) { animation-delay: 0.12s; }
-    .item-button:nth-child(7) { animation-delay: 0.14s; }
-    .item-button:nth-child(8) { animation-delay: 0.16s; }
-
-    @keyframes filterItemFadeIn {
-      from {
-        opacity: 0;
-        transform: translateX(-8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .item-button {
-        animation: none;
-      }
+      margin-bottom: var(--border-widths-thin);
     }
 
     .item-button.deselected {
@@ -478,11 +452,11 @@ export class GraphFilterSection extends LitElement {
         this.isExpanded,
         () => html`
             <div class="items">
-              ${repeat(
-                this.items ?? [],
-                (item) => item.key,
-                (item) => this.renderItem(item),
-              )}
+              ${virtualize({
+                items: this.items ?? [],
+                renderItem: (item: FilterItem) => this.renderItem(item),
+                keyFunction: (item: FilterItem) => item.key,
+              })}
             </div>
           `,
       )}

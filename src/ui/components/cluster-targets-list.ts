@@ -18,15 +18,19 @@
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 
+import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { type CSSResultGroup, css, html, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { repeat } from 'lit/directives/repeat.js';
 import { when } from 'lit/directives/when.js';
 import { NodeListEventsBase } from './node-list-events';
 import './list-item-row';
+
+type ClusterListItem =
+  | { kind: 'header'; nodeType: string; count: number }
+  | { kind: 'node'; node: GraphNode; stats: { dependencies: number; dependents: number } };
 
 /**
  * List of cluster target nodes grouped by type using ListItemRow components.
@@ -133,15 +137,11 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
       margin-top: var(--spacing-md);
     }
 
-    .sections {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-3);
-    }
-
-    .type-section {
-      display: flex;
-      flex-direction: column;
+    .target-list {
+      display: block;
+      max-height: 400px;
+      overflow-y: auto;
+      scrollbar-width: thin;
     }
 
     .type-header {
@@ -150,14 +150,17 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
       font-weight: var(--font-weights-medium);
       color: var(--colors-muted-foreground);
       margin-bottom: var(--spacing-sm);
+      margin-top: var(--spacing-3);
       text-transform: uppercase;
       letter-spacing: var(--letter-spacing-wide);
     }
 
-    .node-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-1);
+    .type-header:first-child {
+      margin-top: 0;
+    }
+
+    xcode-graph-list-item-row {
+      margin-bottom: var(--spacing-1);
     }
   `;
 
@@ -167,6 +170,18 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
 
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
+  }
+
+  private get flatItems(): ClusterListItem[] {
+    if (!this.nodesByType) return [];
+    const items: ClusterListItem[] = [];
+    for (const [type, nodes] of Object.entries(this.nodesByType)) {
+      items.push({ kind: 'header', nodeType: type, count: nodes.length });
+      for (const node of nodes) {
+        items.push({ kind: 'node', node, stats: this.getNodeStats(node.id) });
+      }
+    }
+    return items;
   }
 
   private getNodeStats(nodeId: string): { dependencies: number; dependents: number } {
@@ -220,40 +235,25 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
         this.isExpanded,
         () => html`
           <div class="content">
-            <div class="sections">
-              ${repeat(
-                Object.entries(this.nodesByType),
-                ([type]) => type,
-                ([type, nodes]) => html`
-                <div class="type-section">
-                  <div class="type-header">
-                    ${getNodeTypeLabel(type)} (${nodes.length})
-                  </div>
-
-                  <div class="node-list">
-                    ${repeat(
-                      nodes,
-                      (node) => node.id,
-                      (node) => {
-                        const stats = this.getNodeStats(node.id);
-                        const subtitle = this.formatNodeStatsSubtitle(stats);
-
-                        return html`
+            <div class="target-list">
+              ${virtualize({
+                items: this.flatItems,
+                renderItem: (item: ClusterListItem) =>
+                  item.kind === 'header'
+                    ? html`<div class="type-header">${getNodeTypeLabel(item.nodeType)} (${item.count})</div>`
+                    : html`
                         <xcode-graph-list-item-row
-                          .node=${node}
-                          subtitle=${subtitle || ''}
+                          .node=${item.node}
+                          subtitle=${this.formatNodeStatsSubtitle(item.stats) || ''}
                           .zoom=${this.zoom}
                           @row-select=${this.handleNodeSelect}
                           @row-hover=${this.handleNodeHover}
                           @row-hover-end=${this.handleHoverEnd}
                         ></xcode-graph-list-item-row>
-                      `;
-                      },
-                    )}
-                  </div>
-                </div>
-              `,
-              )}
+                      `,
+                keyFunction: (item: ClusterListItem) =>
+                  item.kind === 'header' ? `header-${item.nodeType}` : item.node.id,
+              })}
             </div>
           </div>
         `,

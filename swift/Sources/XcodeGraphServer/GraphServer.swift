@@ -63,6 +63,8 @@ public final class GraphServer {
 
         do {
             self.channel = try bootstrap.bind(host: "localhost", port: port).wait()
+            print("Serving graph at http://localhost:\(port)")
+            print("Press Ctrl+C to stop")
             if shouldOpenBrowser {
                 openBrowser(url: "http://localhost:\(port)")
             }

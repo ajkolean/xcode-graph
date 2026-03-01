@@ -23,6 +23,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@lit-labs/virtualizer": "^2.1.1",
     "@zag-js/core": "^1.34.1",
     "@zag-js/vanilla": "^1.34.1",
     "d3-force": "^3.0.0",

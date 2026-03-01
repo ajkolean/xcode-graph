@@ -13,6 +13,7 @@
  * ```
  */
 
+import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
@@ -257,14 +258,15 @@ export class GraphCycleWarning extends LitElement {
             this.isExpanded
               ? html`
                 <div class="cycle-list">
-                  ${this.cycles.map(
-                    (cycle, index) => html`
+                  ${virtualize({
+                    items: this.cycles,
+                    renderItem: (cycle: string[], index: number) => html`
                       <div class="cycle-item">
                         <span class="cycle-index">${index + 1}.</span>
                         <span class="cycle-path">${this.formatCycle(cycle)}</span>
                       </div>
                     `,
-                  )}
+                  })}
                 </div>
               `
               : null

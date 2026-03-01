@@ -71,7 +71,7 @@ final class GraphHTTPHandler: ChannelInboundHandler {
             const res = await fetch('/graph.json');
             const raw = await res.json();
 
-            const app = document.createElement('graph-app');
+            const app = document.createElement('xcode-graph');
             app.loadRawGraph(raw);
 
             const root = document.getElementById('root');
