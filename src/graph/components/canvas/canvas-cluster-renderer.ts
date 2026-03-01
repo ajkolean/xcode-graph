@@ -7,8 +7,6 @@ import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 
-// ==================== Gradient Cache ====================
-
 const gradientCache = new Map<string, CanvasGradient>();
 
 /** Clear the radial gradient cache (e.g. on theme change or layout reset). */

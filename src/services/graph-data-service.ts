@@ -97,32 +97,20 @@ export class GraphDataService {
     );
   }
 
-  // ==================== Edge Operations ====================
-
-  /**
-   * Get all edges
-   */
   getAllEdges(): GraphEdge[] {
     return this.edges;
   }
 
-  /**
-   * Get edge by source and target
-   */
   getEdge(source: string, target: string): GraphEdge | undefined {
     return this.edgeMap.get(`${source}->${target}`);
   }
 
-  /**
-   * Get outgoing edges from a node (dependencies)
-   */
+  /** Get outgoing edges from a node (dependencies) */
   getOutgoingEdges(nodeId: string): GraphEdge[] {
     return this.outgoingEdges.get(nodeId) || [];
   }
 
-  /**
-   * Get incoming edges to a node (dependents)
-   */
+  /** Get incoming edges to a node (dependents) */
   getIncomingEdges(nodeId: string): GraphEdge[] {
     return this.incomingEdges.get(nodeId) || [];
   }
@@ -135,8 +123,6 @@ export class GraphDataService {
     const incoming = this.getIncomingEdges(nodeId);
     return [...outgoing, ...incoming];
   }
-
-  // ==================== Dependency Operations ====================
 
   /**
    * Get direct dependencies of a node
@@ -223,8 +209,6 @@ export class GraphDataService {
       })),
     );
   }
-
-  // ==================== Cluster Operations ====================
 
   /**
    * Get all nodes in a cluster
