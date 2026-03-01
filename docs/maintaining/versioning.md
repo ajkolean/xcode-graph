@@ -2,7 +2,7 @@
 title: Versioning
 ---
 
-# Tuist CLI Integration: Triggering Compatibility Checks
+# Versioning & Compatibility
 
 When the Tuist CLI bumps its XcodeGraph dependency, it should notify this repo
 to run the compatibility suite. This is done via GitHub's `repository_dispatch` API.
