@@ -157,11 +157,13 @@ export class GraphControls extends LitElement {
   }
 
   private get atMinZoom(): boolean {
-    return this.zoomRatio <= GraphControls.ZOOM_STEPS[0]! + 0.01;
+    const minStep = GraphControls.ZOOM_STEPS[0] ?? 0.25;
+    return this.zoomRatio <= minStep + 0.01;
   }
 
   private get atMaxZoom(): boolean {
-    return this.zoomRatio >= GraphControls.ZOOM_STEPS[GraphControls.ZOOM_STEPS.length - 1]! - 0.01;
+    const maxStep = GraphControls.ZOOM_STEPS[GraphControls.ZOOM_STEPS.length - 1] ?? 4.0;
+    return this.zoomRatio >= maxStep - 0.01;
   }
 
   private handleZoomIn() {
@@ -180,7 +182,8 @@ export class GraphControls extends LitElement {
     const steps = GraphControls.ZOOM_STEPS;
     let prevStep: number | undefined;
     for (let i = steps.length - 1; i >= 0; i--) {
-      if (steps[i]! < current - 0.01) {
+      const step = steps[i];
+      if (step !== undefined && step < current - 0.01) {
         prevStep = steps[i];
         break;
       }

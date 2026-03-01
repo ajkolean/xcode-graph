@@ -22,23 +22,27 @@ import { setFilters, setSearchQuery } from '@shared/signals/index';
 // Mock Data
 // ========================================
 
+const mockNodeCoreLib: GraphNode = {
+  id: 'node1',
+  name: 'CoreLib',
+  type: NodeType.Framework,
+  origin: Origin.Local,
+  platform: Platform.iOS,
+  project: 'MyApp',
+};
+
+const mockNodeUtils: GraphNode = {
+  id: 'node2',
+  name: 'Utils',
+  type: NodeType.Library,
+  origin: Origin.Local,
+  platform: Platform.iOS,
+  project: 'MyApp',
+};
+
 const mockNodes: GraphNode[] = [
-  {
-    id: 'node1',
-    name: 'CoreLib',
-    type: NodeType.Framework,
-    origin: Origin.Local,
-    platform: Platform.iOS,
-    project: 'MyApp',
-  },
-  {
-    id: 'node2',
-    name: 'Utils',
-    type: NodeType.Library,
-    origin: Origin.Local,
-    platform: Platform.iOS,
-    project: 'MyApp',
-  },
+  mockNodeCoreLib,
+  mockNodeUtils,
   {
     id: 'node3',
     name: 'NetworkKit',
@@ -66,7 +70,7 @@ const mockCluster: Cluster = {
   name: 'MyApp',
   type: ClusterType.Project,
   origin: Origin.Local,
-  nodes: [mockNodes[0]!, mockNodes[1]!],
+  nodes: [mockNodeCoreLib, mockNodeUtils],
   anchors: ['node1'],
   metadata: new Map(),
 };
@@ -183,7 +187,7 @@ describe('graph-right-sidebar - Panel Switching', () => {
       ></graph-right-sidebar>
     `);
 
-    selectNode(mockNodes[0]!);
+    selectNode(mockNodeCoreLib);
     await el.updateComplete;
 
     const nodePanel = el.shadowRoot?.querySelector('graph-node-details-panel');
@@ -241,7 +245,7 @@ describe('graph-right-sidebar - Panel Switching', () => {
     expect(header?.getAttribute('title')).to.equal('MyApp');
 
     // Node details replaces header with details toolbar
-    selectNode(mockNodes[0]!);
+    selectNode(mockNodeCoreLib);
     await el.updateComplete;
 
     header = el.shadowRoot?.querySelector('graph-right-sidebar-header');
@@ -304,7 +308,7 @@ describe('graph-right-sidebar - Event Coordination', () => {
       ></graph-right-sidebar>
     `);
 
-    selectNode(mockNodes[0]!);
+    selectNode(mockNodeCoreLib);
     await el.updateComplete;
 
     expect(selectedNode.get()).to.equal(mockNodes[0]);

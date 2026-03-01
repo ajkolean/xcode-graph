@@ -36,7 +36,8 @@ export function assertSvgAttribute(
   expectedValue: string | number,
 ): void {
   expect(element).to.exist;
-  const actualValue = element!.getAttribute(attributeName);
+  if (!element) return;
+  const actualValue = element.getAttribute(attributeName);
   expect(actualValue).to.equal(
     String(expectedValue),
     `Expected ${attributeName}="${expectedValue}", got "${actualValue}"`,
@@ -52,7 +53,8 @@ export function assertSvgAttributeMatches(
   pattern: RegExp,
 ): void {
   expect(element).to.exist;
-  const actualValue = element!.getAttribute(attributeName);
+  if (!element) return;
+  const actualValue = element.getAttribute(attributeName);
   expect(actualValue).to.match(
     pattern,
     `Expected ${attributeName} to match ${pattern}, got "${actualValue}"`,

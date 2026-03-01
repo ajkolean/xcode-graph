@@ -299,8 +299,8 @@ export class GraphClusterGroup extends LitElement {
             return html`
               <graph-node
                 .node=${node}
-                .x=${this.clusterPosition!.x + pos.x}
-                .y=${this.clusterPosition!.y + pos.y}
+                .x=${(this.clusterPosition?.x ?? 0) + pos.x}
+                .y=${(this.clusterPosition?.y ?? 0) + pos.y}
                 .size=${getNodeSize(node, edges)}
                 .color=${getNodeTypeColor(node.type)}
                 .isSelected=${isSelectedNode}

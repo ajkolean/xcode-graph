@@ -90,12 +90,12 @@ export class GraphEdges extends LitElement {
       if (!this.nodeToEdgesCache.has(edge.source)) {
         this.nodeToEdgesCache.set(edge.source, new Set());
       }
-      this.nodeToEdgesCache.get(edge.source)!.add(edgeKey);
+      this.nodeToEdgesCache.get(edge.source)?.add(edgeKey);
 
       if (!this.nodeToEdgesCache.has(edge.target)) {
         this.nodeToEdgesCache.set(edge.target, new Set());
       }
-      this.nodeToEdgesCache.get(edge.target)!.add(edgeKey);
+      this.nodeToEdgesCache.get(edge.target)?.add(edgeKey);
     }
   }
 

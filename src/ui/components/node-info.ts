@@ -247,8 +247,8 @@ export class GraphNodeInfo extends LitElement {
             <graph-info-row label="Origin" value=${this.originLabel}></graph-info-row>
             <graph-info-row label="Type" value=${getNodeTypeLabel(this.node.type)}></graph-info-row>
             ${
-              showProductName
-                ? html`<graph-info-row label="Product" value=${this.node.productName!}></graph-info-row>`
+              showProductName && this.node.productName
+                ? html`<graph-info-row label="Product" value=${this.node.productName}></graph-info-row>`
                 : nothing
             }
             ${

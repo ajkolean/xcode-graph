@@ -39,7 +39,8 @@ describe('GraphLoader', () => {
       expect(progressUpdates.length).toBeGreaterThan(5);
 
       // Last update should be complete
-      const lastUpdate = progressUpdates.at(-1)!;
+      const lastUpdate = progressUpdates.at(-1);
+      if (!lastUpdate) { expect.fail('expected at least one progress update'); return; }
       expect(lastUpdate.type).toBe('complete');
       expect(lastUpdate.percentage).toBe(100);
       expect(lastUpdate.loadedNodes).toBe(250);
@@ -57,8 +58,10 @@ describe('GraphLoader', () => {
       await loadPromise;
 
       expect(progressUpdates).toHaveLength(1);
-      expect(progressUpdates[0]!.type).toBe('complete');
-      expect(progressUpdates[0]!.loadedNodes).toBe(0);
+      const firstUpdate = progressUpdates[0];
+      if (!firstUpdate) { expect.fail('expected progress update'); return; }
+      expect(firstUpdate.type).toBe('complete');
+      expect(firstUpdate.loadedNodes).toBe(0);
     });
 
     it('should calculate correct progress percentages', async () => {
@@ -77,7 +80,9 @@ describe('GraphLoader', () => {
       // Check percentages increase
       const percentages = progressUpdates.map((p) => p.percentage);
       for (let i = 1; i < percentages.length; i++) {
-        expect(percentages[i]).toBeGreaterThanOrEqual(percentages[i - 1]!);
+        const prev = percentages[i - 1];
+        if (prev === undefined) { expect.fail('expected previous percentage'); return; }
+        expect(percentages[i]).toBeGreaterThanOrEqual(prev);
       }
 
       // Final should be 100%
@@ -100,8 +105,10 @@ describe('GraphLoader', () => {
       await loadPromise;
 
       expect(firstChunk).not.toBeNull();
-      expect(firstChunk!.chunk).toBeDefined();
-      expect(firstChunk!.chunk!.nodes.length).toBeLessThanOrEqual(20);
+      if (!firstChunk) { expect.fail('expected first chunk'); return; }
+      expect(firstChunk.chunk).toBeDefined();
+      if (!firstChunk.chunk) { expect.fail('expected chunk data'); return; }
+      expect(firstChunk.chunk.nodes.length).toBeLessThanOrEqual(20);
     });
   });
 
@@ -147,7 +154,9 @@ describe('GraphLoader', () => {
 
       // First chunk should have App cluster nodes
       expect(progressUpdates.length).toBeGreaterThan(0);
-      expect(progressUpdates[0]!.chunk?.nodes.some((n) => n.project === 'App')).toBe(true);
+      const firstProgress = progressUpdates[0];
+      if (!firstProgress) { expect.fail('expected progress update'); return; }
+      expect(firstProgress.chunk?.nodes.some((n) => n.project === 'App')).toBe(true);
     });
   });
 

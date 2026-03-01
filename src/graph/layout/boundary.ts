@@ -80,28 +80,41 @@ export default function forceBoundary(
   }
 
   function isNearBorder(node: BoundaryNode, i: number): boolean {
-    return (
-      node.x! < x0z[i]! + borderz[i]! ||
-      node.x! > x1z[i]! - borderz[i]! ||
-      node.y! < y0z[i]! + borderz[i]! ||
-      node.y! > y1z[i]! - borderz[i]!
-    );
+    const nx = node.x ?? 0;
+    const ny = node.y ?? 0;
+    const bx0 = x0z[i] ?? 0;
+    const bx1 = x1z[i] ?? 0;
+    const by0 = y0z[i] ?? 0;
+    const by1 = y1z[i] ?? 0;
+    const b = borderz[i] ?? 0;
+    return nx < bx0 + b || nx > bx1 - b || ny < by0 + b || ny > by1 - b;
   }
 
   function applyHardBoundary(node: BoundaryNode, i: number): void {
-    if (node.x! >= x1z[i]!) node.vx = (node.vx ?? 0) + (x1z[i]! - node.x!);
-    if (node.x! <= x0z[i]!) node.vx = (node.vx ?? 0) + (x0z[i]! - node.x!);
-    if (node.y! >= y1z[i]!) node.vy = (node.vy ?? 0) + (y1z[i]! - node.y!);
-    if (node.y! <= y0z[i]!) node.vy = (node.vy ?? 0) + (y0z[i]! - node.y!);
+    const nx = node.x ?? 0;
+    const ny = node.y ?? 0;
+    const bx0 = x0z[i] ?? 0;
+    const bx1 = x1z[i] ?? 0;
+    const by0 = y0z[i] ?? 0;
+    const by1 = y1z[i] ?? 0;
+    if (nx >= bx1) node.vx = (node.vx ?? 0) + (bx1 - nx);
+    if (nx <= bx0) node.vx = (node.vx ?? 0) + (bx0 - nx);
+    if (ny >= by1) node.vy = (node.vy ?? 0) + (by1 - ny);
+    if (ny <= by0) node.vy = (node.vy ?? 0) + (by0 - ny);
   }
 
   function force(alpha: number) {
     for (let i = 0, n = nodes.length; i < n; ++i) {
-      const node = nodes[i]!;
+      const node = nodes[i];
+      if (node === undefined) continue;
 
       if (isNearBorder(node, i)) {
-        node.vx = (node.vx ?? 0) + getVx(halfX[i]!, node.x!, strengthsX[i]!, borderz[i]!, alpha);
-        node.vy = (node.vy ?? 0) + getVx(halfY[i]!, node.y!, strengthsY[i]!, borderz[i]!, alpha);
+        node.vx =
+          (node.vx ?? 0) +
+          getVx(halfX[i] ?? 0, node.x ?? 0, strengthsX[i] ?? 0, borderz[i] ?? 0, alpha);
+        node.vy =
+          (node.vy ?? 0) +
+          getVx(halfY[i] ?? 0, node.y ?? 0, strengthsY[i] ?? 0, borderz[i] ?? 0, alpha);
       }
 
       if (hardBoundary) {
@@ -129,8 +142,8 @@ export default function forceBoundary(
     y0z[i] = y0Val;
     y1z[i] = y1Val;
 
-    halfX[i] = x0z[i]! + (x1z[i]! - x0z[i]!) / 2;
-    halfY[i] = y0z[i]! + (y1z[i]! - y0z[i]!) / 2;
+    halfX[i] = x0Val + (x1Val - x0Val) / 2;
+    halfY[i] = y0Val + (y1Val - y0Val) / 2;
     borderz[i] = +borderFn(node, i, nodes);
   }
 
@@ -151,7 +164,9 @@ export default function forceBoundary(
     const borderFn = typeof border === 'function' ? border : constant(+border);
 
     for (let i = 0; i < n; ++i) {
-      initializeNode(i, nodes[i]!, strengthFn, borderFn);
+      const node = nodes[i];
+      if (node === undefined) continue;
+      initializeNode(i, node, strengthFn, borderFn);
     }
   }
 

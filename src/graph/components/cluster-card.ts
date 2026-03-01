@@ -108,7 +108,7 @@ export class GraphClusterCard extends LitElement {
     return {
       isActive,
       cursorStyle: props.clickable ? 'pointer' : 'default',
-      strokeDasharray: this.cluster!.type === 'project' ? '8 8' : '3 8',
+      strokeDasharray: this.cluster?.type === 'project' ? '8 8' : '3 8',
       fillAlpha: isActive ? '08' : '18',
       textOpacity: isActive ? 1 : 0.6,
       fontWeight: isActive ? 600 : 500,

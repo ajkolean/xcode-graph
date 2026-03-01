@@ -181,7 +181,7 @@ export function createMockClusters(nodes: GraphNode[]): Cluster[] {
     if (!clusterMap.has(clusterId)) {
       clusterMap.set(clusterId, []);
     }
-    clusterMap.get(clusterId)!.push(node);
+    clusterMap.get(clusterId)?.push(node);
   }
 
   // Create clusters

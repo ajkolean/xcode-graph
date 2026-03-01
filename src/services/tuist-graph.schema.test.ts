@@ -72,8 +72,10 @@ describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
         // targets is { [key: string]: Target } because key is String
         const targetNames = Object.keys(project.targets);
         if (targetNames.length > 0) {
-          const targetName = targetNames[0]!;
-          const target = project.targets[targetName]!;
+          const targetName = targetNames[0];
+          if (!targetName) return;
+          const target = project.targets[targetName];
+          if (!target) return;
 
           expect(typeof targetName).toBe('string');
           expect(typeof target.name).toBe('string');
@@ -95,9 +97,10 @@ describe('safeParseGraph boundary validation against real fixture', () => {
 
     expect(result.success).toBe(true);
     expect(result.data).toBeDefined();
-    expect(result.data!.name).toBeTruthy();
-    expect(result.data!.projects.length).toBeGreaterThan(0);
-    expect(result.data!.dependencies.length).toBeGreaterThan(0);
+    if (!result.data) { expect.fail('result.data should be defined'); return; }
+    expect(result.data.name).toBeTruthy();
+    expect(result.data.projects.length).toBeGreaterThan(0);
+    expect(result.data.dependencies.length).toBeGreaterThan(0);
     // Real fixture should have no warnings about unknown top-level fields
     expect(result.warnings).toEqual([]);
   });
@@ -107,10 +110,11 @@ describe('safeParseGraph boundary validation against real fixture', () => {
     const result = safeParseGraph(raw);
 
     expect(result.success).toBe(true);
+    if (!result.data) { expect.fail('result.data should be defined'); return; }
     // Verify the parsed data has the same shape as the raw input
-    expect(result.data!.name).toBe(raw.name);
-    expect(result.data!.path).toBe(raw.path);
-    expect(result.data!.projects.length).toBe(raw.projects.length);
-    expect(result.data!.dependencies.length).toBe(raw.dependencies.length);
+    expect(result.data.name).toBe(raw.name);
+    expect(result.data.path).toBe(raw.path);
+    expect(result.data.projects.length).toBe(raw.projects.length);
+    expect(result.data.dependencies.length).toBe(raw.dependencies.length);
   });
 });

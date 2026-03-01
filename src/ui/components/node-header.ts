@@ -195,10 +195,10 @@ export class GraphNodeHeader extends LitElement {
 
       <!-- Architecture Tags -->
       ${
-        hasTags
+        hasTags && this.node.tags
           ? html`
             <div class="tags-container">
-              ${this.node.tags!.map((tag) => html`<graph-tag-badge tag=${tag}></graph-tag-badge>`)}
+              ${this.node.tags.map((tag) => html`<graph-tag-badge tag=${tag}></graph-tag-badge>`)}
             </div>
           `
           : nothing

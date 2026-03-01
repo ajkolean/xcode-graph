@@ -68,7 +68,7 @@ export class MockGraphLayoutController implements ReactiveController {
       if (!clusterMap.has(clusterId)) {
         clusterMap.set(clusterId, []);
       }
-      clusterMap.get(clusterId)!.push(node);
+      clusterMap.get(clusterId)?.push(node);
     });
 
     this.clusters = Array.from(clusterMap.entries()).map(([id, clusterNodes]) => ({

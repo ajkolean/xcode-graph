@@ -102,7 +102,7 @@ export class GraphCanvas extends LitElement {
 
   @query('canvas')
   private declare canvas: HTMLCanvasElement;
-  private ctx!: CanvasRenderingContext2D;
+  private ctx: CanvasRenderingContext2D | undefined;
 
   private readonly layout = new GraphLayoutController(this, {
     enableAnimation: false,
@@ -132,7 +132,7 @@ export class GraphCanvas extends LitElement {
   private connectedNodesCache: { nodeId: string; result: Set<string> } | null = null;
   private routedEdgeMapCache: Map<string, RoutedEdge> | null = null;
   private lastRoutedEdgesRef: RoutedEdge[] | undefined = undefined;
-  private theme!: CanvasTheme;
+  private theme: CanvasTheme | undefined;
 
   // Animation & Render State
   private animationFrameId: number | null = null;
@@ -198,7 +198,7 @@ export class GraphCanvas extends LitElement {
   override firstUpdated(): void {
     this.theme = resolveCanvasTheme(this);
     if (this.canvas) {
-      this.ctx = this.canvas.getContext('2d', { alpha: true })!;
+      this.ctx = this.canvas.getContext('2d', { alpha: true }) ?? undefined;
       this.resizeCanvas();
       window.addEventListener('resize', this.handleResize);
       this.centerGraph();
@@ -357,7 +357,7 @@ export class GraphCanvas extends LitElement {
       const pathString = getNodeIconPath(node.type, node.platform);
       this.pathCache.set(key, new Path2D(pathString));
     }
-    return this.pathCache.get(key)!;
+    return this.pathCache.get(key) as Path2D;
   };
 
   private centerGraph() {
@@ -447,7 +447,7 @@ export class GraphCanvas extends LitElement {
   };
 
   private resizeCanvas() {
-    if (!this.canvas) return;
+    if (!this.canvas || !this.ctx) return;
     const dpr = window.devicePixelRatio || 1;
     const rect = this.getBoundingClientRect();
 
@@ -621,7 +621,7 @@ export class GraphCanvas extends LitElement {
   }
 
   private renderCanvas() {
-    if (!this.ctx || !this.canvas) return;
+    if (!this.ctx || !this.canvas || !this.theme) return;
 
     const pan = this.interactionState.pan;
     const width = this.canvas.width / (window.devicePixelRatio || 1);

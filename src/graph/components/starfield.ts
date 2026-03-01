@@ -153,7 +153,7 @@ export class Starfield {
       r: isBright ? Math.random() * 0.5 + 1.0 : Math.random() * 0.8 + 0.2,
       a: Math.min(isBright ? Math.random() * 0.1 + 0.1 : Math.random() * 0.1 + 0.03, 0.15),
       depth,
-      color: palette[colorIndex] ?? palette[0]!,
+      color: palette[colorIndex] ?? palette[0] ?? '#f7f1da',
     };
   }
 
@@ -203,7 +203,8 @@ export class Starfield {
       this.cachedCanvas = new OffscreenCanvas(width, height);
     }
 
-    const offCtx = this.cachedCanvas.getContext('2d')!;
+    const offCtx = this.cachedCanvas.getContext('2d');
+    if (!offCtx) return;
     offCtx.clearRect(0, 0, width, height);
 
     const spanX = width * spanMultiplier;

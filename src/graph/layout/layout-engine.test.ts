@@ -26,7 +26,7 @@ function createClustersFromGraph(nodes: GraphNode[], _edges: GraphEdge[]): Clust
     if (!projectNodes.has(project)) {
       projectNodes.set(project, []);
     }
-    projectNodes.get(project)!.push(node);
+    projectNodes.get(project)?.push(node);
   }
 
   return Array.from(projectNodes.entries()).map(([id, clusterNodes]) => ({
@@ -35,7 +35,7 @@ function createClustersFromGraph(nodes: GraphNode[], _edges: GraphEdge[]): Clust
     type: ClusterType.Project,
     origin: Origin.Local,
     nodes: clusterNodes,
-    anchors: clusterNodes.length > 0 ? [clusterNodes[0]!.id] : [],
+    anchors: clusterNodes.length > 0 && clusterNodes[0] ? [clusterNodes[0].id] : [],
     metadata: new Map(),
   }));
 }
@@ -54,8 +54,10 @@ describe('computeHierarchicalLayout', () => {
       for (let i = 0; i < 4; i++) {
         const pos = result.clusterPositions.get(`Layer${i}`);
         expect(pos).toBeDefined();
-        expect(Number.isFinite(pos!.x)).toBe(true);
-        expect(Number.isFinite(pos!.y)).toBe(true);
+        if (pos) {
+          expect(Number.isFinite(pos.x)).toBe(true);
+          expect(Number.isFinite(pos.y)).toBe(true);
+        }
       }
     });
 

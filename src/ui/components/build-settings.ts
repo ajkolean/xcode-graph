@@ -177,36 +177,38 @@ export class GraphBuildSettings extends LitElement {
 
   private renderCodeSignSection(): TemplateResult | typeof nothing {
     if (!this.hasCodeSignSettings) return nothing;
+    const settings = this.settings;
+    if (!settings) return nothing;
 
     return html`
       <div class="code-sign-section">
         <div class="section-label">Code Signing</div>
         <div class="info-rows">
           ${
-            this.settings!.codeSignIdentity
+            settings.codeSignIdentity
               ? html`
                 <graph-info-row label="Identity">
-                  <span class="truncated" title=${this.settings!.codeSignIdentity}>
-                    ${this.settings!.codeSignIdentity}
+                  <span class="truncated" title=${settings.codeSignIdentity}>
+                    ${settings.codeSignIdentity}
                   </span>
                 </graph-info-row>
               `
               : nothing
           }
           ${
-            this.settings!.developmentTeam
+            settings.developmentTeam
               ? html`
-                <graph-info-row label="Team" value=${this.settings!.developmentTeam}>
+                <graph-info-row label="Team" value=${settings.developmentTeam}>
                 </graph-info-row>
               `
               : nothing
           }
           ${
-            this.settings!.provisioningProfile
+            settings.provisioningProfile
               ? html`
                 <graph-info-row label="Profile">
-                  <span class="truncated" title=${this.settings!.provisioningProfile}>
-                    ${this.settings!.provisioningProfile}
+                  <span class="truncated" title=${settings.provisioningProfile}>
+                    ${settings.provisioningProfile}
                   </span>
                 </graph-info-row>
               `
@@ -217,24 +219,27 @@ export class GraphBuildSettings extends LitElement {
     `;
   }
 
-  private renderExpandedContent(): TemplateResult {
+  private renderExpandedContent(): TemplateResult | typeof nothing {
+    const settings = this.settings;
+    if (!settings) return nothing;
+
     return html`
       <div class="content">
         <div class="info-rows">
           ${
-            this.settings!.swiftVersion
+            settings.swiftVersion
               ? html`
-                <graph-info-row label="Swift Version" value=${this.settings!.swiftVersion}>
+                <graph-info-row label="Swift Version" value=${settings.swiftVersion}>
                 </graph-info-row>
               `
               : nothing
           }
           ${
-            this.settings!.compilationConditions && this.settings!.compilationConditions.length > 0
+            settings.compilationConditions && settings.compilationConditions.length > 0
               ? html`
                 <graph-info-row label="Conditions">
                   <div class="conditions">
-                    ${this.settings!.compilationConditions.map(
+                    ${settings.compilationConditions.map(
                       (condition) => html`<span class="condition-badge">${condition}</span>`,
                     )}
                   </div>

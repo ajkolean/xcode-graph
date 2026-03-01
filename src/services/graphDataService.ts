@@ -193,7 +193,9 @@ export class GraphDataService {
     const queue: Array<{ id: string; depth: number }> = [{ id: nodeId, depth: 0 }];
 
     while (queue.length > 0) {
-      const { id, depth } = queue.shift()!;
+      const item = queue.shift();
+      if (!item) break;
+      const { id, depth } = item;
 
       const outgoing = this.getOutgoingEdges(id);
 
@@ -225,7 +227,9 @@ export class GraphDataService {
     const queue: Array<{ id: string; depth: number }> = [{ id: nodeId, depth: 0 }];
 
     while (queue.length > 0) {
-      const { id, depth } = queue.shift()!;
+      const item = queue.shift();
+      if (!item) break;
+      const { id, depth } = item;
 
       const incoming = this.getIncomingEdges(id);
 

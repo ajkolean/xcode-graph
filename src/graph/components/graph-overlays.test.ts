@@ -19,28 +19,35 @@ describe('graph-background', () => {
   it('should render SVG with grid pattern', async () => {
     const el = await fixture<GraphBackground>(html`<graph-background></graph-background>`);
 
-    const svg = querySvgElement(el.shadowRoot!, 'svg');
+    const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
     expect(svg).to.exist;
   });
 
   it('should define grid pattern in defs', async () => {
     const el = await fixture<GraphBackground>(html`<graph-background></graph-background>`);
 
-    const svg = querySvgElement(el.shadowRoot!, 'svg');
-    const defs = querySvgElement(svg!, 'defs');
-    expect(defs).to.exist;
+    const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
+    expect(svg).to.exist;
+    if (!svg) return;
 
-    const pattern = querySvgElement(defs!, 'pattern#grid');
+    const defs = querySvgElement(svg, 'defs');
+    expect(defs).to.exist;
+    if (!defs) return;
+
+    const pattern = querySvgElement(defs, 'pattern#grid');
     expect(pattern).to.exist;
   });
 
   it('should have rect with grid pattern fill', async () => {
     const el = await fixture<GraphBackground>(html`<graph-background></graph-background>`);
 
-    const svg = querySvgElement(el.shadowRoot!, 'svg');
-    const rect = querySvgElement(svg!, 'rect');
+    const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
+    expect(svg).to.exist;
+    if (!svg) return;
+
+    const rect = querySvgElement(svg, 'rect');
     expect(rect).to.exist;
-    expect(rect!.getAttribute('fill')).to.equal('url(#grid)');
+    expect(rect?.getAttribute('fill')).to.equal('url(#grid)');
   });
 });
 
@@ -57,16 +64,16 @@ describe('graph-controls', () => {
 
     await el.updateComplete;
 
-    const container = el.shadowRoot!.querySelector('.container');
-    expect(container!.textContent).to.include('150%');
+    const container = el.shadowRoot?.querySelector('.container');
+    expect(container?.textContent).to.include('150%');
   });
 
   it('should render zoom buttons', async () => {
     const el = await fixture<GraphControls>(html`<graph-controls zoom="1"></graph-controls>`);
 
-    const zoomInBtn = el.shadowRoot!.querySelector('button[title="Zoom in"]');
-    const zoomOutBtn = el.shadowRoot!.querySelector('button[title="Zoom out"]');
-    const resetBtn = el.shadowRoot!.querySelector('button[title="Fit to view"]');
+    const zoomInBtn = el.shadowRoot?.querySelector('button[title="Zoom in"]');
+    const zoomOutBtn = el.shadowRoot?.querySelector('button[title="Zoom out"]');
+    const resetBtn = el.shadowRoot?.querySelector('button[title="Fit to view"]');
 
     expect(zoomInBtn).to.exist;
     expect(zoomOutBtn).to.exist;
@@ -83,7 +90,7 @@ describe('graph-controls', () => {
       eventFired = true;
     });
 
-    const zoomInBtn = el.shadowRoot!.querySelector('button[title="Zoom in"]') as HTMLButtonElement;
+    const zoomInBtn = el.shadowRoot?.querySelector('button[title="Zoom in"]') as HTMLButtonElement;
     zoomInBtn.click();
 
     expect(eventFired).to.be.true;
@@ -99,7 +106,7 @@ describe('graph-controls', () => {
       eventFired = true;
     });
 
-    const zoomOutBtn = el.shadowRoot!.querySelector(
+    const zoomOutBtn = el.shadowRoot?.querySelector(
       'button[title="Zoom out"]',
     ) as HTMLButtonElement;
     zoomOutBtn.click();
@@ -115,7 +122,7 @@ describe('graph-controls', () => {
       eventFired = true;
     });
 
-    const resetBtn = el.shadowRoot!.querySelector(
+    const resetBtn = el.shadowRoot?.querySelector(
       'button[title="Fit to view"]',
     ) as HTMLButtonElement;
     resetBtn.click();
@@ -131,9 +138,9 @@ describe('graph-visualization-empty-state', () => {
     );
 
     expect(el).to.exist;
-    const message = el.shadowRoot!.querySelector('.message');
+    const message = el.shadowRoot?.querySelector('.message');
     expect(message).to.exist;
-    expect(message!.textContent).to.include('No nodes to display');
+    expect(message?.textContent).to.include('No nodes to display');
   });
 
   it('should render hint text', async () => {
@@ -141,9 +148,9 @@ describe('graph-visualization-empty-state', () => {
       html`<graph-visualization-empty-state></graph-visualization-empty-state>`,
     );
 
-    const hint = el.shadowRoot!.querySelector('.hint');
+    const hint = el.shadowRoot?.querySelector('.hint');
     expect(hint).to.exist;
-    expect(hint!.textContent).to.include('Try adjusting your filters');
+    expect(hint?.textContent).to.include('Try adjusting your filters');
   });
 });
 
@@ -152,10 +159,10 @@ describe('graph-instructions', () => {
     const el = await fixture<GraphInstructions>(html`<graph-instructions></graph-instructions>`);
 
     expect(el).to.exist;
-    const container = el.shadowRoot!.querySelector('.container');
+    const container = el.shadowRoot?.querySelector('.container');
     expect(container).to.exist;
-    expect(container!.textContent).to.include('Drag nodes to reposition');
-    expect(container!.textContent).to.include('Click to inspect');
-    expect(container!.textContent).to.include('Scroll to zoom');
+    expect(container?.textContent).to.include('Drag nodes to reposition');
+    expect(container?.textContent).to.include('Click to inspect');
+    expect(container?.textContent).to.include('Scroll to zoom');
   });
 });
