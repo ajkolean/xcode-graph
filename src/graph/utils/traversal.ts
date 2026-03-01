@@ -102,7 +102,6 @@ const transitiveCache = new TransitiveCache();
 /**
  * Build outgoing and incoming adjacency lists from a list of edges.
  *
- * @param edges - The graph edges to index
  * @returns An object with `outgoing` (source → targets) and `incoming` (target → sources) maps
  *
  * @example

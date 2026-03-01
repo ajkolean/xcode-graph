@@ -17,8 +17,6 @@ import {
 } from '@shared/schemas/graph.types';
 import { buildAdjacency, traverseGraph } from './traversal';
 
-// ==================== Type Definitions ====================
-
 /**
  * A node with its associated edge information
  */
@@ -38,8 +36,6 @@ export interface ClusterStatsResult {
   filteredTargetsCount: number;
   platforms: Set<string>;
 }
-
-// ==================== Dependency Analysis ====================
 
 /**
  * Compute dependencies and dependents for a node.
@@ -168,8 +164,6 @@ export function computeNodeDependencies(
   };
 }
 
-// ==================== Cluster Analysis ====================
-
 /**
  * Compute statistics for a cluster
  *
@@ -227,8 +221,6 @@ export function computeClusterStats(
     platforms,
   };
 }
-
-// ==================== Filter Utilities ====================
 
 /**
  * Compute filter counts and utilities from node data

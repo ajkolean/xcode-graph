@@ -14,7 +14,6 @@ import { matchesSearch } from './visibility';
 
 function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
   if (!filters.nodeTypes.has(node.type)) return false;
-  // Check if any of the node's platforms match the filter
   if (node.deploymentTargets) {
     const nodePlatforms = Object.keys(node.deploymentTargets);
     if (!nodePlatforms.some((p) => filters.platforms.has(p as Platform))) return false;

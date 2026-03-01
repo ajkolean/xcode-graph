@@ -9,8 +9,6 @@
 
 import type { GraphEdge } from '@shared/schemas/graph.types';
 
-// ==================== Connection Analysis ====================
-
 /**
  * Get all nodes connected to a given node
  *

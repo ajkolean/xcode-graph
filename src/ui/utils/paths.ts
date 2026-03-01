@@ -83,52 +83,37 @@ interface Point {
  * @param end - Ending point
  * @returns SVG path string
  */
+function buildSegment(
+  curr: Point,
+  next: Point,
+  end: Point,
+  isLast: boolean,
+): string {
+  const target = isLast
+    ? end
+    : { x: (curr.x + next.x) / 2, y: (curr.y + next.y) / 2 };
+  return `Q ${curr.x},${curr.y} ${target.x},${target.y}`;
+}
+
 export function generateWaypointPath(start: Point, waypoints: Point[], end: Point): string {
   if (waypoints.length === 0) {
-    // No waypoints, use simple bezier
     return generateBezierPath(start.x, start.y, end.x, end.y);
   }
 
   const parts: string[] = [`M ${start.x},${start.y}`];
-
-  // All points in sequence
   const points = [start, ...waypoints, end];
 
-  // Use quadratic bezier curves through waypoints
-  // For smooth transitions, we use the waypoints as control points
-  // and compute midpoints as the actual curve endpoints
-
   if (points.length === 2) {
-    // Just start and end
     parts.push(`L ${end.x},${end.y}`);
   } else if (points.length === 3) {
-    // One waypoint - use quadratic bezier
     const wp = points[1] ?? start;
     parts.push(`Q ${wp.x},${wp.y} ${end.x},${end.y}`);
   } else {
-    // Multiple waypoints - chain quadratic curves
-    // Use Catmull-Rom style: curve through midpoints, waypoints are control points
-
     for (let i = 1; i < points.length - 1; i++) {
       const curr = points[i] ?? start;
       const next = points[i + 1] ?? end;
-
-      // Midpoint after current waypoint
-      const midAfter = {
-        x: (curr.x + next.x) / 2,
-        y: (curr.y + next.y) / 2,
-      };
-
-      if (i === 1) {
-        // First segment: from start to first midpoint
-        parts.push(`Q ${curr.x},${curr.y} ${midAfter.x},${midAfter.y}`);
-      } else if (i === points.length - 2) {
-        // Last segment: from last midpoint to end
-        parts.push(`Q ${curr.x},${curr.y} ${end.x},${end.y}`);
-      } else {
-        // Middle segments: from midpoint to midpoint
-        parts.push(`Q ${curr.x},${curr.y} ${midAfter.x},${midAfter.y}`);
-      }
+      const isLast = i === points.length - 2;
+      parts.push(buildSegment(curr, next, end, isLast));
     }
   }
 

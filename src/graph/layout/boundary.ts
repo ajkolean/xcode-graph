@@ -75,6 +75,16 @@ export default function forceBoundary(
   let y0Fn = toAccessor(y0, -100);
   let y1Fn = toAccessor(y1, 100);
 
+  function getBounds(i: number) {
+    return {
+      x0: x0z[i] ?? 0,
+      x1: x1z[i] ?? 0,
+      y0: y0z[i] ?? 0,
+      y1: y1z[i] ?? 0,
+      border: borderz[i] ?? 0,
+    };
+  }
+
   function getVx(halfX: number, x: number, strengthX: number, _border: number, alpha: number) {
     return (halfX - x) * Math.min(2, Math.abs(halfX - x) / halfX) * strengthX * alpha;
   }
@@ -82,25 +92,34 @@ export default function forceBoundary(
   function isNearBorder(node: BoundaryNode, i: number): boolean {
     const nx = node.x ?? 0;
     const ny = node.y ?? 0;
-    const bx0 = x0z[i] ?? 0;
-    const bx1 = x1z[i] ?? 0;
-    const by0 = y0z[i] ?? 0;
-    const by1 = y1z[i] ?? 0;
-    const b = borderz[i] ?? 0;
-    return nx < bx0 + b || nx > bx1 - b || ny < by0 + b || ny > by1 - b;
+    const { x0, x1, y0, y1, border } = getBounds(i);
+    return nx < x0 + border || nx > x1 - border || ny < y0 + border || ny > y1 - border;
+  }
+
+  function clampAxis(
+    node: BoundaryNode,
+    axis: 'vx' | 'vy',
+    pos: number,
+    min: number,
+    max: number,
+  ): void {
+    if (pos >= max) node[axis] = (node[axis] ?? 0) + (max - pos);
+    if (pos <= min) node[axis] = (node[axis] ?? 0) + (min - pos);
   }
 
   function applyHardBoundary(node: BoundaryNode, i: number): void {
-    const nx = node.x ?? 0;
-    const ny = node.y ?? 0;
-    const bx0 = x0z[i] ?? 0;
-    const bx1 = x1z[i] ?? 0;
-    const by0 = y0z[i] ?? 0;
-    const by1 = y1z[i] ?? 0;
-    if (nx >= bx1) node.vx = (node.vx ?? 0) + (bx1 - nx);
-    if (nx <= bx0) node.vx = (node.vx ?? 0) + (bx0 - nx);
-    if (ny >= by1) node.vy = (node.vy ?? 0) + (by1 - ny);
-    if (ny <= by0) node.vy = (node.vy ?? 0) + (by0 - ny);
+    const { x0, x1, y0, y1 } = getBounds(i);
+    clampAxis(node, 'vx', node.x ?? 0, x0, x1);
+    clampAxis(node, 'vy', node.y ?? 0, y0, y1);
+  }
+
+  function applyBorderForce(node: BoundaryNode, i: number, alpha: number): void {
+    node.vx =
+      (node.vx ?? 0) +
+      getVx(halfX[i] ?? 0, node.x ?? 0, strengthsX[i] ?? 0, borderz[i] ?? 0, alpha);
+    node.vy =
+      (node.vy ?? 0) +
+      getVx(halfY[i] ?? 0, node.y ?? 0, strengthsY[i] ?? 0, borderz[i] ?? 0, alpha);
   }
 
   function force(alpha: number) {
@@ -109,12 +128,7 @@ export default function forceBoundary(
       if (node === undefined) continue;
 
       if (isNearBorder(node, i)) {
-        node.vx =
-          (node.vx ?? 0) +
-          getVx(halfX[i] ?? 0, node.x ?? 0, strengthsX[i] ?? 0, borderz[i] ?? 0, alpha);
-        node.vy =
-          (node.vy ?? 0) +
-          getVx(halfY[i] ?? 0, node.y ?? 0, strengthsY[i] ?? 0, borderz[i] ?? 0, alpha);
+        applyBorderForce(node, i, alpha);
       }
 
       if (hardBoundary) {
