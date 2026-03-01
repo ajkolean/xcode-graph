@@ -4,7 +4,6 @@
 
 import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 
-
 export const mockAppNode: GraphNode = {
   id: 'app-1',
   name: 'MyApp',
@@ -74,7 +73,6 @@ export const mockPackageNode: GraphNode = {
   targetCount: 0,
 };
 
-
 export const allNodeTypes: GraphNode[] = [
   mockAppNode,
   mockFrameworkNode,
@@ -85,7 +83,6 @@ export const allNodeTypes: GraphNode[] = [
   mockPackageNode,
 ];
 
-
 export const allPlatforms: GraphNode[] = [
   { ...mockAppNode, id: 'ios-node', name: 'iOS App', platform: Platform.iOS },
   { ...mockAppNode, id: 'macos-node', name: 'macOS App', platform: Platform.macOS },
@@ -93,7 +90,6 @@ export const allPlatforms: GraphNode[] = [
   { ...mockAppNode, id: 'watchos-node', name: 'watchOS App', platform: Platform.watchOS },
   { ...mockAppNode, id: 'visionos-node', name: 'visionOS App', platform: Platform.visionOS },
 ];
-
 
 export const mockGraphNodes: GraphNode[] = [
   // Apps
@@ -225,7 +221,6 @@ export const mockGraphNodes: GraphNode[] = [
     targetCount: 0,
   },
 ];
-
 
 /**
  * Get mock nodes with dependencies

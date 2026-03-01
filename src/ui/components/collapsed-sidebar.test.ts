@@ -8,10 +8,6 @@ import type { GraphCollapsedSidebar } from './collapsed-sidebar';
 import './collapsed-sidebar';
 
 describe('xcode-graph-collapsed-sidebar', () => {
-  // ========================================
-  // Badge Visibility Tests
-  // ========================================
-
   it('should show product types badge when filterSize < typeCounts', async () => {
     const el = await fixture<GraphCollapsedSidebar>(html`
       <xcode-graph-collapsed-sidebar
@@ -122,10 +118,6 @@ describe('xcode-graph-collapsed-sidebar', () => {
     expect(badges?.length).to.equal(0);
   });
 
-  // ========================================
-  // Event Dispatch Tests
-  // ========================================
-
   it('should dispatch expand-to-section event with productTypes section', async () => {
     const el = await fixture<GraphCollapsedSidebar>(html`
       <xcode-graph-collapsed-sidebar
@@ -165,10 +157,6 @@ describe('xcode-graph-collapsed-sidebar', () => {
     expect(event).to.exist;
     expect((event as CustomEvent).detail.section).to.equal('platforms');
   });
-
-  // ========================================
-  // Undefined filteredNodes/filteredEdges
-  // ========================================
 
   it('should display 0 for nodes and edges when filteredNodes and filteredEdges are undefined', async () => {
     const el = await fixture<GraphCollapsedSidebar>(html`

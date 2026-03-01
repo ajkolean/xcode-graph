@@ -17,7 +17,6 @@ const node1Id = mockGraphNodes[1]?.id ?? '';
 const node2Id = mockGraphNodes[2]?.id ?? '';
 const node5Id = mockGraphNodes[5]?.id ?? '';
 
-
 function createClusterMetadata(nodeIds: string[]): Map<string, ClusterNodeMetadata> {
   const metadata = new Map<string, ClusterNodeMetadata>();
 
@@ -41,7 +40,6 @@ function createClusterMetadata(nodeIds: string[]): Map<string, ClusterNodeMetada
 
   return metadata;
 }
-
 
 export const mockClusterSmall: Cluster = {
   id: 'utils-kit',
@@ -122,7 +120,6 @@ export const mockClusterExternal: Cluster = {
     height: 180,
   },
 };
-
 
 export const allClusterSizes: Cluster[] = [mockClusterSmall, mockClusterMedium, mockClusterLarge];
 

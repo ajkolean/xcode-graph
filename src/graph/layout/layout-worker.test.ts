@@ -20,7 +20,6 @@ import {
 } from '../../fixtures';
 import { computeHierarchicalLayout } from './engine';
 
-
 /**
  * Build clusters from nodes based on their project property.
  * Nodes without a project are placed into a 'default' cluster.
@@ -98,7 +97,6 @@ describe('Layout Worker (direct function tests)', () => {
     });
   });
 
-
   describe('empty graph', () => {
     it('should return empty valid result for empty graph', async () => {
       const result = await computeHierarchicalLayout([], [], []);
@@ -116,7 +114,6 @@ describe('Layout Worker (direct function tests)', () => {
       expect(result.clusterPositions.size).toBe(0);
     });
   });
-
 
   describe('edge cases', () => {
     it('should handle single node in a single cluster', async () => {

@@ -9,10 +9,6 @@ import type { GraphClusterTypeBadge } from './cluster-type-badge';
 import './cluster-type-badge';
 
 describe('xcode-graph-cluster-type-badge', () => {
-  // ========================================
-  // Rendering Tests
-  // ========================================
-
   it('should render package badge', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
       <xcode-graph-cluster-type-badge
@@ -39,10 +35,6 @@ describe('xcode-graph-cluster-type-badge', () => {
     expect(badge.label).to.equal('Project');
   });
 
-  // ========================================
-  // Property Tests
-  // ========================================
-
   it('should update badge text when clusterType changes', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
       <xcode-graph-cluster-type-badge cluster-type="package"></xcode-graph-cluster-type-badge>
@@ -56,10 +48,6 @@ describe('xcode-graph-cluster-type-badge', () => {
 
     expect(badge.label).to.equal('Project');
   });
-
-  // ========================================
-  // Dynamic Styling Tests
-  // ========================================
 
   it('should apply color to graph-badge', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
@@ -100,10 +88,6 @@ describe('xcode-graph-cluster-type-badge', () => {
     // Should use default orange color
     expect(badge.color).to.equal('#F59E0B');
   });
-
-  // ========================================
-  // Badge Configuration Tests
-  // ========================================
 
   it('should configure graph-badge with accent variant', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`

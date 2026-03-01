@@ -18,7 +18,6 @@ import {
   type InteractionState,
 } from './canvas-interaction-handler';
 
-
 function createDefaultState(overrides: Partial<InteractionState> = {}): InteractionState {
   return {
     pan: { x: 0, y: 0 },
@@ -114,7 +113,6 @@ function createWheelEvent(overrides: Partial<WheelEvent> = {}): WheelEvent {
     ...overrides,
   } as unknown as WheelEvent;
 }
-
 
 describe('canvas-interaction-handler', () => {
   describe('handleMouseDown', () => {

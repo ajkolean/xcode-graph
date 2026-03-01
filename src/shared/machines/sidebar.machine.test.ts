@@ -62,7 +62,6 @@ describe('sidebarMachine', () => {
     });
   });
 
-
   describe('state transitions', () => {
     it('should transition from expanded to collapsed on TOGGLE', async () => {
       const ctx = createMachineTestContext({
@@ -145,7 +144,6 @@ describe('sidebarMachine', () => {
     });
   });
 
-
   describe('context updates', () => {
     it('should switch tab when SWITCH_TAB is sent', async () => {
       const ctx = createMachineTestContext({
@@ -224,7 +222,6 @@ describe('sidebarMachine', () => {
     });
   });
 
-
   describe('callbacks', () => {
     it('should call onCollapseChange on initialization (expanded)', async () => {
       const onCollapseChange = vi.fn();
@@ -300,7 +297,6 @@ describe('sidebarMachine', () => {
       ctx.cleanup();
     });
   });
-
 
   describe('event handling', () => {
     it('should handle multiple TOGGLE_SECTION events for different sections', async () => {

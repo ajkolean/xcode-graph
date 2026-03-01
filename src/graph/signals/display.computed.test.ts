@@ -23,7 +23,6 @@ import {
   viewMode,
 } from './graph.signals';
 
-
 function createTestNode(id: string, overrides: Partial<GraphNode> = {}): GraphNode {
   return {
     id,
@@ -60,7 +59,6 @@ describe('display.computed', () => {
   afterEach(() => {
     restoreSignalSnapshot(snapshot);
   });
-
 
   describe('filteredData', () => {
     it('should return all nodes and edges when filters include everything', () => {
@@ -173,7 +171,6 @@ describe('display.computed', () => {
     });
   });
 
-
   describe('transitiveData', () => {
     it('should return empty results when view mode is Full', () => {
       const testNodes = [createTestNode('a'), createTestNode('b')];
@@ -246,7 +243,6 @@ describe('display.computed', () => {
       expect(result.transitiveDeps.nodes.size).toBe(0);
     });
   });
-
 
   describe('displayData', () => {
     it('should combine filtered data with transitive data', () => {

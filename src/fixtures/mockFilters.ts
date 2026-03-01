@@ -4,7 +4,6 @@
 
 import type { FilterItem } from '@ui/components/filter-section';
 
-
 export const mockNodeTypeFilters: FilterItem[] = [
   { key: 'app', count: 5, color: '#3B82F6' }, // Blue
   { key: 'framework', count: 12, color: '#8B5CF6' }, // Purple
@@ -15,7 +14,6 @@ export const mockNodeTypeFilters: FilterItem[] = [
   { key: 'package', count: 4, color: '#EC4899' }, // Pink
 ];
 
-
 export const mockPlatformFilters: FilterItem[] = [
   { key: 'iOS', count: 25, color: '#A8A29E' }, // Stone
   { key: 'macOS', count: 18, color: '#A8A29E' },
@@ -23,7 +21,6 @@ export const mockPlatformFilters: FilterItem[] = [
   { key: 'watchOS', count: 6, color: '#A8A29E' },
   { key: 'visionOS', count: 3, color: '#A8A29E' },
 ];
-
 
 export const mockProjectFilters: FilterItem[] = [
   { key: 'MainApp', count: 15, color: '#94A3B8' }, // Slate
@@ -33,7 +30,6 @@ export const mockProjectFilters: FilterItem[] = [
   { key: 'Analytics', count: 4, color: '#94A3B8' },
 ];
 
-
 export const mockPackageFilters: FilterItem[] = [
   { key: 'Alamofire', count: 3, color: '#A78BFA' }, // Violet
   { key: 'SwiftUI', count: 20, color: '#A78BFA' },
@@ -41,7 +37,6 @@ export const mockPackageFilters: FilterItem[] = [
   { key: 'SnapKit', count: 8, color: '#A78BFA' },
   { key: 'Kingfisher', count: 5, color: '#A78BFA' },
 ];
-
 
 /**
  * All filter items organized by type

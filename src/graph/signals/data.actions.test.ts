@@ -41,7 +41,6 @@ describe('data.actions', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-
   describe('setGraphData', () => {
     it('should set nodes and edges', () => {
       const testNodes = [createTestNode('node-1'), createTestNode('node-2')];
@@ -68,7 +67,6 @@ describe('data.actions', () => {
       expect(edges.get()).not.toEqual(initialEdges);
     });
   });
-
 
   describe('clearGraphData', () => {
     it('should clear nodes and edges', () => {

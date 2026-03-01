@@ -77,10 +77,6 @@ describe('xcode-graph-metrics-section', () => {
     expect(cards?.length).to.equal(4);
   });
 
-  // ========================================
-  // Event Tests
-  // ========================================
-
   it('should dispatch toggle-direct-deps event', async () => {
     const el = await fixture<GraphMetricsSection>(html`
       <xcode-graph-metrics-section
@@ -114,10 +110,6 @@ describe('xcode-graph-metrics-section', () => {
 
     expect(event).to.exist;
   });
-
-  // ========================================
-  // Property Tests
-  // ========================================
 
   it('should reflect attribute properties', async () => {
     const el = await fixture<GraphMetricsSection>(html`

@@ -68,7 +68,6 @@ describe('computeClusterInterior', () => {
     });
   });
 
-
   describe('various cluster sizes', () => {
     it('should handle a cluster with a single node', () => {
       const cluster = createClusterWithNodes(1);
@@ -117,7 +116,6 @@ describe('computeClusterInterior', () => {
     });
   });
 
-
   describe('empty cluster', () => {
     it('should handle an empty cluster gracefully', () => {
       const emptyCluster: Cluster = {
@@ -139,7 +137,6 @@ describe('computeClusterInterior', () => {
       expect(result.height).toBe(DEFAULT_CONFIG.minClusterSize);
     });
   });
-
 
   describe('metadata and roles', () => {
     it('should handle nodes with different roles', () => {
@@ -195,7 +192,6 @@ describe('computeClusterInterior', () => {
       }
     });
   });
-
 
   describe('position bounds', () => {
     it('should keep all node positions within the cluster radius', () => {

@@ -19,8 +19,6 @@ describe('filter.signals', () => {
     resetFilterSignals();
   });
 
-  // hasActiveFilters computed signal
-
   it('should return false when all filters are at defaults', () => {
     expect(hasActiveFilters.get()).to.equal(false);
   });
@@ -73,8 +71,6 @@ describe('filter.signals', () => {
 
     expect(hasActiveFilters.get()).to.equal(true);
   });
-
-  // resetFilterSignals
 
   it('should reset all signals to defaults', () => {
     searchQuery.set('some search');

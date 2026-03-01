@@ -64,7 +64,6 @@ describe('graph.actions', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-
   describe('selectNode', () => {
     it('should set selected node', () => {
       const node = createTestNode('node-1');
@@ -199,7 +198,6 @@ describe('graph.actions', () => {
     });
   });
 
-
   describe('toggleHighlight', () => {
     it('should toggle direct deps on and off', () => {
       expect(highlightDirectDeps.get()).toBe(false);
@@ -260,7 +258,6 @@ describe('graph.actions', () => {
       expect(highlightTransitiveDependents.get()).toBe(false);
     });
   });
-
 
   describe('viewMode (computed)', () => {
     it('should be Full when no toggles active', () => {
@@ -335,7 +332,6 @@ describe('graph.actions', () => {
       expect(viewMode.get()).toBe(ViewMode.Full);
     });
   });
-
 
   describe('integration scenarios', () => {
     it('should handle switching between node and cluster selection', () => {

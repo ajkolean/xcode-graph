@@ -15,7 +15,6 @@ import {
 } from './theme-utils';
 
 describe('theme-utils', () => {
-  // contrastRatio Tests
 
   describe('contrastRatio', () => {
     it('should return ~21 for black and white', () => {
@@ -35,8 +34,6 @@ describe('theme-utils', () => {
     });
   });
 
-  // meetsContrast Tests
-
   describe('meetsContrast', () => {
     it('should pass AA for black on white', () => {
       expect(meetsContrast('#000000', '#ffffff', 'AA')).to.be.true;
@@ -55,8 +52,6 @@ describe('theme-utils', () => {
     });
   });
 
-  // ensureContrast Tests
-
   describe('ensureContrast', () => {
     it('should return a color that meets AA contrast on dark background', () => {
       const result = ensureContrast('#333333', '#000000', 'AA');
@@ -74,8 +69,6 @@ describe('theme-utils', () => {
       expect(result).to.equal('#000000');
     });
   });
-
-  // withAlpha Tests
 
   describe('withAlpha', () => {
     it('should set alpha to 0.5', () => {
@@ -96,8 +89,6 @@ describe('theme-utils', () => {
     });
   });
 
-  // lighten Tests
-
   describe('lighten', () => {
     it('should return a lighter color', () => {
       const original = '#555555';
@@ -117,8 +108,6 @@ describe('theme-utils', () => {
     });
   });
 
-  // darken Tests
-
   describe('darken', () => {
     it('should return a darker color', () => {
       const original = '#aaaaaa';
@@ -137,16 +126,12 @@ describe('theme-utils', () => {
     });
   });
 
-  // prefersDarkMode Tests
-
   describe('prefersDarkMode', () => {
     it('should return a boolean', () => {
       const result = prefersDarkMode();
       expect(typeof result).to.equal('boolean');
     });
   });
-
-  // onColorSchemeChange Tests
 
   describe('onColorSchemeChange', () => {
     it('should return a cleanup function', () => {

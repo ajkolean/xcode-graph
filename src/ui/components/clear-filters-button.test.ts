@@ -18,10 +18,6 @@ describe('xcode-graph-clear-filters-button', () => {
     expect(button?.textContent?.trim()).to.equal('Clear all filters');
   });
 
-  // ========================================
-  // Property Tests
-  // ========================================
-
   it('should be disabled when not active', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
       <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
@@ -58,10 +54,6 @@ describe('xcode-graph-clear-filters-button', () => {
     await el.updateComplete;
     expect(button.disabled).to.be.true;
   });
-
-  // ========================================
-  // Event Tests
-  // ========================================
 
   it('should dispatch clear-filters event when clicked and active', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`

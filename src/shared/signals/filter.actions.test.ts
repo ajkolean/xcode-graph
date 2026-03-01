@@ -34,7 +34,6 @@ describe('filter.actions', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-
   describe('setFilters', () => {
     it('should replace all filters', () => {
       const newFilters: FilterState = {
@@ -89,7 +88,6 @@ describe('filter.actions', () => {
       expect(searchQuery.get()).toBe('');
     });
   });
-
 
   describe('toggleNodeType', () => {
     it('should add node type when not present', () => {
@@ -213,7 +211,6 @@ describe('filter.actions', () => {
     });
   });
 
-
   describe('clearFilters', () => {
     it('should reset to default filters', () => {
       // Modify filters
@@ -316,7 +313,6 @@ describe('filter.actions', () => {
       expect(filters.get().packages.size).toBe(1);
     });
   });
-
 
   describe('integration scenarios', () => {
     it('should handle multiple filter toggles in sequence', () => {

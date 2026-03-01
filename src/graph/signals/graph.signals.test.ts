@@ -27,7 +27,6 @@ import {
   viewMode,
 } from './graph.signals';
 
-
 function createTestNode(id: string): GraphNode {
   return {
     id,
@@ -57,7 +56,6 @@ describe('graph.signals', () => {
   afterEach(() => {
     restoreSignalSnapshot(snapshot);
   });
-
 
   describe('viewMode', () => {
     it('should return Full when all toggles are off', () => {
@@ -154,7 +152,6 @@ describe('graph.signals', () => {
     });
   });
 
-
   describe('hasSelection', () => {
     it('should return false when nothing is selected', () => {
       selectedNode.set(null);
@@ -182,7 +179,6 @@ describe('graph.signals', () => {
       expect(hasSelection.get()).toBe(true);
     });
   });
-
 
   describe('createIsNodeSelected', () => {
     it('should return false when no node is selected', () => {
@@ -221,7 +217,6 @@ describe('graph.signals', () => {
       expect(isSelected.get()).toBe(false);
     });
   });
-
 
   describe('resetGraphSignals', () => {
     it('should reset all signals to initial state', () => {
@@ -267,7 +262,6 @@ describe('graph.signals', () => {
       expect(hasSelection.get()).toBe(false);
     });
   });
-
 
   describe('signal defaults', () => {
     it('should have null for selectedNode initially', () => {

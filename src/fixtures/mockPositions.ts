@@ -6,7 +6,6 @@
 
 import type { ClusterPosition, NodePosition } from '@shared/schemas/simulation.types';
 
-
 export const mockNodePositions: Map<string, NodePosition> = new Map<string, NodePosition>([
   // MainApp cluster nodes
   [
@@ -145,7 +144,6 @@ export const mockNodePositions: Map<string, NodePosition> = new Map<string, Node
   ],
 ]);
 
-
 export const mockClusterPositions: Map<string, ClusterPosition> = new Map<string, ClusterPosition>([
   [
     'main-app',
@@ -213,7 +211,6 @@ export const mockClusterPositions: Map<string, ClusterPosition> = new Map<string
     },
   ],
 ]);
-
 
 /**
  * Get node position by ID, with fallback to default

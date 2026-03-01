@@ -22,10 +22,6 @@ function makeNode(overrides: Partial<GraphNode> = {}): GraphNode {
 }
 
 describe('xcode-graph-cluster-composition', () => {
-  // ========================================
-  // Rendering Tests
-  // ========================================
-
   it('should render with nodes that have content', async () => {
     const el = await fixture<GraphClusterComposition>(html`
       <xcode-graph-cluster-composition .nodes=${[makeNode()]}></xcode-graph-cluster-composition>
@@ -54,10 +50,6 @@ describe('xcode-graph-cluster-composition', () => {
     const header = el.shadowRoot?.querySelector('.header');
     expect(header).to.not.exist;
   });
-
-  // ========================================
-  // Expand/Collapse Tests
-  // ========================================
 
   it('should start collapsed by default', async () => {
     const el = await fixture<GraphClusterComposition>(html`
@@ -89,10 +81,6 @@ describe('xcode-graph-cluster-composition', () => {
     const content = el.shadowRoot?.querySelector('.content');
     expect(content).to.exist;
   });
-
-  // ========================================
-  // Content Tests
-  // ========================================
 
   it('should display total source files when expanded', async () => {
     const nodes = [makeNode({ sourceCount: 100 }), makeNode({ id: 'node-2', sourceCount: 50 })];

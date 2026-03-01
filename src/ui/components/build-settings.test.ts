@@ -17,10 +17,6 @@ const fullSettings: BuildSettings = {
 };
 
 describe('xcode-graph-build-settings', () => {
-  // ========================================
-  // Rendering Tests
-  // ========================================
-
   it('should render with settings', async () => {
     const el = await fixture<GraphBuildSettings>(html`
       <xcode-graph-build-settings .settings=${fullSettings}></xcode-graph-build-settings>
@@ -56,10 +52,6 @@ describe('xcode-graph-build-settings', () => {
     const title = el.shadowRoot?.querySelector('.title');
     expect(title?.textContent?.trim()).to.equal('Build Settings');
   });
-
-  // ========================================
-  // Expand/Collapse Tests
-  // ========================================
 
   it('should start collapsed by default', async () => {
     const el = await fixture<GraphBuildSettings>(html`
@@ -104,10 +96,6 @@ describe('xcode-graph-build-settings', () => {
     await el.updateComplete;
     expect(header.getAttribute('aria-expanded')).to.equal('true');
   });
-
-  // ========================================
-  // Content Tests
-  // ========================================
 
   it('should show Swift version when expanded', async () => {
     const el = await fixture<GraphBuildSettings>(html`

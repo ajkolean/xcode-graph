@@ -8,10 +8,6 @@ import type { GraphPanelHeader } from './panel-header';
 import './panel-header';
 
 describe('xcode-graph-panel-header', () => {
-  // ========================================
-  // Rendering Tests
-  // ========================================
-
   it('should render title', async () => {
     const el = await fixture<GraphPanelHeader>(html`
       <xcode-graph-panel-header title="My Title"></xcode-graph-panel-header>
@@ -39,10 +35,6 @@ describe('xcode-graph-panel-header', () => {
     expect(subtitle).to.not.exist;
   });
 
-  // ========================================
-  // Property Tests
-  // ========================================
-
   it('should default to lg title size', async () => {
     const el = await fixture<GraphPanelHeader>(html`
       <xcode-graph-panel-header title="Test"></xcode-graph-panel-header>
@@ -59,10 +51,6 @@ describe('xcode-graph-panel-header', () => {
     const title = el.shadowRoot?.querySelector('.title');
     expect(title?.classList.contains('size-md')).to.be.true;
   });
-
-  // ========================================
-  // Color Styling Tests
-  // ========================================
 
   it('should apply color to icon box', async () => {
     const el = await fixture<GraphPanelHeader>(html`
@@ -85,10 +73,6 @@ describe('xcode-graph-panel-header', () => {
     expect(style).to.include('#8B5CF6');
   });
 
-  // ========================================
-  // Event Tests
-  // ========================================
-
   it('should dispatch back event on button click', async () => {
     const el = await fixture<GraphPanelHeader>(html`
       <xcode-graph-panel-header title="Test"></xcode-graph-panel-header>
@@ -100,10 +84,6 @@ describe('xcode-graph-panel-header', () => {
 
     expect(event).to.exist;
   });
-
-  // ========================================
-  // Slot Tests
-  // ========================================
 
   it('should render icon slot content', async () => {
     const el = await fixture<GraphPanelHeader>(html`

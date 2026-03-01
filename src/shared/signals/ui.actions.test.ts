@@ -33,7 +33,6 @@ describe('ui.actions', () => {
     restoreSignalSnapshot(snapshot);
   });
 
-
   describe('setActiveTab', () => {
     it('should allow switching between tabs', () => {
       const tabs: ActiveTab[] = [ActiveTab.Graph, ActiveTab.Overview];
@@ -51,7 +50,6 @@ describe('ui.actions', () => {
       expect(activeTab.get()).toBe(ActiveTab.Overview);
     });
   });
-
 
   describe('setZoom', () => {
     it('should set zoom level', () => {
@@ -203,7 +201,6 @@ describe('ui.actions', () => {
     });
   });
 
-
   describe('toggleAnimation', () => {
     it('should toggle animation from false to true', () => {
       enableAnimation.set(false);
@@ -240,7 +237,6 @@ describe('ui.actions', () => {
     });
   });
 
-
   describe('setPreviewFilter', () => {
     it('should clear preview filter with null', () => {
       setPreviewFilter({ type: 'nodeType', value: 'framework' });
@@ -257,7 +253,6 @@ describe('ui.actions', () => {
       expect(previewFilter.get()).toEqual({ type: 'platform', value: 'iOS' });
     });
   });
-
 
   describe('integration scenarios', () => {
     it('should handle zoom in and out sequence', () => {
