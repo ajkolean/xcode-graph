@@ -9,12 +9,12 @@ import { KeyboardShortcutController } from './keyboard-shortcut.controller';
 
 describe('KeyboardShortcutController', () => {
   let host: MockHost;
-  let onTrigger: ReturnType<typeof vi.fn>;
+  let onTrigger: ReturnType<typeof vi.fn<() => void>>;
   let controller: KeyboardShortcutController;
 
   beforeEach(() => {
     host = new MockHost();
-    onTrigger = vi.fn();
+    onTrigger = vi.fn<() => void>();
     controller = new KeyboardShortcutController(host, {
       key: '/',
       onTrigger,

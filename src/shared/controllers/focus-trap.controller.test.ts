@@ -61,7 +61,7 @@ if (!customElements.get('mock-html-host')) {
 describe('FocusTrapController', () => {
   let host: MockHTMLHost;
   let isActive: ReturnType<typeof vi.fn<() => boolean>>;
-  let onDeactivate: ReturnType<typeof vi.fn>;
+  let onDeactivate: ReturnType<typeof vi.fn<() => void>>;
   let _controller: FocusTrapController;
 
   function createHost(): MockHTMLHost {
@@ -85,7 +85,7 @@ describe('FocusTrapController', () => {
 
   beforeEach(() => {
     isActive = vi.fn(() => false);
-    onDeactivate = vi.fn();
+    onDeactivate = vi.fn<() => void>();
     host = createHost();
     _controller = createController(host, { isActive });
   });

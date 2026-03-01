@@ -88,7 +88,7 @@ describe('xcode-graph-node-header', () => {
   it('should render Foreign Build badge for foreign build nodes', async () => {
     const el = await fixture<GraphNodeHeader>(html`
       <xcode-graph-node-header
-        .node=${makeNode({ foreignBuild: { script: 'make build' } })}
+        .node=${makeNode({ foreignBuild: { script: 'make build', outputPath: '/build/output.xcframework', outputLinking: 'static', inputCount: 0, inputs: { files: [], folders: [], scripts: [] } } })}
         zoom="1"
       ></xcode-graph-node-header>
     `);

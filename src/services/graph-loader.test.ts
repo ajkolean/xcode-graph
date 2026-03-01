@@ -111,14 +111,9 @@ describe('GraphLoader', () => {
       await loadPromise;
 
       expect(firstChunk).not.toBeNull();
-      if (!firstChunk) {
-        expect.fail('expected first chunk');
-      }
-      expect(firstChunk.chunk).toBeDefined();
-      if (!firstChunk.chunk) {
-        expect.fail('expected chunk data');
-      }
-      expect(firstChunk.chunk.nodes.length).toBeLessThanOrEqual(20);
+      const chunk = firstChunk as unknown as LoadProgress;
+      expect(chunk.chunk).toBeDefined();
+      expect(chunk.chunk!.nodes.length).toBeLessThanOrEqual(20);
     });
   });
 

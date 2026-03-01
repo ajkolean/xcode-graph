@@ -45,6 +45,8 @@ describe('node-massage', () => {
         for (let j = i + 1; j < positions.length; j++) {
           const a = positions[i];
           const b = positions[j];
+          if (!a) throw new Error('expected position a');
+          if (!b) throw new Error('expected position b');
           const dist = Math.hypot(a.x - b.x, a.y - b.y);
           // After massage, nodes should still not overlap
           expect(dist).toBeGreaterThan(DEFAULT_CONFIG.nodeRadius);
