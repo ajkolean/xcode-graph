@@ -12,12 +12,8 @@ import type { NodeType, Origin, Platform } from './graph.types';
 // Re-export all types for backward compatibility
 export * from './app.types';
 
-// ==================== Enum Schemas ====================
-
 export const ActiveTabSchema: z.ZodType<ActiveTab> = z.enum(ActiveTab);
 export const ViewModeSchema: z.ZodType<ViewMode> = z.enum(ViewMode);
-
-// ==================== Filter State Schemas ====================
 
 export const FilterStateInputSchema: z.ZodType<FilterStateInput> = z.object({
   nodeTypes: z.array(z.string()),

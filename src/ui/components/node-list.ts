@@ -49,10 +49,6 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
  * @fires node-hover - Dispatched on node row hover (detail: { nodeId })
  */
 export class GraphNodeList extends NodeListEventsBase {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Section title (e.g., "Dependencies", "Dependents")
    */
@@ -107,10 +103,6 @@ export class GraphNodeList extends NodeListEventsBase {
     this.showKind = true;
     this.isExpanded = true;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -212,10 +204,6 @@ export class GraphNodeList extends NodeListEventsBase {
     }
   `;
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
@@ -258,10 +246,6 @@ export class GraphNodeList extends NodeListEventsBase {
       ></xcode-graph-badge>
     `;
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     const items = this.itemList;
@@ -323,7 +307,6 @@ export class GraphNodeList extends NodeListEventsBase {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-node-list': GraphNodeList;

@@ -313,7 +313,4 @@ export class ErrorService {
   }
 }
 
-/**
- * Export singleton instance for convenience
- */
 export const errorService: ErrorService = ErrorService.getInstance();

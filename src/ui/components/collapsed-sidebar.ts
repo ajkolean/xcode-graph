@@ -30,10 +30,6 @@ import { when } from 'lit/directives/when.js';
  * @fires expand-to-section - Dispatched when a section icon is clicked (detail: { section })
  */
 export class GraphCollapsedSidebar extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare filteredNodes: GraphNode[];
 
@@ -63,10 +59,6 @@ export class GraphCollapsedSidebar extends LitElement {
 
   @property({ type: Number, attribute: 'packages-filter-size' })
   declare packagesFilterSize: number;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -166,10 +158,6 @@ export class GraphCollapsedSidebar extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleExpandToSection(section: string) {
     this.dispatchEvent(
       new CustomEvent('expand-to-section', {
@@ -179,10 +167,6 @@ export class GraphCollapsedSidebar extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Helpers
-  // ========================================
 
   private renderProductTypesIcon() {
     return svg`
@@ -222,10 +206,6 @@ export class GraphCollapsedSidebar extends LitElement {
       </svg>
     `;
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     const showProductTypesBadge = this.nodeTypesFilterSize < (this.typeCounts?.size || 0);
@@ -290,7 +270,6 @@ export class GraphCollapsedSidebar extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-collapsed-sidebar': GraphCollapsedSidebar;

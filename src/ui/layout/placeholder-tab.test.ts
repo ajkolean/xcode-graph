@@ -39,5 +39,4 @@ describe('xcode-graph-placeholder-tab', () => {
 
     expect(title?.textContent).to.equal('Updated');
   });
-
 });

@@ -65,53 +65,30 @@ export class GraphDataService {
     }
   }
 
-  // ==================== Node Operations ====================
-
-  /**
-   * Get all nodes
-   */
   getAllNodes(): GraphNode[] {
     return this.nodes;
   }
 
-  /**
-   * Get node by ID
-   */
   getNodeById(id: string): GraphNode | undefined {
     return this.nodeMap.get(id);
   }
 
-  /**
-   * Get nodes by type
-   */
   getNodesByType(type: string): GraphNode[] {
     return this.nodesByType.get(type) || [];
   }
 
-  /**
-   * Get nodes by project
-   */
   getNodesByProject(project: string): GraphNode[] {
     return this.nodesByProject.get(project) || [];
   }
 
-  /**
-   * Get nodes by platform
-   */
   getNodesByPlatform(platform: string): GraphNode[] {
     return this.nodesByPlatform.get(platform) || [];
   }
 
-  /**
-   * Get nodes by origin
-   */
   getNodesByOrigin(origin: Origin): GraphNode[] {
     return this.nodesByOrigin.get(origin) || [];
   }
 
-  /**
-   * Search nodes by name
-   */
   searchNodes(query: string): GraphNode[] {
     const lowerQuery = query.toLowerCase();
     return this.nodes.filter(
@@ -120,68 +97,46 @@ export class GraphDataService {
     );
   }
 
-  // ==================== Edge Operations ====================
-
-  /**
-   * Get all edges
-   */
   getAllEdges(): GraphEdge[] {
     return this.edges;
   }
 
-  /**
-   * Get edge by source and target
-   */
   getEdge(source: string, target: string): GraphEdge | undefined {
     return this.edgeMap.get(`${source}->${target}`);
   }
 
-  /**
-   * Get outgoing edges from a node (dependencies)
-   */
+  /** Get outgoing edges from a node (dependencies) */
   getOutgoingEdges(nodeId: string): GraphEdge[] {
     return this.outgoingEdges.get(nodeId) || [];
   }
 
-  /**
-   * Get incoming edges to a node (dependents)
-   */
+  /** Get incoming edges to a node (dependents) */
   getIncomingEdges(nodeId: string): GraphEdge[] {
     return this.incomingEdges.get(nodeId) || [];
   }
 
-  /**
-   * Get all edges for a node (both directions)
-   */
+  /** Get all edges for a node (both directions) */
   getNodeEdges(nodeId: string): GraphEdge[] {
     const outgoing = this.getOutgoingEdges(nodeId);
     const incoming = this.getIncomingEdges(nodeId);
     return [...outgoing, ...incoming];
   }
 
-  // ==================== Dependency Operations ====================
-
-  /**
-   * Get direct dependencies of a node
-   */
+  /** Get direct dependencies of a node */
   getDirectDependencies(nodeId: string): GraphNode[] {
     const outgoing = this.getOutgoingEdges(nodeId);
     const depIds = outgoing.map((e) => e.target);
     return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
   }
 
-  /**
-   * Get direct dependents of a node
-   */
+  /** Get direct dependents of a node */
   getDirectDependents(nodeId: string): GraphNode[] {
     const incoming = this.getIncomingEdges(nodeId);
     const depIds = incoming.map((e) => e.source);
     return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
   }
 
-  /**
-   * Get transitive dependencies (all levels)
-   */
+  /** Get transitive dependencies (all levels) */
   getTransitiveDependencies(nodeId: string): {
     nodes: Set<string>;
     edges: Set<string>;
@@ -213,9 +168,7 @@ export class GraphDataService {
     return { nodes: visited, edges, depths };
   }
 
-  /**
-   * Get transitive dependents (all levels)
-   */
+  /** Get transitive dependents (all levels) */
   getTransitiveDependents(nodeId: string): {
     nodes: Set<string>;
     edges: Set<string>;
@@ -247,11 +200,7 @@ export class GraphDataService {
     return { nodes: visited, edges, depths };
   }
 
-  // ==================== Cluster Operations ====================
-
-  /**
-   * Get all nodes in a cluster
-   */
+  /** Get all nodes in a cluster */
   getClusterNodes(clusterId: string): GraphNode[] {
     // Optimization: use indices
     const projectNodes = (this.nodesByProject.get(clusterId) || []).filter(
@@ -264,9 +213,7 @@ export class GraphDataService {
     return [...projectNodes, ...packageNodes];
   }
 
-  /**
-   * Get cluster data by ID
-   */
+  /** Get cluster data by ID */
   getCluster(clusterId: string): Cluster | null {
     const clusterNodes = this.getClusterNodes(clusterId);
 

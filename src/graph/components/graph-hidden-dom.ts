@@ -9,7 +9,14 @@
  */
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import { type CSSResultGroup, css, html, LitElement, type PropertyValues, type TemplateResult } from 'lit';
+import {
+  type CSSResultGroup,
+  css,
+  html,
+  LitElement,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 

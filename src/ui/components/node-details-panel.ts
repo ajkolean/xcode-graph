@@ -54,10 +54,6 @@ export class GraphNodeDetailsPanel extends LitElement {
     zoom: { type: Number },
   };
 
-  // ========================================
-  // Properties
-  // ========================================
-
   declare node: GraphNode;
 
   declare allNodes: GraphNode[];
@@ -78,20 +74,12 @@ export class GraphNodeDetailsPanel extends LitElement {
 
   declare zoom: number;
 
-  // ========================================
-  // Controllers
-  // ========================================
-
   private readonly focusTrap = new FocusTrapController(this, {
     isActive: () => !!this.node,
     onDeactivate: () => this.bubbleEvent('close'),
     escapeDeactivates: true,
     clickOutsideDeactivates: true,
   });
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -134,17 +122,9 @@ export class GraphNodeDetailsPanel extends LitElement {
     }
   `;
 
-  // ========================================
-  // Computed Values
-  // ========================================
-
   private get nodeData() {
     return computeNodeDependencies(this.node, this.allNodes, this.edges, this.filteredEdges);
   }
-
-  // ========================================
-  // Event Handlers (bubble up)
-  // ========================================
 
   private bubbleEvent(eventName: string, detail?: unknown) {
     this.dispatchEvent(
@@ -155,10 +135,6 @@ export class GraphNodeDetailsPanel extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     // Reference focusTrap to ensure controller is not tree-shaken
@@ -227,7 +203,6 @@ export class GraphNodeDetailsPanel extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-node-details-panel': GraphNodeDetailsPanel;

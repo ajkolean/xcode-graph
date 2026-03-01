@@ -26,10 +26,6 @@ export type FilterIconName = 'product-types' | 'platforms' | 'projects' | 'packa
  * @summary Filter section icon with multiple named variants
  */
 export class GraphFilterIcon extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The icon name to render
    */
@@ -48,20 +44,12 @@ export class GraphFilterIcon extends LitElement {
     this.size = 18;
   }
 
-  // ========================================
-  // Styles
-  // ========================================
-
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: inline-block;
       flex-shrink: 0;
     }
   `;
-
-  // ========================================
-  // Icon Paths
-  // ========================================
 
   private renderProductTypes() {
     return svg`
@@ -145,10 +133,6 @@ export class GraphFilterIcon extends LitElement {
     `;
   }
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     switch (this.name) {
       case 'product-types':
@@ -165,7 +149,6 @@ export class GraphFilterIcon extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-filter-icon': GraphFilterIcon;

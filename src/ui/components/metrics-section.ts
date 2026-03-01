@@ -31,10 +31,6 @@ import './stats-card';
  * @fires toggle-transitive-dependents - Dispatched when transitive dependents card is toggled
  */
 export class GraphMetricsSection extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ type: Number, attribute: 'dependencies-count' })
   declare dependenciesCount: number;
 
@@ -87,10 +83,6 @@ export class GraphMetricsSection extends LitElement {
     super.connectedCallback();
     this.isExpanded = this.expanded;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -158,10 +150,6 @@ export class GraphMetricsSection extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
@@ -174,10 +162,6 @@ export class GraphMetricsSection extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     return html`
@@ -240,7 +224,6 @@ export class GraphMetricsSection extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-metrics-section': GraphMetricsSection;

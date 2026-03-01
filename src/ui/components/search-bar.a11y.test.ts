@@ -38,5 +38,4 @@ describe('xcode-graph-search-bar a11y', () => {
     chaiExpect(input).to.exist;
     chaiExpect(input?.getAttribute('aria-label')).to.equal('Filter nodes');
   });
-
 });

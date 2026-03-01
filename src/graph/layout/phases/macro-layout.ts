@@ -187,10 +187,6 @@ function compactBands(
   }
 }
 
-// ============================================================================
-// Position Extraction
-// ============================================================================
-
 function extractPositions(layoutChildren: ElkNode[]): Map<string, ClusterPosition> {
   const positions = new Map<string, ClusterPosition>();
 
@@ -212,10 +208,6 @@ function extractPositions(layoutChildren: ElkNode[]): Map<string, ClusterPositio
 
   return positions;
 }
-
-// ============================================================================
-// Public API
-// ============================================================================
 
 /**
  * Compute macro-layout (inter-cluster) using ELK Layered algorithm

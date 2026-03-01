@@ -38,10 +38,6 @@ export class GraphIconButton extends LitElement {
     delegatesFocus: true,
   };
 
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Button variant style
    */
@@ -80,10 +76,6 @@ export class GraphIconButton extends LitElement {
     this.disabled = false;
     this.title = '';
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -227,10 +219,6 @@ export class GraphIconButton extends LitElement {
     }
   `;
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     return html`
       <button
@@ -244,7 +232,6 @@ export class GraphIconButton extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-icon-button': GraphIconButton;

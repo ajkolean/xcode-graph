@@ -7,8 +7,6 @@
  * @module shared/signals
  */
 
-// ==================== Filter Signals ====================
-
 export {
   clearFilters,
   initializeFromData,
@@ -29,8 +27,6 @@ export {
   resetFilterSignals,
   searchQuery,
 } from './filter.signals';
-
-// ==================== UI Signals ====================
 
 export {
   resetZoom,

@@ -19,15 +19,11 @@ import {
   selectedNode,
 } from './graph.signals';
 
-// ==================== Highlight Toggle Types ====================
-
 export type HighlightCard =
   | 'direct-deps'
   | 'transitive-deps'
   | 'direct-dependents'
   | 'transitive-dependents';
-
-// ==================== Basic Actions ====================
 
 /**
  * Select a node (clears cluster selection)
@@ -72,13 +68,10 @@ let pendingHoverUpdate: string | null | undefined;
 let hoverRafId: number | null = null;
 
 export function setHoveredNode(nodeId: string | null): void {
-  // Store the pending update
   pendingHoverUpdate = nodeId;
 
-  // Cancel previous RAF if pending
   if (hoverRafId !== null) return;
 
-  // Schedule update for next frame
   hoverRafId = requestAnimationFrame(() => {
     hoveredNode.set(pendingHoverUpdate ?? null);
     hoverRafId = null;
@@ -93,8 +86,6 @@ export function setHoveredNode(nodeId: string | null): void {
 export function setCircularDependencies(cycles: string[][]): void {
   circularDependencies.set(cycles);
 }
-
-// ==================== Highlight Toggle Actions ====================
 
 /**
  * Toggle a highlight card on/off
@@ -126,8 +117,6 @@ export function resetHighlightToggles(): void {
   highlightDirectDependents.set(false);
   highlightTransitiveDependents.set(false);
 }
-
-// ==================== Complex Actions ====================
 
 /**
  * Reset to full view with no selection

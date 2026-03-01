@@ -11,15 +11,11 @@ import { type Signal, signal } from '@lit-labs/signals';
 import type { AppError } from '@shared/schemas/error.types';
 import { DEFAULT_MAX_VISIBLE_TOASTS } from '@shared/schemas/error.types';
 
-// ==================== State Signals ====================
-
 /** Active error notifications */
 export const errors: Signal.State<AppError[]> = signal<AppError[]>([]);
 
 /** Maximum number of visible toasts at once */
 export const maxVisibleToasts: Signal.State<number> = signal<number>(DEFAULT_MAX_VISIBLE_TOASTS);
-
-// ==================== Computed Properties ====================
 
 /**
  * Get visible (non-dismissed) errors
@@ -43,8 +39,6 @@ export function getToastErrors(): AppError[] {
 export function getErrorById(id: string): AppError | undefined {
   return errors.get().find((error) => error.id === id);
 }
-
-// ==================== Reset Utility ====================
 
 /**
  * Reset all error signals to their initial state.

@@ -11,36 +11,18 @@
  * @module utils/rendering
  */
 
-// ==================== Color Constants ====================
-
-export { FILTER_ICON_COLOR } from './colors';
-
-// ==================== Color Generation ====================
-
 export {
   generateColor,
   generateColorPalette,
   generateColorWithAlpha,
 } from './color-generator';
-
-// ==================== Zoom Adjustments ====================
-
-export { adjustColorForZoom, adjustOpacityForZoom } from './zoom-colors';
-
-// ==================== Node Theming ====================
-
+export { FILTER_ICON_COLOR } from './colors';
 export { getNodeTypeColor, getNodeTypeColorFromTheme, NODE_TYPE_COLORS } from './node-colors';
-
-// ==================== Icons ====================
-
 export { getNodeIconPath, getNodeTypeLabel } from './node-icons';
+export { generateBezierPath } from './paths';
 export { getPlatformColor, getPlatformIconPath, PLATFORM_COLOR } from './platform-icons';
 
-// ==================== Sizing ====================
-
 export { getBaseNodeSize, getNodeSize } from './sizing';
-
-// ==================== Viewport Culling ====================
 
 export {
   calculateViewportBounds,
@@ -48,7 +30,4 @@ export {
   isLineInViewport,
   type ViewportBounds,
 } from './viewport';
-
-// ==================== Path Generation ====================
-
-export { generateBezierPath } from './paths';
+export { adjustColorForZoom, adjustOpacityForZoom } from './zoom-colors';

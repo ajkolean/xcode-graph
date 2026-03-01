@@ -21,10 +21,6 @@ import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
-// ========================================
-// GraphBackground
-// ========================================
-
 /**
  * Grid pattern background overlay for the graph visualization area.
  *
@@ -54,10 +50,6 @@ export class GraphBackground extends LitElement {
     `;
   }
 }
-
-// ========================================
-// GraphControls
-// ========================================
 
 /**
  * Zoom controls and animation toggle overlay for the graph visualization.
@@ -209,12 +201,10 @@ export class GraphControls extends LitElement {
   }
 
   private handleWheel(e: WheelEvent) {
-    // Stop wheel events from propagating to the canvas
     e.stopPropagation();
   }
 
   private handleMouseDown(e: MouseEvent) {
-    // Stop mouse events from propagating to the canvas
     e.stopPropagation();
   }
 
@@ -251,10 +241,6 @@ export class GraphControls extends LitElement {
     `;
   }
 }
-
-// ========================================
-// GraphEmptyState
-// ========================================
 
 /**
  * Empty state message overlay shown when no nodes match the current filters.

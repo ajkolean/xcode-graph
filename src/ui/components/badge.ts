@@ -52,10 +52,6 @@ export type BadgeSize = 'sm' | 'md';
  * @cssproperty --badge-glow - Glow color on hover (computed from color prop)
  */
 export class GraphBadge extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The text to display in the badge
    */
@@ -104,10 +100,6 @@ export class GraphBadge extends LitElement {
     this.interactive = false;
     this.glow = false;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -190,10 +182,6 @@ export class GraphBadge extends LitElement {
     }
   `;
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     const color = this.color || '#8B5CF6';
 
@@ -226,7 +214,6 @@ export class GraphBadge extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-badge': GraphBadge;

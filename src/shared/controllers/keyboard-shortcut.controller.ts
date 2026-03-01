@@ -24,8 +24,6 @@
 
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
-// ==================== Type Definitions ====================
-
 /**
  * Configuration for the keyboard shortcut controller.
  */
@@ -39,8 +37,6 @@ export interface KeyboardShortcutConfig {
   /** Whether to skip the callback when an input or textarea is focused. Defaults to `true`. */
   ignoreWhenInputFocused?: boolean;
 }
-
-// ==================== Controller Class ====================
 
 /**
  * Reactive controller that listens for a global keydown event matching a

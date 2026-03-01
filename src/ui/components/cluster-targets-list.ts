@@ -42,10 +42,6 @@ type ClusterListItem =
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 export class GraphClusterTargetsList extends NodeListEventsBase {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare clusterNodes: GraphNode[];
 
@@ -83,10 +79,6 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     super.connectedCallback();
     this.isExpanded = this.expanded;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -164,20 +156,12 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     }
   `;
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
 
   // Derived state: flat list of headers and nodes for virtualized rendering
   private _flatItems: ClusterListItem[] = [];
-
-  // ========================================
-  // Lifecycle
-  // ========================================
 
   override willUpdate(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('nodesByType') || changedProperties.has('edges')) {
@@ -231,10 +215,6 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     return parts.length > 0 ? parts.join(' · ') : undefined;
   }
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     if (!this.nodesByType) return html``;
 
@@ -285,7 +265,6 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster-targets-list': GraphClusterTargetsList;

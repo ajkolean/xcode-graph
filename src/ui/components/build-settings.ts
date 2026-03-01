@@ -25,10 +25,6 @@ import './info-row.js';
  * @summary Collapsible build settings display for a node
  */
 export class GraphBuildSettings extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Curated build settings to display
    */
@@ -54,10 +50,6 @@ export class GraphBuildSettings extends LitElement {
     super.connectedCallback();
     this.isExpanded = this.expanded;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -168,10 +160,6 @@ export class GraphBuildSettings extends LitElement {
     }
   `;
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
@@ -188,10 +176,6 @@ export class GraphBuildSettings extends LitElement {
       this.settings.provisioningProfile
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   private renderCodeSignSection(): TemplateResult | typeof nothing {
     if (!this.hasCodeSignSettings) return nothing;
@@ -296,7 +280,6 @@ export class GraphBuildSettings extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-build-settings': GraphBuildSettings;

@@ -7,8 +7,6 @@
  * @module schemas
  */
 
-// ==================== App Types ====================
-
 export type { FilterState, FilterStateInput } from './app.types';
 export {
   ACTIVE_TAB_VALUES,
@@ -18,8 +16,6 @@ export {
   VIEW_MODE_VALUES,
   ViewMode,
 } from './app.types';
-
-// ==================== Cluster Types ====================
 
 export type {
   Cluster,
@@ -37,9 +33,13 @@ export {
   NODE_ROLE_VALUES,
   NodeRole,
 } from './cluster.types';
-
-// ==================== Graph Types ====================
-
+export type { AppError, ErrorNotificationState } from './error.types';
+export {
+  DEFAULT_MAX_VISIBLE_TOASTS,
+  DEFAULT_TOAST_DURATION,
+  ErrorCategory,
+  ErrorSeverity,
+} from './error.types';
 export type { GraphData, GraphEdge, GraphNode } from './graph.types';
 export {
   NODE_TYPE_VALUES,
@@ -49,17 +49,4 @@ export {
   PLATFORM_VALUES,
   Platform,
 } from './graph.types';
-
-// ==================== Simulation Types ====================
-
 export type { ClusterPosition, NodePosition } from './simulation.types';
-
-// ==================== Error Types ====================
-
-export type { AppError, ErrorNotificationState } from './error.types';
-export {
-  DEFAULT_MAX_VISIBLE_TOASTS,
-  DEFAULT_TOAST_DURATION,
-  ErrorCategory,
-  ErrorSeverity,
-} from './error.types';

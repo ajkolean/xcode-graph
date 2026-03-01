@@ -47,10 +47,6 @@ export class GraphSidebar extends LitElement {
   @property({ type: Boolean })
   declare defaultCollapsed: boolean;
 
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The currently active tab
    */
@@ -64,10 +60,6 @@ export class GraphSidebar extends LitElement {
       this.collapsed = true;
     }
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -258,10 +250,6 @@ export class GraphSidebar extends LitElement {
     }
   `;
 
-  // ========================================
-  // Data
-  // ========================================
-
   private get navItems(): NavItem[] {
     return [
       {
@@ -314,10 +302,6 @@ export class GraphSidebar extends LitElement {
     ];
   }
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleTabClick(tab: ActiveTabType) {
     this.dispatchEvent(
       new CustomEvent('tab-change', {
@@ -331,10 +315,6 @@ export class GraphSidebar extends LitElement {
   private toggleCollapse() {
     this.collapsed = !this.collapsed;
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     return html`
@@ -372,7 +352,6 @@ export class GraphSidebar extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-sidebar': GraphSidebar;

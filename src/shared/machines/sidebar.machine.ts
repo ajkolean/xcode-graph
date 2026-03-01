@@ -9,8 +9,6 @@
 
 import { createMachine, type Machine, type MachineSchema } from '@zag-js/core';
 
-// ==================== Type Definitions ====================
-
 /**
  * Available sidebar tabs
  *
@@ -26,8 +24,6 @@ export type SidebarTab = 'nodeDetails' | 'clusterDetails' | 'filters';
  * Each section can be independently expanded or collapsed.
  */
 export type SidebarSection = 'productTypes' | 'platforms' | 'projects' | 'packages';
-
-// ==================== Machine Schema ====================
 
 /**
  * Type-safe schema for the sidebar state machine
@@ -59,8 +55,6 @@ interface SidebarMachineSchema extends MachineSchema {
     | 'expandSection'
     | 'notifyCollapseChange';
 }
-
-// ==================== Machine Definition ====================
 
 /**
  * Sidebar state machine instance
@@ -124,8 +118,6 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
     return prop('defaultCollapsed') ? 'collapsed' : 'expanded';
   },
 
-  // ==================== State Definitions ====================
-
   states: {
     /**
      * Collapsed state - sidebar is hidden
@@ -171,8 +163,6 @@ export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<Sideb
       },
     },
   },
-
-  // ==================== Action Implementations ====================
 
   implementations: {
     actions: {

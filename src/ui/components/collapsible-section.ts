@@ -39,10 +39,6 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  * @slot - Default slot for expandable content
  */
 export class GraphCollapsibleSection extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The section title
    */
@@ -60,10 +56,6 @@ export class GraphCollapsibleSection extends LitElement {
     this.title = '';
     this.isExpanded = false;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -158,10 +150,6 @@ export class GraphCollapsibleSection extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleToggle() {
     this.dispatchEvent(
       new CustomEvent('toggle', {
@@ -170,10 +158,6 @@ export class GraphCollapsibleSection extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     return html`
@@ -196,7 +180,6 @@ export class GraphCollapsibleSection extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-collapsible-section': GraphCollapsibleSection;

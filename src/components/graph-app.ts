@@ -36,7 +36,6 @@ import { transformXcodeGraph } from '@/services/xcode-graph.service';
 import '@ui/layout/graph-tab';
 import '@ui/components/error-notification-container';
 
-// Import signals and actions from graph module
 import {
   edges as allEdges,
   nodes as allNodes,
@@ -46,7 +45,6 @@ import {
   setGraphData,
 } from '@graph/signals/index';
 
-// Import signals and actions from shared module
 import { initializeFromData } from '@shared/signals/index';
 
 const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
@@ -59,19 +57,12 @@ const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
  * @summary Embeddable graph visualization entry point
  */
 export class GraphApp extends SignalWatcherLitElement {
-  // ========================================
-  // Public Properties
-  // ========================================
-
   @property({ attribute: false })
   declare nodes: GraphNode[];
 
   @property({ attribute: false })
   declare edges: GraphEdge[];
 
-  // ========================================
-  // Data Service
-  // ========================================
   private graphDataService: GraphDataService | null = null;
   private dataFingerprint: string | null = null;
   private filtersInitialized = false;
@@ -103,10 +94,6 @@ export class GraphApp extends SignalWatcherLitElement {
     }
   }
 
-  // ========================================
-  // Styles
-  // ========================================
-
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: flex;
@@ -115,10 +102,6 @@ export class GraphApp extends SignalWatcherLitElement {
       overflow: hidden;
     }
   `;
-
-  // ========================================
-  // Lifecycle
-  // ========================================
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -179,10 +162,6 @@ export class GraphApp extends SignalWatcherLitElement {
       });
     }
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     const display = displayData.get();

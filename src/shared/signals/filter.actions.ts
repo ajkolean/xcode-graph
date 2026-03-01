@@ -11,8 +11,6 @@ import type { FilterState } from '@shared/schemas/app.types';
 import type { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { allPackages, allProjects, DEFAULT_FILTERS, filters, searchQuery } from './filter.signals';
 
-// ==================== Helper Functions ====================
-
 /**
  * Toggle a value in a Set, returning a new Set
  * @param set - The original set
@@ -29,8 +27,6 @@ function toggleSetValue<T>(set: Set<T>, value: T): Set<T> {
   return newSet;
 }
 
-// ==================== Basic Actions ====================
-
 /**
  * Replace all filters
  * @param newFilters - The new filter state
@@ -46,8 +42,6 @@ export function setFilters(newFilters: FilterState): void {
 export function setSearchQuery(query: string): void {
   searchQuery.set(query);
 }
-
-// ==================== Toggle Actions ====================
 
 /**
  * Toggle a node type filter on/off
@@ -108,8 +102,6 @@ export function togglePackage(pkg: string): void {
     packages: toggleSetValue(current.packages, pkg),
   });
 }
-
-// ==================== Bulk Actions ====================
 
 /**
  * Reset filters to defaults

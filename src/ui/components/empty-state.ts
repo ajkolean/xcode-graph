@@ -24,19 +24,11 @@ import { property } from 'lit/decorators.js';
  * @fires clear-filters - Dispatched when the clear filters button is clicked
  */
 export class GraphEmptyState extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Whether there are active filters that can be cleared
    */
   @property({ type: Boolean, attribute: 'has-active-filters' })
   declare hasActiveFilters: boolean;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -150,10 +142,6 @@ export class GraphEmptyState extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleClearFilters() {
     this.dispatchEvent(
       new CustomEvent('clear-filters', {
@@ -162,10 +150,6 @@ export class GraphEmptyState extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   private renderSearchIcon() {
     return svg`
@@ -208,7 +192,6 @@ export class GraphEmptyState extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-empty-state': GraphEmptyState;

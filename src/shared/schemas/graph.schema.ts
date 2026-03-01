@@ -19,15 +19,11 @@ import { DependencyKind, NodeType, Origin, Platform, SourceType } from './graph.
 // Re-export all types for backward compatibility
 export * from './graph.types';
 
-// ==================== Enum Schemas ====================
-
 export const NodeTypeSchema: z.ZodType<NodeType> = z.enum(NodeType);
 export const PlatformSchema: z.ZodType<Platform> = z.enum(Platform);
 export const OriginSchema: z.ZodType<Origin> = z.enum(Origin);
 export const DependencyKindSchema: z.ZodType<DependencyKind> = z.enum(DependencyKind);
 export const SourceTypeSchema: z.ZodType<SourceType> = z.enum(SourceType);
-
-// ==================== Entity Schemas ====================
 
 export const BuildSettingsSchema: z.ZodType<BuildSettings> = z.object({
   swiftVersion: z.string().optional(),
@@ -112,12 +108,12 @@ export const GraphDataSchema: z.ZodType<GraphData> = z
     { error: 'All edge endpoints must reference existing nodes' },
   );
 
-// ==================== Lenient Schemas (Boundary Validation) ====================
-
 export const LenientNodeTypeSchema: z.ZodType<NodeType> = z.enum(NodeType).catch(NodeType.Library);
 export const LenientPlatformSchema: z.ZodType<Platform> = z.enum(Platform).catch(Platform.macOS);
 export const LenientOriginSchema: z.ZodType<Origin> = z.enum(Origin).catch(Origin.Local);
-export const LenientDependencyKindSchema: z.ZodType<DependencyKind> = z.enum(DependencyKind).catch(DependencyKind.Target);
+export const LenientDependencyKindSchema: z.ZodType<DependencyKind> = z
+  .enum(DependencyKind)
+  .catch(DependencyKind.Target);
 
 const LenientGraphNodeSchema = z.object({
   id: z.string().min(1, 'Node ID is required'),

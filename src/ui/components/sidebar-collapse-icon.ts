@@ -21,19 +21,11 @@ import { property } from 'lit/decorators.js';
  * @summary Animated collapse/expand chevron icon
  */
 export class GraphSidebarCollapseIcon extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Whether the sidebar is collapsed
    */
   @property({ type: Boolean, attribute: 'is-collapsed' })
   declare isCollapsed: boolean;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -44,10 +36,6 @@ export class GraphSidebarCollapseIcon extends LitElement {
       display: block;
     }
   `;
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     return svg`
@@ -79,7 +67,6 @@ export class GraphSidebarCollapseIcon extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-sidebar-collapse-icon': GraphSidebarCollapseIcon;

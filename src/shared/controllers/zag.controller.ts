@@ -43,8 +43,6 @@ import { type MachineSchema, MachineStatus, type Service } from '@zag-js/core';
 import type { VanillaMachine } from '@zag-js/vanilla';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
-// ==================== Controller Class ====================
-
 /**
  * A Lit Reactive Controller for Zag.js state machines.
  *
@@ -156,8 +154,6 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
   }
 }
 
-// ==================== Factory Functions ====================
-
 /**
  * Factory function to create a ZagController with proper typing.
  *
@@ -191,8 +187,6 @@ export function createMachineController<TSchema extends MachineSchema>(
 ): ZagController<TSchema> {
   return new ZagController(host, machine, props);
 }
-
-// ==================== Type Utilities ====================
 
 /**
  * Helper to extract machine schema type

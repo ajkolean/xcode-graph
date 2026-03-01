@@ -9,8 +9,6 @@
 
 import type { NodeType, Origin, Platform } from './graph.types';
 
-// ==================== Native Enums ====================
-
 /**
  * Active tab enum - application navigation tabs
  */
@@ -36,8 +34,6 @@ export enum ViewMode {
   Dependents = 'dependents',
   Both = 'both',
 }
-
-// ==================== Type Definitions ====================
 
 /** Serializable filter state with arrays */
 export interface FilterStateInput {
@@ -69,8 +65,6 @@ export function serializeFilterState(state: FilterState): FilterStateInput {
     packages: Array.from(state.packages),
   };
 }
-
-// ==================== Value Arrays ====================
 
 /** All active tab values for iteration */
 export const ACTIVE_TAB_VALUES: ActiveTab[] = Object.values(ActiveTab);

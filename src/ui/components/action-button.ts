@@ -42,10 +42,6 @@ export class GraphActionButton extends LitElement {
     delegatesFocus: true,
   };
 
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Button color variant
    */
@@ -77,10 +73,6 @@ export class GraphActionButton extends LitElement {
     this.fullWidth = false;
     this.disabled = false;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -211,10 +203,6 @@ export class GraphActionButton extends LitElement {
     }
   `;
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     return html`
       <button ?disabled=${this.disabled}>
@@ -227,7 +215,6 @@ export class GraphActionButton extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-action-button': GraphActionButton;

@@ -37,10 +37,6 @@ import './tag-badge.js';
  * @fires cluster-click - Dispatched when a cluster badge is clicked (detail: { clusterId })
  */
 export class GraphNodeHeader extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare node: GraphNode;
 
@@ -54,10 +50,6 @@ export class GraphNodeHeader extends LitElement {
     super();
     this.showClusterLink = true;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -76,10 +68,6 @@ export class GraphNodeHeader extends LitElement {
       padding: 0 var(--spacing-md);
     }
   `;
-
-  // ========================================
-  // Event Handlers
-  // ========================================
 
   private handleBack() {
     if (this.showClusterLink) {
@@ -103,10 +91,6 @@ export class GraphNodeHeader extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     if (!this.node) return html``;
@@ -220,7 +204,6 @@ export class GraphNodeHeader extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-node-header': GraphNodeHeader;

@@ -7,8 +7,6 @@
  * @module schemas/error
  */
 
-// ==================== Native Enums ====================
-
 /**
  * Error severity levels
  */
@@ -32,8 +30,6 @@ export enum ErrorCategory {
   Unknown = 'unknown',
 }
 
-// ==================== Type Definitions ====================
-
 /** Application error with metadata */
 export interface AppError {
   id: string;
@@ -53,8 +49,6 @@ export interface ErrorNotificationState {
   errors: AppError[];
   maxVisible: number;
 }
-
-// ==================== Defaults ====================
 
 /** Default maximum visible toasts */
 export const DEFAULT_MAX_VISIBLE_TOASTS = 3;

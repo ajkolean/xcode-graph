@@ -28,8 +28,6 @@ import { repeat } from 'lit/directives/repeat.js';
 import { errorService } from '@/services/error-service';
 import './error-toast';
 
-// ==================== Component ====================
-
 const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
 
 /**
@@ -40,10 +38,6 @@ const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
  * @summary Error toast notification stack manager
  */
 export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
-  // ========================================
-  // Styles
-  // ========================================
-
   static override readonly styles: CSSResultGroup = css`
     :host {
       position: fixed;
@@ -75,10 +69,6 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleDismiss(e: CustomEvent<{ errorId: string }>): void {
     const { errorId } = e.detail;
     errorService.dismiss(errorId);
@@ -88,10 +78,6 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
     const { error } = e.detail;
     errorService.executeAction(error);
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult | null {
     // Get visible toasts from signal

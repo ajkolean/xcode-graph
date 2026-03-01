@@ -44,5 +44,4 @@ describe('xcode-graph-icon-button a11y', () => {
     chaiExpect(button).to.exist;
     chaiExpect(button?.getAttribute('aria-label')).to.equal('Settings');
   });
-
 });

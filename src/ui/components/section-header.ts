@@ -24,10 +24,6 @@ import { property } from 'lit/decorators.js';
  * @summary Section header with title and count display
  */
 export class GraphSectionHeader extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The section title
    */
@@ -51,10 +47,6 @@ export class GraphSectionHeader extends LitElement {
     this.count = 0;
     this.suffix = '';
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -81,10 +73,6 @@ export class GraphSectionHeader extends LitElement {
     }
   `;
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     const countText = this.suffix ? `${this.count} ${this.suffix}` : `${this.count}`;
 
@@ -95,7 +83,6 @@ export class GraphSectionHeader extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-section-header': GraphSectionHeader;

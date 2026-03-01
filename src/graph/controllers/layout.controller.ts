@@ -21,7 +21,7 @@ export interface LayoutResult {
   nodePositions: Map<string, NodePosition>;
   clusterPositions: Map<string, ClusterPosition>;
   clusters: Cluster[];
-  /** Aggregated edges between clusters (Arteries) */
+  /** Aggregated edges between clusters */
   clusterEdges?: { source: string; target: string; weight: number }[] | undefined;
   /** Port-routed edges for cross-cluster connections */
   routedEdges?: RoutedEdge[] | undefined;

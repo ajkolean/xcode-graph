@@ -39,10 +39,6 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  * @slot badges - Badge elements to display below the header
  */
 export class GraphPanelHeader extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The main title/name to display
    */
@@ -73,10 +69,6 @@ export class GraphPanelHeader extends LitElement {
     super();
     this.titleSize = 'lg';
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -201,10 +193,6 @@ export class GraphPanelHeader extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleBack() {
     this.dispatchEvent(
       new CustomEvent('back', {
@@ -213,10 +201,6 @@ export class GraphPanelHeader extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     const color = this.color || '#8B5CF6';
@@ -256,7 +240,6 @@ export class GraphPanelHeader extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-panel-header': GraphPanelHeader;

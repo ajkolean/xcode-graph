@@ -20,19 +20,11 @@ import { property } from 'lit/decorators.js';
  * @summary Coming soon placeholder tab
  */
 export class GraphPlaceholderTab extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The title of the tab section
    */
   @property({ type: String })
   declare title: string;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -63,10 +55,6 @@ export class GraphPlaceholderTab extends LitElement {
     }
   `;
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     return html`
       <div class="container">
@@ -77,7 +65,6 @@ export class GraphPlaceholderTab extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-placeholder-tab': GraphPlaceholderTab;

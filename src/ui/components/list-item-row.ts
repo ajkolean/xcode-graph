@@ -41,10 +41,6 @@ import { when } from 'lit/directives/when.js';
  * @fires row-hover-end - Dispatched on mouse leave
  */
 export class GraphListItemRow extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare node: GraphNode;
 
@@ -57,10 +53,6 @@ export class GraphListItemRow extends LitElement {
   @property({ type: Boolean, attribute: 'is-selected' })
   declare isSelected: boolean;
 
-  // ========================================
-  // Internal State
-  // ========================================
-
   @state()
   private declare isHovered: boolean;
 
@@ -68,10 +60,6 @@ export class GraphListItemRow extends LitElement {
     super();
     this.zoom = 1;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -189,10 +177,6 @@ export class GraphListItemRow extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleClick() {
     this.dispatchEvent(
       new CustomEvent('row-select', {
@@ -223,10 +207,6 @@ export class GraphListItemRow extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     if (!this.node) return html``;
@@ -278,7 +258,6 @@ export class GraphListItemRow extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-list-item-row': GraphListItemRow;

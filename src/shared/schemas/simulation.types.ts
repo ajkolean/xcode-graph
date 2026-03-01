@@ -7,8 +7,6 @@
  * @module schemas/simulation
  */
 
-// ==================== Type Definitions ====================
-
 /** Node position during simulation */
 export interface NodePosition {
   id: string;

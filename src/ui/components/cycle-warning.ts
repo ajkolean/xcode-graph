@@ -26,10 +26,6 @@ import { property, state } from 'lit/decorators.js';
  * @fires dismiss - Dispatched when the warning is dismissed
  */
 export class GraphCycleWarning extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare cycles: string[][];
 
@@ -38,10 +34,6 @@ export class GraphCycleWarning extends LitElement {
 
   @state()
   private declare isDismissed: boolean;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -190,20 +182,12 @@ export class GraphCycleWarning extends LitElement {
     }
   `;
 
-  // ========================================
-  // Lifecycle
-  // ========================================
-
   constructor() {
     super();
     this.cycles = [];
     this.isExpanded = false;
     this.isDismissed = false;
   }
-
-  // ========================================
-  // Event Handlers
-  // ========================================
 
   private handleToggleExpand() {
     this.isExpanded = !this.isExpanded;
@@ -219,17 +203,9 @@ export class GraphCycleWarning extends LitElement {
     );
   }
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private formatCycle(cycle: string[]): string {
     return cycle.join(' → ');
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult | null {
     if (this.isDismissed || !this.cycles || this.cycles.length === 0) {

@@ -42,10 +42,6 @@ const DESTINATION_CONFIG: Record<string, { label: string; color: string }> = {
  * @summary Platform deployment targets and destination badges
  */
 export class GraphDeploymentTargets extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Deployment targets with minimum OS versions per platform
    */
@@ -68,10 +64,6 @@ export class GraphDeploymentTargets extends LitElement {
     super();
     this.compact = false;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -132,10 +124,6 @@ export class GraphDeploymentTargets extends LitElement {
       margin-bottom: var(--spacing-1);
     }
   `;
-
-  // ========================================
-  // Render Helpers
-  // ========================================
 
   private renderPlatformTargets() {
     if (!this.deploymentTargets) return nothing;
@@ -202,10 +190,6 @@ export class GraphDeploymentTargets extends LitElement {
     `;
   }
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult | typeof nothing {
     const hasPlatforms =
       this.deploymentTargets && Object.values(this.deploymentTargets).some((v) => v != null);
@@ -219,7 +203,6 @@ export class GraphDeploymentTargets extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-deployment-targets': GraphDeploymentTargets;

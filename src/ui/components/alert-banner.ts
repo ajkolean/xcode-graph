@@ -45,10 +45,6 @@ export type AlertBannerVariant = 'warning' | 'error' | 'info' | 'success';
  * @slot - Default slot for additional content
  */
 export class GraphAlertBanner extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Alert variant (determines color scheme)
    */
@@ -84,10 +80,6 @@ export class GraphAlertBanner extends LitElement {
     this.dismissible = false;
     this.isDismissed = false;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -224,10 +216,6 @@ export class GraphAlertBanner extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleDismiss() {
     this.isDismissed = true;
     this.dispatchEvent(
@@ -237,10 +225,6 @@ export class GraphAlertBanner extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult | typeof nothing {
     if (this.isDismissed) {
@@ -280,7 +264,6 @@ export class GraphAlertBanner extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-alert-banner': GraphAlertBanner;

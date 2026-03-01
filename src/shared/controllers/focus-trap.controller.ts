@@ -26,8 +26,6 @@
 import { createFocusTrap, type FocusTrap } from 'focus-trap';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
-// ==================== Type Definitions ====================
-
 /**
  * Configuration for the focus trap controller.
  */
@@ -45,8 +43,6 @@ export interface FocusTrapConfig {
   /** Whether clicking outside the trap deactivates it. Defaults to `false`. */
   clickOutsideDeactivates?: boolean;
 }
-
-// ==================== Controller Class ====================
 
 /**
  * Reactive controller that manages a focus trap on the host element.

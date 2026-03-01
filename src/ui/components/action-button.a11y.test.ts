@@ -40,5 +40,4 @@ describe('xcode-graph-action-button a11y', () => {
     const results = await axe(el);
     expect(results).toHaveNoViolations();
   });
-
 });

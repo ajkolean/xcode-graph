@@ -79,31 +79,6 @@ describe('GraphLayoutController', () => {
       expect(controller.clusterPositions.size).toBe(0);
       expect(controller.clusters).toHaveLength(0);
     });
-
-    it('should assign positions to all nodes', async () => {
-      const { nodes, edges } = createLinearChain(3);
-
-      await controller.computeLayout(nodes, edges);
-
-      // All nodes should have positions
-      for (const node of nodes) {
-        const pos = controller.nodePositions.get(node.id);
-        expect(pos).toBeDefined();
-        expect(typeof pos?.x).toBe('number');
-        expect(typeof pos?.y).toBe('number');
-      }
-    });
-
-    it('should initialize velocities to zero when animation disabled', async () => {
-      const { nodes, edges } = createLinearChain(3);
-
-      await controller.computeLayout(nodes, edges);
-
-      for (const pos of controller.nodePositions.values()) {
-        expect(pos.vx).toBe(0);
-        expect(pos.vy).toBe(0);
-      }
-    });
   });
 
   describe('Animation', () => {

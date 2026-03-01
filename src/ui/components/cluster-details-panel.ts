@@ -37,10 +37,6 @@ import './cluster-targets-list';
  * @fires node-hover - Dispatched when a target node is hovered (detail: { nodeId })
  */
 export class GraphClusterDetailsPanel extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare cluster: Cluster;
 
@@ -65,20 +61,12 @@ export class GraphClusterDetailsPanel extends LitElement {
   @property({ type: Number })
   declare zoom: number;
 
-  // ========================================
-  // Controllers
-  // ========================================
-
   private readonly focusTrap = new FocusTrapController(this, {
     isActive: () => !!this.cluster,
     onDeactivate: () => this.bubbleEvent('close'),
     escapeDeactivates: true,
     clickOutsideDeactivates: true,
   });
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -108,10 +96,6 @@ export class GraphClusterDetailsPanel extends LitElement {
     }
   `;
 
-  // ========================================
-  // Computed Values
-  // ========================================
-
   private get stats() {
     return computeClusterStats(this.clusterNodes, this.edges, this.filteredEdges);
   }
@@ -128,10 +112,6 @@ export class GraphClusterDetailsPanel extends LitElement {
     return breakdown;
   }
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private bubbleEvent(eventName: string, detail?: unknown) {
     this.dispatchEvent(
       new CustomEvent(eventName, {
@@ -141,10 +121,6 @@ export class GraphClusterDetailsPanel extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     // Reference focusTrap to ensure controller is not tree-shaken
@@ -202,7 +178,6 @@ export class GraphClusterDetailsPanel extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster-details-panel': GraphClusterDetailsPanel;

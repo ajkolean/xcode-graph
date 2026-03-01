@@ -10,15 +10,11 @@
 import { type Signal, signal } from '@lit-labs/signals';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
-// ==================== State Signals ====================
-
 /** All graph nodes */
 export const nodes: Signal.State<GraphNode[]> = signal<GraphNode[]>([]);
 
 /** All graph edges */
 export const edges: Signal.State<GraphEdge[]> = signal<GraphEdge[]>([]);
-
-// ==================== Reset Utility ====================
 
 /**
  * Reset all data signals to their initial state.

@@ -10,8 +10,6 @@
 import type { AppError, ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
 import { errors, maxVisibleToasts } from './error.signals';
 
-// ==================== Error Management Actions ====================
-
 /**
  * Add a new error notification
  * @param error - The error to add
@@ -73,8 +71,6 @@ export function clearErrorsByCategory(category: ErrorCategory): void {
   const currentErrors = errors.get();
   errors.set(currentErrors.filter((error) => error.category !== category));
 }
-
-// ==================== Configuration Actions ====================
 
 /**
  * Set maximum visible toasts

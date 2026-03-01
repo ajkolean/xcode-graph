@@ -274,5 +274,4 @@ describe('GraphErrorToast', () => {
       expect(element.visible).toBe(false);
     });
   });
-
 });

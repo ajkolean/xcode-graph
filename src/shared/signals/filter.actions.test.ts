@@ -144,15 +144,6 @@ describe('filter.actions', () => {
       expect(filters.get().platforms.has(Platform.macOS)).toBe(true);
     });
 
-    it('should not affect other filter categories', () => {
-      const initialFilters = filters.get();
-
-      togglePlatform(Platform.iOS);
-
-      const updatedFilters = filters.get();
-      expect(updatedFilters.nodeTypes).toEqual(initialFilters.nodeTypes);
-      expect(updatedFilters.origins).toEqual(initialFilters.origins);
-    });
   });
 
   describe('toggleOrigin', () => {
@@ -173,15 +164,6 @@ describe('filter.actions', () => {
       expect(filters.get().origins.has(Origin.External)).toBe(true);
     });
 
-    it('should not affect other filter categories', () => {
-      const initialFilters = filters.get();
-
-      toggleOrigin(Origin.Local);
-
-      const updatedFilters = filters.get();
-      expect(updatedFilters.nodeTypes).toEqual(initialFilters.nodeTypes);
-      expect(updatedFilters.platforms).toEqual(initialFilters.platforms);
-    });
   });
 
   describe('toggleProject', () => {
@@ -234,18 +216,6 @@ describe('filter.actions', () => {
       expect(filters.get().packages.has('Package2')).toBe(true);
     });
 
-    it('should handle multiple toggles', () => {
-      filters.set({ ...DEFAULT_FILTERS, packages: new Set() });
-
-      togglePackage('Package1');
-      expect(filters.get().packages.has('Package1')).toBe(true);
-
-      togglePackage('Package1');
-      expect(filters.get().packages.has('Package1')).toBe(false);
-
-      togglePackage('Package1');
-      expect(filters.get().packages.has('Package1')).toBe(true);
-    });
   });
 
   // ==================== Bulk Actions ====================

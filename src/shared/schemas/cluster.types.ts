@@ -9,8 +9,6 @@
 
 import type { GraphNode, Origin } from './graph.types';
 
-// ==================== Native Enums ====================
-
 /**
  * Node role enum - determines positioning strategy within a cluster
  */
@@ -46,8 +44,6 @@ export enum ElkHierarchyHandling {
 export interface ClusterElkOptions {
   hierarchyHandling?: ElkHierarchyHandling | undefined;
 }
-
-// ==================== Type Definitions ====================
 
 /** Node metadata within cluster */
 export interface ClusterNodeMetadata {
@@ -124,8 +120,6 @@ export interface ClusterLayoutConfig {
   forceStrength: ForceStrength;
 }
 
-// ==================== Default Configuration ====================
-
 /** Default layout configuration values */
 export const DEFAULT_CLUSTER_CONFIG: ClusterLayoutConfig = {
   ringRadius: 75,
@@ -145,8 +139,6 @@ export const DEFAULT_CLUSTER_CONFIG: ClusterLayoutConfig = {
     boundary: 0.6,
   },
 };
-
-// ==================== Value Arrays ====================
 
 /** All node role values for iteration */
 export const NODE_ROLE_VALUES: NodeRole[] = Object.values(NodeRole);

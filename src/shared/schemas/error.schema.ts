@@ -11,12 +11,8 @@ import { ErrorCategory, ErrorSeverity } from './error.types';
 // Re-export all types for backward compatibility
 export * from './error.types';
 
-// ==================== Enum Schemas ====================
-
 export const ErrorSeveritySchema: z.ZodType<ErrorSeverity> = z.enum(ErrorSeverity);
 export const ErrorCategorySchema: z.ZodType<ErrorCategory> = z.enum(ErrorCategory);
-
-// ==================== Error Schemas ====================
 
 export const AppErrorSchema: z.ZodType<AppError> = z.object({
   id: z.string(),

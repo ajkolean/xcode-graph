@@ -91,5 +91,4 @@ describe('xcode-graph-clear-filters-button', () => {
 
     expect(eventFired).to.be.false;
   });
-
 });

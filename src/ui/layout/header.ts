@@ -21,10 +21,6 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
  * @summary Mission control themed header bar
  */
 export class GraphHeader extends LitElement {
-  // ========================================
-  // Styles
-  // ========================================
-
   static override readonly styles: CSSResultGroup = css`
     :host {
       display: block;
@@ -239,10 +235,6 @@ export class GraphHeader extends LitElement {
     }
   `;
 
-  // ========================================
-  // Helper SVGs
-  // ========================================
-
   private renderSelectorIcon() {
     return svg`
       <svg
@@ -281,10 +273,6 @@ export class GraphHeader extends LitElement {
       </svg>
     `;
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     return html`
@@ -339,7 +327,6 @@ export class GraphHeader extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-header': GraphHeader;

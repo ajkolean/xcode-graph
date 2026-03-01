@@ -15,8 +15,6 @@ import { computeTransitiveDependencies, type TransitiveResult } from '../utils/t
 import { edges, nodes } from './data.signals';
 import { selectedNode, viewMode } from './graph.signals';
 
-// ==================== Types ====================
-
 /**
  * Result of filtering graph data
  */
@@ -39,12 +37,7 @@ export interface DisplayData extends FilteredData {
   transitiveDependents: TransitiveResult;
 }
 
-// ==================== Computed Signals ====================
-
-/**
- * Computed signal for filtered graph data.
- * Automatically recomputes when nodes, edges, filters, or searchQuery change.
- */
+/** Computed signal for filtered graph data. */
 export const filteredData: Signal.Computed<FilteredData> = new Signal.Computed<FilteredData>(() => {
   const currentNodes = nodes.get();
   const currentEdges = edges.get();
@@ -54,10 +47,7 @@ export const filteredData: Signal.Computed<FilteredData> = new Signal.Computed<F
   return applyGraphFilters(currentNodes, currentEdges, currentFilters, currentSearchQuery);
 });
 
-/**
- * Computed signal for transitive dependency data.
- * Automatically recomputes when viewMode, selectedNode, or edges change.
- */
+/** Computed signal for transitive dependency data. */
 export const transitiveData: Signal.Computed<{
   transitiveDeps: TransitiveResult;
   transitiveDependents: TransitiveResult;
@@ -73,7 +63,6 @@ export const transitiveData: Signal.Computed<{
  * Computed signal for final display data.
  * Always passes all filtered nodes/edges through to the canvas.
  * The canvas handles visibility (direct mode = hide non-chain, highlight mode = depth alpha).
- * Automatically recomputes when any dependency changes.
  */
 export const displayData: Signal.Computed<DisplayData> = new Signal.Computed<DisplayData>(() => {
   const { filteredNodes, filteredEdges, searchResults } = filteredData.get();

@@ -19,8 +19,6 @@
  * ```
  */
 
-// ==================== Sidebar Machine ====================
-
 export {
   type SidebarMachineSchema,
   type SidebarSection,

@@ -24,19 +24,11 @@ import { property } from 'lit/decorators.js';
  * @fires clear-filters - Dispatched when button is clicked (only when active)
  */
 export class GraphClearFiltersButton extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Whether the button is active (has filters to clear)
    */
   @property({ type: Boolean, attribute: 'is-active' })
   declare isActive: boolean;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -89,10 +81,6 @@ export class GraphClearFiltersButton extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleClick() {
     if (!this.isActive) {
       return;
@@ -106,10 +94,6 @@ export class GraphClearFiltersButton extends LitElement {
     );
   }
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     return html`
       <button
@@ -122,7 +106,6 @@ export class GraphClearFiltersButton extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-clear-filters-button': GraphClearFiltersButton;

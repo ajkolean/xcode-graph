@@ -112,6 +112,7 @@ describe('FocusTrapController', () => {
       host.simulateConnected();
       host.simulateUpdated();
       expect(isActive).toHaveBeenCalled();
+      expect(_controller.active).toBe(true);
     });
 
     it('should not activate the trap when isActive returns false', () => {
@@ -119,20 +120,22 @@ describe('FocusTrapController', () => {
       host.simulateConnected();
       host.simulateUpdated();
       expect(isActive).toHaveBeenCalled();
+      expect(_controller.active).toBe(false);
     });
 
     it('should activate and deactivate as isActive changes', () => {
       isActive.mockReturnValue(false);
       host.simulateConnected();
       host.simulateUpdated();
+      expect(_controller.active).toBe(false);
 
       isActive.mockReturnValue(true);
       host.simulateUpdated();
+      expect(_controller.active).toBe(true);
 
       isActive.mockReturnValue(false);
       host.simulateUpdated();
-
-      expect(isActive).toHaveBeenCalled();
+      expect(_controller.active).toBe(false);
     });
 
     it('should not double-activate when already active', () => {
@@ -153,11 +156,11 @@ describe('FocusTrapController', () => {
       isActive.mockReturnValue(true);
       host.simulateConnected();
       host.simulateUpdated();
+      expect(_controller.active).toBe(true);
 
       isActive.mockReturnValue(false);
       host.simulateUpdated();
-
-      expect(isActive).toHaveBeenCalled();
+      expect(_controller.active).toBe(false);
     });
 
     it('should not error when deactivating an already inactive trap', () => {
@@ -175,9 +178,10 @@ describe('FocusTrapController', () => {
       isActive.mockReturnValue(true);
       host.simulateConnected();
       host.simulateUpdated();
+      expect(_controller.active).toBe(true);
 
       host.simulateDisconnected();
-      expect(isActive).toHaveBeenCalled();
+      expect(_controller.active).toBe(false);
     });
 
     it('should handle disconnect when trap was never activated', () => {
@@ -188,18 +192,20 @@ describe('FocusTrapController', () => {
       expect(() => host.simulateDisconnected()).not.toThrow();
     });
 
-    it('should nullify the trap on disconnect', () => {
+    it('should nullify the trap on disconnect and recreate on reconnect', () => {
       isActive.mockReturnValue(true);
       host.simulateConnected();
       host.simulateUpdated();
+      expect(_controller.active).toBe(true);
 
       host.simulateDisconnected();
+      expect(_controller.active).toBe(false);
 
+      // Reconnecting and updating should create a new trap
       isActive.mockReturnValue(true);
       host.simulateConnected();
       host.simulateUpdated();
-
-      expect(isActive).toHaveBeenCalled();
+      expect(_controller.active).toBe(true);
     });
   });
 
@@ -277,11 +283,12 @@ describe('FocusTrapController', () => {
       isActive.mockReturnValue(true);
       host.simulateConnected();
       host.simulateUpdated();
+      expect(_controller.active).toBe(true);
 
+      // Deactivating should work without error (returnFocusOnDeactivate defaults to true)
       isActive.mockReturnValue(false);
       host.simulateUpdated();
-
-      expect(isActive).toHaveBeenCalled();
+      expect(_controller.active).toBe(false);
     });
   });
 });

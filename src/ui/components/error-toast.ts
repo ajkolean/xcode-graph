@@ -36,16 +36,12 @@ import {
 } from 'lit';
 import { property } from 'lit/decorators.js';
 
-// ==================== Severity Icons ====================
-
 const SEVERITY_ICONS = {
   [ErrorSeverity.Info]: 'ℹ️',
   [ErrorSeverity.Warning]: '⚠️',
   [ErrorSeverity.Error]: '❌',
   [ErrorSeverity.Critical]: '🚨',
 };
-
-// ==================== Component ====================
 
 /**
  * Displays a single error notification with severity-based styling,
@@ -57,10 +53,6 @@ const SEVERITY_ICONS = {
  * @fires action - Dispatched when the action button is clicked (detail: { error })
  */
 export class GraphErrorToast extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare error: AppError | null;
 
@@ -72,10 +64,6 @@ export class GraphErrorToast extends LitElement {
     this.error = null;
     this.visible = false;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -203,10 +191,6 @@ export class GraphErrorToast extends LitElement {
     }
   `;
 
-  // ========================================
-  // Lifecycle
-  // ========================================
-
   override updated(changed: PropertyValues): void {
     if (changed.has('error') && this.error) {
       // Set data attribute for severity-based styling
@@ -218,10 +202,6 @@ export class GraphErrorToast extends LitElement {
       });
     }
   }
-
-  // ========================================
-  // Event Handlers
-  // ========================================
 
   private handleDismiss(): void {
     if (!this.error || !this.error.dismissible) {
@@ -255,10 +235,6 @@ export class GraphErrorToast extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult | typeof nothing {
     if (!this.error) {

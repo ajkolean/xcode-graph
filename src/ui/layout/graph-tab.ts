@@ -25,8 +25,6 @@ import '@graph/components/graph-canvas';
 import '@graph/components/graph-overlays';
 import '../components/right-sidebar';
 
-// Import signals
-// Import actions
 import {
   highlightDirectDependents,
   highlightDirectDeps,
@@ -65,10 +63,6 @@ const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
  * @slot filter-view - Slot for injecting a custom filter view into the right sidebar
  */
 export class GraphTab extends SignalWatcherLitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @query('xcode-graph-canvas')
   private declare canvasElement: GraphCanvas;
 
@@ -98,10 +92,6 @@ export class GraphTab extends SignalWatcherLitElement {
 
   @property({ attribute: false })
   declare transitiveDependents: TransitiveResult;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -133,10 +123,6 @@ export class GraphTab extends SignalWatcherLitElement {
       min-height: 0;
     }
   `;
-
-  // ========================================
-  // Event Handlers (delegate to signal actions)
-  // ========================================
 
   private handleNodeSelect(e: CustomEvent) {
     selectNode(e.detail.node);
@@ -174,10 +160,6 @@ export class GraphTab extends SignalWatcherLitElement {
   private handleZoomChange(e: CustomEvent) {
     setZoom(e.detail);
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     return html`
@@ -243,7 +225,6 @@ export class GraphTab extends SignalWatcherLitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-tab': GraphTab;

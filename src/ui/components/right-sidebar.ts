@@ -49,8 +49,6 @@ import './filter-section';
 import './empty-state';
 import './stats-card';
 
-// Import signals
-// Import actions
 import {
   highlightDirectDependents,
   highlightDirectDeps,
@@ -125,10 +123,6 @@ const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
  * @summary Right sidebar with filters, search, and detail panels
  */
 export class GraphRightSidebar extends SignalWatcherLitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare allNodes: GraphNode[];
 
@@ -144,10 +138,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   @property({ attribute: false })
   declare clusters: Cluster[] | undefined;
 
-  // ========================================
-  // State Management
-  // ========================================
-
   // Zag sidebar machine (kept - only replacing Zustand)
   private readonly sidebar = createMachineController(this, sidebarMachine, {
     id: 'right-sidebar',
@@ -160,10 +150,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     onDeactivate: () => this.handleBackToFilters(),
     initialFocus: '.breadcrumb-button',
   });
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -295,10 +281,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     }
   `;
 
-  // ========================================
-  // Computed Values
-  // ========================================
-
   private _filterData = computeFilters([]);
 
   override willUpdate(changedProperties: PropertyValues<this>): void {
@@ -362,10 +344,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     return largest || 'Project Overview';
   }
 
-  // ========================================
-  // Event Helpers
-  // ========================================
-
   private handleSearchChange(query: string) {
     setSearchQuery(query);
   }
@@ -404,10 +382,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     setPreviewFilter(preview);
   }
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleToggleCollapse() {
     this.sidebar.send({ type: 'TOGGLE' });
   }
@@ -430,10 +404,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   }
-
-  // ========================================
-  // Render Helpers
-  // ========================================
 
   private renderCollapsedSidebar(currentFilters: ReturnType<typeof filters.get>) {
     return html`
@@ -721,10 +691,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     );
   }
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     const isCollapsed = this.isCollapsed;
     // Reference focusTrap to ensure controller is not tree-shaken
@@ -814,7 +780,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-right-sidebar': GraphRightSidebar;

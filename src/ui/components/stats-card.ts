@@ -24,10 +24,6 @@ import { property } from 'lit/decorators.js';
  * @fires card-toggle - Dispatched when a toggleable card is clicked
  */
 export class GraphStatsCard extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The label text displayed above the value
    */
@@ -63,10 +59,6 @@ export class GraphStatsCard extends LitElement {
    */
   @property({ type: Boolean, attribute: 'active' })
   declare active: boolean;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -167,10 +159,6 @@ export class GraphStatsCard extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleClick() {
     if (this.toggleable) {
       this.dispatchEvent(
@@ -181,10 +169,6 @@ export class GraphStatsCard extends LitElement {
       );
     }
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     const classes = [
@@ -207,7 +191,6 @@ export class GraphStatsCard extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-stats-card': GraphStatsCard;

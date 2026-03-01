@@ -16,8 +16,6 @@
 import type { ClusterPosition, NodePosition } from '@shared/schemas';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
-// ==================== Type Definitions ====================
-
 /**
  * Configuration for full interaction controller
  */
@@ -26,8 +24,6 @@ export interface GraphInteractionConfig {
   finalNodePositions: Map<string, NodePosition>;
   clusterPositions: Map<string, ClusterPosition>;
 }
-
-// ==================== Controller Class ====================
 
 /**
  * Reactive controller for complete graph interactions
@@ -66,10 +62,6 @@ export class GraphInteractionFullController implements ReactiveController {
     host.addController(this);
   }
 
-  // ========================================
-  // Public API
-  // ========================================
-
   setSvgElement(element: SVGSVGElement): void {
     this.svgElement = element;
   }
@@ -83,10 +75,6 @@ export class GraphInteractionFullController implements ReactiveController {
     if (config.finalNodePositions) this.finalNodePositions = config.finalNodePositions;
     if (config.clusterPositions) this.clusterPositions = config.clusterPositions;
   }
-
-  // ========================================
-  // Canvas Pan Handlers
-  // ========================================
 
   handleMouseDown = (e: MouseEvent): void => {
     const target = e.target as HTMLElement;
@@ -146,20 +134,12 @@ export class GraphInteractionFullController implements ReactiveController {
     this.host.requestUpdate();
   };
 
-  // ========================================
-  // Node Drag Handlers
-  // ========================================
-
   handleNodeMouseDown(nodeId: string, e: MouseEvent): void {
     e.stopPropagation();
     this.draggedNode = nodeId;
     this.hasMoved = false;
     this.host.requestUpdate();
   }
-
-  // ========================================
-  // Lifecycle
-  // ========================================
 
   hostConnected(): void {
     window.addEventListener('mouseup', this.handleWindowMouseUp, { capture: true });

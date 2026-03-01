@@ -11,8 +11,6 @@ import { Signal, signal } from '@lit-labs/signals';
 import { ViewMode } from '@shared/schemas/app.types';
 import type { GraphNode } from '@shared/schemas/graph.types';
 
-// ==================== State Signals ====================
-
 /** Currently selected node (null if none) */
 export const selectedNode: Signal.State<GraphNode | null> = signal<GraphNode | null>(null);
 
@@ -25,8 +23,6 @@ export const hoveredNode: Signal.State<string | null> = signal<string | null>(nu
 /** Detected circular dependency paths */
 export const circularDependencies: Signal.State<string[][]> = signal<string[][]>([]);
 
-// ==================== Highlight Toggle Signals ====================
-
 /** Whether direct dependencies are highlighted */
 export const highlightDirectDeps: Signal.State<boolean> = signal<boolean>(false);
 
@@ -38,8 +34,6 @@ export const highlightDirectDependents: Signal.State<boolean> = signal<boolean>(
 
 /** Whether transitive dependents are highlighted */
 export const highlightTransitiveDependents: Signal.State<boolean> = signal<boolean>(false);
-
-// ==================== Computed Signals ====================
 
 /** Current graph visualization mode, derived from highlight toggles */
 export const viewMode: Signal.Computed<ViewMode> = new Signal.Computed(() => {
@@ -57,16 +51,10 @@ export const hasSelection: Signal.Computed<boolean> = new Signal.Computed(
   () => selectedNode.get() !== null || selectedCluster.get() !== null,
 );
 
-/**
- * Factory to create a computed signal that checks if a specific node is selected
- * @param nodeId - The node ID to check
- * @returns A computed signal that returns true if the node is selected
- */
+/** Factory to create a computed signal that checks if a specific node is selected */
 export function createIsNodeSelected(nodeId: string): Signal.Computed<boolean> {
   return new Signal.Computed(() => selectedNode.get()?.id === nodeId);
 }
-
-// ==================== Reset Utility ====================
 
 /**
  * Reset all graph signals to their initial state.

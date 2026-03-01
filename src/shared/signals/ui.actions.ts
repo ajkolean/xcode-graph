@@ -18,8 +18,6 @@ import {
   zoom,
 } from './ui.signals';
 
-// ==================== Tab Actions ====================
-
 /**
  * Change the active tab
  * @param tab - The tab to activate
@@ -27,8 +25,6 @@ import {
 export function setActiveTab(tab: ActiveTab): void {
   activeTab.set(tab);
 }
-
-// ==================== Zoom Actions ====================
 
 /**
  * Set zoom level (clamped to 0.1-5.0)
@@ -67,8 +63,6 @@ export function setBaseZoom(value: number): void {
   baseZoom.set(value);
 }
 
-// ==================== Animation Actions ====================
-
 /**
  * Toggle animation on/off
  */
@@ -83,8 +77,6 @@ export function toggleAnimation(): void {
 export function setEnableAnimation(enabled: boolean): void {
   enableAnimation.set(enabled);
 }
-
-// ==================== Preview Filter Actions ====================
 
 /**
  * Set preview filter for hover effects

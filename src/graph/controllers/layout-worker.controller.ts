@@ -211,10 +211,6 @@ export class LayoutWorkerController implements ReactiveController {
     this.cachedEdges = edges;
   }
 
-  // ========================================
-  // Lifecycle
-  // ========================================
-
   hostConnected(): void {
     // Worker is lazily created on first computeLayout call
   }

@@ -6,8 +6,15 @@
  * @module graph/signals
  */
 
-// ==================== Graph Signals ====================
-
+export { clearGraphData, setGraphData } from './data.actions';
+export { edges, nodes, resetDataSignals } from './data.signals';
+export {
+  type DisplayData,
+  displayData,
+  type FilteredData,
+  filteredData,
+  transitiveData,
+} from './display.computed';
 export {
   type HighlightCard,
   resetHighlightToggles,
@@ -32,18 +39,3 @@ export {
   selectedNode,
   viewMode,
 } from './graph.signals';
-
-// ==================== Data Signals ====================
-
-export { clearGraphData, setGraphData } from './data.actions';
-export { edges, nodes, resetDataSignals } from './data.signals';
-
-// ==================== Computed Signals ====================
-
-export {
-  type DisplayData,
-  displayData,
-  type FilteredData,
-  filteredData,
-  transitiveData,
-} from './display.computed';

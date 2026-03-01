@@ -18,8 +18,6 @@ import {
   type Platform,
 } from '@shared/schemas/graph.types';
 
-// ==================== Default Values ====================
-
 /** Default filter configuration - show everything */
 export const DEFAULT_FILTERS: FilterState = {
   nodeTypes: new Set<NodeType>(NODE_TYPE_VALUES),
@@ -28,8 +26,6 @@ export const DEFAULT_FILTERS: FilterState = {
   projects: new Set<string>(),
   packages: new Set<string>(),
 };
-
-// ==================== State Signals ====================
 
 /** Current active filters */
 export const filters: Signal.State<FilterState> = signal<FilterState>({
@@ -49,8 +45,6 @@ export const allProjects: Signal.State<Set<string>> = signal<Set<string>>(new Se
 
 /** All available packages (for active filter detection) */
 export const allPackages: Signal.State<Set<string>> = signal<Set<string>>(new Set());
-
-// ==================== Computed Signals ====================
 
 /**
  * Check if any filters are active (not showing everything)
@@ -77,8 +71,6 @@ export const hasActiveFilters: Signal.Computed<boolean> = new Signal.Computed(()
     query !== ''
   );
 });
-
-// ==================== Reset Utility ====================
 
 /**
  * Reset all filter signals to their initial state.

@@ -10,8 +10,6 @@ import type { ClusterPosition, NodePosition } from './simulation.types';
 // Re-export all types for backward compatibility
 export * from './simulation.types';
 
-// ==================== Position Schemas ====================
-
 export const NodePositionSchema: z.ZodType<NodePosition> = z.object({
   id: z.string(),
   x: z.number(),

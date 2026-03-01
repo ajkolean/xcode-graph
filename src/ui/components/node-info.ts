@@ -24,10 +24,6 @@ import './info-row.js';
  * @summary Collapsible node information details section
  */
 export class GraphNodeInfo extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare node: GraphNode;
 
@@ -51,10 +47,6 @@ export class GraphNodeInfo extends LitElement {
     super.connectedCallback();
     this.isExpanded = this.expanded;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -193,10 +185,6 @@ export class GraphNodeInfo extends LitElement {
     }
   `;
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
@@ -215,10 +203,6 @@ export class GraphNodeInfo extends LitElement {
   private get hasDestinations(): boolean {
     return !!this.node.destinations && this.node.destinations.length > 0;
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   private renderForeignBuild() {
     const fb = this.node.foreignBuild;
@@ -341,7 +325,6 @@ export class GraphNodeInfo extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-node-info': GraphNodeInfo;

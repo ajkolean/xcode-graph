@@ -55,10 +55,6 @@ export interface FilterItem {
  * @slot icon - Icon to display in the section header
  */
 export class GraphFilterSection extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ type: String })
   declare id: string;
 
@@ -82,10 +78,6 @@ export class GraphFilterSection extends LitElement {
 
   @property({ type: Number })
   declare zoom: number;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -282,10 +274,6 @@ export class GraphFilterSection extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleToggle() {
     this.dispatchEvent(
       new CustomEvent('section-toggle', {
@@ -314,10 +302,6 @@ export class GraphFilterSection extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Helpers
-  // ========================================
 
   private renderItemIcon(item: FilterItem, isSelected: boolean, zoomColor: string) {
     const opacity = isSelected ? 1 : 0.7;
@@ -386,10 +370,6 @@ export class GraphFilterSection extends LitElement {
         `;
     }
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   private renderItem(item: FilterItem) {
     const isSelected = this.selectedItems?.has(item.key) || false;
@@ -463,7 +443,6 @@ export class GraphFilterSection extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-filter-section': GraphFilterSection;

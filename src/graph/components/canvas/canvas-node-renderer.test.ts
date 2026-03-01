@@ -198,8 +198,12 @@ describe('canvas-node-renderer', () => {
 
   describe('isPreviewDimmed via previewFilter', () => {
     it('should dim nodes not matching nodeType preview filter', () => {
+      const nodeAlphaMap = new Map([
+        ['node1', { current: 0.3, target: 0.3, start: 0.3, progress: 0 }],
+      ]);
       const rc = createRenderContext({
         previewFilter: { type: 'nodeType', value: NodeType.Framework },
+        nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
@@ -207,7 +211,12 @@ describe('canvas-node-renderer', () => {
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 0.3,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
 
     it('should not dim nodes matching nodeType preview filter', () => {
@@ -216,16 +225,25 @@ describe('canvas-node-renderer', () => {
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
-      // Node is App type and filter is App → should not be dimmed
+      // Node is App type and filter is App → should not be dimmed, alpha stays 1.0
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 1,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
 
     it('should dim nodes not matching platform preview filter', () => {
+      const nodeAlphaMap = new Map([
+        ['node1', { current: 0.3, target: 0.3, start: 0.3, progress: 0 }],
+      ]);
       const rc = createRenderContext({
         previewFilter: { type: 'platform', value: Platform.macOS },
+        nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
@@ -233,25 +251,43 @@ describe('canvas-node-renderer', () => {
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 0.3,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
 
     it('should dim nodes not matching origin preview filter', () => {
+      const nodeAlphaMap = new Map([
+        ['node1', { current: 0.3, target: 0.3, start: 0.3, progress: 0 }],
+      ]);
       const rc = createRenderContext({
         previewFilter: { type: 'origin', value: Origin.External },
+        nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
-      // Node is Local but filter is Remote → dimmed
+      // Node is Local but filter is External → dimmed
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 0.3,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
 
     it('should dim nodes not matching project preview filter', () => {
+      const nodeAlphaMap = new Map([
+        ['node1', { current: 0.3, target: 0.3, start: 0.3, progress: 0 }],
+      ]);
       const rc = createRenderContext({
         previewFilter: { type: 'project', value: 'ProjectB' },
+        nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
@@ -259,12 +295,21 @@ describe('canvas-node-renderer', () => {
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 0.3,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
 
     it('should dim non-package nodes for package preview filter', () => {
+      const nodeAlphaMap = new Map([
+        ['node1', { current: 0.3, target: 0.3, start: 0.3, progress: 0 }],
+      ]);
       const rc = createRenderContext({
         previewFilter: { type: 'package', value: 'SomePackage' },
+        nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
@@ -272,7 +317,12 @@ describe('canvas-node-renderer', () => {
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 0.3,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
 
     it('should not dim a package node matching the package preview filter', () => {
@@ -287,10 +337,16 @@ describe('canvas-node-renderer', () => {
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
+      // Package node matches filter → should not be dimmed, alpha stays 1.0
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 1,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
   });
 
@@ -300,25 +356,38 @@ describe('canvas-node-renderer', () => {
 
   describe('isSearchDimmed via searchQuery', () => {
     it('should dim nodes not matching search query', () => {
-      const rc = createRenderContext({ searchQuery: 'xyz' });
+      const nodeAlphaMap = new Map([
+        ['node1', { current: 0.3, target: 0.3, start: 0.3, progress: 0 }],
+      ]);
+      const rc = createRenderContext({ searchQuery: 'xyz', nodeAlphaMap });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
-      // Node name is 'AppModule' which doesn't contain 'xyz'
+      // Node name is 'AppModule' which doesn't contain 'xyz' → dimmed
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 0.3,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
 
     it('should not dim nodes matching search query (case insensitive)', () => {
       const rc = createRenderContext({ searchQuery: 'app' });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
-      // Node name is 'AppModule' which contains 'app' (case-insensitive)
+      // Node name is 'AppModule' which contains 'app' (case-insensitive) → not dimmed, alpha 1.0
       renderNodes(rc, viewport);
 
       const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-      expect(events.length).to.be.greaterThan(0);
+      const alphaEvents = events.filter(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: number } }).type === 'globalAlpha' &&
+          (e as { type: string; props?: { value?: number } }).props?.value === 1,
+      );
+      expect(alphaEvents.length).to.be.greaterThan(0);
     });
   });
 

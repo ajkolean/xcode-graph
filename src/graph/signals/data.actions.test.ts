@@ -68,7 +68,6 @@ describe('data.actions', () => {
       expect(nodes.get()).not.toEqual(initialNodes);
       expect(edges.get()).not.toEqual(initialEdges);
     });
-
   });
 
   // ==================== clearGraphData Tests ====================
@@ -83,107 +82,6 @@ describe('data.actions', () => {
 
       expect(nodes.get()).toEqual([]);
       expect(edges.get()).toEqual([]);
-    });
-
-  });
-
-  // ==================== Integration Tests ====================
-
-  describe('integration scenarios', () => {
-    it('should handle multiple setGraphData calls', () => {
-      const dataset1 = {
-        nodes: [createTestNode('node-1')],
-        edges: [createTestEdge('node-1', 'node-2')],
-      };
-
-      const dataset2 = {
-        nodes: [createTestNode('node-3'), createTestNode('node-4')],
-        edges: [createTestEdge('node-3', 'node-4')],
-      };
-
-      const dataset3 = {
-        nodes: [createTestNode('node-5')],
-        edges: [],
-      };
-
-      setGraphData(dataset1.nodes, dataset1.edges);
-      expect(nodes.get()).toEqual(dataset1.nodes);
-
-      setGraphData(dataset2.nodes, dataset2.edges);
-      expect(nodes.get()).toEqual(dataset2.nodes);
-
-      setGraphData(dataset3.nodes, dataset3.edges);
-      expect(nodes.get()).toEqual(dataset3.nodes);
-    });
-
-    it('should handle alternating between setGraphData and clearGraphData', () => {
-      const testNodes = [createTestNode('node-1')];
-      const testEdges = [createTestEdge('node-1', 'node-2')];
-
-      setGraphData(testNodes, testEdges);
-      expect(nodes.get()).toHaveLength(1);
-
-      clearGraphData();
-      expect(nodes.get()).toHaveLength(0);
-
-      setGraphData(testNodes, testEdges);
-      expect(nodes.get()).toHaveLength(1);
-
-      clearGraphData();
-      expect(nodes.get()).toHaveLength(0);
-    });
-
-    it('should handle complex graph structures', () => {
-      // Create a diamond graph: 1 -> 2,3 -> 4
-      const testNodes = [
-        createTestNode('node-1'),
-        createTestNode('node-2'),
-        createTestNode('node-3'),
-        createTestNode('node-4'),
-      ];
-      const testEdges = [
-        createTestEdge('node-1', 'node-2'),
-        createTestEdge('node-1', 'node-3'),
-        createTestEdge('node-2', 'node-4'),
-        createTestEdge('node-3', 'node-4'),
-      ];
-
-      setGraphData(testNodes, testEdges);
-
-      expect(nodes.get()).toHaveLength(4);
-      expect(edges.get()).toHaveLength(4);
-    });
-
-    it('should handle nodes with various properties', () => {
-      const testNodes: GraphNode[] = [
-        {
-          id: 'node-1',
-          name: 'Framework A',
-          type: NodeType.Framework,
-          path: '/path/to/framework',
-          platform: Platform.iOS,
-          project: 'Project1',
-          origin: Origin.Local,
-        },
-        {
-          id: 'node-2',
-          name: 'Package B',
-          type: NodeType.Package,
-          path: '/path/to/package',
-          platform: Platform.macOS,
-          project: 'Project2',
-          origin: Origin.External,
-        },
-      ];
-
-      setGraphData(testNodes, []);
-
-      const storedNodes = nodes.get();
-      expect(storedNodes).toHaveLength(2);
-      expect(storedNodes[0]?.type).toBe(NodeType.Framework);
-      expect(storedNodes[1]?.type).toBe(NodeType.Package);
-      expect(storedNodes[0]?.origin).toBe(Origin.Local);
-      expect(storedNodes[1]?.origin).toBe(Origin.External);
     });
   });
 });

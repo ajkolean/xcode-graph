@@ -24,10 +24,6 @@ import './badge.js';
  * @summary Cluster type badge showing package or project
  */
 export class GraphClusterTypeBadge extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The type of cluster (package or project)
    */
@@ -39,10 +35,6 @@ export class GraphClusterTypeBadge extends LitElement {
    */
   @property({ type: String, attribute: 'cluster-color' })
   declare clusterColor: string;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -59,17 +51,9 @@ export class GraphClusterTypeBadge extends LitElement {
     }
   `;
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private get badgeLabel(): string {
     return this.clusterType === 'package' ? 'Package' : 'Project';
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     const color = this.clusterColor || '#F59E0B';
@@ -89,7 +73,6 @@ export class GraphClusterTypeBadge extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster-type-badge': GraphClusterTypeBadge;

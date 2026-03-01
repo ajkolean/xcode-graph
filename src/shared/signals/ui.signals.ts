@@ -10,8 +10,6 @@
 import { type Signal, signal } from '@lit-labs/signals';
 import { type ActiveTab, DEFAULT_ACTIVE_TAB } from '@shared/schemas';
 
-// ==================== Types ====================
-
 /**
  * Preview filter for hover highlights
  *
@@ -23,8 +21,6 @@ export type PreviewFilter = {
   /** Value being previewed */
   value: string;
 } | null;
-
-// ==================== State Signals ====================
 
 /** Currently active application tab */
 export const activeTab: Signal.State<ActiveTab> = signal<ActiveTab>(DEFAULT_ACTIVE_TAB);
@@ -40,8 +36,6 @@ export const enableAnimation: Signal.State<boolean> = signal<boolean>(false);
 
 /** Current preview filter for hover effects */
 export const previewFilter: Signal.State<PreviewFilter> = signal<PreviewFilter>(null);
-
-// ==================== Reset Utility ====================
 
 /**
  * Reset all UI signals to their initial state.

@@ -23,10 +23,6 @@ import { property } from 'lit/decorators.js';
  * @slot - Default slot for complex value content (overrides value prop)
  */
 export class GraphInfoRow extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The label text (left side)
    */
@@ -44,10 +40,6 @@ export class GraphInfoRow extends LitElement {
     this.label = '';
     this.value = '';
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -70,10 +62,6 @@ export class GraphInfoRow extends LitElement {
     }
   `;
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     return html`
       <span class="label">${this.label}:</span>
@@ -84,7 +72,6 @@ export class GraphInfoRow extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-info-row': GraphInfoRow;

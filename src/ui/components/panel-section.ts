@@ -28,10 +28,6 @@ export type PanelSectionPadding = 'none' | 'sm' | 'md' | 'lg';
  * @slot - Default slot for section content
  */
 export class GraphPanelSection extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Whether to show a bottom border
    */
@@ -56,10 +52,6 @@ export class GraphPanelSection extends LitElement {
     this.padding = 'md';
     this.shrink = true;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -100,16 +92,11 @@ export class GraphPanelSection extends LitElement {
     }
   `;
 
-  // ========================================
-  // Render
-  // ========================================
-
   override render(): TemplateResult {
     return html`<slot></slot>`;
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-panel-section': GraphPanelSection;

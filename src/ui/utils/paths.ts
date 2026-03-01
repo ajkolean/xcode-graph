@@ -69,9 +69,7 @@ export function generateBezierPath(x1: number, y1: number, x2: number, y2: numbe
   return path;
 }
 
-// ============================================================================
 // Port-Routed Path Generation
-// ============================================================================
 
 interface Point {
   x: number;

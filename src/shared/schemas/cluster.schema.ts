@@ -19,12 +19,8 @@ import { GraphNodeSchema, OriginSchema } from './graph.schema';
 // Re-export all types for backward compatibility
 export * from './cluster.types';
 
-// ==================== Enum Schemas ====================
-
 export const NodeRoleSchema: z.ZodType<NodeRole> = z.enum(NodeRole);
 export const ClusterTypeSchema: z.ZodType<ClusterType> = z.enum(ClusterType);
-
-// ==================== Entity Schemas ====================
 
 export const ClusterNodeMetadataSchema: z.ZodType<ClusterNodeMetadata> = z.object({
   nodeId: z.string(),
@@ -72,8 +68,6 @@ export const PositionedNodeSchema: z.ZodType<PositionedNode> = z.object({
   targetRadius: z.number().optional(),
   targetAngle: z.number().optional(),
 });
-
-// ==================== Configuration Schemas ====================
 
 export const ForceStrengthSchema: z.ZodType<ForceStrength> = z.object({
   boundary: z.number(),

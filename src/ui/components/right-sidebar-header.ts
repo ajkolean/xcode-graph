@@ -28,10 +28,6 @@ import './icon-button.js';
  * @fires toggle-collapse - Dispatched when the collapse button is clicked
  */
 export class GraphRightSidebarHeader extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ type: String })
   declare title: string;
 
@@ -40,10 +36,6 @@ export class GraphRightSidebarHeader extends LitElement {
 
   @property({ type: Boolean, attribute: 'has-active-filters' })
   declare hasActiveFilters: boolean;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -92,10 +84,6 @@ export class GraphRightSidebarHeader extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private handleToggle() {
     this.dispatchEvent(
       new CustomEvent('toggle-collapse', {
@@ -104,10 +92,6 @@ export class GraphRightSidebarHeader extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     return html`
@@ -135,7 +119,6 @@ export class GraphRightSidebarHeader extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-right-sidebar-header': GraphRightSidebarHeader;

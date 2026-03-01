@@ -56,5 +56,4 @@ describe('xcode-graph-panel-section', () => {
     expect(el.shrink).to.be.true;
     expect(el.hasAttribute('shrink')).to.be.true;
   });
-
 });

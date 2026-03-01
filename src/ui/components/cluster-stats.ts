@@ -34,10 +34,6 @@ import './stats-card';
  * @fires toggle-direct-dependents - Dispatched when dependents card is toggled
  */
 export class GraphClusterStats extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ type: Number, attribute: 'filtered-dependencies' })
   declare filteredDependencies: number;
 
@@ -81,10 +77,6 @@ export class GraphClusterStats extends LitElement {
     super.connectedCallback();
     this.isExpanded = this.expanded;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -205,10 +197,6 @@ export class GraphClusterStats extends LitElement {
     }
   `;
 
-  // ========================================
-  // Event Handlers
-  // ========================================
-
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
@@ -221,10 +209,6 @@ export class GraphClusterStats extends LitElement {
       }),
     );
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   private renderTargetBreakdown() {
     if (!this.targetBreakdown || Object.keys(this.targetBreakdown).length === 0) {
@@ -360,7 +344,6 @@ export class GraphClusterStats extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster-stats': GraphClusterStats;

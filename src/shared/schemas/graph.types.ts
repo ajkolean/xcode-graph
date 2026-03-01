@@ -7,8 +7,6 @@
  * @module schemas/graph
  */
 
-// ==================== Native Enums ====================
-
 /**
  * Node type enum - defines the category of a graph node
  *
@@ -79,8 +77,6 @@ export enum SourceType {
   Registry = 'registry',
   Git = 'git',
 }
-
-// ==================== Type Definitions ====================
 
 /** Deployment target versions per platform */
 export interface DeploymentTargets {
@@ -198,8 +194,6 @@ export interface GraphData {
   /** All edges (dependencies) in the graph */
   edges: GraphEdge[];
 }
-
-// ==================== Value Arrays ====================
 
 /** All node type values as array for iteration */
 export const NODE_TYPE_VALUES: NodeType[] = Object.values(NodeType);

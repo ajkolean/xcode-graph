@@ -35,10 +35,6 @@ export class GraphEdges extends LitElement {
     return this;
   }
 
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ attribute: false })
   declare edges: GraphEdgeType[] | undefined;
 
@@ -108,10 +104,6 @@ export class GraphEdges extends LitElement {
     }
   }
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private computeDepthOpacity(
     edgeKey: string,
     chain: { edges: Set<string>; edgeDepths: Map<string, number>; maxDepth: number },
@@ -146,10 +138,6 @@ export class GraphEdges extends LitElement {
     return 1;
   }
 
-  // ========================================
-  // Lifecycle
-  // ========================================
-
   override willUpdate(changedProps: PropertyValues<this>): void {
     // Rebuild cache when edges change
     if (changedProps.has('edges')) {
@@ -161,7 +149,6 @@ export class GraphEdges extends LitElement {
     // Always update on first render or property changes
     if (changedProps.size === 0) return true;
 
-    // Update if structure changed
     if (
       changedProps.has('edges') ||
       changedProps.has('nodes') ||
@@ -172,7 +159,6 @@ export class GraphEdges extends LitElement {
       return true;
     }
 
-    // Update if visual properties changed
     if (
       changedProps.has('selectedNode') ||
       changedProps.has('hoveredClusterId') ||
@@ -192,7 +178,6 @@ export class GraphEdges extends LitElement {
       // If no hover, or hover unchanged, skip
       if (oldHover === newHover) return false;
 
-      // Check if old or new hover affects any edges
       const oldAffected = oldHover ? this.nodeToEdgesCache.has(oldHover) : false;
       const newAffected = newHover ? this.nodeToEdgesCache.has(newHover) : false;
 
@@ -202,10 +187,6 @@ export class GraphEdges extends LitElement {
 
     return false;
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   /**
    * Determines whether an edge should be visible based on cluster context.
@@ -306,7 +287,6 @@ export class GraphEdges extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-edges': GraphEdges;

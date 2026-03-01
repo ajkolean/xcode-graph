@@ -29,10 +29,6 @@ import './section-header.js';
  * @summary Collapsible cluster composition statistics
  */
 export class GraphClusterComposition extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * Nodes in the cluster
    */
@@ -59,10 +55,6 @@ export class GraphClusterComposition extends LitElement {
     super.connectedCallback();
     this.isExpanded = this.expanded;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -212,10 +204,6 @@ export class GraphClusterComposition extends LitElement {
     }
   `;
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
@@ -255,10 +243,6 @@ export class GraphClusterComposition extends LitElement {
   private get hasContent(): boolean {
     return this.totalSources > 0 || this.totalResources > 0;
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult | typeof nothing {
     if (!this.hasContent) return nothing;
@@ -333,7 +317,6 @@ export class GraphClusterComposition extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster-composition': GraphClusterComposition;

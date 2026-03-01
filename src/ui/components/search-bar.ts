@@ -36,10 +36,6 @@ export class GraphSearchBar extends LitElement {
     delegatesFocus: true,
   };
 
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The current search query
    */
@@ -48,10 +44,6 @@ export class GraphSearchBar extends LitElement {
 
   @query('input')
   private declare inputElement: HTMLInputElement;
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -168,18 +160,10 @@ export class GraphSearchBar extends LitElement {
     }
   `;
 
-  // ========================================
-  // Controllers
-  // ========================================
-
   readonly shortcut: KeyboardShortcutController = new KeyboardShortcutController(this, {
     key: '/',
     onTrigger: () => this.inputElement?.focus(),
   });
-
-  // ========================================
-  // Event Handlers
-  // ========================================
 
   private handleInput(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -207,10 +191,6 @@ export class GraphSearchBar extends LitElement {
       (e.target as HTMLInputElement).blur();
     }
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     return html`
@@ -250,7 +230,6 @@ export class GraphSearchBar extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-search-bar': GraphSearchBar;

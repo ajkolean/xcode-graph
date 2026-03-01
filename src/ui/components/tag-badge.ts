@@ -34,10 +34,6 @@ const DEFAULT_TAG_COLOR = '#6B7280'; // Gray
  * @summary Color-coded architecture tag badge
  */
 export class GraphTagBadge extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   /**
    * The full tag string (e.g., "domain:infrastructure")
    */
@@ -54,10 +50,6 @@ export class GraphTagBadge extends LitElement {
     super();
     this.interactive = false;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -105,10 +97,6 @@ export class GraphTagBadge extends LitElement {
     }
   `;
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private parseTag(): { prefix: string; value: string; color: string } {
     const parts = this.tag.split(':');
     if (parts.length >= 2) {
@@ -119,10 +107,6 @@ export class GraphTagBadge extends LitElement {
     }
     return { prefix: '', value: this.tag, color: DEFAULT_TAG_COLOR };
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     if (!this.tag) return html``;
@@ -150,7 +134,6 @@ export class GraphTagBadge extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-tag-badge': GraphTagBadge;

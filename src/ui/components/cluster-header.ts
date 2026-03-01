@@ -43,10 +43,6 @@ const SOURCE_TYPE_CONFIG: Record<string, { label: string; color: string }> = {
  * @fires back - Dispatched when back button is clicked
  */
 export class GraphClusterHeader extends LitElement {
-  // ========================================
-  // Properties
-  // ========================================
-
   @property({ type: String, attribute: 'cluster-name' })
   declare clusterName: string;
 
@@ -69,10 +65,6 @@ export class GraphClusterHeader extends LitElement {
     super();
     this.copied = false;
   }
-
-  // ========================================
-  // Styles
-  // ========================================
 
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -149,10 +141,6 @@ export class GraphClusterHeader extends LitElement {
     }
   `;
 
-  // ========================================
-  // Helpers
-  // ========================================
-
   private getSourceType(): SourceType {
     if (!this.clusterPath) return SourceType.Local;
 
@@ -193,10 +181,6 @@ export class GraphClusterHeader extends LitElement {
       // Fallback: just ignore if clipboard not available
     }
   }
-
-  // ========================================
-  // Render
-  // ========================================
 
   override render(): TemplateResult {
     const isPackage = this.clusterType === 'package';
@@ -265,7 +249,6 @@ export class GraphClusterHeader extends LitElement {
   }
 }
 
-// Export for TypeScript type checking
 declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-cluster-header': GraphClusterHeader;
