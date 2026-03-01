@@ -1,17 +1,5 @@
 /**
- * Error Service - Centralized error handling and notification
- *
- * Singleton service that provides a consistent interface for error handling
- * across the application. Integrates with signals for reactive UI updates.
- *
- * Features:
- * - Automatic error categorization
- * - Configurable severity levels
- * - User-facing notifications via signals
- * - Optional actions (retry, reload, etc.)
- * - Automatic toast dismissal based on severity
- *
- * @module services/error-service
+ * Singleton error handling service. Dispatches AppError notifications via signals.
  *
  * @example
  * ```typescript
@@ -36,8 +24,6 @@ import {
   ErrorSeverity as ErrorSeverityEnum,
 } from '@shared/schemas/error.types';
 import { addError, dismissError, removeError } from '@shared/signals/error.actions';
-
-// ==================== Type Definitions ====================
 
 /**
  * Options for handling an error
@@ -66,11 +52,7 @@ export interface ErrorHandlingOptions {
  */
 export type ErrorActionHandler = (error: AppError) => void | Promise<void>;
 
-// ==================== Constants ====================
-
 const DEFAULT_USER_MESSAGE = 'An unexpected error occurred';
-
-// ==================== Service Class ====================
 
 /**
  * Centralized error handling service (Singleton)
@@ -88,9 +70,6 @@ export class ErrorService {
     // Private constructor for singleton
   }
 
-  /**
-   * Get singleton instance
-   */
   public static getInstance(): ErrorService {
     if (!ErrorService.instance) {
       ErrorService.instance = new ErrorService();
@@ -98,9 +77,7 @@ export class ErrorService {
     return ErrorService.instance;
   }
 
-  /**
-   * Reset singleton instance (for testing)
-   */
+  /** For testing only. */
   public static resetInstance(): void {
     if (ErrorService.instance) {
       ErrorService.instance.cleanup();
@@ -108,15 +85,11 @@ export class ErrorService {
     }
   }
 
-  // ========================================
-  // Error Handling
-  // ========================================
-
   /**
    * Handle an error and create a notification
    *
-   * @param error - The error to handle (Error object or string)
-   * @param options - Configuration options
+   * @param error
+   * @param options
    * @returns The created AppError
    */
   public handleError(error: unknown, options: ErrorHandlingOptions = {}): AppError {
@@ -131,11 +104,9 @@ export class ErrorService {
       autoDismissMs,
     } = options;
 
-    // Extract error details
     const errorMessage = this.extractErrorMessage(error);
     const errorDetails = this.extractErrorDetails(error);
 
-    // Create app error
     const appError: AppError = {
       id: this.generateErrorId(),
       severity,
@@ -149,15 +120,11 @@ export class ErrorService {
       actionType,
     };
 
-    // Log to console if enabled
     if (logToConsole) {
       this.logError(appError, error);
     }
 
-    // Add to signal state
     addError(appError);
-
-    // Set up auto-dismiss if configured
     this.setupAutoDismiss(appError.id, severity, autoDismissMs);
 
     return appError;
@@ -197,15 +164,11 @@ export class ErrorService {
     });
   }
 
-  // ========================================
-  // Error Actions
-  // ========================================
-
   /**
    * Register an action handler for error actions
    *
-   * @param actionType - The action type identifier
-   * @param handler - The handler function
+   * @param actionType
+   * @param handler
    */
   public registerActionHandler(actionType: string, handler: ErrorActionHandler): void {
     this.actionHandlers.set(actionType, handler);
@@ -214,7 +177,7 @@ export class ErrorService {
   /**
    * Unregister an action handler
    *
-   * @param actionType - The action type identifier
+   * @param actionType
    */
   public unregisterActionHandler(actionType: string): void {
     this.actionHandlers.delete(actionType);
@@ -223,7 +186,7 @@ export class ErrorService {
   /**
    * Execute an error action
    *
-   * @param error - The error with action
+   * @param error
    */
   public async executeAction(error: AppError): Promise<void> {
     if (!error.actionType) {
@@ -250,17 +213,15 @@ export class ErrorService {
   /**
    * Dismiss an error notification
    *
-   * @param errorId - The error ID to dismiss
+   * @param errorId
    */
   public dismiss(errorId: string): void {
-    // Clear auto-dismiss timer
     const timer = this.autoDismissTimers.get(errorId);
     if (timer) {
       clearTimeout(timer);
       this.autoDismissTimers.delete(errorId);
     }
 
-    // Dismiss error
     dismissError(errorId);
 
     // Remove after animation (1 second)
@@ -269,20 +230,10 @@ export class ErrorService {
     }, 1000);
   }
 
-  // ========================================
-  // Private Helpers
-  // ========================================
-
-  /**
-   * Generate a unique error ID
-   */
   private generateErrorId(): string {
     return `error-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }
 
-  /**
-   * Extract error message from unknown error type
-   */
   private extractErrorMessage(error: unknown): string {
     if (error instanceof Error) {
       return error.message;
@@ -296,9 +247,6 @@ export class ErrorService {
     return 'Unknown error';
   }
 
-  /**
-   * Extract detailed error information
-   */
   private extractErrorDetails(error: unknown): string | undefined {
     if (error instanceof Error) {
       return error.stack;
@@ -313,9 +261,6 @@ export class ErrorService {
     return undefined;
   }
 
-  /**
-   * Log error to console with appropriate level
-   */
   private logError(appError: AppError, originalError: unknown): void {
     const prefix = `[ErrorService][${appError.category}]`;
     const logData = {
@@ -339,9 +284,6 @@ export class ErrorService {
     }
   }
 
-  /**
-   * Set up auto-dismiss timer for error
-   */
   private setupAutoDismiss(
     errorId: string,
     severity: ErrorSeverity,
@@ -361,9 +303,7 @@ export class ErrorService {
     this.autoDismissTimers.set(errorId, timer);
   }
 
-  /**
-   * Clean up all timers (called on reset)
-   */
+  /** Clears all timers on reset. */
   private cleanup(): void {
     for (const timer of this.autoDismissTimers.values()) {
       clearTimeout(timer);

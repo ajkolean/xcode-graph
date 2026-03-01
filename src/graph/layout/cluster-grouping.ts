@@ -29,7 +29,6 @@ export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Clust
       });
     }
 
-    // Update path if not set (use first available node path)
     const cluster = clusterMap.get(clusterId);
     if (!cluster) return;
     if (!cluster.path && node.path) {
@@ -56,7 +55,6 @@ export function arrangeClusterGrid(
 ): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>();
 
-  // Sort clusters: local first, then by size
   const sortedClusters = [...clusters].sort((a, b) => {
     if (a.origin !== b.origin) {
       return a.origin === Origin.Local ? -1 : 1;

@@ -131,7 +131,6 @@ export function computeClusterInterior(cluster: Cluster, config: LayoutConfig): 
   const dynamicBands = computeDynamicBands(n, roleCounts);
   const radius = computeClusterRadius(n, config);
 
-  // Initialize simulation nodes near center
   const simNodes: MicroSimNode[] = nodes.map((node) => ({
     id: node.id,
     x: (Math.random() - 0.5) * 10,
@@ -142,7 +141,6 @@ export function computeClusterInterior(cluster: Cluster, config: LayoutConfig): 
     radius: config.nodeRadius,
   }));
 
-  // Run force simulation: collision + orbit bands + center gravity + repulsion
   const simulation = d3
     .forceSimulation<MicroSimNode>(simNodes)
     .force(

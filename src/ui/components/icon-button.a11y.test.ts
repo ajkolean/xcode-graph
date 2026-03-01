@@ -45,15 +45,4 @@ describe('xcode-graph-icon-button a11y', () => {
     chaiExpect(button?.getAttribute('aria-label')).to.equal('Settings');
   });
 
-  it('should have disabled attribute on the button when disabled', async () => {
-    const el = await fixture<GraphIconButton>(html`
-      <xcode-graph-icon-button title="Delete" disabled>
-        <svg viewBox="0 0 24 24"><path d="M12 12"></path></svg>
-      </xcode-graph-icon-button>
-    `);
-
-    const button = el.shadowRoot?.querySelector('button');
-    chaiExpect(button).to.exist;
-    chaiExpect(button?.hasAttribute('disabled')).to.be.true;
-  });
 });

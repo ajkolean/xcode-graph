@@ -30,7 +30,6 @@ export function buildClusterGraph(edges: GraphEdge[], clusters: Cluster[]): Clus
     }
   }
 
-  // Map "Source|Target" -> { directed, undirected }
   const edgeMap = new Map<string, { source: string; target: string; w: number }>();
 
   for (const edge of edges) {
@@ -49,14 +48,9 @@ export function buildClusterGraph(edges: GraphEdge[], clusters: Cluster[]): Clus
 
   const clusterEdges: ClusterEdge[] = [];
 
-  // Calculate final edges
-  // We need to compute undirected tie strength U for A<->B
-  // U = W(A->B) + W(B->A)
-
-  // First pass: Collect all directed edges
+  // Compute undirected tie strength: U(A,B) = W(A->B) + W(B->A)
   const directedEdges = Array.from(edgeMap.values());
 
-  // Second pass: Compute ties
   for (const edge of directedEdges) {
     const reverseKey = `${edge.target}->${edge.source}`;
     const reverseWeight = edgeMap.get(reverseKey)?.w ?? 0;

@@ -298,7 +298,7 @@ describe('xcode-graph-right-sidebar - State Management', () => {
 // ========================================
 
 describe('xcode-graph-right-sidebar - Event Coordination', () => {
-  it('should clear node selection when expanding to section', async () => {
+  it('should show node details panel when node is selected', async () => {
     const el = await fixture<GraphRightSidebar>(html`
       <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
@@ -313,12 +313,11 @@ describe('xcode-graph-right-sidebar - Event Coordination', () => {
 
     expect(selectedNode.get()).to.equal(mockNodes[0]);
 
-    // Node details panel should be visible
     const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
     expect(nodePanel).to.exist;
   });
 
-  it('should clear cluster selection when expanding to section', async () => {
+  it('should show cluster details panel when cluster is selected', async () => {
     const el = await fixture<GraphRightSidebar>(html`
       <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
@@ -333,7 +332,6 @@ describe('xcode-graph-right-sidebar - Event Coordination', () => {
 
     expect(selectedCluster.get()).to.equal('MyApp');
 
-    // Cluster details panel should be visible
     const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
     expect(clusterPanel).to.exist;
   });

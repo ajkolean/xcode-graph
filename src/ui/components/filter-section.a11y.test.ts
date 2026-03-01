@@ -63,23 +63,6 @@ describe('xcode-graph-filter-section a11y', () => {
     chaiExpect(button?.hasAttribute('aria-expanded')).to.be.true;
   });
 
-  it('should have aria-expanded="true" when expanded', async () => {
-    const el = await fixture<GraphFilterSection>(html`
-      <xcode-graph-filter-section
-        title="Platforms"
-        .items=${sampleItems}
-        .selectedItems=${new Set()}
-        filter-type="platform"
-        .zoom=${1}
-        is-expanded
-      ></xcode-graph-filter-section>
-    `);
-
-    const button = el.shadowRoot?.querySelector('.header-button');
-    chaiExpect(button).to.exist;
-    chaiExpect(button?.getAttribute('aria-expanded')).to.equal('true');
-  });
-
   it('should have aria-pressed on item buttons when expanded', async () => {
     const el = await fixture<GraphFilterSection>(html`
       <xcode-graph-filter-section

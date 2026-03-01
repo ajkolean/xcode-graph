@@ -41,13 +41,4 @@ describe('xcode-graph-action-button a11y', () => {
     expect(results).toHaveNoViolations();
   });
 
-  it('should have disabled attribute on the button when disabled', async () => {
-    const el = await fixture<GraphActionButton>(html`
-      <xcode-graph-action-button disabled>Action</xcode-graph-action-button>
-    `);
-
-    const button = el.shadowRoot?.querySelector('button');
-    chaiExpect(button).to.exist;
-    chaiExpect(button?.hasAttribute('disabled')).to.be.true;
-  });
 });

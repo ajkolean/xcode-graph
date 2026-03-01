@@ -13,15 +13,6 @@ describe('xcode-graph-cluster-type-badge', () => {
   // Rendering Tests
   // ========================================
 
-  it('should render with default properties', async () => {
-    const el = await fixture<GraphClusterTypeBadge>(html`
-      <xcode-graph-cluster-type-badge></xcode-graph-cluster-type-badge>
-    `);
-
-    expect(el).to.exist;
-    expect(el.tagName.toLowerCase()).to.equal('xcode-graph-cluster-type-badge');
-  });
-
   it('should render package badge', async () => {
     const el = await fixture<GraphClusterTypeBadge>(html`
       <xcode-graph-cluster-type-badge

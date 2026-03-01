@@ -37,23 +37,20 @@ export function applyForceMassage(
   clusterGraph: ClusterGraph,
   config: LayoutConfig,
 ): Map<string, ClusterPosition> {
-  // 1. Prepare simulation nodes
   // d3-force modifies nodes in place, so we create a working copy
-  // We need to store width/height for collision radius
   const nodes: ClusterSimNode[] = Array.from(clusterPositions.values()).map((pos) => ({
     id: pos.id,
     x: pos.x,
     y: pos.y,
     width: pos.width,
     height: pos.height,
-    // Store original position to keep them somewhat tethered?
+    // Tether to ELK-computed position
     ox: pos.x,
     oy: pos.y,
   }));
 
   const nodeMap = new Map(nodes.map((n) => [n.id, n]));
 
-  // 2. Prepare links
   const links = clusterGraph.edges
     .map((e) => ({
       source: nodeMap.get(e.source),
@@ -62,9 +59,7 @@ export function applyForceMassage(
     }))
     .filter((l) => l.source && l.target); // Filter broken links
 
-  // 3. Configure Simulation
   const simulation = forceSimulation<ClusterSimNode>(nodes)
-    // Link force to keep related clusters together
     .force(
       'link',
       forceLink<ClusterSimNode, ClusterSimLink>(links as ClusterSimLink[])
@@ -80,7 +75,6 @@ export function applyForceMassage(
         })
         .strength(0.1), // Gentle pull
     )
-    // Collision force to prevent overlap
     .force(
       'collide',
       forceCollide<ClusterSimNode>()
@@ -91,19 +85,13 @@ export function applyForceMassage(
         .strength(1) // Hard collision
         .iterations(2),
     )
-    // Tether to initial positions (to preserve ELK's general structure)
-    // This acts like "gravity" keeping them near where ELK put them,
-    // but allowing local relaxation.
     .force('x', forceX<ClusterSimNode>((d) => d.ox).strength(0.05))
     .force('y', forceY<ClusterSimNode>((d) => d.oy).strength(0.05))
     .stop();
 
-  // 4. Run Simulation
-  // A small number of ticks to just "nudge" things
-  const TICKS = 100; // Configurable?
+  const TICKS = 100;
   simulation.tick(TICKS);
 
-  // 5. Update positions
   const newPositions = new Map<string, ClusterPosition>();
   for (const node of nodes) {
     // Preserve the original width/height/id, just update x/y
@@ -113,7 +101,7 @@ export function applyForceMassage(
       ...original,
       x: node.x,
       y: node.y,
-      vx: node.vx ?? 0, // Save velocity if we ever want to animate continued settling
+      vx: node.vx ?? 0,
       vy: node.vy ?? 0,
     });
   }

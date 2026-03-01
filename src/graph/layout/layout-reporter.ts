@@ -9,10 +9,6 @@ import type { ClusterPosition } from '@shared/schemas';
 import type { GraphEdge } from '@shared/schemas/graph.types';
 import type { HierarchicalLayoutResult } from './types';
 
-// ============================================================================
-// Report Interfaces
-// ============================================================================
-
 export interface ClusterReport {
   id: string;
   stratum: number;
@@ -53,10 +49,6 @@ export interface PositionReport {
   summary: LayoutSummary;
 }
 
-// ============================================================================
-// Report Generation
-// ============================================================================
-
 /**
  * Generate a complete position report from layout results
  */
@@ -67,7 +59,6 @@ export function generatePositionReport(
   const clusterPositions = Array.from(result.clusterPositions.entries());
   const nodePositions = Array.from(result.nodePositions.entries());
 
-  // Build cluster reports
   const clusters: ClusterReport[] = clusterPositions
     .map(([id, pos]) => ({
       id,
@@ -80,7 +71,6 @@ export function generatePositionReport(
     }))
     .sort((a, b) => a.y - b.y || a.x - b.x);
 
-  // Build node reports
   const nodes: NodeReport[] = nodePositions.map(([id, pos]) => {
     const clusterId = pos.clusterId;
     const clusterPos = result.clusterPositions.get(clusterId);
@@ -94,10 +84,8 @@ export function generatePositionReport(
     };
   });
 
-  // Compute bounding box
   const bbox = computeBoundingBox(clusterPositions.map(([, pos]) => pos));
 
-  // Count distinct strata
   const strataSet = new Set(clusters.map((c) => c.stratum));
 
   const summary: LayoutSummary = {
@@ -139,10 +127,6 @@ function computeBoundingBox(clusters: ClusterPosition[]) {
     height: Math.round(yMax - yMin),
   };
 }
-
-// ============================================================================
-// Console Output Functions
-// ============================================================================
 
 /**
  * Print formatted cluster position table
@@ -274,10 +258,6 @@ export function printLayoutSummary(report: PositionReport): void {
   console.log('');
 }
 
-// ============================================================================
-// Export Functions
-// ============================================================================
-
 /**
  * Export position report to JSON string
  */
@@ -307,10 +287,6 @@ export function exportNodesToCSV(report: PositionReport): string {
   return [headers, ...rows].join('\n');
 }
 
-// ============================================================================
-// Analysis Functions
-// ============================================================================
-
 /**
  * Find clusters with most cross-stratum edges (hub clusters)
  */
@@ -322,12 +298,10 @@ export function findHubClusters(
 ): Array<{ clusterId: string; crossStrataEdges: number; connectedStrata: number }> {
   const clusterCrossEdges = new Map<string, Set<number>>();
 
-  // Initialize
   for (const cluster of result.clusters) {
     clusterCrossEdges.set(cluster.id, new Set());
   }
 
-  // Count cross-stratum edges per cluster
   for (const edge of edges) {
     const sourceCluster = nodeToCluster.get(edge.source);
     const targetCluster = nodeToCluster.get(edge.target);
@@ -350,7 +324,6 @@ export function findHubClusters(
     }
   }
 
-  // Build results
   const results: Array<{ clusterId: string; crossStrataEdges: number; connectedStrata: number }> =
     [];
 
@@ -377,12 +350,10 @@ export function findIsolatedClusters(
 ): Array<{ clusterId: string; connectionCount: number }> {
   const clusterConnections = new Map<string, Set<string>>();
 
-  // Initialize
   for (const cluster of result.clusters) {
     clusterConnections.set(cluster.id, new Set());
   }
 
-  // Count connections
   for (const edge of edges) {
     const sourceCluster = nodeToCluster.get(edge.source);
     const targetCluster = nodeToCluster.get(edge.target);
@@ -395,7 +366,6 @@ export function findIsolatedClusters(
     clusterConnections.get(targetCluster)?.add(sourceCluster);
   }
 
-  // Find clusters with few connections
   const results: Array<{ clusterId: string; connectionCount: number }> = [];
 
   for (const [clusterId, connections] of clusterConnections) {

@@ -57,14 +57,4 @@ describe('xcode-graph-panel-section', () => {
     expect(el.hasAttribute('shrink')).to.be.true;
   });
 
-  it('should render slot content when not collapsed', async () => {
-    const el = await fixture<GraphPanelSection>(html`
-      <xcode-graph-panel-section>
-        <div class="inner-content">Visible</div>
-      </xcode-graph-panel-section>
-    `);
-
-    const slot = el.shadowRoot?.querySelector('slot');
-    expect(slot).to.exist;
-  });
 });

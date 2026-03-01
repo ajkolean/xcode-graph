@@ -12,15 +12,6 @@ describe('xcode-graph-badge', () => {
   // Rendering Tests
   // ========================================
 
-  it('should render with default properties', async () => {
-    const el = await fixture<GraphBadge>(html`
-      <xcode-graph-badge label="Test"></xcode-graph-badge>
-    `);
-
-    expect(el).to.exist;
-    expect(el.tagName.toLowerCase()).to.equal('xcode-graph-badge');
-  });
-
   it('should render label text', async () => {
     const el = await fixture<GraphBadge>(html`
       <xcode-graph-badge label="Package"></xcode-graph-badge>

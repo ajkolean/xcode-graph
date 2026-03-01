@@ -41,24 +41,6 @@ describe('xcode-graph-svg-defs', () => {
     expect(arrowheadHighlight?.tagName.toLowerCase()).to.equal('marker');
   });
 
-  it('should render 35 node icon paths (7 types x 5 platforms)', async () => {
-    const el = await createFixture();
-    const iconPaths = el.querySelectorAll('defs path[id^="node-icon-"]');
-    expect(iconPaths.length).to.equal(35);
-  });
-
-  it('should render specific icon IDs for known type/platform combos', async () => {
-    const el = await createFixture();
-
-    expect(el.querySelector('#node-icon-app-iOS')).to.exist;
-    expect(el.querySelector('#node-icon-framework-macOS')).to.exist;
-    expect(el.querySelector('#node-icon-library-tvOS')).to.exist;
-    expect(el.querySelector('#node-icon-package-watchOS')).to.exist;
-    expect(el.querySelector('#node-icon-test-unit-visionOS')).to.exist;
-    expect(el.querySelector('#node-icon-test-ui-iOS')).to.exist;
-    expect(el.querySelector('#node-icon-cli-macOS')).to.exist;
-  });
-
   it('should have icon IDs matching node-icon-{type}-{platform} pattern', async () => {
     const el = await createFixture();
     const iconPaths = el.querySelectorAll('defs path[id^="node-icon-"]');

@@ -1,15 +1,6 @@
 /**
  * Layout Controller - Deterministic graph layout computation
  *
- * Handles deterministic layout computation only, separated from physics
- * and animation for single responsibility principle compliance.
- *
- * **Responsibilities:**
- * - Cluster grouping and analysis
- * - Deterministic position calculation (via ELK)
- * - Initial layout state preparation
- *
- * **Architecture:**
  * This controller only computes static positions. Physics and animation
  * are handled by separate controllers (PhysicsController, AnimationController).
  *
@@ -22,8 +13,6 @@ import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import { computeHierarchicalLayout } from '@/graph/layout';
-
-// ==================== Type Definitions ====================
 
 /**
  * Result of layout computation
@@ -43,8 +32,6 @@ export interface LayoutResult {
   /** Size of each SCC (size > 1 indicates a cycle) */
   sccSizes?: Map<number, number> | undefined;
 }
-
-// ==================== Controller Class ====================
 
 /**
  * Reactive controller for deterministic graph layout
@@ -68,10 +55,6 @@ export class LayoutController implements ReactiveController {
     host.addController(this);
   }
 
-  // ========================================
-  // Public API
-  // ========================================
-
   /**
    * Compute deterministic layout positions (Async)
    * Returns positions with velocities initialized to 0
@@ -86,7 +69,6 @@ export class LayoutController implements ReactiveController {
     edges: GraphEdge[],
     forceRecompute = false,
   ): Promise<LayoutResult> {
-    // Return cached result if inputs haven't changed
     if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
       return this.cachedResult;
     }
@@ -121,7 +103,7 @@ export class LayoutController implements ReactiveController {
         routedEdges,
       } = await computeHierarchicalLayout(nodes, edges, analyzedClusters);
 
-      // Step 4: Add velocity properties for physics simulation
+      // Step 3: Add velocity properties for physics simulation
       const nodePositions = new Map<string, NodePosition>();
       initialNodePos.forEach((pos, id) => {
         nodePositions.set(id, { ...pos, vx: 0, vy: 0 });
@@ -167,10 +149,6 @@ export class LayoutController implements ReactiveController {
     return this.cachedResult;
   }
 
-  // ========================================
-  // Private Helpers
-  // ========================================
-
   private isSameInput(nodes: GraphNode[], edges: GraphEdge[]): boolean {
     return (
       nodes.length === this.cachedNodes.length &&
@@ -185,10 +163,6 @@ export class LayoutController implements ReactiveController {
     this.cachedNodes = nodes;
     this.cachedEdges = edges;
   }
-
-  // ========================================
-  // Lifecycle
-  // ========================================
 
   hostConnected(): void {
     // Required by ReactiveControllerHost interface - no initialization needed

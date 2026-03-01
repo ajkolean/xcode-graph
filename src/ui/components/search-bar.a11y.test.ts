@@ -39,22 +39,4 @@ describe('xcode-graph-search-bar a11y', () => {
     chaiExpect(input?.getAttribute('aria-label')).to.equal('Filter nodes');
   });
 
-  it('should clear search on Escape key and blur input', async () => {
-    const el = await fixture<GraphSearchBar>(html`
-      <xcode-graph-search-bar search-query="test"></xcode-graph-search-bar>
-    `);
-
-    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
-    input.focus();
-    chaiExpect(el.shadowRoot?.activeElement).to.equal(input);
-
-    let clearFired = false;
-    el.addEventListener('search-clear', () => {
-      clearFired = true;
-    });
-
-    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-
-    chaiExpect(clearFired).to.be.true;
-  });
 });

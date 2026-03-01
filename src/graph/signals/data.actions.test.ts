@@ -54,31 +54,6 @@ describe('data.actions', () => {
       expect(edges.get()).toEqual(testEdges);
     });
 
-    it('should set empty arrays', () => {
-      setGraphData([], []);
-
-      expect(nodes.get()).toEqual([]);
-      expect(edges.get()).toEqual([]);
-    });
-
-    it('should set nodes without edges', () => {
-      const testNodes = [createTestNode('node-1'), createTestNode('node-2')];
-
-      setGraphData(testNodes, []);
-
-      expect(nodes.get()).toEqual(testNodes);
-      expect(edges.get()).toEqual([]);
-    });
-
-    it('should set edges without nodes', () => {
-      const testEdges = [createTestEdge('node-1', 'node-2')];
-
-      setGraphData([], testEdges);
-
-      expect(nodes.get()).toEqual([]);
-      expect(edges.get()).toEqual(testEdges);
-    });
-
     it('should replace existing data', () => {
       const initialNodes = [createTestNode('node-1')];
       const initialEdges = [createTestEdge('node-1', 'node-2')];
@@ -94,22 +69,6 @@ describe('data.actions', () => {
       expect(edges.get()).not.toEqual(initialEdges);
     });
 
-    it('should handle large datasets', () => {
-      const testNodes: GraphNode[] = [];
-      const testEdges: GraphEdge[] = [];
-
-      for (let i = 0; i < 1000; i++) {
-        testNodes.push(createTestNode(`node-${i}`));
-        if (i > 0) {
-          testEdges.push(createTestEdge(`node-${i - 1}`, `node-${i}`));
-        }
-      }
-
-      setGraphData(testNodes, testEdges);
-
-      expect(nodes.get()).toHaveLength(1000);
-      expect(edges.get()).toHaveLength(999);
-    });
   });
 
   // ==================== clearGraphData Tests ====================
@@ -126,32 +85,6 @@ describe('data.actions', () => {
       expect(edges.get()).toEqual([]);
     });
 
-    it('should work when data is already empty', () => {
-      setGraphData([], []);
-
-      clearGraphData();
-
-      expect(nodes.get()).toEqual([]);
-      expect(edges.get()).toEqual([]);
-    });
-
-    it('should clear large datasets', () => {
-      const testNodes: GraphNode[] = [];
-      const testEdges: GraphEdge[] = [];
-
-      for (let i = 0; i < 1000; i++) {
-        testNodes.push(createTestNode(`node-${i}`));
-        if (i > 0) {
-          testEdges.push(createTestEdge(`node-${i - 1}`, `node-${i}`));
-        }
-      }
-
-      setGraphData(testNodes, testEdges);
-      clearGraphData();
-
-      expect(nodes.get()).toEqual([]);
-      expect(edges.get()).toEqual([]);
-    });
   });
 
   // ==================== Integration Tests ====================

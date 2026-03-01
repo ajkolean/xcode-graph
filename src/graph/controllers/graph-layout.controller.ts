@@ -1,46 +1,10 @@
-/**
- * Graph Layout Controller - Unified layout orchestration
- *
- * **This is the default/recommended controller for graph layout.**
- *
- * Unified controller that composes Layout, Physics, and Animation controllers
- * for graph layout computation with optional physics-based settling animation.
- * Runs on the main thread, which is suitable for most graphs (<1000 nodes).
- *
- * ## When to Use This Controller
- *
- * **Use GraphLayoutController when:**
- * - Graph has <1000 nodes (most use cases)
- * - You want a simpler, synchronous API
- * - Main thread blocking is acceptable (~10-50ms for typical graphs)
- *
- * **Use {@link LayoutWorkerController} instead when:**
- * - Graph has 1000+ nodes where layout computation takes >100ms
- * - UI responsiveness is critical during layout (e.g., concurrent drag interactions)
- * - You need progress callbacks during animated layout
- *
- * ## Architecture
- * - Single Responsibility Principle (each sub-controller has one job)
- * - DRY (no duplicate collision code)
- * - Better testability (each controller tested independently)
- * - Lower cognitive complexity
- *
- * ## Sub-Controllers
- * - `LayoutController`: Computes initial deterministic positions
- * - `PhysicsController`: Calculates physics forces
- * - `AnimationController`: Manages animation loop
- *
- * @module controllers/graph-layout
- * @see {@link LayoutWorkerController} - Alternative for large graphs (1000+ nodes)
- */
+/** Default layout controller for graphs with <1000 nodes. For larger graphs, use {@link LayoutWorkerController}. */
 
 import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import { LayoutController } from './layout.controller';
-
-// ==================== Type Definitions ====================
 
 /**
  * Configuration for graph layout with optional animation
@@ -119,14 +83,9 @@ export class GraphLayoutController implements ReactiveController {
     this.host = host;
     this.enableAnimation = config.enableAnimation ?? true;
 
-    // Initialize layout controller (D3 handles physics/animation)
     this.layoutController = new LayoutController(host);
     host.addController(this);
   }
-
-  // ========================================
-  // Public API
-  // ========================================
 
   /**
    * Compute layout - ELK runs asynchronously
@@ -159,23 +118,15 @@ export class GraphLayoutController implements ReactiveController {
     this.host.requestUpdate();
   }
 
-  // ========================================
-  // Configuration
-  // ========================================
-
   setEnableAnimation(enabled: boolean): void {
     this.enableAnimation = enabled;
   }
-
-  // ========================================
-  // Lifecycle
-  // ========================================
 
   hostConnected(): void {
     // Sub-controllers handle their own lifecycle
   }
 
   hostDisconnected(): void {
-    // No cleanup needed - D3 runs synchronously
+    // ELK runs via Promise; no persistent handles to clean up.
   }
 }

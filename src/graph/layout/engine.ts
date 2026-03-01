@@ -65,7 +65,6 @@ export async function computeHierarchicalLayout(
       });
     }
 
-    // Update node count in position
     clusterPos.nodeCount = cluster.nodes.length;
   }
 

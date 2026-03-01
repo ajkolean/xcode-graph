@@ -1,7 +1,3 @@
-// ============================================================================
-// Atlas Layout Configuration
-// ============================================================================
-
 /**
  * Default layout configuration
  * Exported for parameter sweep testing
@@ -63,10 +59,6 @@ export const DEFAULT_CONFIG = {
   clusterBoundingStrength: 0.5,
   clusterStrataAlignmentStrength: 0.45,
 
-  // ==========================================================================
-  // ELK Layout Configuration
-  // ==========================================================================
-
   /** Direction of flow: 'RIGHT' (left->right) or 'DOWN' (top->bottom) */
   elkDirection: 'DOWN',
 
@@ -97,10 +89,6 @@ export const DEFAULT_CONFIG = {
   /** Hierarchy handling strategy for ELK layout */
   elkHierarchyHandling: 'SEPARATE_CHILDREN',
 
-  // ==========================================================================
-  // Port-Based Edge Routing Configuration
-  // ==========================================================================
-
   /** Enable port-based edge routing for cross-cluster edges */
   portRoutingEnabled: true,
 
@@ -114,12 +102,7 @@ export const DEFAULT_CONFIG = {
   maxPortsPerSide: 8,
 } as const;
 
-/**
- * ELK Hierarchy Handling strategy
- * - INHERIT: Use parent's setting (root defaults to SEPARATE_CHILDREN)
- * - INCLUDE_CHILDREN: Layout node and all descendants in single run
- * - SEPARATE_CHILDREN: Each child triggers its own layout run
- */
+/** ELK Hierarchy Handling strategy */
 export enum ElkHierarchyHandling {
   Inherit = 'INHERIT',
   IncludeChildren = 'INCLUDE_CHILDREN',

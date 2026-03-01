@@ -34,7 +34,6 @@ export function applyNodeMassage(
 ): MicroLayoutResult {
   const nodes = Array.from(micro.relativePositions.values()).map((pos) => ({
     ...pos,
-    // Store original positions for tethering
     ox: pos.x,
     oy: pos.y,
   }));
@@ -59,10 +58,8 @@ export function applyNodeMassage(
     )
     .stop();
 
-  // Run a short burst
   simulation.tick(50);
 
-  // Update positions and recalculate bounds
   const newPositions = new Map<string, NodePosition>();
   let minX = Infinity,
     maxX = -Infinity;
@@ -84,10 +81,7 @@ export function applyNodeMassage(
     if (node.y > maxY) maxY = node.y;
   }
 
-  // Ensure we don't shrink below original calculated size (which had "breathing room" logic)
-  // but do expand if needed.
-  // Actually, let's keep it simple: Expand if bounding box exceeds original size.
-  // Assuming 0,0 center, the radius is max(abs(min), abs(max))
+  // Expand to fit if bounding box exceeds original size.
   const maxDim = Math.max(Math.abs(minX), Math.abs(maxX), Math.abs(minY), Math.abs(maxY));
 
   const neededSize = maxDim * 2 + 100; // + padding

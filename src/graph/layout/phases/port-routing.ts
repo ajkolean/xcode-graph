@@ -11,10 +11,6 @@ import type { ClusterEdge } from '../cluster-graph';
 import type { LayoutConfig } from '../config';
 import type { ClusterPort, PortSide, RoutedEdge } from '../types';
 
-// ============================================================================
-// Port Side Computation
-// ============================================================================
-
 /**
  * Determine which side of a cluster a port should be on based on direction to target.
  * Uses the angle from source cluster center to target cluster center.
@@ -62,10 +58,6 @@ function getOppositeSide(side: PortSide): PortSide {
       return 'EAST';
   }
 }
-
-// ============================================================================
-// Port Position Computation
-// ============================================================================
 
 interface PortRequirement {
   clusterId: string;
@@ -248,10 +240,6 @@ function computePortPositionsOnSide(
   return ports;
 }
 
-// ============================================================================
-// Edge-to-Port Assignment
-// ============================================================================
-
 interface EdgePortAssignment {
   sourceClusterId: string;
   targetClusterId: string;
@@ -282,9 +270,7 @@ function assignClusterEdgesToPorts(
     const sourcePorts = clusterPorts.get(edge.source) ?? [];
     const targetPorts = clusterPorts.get(edge.target) ?? [];
 
-    // Find best matching port on source side
     const sourcePort = findBestPort(sourcePorts, exitSide, targetPos.x, targetPos.y);
-    // Find best matching port on target side
     const targetPort = findBestPort(targetPorts, entrySide, sourcePos.x, sourcePos.y);
 
     if (sourcePort && targetPort) {
@@ -314,7 +300,6 @@ function findBestPort(
   const sidePorts = ports.filter((p) => p.side === side);
   if (sidePorts.length === 0) return undefined;
 
-  // Find port closest to the line toward the target
   let bestPort = sidePorts[0];
   let bestDist = Number.POSITIVE_INFINITY;
 
@@ -329,10 +314,6 @@ function findBestPort(
 
   return bestPort;
 }
-
-// ============================================================================
-// Routed Edge Computation
-// ============================================================================
 
 /**
  * Compute routed edges for all node-level edges that cross cluster boundaries.

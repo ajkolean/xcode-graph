@@ -10,10 +10,6 @@ interface ElkNodeWithLayoutIds extends ElkNode {
   'org.eclipse.elk.layered.crossingMinimization.positionId'?: number;
 }
 
-// ============================================================================
-// ELK Graph Construction Helpers
-// ============================================================================
-
 function buildElkChildren(
   clusterGraph: ClusterGraph,
   microLayouts: Map<string, MicroLayoutResult>,
@@ -76,10 +72,6 @@ function buildElkRoot(
     },
   };
 }
-
-// ============================================================================
-// Post-Compaction Helpers
-// ============================================================================
 
 function groupIntoBands(
   layoutChildren: ElkNodeWithLayoutIds[],

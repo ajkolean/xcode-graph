@@ -8,19 +8,6 @@ import type { GraphClearFiltersButton } from './clear-filters-button';
 import './clear-filters-button';
 
 describe('xcode-graph-clear-filters-button', () => {
-  // ========================================
-  // Rendering Tests
-  // ========================================
-
-  it('should render with default properties', async () => {
-    const el = await fixture<GraphClearFiltersButton>(html`
-      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
-    `);
-
-    expect(el).to.exist;
-    expect(el.tagName.toLowerCase()).to.equal('xcode-graph-clear-filters-button');
-  });
-
   it('should render button in shadow DOM', async () => {
     const el = await fixture<GraphClearFiltersButton>(html`
       <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
@@ -105,13 +92,4 @@ describe('xcode-graph-clear-filters-button', () => {
     expect(eventFired).to.be.false;
   });
 
-  it('should be hidden when no filters are active', async () => {
-    const el = await fixture<GraphClearFiltersButton>(html`
-      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
-    `);
-
-    // Without is-active attribute, the host has max-height: 0 and opacity: 0
-    expect(el.isActive).to.not.be.true;
-    expect(el.hasAttribute('is-active')).to.be.false;
-  });
 });

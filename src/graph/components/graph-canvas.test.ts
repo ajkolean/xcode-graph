@@ -11,7 +11,6 @@ describe('xcode-graph-canvas', () => {
 
     const canvas = el.shadowRoot?.querySelector('canvas');
     expect(canvas).to.exist;
-    expect(canvas?.tagName.toLowerCase()).to.equal('canvas');
   });
 
   it('should initialize constructor with default values', async () => {

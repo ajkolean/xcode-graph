@@ -7,7 +7,6 @@ import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.
 export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
   const nodeIds = new Set(cluster.nodes.map((n) => n.id));
 
-  // Build dependency maps
   const dependents = new Map<string, Set<string>>();
   const dependencies = new Map<string, Set<string>>();
 
@@ -106,7 +105,6 @@ export function identifyAnchors(
       (externalDependents.get(n.id) || 0) > 0,
   );
   if (externalEntryPoints.length > 0) {
-    // Return the one with most external dependents
     const sorted = externalEntryPoints.toSorted(
       (a, b) => (externalDependents.get(b.id) || 0) - (externalDependents.get(a.id) || 0),
     );

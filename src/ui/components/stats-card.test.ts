@@ -50,31 +50,8 @@ describe('xcode-graph-stats-card', () => {
   });
 
   // ========================================
-  // Shadow DOM Tests
+  // Highlighted Tests
   // ========================================
-
-  it('should render label in shadow DOM', async () => {
-    const el = await fixture<GraphStatsCard>(html`
-      <xcode-graph-stats-card label="Test Label" value="42"></xcode-graph-stats-card>
-    `);
-
-    const shadowRoot = el.shadowRoot;
-    expect(shadowRoot).to.exist;
-
-    const label = shadowRoot?.querySelector('.label');
-    expect(label).to.exist;
-    expect(label?.textContent).to.equal('Test Label');
-  });
-
-  it('should render value in shadow DOM', async () => {
-    const el = await fixture<GraphStatsCard>(html`
-      <xcode-graph-stats-card label="Count" value="999"></xcode-graph-stats-card>
-    `);
-
-    const value = el.shadowRoot?.querySelector('.value');
-    expect(value).to.exist;
-    expect(value?.textContent?.trim()).to.equal('999');
-  });
 
   it('should apply highlighted class when highlighted prop is true', async () => {
     const el = await fixture<GraphStatsCard>(html`

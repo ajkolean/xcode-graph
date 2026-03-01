@@ -20,8 +20,6 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import * as Comlink from 'comlink';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
-// ==================== Type Definitions ====================
-
 /**
  * Result of layout computation (same shape as LayoutController.LayoutResult)
  */
@@ -35,8 +33,6 @@ export interface LayoutResult {
   nodeSccId?: Map<string, number> | undefined;
   sccSizes?: Map<number, number> | undefined;
 }
-
-// ==================== Serialization Helpers ====================
 
 /**
  * Serialize clusters for transfer to worker (convert Maps to arrays).
@@ -67,8 +63,6 @@ function deserializeResult(serialized: SerializedLayoutResult): LayoutResult {
   };
 }
 
-// ==================== Controller Class ====================
-
 /**
  * Reactive controller for off-main-thread graph layout via Comlink.
  *
@@ -95,10 +89,6 @@ export class LayoutWorkerController implements ReactiveController {
     host.addController(this);
   }
 
-  // ========================================
-  // Public API
-  // ========================================
-
   /**
    * Compute layout using the web worker.
    *
@@ -119,7 +109,6 @@ export class LayoutWorkerController implements ReactiveController {
     opts?: LayoutOptions,
     forceRecompute = false,
   ): Promise<LayoutResult> {
-    // Return cached result if inputs haven't changed
     if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
       return this.cachedResult;
     }
@@ -155,7 +144,7 @@ export class LayoutWorkerController implements ReactiveController {
 
       const result = deserializeResult(serializedResult);
 
-      // Add zero velocity to positions (matching LayoutController behavior)
+      // Match LayoutController's velocity initialization
       for (const [id, pos] of result.nodePositions) {
         result.nodePositions.set(id, { ...pos, vx: 0, vy: 0 });
       }
@@ -197,10 +186,6 @@ export class LayoutWorkerController implements ReactiveController {
       this.remote = null;
     }
   }
-
-  // ========================================
-  // Private Helpers
-  // ========================================
 
   private ensureWorker(): void {
     if (this.worker) return;

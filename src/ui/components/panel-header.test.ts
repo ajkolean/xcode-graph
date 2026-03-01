@@ -12,15 +12,6 @@ describe('xcode-graph-panel-header', () => {
   // Rendering Tests
   // ========================================
 
-  it('should render with required properties', async () => {
-    const el = await fixture<GraphPanelHeader>(html`
-      <xcode-graph-panel-header title="Test Title"></xcode-graph-panel-header>
-    `);
-
-    expect(el).to.exist;
-    expect(el.tagName.toLowerCase()).to.equal('xcode-graph-panel-header');
-  });
-
   it('should render title', async () => {
     const el = await fixture<GraphPanelHeader>(html`
       <xcode-graph-panel-header title="My Title"></xcode-graph-panel-header>

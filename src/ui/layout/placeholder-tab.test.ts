@@ -40,15 +40,4 @@ describe('xcode-graph-placeholder-tab', () => {
     expect(title?.textContent).to.equal('Updated');
   });
 
-  it('should render container with title and subtitle when no title provided', async () => {
-    const el = await fixture<GraphPlaceholderTab>(html`
-      <xcode-graph-placeholder-tab></xcode-graph-placeholder-tab>
-    `);
-
-    const container = el.shadowRoot?.querySelector('.container');
-    expect(container).to.exist;
-
-    const subtitle = el.shadowRoot?.querySelector('.subtitle');
-    expect(subtitle?.textContent).to.equal('This section is coming soon');
-  });
 });

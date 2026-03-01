@@ -1,10 +1,6 @@
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type * as d3Force2D from 'd3-force';
 
-// ============================================================================
-// Core Layout Types
-// ============================================================================
-
 /** Interface for simulation nodes */
 export interface SimNode extends d3Force2D.SimulationNodeDatum {
   id: string;
@@ -45,7 +41,7 @@ export interface HierarchicalLayoutResult {
   nodePositions: Map<string, NodePosition>;
   clusters: Cluster[];
   bundledEdges?: Array<Array<{ x: number; y: number }>> | undefined;
-  /** Aggregated edges between clusters (Arteries) */
+  /** Aggregated edges between clusters */
   clusterEdges?: ClusterEdgeResult[];
   /** Nodes that are part of cycles (SCC size > 1) */
   cycleNodes?: Set<string>;
@@ -61,10 +57,6 @@ export interface HierarchicalLayoutResult {
   routedEdges?: RoutedEdge[];
 }
 
-// ============================================================================
-// Port-Based Edge Routing Types
-// ============================================================================
-
 /** Cardinal direction for port placement on cluster boundary */
 export type PortSide = 'NORTH' | 'SOUTH' | 'EAST' | 'WEST';
 
@@ -72,13 +64,9 @@ export type PortSide = 'NORTH' | 'SOUTH' | 'EAST' | 'WEST';
 export interface ClusterPort {
   /** Unique port identifier (e.g., "cluster-A_EAST_0") */
   id: string;
-  /** Parent cluster ID */
   clusterId: string;
-  /** Which boundary side the port is on */
   side: PortSide;
-  /** World X coordinate of the port */
   x: number;
-  /** World Y coordinate of the port */
   y: number;
   /** Order index on this side (0 = first) */
   index: number;
@@ -86,21 +74,13 @@ export interface ClusterPort {
 
 /** An edge routed through cluster boundary ports */
 export interface RoutedEdge {
-  /** Source node ID */
   sourceNodeId: string;
-  /** Target node ID */
   targetNodeId: string;
-  /** Source cluster ID */
   sourceClusterId: string;
-  /** Target cluster ID */
   targetClusterId: string;
-  /** Exit port on source cluster */
   sourcePort: ClusterPort;
-  /** Entry port on target cluster */
   targetPort: ClusterPort;
-  /** Intermediate bend points between ports */
   waypoints: Array<{ x: number; y: number }>;
-  /** Edge weight (for rendering thickness) */
   weight: number;
 }
 
