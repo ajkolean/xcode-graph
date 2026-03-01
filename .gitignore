@@ -71,6 +71,7 @@ docs/.vitepress/cache/
 
 # Swift
 .build/
+swift/build/
 .swiftpm/
 xcuserdata/
 DerivedData/
