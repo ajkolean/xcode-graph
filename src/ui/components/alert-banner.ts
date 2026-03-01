@@ -26,7 +26,7 @@
  * @slot - Default slot for additional content
  */
 
-import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
 export type AlertBannerVariant = 'warning' | 'error' | 'info' | 'success';
@@ -242,9 +242,9 @@ export class GraphAlertBanner extends LitElement {
   // Render
   // ========================================
 
-  override render(): TemplateResult | null {
+  override render(): TemplateResult | typeof nothing {
     if (this.isDismissed) {
-      return null;
+      return nothing;
     }
 
     return html`
@@ -254,10 +254,10 @@ export class GraphAlertBanner extends LitElement {
         </div>
         <div class="content">
           <div class="header">
-            ${this.title ? html`<span class="title">${this.title}</span>` : ''}
+            ${this.title ? html`<span class="title">${this.title}</span>` : nothing}
             <slot name="badge"></slot>
           </div>
-          ${this.message ? html`<div class="message">${this.message}</div>` : ''}
+          ${this.message ? html`<div class="message">${this.message}</div>` : nothing}
           <slot></slot>
           <div class="actions">
             <slot name="actions"></slot>
@@ -273,7 +273,7 @@ export class GraphAlertBanner extends LitElement {
                 aria-label="Dismiss"
               >×</button>
             `
-            : ''
+            : nothing
         }
       </div>
     `;

@@ -33,6 +33,11 @@ export type IconButtonSize = 'sm' | 'md';
  * @slot - Icon content (typically an SVG element)
  */
 export class GraphIconButton extends LitElement {
+  static override shadowRootOptions: ShadowRootInit = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
+
   // ========================================
   // Properties
   // ========================================

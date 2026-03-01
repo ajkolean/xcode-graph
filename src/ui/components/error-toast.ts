@@ -30,6 +30,7 @@ import {
   css,
   html,
   LitElement,
+  nothing,
   type PropertyValues,
   type TemplateResult,
 } from 'lit';
@@ -260,9 +261,9 @@ export class GraphErrorToast extends LitElement {
   // Render
   // ========================================
 
-  override render(): TemplateResult | null {
+  override render(): TemplateResult | typeof nothing {
     if (!this.error) {
-      return null;
+      return nothing;
     }
 
     const icon = SEVERITY_ICONS[this.error.severity];
@@ -280,7 +281,7 @@ export class GraphErrorToast extends LitElement {
         <div class="content">
           <p class="message">${this.error.message}</p>
 
-          ${this.error.details ? html`<pre class="details">${this.error.details}</pre>` : null}
+          ${this.error.details ? html`<pre class="details">${this.error.details}</pre>` : nothing}
 
           ${
             hasAction
@@ -295,7 +296,7 @@ export class GraphErrorToast extends LitElement {
                     </button>
                   </div>
                 `
-              : null
+              : nothing
           }
         </div>
 
@@ -318,7 +319,7 @@ export class GraphErrorToast extends LitElement {
                   ×
                 </span>
               `
-            : null
+            : nothing
         }
       </div>
     `;

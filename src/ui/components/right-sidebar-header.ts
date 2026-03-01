@@ -15,7 +15,7 @@
  * @fires toggle-collapse - Dispatched when collapse button is clicked
  */
 
-import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import './sidebar-collapse-icon';
 import './icon-button.js';
@@ -114,11 +114,11 @@ export class GraphRightSidebarHeader extends LitElement {
       <div class="container">
         ${
           this.isCollapsed || !this.title
-            ? ''
+            ? nothing
             : html`
           <div class="title-wrapper">
             <h2 class="title">${this.title}</h2>
-            ${this.hasActiveFilters ? html`<span class="filters-active-dot" title="Filters active"></span>` : ''}
+            ${this.hasActiveFilters ? html`<span class="filters-active-dot" title="Filters active"></span>` : nothing}
           </div>
         `
         }

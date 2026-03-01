@@ -170,7 +170,7 @@ export class GraphNodeHeader extends LitElement {
                 color=${clusterDisplayColor}
               ></xcode-graph-badge>
             `
-            : ''
+            : nothing
         }
         <xcode-graph-badge
           slot="badges"
@@ -186,7 +186,7 @@ export class GraphNodeHeader extends LitElement {
                 color="var(--colors-warning)"
               ></xcode-graph-badge>
             `
-            : ''
+            : nothing
         }
         ${
           this.node.foreignBuild
@@ -197,7 +197,7 @@ export class GraphNodeHeader extends LitElement {
                 color="var(--colors-warning)"
               ></xcode-graph-badge>
             `
-            : ''
+            : nothing
         }
       </xcode-graph-panel-header>
 

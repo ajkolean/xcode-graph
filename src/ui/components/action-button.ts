@@ -37,6 +37,11 @@ export type ActionButtonVariant = 'primary' | 'success' | 'warning' | 'neutral';
  * @slot - Button text content
  */
 export class GraphActionButton extends LitElement {
+  static override shadowRootOptions: ShadowRootInit = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
+
   // ========================================
   // Properties
   // ========================================

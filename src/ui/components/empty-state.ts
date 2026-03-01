@@ -12,7 +12,7 @@
  * @fires clear-filters - Dispatched when clear button is clicked
  */
 
-import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
 /**
@@ -202,7 +202,7 @@ export class GraphEmptyState extends LitElement {
               Clear all filters
             </button>
           `
-          : ''
+          : nothing
       }
     `;
   }

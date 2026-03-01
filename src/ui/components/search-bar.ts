@@ -31,6 +31,11 @@ import './icon-button.js';
  * @fires search-clear - Dispatched when the clear button is clicked or Escape is pressed
  */
 export class GraphSearchBar extends LitElement {
+  static override shadowRootOptions: ShadowRootInit = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
+
   // ========================================
   // Properties
   // ========================================

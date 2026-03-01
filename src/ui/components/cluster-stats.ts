@@ -314,7 +314,7 @@ export class GraphClusterStats extends LitElement {
                                 <path d="${iconPath}" />
                               </svg>
                             `
-                            : ''
+                            : nothing
                         }
                         <span class="platform-name" style="color: ${color}">
                           ${platform}
