@@ -335,9 +335,9 @@ describe('GraphDataService', () => {
 
       const result = service.getTransitiveDependencies('A');
 
-      expect(result.depths.get('B')).toBe(1);
-      expect(result.depths.get('C')).toBe(2);
-      expect(result.depths.get('D')).toBe(3);
+      expect(result.nodeDepths.get('B')).toBe(1);
+      expect(result.nodeDepths.get('C')).toBe(2);
+      expect(result.nodeDepths.get('D')).toBe(3);
     });
 
     it('should include all edges', () => {
@@ -380,9 +380,9 @@ describe('GraphDataService', () => {
 
       const result = service.getTransitiveDependents('D');
 
-      expect(result.depths.get('C')).toBe(1);
-      expect(result.depths.get('B')).toBe(2);
-      expect(result.depths.get('A')).toBe(3);
+      expect(result.nodeDepths.get('C')).toBe(1);
+      expect(result.nodeDepths.get('B')).toBe(2);
+      expect(result.nodeDepths.get('A')).toBe(3);
     });
   });
 

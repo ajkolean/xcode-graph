@@ -120,6 +120,13 @@ export class GraphNodeDetailsPanel extends LitElement {
     :host::-webkit-scrollbar-thumb:hover {
       background: rgba(var(--colors-accent-rgb), 0.35);
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
   `;
 
   private get nodeData() {

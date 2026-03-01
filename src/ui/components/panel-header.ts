@@ -27,7 +27,6 @@
 import { icons } from '@shared/controllers/icon.adapter';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 /**
  * A reusable header component for detail panels with back button,

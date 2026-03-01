@@ -28,7 +28,6 @@ import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } 
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { when } from 'lit/directives/when.js';
 
 /**

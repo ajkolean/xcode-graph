@@ -72,8 +72,17 @@ export class GraphEmptyState extends LitElement {
     }
 
     @media (prefers-reduced-motion: reduce) {
+      :host {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+
       .icon-container {
         animation: none;
+      }
+
+      .clear-button {
+        transition-duration: 0.01ms !important;
       }
     }
 

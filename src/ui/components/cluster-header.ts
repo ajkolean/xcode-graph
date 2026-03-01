@@ -23,7 +23,6 @@ import { icons } from '@shared/controllers/icon.adapter';
 import { SourceType } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import './badge.js';
 import './panel-header.js';
 

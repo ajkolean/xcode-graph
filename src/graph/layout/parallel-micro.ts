@@ -97,7 +97,8 @@ export async function computeMicroLayoutsParallel(
 
     const results = await Promise.all(tasks);
     return new Map(results.map((r) => [r.clusterId, r]));
-  } catch {
+  } catch (e) {
+    console.warn('Worker pool failed, falling back to synchronous layout', e);
     return computeMicroLayoutsSync(clusters, config);
   } finally {
     for (const worker of workers) {

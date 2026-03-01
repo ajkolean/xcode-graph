@@ -57,7 +57,7 @@ export interface SerializedLayoutResult {
 /**
  * Deserialize clusters from worker-safe format back to runtime format with Maps.
  */
-function deserializeClusters(serialized: SerializedCluster[]): Cluster[] {
+export function deserializeClusters(serialized: SerializedCluster[]): Cluster[] {
   return serialized.map((sc) => ({
     ...sc,
     metadata: new Map(sc.metadata),
@@ -67,7 +67,7 @@ function deserializeClusters(serialized: SerializedCluster[]): Cluster[] {
 /**
  * Serialize a layout result for transfer back to main thread.
  */
-function serializeResult(result: HierarchicalLayoutResult): SerializedLayoutResult {
+export function serializeResult(result: HierarchicalLayoutResult): SerializedLayoutResult {
   return {
     nodePositions: Array.from(result.nodePositions.entries()),
     clusterPositions: Array.from(result.clusterPositions.entries()),

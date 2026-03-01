@@ -1,12 +1,18 @@
 /**
- * Schema Module - Type exports
+ * Schema Module - Type and Zod schema exports
  *
- * Centralized exports for all types, enums, and constants used throughout the app.
- * Zod validation schemas are available via direct imports from individual .schema files.
+ * Centralized exports for all types, enums, constants, and Zod validation schemas.
  *
  * @module schemas
  */
 
+// Zod validation schemas
+export {
+  ActiveTabSchema,
+  FilterStateInputSchema,
+  FilterStateSchema,
+  ViewModeSchema,
+} from './app.schema';
 export type { FilterState, FilterStateInput } from './app.types';
 export {
   ACTIVE_TAB_VALUES,
@@ -16,7 +22,16 @@ export {
   VIEW_MODE_VALUES,
   ViewMode,
 } from './app.types';
-
+export {
+  ClusterBoundsSchema,
+  ClusterLayoutConfigSchema,
+  ClusterNodeMetadataSchema,
+  ClusterSchema,
+  ClusterTypeSchema,
+  ForceStrengthSchema,
+  NodeRoleSchema,
+  PositionedNodeSchema,
+} from './cluster.schema';
 export type {
   Cluster,
   ClusterBounds,
@@ -33,6 +48,12 @@ export {
   NODE_ROLE_VALUES,
   NodeRole,
 } from './cluster.types';
+export {
+  AppErrorSchema,
+  ErrorCategorySchema,
+  ErrorNotificationStateSchema,
+  ErrorSeveritySchema,
+} from './error.schema';
 export type { AppError, ErrorNotificationState } from './error.types';
 export {
   DEFAULT_MAX_VISIBLE_TOASTS,
@@ -40,6 +61,25 @@ export {
   ErrorCategory,
   ErrorSeverity,
 } from './error.types';
+export {
+  BuildSettingsSchema,
+  DependencyKindSchema,
+  DeploymentTargetsSchema,
+  DestinationSchema,
+  ForeignBuildInfoSchema,
+  GraphDataSchema,
+  GraphEdgeSchema,
+  GraphNodeSchema,
+  LenientDependencyKindSchema,
+  LenientGraphDataSchema,
+  LenientNodeTypeSchema,
+  LenientOriginSchema,
+  LenientPlatformSchema,
+  NodeTypeSchema,
+  OriginSchema,
+  PlatformSchema,
+  SourceTypeSchema,
+} from './graph.schema';
 export type { GraphData, GraphEdge, GraphNode } from './graph.types';
 export {
   NODE_TYPE_VALUES,
@@ -49,4 +89,5 @@ export {
   PLATFORM_VALUES,
   Platform,
 } from './graph.types';
+export { ClusterPositionSchema, NodePositionSchema } from './simulation.schema';
 export type { ClusterPosition, NodePosition } from './simulation.types';

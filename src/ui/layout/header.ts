@@ -12,7 +12,6 @@
 
 import { icons } from '@shared/controllers/icon.adapter';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 /**
  * Top header component with bold identity. Features scan line effect,
@@ -233,6 +232,33 @@ export class GraphHeader extends LitElement {
         box-shadow: 0 0 12px rgba(var(--colors-success-rgb), var(--opacity-80));
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo {
+        transition-duration: 0.01ms !important;
+      }
+
+      .breadcrumb-button {
+        transition-duration: 0.01ms !important;
+      }
+
+      .user-avatar {
+        transition-duration: 0.01ms !important;
+      }
+
+      .action-button {
+        transition-duration: 0.01ms !important;
+      }
+
+      .selector-icon {
+        transition-duration: 0.01ms !important;
+      }
+
+      .status-dot {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
   `;
 
   private renderSelectorIcon() {
@@ -316,7 +342,7 @@ export class GraphHeader extends LitElement {
         <div class="right-section">
           <!-- Docs Button -->
           <button class="action-button" title="Documentation">
-            <span class="icon">${unsafeHTML(icons.Book)}</span>
+            <span class="icon">${icons.Book}</span>
           </button>
 
           <!-- User Avatar -->

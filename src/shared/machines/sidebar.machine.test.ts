@@ -11,7 +11,6 @@ import type { SidebarSection, SidebarTab } from './sidebar.machine';
 import { sidebarMachine } from './sidebar.machine';
 
 describe('sidebarMachine', () => {
-
   describe('initialization', () => {
     it('should initialize with expanded state by default', async () => {
       const ctx = createMachineTestContext({

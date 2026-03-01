@@ -19,7 +19,6 @@ import { icons } from '@shared/controllers/icon.adapter';
 import { KeyboardShortcutController } from '@shared/controllers/keyboard-shortcut.controller';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, query } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import './icon-button.js';
 
 /**

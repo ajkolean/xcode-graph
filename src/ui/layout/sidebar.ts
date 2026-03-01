@@ -19,11 +19,19 @@ import { ActiveTab, type ActiveTab as ActiveTabType } from '@shared/schemas';
 
 export type { ActiveTab } from '@shared/schemas';
 
-import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
+import {
+  type CSSResultGroup,
+  css,
+  html,
+  LitElement,
+  nothing,
+  type SVGTemplateResult,
+  svg,
+  type TemplateResult,
+} from 'lit';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { when } from 'lit/directives/when.js';
 import '@ui/components/sidebar-collapse-icon';
 
@@ -246,6 +254,27 @@ export class GraphSidebar extends LitElement {
       color: var(--colors-primary-text);
       opacity: var(--opacity-60);
       padding: var(--spacing-2) var(--spacing-3) var(--spacing-1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host {
+        transition-duration: 0.01ms !important;
+      }
+
+      .nav-button {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .collapse-button {
+        transition-duration: 0.01ms !important;
+      }
+
+      .icon-container,
+      .dropdown-icon {
+        transition-duration: 0.01ms !important;
+      }
     }
   `;
 

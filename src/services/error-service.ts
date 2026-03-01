@@ -1,6 +1,22 @@
 /**
  * Singleton error handling service. Dispatches AppError notifications via signals.
  *
+ * ## Error Handling Convention
+ *
+ * This project uses a three-tier error handling strategy:
+ *
+ * 1. **System boundary errors** (layout failures, data loading, network) —
+ *    Use `ErrorService.getInstance().handleError(err, { category, userMessage })`.
+ *    These create user-visible toast notifications and are logged with full context.
+ *
+ * 2. **UI interaction errors** (non-critical, recoverable) —
+ *    Use `console.warn(...)` with a descriptive message.
+ *    These are developer-visible only and do not surface to end users.
+ *
+ * 3. **Worker/fallback errors** (web worker failures with graceful degradation) —
+ *    Always log with `console.warn(message, error)` before falling back.
+ *    Never silently swallow errors in catch blocks.
+ *
  * @example
  * ```typescript
  * try {

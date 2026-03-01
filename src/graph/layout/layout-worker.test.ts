@@ -47,7 +47,6 @@ function createClustersFromNodes(nodes: GraphNode[]): Cluster[] {
 }
 
 describe('Layout Worker (direct function tests)', () => {
-
   describe('valid graph input', () => {
     it('should produce layout with positions for a project graph', async () => {
       const { nodes, edges } = createProjectGraph();

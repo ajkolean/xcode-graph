@@ -1,4 +1,4 @@
-/** Default layout controller for graphs with <1000 nodes. For larger graphs, use {@link LayoutWorkerController}. */
+/** Default layout controller for graph layout computation. */
 
 import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';

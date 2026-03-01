@@ -94,6 +94,13 @@ export class GraphClusterDetailsPanel extends LitElement {
       scrollbar-width: thin;
       scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
   `;
 
   private get stats() {

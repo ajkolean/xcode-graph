@@ -20,7 +20,6 @@ import { DEFAULT_CONFIG } from './config';
 import { computeClusterInterior } from './phases/micro-layout';
 
 describe('computeClusterInterior', () => {
-
   describe('valid cluster input', () => {
     it('should produce a result with width and height greater than 0', () => {
       const cluster = createCluster();

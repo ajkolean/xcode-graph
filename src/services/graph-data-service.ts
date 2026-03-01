@@ -3,6 +3,7 @@
  * Provides single source of truth for all graph data operations
  */
 
+import { bfsTraverseGraph, type TransitiveResult } from '@graph/utils/traversal';
 import { addToMultiMap } from '@shared/collections';
 import type { Cluster } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
@@ -133,65 +134,19 @@ export class GraphDataService {
     return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
   }
 
-  /**
-   * Generic BFS traversal from a start node.
-   * Returns all visited node IDs, traversed edge keys, and depth of each node.
-   */
-  private bfsTraverse(
-    startId: string,
-    getNeighbors: (nodeId: string) => { neighbor: string; edgeKey: string }[],
-  ): {
-    nodes: Set<string>;
-    edges: Set<string>;
-    depths: Map<string, number>;
-  } {
-    const visited = new Set<string>([startId]);
-    const edges = new Set<string>();
-    const depths = new Map<string, number>();
-    const queue: Array<{ id: string; depth: number }> = [{ id: startId, depth: 0 }];
-
-    while (queue.length > 0) {
-      const item = queue.shift();
-      if (!item) break;
-      const { id, depth } = item;
-
-      for (const { neighbor, edgeKey } of getNeighbors(id)) {
-        edges.add(edgeKey);
-
-        if (!visited.has(neighbor)) {
-          visited.add(neighbor);
-          depths.set(neighbor, depth + 1);
-          queue.push({ id: neighbor, depth: depth + 1 });
-        }
-      }
-    }
-
-    return { nodes: visited, edges, depths };
-  }
-
-  getTransitiveDependencies(nodeId: string): {
-    nodes: Set<string>;
-    edges: Set<string>;
-    depths: Map<string, number>;
-  } {
-    return this.bfsTraverse(nodeId, (id) =>
-      this.getOutgoingEdges(id).map((e) => ({
-        neighbor: e.target,
-        edgeKey: `${e.source}->${e.target}`,
-      })),
+  getTransitiveDependencies(nodeId: string): TransitiveResult {
+    return bfsTraverseGraph(
+      nodeId,
+      (id) => this.getOutgoingEdges(id).map((e) => e.target),
+      (current, neighbor) => `${current}->${neighbor}`,
     );
   }
 
-  getTransitiveDependents(nodeId: string): {
-    nodes: Set<string>;
-    edges: Set<string>;
-    depths: Map<string, number>;
-  } {
-    return this.bfsTraverse(nodeId, (id) =>
-      this.getIncomingEdges(id).map((e) => ({
-        neighbor: e.source,
-        edgeKey: `${e.source}->${e.target}`,
-      })),
+  getTransitiveDependents(nodeId: string): TransitiveResult {
+    return bfsTraverseGraph(
+      nodeId,
+      (id) => this.getIncomingEdges(id).map((e) => e.source),
+      (current, neighbor) => `${neighbor}->${current}`,
     );
   }
 

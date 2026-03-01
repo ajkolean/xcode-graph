@@ -12,7 +12,7 @@ import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme'
 import { getConnectedNodes } from '@graph/utils/connections';
 import { IntersectionController } from '@lit-labs/observers/intersection-controller.js';
 import { ResizeController } from '@lit-labs/observers/resize-controller.js';
-import { ViewMode } from '@shared/schemas';
+import { ErrorCategory, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
@@ -32,6 +32,7 @@ import {
   type TemplateResult,
 } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
+import { ErrorService } from '@/services/error-service';
 import { renderClusters } from './canvas/canvas-cluster-renderer';
 import { renderEdges } from './canvas/canvas-edge-renderer';
 import {
@@ -253,7 +254,10 @@ export class GraphCanvas extends LitElement {
       if (!isFilterChange) {
         this.layout.enableAnimation = this.enableAnimation;
         this.layout.computeLayout(this.nodes, this.edges).catch((err) => {
-          console.error('Layout computation failed', err);
+          ErrorService.getInstance().handleError(err, {
+            category: ErrorCategory.Layout,
+            userMessage: 'Layout computation failed',
+          });
         });
         this.manualNodePositions.clear();
         this.manualClusterPositions.clear();
@@ -275,7 +279,12 @@ export class GraphCanvas extends LitElement {
     if (changedProps.has('enableAnimation')) {
       this.layout.enableAnimation = this.enableAnimation;
       if (this.enableAnimation && this.nodes.length > 0) {
-        this.layout.computeLayout(this.nodes, this.edges).catch(console.error);
+        this.layout.computeLayout(this.nodes, this.edges).catch((err) => {
+          ErrorService.getInstance().handleError(err, {
+            category: ErrorCategory.Layout,
+            userMessage: 'Layout computation failed',
+          });
+        });
       }
     }
 

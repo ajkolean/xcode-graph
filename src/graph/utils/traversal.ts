@@ -173,6 +173,56 @@ export function traverseGraph(
   return { nodes: visitedNodes, edges: visitedEdges, edgeDepths, nodeDepths, maxDepth };
 }
 
+/**
+ * Generic graph traversal using BFS (breadth-first search)
+ *
+ * Unlike DFS, BFS guarantees shortest-path depths because it explores
+ * all nodes at depth N before moving to depth N+1.
+ *
+ * @param startId - Starting node ID
+ * @param getNeighbors - Function to get neighboring node IDs
+ * @param getEdgeKey - Function to construct edge key from current and neighbor IDs
+ * @returns Traversal result with visited nodes, edges, depths, and max depth
+ */
+export function bfsTraverseGraph(
+  startId: string,
+  getNeighbors: (id: string) => string[],
+  getEdgeKey: (currentId: string, neighborId: string) => string,
+): TransitiveResult {
+  const visitedNodes = new Set<string>([startId]);
+  const visitedEdges = new Set<string>();
+  const edgeDepths = new Map<string, number>();
+  const nodeDepths = new Map<string, number>();
+  nodeDepths.set(startId, 0);
+  let maxDepth = 0;
+
+  const queue: Array<{ id: string; depth: number }> = [{ id: startId, depth: 0 }];
+
+  while (queue.length > 0) {
+    const item = queue.shift();
+    if (!item) break;
+    const { id, depth } = item;
+
+    for (const neighbor of getNeighbors(id)) {
+      const edgeKey = getEdgeKey(id, neighbor);
+      if (!visitedEdges.has(edgeKey)) {
+        visitedEdges.add(edgeKey);
+        edgeDepths.set(edgeKey, depth);
+      }
+
+      if (!visitedNodes.has(neighbor)) {
+        visitedNodes.add(neighbor);
+        const neighborDepth = depth + 1;
+        nodeDepths.set(neighbor, neighborDepth);
+        maxDepth = Math.max(maxDepth, neighborDepth);
+        queue.push({ id: neighbor, depth: neighborDepth });
+      }
+    }
+  }
+
+  return { nodes: visitedNodes, edges: visitedEdges, edgeDepths, nodeDepths, maxDepth };
+}
+
 /** Empty result for when traversal is not needed */
 const EMPTY_RESULT: TransitiveResult = {
   nodes: new Set<string>(),

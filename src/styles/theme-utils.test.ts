@@ -15,7 +15,6 @@ import {
 } from './theme-utils';
 
 describe('theme-utils', () => {
-
   describe('contrastRatio', () => {
     it('should return ~21 for black and white', () => {
       const ratio = contrastRatio('#000000', '#ffffff');

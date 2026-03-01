@@ -17,11 +17,6 @@ export {
   createProjectGraph,
   createSingleNodeGraph,
 } from './graphs';
-export * from './mockClusters';
-export * from './mockEdges';
-export * from './mockFilters';
-export * from './mockNodes';
-export * from './mockPositions';
 export { createNode, createNodesForFilterTesting } from './nodes';
 export type { TestPosition } from './positions';
 export { createCenteredPositions, createCircularPositions } from './positions';

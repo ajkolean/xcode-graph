@@ -25,14 +25,10 @@ export {
   computeNodeDependencies,
 } from './node-utils';
 export {
+  bfsTraverseGraph,
   buildAdjacency,
   computeTransitiveDependencies,
   type TransitiveResult,
   traverseGraph,
 } from './traversal';
-export {
-  getConnectedNodeIds,
-  matchesSearch,
-  shouldDimNode,
-  shouldShowEdge,
-} from './visibility';
+export { matchesSearch } from './visibility';

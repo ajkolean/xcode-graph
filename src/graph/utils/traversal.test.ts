@@ -3,6 +3,7 @@ import type { GraphEdge } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import { createDiamondGraph, createEmptyGraph, createLinearChain } from '../../fixtures';
 import {
+  bfsTraverseGraph,
   buildAdjacency,
   computeTransitiveDependencies,
   getTransitiveCacheStats,
@@ -111,6 +112,102 @@ describe('traverseGraph', () => {
     );
 
     expect(result.nodes).toEqual(new Set(['A', 'B', 'C']));
+  });
+});
+
+describe('bfsTraverseGraph', () => {
+  it('should traverse a linear chain', () => {
+    const { edges } = createLinearChain(4);
+    const { outgoing } = buildAdjacency(edges);
+
+    const result = bfsTraverseGraph(
+      'A',
+      (id) => outgoing.get(id) ?? [],
+      (current, neighbor) => `${current}->${neighbor}`,
+    );
+
+    expect(result.nodes).toEqual(new Set(['A', 'B', 'C', 'D']));
+    expect(result.maxDepth).toBe(3);
+  });
+
+  it('should track shortest-path node depths correctly', () => {
+    const { edges } = createLinearChain(4);
+    const { outgoing } = buildAdjacency(edges);
+
+    const result = bfsTraverseGraph(
+      'A',
+      (id) => outgoing.get(id) ?? [],
+      (current, neighbor) => `${current}->${neighbor}`,
+    );
+
+    expect(result.nodeDepths.get('A')).toBe(0);
+    expect(result.nodeDepths.get('B')).toBe(1);
+    expect(result.nodeDepths.get('C')).toBe(2);
+    expect(result.nodeDepths.get('D')).toBe(3);
+  });
+
+  it('should collect edges during traversal', () => {
+    const { edges } = createDiamondGraph();
+    const { outgoing } = buildAdjacency(edges);
+
+    const result = bfsTraverseGraph(
+      'A',
+      (id) => outgoing.get(id) ?? [],
+      (current, neighbor) => `${current}->${neighbor}`,
+    );
+
+    expect(result.edges.has('A->B')).toBe(true);
+    expect(result.edges.has('A->C')).toBe(true);
+    expect(result.edges.has('B->D')).toBe(true);
+    expect(result.edges.has('C->D')).toBe(true);
+  });
+
+  it('should handle isolated node with no neighbors', () => {
+    const result = bfsTraverseGraph(
+      'isolated',
+      () => [],
+      (current, neighbor) => `${current}->${neighbor}`,
+    );
+
+    expect(result.nodes.size).toBe(1);
+    expect(result.nodes.has('isolated')).toBe(true);
+    expect(result.edges.size).toBe(0);
+    expect(result.maxDepth).toBe(0);
+  });
+
+  it('should handle cyclic graph without infinite loop', () => {
+    const edges: GraphEdge[] = [
+      { source: 'A', target: 'B' },
+      { source: 'B', target: 'C' },
+      { source: 'C', target: 'A' },
+    ];
+    const { outgoing } = buildAdjacency(edges);
+
+    const result = bfsTraverseGraph(
+      'A',
+      (id) => outgoing.get(id) ?? [],
+      (current, neighbor) => `${current}->${neighbor}`,
+    );
+
+    expect(result.nodes).toEqual(new Set(['A', 'B', 'C']));
+  });
+
+  it('should find shortest path depths in diamond graph', () => {
+    const { edges } = createDiamondGraph();
+    const { outgoing } = buildAdjacency(edges);
+
+    const result = bfsTraverseGraph(
+      'A',
+      (id) => outgoing.get(id) ?? [],
+      (current, neighbor) => `${current}->${neighbor}`,
+    );
+
+    // BFS guarantees shortest-path depth: A(0) -> B(1), C(1) -> D(2)
+    expect(result.nodeDepths.get('A')).toBe(0);
+    expect(result.nodeDepths.get('B')).toBe(1);
+    expect(result.nodeDepths.get('C')).toBe(1);
+    expect(result.nodeDepths.get('D')).toBe(2);
+    expect(result.maxDepth).toBe(2);
   });
 });
 

@@ -1,4 +1,5 @@
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type * as d3Force2D from 'd3-force';
 
 /** Interface for simulation nodes */
