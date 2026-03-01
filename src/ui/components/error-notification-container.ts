@@ -25,6 +25,7 @@ import type { AppError } from '@shared/schemas/error.types';
 import { getToastErrors } from '@shared/signals/error.signals';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { errorService } from '@/services/error-service';
 import './error-toast';
 
@@ -32,6 +33,13 @@ import './error-toast';
 
 const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
 
+/**
+ * Container component that manages the display of multiple error toast
+ * notifications. Integrates with error signals to automatically show/hide
+ * toasts as errors are added or dismissed.
+ *
+ * @summary Error toast notification stack manager
+ */
 @customElement('graph-error-notification-container')
 export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
   // ========================================
@@ -96,7 +104,9 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
     }
 
     return html`
-      ${toasts.map(
+      ${repeat(
+        toasts,
+        (error) => error.id,
         (error) => html`
           <graph-error-toast
             .error=${error}

@@ -51,6 +51,13 @@ import { initializeFromData } from '@shared/signals/index';
 
 const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
 
+/**
+ * Root application component that orchestrates the entire graph visualization.
+ * Accepts graph data via `.nodes` and `.edges` properties, making it a
+ * self-contained web component that can be embedded in any host application.
+ *
+ * @summary Embeddable graph visualization entry point
+ */
 export class GraphApp extends SignalWatcherLitElement {
   // ========================================
   // Public Properties

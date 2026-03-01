@@ -20,6 +20,13 @@ import { property } from 'lit/decorators.js';
 import './sidebar-collapse-icon';
 import './icon-button.js';
 
+/**
+ * Header for the right sidebar with title and collapse button.
+ * Shows an active filters indicator dot when filters are applied.
+ *
+ * @summary Right sidebar header with collapse toggle
+ * @fires toggle-collapse - Dispatched when the collapse button is clicked
+ */
 export class GraphRightSidebarHeader extends LitElement {
   // ========================================
   // Properties

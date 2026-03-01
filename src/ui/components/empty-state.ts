@@ -15,6 +15,14 @@
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+/**
+ * Displays an empty state message when no nodes match the current filters.
+ * Features animated icon and optional clear filters button.
+ *
+ * @summary Empty state message with optional clear filters action
+ *
+ * @fires clear-filters - Dispatched when the clear filters button is clicked
+ */
 export class GraphEmptyState extends LitElement {
   // ========================================
   // Properties

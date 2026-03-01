@@ -15,6 +15,13 @@
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+/**
+ * A key-value pair display component for metadata sections.
+ * Shows a label on the left and value on the right in a flex row.
+ *
+ * @summary Key-value pair display row
+ * @slot - Default slot for complex value content (overrides value prop)
+ */
 export class GraphInfoRow extends LitElement {
   // ========================================
   // Properties

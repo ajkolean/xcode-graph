@@ -17,8 +17,16 @@
 import type { GraphNode } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { when } from 'lit/directives/when.js';
 import './section-header.js';
 
+/**
+ * Shows composition statistics for a cluster including total source files,
+ * total resources (with notable ones highlighted), and largest targets by source count.
+ *
+ * @summary Collapsible cluster composition statistics
+ */
 export class GraphClusterComposition extends LitElement {
   // ========================================
   // Properties
@@ -247,7 +255,7 @@ export class GraphClusterComposition extends LitElement {
       <div class="header" @click=${this.toggleExpanded}>
         <span class="title">Composition</span>
         <svg
-          class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
+          class=${classMap({ 'toggle-icon': true, expanded: this.isExpanded })}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -257,9 +265,9 @@ export class GraphClusterComposition extends LitElement {
         </svg>
       </div>
 
-      ${
-        this.isExpanded
-          ? html`
+      ${when(
+        this.isExpanded,
+        () => html`
             <div class="content">
               <div class="stats-row">
                 <span class="stat-label">Total Source Files</span>
@@ -271,27 +279,22 @@ export class GraphClusterComposition extends LitElement {
                 <span class="stat-value">${this.totalResources.toLocaleString()}</span>
               </div>
 
-              ${
-                this.hasPrivacyManifest || this.notableResources.size > 0
-                  ? html`
+              ${when(
+                this.hasPrivacyManifest || this.notableResources.size > 0,
+                () => html`
                     <div class="notable-resources">
-                      ${
-                        this.hasPrivacyManifest
-                          ? html`<span class="resource-badge privacy">Privacy Manifest</span>`
-                          : nothing
-                      }
+                      ${when(this.hasPrivacyManifest, () => html`<span class="resource-badge privacy">Privacy Manifest</span>`)}
                       ${Array.from(this.notableResources)
                         .filter((r) => r !== 'PrivacyInfo.xcprivacy')
                         .slice(0, 3)
                         .map((r) => html`<span class="resource-badge">${r}</span>`)}
                     </div>
-                  `
-                  : nothing
-              }
+                  `,
+              )}
 
-              ${
-                this.largestTargets.length > 0
-                  ? html`
+              ${when(
+                this.largestTargets.length > 0,
+                () => html`
                     <div class="section-divider"></div>
                     <div class="sub-title">Largest Targets</div>
                     <div class="largest-targets">
@@ -304,13 +307,11 @@ export class GraphClusterComposition extends LitElement {
                         `,
                       )}
                     </div>
-                  `
-                  : nothing
-              }
+                  `,
+              )}
             </div>
-          `
-          : nothing
-      }
+          `,
+      )}
     `;
   }
 }

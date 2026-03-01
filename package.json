@@ -12,8 +12,13 @@
     "./dist/tuistgraph.js": "./dist/tuistgraph.js"
   },
   "files": [
-    "dist/*.js"
+    "dist/*.js",
+    "custom-elements.json",
+    "web-types.json",
+    "vscode.html-custom-data.json",
+    "vscode.css-custom-data.json"
   ],
+  "web-types": "web-types.json",
   "publishConfig": {
     "access": "public"
   },
@@ -34,6 +39,9 @@
     "@types/d3-force": "^3.0.10",
     "@types/node": "^25.3.0",
     "@vitest/coverage-v8": "^4.0.18",
+    "cem-plugin-expanded-types": "^1.4.0",
+    "custom-element-jet-brains-integration": "^1.7.0",
+    "custom-element-vs-code-integration": "^1.5.0",
     "depcheck": "^1.4.7",
     "jsdom": "^28.1.0",
     "rollup-plugin-visualizer": "^7.0.0",
@@ -44,6 +52,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "prebuild:lib": "cem analyze",
     "build:lib": "vite build --config vite.lib.config.ts",
     "build:types": "tsc -p tsconfig.build.json",
     "build:api": "tsc -p tsconfig.api.json",
@@ -55,6 +64,7 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "analyze": "cem analyze",
+    "analyze:check": "cem analyze && git diff --exit-code custom-elements.json vscode.html-custom-data.json vscode.css-custom-data.json web-types.json",
     "docs": "typedoc",
     "docs:api": "pnpm build:api && api-extractor run --local --verbose",
     "docs:api:ci": "pnpm build:api && api-extractor run",

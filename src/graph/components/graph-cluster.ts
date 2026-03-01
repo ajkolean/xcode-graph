@@ -30,6 +30,16 @@
 import { Origin } from '@shared/schemas/graph.types';
 import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
 
+/**
+ * SVG cluster container with background, border, and glow effects.
+ * Renders as a rounded rectangle with label, target count, and children.
+ *
+ * @summary SVG cluster container with label and glow effects
+ * @fires cluster-mouseenter - Dispatched on mouse enter
+ * @fires cluster-mouseleave - Dispatched on mouse leave
+ * @fires cluster-click - Dispatched on click
+ * @slot - Default slot for child nodes and edges
+ */
 export class GraphCluster extends LitElement {
   static override readonly properties: PropertyDeclarations = {
     clusterId: { type: String, attribute: 'cluster-id' },

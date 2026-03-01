@@ -20,11 +20,23 @@
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
-import { type CSSResultGroup, css, html, nothing, type TemplateResult } from 'lit';
+import { type CSSResultGroup, css, html, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { when } from 'lit/directives/when.js';
 import { NodeListEventsBase } from './node-list-events';
 import './list-item-row';
 
+/**
+ * List of cluster target nodes grouped by type using ListItemRow components.
+ * Shows targets organized by node type with dependency/dependent counts.
+ *
+ * @summary Collapsible cluster targets list grouped by node type
+ *
+ * @fires node-select - Dispatched when a target is clicked (detail: { node })
+ * @fires node-hover - Dispatched on hover (detail: { nodeId })
+ */
 export class GraphClusterTargetsList extends NodeListEventsBase {
   // ========================================
   // Properties
@@ -194,7 +206,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
           Targets (${this.filteredTargetsCount || 0}/${this.totalTargetsCount || 0})
         </span>
         <svg
-          class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
+          class=${classMap({ 'toggle-icon': true, expanded: this.isExpanded })}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -204,12 +216,14 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
         </svg>
       </div>
 
-      ${
-        this.isExpanded
-          ? html`
+      ${when(
+        this.isExpanded,
+        () => html`
           <div class="content">
             <div class="sections">
-              ${Object.entries(this.nodesByType).map(
+              ${repeat(
+                Object.entries(this.nodesByType),
+                ([type]) => type,
                 ([type, nodes]) => html`
                 <div class="type-section">
                   <div class="type-header">
@@ -217,11 +231,14 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
                   </div>
 
                   <div class="node-list">
-                    ${nodes.map((node) => {
-                      const stats = this.getNodeStats(node.id);
-                      const subtitle = this.formatNodeStatsSubtitle(stats);
+                    ${repeat(
+                      nodes,
+                      (node) => node.id,
+                      (node) => {
+                        const stats = this.getNodeStats(node.id);
+                        const subtitle = this.formatNodeStatsSubtitle(stats);
 
-                      return html`
+                        return html`
                         <graph-list-item-row
                           .node=${node}
                           subtitle=${subtitle || ''}
@@ -231,16 +248,16 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
                           @row-hover-end=${this.handleHoverEnd}
                         ></graph-list-item-row>
                       `;
-                    })}
+                      },
+                    )}
                   </div>
                 </div>
               `,
               )}
             </div>
           </div>
-        `
-          : nothing
-      }
+        `,
+      )}
     `;
   }
 }

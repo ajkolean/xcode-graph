@@ -13,8 +13,6 @@
  *   zoom="1.0"
  * ></graph-node-details-panel>
  * ```
- *
- * @fires close, node-select, cluster-select, node-hover, toggle-direct-deps, toggle-transitive-deps, toggle-direct-dependents, toggle-transitive-dependents
  */
 
 import { computeNodeDependencies } from '@graph/utils/node-utils';
@@ -27,6 +25,20 @@ import './node-info';
 import './node-list.js';
 import type { Cluster } from '@shared/schemas';
 
+/**
+ * Full node details panel orchestrating all node detail sub-components.
+ * Uses utility function for dependency computation.
+ *
+ * @summary Node details panel with metrics, info, and dependency lists
+ * @fires close - Dispatched when the panel close/back button is clicked
+ * @fires node-select - Dispatched when a dependency or dependent node is clicked (detail: { node })
+ * @fires cluster-select - Dispatched when a cluster badge is clicked (detail: { clusterId })
+ * @fires node-hover - Dispatched when hovering a dependency or dependent node (detail: { nodeId })
+ * @fires toggle-direct-deps - Dispatched when the direct dependencies metric card is toggled
+ * @fires toggle-transitive-deps - Dispatched when the transitive dependencies metric card is toggled
+ * @fires toggle-direct-dependents - Dispatched when the direct dependents metric card is toggled
+ * @fires toggle-transitive-dependents - Dispatched when the transitive dependents metric card is toggled
+ */
 export class GraphNodeDetailsPanel extends LitElement {
   static override readonly properties: Record<string, object> = {
     node: { attribute: false },

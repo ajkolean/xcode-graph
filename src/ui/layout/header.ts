@@ -14,6 +14,12 @@ import { icons } from '@shared/controllers/icon.adapter';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
+/**
+ * Top header component with bold identity. Features scan line effect,
+ * glowing logo, and monospace typography.
+ *
+ * @summary Mission control themed header bar
+ */
 export class GraphHeader extends LitElement {
   // ========================================
   // Styles

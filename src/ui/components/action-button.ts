@@ -27,6 +27,15 @@ import { property } from 'lit/decorators.js';
 
 export type ActionButtonVariant = 'primary' | 'success' | 'warning' | 'neutral';
 
+/**
+ * A semantic action button with color variants and active states.
+ * Used for action buttons in panels and forms.
+ *
+ * @summary Action button with color variants and active states
+ *
+ * @slot icon - Optional icon to display before the text
+ * @slot - Button text content
+ */
 export class GraphActionButton extends LitElement {
   // ========================================
   // Properties

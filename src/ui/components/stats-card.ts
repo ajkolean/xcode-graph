@@ -15,6 +15,14 @@
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+/**
+ * Reusable stats card component for displaying metrics.
+ * Features bold left accent border and monospace typography.
+ * Can be toggleable for interactive highlight controls.
+ *
+ * @summary Stats metric card with optional toggle behavior
+ * @fires card-toggle - Dispatched when a toggleable card is clicked
+ */
 export class GraphStatsCard extends LitElement {
   // ========================================
   // Properties

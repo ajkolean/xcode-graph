@@ -24,8 +24,20 @@
 import { icons } from '@shared/controllers/icon.adapter';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
+/**
+ * An expandable/collapsible section with animated chevron.
+ * Used for filter sections, details panels, and other expandable content.
+ *
+ * @summary Expandable/collapsible section with animated chevron
+ *
+ * @fires toggle - Dispatched when the header is clicked
+ *
+ * @slot icon - Optional icon to display before the title
+ * @slot - Default slot for expandable content
+ */
 export class GraphCollapsibleSection extends LitElement {
   // ========================================
   // Properties
@@ -170,12 +182,12 @@ export class GraphCollapsibleSection extends LitElement {
           <slot name="icon"></slot>
         </div>
         <span class="header-title">${this.title}</span>
-        <span class="chevron ${this.isExpanded ? 'expanded' : ''}">
+        <span class=${classMap({ chevron: true, expanded: this.isExpanded })}>
           ${unsafeHTML(icons.ChevronRight)}
         </span>
       </button>
 
-      <div class="content ${this.isExpanded ? 'expanded' : ''}">
+      <div class=${classMap({ content: true, expanded: this.isExpanded })}>
         <div class="content-inner">
           <slot></slot>
         </div>

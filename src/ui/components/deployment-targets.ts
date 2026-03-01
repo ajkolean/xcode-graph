@@ -17,6 +17,9 @@ import type { DeploymentTargets, Destination } from '@shared/schemas/graph.types
 import { getPlatformColor } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { styleMap } from 'lit/directives/style-map.js';
+import { when } from 'lit/directives/when.js';
 import './badge.js';
 
 /** Destination display labels and colors */
@@ -32,6 +35,12 @@ const DESTINATION_CONFIG: Record<string, { label: string; color: string }> = {
   appleVisionWithiPadDesign: { label: 'Vision (iPad Design)', color: '#7D7AFF' },
 };
 
+/**
+ * Displays platform deployment targets (minimum OS versions) and
+ * supported destinations (device types) for a node.
+ *
+ * @summary Platform deployment targets and destination badges
+ */
 export class GraphDeploymentTargets extends LitElement {
   // ========================================
   // Properties
@@ -139,24 +148,28 @@ export class GraphDeploymentTargets extends LitElement {
 
     return html`
       <div class="section">
-        ${!this.compact ? html`<div class="section-title">Min OS Versions</div>` : nothing}
+        ${when(!this.compact, () => html`<div class="section-title">Min OS Versions</div>`)}
         <div class="badges">
-          ${platforms.map(([platform, version]) => {
-            const color = getPlatformColor(platform);
-            return html`
+          ${repeat(
+            platforms,
+            ([platform]) => platform,
+            ([platform, version]) => {
+              const color = getPlatformColor(platform);
+              return html`
               <span
                 class="platform-badge"
-                style="
-                  --platform-color: ${color};
-                  --platform-bg: ${color}15;
-                  --platform-border: ${color}30;
-                "
+                style=${styleMap({
+                  '--platform-color': color,
+                  '--platform-bg': `${color}15`,
+                  '--platform-border': `${color}30`,
+                })}
               >
                 <span class="platform-name">${platform}</span>
                 <span class="platform-version">${version}+</span>
               </span>
             `;
-          })}
+            },
+          )}
         </div>
       </div>
     `;
@@ -167,11 +180,14 @@ export class GraphDeploymentTargets extends LitElement {
 
     return html`
       <div class="section">
-        ${!this.compact ? html`<div class="section-title">Destinations</div>` : nothing}
+        ${when(!this.compact, () => html`<div class="section-title">Destinations</div>`)}
         <div class="badges">
-          ${this.destinations.map((dest) => {
-            const config = DESTINATION_CONFIG[dest] || { label: dest, color: '#8E8E93' };
-            return html`
+          ${repeat(
+            this.destinations,
+            (dest) => dest,
+            (dest) => {
+              const config = DESTINATION_CONFIG[dest] || { label: dest, color: '#8E8E93' };
+              return html`
               <graph-badge
                 label=${config.label}
                 color=${config.color}
@@ -179,7 +195,8 @@ export class GraphDeploymentTargets extends LitElement {
                 size="sm"
               ></graph-badge>
             `;
-          })}
+            },
+          )}
         </div>
       </div>
     `;

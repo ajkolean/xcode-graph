@@ -17,6 +17,12 @@ import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResul
 import { property, state } from 'lit/decorators.js';
 import './info-row.js';
 
+/**
+ * Displays curated build settings for a node, showing key configuration
+ * like Swift version, compilation conditions, and code signing.
+ *
+ * @summary Collapsible build settings display for a node
+ */
 export class GraphBuildSettings extends LitElement {
   // ========================================
   // Properties

@@ -31,6 +31,19 @@ import { property, state } from 'lit/decorators.js';
 
 export type AlertBannerVariant = 'warning' | 'error' | 'info' | 'success';
 
+/**
+ * A dismissible alert/warning banner with icon and actions.
+ * Used for warnings, errors, info messages, and success notifications.
+ *
+ * @summary Dismissible alert banner with icon, message, and actions
+ *
+ * @fires dismiss - Dispatched when the banner is dismissed
+ *
+ * @slot icon - Optional icon to display
+ * @slot badge - Optional badge to display next to the title
+ * @slot actions - Optional action buttons
+ * @slot - Default slot for additional content
+ */
 export class GraphAlertBanner extends LitElement {
   // ========================================
   // Properties

@@ -19,6 +19,12 @@
 import { getNodeIconPath } from '@ui/utils/node-icons';
 import { LitElement, svg, type TemplateResult } from 'lit';
 
+/**
+ * SVG definitions (filters, markers, reusable shapes) used by the graph visualization.
+ * Provides reusable filters, arrow markers, and node shape templates for performance.
+ *
+ * @summary Reusable SVG defs for graph filters, markers, and shapes
+ */
 export class GraphSVGDefs extends LitElement {
   // No Shadow DOM for SVG defs - they need to be in the same SVG context
   protected override createRenderRoot(): this {

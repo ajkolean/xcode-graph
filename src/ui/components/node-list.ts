@@ -24,6 +24,9 @@ import type { NodeWithEdge } from '@graph/utils/node-utils';
 import { DependencyKind, type GraphNode, Origin } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { when } from 'lit/directives/when.js';
 import './badge.js';
 import './list-item-row.js';
 import { NodeListEventsBase } from './node-list-events';
@@ -36,6 +39,15 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
   [DependencyKind.XCFramework]: { label: 'XCF', color: 'var(--colors-warning)' },
 };
 
+/**
+ * A unified list component for displaying nodes with a section header.
+ * Used for dependencies, dependents, and other node list displays.
+ * Supports displaying dependency kind badges when edge information is provided.
+ *
+ * @summary Collapsible node list with section header and kind badges
+ * @fires node-select - Dispatched when a node row is clicked (detail: { node })
+ * @fires node-hover - Dispatched on node row hover (detail: { nodeId })
+ */
 export class GraphNodeList extends NodeListEventsBase {
   // ========================================
   // Properties
@@ -262,7 +274,7 @@ export class GraphNodeList extends NodeListEventsBase {
           <span class="count">${countText}</span>
         </div>
         <svg
-          class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
+          class=${classMap({ 'toggle-icon': true, expanded: this.isExpanded })}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -272,16 +284,18 @@ export class GraphNodeList extends NodeListEventsBase {
         </svg>
       </div>
 
-      ${
-        this.isExpanded
-          ? html`
+      ${when(
+        this.isExpanded,
+        () => html`
           <div class="content">
             ${
               count === 0
                 ? html`<div class="empty">${this.emptyMessage}</div>`
                 : html`
                   <div class="list">
-                    ${items.map(
+                    ${repeat(
+                      items,
+                      (item) => item.node.id,
                       (item) => html`
                         <div class="item-row">
                           <div class="item-content">
@@ -302,9 +316,8 @@ export class GraphNodeList extends NodeListEventsBase {
                 `
             }
           </div>
-        `
-          : nothing
-      }
+        `,
+      )}
     `;
   }
 }

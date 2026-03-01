@@ -39,6 +39,12 @@ export interface VirtualRenderConfig {
   bufferMargin?: number;
 }
 
+/**
+ * Virtual renderer that only creates DOM elements for nodes visible in the viewport.
+ * Dramatically improves performance with large graphs (10,000+ nodes).
+ *
+ * @summary Viewport-culled virtual node renderer
+ */
 export class GraphVirtualRenderer extends LitElement {
   // ========================================
   // Properties

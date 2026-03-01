@@ -37,6 +37,20 @@ import { property } from 'lit/decorators.js';
 export type BadgeVariant = 'pill' | 'rounded' | 'accent';
 export type BadgeSize = 'sm' | 'md';
 
+/**
+ * A reusable badge/label component with color theming and multiple variants.
+ * Consolidates badge patterns used across node-header, cluster-header,
+ * cluster-type-badge, and filter-section components.
+ *
+ * @summary Color-themed badge with pill, rounded, and accent variants
+ *
+ * @cssproperty --badge-bg - Background color of the badge (computed from color prop)
+ * @cssproperty --badge-border - Border color of the badge (computed from color prop)
+ * @cssproperty --badge-color - Text color of the badge (computed from color prop)
+ * @cssproperty --badge-bg-hover - Background color on hover (computed from color prop)
+ * @cssproperty --badge-border-hover - Border color on hover (computed from color prop)
+ * @cssproperty --badge-glow - Glow color on hover (computed from color prop)
+ */
 export class GraphBadge extends LitElement {
   // ========================================
   // Properties

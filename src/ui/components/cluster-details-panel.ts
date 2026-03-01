@@ -25,6 +25,16 @@ import './cluster-header';
 import './cluster-stats';
 import './cluster-targets-list';
 
+/**
+ * Full cluster details panel orchestrating all cluster detail components
+ * including header, stats, composition, and targets list.
+ *
+ * @summary Cluster details panel with header, stats, and targets
+ *
+ * @fires close - Dispatched when the back button is clicked
+ * @fires node-select - Dispatched when a target node is selected (detail: { node })
+ * @fires node-hover - Dispatched when a target node is hovered (detail: { nodeId })
+ */
 export class GraphClusterDetailsPanel extends LitElement {
   // ========================================
   // Properties

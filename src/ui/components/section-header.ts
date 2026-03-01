@@ -17,6 +17,12 @@
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+/**
+ * A simple header component for sections with title and count.
+ * Used in node-list, cluster-targets-list, and other list sections.
+ *
+ * @summary Section header with title and count display
+ */
 export class GraphSectionHeader extends LitElement {
   // ========================================
   // Properties

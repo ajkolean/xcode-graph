@@ -26,8 +26,20 @@ import { getNodeIconPath } from '@ui/utils/node-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { when } from 'lit/directives/when.js';
 
+/**
+ * Reusable row component for displaying nodes in lists.
+ * Features sharp edges, accent borders, and monospace typography.
+ *
+ * @summary Node list row with icon, name, and chevron
+ * @fires row-select - Dispatched when the row is clicked (detail: { node })
+ * @fires row-hover - Dispatched on mouse enter (detail: { nodeId })
+ * @fires row-hover-end - Dispatched on mouse leave
+ */
 export class GraphListItemRow extends LitElement {
   // ========================================
   // Properties
@@ -224,8 +236,8 @@ export class GraphListItemRow extends LitElement {
 
     return html`
       <button
-        class="${this.isSelected ? 'selected' : ''} ${this.isHovered ? 'hovered' : ''}"
-        style="--node-color: ${nodeColor}"
+        class=${classMap({ selected: this.isSelected, hovered: this.isHovered })}
+        style=${styleMap({ '--node-color': nodeColor })}
         @click=${this.handleClick}
         @mouseenter=${this.handleMouseEnter}
         @mouseleave=${this.handleMouseLeave}
@@ -254,11 +266,11 @@ export class GraphListItemRow extends LitElement {
         <!-- Content -->
         <div class="content">
           <div class="name">${this.node.name}</div>
-          ${this.subtitle ? html`<div class="subtitle">${this.subtitle}</div>` : ''}
+          ${when(this.subtitle, () => html`<div class="subtitle">${this.subtitle}</div>`)}
         </div>
 
         <!-- Chevron -->
-        <span class="chevron ${this.isHovered ? 'hovered' : ''}">
+        <span class=${classMap({ chevron: true, hovered: this.isHovered })}>
           ${unsafeHTML(icons.ChevronRight)}
         </span>
       </button>

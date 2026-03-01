@@ -13,6 +13,12 @@
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+/**
+ * Placeholder content for tabs that are coming soon.
+ * Displays a centered message with title.
+ *
+ * @summary Coming soon placeholder tab
+ */
 export class GraphPlaceholderTab extends LitElement {
   // ========================================
   // Properties

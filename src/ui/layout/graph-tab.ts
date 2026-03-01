@@ -57,6 +57,13 @@ const searchQueryValue = computed(() => searchQuery.get() || '');
 
 const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
 
+/**
+ * Main graph tab orchestrator that coordinates the graph canvas, overlays,
+ * and right sidebar. Uses Lit Signals for reactive state management.
+ *
+ * @summary Graph tab layout orchestrator
+ * @slot filter-view - Slot for injecting a custom filter view into the right sidebar
+ */
 export class GraphTab extends SignalWatcherLitElement {
   // ========================================
   // Properties

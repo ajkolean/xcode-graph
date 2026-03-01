@@ -25,6 +25,13 @@ import { generateColor } from '@ui/utils/color-generator';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { LitElement, type PropertyDeclarations, type SVGTemplateResult, svg } from 'lit';
 
+/**
+ * SVG card background for cluster visualization.
+ * Renders a rounded rectangle with cluster name and target count.
+ *
+ * @summary SVG cluster card background
+ * @fires cluster-click - Dispatched when the card is clicked (detail: { cluster })
+ */
 export class GraphClusterCard extends LitElement {
   static override readonly properties: PropertyDeclarations = {
     cluster: { attribute: false },

@@ -46,6 +46,15 @@ const SEVERITY_ICONS = {
 
 // ==================== Component ====================
 
+/**
+ * Displays a single error notification with severity-based styling,
+ * optional action button, and dismiss functionality.
+ *
+ * @summary Individual error notification toast with severity styling
+ *
+ * @fires dismiss - Dispatched when the toast is dismissed (detail: { errorId })
+ * @fires action - Dispatched when the action button is clicked (detail: { error })
+ */
 @customElement('graph-error-toast')
 export class GraphErrorToast extends LitElement {
   // ========================================

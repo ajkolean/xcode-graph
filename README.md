@@ -76,6 +76,12 @@ pnpm docs             # Generate TypeDoc → docs/api/
 pnpm analyze          # Regenerate Custom Elements Manifest
 ```
 
+## Maintaining
+
+- [XcodeGraph version syncing & release workflow](.github/TUIST_CLI_INTEGRATION.md) — how versioning tracks XcodeGraph, compatibility checks, and publishing
+- [Tuist CLI integration](swift/INTEGRATION.md) — how GraphServer serves the component, CDN delivery, and the Swift ↔ TypeScript boundary
+- [Migration guide](docs/MIGRATION-GUIDE.md) — patterns used when porting from React to Lit
+
 ## License
 
 See [LICENSE](LICENSE) for details.

@@ -27,6 +27,12 @@ const TAG_PREFIX_COLORS: Record<string, string> = {
 /** Default color for tags without recognized prefix */
 const DEFAULT_TAG_COLOR = '#6B7280'; // Gray
 
+/**
+ * Displays architecture tags (like domain:*, layer:*) with color-coding
+ * based on the tag prefix. Useful for showing organizational metadata.
+ *
+ * @summary Color-coded architecture tag badge
+ */
 export class GraphTagBadge extends LitElement {
   // ========================================
   // Properties

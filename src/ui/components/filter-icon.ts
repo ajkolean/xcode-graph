@@ -19,6 +19,12 @@ import { property } from 'lit/decorators.js';
 
 export type FilterIconName = 'product-types' | 'platforms' | 'projects' | 'packages';
 
+/**
+ * A unified icon component for filter sections.
+ * Renders product-types, platforms, projects, and packages icons.
+ *
+ * @summary Filter section icon with multiple named variants
+ */
 export class GraphFilterIcon extends LitElement {
   // ========================================
   // Properties

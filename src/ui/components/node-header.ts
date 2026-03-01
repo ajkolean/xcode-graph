@@ -27,6 +27,14 @@ import './badge.js';
 import './panel-header.js';
 import './tag-badge.js';
 
+/**
+ * Header for the node details panel with icon, name, type badges, and tags.
+ * Uses graph-panel-header for consistent layout.
+ *
+ * @summary Node details header with icon, badges, and tags
+ * @fires close - Dispatched when the back/close button is clicked
+ * @fires cluster-click - Dispatched when a cluster badge is clicked (detail: { clusterId })
+ */
 export class GraphNodeHeader extends LitElement {
   // ========================================
   // Properties

@@ -26,6 +26,7 @@ import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getPlatformColor } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 import './right-sidebar-header';
 import './sidebar-collapse-icon';
 import './icon-button.js';
@@ -108,6 +109,12 @@ interface ExpandedContentOptions {
 
 const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
 
+/**
+ * Main right sidebar orchestrator with Zag state machine and Lit Signals.
+ * Manages collapse/expand, tabs, and displays node/cluster details or filters.
+ *
+ * @summary Right sidebar with filters, search, and detail panels
+ */
 export class GraphRightSidebar extends SignalWatcherLitElement {
   // ========================================
   // Properties
@@ -529,16 +536,15 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
               ?highlighted=${edgesFiltered}
             ></graph-stats-card>
           </div>
-          ${
-            this.filteredNodes?.length === 0
-              ? html`
+          ${when(
+            this.filteredNodes?.length === 0,
+            () => html`
                 <graph-empty-state
                   ?has-active-filters=${hasAnyFiltering}
                   @clear-filters=${() => this.handleClearFilters()}
                 ></graph-empty-state>
-              `
-              : ''
-          }
+              `,
+          )}
 
           <div class="filter-sections">
             ${this.renderFilterSections(currentFilters, currentZoom, expandedSections, items)}
@@ -602,11 +608,11 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
         @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
       ></graph-filter-section>
 
-      ${packageItems.length ? html`<div class="section-divider"></div>` : ''}
+      ${when(packageItems.length, () => html`<div class="section-divider"></div>`)}
 
-      ${
-        packageItems.length
-          ? html`
+      ${when(
+        packageItems.length,
+        () => html`
             <graph-filter-section
               id="packages"
               title="Packages"
@@ -621,9 +627,8 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
                 this.handleItemToggle('package', e.detail.key, e.detail.checked)}
               @preview-change=${(e: CustomEvent) => this.handlePreviewChange(e.detail)}
             ></graph-filter-section>
-          `
-          : ''
-      }
+          `,
+      )}
     `;
   }
 
@@ -769,18 +774,17 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
     return html`
       <aside>
-        ${
-          !this.isViewingDetails || isCollapsed
-            ? html`
+        ${when(
+          !this.isViewingDetails || isCollapsed,
+          () => html`
             <graph-right-sidebar-header
               title=${this.workspaceName}
               ?is-collapsed=${isCollapsed}
               ?has-active-filters=${isFiltersActive}
               @toggle-collapse=${this.handleToggleCollapse}
             ></graph-right-sidebar-header>
-          `
-            : ''
-        }
+          `,
+        )}
 
         ${sidebarContent}
       </aside>

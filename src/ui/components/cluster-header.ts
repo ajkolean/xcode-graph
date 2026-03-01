@@ -34,6 +34,14 @@ const SOURCE_TYPE_CONFIG: Record<string, { label: string; color: string }> = {
   [SourceType.Git]: { label: 'Git', color: 'var(--colors-primary)' },
 };
 
+/**
+ * Header for cluster details panel with back button, icon, and cluster info.
+ * Shows source type (Local/Registry/Git) and provides path copy button.
+ *
+ * @summary Cluster details panel header with icon, badges, and path
+ *
+ * @fires back - Dispatched when back button is clicked
+ */
 export class GraphClusterHeader extends LitElement {
   // ========================================
   // Properties

@@ -19,7 +19,16 @@
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 
+/**
+ * Vertical icon bar shown when sidebar is collapsed.
+ * Displays filter section icons with active filter badges.
+ *
+ * @summary Collapsed sidebar icon bar with filter badges
+ *
+ * @fires expand-to-section - Dispatched when a section icon is clicked (detail: { section })
+ */
 export class GraphCollapsedSidebar extends LitElement {
   // ========================================
   // Properties
@@ -232,7 +241,7 @@ export class GraphCollapsedSidebar extends LitElement {
         title="Product Types"
       >
         ${this.renderProductTypesIcon()}
-        ${showProductTypesBadge ? html`<div class="badge">${this.nodeTypesFilterSize}</div>` : ''}
+        ${when(showProductTypesBadge, () => html`<div class="badge">${this.nodeTypesFilterSize}</div>`)}
       </button>
 
       <!-- Platforms -->
@@ -242,7 +251,7 @@ export class GraphCollapsedSidebar extends LitElement {
         title="Platforms"
       >
         ${this.renderPlatformsIcon()}
-        ${showPlatformsBadge ? html`<div class="badge">${this.platformsFilterSize}</div>` : ''}
+        ${when(showPlatformsBadge, () => html`<div class="badge">${this.platformsFilterSize}</div>`)}
       </button>
 
       <!-- Projects -->
@@ -252,7 +261,7 @@ export class GraphCollapsedSidebar extends LitElement {
         title="Projects"
       >
         ${this.renderProjectsIcon()}
-        ${showProjectsBadge ? html`<div class="badge">${this.projectsFilterSize}</div>` : ''}
+        ${when(showProjectsBadge, () => html`<div class="badge">${this.projectsFilterSize}</div>`)}
       </button>
 
       <!-- Packages -->
@@ -262,7 +271,7 @@ export class GraphCollapsedSidebar extends LitElement {
         title="Packages"
       >
         ${this.renderPackagesIcon()}
-        ${showPackagesBadge ? html`<div class="badge">${this.packagesFilterSize}</div>` : ''}
+        ${when(showPackagesBadge, () => html`<div class="badge">${this.packagesFilterSize}</div>`)}
       </button>
 
       <!-- Stats -->

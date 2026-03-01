@@ -21,6 +21,14 @@ import { property, query } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import './icon-button.js';
 
+/**
+ * Input field for filtering nodes by name/text search.
+ * Features sharp edges, dramatic focus glow, and animated icon.
+ *
+ * @summary Search input for filtering nodes
+ * @fires search-change - Dispatched when the search query changes (detail: { query: string })
+ * @fires search-clear - Dispatched when the clear button is clicked or Escape is pressed
+ */
 export class GraphSearchBar extends LitElement {
   // ========================================
   // Properties

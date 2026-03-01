@@ -17,6 +17,12 @@ import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 
 import { property } from 'lit/decorators.js';
 import './badge.js';
 
+/**
+ * Displays package/project badge with sharp styling and monospace typography.
+ * Wrapper around graph-badge with container styling.
+ *
+ * @summary Cluster type badge showing package or project
+ */
 export class GraphClusterTypeBadge extends LitElement {
   // ========================================
   // Properties

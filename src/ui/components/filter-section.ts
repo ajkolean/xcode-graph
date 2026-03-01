@@ -28,7 +28,11 @@ import { getPlatformIconPath } from '@ui/utils/platform-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { when } from 'lit/directives/when.js';
 
 export type FilterType = 'nodeType' | 'platform' | 'project' | 'package';
 
@@ -38,6 +42,18 @@ export interface FilterItem {
   color: string;
 }
 
+/**
+ * Collapsible filter section with checkbox items.
+ * Used for nodeType, platform, project, and package filters.
+ *
+ * @summary Collapsible filter section with toggleable checkbox items
+ *
+ * @fires section-toggle - Dispatched when the section header is clicked
+ * @fires item-toggle - Dispatched when an item checkbox is toggled (detail: { key, checked })
+ * @fires preview-change - Dispatched on item hover for filter preview (detail: { type, value } or null)
+ *
+ * @slot icon - Icon to display in the section header
+ */
 export class GraphFilterSection extends LitElement {
   // ========================================
   // Properties
@@ -374,20 +390,24 @@ export class GraphFilterSection extends LitElement {
         return html`
           <div
             class="item-icon"
-            style="
-              width: 16px;
-              height: 16px;
-              border-radius: var(--radius);
-              background-color: ${zoomColor};
-              opacity: ${opacity};
-              border: 1px solid rgba(255, 255, 255, 0.15);
-            "
+            style=${styleMap({
+              width: '16px',
+              height: '16px',
+              'border-radius': 'var(--radius)',
+              'background-color': zoomColor,
+              opacity: String(opacity),
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+            })}
           ></div>
         `;
 
       case 'package':
         return html`
-          <span class="item-icon" style="filter: ${dropShadow}; opacity: ${opacity}; color: ${zoomColor}">
+          <span class="item-icon" style=${styleMap({
+            filter: dropShadow,
+            opacity: String(opacity),
+            color: zoomColor,
+          })}>
             ${unsafeHTML(icons.Package)}
           </span>
         `;
@@ -404,36 +424,35 @@ export class GraphFilterSection extends LitElement {
 
     return html`
       <button
-        class="item-button ${isSelected ? '' : 'deselected'}"
+        class=${classMap({ 'item-button': true, deselected: !isSelected })}
         aria-pressed=${isSelected}
         @click=${() => this.handleItemToggle(item.key, !isSelected)}
         @mouseenter=${() => this.handleItemHover(item)}
         @mouseleave=${() => this.handleItemHover(null)}
       >
-        ${
-          isSelected
-            ? html`
+        ${when(
+          isSelected,
+          () => html`
               <div
                 class="item-accent"
-                style="
-                  background-color: ${zoomColor};
-                  box-shadow: 0 0 4px ${zoomColor}60;
-                "
+                style=${styleMap({
+                  'background-color': zoomColor,
+                  'box-shadow': `0 0 4px ${zoomColor}60`,
+                })}
               ></div>
-            `
-            : ''
-        }
+            `,
+        )}
 
         <div class="item-content">
           ${this.renderItemIcon(item, isSelected, zoomColor)}
-          <span class="item-label ${isSelected ? 'selected' : ''}">
+          <span class=${classMap({ 'item-label': true, selected: isSelected })}>
             ${this.filterType === 'nodeType' ? getNodeTypeLabel(item.key) : item.key}
           </span>
         </div>
 
         <span
-          class="item-count ${isSelected ? 'selected' : ''}"
-          style="background-color: ${zoomColor}10"
+          class=${classMap({ 'item-count': true, selected: isSelected })}
+          style=${styleMap({ 'background-color': `${zoomColor}10` })}
         >
           ${item.count}
         </span>
@@ -449,21 +468,24 @@ export class GraphFilterSection extends LitElement {
           <slot name="icon"></slot>
         </div>
         <span class="header-title">${this.title}</span>
-        <span class="chevron ${this.isExpanded ? 'expanded' : ''}">
+        <span class=${classMap({ chevron: true, expanded: this.isExpanded })}>
           ${unsafeHTML(icons.ChevronRight)}
         </span>
       </button>
 
       <!-- Section Items -->
-      ${
-        this.isExpanded
-          ? html`
+      ${when(
+        this.isExpanded,
+        () => html`
             <div class="items">
-              ${this.items?.map((item) => this.renderItem(item))}
+              ${repeat(
+                this.items ?? [],
+                (item) => item.key,
+                (item) => this.renderItem(item),
+              )}
             </div>
-          `
-          : ''
-      }
+          `,
+      )}
     `;
   }
 }

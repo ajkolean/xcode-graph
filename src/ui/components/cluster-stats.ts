@@ -23,6 +23,15 @@ import { property, state } from 'lit/decorators.js';
 import './badge.js';
 import './stats-card';
 
+/**
+ * Statistics section for cluster details using StatsCard components.
+ * Shows dependencies, dependents, target breakdown, and platform badges.
+ *
+ * @summary Collapsible cluster metrics with stats cards and breakdowns
+ *
+ * @fires toggle-direct-deps - Dispatched when dependencies card is toggled
+ * @fires toggle-direct-dependents - Dispatched when dependents card is toggled
+ */
 export class GraphClusterStats extends LitElement {
   // ========================================
   // Properties

@@ -16,6 +16,14 @@
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
+/**
+ * Displays a warning banner when circular dependencies are detected in the graph.
+ * Shows the number of cycles and allows users to expand details or dismiss the warning.
+ *
+ * @summary Dismissible circular dependency warning banner
+ *
+ * @fires dismiss - Dispatched when the warning is dismissed
+ */
 export class GraphCycleWarning extends LitElement {
   // ========================================
   // Properties

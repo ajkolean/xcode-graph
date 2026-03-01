@@ -18,12 +18,18 @@
 import { icons } from '@shared/controllers/icon.adapter';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 // ========================================
 // GraphBackground
 // ========================================
 
+/**
+ * Grid pattern background overlay for the graph visualization area.
+ *
+ * @summary Grid pattern background overlay
+ */
 export class GraphBackground extends LitElement {
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -53,6 +59,14 @@ export class GraphBackground extends LitElement {
 // GraphControls
 // ========================================
 
+/**
+ * Zoom controls and animation toggle overlay for the graph visualization.
+ * Displays zoom percentage, zoom in/out buttons, and fit-to-view reset.
+ *
+ * @summary Zoom controls overlay
+ * @fires zoom-step - Dispatched when a zoom step button is clicked (detail: number)
+ * @fires zoom-reset - Dispatched when the fit-to-view button is clicked
+ */
 export class GraphControls extends LitElement {
   @property({ type: Number })
   declare zoom: number;
@@ -222,14 +236,14 @@ export class GraphControls extends LitElement {
 
         <div class="zoom-buttons">
           <button
-            class="zoom-button ${this.atMaxZoom ? 'disabled' : ''}"
+            class=${classMap({ 'zoom-button': true, disabled: this.atMaxZoom })}
             @click=${this.handleZoomIn}
             title="Zoom in"
           >
             ${unsafeHTML(icons.ZoomIn)}
           </button>
           <button
-            class="zoom-button ${this.atMinZoom ? 'disabled' : ''}"
+            class=${classMap({ 'zoom-button': true, disabled: this.atMinZoom })}
             @click=${this.handleZoomOut}
             title="Zoom out"
           >
@@ -248,6 +262,11 @@ export class GraphControls extends LitElement {
 // GraphEmptyState
 // ========================================
 
+/**
+ * Empty state message overlay shown when no nodes match the current filters.
+ *
+ * @summary Empty state message overlay
+ */
 export class GraphEmptyStateOverlay extends LitElement {
   static override readonly styles: CSSResultGroup = css`
     :host {
@@ -300,6 +319,11 @@ export class GraphEmptyStateOverlay extends LitElement {
 // GraphInstructions
 // ========================================
 
+/**
+ * Usage instructions overlay showing drag, click, and scroll hints.
+ *
+ * @summary Usage instructions overlay
+ */
 export class GraphInstructions extends LitElement {
   static override readonly styles: CSSResultGroup = css`
     :host {

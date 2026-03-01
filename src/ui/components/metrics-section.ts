@@ -14,10 +14,22 @@
  * ```
  */
 
-import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { when } from 'lit/directives/when.js';
 import './stats-card';
 
+/**
+ * Displays node metrics using StatsCard components in a grid.
+ * Cards can be toggleable to control edge highlighting on the canvas.
+ *
+ * @summary Metrics grid with toggleable stats cards
+ * @fires toggle-direct-deps - Dispatched when direct dependencies card is toggled
+ * @fires toggle-transitive-deps - Dispatched when transitive dependencies card is toggled
+ * @fires toggle-direct-dependents - Dispatched when direct dependents card is toggled
+ * @fires toggle-transitive-dependents - Dispatched when transitive dependents card is toggled
+ */
 export class GraphMetricsSection extends LitElement {
   // ========================================
   // Properties
@@ -161,7 +173,7 @@ export class GraphMetricsSection extends LitElement {
       <div class="header" @click=${this.toggleExpanded}>
         <span class="title">Metrics</span>
         <svg
-          class="toggle-icon ${this.isExpanded ? 'expanded' : ''}"
+          class=${classMap({ 'toggle-icon': true, expanded: this.isExpanded })}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -171,9 +183,9 @@ export class GraphMetricsSection extends LitElement {
         </svg>
       </div>
 
-      ${
-        this.isExpanded
-          ? html`
+      ${when(
+        this.isExpanded,
+        () => html`
           <div class="grid">
             <graph-stats-card
               label="Dependencies"
@@ -211,9 +223,8 @@ export class GraphMetricsSection extends LitElement {
               @card-toggle=${() => this.handleCardToggle('toggle-transitive-dependents')}
             ></graph-stats-card>
           </div>
-        `
-          : nothing
-      }
+        `,
+      )}
     `;
   }
 }

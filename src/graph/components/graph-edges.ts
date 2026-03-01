@@ -28,6 +28,12 @@ import {
 } from 'lit';
 import './graph-edge';
 
+/**
+ * Renders all edges in the graph with depth-based opacity and highlighting.
+ * Handles both cross-cluster and intra-cluster edges.
+ *
+ * @summary Collection renderer for all graph edges
+ */
 export class GraphEdges extends LitElement {
   static override readonly properties: PropertyDeclarations = {
     edges: { attribute: false },

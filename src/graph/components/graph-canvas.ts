@@ -42,6 +42,20 @@ import {
 } from './canvas/canvas-interaction-handler';
 import { renderNodes } from './canvas/canvas-node-renderer';
 
+/**
+ * Canvas-based graph visualization component. Renders nodes, edges, and clusters
+ * on an HTML canvas with pan, zoom, and interactive selection support.
+ *
+ * @summary Canvas-based interactive graph visualization
+ * @fires node-select - Dispatched when a node is selected or deselected (detail: { node })
+ * @fires node-hover - Dispatched when a node is hovered (detail: { nodeId })
+ * @fires cluster-select - Dispatched when a cluster is selected or deselected (detail: { clusterId })
+ * @fires cluster-hover - Dispatched when a cluster is hovered (detail: { clusterId })
+ * @fires zoom-change - Dispatched when the zoom level changes (detail: number)
+ * @fires zoom-in - Dispatched when zoom in is requested via keyboard
+ * @fires zoom-out - Dispatched when zoom out is requested via keyboard
+ * @fires zoom-reset - Dispatched when zoom reset is requested via keyboard
+ */
 @customElement('graph-canvas')
 export class GraphCanvas extends LitElement {
   // ========================================

@@ -29,6 +29,15 @@ import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 
 import { property } from 'lit/decorators.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
+/**
+ * A reusable header component for detail panels with back button,
+ * icon box, title, subtitle, and optional badges slot.
+ *
+ * @summary Reusable panel header with back button and badge slots
+ * @fires back - Dispatched when the back button is clicked
+ * @slot icon - Icon content for the icon box (SVG or other element)
+ * @slot badges - Badge elements to display below the header
+ */
 export class GraphPanelHeader extends LitElement {
   // ========================================
   // Properties

@@ -42,6 +42,16 @@ interface LabelRenderOptions {
   showTooltip: boolean;
 }
 
+/**
+ * SVG node in the graph visualization with icon, label, and sonar pulse animations.
+ * Features dramatic hover states, enhanced glows, and amber/teal color scheme.
+ *
+ * @summary SVG graph node with icon and label
+ * @fires node-mouseenter - Dispatched on mouse enter
+ * @fires node-mouseleave - Dispatched on mouse leave
+ * @fires node-mousedown - Dispatched on mouse down (detail: { originalEvent })
+ * @fires node-click - Dispatched on click (detail: { originalEvent })
+ */
 export class GraphNode extends LitElement {
   static override readonly properties: PropertyDeclarations = {
     node: { attribute: false },

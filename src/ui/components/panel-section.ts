@@ -20,6 +20,13 @@ import { property } from 'lit/decorators.js';
 
 export type PanelSectionPadding = 'none' | 'sm' | 'md' | 'lg';
 
+/**
+ * A consistent container for sections within panels.
+ * Provides padding, borders, and flex-shrink control.
+ *
+ * @summary Panel section container with configurable padding and borders
+ * @slot - Default slot for section content
+ */
 export class GraphPanelSection extends LitElement {
   // ========================================
   // Properties

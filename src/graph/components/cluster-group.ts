@@ -44,6 +44,19 @@ import './cluster-card';
 import './graph-edges';
 import './graph-node';
 
+/**
+ * Renders a cluster with its card background, internal edges, and nodes.
+ * Orchestrates ClusterCard, GraphEdges, and GraphNode components.
+ *
+ * @summary Cluster group orchestrating card, edges, and nodes
+ * @fires cluster-mouseenter - Dispatched when the cluster is hovered
+ * @fires cluster-mouseleave - Dispatched when the cluster hover ends
+ * @fires cluster-click - Dispatched when the cluster is clicked
+ * @fires node-mouseenter - Dispatched when a child node is hovered (detail: { nodeId })
+ * @fires node-mouseleave - Dispatched when a child node hover ends
+ * @fires node-mousedown - Dispatched on child node mouse down (detail: { nodeId, originalEvent })
+ * @fires node-click - Dispatched on child node click (detail: { node, originalEvent })
+ */
 export class GraphClusterGroup extends LitElement {
   static override readonly properties: PropertyDeclarations = {
     cluster: { attribute: false },

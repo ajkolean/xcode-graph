@@ -14,6 +14,12 @@
 import { type CSSResultGroup, css, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+/**
+ * Displays chevrons pointing left (collapsed) or right (expanded)
+ * to indicate sidebar collapse/expand state.
+ *
+ * @summary Animated collapse/expand chevron icon
+ */
 export class GraphSidebarCollapseIcon extends LitElement {
   // ========================================
   // Properties

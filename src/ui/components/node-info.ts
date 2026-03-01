@@ -17,6 +17,12 @@ import { property, state } from 'lit/decorators.js';
 import './deployment-targets.js';
 import './info-row.js';
 
+/**
+ * Displays key-value pairs about a node including platform, origin, type,
+ * bundle ID, product name, deployment targets, and source/resource counts.
+ *
+ * @summary Collapsible node information details section
+ */
 export class GraphNodeInfo extends LitElement {
   // ========================================
   // Properties

@@ -21,7 +21,10 @@ export type { ActiveTab } from '@shared/schemas';
 
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { when } from 'lit/directives/when.js';
 import '@ui/components/sidebar-collapse-icon';
 import '@ui/components/sidebar-collapse-icon';
 
@@ -32,6 +35,13 @@ interface NavItem {
   hasDropdown?: boolean;
 }
 
+/**
+ * Left sidebar navigation with staggered entrance animations.
+ * Features noise texture, accent borders, and monospace typography.
+ *
+ * @summary Left sidebar navigation component
+ * @fires tab-change - Dispatched when a tab is clicked (detail: { tab: string })
+ */
 export class GraphSidebar extends LitElement {
   @property({ type: Boolean, reflect: true })
   declare collapsed: boolean;
@@ -335,26 +345,26 @@ export class GraphSidebar extends LitElement {
         </button>
         <nav>
           <div class="nav-items">
-            ${this.navItems.map((item) => {
-              const isActive = this.activeTab === item.id;
+            ${repeat(
+              this.navItems,
+              (item) => item.id,
+              (item) => {
+                const isActive = this.activeTab === item.id;
 
-              return html`
+                return html`
                 <button
-                  class="nav-button ${isActive ? 'active' : ''}"
+                  class=${classMap({ 'nav-button': true, active: isActive })}
                   @click=${() => this.handleTabClick(item.id)}
                 >
                   <div class="nav-content">
                     <div class="icon-container">${unsafeHTML(item.iconSvg)}</div>
                     <span class="label">${item.label}</span>
                   </div>
-                  ${
-                    item.hasDropdown
-                      ? html`<span class="dropdown-icon">${unsafeHTML(icons.ChevronDown)}</span>`
-                      : ''
-                  }
+                  ${when(item.hasDropdown, () => html`<span class="dropdown-icon">${unsafeHTML(icons.ChevronDown)}</span>`)}
                 </button>
               `;
-            })}
+              },
+            )}
           </div>
         </nav>
       </aside>

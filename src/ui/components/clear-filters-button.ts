@@ -15,6 +15,14 @@
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+/**
+ * Button to clear all active filters.
+ * Disabled state when no filters are active.
+ *
+ * @summary Button to clear all active filters
+ *
+ * @fires clear-filters - Dispatched when button is clicked (only when active)
+ */
 export class GraphClearFiltersButton extends LitElement {
   // ========================================
   // Properties

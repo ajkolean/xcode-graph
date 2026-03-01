@@ -24,6 +24,12 @@ import { generateBezierPath } from '@ui/utils/paths';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
 
+/**
+ * SVG edge/connection between nodes in the graph visualization.
+ * Supports bezier curves, animations, highlighting, and zoom adjustments.
+ *
+ * @summary SVG edge connection between graph nodes
+ */
 export class GraphEdge extends LitElement {
   static override readonly properties: PropertyDeclarations = {
     x1: { type: Number },
