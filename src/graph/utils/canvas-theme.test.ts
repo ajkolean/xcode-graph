@@ -1,5 +1,6 @@
+import { colord } from 'colord';
 import { describe, expect, it } from 'vitest';
-import { resolveCanvasTheme } from './canvas-theme';
+import { DARK_FALLBACKS, LIGHT_FALLBACKS, resolveCanvasTheme } from './canvas-theme';
 
 describe('canvas-theme', () => {
   it('resolves theme with fallback values when no CSS properties set', () => {

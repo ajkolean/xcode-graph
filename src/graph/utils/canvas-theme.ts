@@ -30,6 +30,48 @@ export interface CanvasTheme {
   isDark: boolean;
 }
 
+interface ThemeFallbacks {
+  nodeApp: string;
+  nodeFramework: string;
+  nodeLibrary: string;
+  nodeTest: string;
+  nodeCli: string;
+  nodePackage: string;
+  canvasBg: string;
+  tooltipBg: string;
+  shadowColor: string;
+  cycleEdgeColor: string;
+  cycleGlowColor: string;
+}
+
+export const DARK_FALLBACKS: ThemeFallbacks = {
+  nodeApp: 'rgba(240, 176, 64, 1)',
+  nodeFramework: 'rgba(100, 181, 246, 1)',
+  nodeLibrary: 'rgba(129, 199, 132, 1)',
+  nodeTest: 'rgba(240, 120, 170, 1)',
+  nodeCli: 'rgba(120, 160, 246, 1)',
+  nodePackage: 'rgba(234, 196, 72, 1)',
+  canvasBg: '#161617',
+  tooltipBg: 'rgba(24, 24, 28, 0.95)',
+  shadowColor: 'rgba(24, 24, 28, 0.9)',
+  cycleEdgeColor: 'rgba(239, 68, 68, 0.8)',
+  cycleGlowColor: 'rgba(239, 68, 68, 0.6)',
+};
+
+export const LIGHT_FALLBACKS: ThemeFallbacks = {
+  nodeApp: 'rgba(217, 145, 10, 1)',
+  nodeFramework: 'rgba(37, 99, 235, 1)',
+  nodeLibrary: 'rgba(22, 163, 74, 1)',
+  nodeTest: 'rgba(219, 39, 119, 1)',
+  nodeCli: 'rgba(79, 70, 229, 1)',
+  nodePackage: 'rgba(202, 138, 4, 1)',
+  canvasBg: '#f5f5f7',
+  tooltipBg: 'rgba(255, 255, 255, 0.95)',
+  shadowColor: 'rgba(0, 0, 0, 0.1)',
+  cycleEdgeColor: 'rgba(220, 38, 38, 0.8)',
+  cycleGlowColor: 'rgba(220, 38, 38, 0.4)',
+};
+
 /** Read CSS custom properties from an element's computed style */
 export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
   const s = getComputedStyle(el);
@@ -38,19 +80,20 @@ export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
   // Detect if we're in dark mode by checking background luminance
   const bgColor = get('--colors-background', '#161617');
   const isDark = isDarkColor(bgColor);
+  const fb = isDark ? DARK_FALLBACKS : LIGHT_FALLBACKS;
 
   return {
-    nodeApp: get('--colors-node-app', 'rgba(240, 176, 64, 1)'),
-    nodeFramework: get('--colors-node-framework', 'rgba(100, 181, 246, 1)'),
-    nodeLibrary: get('--colors-node-library', 'rgba(129, 199, 132, 1)'),
-    nodeTest: get('--colors-node-test', 'rgba(240, 120, 170, 1)'),
-    nodeCli: get('--colors-node-cli', 'rgba(120, 160, 246, 1)'),
-    nodePackage: get('--colors-node-package', 'rgba(234, 196, 72, 1)'),
-    canvasBg: get('--colors-canvas-bg', '#161617'),
-    tooltipBg: get('--colors-canvas-tooltip-bg', 'rgba(24, 24, 28, 0.95)'),
-    shadowColor: get('--colors-canvas-shadow', 'rgba(24, 24, 28, 0.9)'),
-    cycleEdgeColor: get('--colors-canvas-cycle-edge', 'rgba(239, 68, 68, 0.8)'),
-    cycleGlowColor: get('--colors-canvas-cycle-glow', 'rgba(239, 68, 68, 0.6)'),
+    nodeApp: get('--colors-node-app', fb.nodeApp),
+    nodeFramework: get('--colors-node-framework', fb.nodeFramework),
+    nodeLibrary: get('--colors-node-library', fb.nodeLibrary),
+    nodeTest: get('--colors-node-test', fb.nodeTest),
+    nodeCli: get('--colors-node-cli', fb.nodeCli),
+    nodePackage: get('--colors-node-package', fb.nodePackage),
+    canvasBg: get('--colors-canvas-bg', fb.canvasBg),
+    tooltipBg: get('--colors-canvas-tooltip-bg', fb.tooltipBg),
+    shadowColor: get('--colors-canvas-shadow', fb.shadowColor),
+    cycleEdgeColor: get('--colors-canvas-cycle-edge', fb.cycleEdgeColor),
+    cycleGlowColor: get('--colors-canvas-cycle-glow', fb.cycleGlowColor),
     isDark,
   };
 }
