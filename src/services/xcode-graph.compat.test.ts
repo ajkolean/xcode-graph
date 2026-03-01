@@ -12,10 +12,6 @@ function loadFixture(path: string): unknown {
   return JSON.parse(readFileSync(path, 'utf-8'));
 }
 
-// =============================================================================
-// Forward-Compatibility Tests
-// =============================================================================
-
 describe('forward-compatibility: future fixture with unknown fields/enums', () => {
   it('should transform a fixture with unknown top-level fields', () => {
     const raw = loadFixture(FUTURE_FIXTURE_PATH);
@@ -82,10 +78,6 @@ describe('forward-compatibility: future fixture with unknown fields/enums', () =
   });
 });
 
-// =============================================================================
-// Missing/Empty Section Tests
-// =============================================================================
-
 describe('forward-compatibility: missing or empty sections', () => {
   it('should handle empty projects array', () => {
     const raw = {
@@ -149,10 +141,6 @@ describe('forward-compatibility: missing or empty sections', () => {
   });
 });
 
-// =============================================================================
-// Boundary Validation (safeParseGraph) Tests
-// =============================================================================
-
 describe('safeParseGraph boundary validation', () => {
   it('should accept the real fixture with no errors', () => {
     const raw = loadFixture(FIXTURE_PATH);
@@ -194,10 +182,6 @@ describe('safeParseGraph boundary validation', () => {
     expect(result.warnings.some((w) => w.includes('odd length'))).toBe(true);
   });
 });
-
-// =============================================================================
-// Real Fixture Regression Test
-// =============================================================================
 
 describe('real fixture transforms correctly', () => {
   it('should transform the real fixture with zero warnings', () => {

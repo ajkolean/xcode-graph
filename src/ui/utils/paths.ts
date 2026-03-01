@@ -83,15 +83,8 @@ interface Point {
  * @param end - Ending point
  * @returns SVG path string
  */
-function buildSegment(
-  curr: Point,
-  next: Point,
-  end: Point,
-  isLast: boolean,
-): string {
-  const target = isLast
-    ? end
-    : { x: (curr.x + next.x) / 2, y: (curr.y + next.y) / 2 };
+function buildSegment(curr: Point, next: Point, end: Point, isLast: boolean): string {
+  const target = isLast ? end : { x: (curr.x + next.x) / 2, y: (curr.y + next.y) / 2 };
   return `Q ${curr.x},${curr.y} ${target.x},${target.y}`;
 }
 

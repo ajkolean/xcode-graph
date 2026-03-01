@@ -10,47 +10,29 @@
  * @module utils/graph
  */
 
-// ==================== Node Connections ====================
-
 export {
   getConnectedNodes,
   getConnectionCount,
   getDependencyCount,
   getDependentCount,
 } from './connections';
-
-// ==================== Node Visibility ====================
-
-export {
-  getConnectedNodeIds,
-  matchesSearch,
-  shouldDimNode,
-  shouldShowEdge,
-} from './visibility';
-
-// ==================== Filtering ====================
-
 export { generateColorMap } from './filters';
-
-// ==================== Node Computations ====================
+export { applyGraphFilters } from './graph-filters';
 
 export {
   computeClusterStats,
   computeFilters,
   computeNodeDependencies,
 } from './node-utils';
-
-// ==================== Graph Filtering ====================
-
-export { applyGraphFilters } from './graph-filters';
-
-// ==================== Graph Traversal ====================
-
 export {
   buildAdjacency,
   computeTransitiveDependencies,
   type TransitiveResult,
   traverseGraph,
 } from './traversal';
-
-// Physics utilities removed - D3 handles force simulation
+export {
+  getConnectedNodeIds,
+  matchesSearch,
+  shouldDimNode,
+  shouldShowEdge,
+} from './visibility';

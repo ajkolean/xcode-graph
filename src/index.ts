@@ -2,29 +2,20 @@
  * @packageDocumentation
  */
 
-export * from './shared/schemas';
-
-export * from './graph/signals';
-export * from './shared/signals';
-
-export * from './services';
-
-export * from './shared/machines';
-
 export { GraphInteractionFullController } from './graph/controllers/graph-interaction-full.controller';
 export {
   type GraphLayoutConfig,
   GraphLayoutController,
 } from './graph/controllers/graph-layout.controller';
-
+export * from './graph/signals';
+export * from './graph/utils';
+export * from './services';
 export {
   createMachineController,
   ZagController,
 } from './shared/controllers/zag.controller';
-
-export * from './graph/utils';
-export * from './ui/utils';
-
+export * from './shared/machines';
+export * from './shared/schemas';
 export type { FilterState, FilterStateInput, ViewMode } from './shared/schemas/app.types';
 export { serializeFilterState, VIEW_MODE_VALUES } from './shared/schemas/app.types';
 export type {
@@ -38,3 +29,5 @@ export type {
   PositionedNode,
 } from './shared/schemas/cluster.types';
 export type { ClusterPosition, NodePosition } from './shared/schemas/simulation.types';
+export * from './shared/signals';
+export * from './ui/utils';
