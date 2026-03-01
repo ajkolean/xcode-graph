@@ -4,8 +4,8 @@
 
 import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
-import type { GraphCollapsedSidebar } from './collapsed-sidebar';
-import './collapsed-sidebar';
+import type { GraphCollapsedSidebar } from './right-sidebar-collapsed';
+import './right-sidebar-collapsed';
 
 describe('xcode-graph-collapsed-sidebar', () => {
   it('should show product types badge when filterSize < typeCounts', async () => {

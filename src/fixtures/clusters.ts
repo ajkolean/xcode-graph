@@ -2,7 +2,7 @@
  * Cluster fixtures
  */
 
-import { range } from '@shared/collections';
+import { range } from '@shared/utils/collections';
 import { type Cluster, type ClusterNodeMetadata, ClusterType, NodeRole } from '@shared/schemas';
 import { type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { createNode } from './nodes';

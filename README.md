@@ -59,16 +59,16 @@ app.loadRawGraph(xcodeGraphJson);
 | `kind`               | `DependencyKind?` | Dependency type (`target`, `project`, `sdk`, `xcframework`) |
 | `platformConditions` | `Platform[]?`     | Platform conditions for this edge          |
 
-See the full type definitions in the [API Reference](https://ajkolean.github.io/xcodegrapher/api/).
+See the full type definitions in the [API Reference](https://ajkolean.github.io/xcode-graph/api/).
 
 ## Documentation
 
-Full documentation is available at **[ajkolean.github.io/xcodegrapher](https://ajkolean.github.io/xcodegrapher/)**.
+Full documentation is available at **[ajkolean.github.io/xcode-graph](https://ajkolean.github.io/xcode-graph/)**.
 
-- [Getting Started](https://ajkolean.github.io/xcodegrapher/guide/) — installation, usage, data shape
-- [Swift Integration](https://ajkolean.github.io/xcodegrapher/guide/swift-integration) — how the Tuist CLI serves the component
-- [Maintaining](https://ajkolean.github.io/xcodegrapher/maintaining/) — versioning, migration guide
-- [Reference](https://ajkolean.github.io/xcodegrapher/reference/) — layout algorithm, API reference
+- [Getting Started](https://ajkolean.github.io/xcode-graph/guide/) — installation, usage, data shape
+- [Swift Integration](https://ajkolean.github.io/xcode-graph/guide/swift-integration) — how the Tuist CLI serves the component
+- [Maintaining](https://ajkolean.github.io/xcode-graph/maintaining/) — versioning, migration guide
+- [Reference](https://ajkolean.github.io/xcode-graph/reference/) — layout algorithm, API reference
 
 ## Development
 

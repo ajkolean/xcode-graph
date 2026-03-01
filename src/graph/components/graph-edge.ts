@@ -20,7 +20,7 @@
  * ```
  */
 
-import { resolveDefaults } from '@shared/collections';
+import { resolveDefaults } from '@shared/utils/collections';
 import { generateBezierPath } from '@ui/utils/paths';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 import { LitElement, svg, type TemplateResult } from 'lit';

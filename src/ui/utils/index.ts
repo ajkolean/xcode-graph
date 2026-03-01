@@ -16,7 +16,6 @@ export {
   generateColorPalette,
   generateColorWithAlpha,
 } from './color-generator';
-export { FILTER_ICON_COLOR } from './colors';
 export { getNodeTypeColor, getNodeTypeColorFromTheme, NODE_TYPE_COLORS } from './node-colors';
 export { getNodeIconPath, getNodeTypeLabel } from './node-icons';
 export { generateBezierPath } from './paths';

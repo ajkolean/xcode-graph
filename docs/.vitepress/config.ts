@@ -4,7 +4,7 @@ export default defineConfig({
 	title: "XcodeGraph",
 	description:
 		"Interactive dependency graph visualization for Tuist projects",
-	base: "/xcodegrapher/",
+	base: "/xcode-graph/",
 	ignoreDeadLinks: [/^\/api\//, /^\/templates\//, /^\/.claude\//],
 
 	head: [
@@ -23,7 +23,7 @@ export default defineConfig({
 			{ text: "Guide", link: "/guide/" },
 			{ text: "Maintaining", link: "/maintaining/" },
 			{ text: "Reference", link: "/reference/" },
-			{ text: "API", link: "/xcodegrapher/api/", target: "_self" },
+			{ text: "API", link: "/xcode-graph/api/", target: "_self" },
 		],
 
 		sidebar: {
@@ -67,12 +67,12 @@ export default defineConfig({
 		},
 
 		socialLinks: [
-			{ icon: "github", link: "https://github.com/ajkolean/xcodegrapher" },
+			{ icon: "github", link: "https://github.com/ajkolean/xcode-graph" },
 		],
 
 		editLink: {
 			pattern:
-				"https://github.com/ajkolean/xcodegrapher/edit/main/docs/:path",
+				"https://github.com/ajkolean/xcode-graph/edit/main/docs/:path",
 		},
 
 		search: {

@@ -19,7 +19,7 @@
  * @fires back - Dispatched when back button is clicked
  */
 
-import { icons } from '@shared/controllers/icon.adapter';
+import { icons } from '@shared/utils/icon-adapter';
 import { SourceType } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';

@@ -5,13 +5,13 @@
  * Icons are rendered as SVGTemplateResult values, which can be used
  * directly in Lit html templates without unsafeHTML.
  *
- * @module controllers/icon-adapter
+ * @module utils/icon-adapter
  *
  * @example
  * Usage in Lit components:
  * ```ts
  * import { html } from 'lit';
- * import { icons } from '@shared/controllers/icon.adapter';
+ * import { icons } from '@shared/utils/icon-adapter';
  *
  * render() {
  *   return html`

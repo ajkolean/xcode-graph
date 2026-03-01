@@ -4,7 +4,7 @@
  */
 
 import { bfsTraverseGraph, type TransitiveResult } from '@graph/utils/traversal';
-import { addToMultiMap } from '@shared/collections';
+import { addToMultiMap } from '@shared/utils/collections';
 import type { Cluster } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 

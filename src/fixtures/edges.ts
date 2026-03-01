@@ -2,7 +2,7 @@
  * Edge fixtures
  */
 
-import { pairwise } from '@shared/pairwise';
+import { pairwise } from '@shared/utils/pairwise';
 import type { GraphEdge } from '@shared/schemas/graph.types';
 
 /**

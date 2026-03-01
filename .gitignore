@@ -50,6 +50,7 @@ vite.config.ts.timestamp-*
 tsconfig.tsbuildinfo
 custom-elements.json
 etc/
+!etc/xcode-graph.schema.json
 
 # Playwright MCP
 .playwright-mcp/
@@ -67,7 +68,7 @@ docs/.vitepress/cache/
 /temp
 
 # Graph data (contains local paths)
-/graph.json
+/src/fixtures/graph.json
 
 # Swift
 .build/

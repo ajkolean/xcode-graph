@@ -10,7 +10,7 @@
  * ```
  */
 
-import { icons } from '@shared/controllers/icon.adapter';
+import { icons } from '@shared/utils/icon-adapter';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 
 /**

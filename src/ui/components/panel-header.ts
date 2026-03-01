@@ -24,7 +24,7 @@
  * @slot badges - Badge elements to display below the header
  */
 
-import { icons } from '@shared/controllers/icon.adapter';
+import { icons } from '@shared/utils/icon-adapter';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 

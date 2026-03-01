@@ -40,6 +40,7 @@ export default defineConfig({
             'src/shared/schemas/*.test.ts',
             'src/shared/signals/*.test.ts',
             'src/shared/controllers/*.test.ts',
+            'src/shared/utils/*.test.ts',
             'src/shared/machines/*.test.ts',
             'src/graph/signals/*.test.ts',
             'src/graph/utils/*.test.ts',

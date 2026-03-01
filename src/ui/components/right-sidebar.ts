@@ -39,7 +39,7 @@ import { when } from 'lit/directives/when.js';
 import './right-sidebar-header';
 import './sidebar-collapse-icon';
 import './icon-button.js';
-import './collapsed-sidebar';
+import './right-sidebar-collapsed';
 import './node-details-panel';
 import './cluster-details-panel';
 import './clear-filters-button';

@@ -1,5 +1,10 @@
-import { FILTER_ICON_COLOR } from '@ui/utils/colors';
 import { type CSSResultGroup, css, LitElement, svg, type TemplateResult } from 'lit';
+
+/**
+ * Filter icon color - used for all filter section icons
+ * Based on --colors-chart-5 (160, 140, 255) with 0.7 alpha
+ */
+const FILTER_ICON_COLOR = 'var(--colors-filter-icon)';
 import { property } from 'lit/decorators.js';
 
 export type FilterIconName = 'product-types' | 'platforms' | 'projects' | 'packages';
