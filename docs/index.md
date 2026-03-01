@@ -4,7 +4,10 @@ layout: home
 hero:
   name: XcodeGraph
   text: Dependency Graph Visualization
-  tagline: An interactive, zoomable web component for visualizing Tuist dependency graphs — with filtering, search, transitive highlighting, and cluster-based layouts.
+  tagline: An interactive, zoomable web component for visualizing Xcode project dependency graphs — with filtering, search, transitive highlighting, and cluster-based layouts.
+  image:
+    src: /xcode-graph-icon.png
+    alt: XcodeGraph
   actions:
     - theme: brand
       text: Get Started

@@ -28,8 +28,19 @@ onMounted(async () => {
 })
 </script>
 
-# Demo
+<style scoped>
+:deep(.VPDoc .container) {
+  max-width: 100% !important;
+}
+:deep(.vp-doc) {
+  padding: 0 !important;
+}
+:deep(.VPDoc .content) {
+  padding: 0 !important;
+}
+:deep(.VPDoc .content-container) {
+  max-width: 100% !important;
+}
+</style>
 
-Try the `<xcode-graph>` component live. The example below loads a real Tuist dependency graph. Use the **Load graph JSON** button in the bottom-left corner to load your own `tuist graph --format json` output.
-
-<div id="xcode-graph-demo" style="width: 100%; height: calc(100vh - 200px); min-height: 500px; border: 1px solid var(--vp-c-border); border-radius: 8px; overflow: hidden;"></div>
+<div id="xcode-graph-demo" style="width: 100%; height: calc(100vh - 64px); overflow: hidden;"></div>

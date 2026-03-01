@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, "../..");
 export default defineConfig({
 	title: "XcodeGraph",
 	description:
-		"Interactive dependency graph visualization for Tuist projects",
+		"Interactive dependency graph visualization for Xcode projects",
 	base: "/xcode-graph/",
 	ignoreDeadLinks: [/^\/api\//, /^\/templates\//, /^\/.claude\//],
 
@@ -36,7 +36,7 @@ export default defineConfig({
 			{
 				name: "og:description",
 				content:
-					"Interactive dependency graph visualization for Tuist projects",
+					"Interactive dependency graph visualization for Xcode projects",
 			},
 		],
 	],
@@ -69,10 +69,6 @@ export default defineConfig({
 					items: [
 						{ text: "Overview", link: "/maintaining/" },
 						{ text: "Versioning", link: "/maintaining/versioning" },
-						{
-							text: "Migration Guide",
-							link: "/maintaining/migration-guide",
-						},
 					],
 				},
 			],

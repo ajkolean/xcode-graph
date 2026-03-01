@@ -53,7 +53,8 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const items = el.shadowRoot?.querySelector('.items');
-    expect(items).to.not.exist;
+    expect(items).to.exist;
+    expect(items?.classList.contains('collapsed')).to.be.true;
   });
 
   it('should show items when expanded', async () => {

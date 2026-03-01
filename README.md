@@ -1,6 +1,12 @@
-# xcode-graph
+<p align="center">
+  <img src="docs/public/xcode-graph-icon.png" alt="XcodeGraph" width="200" />
+</p>
 
-A Lit web component for visualizing [Tuist](https://tuist.dev) dependency graphs. Renders an interactive, zoomable canvas with filtering, search, transitive dependency highlighting, and cluster-based layouts — designed to be embedded in any web application.
+<h1 align="center">xcode-graph</h1>
+
+<p align="center">
+A Lit web component for visualizing Xcode project dependency graphs. Renders an interactive, zoomable canvas with filtering, search, transitive dependency highlighting, and cluster-based layouts — designed to be embedded in any web application.
+</p>
 
 ## Installation
 
@@ -66,7 +72,7 @@ These are the core fields. See the full type definitions in the [API Reference](
 Full documentation is available at **[ajkolean.github.io/xcode-graph](https://ajkolean.github.io/xcode-graph/)**.
 
 - [Getting Started](https://ajkolean.github.io/xcode-graph/guide/) — installation, usage, data shape
-- [Swift Integration](https://ajkolean.github.io/xcode-graph/guide/swift-integration) — how the Tuist CLI serves the component
+- [Swift Integration](https://ajkolean.github.io/xcode-graph/guide/swift-integration) — embedding the component in a Swift server
 - [Maintaining](https://ajkolean.github.io/xcode-graph/maintaining/) — versioning, migration guide
 - [Reference](https://ajkolean.github.io/xcode-graph/reference/) — layout algorithm, API reference
 

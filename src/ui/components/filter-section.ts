@@ -165,6 +165,16 @@ export class GraphFilterSection extends LitElement {
       max-height: 240px;
       overflow-y: auto;
       scrollbar-width: thin;
+      transition: max-height var(--durations-normal) var(--easings-default),
+                  opacity var(--durations-normal) var(--easings-default);
+      opacity: 1;
+    }
+
+    .items.collapsed {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
     }
 
     .item-button {
@@ -437,18 +447,13 @@ export class GraphFilterSection extends LitElement {
       </button>
 
       <!-- Section Items -->
-      ${when(
-        this.isExpanded,
-        () => html`
-            <div class="items">
-              ${virtualize({
-                items: this.items ?? [],
-                renderItem: (item: FilterItem) => this.renderItem(item),
-                keyFunction: (item: FilterItem) => item.key,
-              })}
-            </div>
-          `,
-      )}
+      <div class=${classMap({ items: true, collapsed: !this.isExpanded })}>
+        ${virtualize({
+          items: this.items ?? [],
+          renderItem: (item: FilterItem) => this.renderItem(item),
+          keyFunction: (item: FilterItem) => item.key,
+        })}
+      </div>
     `;
   }
 }
