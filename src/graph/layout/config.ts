@@ -125,4 +125,6 @@ export type LayoutConfig = typeof DEFAULT_CONFIG;
 export interface LayoutOptions {
   /** Override specific config values */
   configOverrides?: Partial<LayoutConfig>;
+  /** Lifecycle hooks for observing layout stages */
+  hooks?: import('./types').LayoutHooks;
 }

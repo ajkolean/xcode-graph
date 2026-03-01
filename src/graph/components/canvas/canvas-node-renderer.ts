@@ -5,7 +5,7 @@ import { colorWithAlpha } from '@graph/utils/canvas-colors';
 import { resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { ViewMode } from '@shared/schemas';
-import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
+import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
@@ -30,6 +30,7 @@ export interface NodeRenderContext {
   transitiveDeps: TransitiveResult | undefined;
   transitiveDependents: TransitiveResult | undefined;
   previewFilter: PreviewFilter | undefined;
+  dimmedNodeIds: Set<string>;
   nodeWeights: Map<string, number>;
   manualNodePositions: Map<string, { x: number; y: number }>;
   manualClusterPositions: Map<string, { x: number; y: number }>;
@@ -43,71 +44,20 @@ export interface NodeRenderContext {
   showTransitiveDependents: boolean;
 }
 
-function isSearchDimmed(node: GraphNode, searchQuery: string): boolean {
-  return !!searchQuery && !node.name.toLowerCase().includes(searchQuery.toLowerCase());
-}
-
-function isSelectionDimmed(
-  node: GraphNode,
-  isSelected: boolean,
-  isChainActive: boolean | GraphNode | null,
-  selectedNode: GraphNode | null,
-  rc: NodeRenderContext,
-): boolean {
-  if (!selectedNode || isSelected) return false;
-  // When toggles are active, dim nodes not in any active chain
-  if (isChainActive) {
-    return !isNodeInActiveChain(node.id, rc);
-  }
-  // No toggles active: don't dim anything
-  return false;
-}
-
-/** Check if a node belongs to any currently-toggled chain.
- *  Node depths: 0 = selected node itself, 1 = direct neighbor, >=2 = transitive */
-function isNodeInActiveChain(nodeId: string, rc: NodeRenderContext): boolean {
-  if (rc.transitiveDeps?.nodes.has(nodeId)) {
-    const depth = rc.transitiveDeps.nodeDepths?.get(nodeId) ?? 0;
-    if (depth <= 1 ? rc.showDirectDeps : rc.showTransitiveDeps) return true;
-  }
-  if (rc.transitiveDependents?.nodes.has(nodeId)) {
-    const depth = rc.transitiveDependents.nodeDepths?.get(nodeId) ?? 0;
-    if (depth <= 1 ? rc.showDirectDependents : rc.showTransitiveDependents) return true;
-  }
-  return false;
-}
-
-function isPreviewDimmed(node: GraphNode, previewFilter: PreviewFilter | undefined): boolean {
-  if (!previewFilter) return false;
-  switch (previewFilter.type) {
-    case 'nodeType':
-      return node.type !== previewFilter.value;
-    case 'platform':
-      return node.platform !== previewFilter.value;
-    case 'origin':
-      return node.origin !== previewFilter.value;
-    case 'project':
-      return node.project !== previewFilter.value;
-    case 'package':
-      return !(node.type === NodeType.Package && node.name === previewFilter.value);
-    default:
-      return false;
-  }
-}
-
+/**
+ * Check if a node should be dimmed.
+ *
+ * Search, selection/highlight-toggle, and preview-filter dimming are
+ * pre-computed in the `dimmedNodeIds` signal (O(1) Set lookup).
+ * Cluster dimming stays per-frame because `hoveredCluster`/`selectedCluster`
+ * are local interaction state in GraphCanvas, not signals.
+ */
 function isNodeDimmed(
   node: GraphNode,
-  isSelected: boolean,
-  isChainActive: boolean | GraphNode | null,
   clusterDim: boolean | '' | null,
   rc: NodeRenderContext,
 ): boolean {
-  return (
-    isSearchDimmed(node, rc.searchQuery) ||
-    isSelectionDimmed(node, isSelected, isChainActive, rc.selectedNode, rc) ||
-    isPreviewDimmed(node, rc.previewFilter) ||
-    !!clusterDim
-  );
+  return rc.dimmedNodeIds.has(node.id) || !!clusterDim;
 }
 
 function drawNodeEffects(
@@ -268,7 +218,6 @@ interface NodeVisualState {
 function resolveNodeVisualState(
   node: GraphNode,
   size: number,
-  isChainActive: boolean | GraphNode | null,
   connectedNodes: Set<string>,
   rc: NodeRenderContext,
 ): NodeVisualState {
@@ -284,7 +233,7 @@ function resolveNodeVisualState(
     (rc.hoveredCluster && clusterId !== rc.hoveredCluster) ||
     (rc.selectedCluster && clusterId !== rc.selectedCluster);
 
-  const isDimmed = isNodeDimmed(node, isSelected, isChainActive, clusterDim, rc);
+  const isDimmed = isNodeDimmed(node, clusterDim, rc);
   const alpha = prefersReducedMotion.get()
     ? (rc.nodeAlphaMap.get(node.id)?.target ?? 1.0)
     : getAnimatedAlpha(rc.nodeAlphaMap, node.id);
@@ -312,12 +261,11 @@ function renderSingleNode(
   x: number,
   y: number,
   size: number,
-  isChainActive: boolean | GraphNode | null,
   connectedNodes: Set<string>,
   rc: NodeRenderContext,
 ) {
   const { ctx, theme, time } = rc;
-  const vs = resolveNodeVisualState(node, size, isChainActive, connectedNodes, rc);
+  const vs = resolveNodeVisualState(node, size, connectedNodes, rc);
   ctx.globalAlpha = vs.alpha;
 
   drawNodeEffects(
@@ -369,12 +317,6 @@ function renderSingleNode(
 export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
   const { ctx, nodes, edges, nodeWeights, connectedNodes } = rc;
 
-  const isChainActive =
-    rc.showDirectDeps ||
-    rc.showTransitiveDeps ||
-    rc.showDirectDependents ||
-    rc.showTransitiveDependents;
-
   for (const node of nodes) {
     const pos = resolveNodeWorldPosition(
       node.id,
@@ -389,7 +331,7 @@ export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): vo
     const size = getNodeSize(node, edges, nodeWeights.get(node.id));
     if (!isCircleInViewport({ x, y }, size, viewport)) continue;
 
-    renderSingleNode(node, x, y, size, isChainActive, connectedNodes, rc);
+    renderSingleNode(node, x, y, size, connectedNodes, rc);
   }
   ctx.globalAlpha = 1.0;
 }

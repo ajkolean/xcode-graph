@@ -23,7 +23,7 @@ const MIN_CLUSTERS_FOR_WORKERS = 3;
 /** Maximum worker pool size */
 const MAX_WORKERS = 4;
 
-function serializeCluster(cluster: Cluster): SerializedMicroCluster {
+export function serializeCluster(cluster: Cluster): SerializedMicroCluster {
   return {
     id: cluster.id,
     name: cluster.name,
@@ -36,7 +36,7 @@ function serializeCluster(cluster: Cluster): SerializedMicroCluster {
   };
 }
 
-function deserializeResult(sr: SerializedMicroResult): MicroLayoutResult {
+export function deserializeResult(sr: SerializedMicroResult): MicroLayoutResult {
   return {
     clusterId: sr.clusterId,
     width: sr.width,

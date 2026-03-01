@@ -34,12 +34,18 @@ export async function computeHierarchicalLayout(
     ? { ...DEFAULT_CONFIG, ...opts.configOverrides }
     : DEFAULT_CONFIG;
 
+  // Hook: before layout starts
+  opts.hooks?.onBeforeLayout?.(nodes, edges);
+
   // 1. Build Cluster Graph (Meta-Graph)
   const clusterGraph = buildClusterGraph(edges, clusters);
 
   // 2. Micro-Layout: Compute dimensions and internal positions for each cluster
   // (Parallelized across web workers for large cluster counts)
   const microLayouts = await computeMicroLayoutsParallel(clusters, config);
+
+  // Hook: after micro layout
+  opts.hooks?.onAfterMicroLayout?.(clusters);
 
   // 3. Macro-Layout: Compute cluster world positions using ELK
   let clusterPositions = await computeMacroLayout(clusterGraph, microLayouts, config);
@@ -85,7 +91,7 @@ export async function computeHierarchicalLayout(
     );
   }
 
-  return {
+  const result: HierarchicalLayoutResult = {
     nodePositions,
     clusterPositions,
     clusters,
@@ -100,4 +106,9 @@ export async function computeHierarchicalLayout(
     nodeSccId: new Map(),
     sccSizes: new Map(),
   };
+
+  // Hook: layout complete
+  opts.hooks?.onLayoutComplete?.(result);
+
+  return result;
 }

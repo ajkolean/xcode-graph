@@ -250,7 +250,7 @@ export class GraphListItemRow extends LitElement {
 
         <!-- Chevron -->
         <span class=${classMap({ chevron: true, hovered: this.isHovered })}>
-          ${unsafeHTML(icons.ChevronRight)}
+          ${icons.ChevronRight}
         </span>
       </button>
     `;

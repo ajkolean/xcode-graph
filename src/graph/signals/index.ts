@@ -10,6 +10,7 @@ export { clearGraphData, setGraphData } from './data.actions';
 export { edges, nodes, resetDataSignals } from './data.signals';
 export {
   type DisplayData,
+  dimmedNodeIds,
   displayData,
   type FilteredData,
   filteredData,

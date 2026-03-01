@@ -1,5 +1,6 @@
 /** Default layout controller for graph layout computation. */
 
+import type { LayoutOptions } from '@graph/layout/config';
 import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
@@ -90,7 +91,11 @@ export class GraphLayoutController implements ReactiveController {
   /**
    * Compute layout - ELK runs asynchronously
    */
-  async computeLayout(nodes: GraphNode[], edges: GraphEdge[]): Promise<void> {
+  async computeLayout(
+    nodes: GraphNode[],
+    edges: GraphEdge[],
+    layoutOptions?: LayoutOptions,
+  ): Promise<void> {
     if (nodes.length === 0) {
       this._nodePositions = new Map();
       this._clusterPositions = new Map();
@@ -104,7 +109,7 @@ export class GraphLayoutController implements ReactiveController {
     }
 
     // ELK layout runs asynchronously
-    const layout = await this.layoutController.computeLayout(nodes, edges);
+    const layout = await this.layoutController.computeLayout(nodes, edges, layoutOptions);
 
     this._clusters = layout.clusters;
     this._nodePositions = layout.nodePositions;

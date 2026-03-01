@@ -198,7 +198,7 @@ export class GraphClusterHeader extends LitElement {
       >
         <!-- Cluster Icon -->
         <span slot="icon" class="cluster-icon" style="color: ${color}">
-          ${unsafeHTML(clusterIcon)}
+          ${clusterIcon}
         </span>
 
         <!-- Source Type and Type Badges -->

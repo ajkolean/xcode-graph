@@ -164,7 +164,7 @@ describe('LayoutController', () => {
       const { nodes, edges } = createLinearChain(3);
 
       const result1 = await controller.computeLayout(nodes, edges);
-      const result2 = await controller.computeLayout(nodes, edges, true); // Force recompute
+      const result2 = await controller.computeLayout(nodes, edges, undefined, true); // Force recompute
 
       expect(result2).not.toBe(result1); // New reference even with same input
     });
@@ -198,10 +198,10 @@ describe('LayoutController', () => {
       // Note: Due to d3-force using Math.random() internally, exact position
       // determinism isn't achievable. We verify structural consistency instead.
       controller.clearCache();
-      const result1 = await controller.computeLayout(nodes, edges, true);
+      const result1 = await controller.computeLayout(nodes, edges, undefined, true);
 
       controller.clearCache();
-      const result2 = await controller.computeLayout(nodes, edges, true);
+      const result2 = await controller.computeLayout(nodes, edges, undefined, true);
 
       // Same number of positions and clusters
       expect(result1.nodePositions.size).toBe(result2.nodePositions.size);
@@ -221,8 +221,8 @@ describe('LayoutController', () => {
     it('should produce consistent cluster count', async () => {
       const { nodes, edges } = createLinearChain(5);
 
-      const result1 = await controller.computeLayout(nodes, edges, true);
-      const result2 = await controller.computeLayout(nodes, edges, true);
+      const result1 = await controller.computeLayout(nodes, edges, undefined, true);
+      const result2 = await controller.computeLayout(nodes, edges, undefined, true);
 
       expect(result1.clusters.length).toBe(result2.clusters.length);
     });

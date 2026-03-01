@@ -7,6 +7,8 @@ export {
   type GraphLayoutConfig,
   GraphLayoutController,
 } from './graph/controllers/graph-layout.controller';
+export type { LayoutOptions } from './graph/layout/config';
+export type { LayoutHooks } from './graph/layout/types';
 export * from './graph/signals';
 export * from './graph/utils';
 export * from './services';

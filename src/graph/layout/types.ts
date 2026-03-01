@@ -90,3 +90,16 @@ export interface ClusterPositionWithPorts extends ClusterPosition {
   /** Ports on this cluster's boundary */
   ports: ClusterPort[];
 }
+
+/**
+ * Lifecycle hooks for layout customization.
+ * Consumers can observe or modify data at key points during layout computation.
+ */
+export interface LayoutHooks {
+  /** Called before layout computation starts */
+  onBeforeLayout?: (nodes: GraphNode[], edges: GraphEdge[]) => void;
+  /** Called after micro-layout (per-cluster interior) completes */
+  onAfterMicroLayout?: (clusters: Cluster[]) => void;
+  /** Called when layout computation is fully complete */
+  onLayoutComplete?: (result: HierarchicalLayoutResult) => void;
+}

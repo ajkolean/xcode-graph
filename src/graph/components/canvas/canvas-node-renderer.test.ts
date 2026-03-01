@@ -80,6 +80,7 @@ function createRenderContext(overrides: Partial<NodeRenderContext> = {}): NodeRe
     transitiveDeps: undefined,
     transitiveDependents: undefined,
     previewFilter: undefined,
+    dimmedNodeIds: new Set<string>(),
     nodeWeights: new Map(),
     manualNodePositions: new Map(),
     manualClusterPositions: new Map(),
@@ -199,6 +200,7 @@ describe('canvas-node-renderer', () => {
       ]);
       const rc = createRenderContext({
         previewFilter: { type: 'nodeType', value: NodeType.Framework },
+        dimmedNodeIds: new Set(['node1']),
         nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
@@ -239,6 +241,7 @@ describe('canvas-node-renderer', () => {
       ]);
       const rc = createRenderContext({
         previewFilter: { type: 'platform', value: Platform.macOS },
+        dimmedNodeIds: new Set(['node1']),
         nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
@@ -261,6 +264,7 @@ describe('canvas-node-renderer', () => {
       ]);
       const rc = createRenderContext({
         previewFilter: { type: 'origin', value: Origin.External },
+        dimmedNodeIds: new Set(['node1']),
         nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
@@ -283,6 +287,7 @@ describe('canvas-node-renderer', () => {
       ]);
       const rc = createRenderContext({
         previewFilter: { type: 'project', value: 'ProjectB' },
+        dimmedNodeIds: new Set(['node1']),
         nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
@@ -305,6 +310,7 @@ describe('canvas-node-renderer', () => {
       ]);
       const rc = createRenderContext({
         previewFilter: { type: 'package', value: 'SomePackage' },
+        dimmedNodeIds: new Set(['node1']),
         nodeAlphaMap,
       });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
@@ -351,7 +357,11 @@ describe('canvas-node-renderer', () => {
       const nodeAlphaMap = new Map([
         ['node1', { current: 0.3, target: 0.3, start: 0.3, progress: 0 }],
       ]);
-      const rc = createRenderContext({ searchQuery: 'xyz', nodeAlphaMap });
+      const rc = createRenderContext({
+        searchQuery: 'xyz',
+        dimmedNodeIds: new Set(['node1']),
+        nodeAlphaMap,
+      });
       const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
       // Node name is 'AppModule' which doesn't contain 'xyz' → dimmed
@@ -400,6 +410,7 @@ describe('canvas-node-renderer', () => {
         layout: createMockLayout(nodePositions, clusterPositions),
         selectedNode: nodes[0] as GraphNode,
         showDirectDeps: true,
+        dimmedNodeIds: new Set(['other']),
         transitiveDeps: {
           nodes: new Set(['selected']),
           edges: new Set(),

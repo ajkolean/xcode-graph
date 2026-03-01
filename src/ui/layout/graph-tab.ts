@@ -26,6 +26,7 @@ import '@graph/components/graph-overlays';
 import '../components/right-sidebar';
 
 import {
+  dimmedNodeIds,
   highlightDirectDependents,
   highlightDirectDeps,
   highlightTransitiveDependents,
@@ -193,6 +194,7 @@ export class GraphTab extends SignalWatcherLitElement {
               .transitiveDeps=${this.transitiveDeps}
               .transitiveDependents=${this.transitiveDependents}
               .previewFilter=${watch(previewFilter)}
+              .dimmedNodeIds=${watch(dimmedNodeIds)}
               ?show-direct-deps=${watch(highlightDirectDeps)}
               ?show-transitive-deps=${watch(highlightTransitiveDeps)}
               ?show-direct-dependents=${watch(highlightDirectDependents)}

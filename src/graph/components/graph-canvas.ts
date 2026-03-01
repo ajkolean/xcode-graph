@@ -111,6 +111,9 @@ export class GraphCanvas extends LitElement {
   @property({ type: Boolean, attribute: 'show-transitive-dependents' })
   declare showTransitiveDependents: boolean;
 
+  @property({ attribute: false })
+  declare dimmedNodeIds: Set<string>;
+
   @query('canvas')
   private declare canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D | undefined;
@@ -185,6 +188,7 @@ export class GraphCanvas extends LitElement {
     this.showTransitiveDeps = false;
     this.showDirectDependents = false;
     this.showTransitiveDependents = false;
+    this.dimmedNodeIds = new Set();
   }
 
   static override styles: CSSResultGroup = css`
@@ -691,6 +695,7 @@ export class GraphCanvas extends LitElement {
         transitiveDeps: this.transitiveDeps,
         transitiveDependents: this.transitiveDependents,
         previewFilter: this.previewFilter,
+        dimmedNodeIds: this.dimmedNodeIds,
         nodeWeights: this.nodeWeights,
         manualNodePositions: this.manualNodePositions,
         manualClusterPositions: this.manualClusterPositions,

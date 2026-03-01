@@ -364,7 +364,7 @@ export class GraphFilterSection extends LitElement {
             opacity: String(opacity),
             color: zoomColor,
           })}>
-            ${unsafeHTML(icons.Package)}
+            ${icons.Package}
           </span>
         `;
     }
@@ -421,7 +421,7 @@ export class GraphFilterSection extends LitElement {
         </div>
         <span class="header-title">${this.title}</span>
         <span class=${classMap({ chevron: true, expanded: this.isExpanded })}>
-          ${unsafeHTML(icons.ChevronRight)}
+          ${icons.ChevronRight}
         </span>
       </button>
 

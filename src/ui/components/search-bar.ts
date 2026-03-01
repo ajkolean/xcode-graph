@@ -194,7 +194,7 @@ export class GraphSearchBar extends LitElement {
   override render(): TemplateResult {
     return html`
       <div class="container">
-        <span class="search-icon">${unsafeHTML(icons.Search)}</span>
+        <span class="search-icon">${icons.Search}</span>
 
         <input
           type="text"
@@ -216,7 +216,7 @@ export class GraphSearchBar extends LitElement {
                   title="Clear search"
                   @click=${this.handleClear}
                 >
-                  ${unsafeHTML(icons.X)}
+                  ${icons.X}
                 </xcode-graph-icon-button>
               `
               : html`

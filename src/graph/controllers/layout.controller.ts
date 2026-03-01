@@ -8,6 +8,7 @@
  */
 
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
+import type { LayoutOptions } from '@graph/layout/config';
 import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
@@ -61,12 +62,14 @@ export class LayoutController implements ReactiveController {
    *
    * @param nodes - All graph nodes
    * @param edges - All graph edges
+   * @param layoutOptions - Optional layout options with hooks and config overrides
    * @param forceRecompute - Force recomputation even if cached
    * @returns Promise resolving to Layout result with positions and clusters
    */
   async computeLayout(
     nodes: GraphNode[],
     edges: GraphEdge[],
+    layoutOptions?: LayoutOptions,
     forceRecompute = false,
   ): Promise<LayoutResult> {
     if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
@@ -101,7 +104,7 @@ export class LayoutController implements ReactiveController {
         sccSizes,
         clusterEdges,
         routedEdges,
-      } = await computeHierarchicalLayout(nodes, edges, analyzedClusters);
+      } = await computeHierarchicalLayout(nodes, edges, analyzedClusters, layoutOptions);
 
       // Step 3: Add velocity properties for physics simulation
       const nodePositions = new Map<string, NodePosition>();

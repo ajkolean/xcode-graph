@@ -17,6 +17,7 @@
  * ```
  */
 
+import type { LayoutOptions } from '@graph/layout/config';
 import { SignalWatcher } from '@lit-labs/signals';
 import { ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
@@ -62,6 +63,9 @@ export class GraphApp extends SignalWatcherLitElement {
 
   @property({ attribute: false })
   declare edges: GraphEdge[];
+
+  @property({ attribute: false })
+  declare layoutOptions: LayoutOptions | undefined;
 
   private graphDataService: GraphDataService | null = null;
   private dataFingerprint: string | null = null;
