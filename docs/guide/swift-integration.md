@@ -27,11 +27,11 @@ func run(graph: XcodeGraph.Graph) throws {
 
 ## Web component CDN
 
-The `<xcode-graph>` web component is published to npm as `@ajkolean/xcodegraph`.
+The `<xcode-graph>` web component is published to npm as `xcode-graph`.
 The server loads it from:
 
 ```
-https://cdn.jsdelivr.net/npm/@ajkolean/xcodegraph/dist/tuistgraph.js
+https://cdn.jsdelivr.net/npm/xcode-graph/dist/tuistgraph.js
 ```
 
 To publish a new version:
@@ -39,7 +39,7 @@ To publish a new version:
 ```bash
 cd /path/to/tuistgraph
 pnpm build:lib            # produces dist/tuistgraph.js
-npm publish               # publishes to @ajkolean/xcodegraph
+npm publish               # publishes to xcode-graph
 ```
 
 ## What changed from the Cytoscape version

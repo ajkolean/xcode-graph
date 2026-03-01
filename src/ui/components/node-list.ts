@@ -95,12 +95,6 @@ export class GraphNodeList extends NodeListEventsBase {
   @property({ type: Boolean, attribute: 'show-kind' })
   declare showKind: boolean;
 
-  /**
-   * Whether to start expanded (default: true)
-   */
-  @property({ type: Boolean })
-  declare expanded: boolean;
-
   @state()
   private declare isExpanded: boolean;
 
@@ -111,13 +105,7 @@ export class GraphNodeList extends NodeListEventsBase {
     this.emptyMessage = 'No items';
     this.zoom = 1;
     this.showKind = true;
-    this.expanded = true;
     this.isExpanded = true;
-  }
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this.isExpanded = this.expanded;
   }
 
   // ========================================

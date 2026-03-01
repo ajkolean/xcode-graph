@@ -28,7 +28,8 @@
  */
 
 import { Origin } from '@shared/schemas/graph.types';
-import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
+import { LitElement, svg, type TemplateResult } from 'lit';
+import { property } from 'lit/decorators.js';
 
 /**
  * SVG cluster container with background, border, and glow effects.
@@ -41,18 +42,6 @@ import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 
  * @slot - Default slot for child nodes and edges
  */
 export class GraphCluster extends LitElement {
-  static override readonly properties: PropertyDeclarations = {
-    clusterId: { type: String, attribute: 'cluster-id' },
-    x: { type: Number },
-    y: { type: Number },
-    width: { type: Number },
-    height: { type: Number },
-    color: { type: String },
-    nodeCount: { type: Number, attribute: 'node-count' },
-    origin: { type: String },
-    isHovered: { type: Boolean, attribute: 'is-hovered' },
-  };
-
   // No Shadow DOM for SVG elements
   protected override createRenderRoot(): this {
     return this;
@@ -62,14 +51,31 @@ export class GraphCluster extends LitElement {
   // Properties
   // ========================================
 
+  @property({ type: String, attribute: 'cluster-id' })
   declare clusterId: string | undefined;
+
+  @property({ type: Number })
   declare x: number | undefined;
+
+  @property({ type: Number })
   declare y: number | undefined;
+
+  @property({ type: Number })
   declare width: number | undefined;
+
+  @property({ type: Number })
   declare height: number | undefined;
+
+  @property({ type: String })
   declare color: string | undefined;
+
+  @property({ type: Number, attribute: 'node-count' })
   declare nodeCount: number | undefined;
+
+  @property({ type: String })
   declare origin: Origin | undefined;
+
+  @property({ type: Boolean, attribute: 'is-hovered' })
   declare isHovered: boolean | undefined;
 
   // ========================================

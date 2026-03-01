@@ -1,5 +1,5 @@
 {
-  "name": "@ajkolean/xcodegraph",
+  "name": "xcode-graph",
   "version": "1.34.0",
   "xcodegraph": "1.34.5",
   "packageManager": "pnpm@10.30.2",

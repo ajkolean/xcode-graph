@@ -22,7 +22,8 @@
 
 import { generateBezierPath } from '@ui/utils/paths';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
-import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 'lit';
+import { LitElement, svg, type TemplateResult } from 'lit';
+import { property } from 'lit/decorators.js';
 
 /**
  * SVG edge/connection between nodes in the graph visualization.
@@ -31,19 +32,6 @@ import { LitElement, type PropertyDeclarations, svg, type TemplateResult } from 
  * @summary SVG edge connection between graph nodes
  */
 export class GraphEdge extends LitElement {
-  static override readonly properties: PropertyDeclarations = {
-    x1: { type: Number },
-    y1: { type: Number },
-    x2: { type: Number },
-    y2: { type: Number },
-    color: { type: String },
-    isHighlighted: { type: Boolean, attribute: 'is-highlighted' },
-    isDependent: { type: Boolean, attribute: 'is-dependent' },
-    opacity: { type: Number },
-    zoom: { type: Number },
-    animated: { type: Boolean },
-  };
-
   // No Shadow DOM for SVG elements - must be in same SVG context
   protected override createRenderRoot(): this {
     return this;
@@ -53,15 +41,34 @@ export class GraphEdge extends LitElement {
   // Properties
   // ========================================
 
+  @property({ type: Number })
   declare x1: number | undefined;
+
+  @property({ type: Number })
   declare y1: number | undefined;
+
+  @property({ type: Number })
   declare x2: number | undefined;
+
+  @property({ type: Number })
   declare y2: number | undefined;
+
+  @property({ type: String })
   declare color: string | undefined;
+
+  @property({ type: Boolean, attribute: 'is-highlighted' })
   declare isHighlighted: boolean | undefined;
+
+  @property({ type: Boolean, attribute: 'is-dependent' })
   declare isDependent: boolean | undefined;
+
+  @property({ type: Number })
   declare opacity: number | undefined;
+
+  @property({ type: Number })
   declare zoom: number | undefined;
+
+  @property({ type: Boolean })
   declare animated: boolean | undefined;
 
   // ========================================

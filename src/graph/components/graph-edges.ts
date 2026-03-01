@@ -19,13 +19,8 @@
 import { type ClusterPosition, type NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge as GraphEdgeType, GraphNode } from '@shared/schemas/graph.types';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
-import {
-  html,
-  LitElement,
-  type PropertyDeclarations,
-  type PropertyValues,
-  type TemplateResult,
-} from 'lit';
+import { html, LitElement, type PropertyValues, type TemplateResult } from 'lit';
+import { property } from 'lit/decorators.js';
 import './graph-edge';
 
 /**
@@ -35,21 +30,6 @@ import './graph-edge';
  * @summary Collection renderer for all graph edges
  */
 export class GraphEdges extends LitElement {
-  static override readonly properties: PropertyDeclarations = {
-    edges: { attribute: false },
-    nodes: { attribute: false },
-    finalNodePositions: { attribute: false },
-    clusterPositions: { attribute: false },
-    selectedNode: { attribute: false },
-    hoveredNode: { attribute: false },
-    clusterId: { type: String, attribute: 'cluster-id' },
-    hoveredClusterId: { type: String, attribute: 'hovered-cluster-id' },
-    viewMode: { type: String, attribute: 'view-mode' },
-    transitiveDeps: { attribute: false },
-    transitiveDependents: { attribute: false },
-    zoom: { type: Number },
-  };
-
   // No Shadow DOM for SVG
   protected override createRenderRoot(): this {
     return this;
@@ -59,15 +39,34 @@ export class GraphEdges extends LitElement {
   // Properties
   // ========================================
 
+  @property({ attribute: false })
   declare edges: GraphEdgeType[] | undefined;
+
+  @property({ attribute: false })
   declare nodes: GraphNode[] | undefined;
+
+  @property({ attribute: false })
   declare finalNodePositions: Map<string, NodePosition> | undefined;
+
+  @property({ attribute: false })
   declare clusterPositions: Map<string, ClusterPosition> | undefined;
+
+  @property({ attribute: false })
   declare selectedNode: GraphNode | null | undefined;
+
+  @property({ attribute: false })
   declare hoveredNode: string | null | undefined;
+
+  @property({ type: String, attribute: 'cluster-id' })
   declare clusterId: string | undefined;
+
+  @property({ type: String, attribute: 'hovered-cluster-id' })
   declare hoveredClusterId: string | null | undefined;
+
+  @property({ type: String, attribute: 'view-mode' })
   declare viewMode: ViewMode | undefined;
+
+  @property({ attribute: false })
   declare transitiveDeps:
     | {
         nodes: Set<string>;
@@ -76,6 +75,8 @@ export class GraphEdges extends LitElement {
         maxDepth: number;
       }
     | undefined;
+
+  @property({ attribute: false })
   declare transitiveDependents:
     | {
         nodes: Set<string>;
@@ -84,6 +85,8 @@ export class GraphEdges extends LitElement {
         maxDepth: number;
       }
     | undefined;
+
+  @property({ type: Number })
   declare zoom: number | undefined;
   private nodeToEdgesCache = new Map<string, Set<string>>();
 

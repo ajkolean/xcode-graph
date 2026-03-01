@@ -33,13 +33,8 @@ import {
 import type { PreviewFilter } from '@shared/signals';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
-import {
-  html,
-  LitElement,
-  type PropertyDeclarations,
-  type PropertyValues,
-  type TemplateResult,
-} from 'lit';
+import { html, LitElement, type PropertyValues, type TemplateResult } from 'lit';
+import { property, state } from 'lit/decorators.js';
 import './cluster-card';
 import './graph-edges';
 import './graph-node';
@@ -58,25 +53,6 @@ import './graph-node';
  * @fires node-click - Dispatched on child node click (detail: { node, originalEvent })
  */
 export class GraphClusterGroup extends LitElement {
-  static override readonly properties: PropertyDeclarations = {
-    cluster: { attribute: false },
-    clusterPosition: { attribute: false },
-    nodes: { attribute: false },
-    edges: { attribute: false },
-    finalNodePositions: { attribute: false },
-    selectedNode: { attribute: false },
-    hoveredNode: { attribute: false },
-    hoveredClusterId: { attribute: false },
-    searchQuery: { type: String, attribute: 'search-query' },
-    zoom: { type: Number },
-    viewMode: { type: String, attribute: 'view-mode' },
-    transitiveDeps: { attribute: false },
-    transitiveDependents: { attribute: false },
-    isSelected: { type: Boolean, attribute: 'is-selected' },
-    previewFilter: { attribute: false },
-    isClusterHovered: { state: true },
-  };
-
   // No Shadow DOM for SVG
   protected override createRenderRoot(): this {
     return this;
@@ -86,21 +62,52 @@ export class GraphClusterGroup extends LitElement {
   // Properties
   // ========================================
 
+  @property({ attribute: false })
   declare cluster: Cluster | undefined;
+
+  @property({ attribute: false })
   declare clusterPosition: ClusterPosition | undefined;
+
+  @property({ attribute: false })
   declare nodes: GraphNodeType[] | undefined;
+
+  @property({ attribute: false })
   declare edges: GraphEdge[] | undefined;
+
+  @property({ attribute: false })
   declare finalNodePositions: Map<string, NodePosition> | undefined;
+
+  @property({ attribute: false })
   declare selectedNode: GraphNodeType | null | undefined;
+
+  @property({ attribute: false })
   declare hoveredNode: string | null | undefined;
+
+  @property({ attribute: false })
   declare hoveredClusterId: string | null | undefined;
+
+  @property({ type: String, attribute: 'search-query' })
   declare searchQuery: string | undefined;
+
+  @property({ type: Number })
   declare zoom: number | undefined;
+
+  @property({ type: String, attribute: 'view-mode' })
   declare viewMode: ViewMode | undefined;
+
+  @property({ attribute: false })
   declare transitiveDeps: TransitiveResult | undefined;
+
+  @property({ attribute: false })
   declare transitiveDependents: TransitiveResult | undefined;
+
+  @property({ type: Boolean, attribute: 'is-selected' })
   declare isSelected: boolean | undefined;
+
+  @property({ attribute: false })
   declare previewFilter: PreviewFilter | undefined;
+
+  @state()
   private declare isClusterHovered: boolean | undefined;
 
   // Hover throttling

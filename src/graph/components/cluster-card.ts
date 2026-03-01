@@ -23,7 +23,8 @@
 import type { Cluster } from '@shared/schemas';
 import { generateColor } from '@ui/utils/color-generator';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
-import { LitElement, type PropertyDeclarations, type SVGTemplateResult, svg } from 'lit';
+import { LitElement, type SVGTemplateResult, svg } from 'lit';
+import { property } from 'lit/decorators.js';
 
 /**
  * SVG card background for cluster visualization.
@@ -33,19 +34,6 @@ import { LitElement, type PropertyDeclarations, type SVGTemplateResult, svg } fr
  * @fires cluster-click - Dispatched when the card is clicked (detail: { cluster })
  */
 export class GraphClusterCard extends LitElement {
-  static override readonly properties: PropertyDeclarations = {
-    cluster: { attribute: false },
-    x: { type: Number },
-    y: { type: Number },
-    width: { type: Number },
-    height: { type: Number },
-    isHighlighted: { type: Boolean, attribute: 'is-highlighted' },
-    isDimmed: { type: Boolean, attribute: 'is-dimmed' },
-    isSelected: { type: Boolean, attribute: 'is-selected' },
-    zoom: { type: Number },
-    clickable: { type: Boolean },
-  };
-
   // No Shadow DOM for SVG
   protected override createRenderRoot(): this {
     return this;
@@ -55,15 +43,34 @@ export class GraphClusterCard extends LitElement {
   // Properties
   // ========================================
 
+  @property({ attribute: false })
   declare cluster: Cluster | undefined;
+
+  @property({ type: Number })
   declare x: number | undefined;
+
+  @property({ type: Number })
   declare y: number | undefined;
+
+  @property({ type: Number })
   declare width: number | undefined;
+
+  @property({ type: Number })
   declare height: number | undefined;
+
+  @property({ type: Boolean, attribute: 'is-highlighted' })
   declare isHighlighted: boolean | undefined;
+
+  @property({ type: Boolean, attribute: 'is-dimmed' })
   declare isDimmed: boolean | undefined;
+
+  @property({ type: Boolean, attribute: 'is-selected' })
   declare isSelected: boolean | undefined;
+
+  @property({ type: Number })
   declare zoom: number | undefined;
+
+  @property({ type: Boolean })
   declare clickable: boolean | undefined;
 
   // ========================================
