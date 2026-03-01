@@ -1,36 +1,41 @@
 /**
  * Utilities for node and project colors
  * Noora-aligned palette
+ *
+ * Colors derive from the canonical palette in {@link @/shared/constants/node-palette}.
  */
 
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
+import { NODE_PALETTE } from '@/shared/constants/node-palette.ts';
 
 /**
  * Color mapping for different node types
  * Uses the Noora palette with high contrast colors
+ *
+ * Derived from {@link NODE_PALETTE} (single source of truth).
  */
 export const NODE_TYPE_COLORS: Record<string, string> = {
   // Orange (apps, main entry points) — Noora orange-500
-  app: '#F59E0B',
+  app: NODE_PALETTE.app,
 
   // Azure (frameworks, core infrastructure) — Noora azure-500
-  framework: '#0EA5E9',
+  framework: NODE_PALETTE.framework,
 
   // Green (libraries, utilities) — Noora green-500
-  library: '#22C55E',
+  library: NODE_PALETTE.library,
 
   // Pink (tests) — Noora pink-500
-  'test-unit': '#EC4899',
-  'test-ui': '#EC4899',
+  'test-unit': NODE_PALETTE['test-unit'],
+  'test-ui': NODE_PALETTE['test-ui'],
 
   // Blue (CLI tools) — Noora blue-500
-  cli: '#3B82F6',
+  cli: NODE_PALETTE.cli,
 
   // Yellow (packages) — Noora yellow-500
-  package: '#EAB308',
+  package: NODE_PALETTE.package,
 };
 
-const DEFAULT_NODE_COLOR = '#F59E0B';
+const DEFAULT_NODE_COLOR = NODE_PALETTE.app;
 
 /**
  * Gets the color for a node type (static fallback for DOM-based components).
@@ -63,7 +68,5 @@ const THEME_KEY_MAP: Record<string, keyof CanvasTheme> = {
  */
 export function getNodeTypeColorFromTheme(type: string, theme: CanvasTheme): string {
   const key = THEME_KEY_MAP[type];
-  if (!key) return theme.nodeApp;
-  const color = theme[key];
-  return typeof color === 'string' ? color : theme.nodeApp;
+  return key ? theme[key] : theme.nodeApp;
 }

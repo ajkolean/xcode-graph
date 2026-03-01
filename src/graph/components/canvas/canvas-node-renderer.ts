@@ -7,6 +7,7 @@ import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { ViewMode } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
+import { prefersReducedMotion } from '@shared/signals/reduced-motion';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
 import { isCircleInViewport, type ViewportBounds } from '@ui/utils/viewport';
@@ -124,7 +125,7 @@ function drawNodeEffects(
   theme: CanvasTheme,
 ) {
   if (isCycleNode && !isDimmed && chainAlpha > 0.3) {
-    const pulse = (Math.sin(time / 300) + 1) / 2;
+    const pulse = prefersReducedMotion.get() ? 0.5 : (Math.sin(time / 300) + 1) / 2;
     const glowRadius = size + 6 + pulse * 3;
 
     ctx.beginPath();
@@ -217,16 +218,21 @@ function drawNodeLabel(
 
   const labelY = y + size + fontSize * 1.8;
 
-  // Shadow halo for readability (single pass with canvas shadow)
-  ctx.save();
-  ctx.shadowColor = theme.shadowColor;
-  ctx.shadowBlur = 3;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 0;
+  // Dark halo pass: draw text in shadow color at small offsets for readability
+  ctx.globalAlpha = alpha * 0.7;
+  ctx.fillStyle = theme.shadowColor;
+  const offsets = [-1.5, 0, 1.5];
+  for (const ox of offsets) {
+    for (const oy of offsets) {
+      if (ox === 0 && oy === 0) continue;
+      ctx.fillText(labelText, x + ox, labelY + oy);
+    }
+  }
+
+  // Clean text on top
   ctx.globalAlpha = alpha;
   ctx.fillStyle = adjustedColor;
   ctx.fillText(labelText, x, labelY);
-  ctx.restore();
 }
 
 function isHubNode(nodeId: string, rc: NodeRenderContext): boolean {
@@ -279,7 +285,9 @@ function resolveNodeVisualState(
     (rc.selectedCluster && clusterId !== rc.selectedCluster);
 
   const isDimmed = isNodeDimmed(node, isSelected, isChainActive, clusterDim, rc);
-  const alpha = getAnimatedAlpha(rc.nodeAlphaMap, node.id);
+  const alpha = prefersReducedMotion.get()
+    ? (rc.nodeAlphaMap.get(node.id)?.target ?? 1.0)
+    : getAnimatedAlpha(rc.nodeAlphaMap, node.id);
   const isCycleNode = rc.layout.cycleNodes?.has(node.id) ?? false;
   const isInChain =
     (rc.transitiveDeps?.nodes.has(node.id) ?? false) ||

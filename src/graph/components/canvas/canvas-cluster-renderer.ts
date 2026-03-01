@@ -1,10 +1,20 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import { hexToRgba } from '@graph/utils/canvas-colors';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
+import { prefersReducedMotion } from '@shared/signals/reduced-motion';
 import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-constants';
 import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
+
+// ==================== Gradient Cache ====================
+
+const gradientCache = new Map<string, CanvasGradient>();
+
+/** Clear the radial gradient cache (e.g. on theme change or layout reset). */
+export function clearGradientCache(): void {
+  gradientCache.clear();
+}
 
 export interface ClusterRenderContext {
   ctx: CanvasRenderingContext2D;
@@ -58,16 +68,22 @@ function drawClusterFillAndBorder(
   zoom: number,
   time: number,
   nodeCount: number,
+  clusterId: string,
 ) {
   const dimFactor = shouldDim ? 0.3 : 1.0;
   const borderOpacity = adjustOpacityForZoom(0.7, zoom);
   const fillOpacity = getClusterFillOpacity(nodeCount, isActive);
 
-  // Radial gradient fill (brighter center → fade at edges)
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-  grad.addColorStop(0, hexToRgba(clusterColor, fillOpacity * 1.8));
-  grad.addColorStop(0.6, hexToRgba(clusterColor, fillOpacity));
-  grad.addColorStop(1, hexToRgba(clusterColor, fillOpacity * 0.3));
+  // Cache radial gradient by cluster id, rounded radius, and zoom
+  const cacheKey = `${clusterId}-${Math.round(radius)}-${Math.round(zoom * 10)}`;
+  let grad = gradientCache.get(cacheKey);
+  if (!grad) {
+    grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    grad.addColorStop(0, hexToRgba(clusterColor, fillOpacity * 1.8));
+    grad.addColorStop(0.6, hexToRgba(clusterColor, fillOpacity));
+    grad.addColorStop(1, hexToRgba(clusterColor, fillOpacity * 0.3));
+    gradientCache.set(cacheKey, grad);
+  }
 
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -80,7 +96,7 @@ function drawClusterFillAndBorder(
   ctx.globalAlpha = (isActive ? 1.0 : borderOpacity) * dimFactor;
   ctx.setLineDash(clusterType === 'project' ? [8, 8] : [3, 8]);
 
-  if (isSelected) {
+  if (isSelected && !prefersReducedMotion.get()) {
     ctx.lineDashOffset = -time / 50;
   }
 
@@ -172,6 +188,7 @@ function renderSingleCluster(
   nodeCount: number,
   centroidAlpha: number,
   fullAlpha: number,
+  clusterId: string,
 ) {
   const { ctx, zoom, time } = rc;
 
@@ -194,6 +211,7 @@ function renderSingleCluster(
       zoom,
       time,
       nodeCount,
+      clusterId,
     );
   }
 }
@@ -231,6 +249,7 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
       cluster.nodes.length,
       centroidAlpha,
       fullAlpha,
+      cluster.id,
     );
 
     // Always draw cluster labels at all zoom levels

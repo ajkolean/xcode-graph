@@ -1,22 +1,14 @@
 /**
- * Signals Module - Lit Signals state management
- *
  * Centralized exports for all application state signals.
- * Replaces Zustand stores with native Lit Signals integration.
  *
  * @module signals
  */
 
-// ==================== Graph Signals ====================
-
 export {
-  // State signals
   circularDependencies,
-  // Actions
   clearGraphData,
   createIsNodeSelected,
   type DisplayData,
-  // Computed
   displayData,
   edges,
   type FilteredData,
@@ -29,7 +21,6 @@ export {
   highlightTransitiveDeps,
   hoveredNode,
   nodes,
-  // Reset utilities
   resetDataSignals,
   resetGraphSignals,
   resetHighlightToggles,
@@ -46,19 +37,14 @@ export {
   viewMode,
 } from '@graph/signals/index';
 
-// ==================== Filter Signals ====================
-
 export {
-  // State signals
   allPackages,
   allProjects,
-  // Actions
   clearFilters,
   DEFAULT_FILTERS,
   filters,
   hasActiveFilters,
   initializeFromData,
-  // Reset utility
   resetFilterSignals,
   searchQuery,
   setFilters,
@@ -70,17 +56,12 @@ export {
   toggleProject,
 } from '@shared/signals/index';
 
-// ==================== UI Signals ====================
-
 export {
-  // State signals
   activeTab,
   enableAnimation,
   type PreviewFilter,
   previewFilter,
-  // Reset utility
   resetUISignals,
-  // Actions
   resetZoom,
   setActiveTab,
   setEnableAnimation,
@@ -91,8 +72,6 @@ export {
   zoomIn,
   zoomOut,
 } from '@shared/signals/index';
-
-// ==================== Reset All Utility ====================
 
 import { resetDataSignals, resetGraphSignals } from '@graph/signals/index';
 import { resetFilterSignals, resetUISignals } from '@shared/signals/index';

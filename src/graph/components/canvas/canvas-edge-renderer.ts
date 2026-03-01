@@ -5,6 +5,7 @@ import { resolveClusterPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
+import { prefersReducedMotion } from '@shared/signals/reduced-motion';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
@@ -294,7 +295,7 @@ function applyEdgeStyle(
     ctx.setLineDash([]);
   }
 
-  ctx.lineDashOffset = animateEdge ? rc.time / 20 : 0;
+  ctx.lineDashOffset = animateEdge && !prefersReducedMotion.get() ? rc.time / 20 : 0;
 }
 
 function shouldHideIntraClusterEdge(
