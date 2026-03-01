@@ -14,4 +14,4 @@ import graphJson from './tuist-graph.json';
 export const rawTuistGraph = graphJson as Graph;
 
 /** Transformed graph data ready for visualization */
-export const tuistGraphData: GraphData = transformTuistGraph(rawTuistGraph);
+export const tuistGraphData: GraphData = transformTuistGraph(rawTuistGraph).data;

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Graph } from './tuist-graph.schema.generated';
+import { safeParseGraph } from './tuist-graph.validation';
 
 // Path to the fixture (copied from Swift test resources)
 const FIXTURE_PATH = resolve(__dirname, '../fixtures/tuist-graph.json');
@@ -84,5 +85,32 @@ describe('tuist-graph.schema.generated types match Swift Codable JSON', () => {
         }
       }
     }
+  });
+});
+
+describe('safeParseGraph boundary validation against real fixture', () => {
+  it('should validate the real fixture successfully', () => {
+    const raw = JSON.parse(readFileSync(FIXTURE_PATH, 'utf-8'));
+    const result = safeParseGraph(raw);
+
+    expect(result.success).toBe(true);
+    expect(result.data).toBeDefined();
+    expect(result.data!.name).toBeTruthy();
+    expect(result.data!.projects.length).toBeGreaterThan(0);
+    expect(result.data!.dependencies.length).toBeGreaterThan(0);
+    // Real fixture should have no warnings about unknown top-level fields
+    expect(result.warnings).toEqual([]);
+  });
+
+  it('should preserve all data through lenient parsing', () => {
+    const raw = JSON.parse(readFileSync(FIXTURE_PATH, 'utf-8'));
+    const result = safeParseGraph(raw);
+
+    expect(result.success).toBe(true);
+    // Verify the parsed data has the same shape as the raw input
+    expect(result.data!.name).toBe(raw.name);
+    expect(result.data!.path).toBe(raw.path);
+    expect(result.data!.projects.length).toBe(raw.projects.length);
+    expect(result.data!.dependencies.length).toBe(raw.dependencies.length);
   });
 });

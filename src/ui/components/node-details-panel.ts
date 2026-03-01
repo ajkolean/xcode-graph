@@ -173,8 +173,8 @@ export class GraphNodeDetailsPanel extends LitElement {
         empty-message="No dependencies"
         .zoom=${this.zoom}
         show-kind
-        @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
-        @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
+        @node-select=${(e: CustomEvent<{ node: GraphNode | null }>) => this.bubbleEvent('node-select', e.detail)}
+        @node-hover=${(e: CustomEvent<{ nodeId: string | null }>) => this.bubbleEvent('node-hover', e.detail)}
       ></graph-node-list>
 
       <graph-node-list
@@ -184,8 +184,8 @@ export class GraphNodeDetailsPanel extends LitElement {
         empty-message="No dependents"
         .zoom=${this.zoom}
         show-kind
-        @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
-        @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
+        @node-select=${(e: CustomEvent<{ node: GraphNode | null }>) => this.bubbleEvent('node-select', e.detail)}
+        @node-hover=${(e: CustomEvent<{ nodeId: string | null }>) => this.bubbleEvent('node-hover', e.detail)}
       ></graph-node-list>
 
       ${

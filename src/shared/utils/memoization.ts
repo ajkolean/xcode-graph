@@ -35,13 +35,11 @@ export function mapsEqual<K, V>(a: Map<K, V>, b: Map<K, V>): boolean {
 /**
  * Deep equality check for plain objects
  */
-export function objectsEqual(a: object, b: object): boolean {
+export function objectsEqual<T extends Record<string, unknown>>(a: T, b: T): boolean {
   const keysA = Object.keys(a);
   const keysB = Object.keys(b);
   if (keysA.length !== keysB.length) return false;
-  return keysA.every((key) =>
-    deepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]),
-  );
+  return keysA.every((key) => deepEqual(a[key], b[key]));
 }
 
 /**

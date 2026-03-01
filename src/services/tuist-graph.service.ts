@@ -173,10 +173,7 @@ function extractBuildSettings(
 
     // Compilation conditions (from SWIFT_ACTIVE_COMPILATION_CONDITIONS)
     // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
-    const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as
-      | string[]
-      | string
-      | undefined;
+    const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as string[] | string | undefined;
     if (conditions) {
       if (Array.isArray(conditions)) {
         result.compilationConditions = conditions.map(String);
@@ -420,10 +417,7 @@ function populateOptionalMetadata(
   if (buildSettings) {
     node.buildSettings = buildSettings;
   }
-  const { resourceCount, notableResources } = extractResourceMetadata(
-    target.resources,
-    collector,
-  );
+  const { resourceCount, notableResources } = extractResourceMetadata(target.resources, collector);
   if (resourceCount > 0) {
     node.resourceCount = resourceCount;
   }
@@ -498,10 +492,15 @@ function extractProjectTargets(
 
   // Projects is flat alternating: [path, Project, path, Project, ...]
   for (let i = 0; i < projects.length; i += 2) {
-    const projectPath = projects[i] as string;
-    const project = projects[i + 1] as Project;
+    const projectPath = projects[i];
+    const project = projects[i + 1];
 
-    if (!project || typeof project !== 'object' || !('targets' in project)) {
+    if (typeof projectPath !== 'string' || !project || typeof project !== 'object') {
+      collector.warn(`Unexpected project entry shape at index ${i}`);
+      continue;
+    }
+
+    if (!('targets' in project)) {
       collector.warn(`Skipping invalid project entry at index ${i + 1}`);
       continue;
     }
@@ -533,11 +532,11 @@ function processDependencies(
 
   // Dependencies is flat alternating: [sourceDep, targetDeps[], sourceDep, targetDeps[], ...]
   for (let i = 0; i < dependencies.length; i += 2) {
-    const sourceDep = dependencies[i] as GraphDependency;
-    const targetDeps = dependencies[i + 1] as GraphDependency[];
+    const sourceDep = dependencies[i];
+    const targetDeps = dependencies[i + 1];
 
-    if (!Array.isArray(targetDeps)) {
-      collector.warn(`Skipping invalid dependency entry at index ${i + 1}`);
+    if (!sourceDep || typeof sourceDep !== 'object' || !Array.isArray(targetDeps)) {
+      collector.warn(`Unexpected dependency entry shape at index ${i}`);
       continue;
     }
 
@@ -602,8 +601,8 @@ export function transformTuistGraph(raw: unknown): TransformResult {
     };
   }
 
-  // Cast to Graph for the transform — boundary validation passed
-  const graph = raw as Graph;
+  // Use validated data — boundary validation passed
+  const graph = parseResult.data as Graph;
 
   const { nodes, lookup } = extractProjectTargets(graph.projects, collector);
   const edges = processDependencies(graph.dependencies, nodes, lookup, collector);

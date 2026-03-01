@@ -170,8 +170,8 @@ export class GraphClusterDetailsPanel extends LitElement {
           total-targets-count=${this.clusterNodes.length}
           .edges=${this.edges}
           .zoom=${this.zoom}
-          @node-select=${(e: CustomEvent) => this.bubbleEvent('node-select', e.detail)}
-          @node-hover=${(e: CustomEvent) => this.bubbleEvent('node-hover', e.detail)}
+          @node-select=${(e: CustomEvent<{ node: GraphNode | null }>) => this.bubbleEvent('node-select', e.detail)}
+          @node-hover=${(e: CustomEvent<{ nodeId: string | null }>) => this.bubbleEvent('node-hover', e.detail)}
         ></graph-cluster-targets-list>
       </div>
     `;

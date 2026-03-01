@@ -7,8 +7,8 @@
  * @module test-utils/machine-helpers
  */
 
+import { createTypedMachine } from '@shared/utils/zag-helpers';
 import type { Machine, MachineSchema, Service } from '@zag-js/core';
-import { VanillaMachine } from '@zag-js/vanilla';
 
 /**
  * Configuration for creating a test machine service
@@ -73,11 +73,7 @@ export function createMachineTestContext<TSchema extends MachineSchema>(
   const { machine, props = {} as TSchema['props'], context } = config;
 
   // Create the Vanilla Machine instance with props
-  const instance = new VanillaMachine(
-    machine as Machine<MachineSchema>,
-    props as Partial<MachineSchema['props']>,
-  );
-  const service = instance.service as unknown as Service<TSchema>;
+  const { instance, service } = createTypedMachine(machine, props);
 
   // Override initial context if provided
   if (context) {

@@ -9,13 +9,8 @@
     "declarationDir": "./dist/types",
     "isolatedDeclarations": false,
     "skipLibCheck": true,
-    "strictNullChecks": false,
-    "exactOptionalPropertyTypes": false,
-    "noImplicitAny": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "strict": false,
-    "noImplicitOverride": false
+    "noUnusedParameters": false
   },
   "include": ["src"],
   "exclude": ["src/**/*.test.ts", "src/components/**", "node_modules"]

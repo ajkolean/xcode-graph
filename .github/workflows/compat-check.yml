@@ -1,0 +1,179 @@
+name: XcodeGraph Compatibility Check
+
+on:
+  # Manual trigger — run against any XcodeGraph version
+  workflow_dispatch:
+    inputs:
+      xcodegraph_version:
+        description: 'XcodeGraph version to test against (e.g., "1.35.0"). Leave blank for latest.'
+        required: false
+        type: string
+
+  # Cross-repo trigger — Tuist CI fires this when bumping XcodeGraph
+  repository_dispatch:
+    types: [xcodegraph-updated]
+
+  # Weekly safety net — catch drift even without explicit triggers
+  schedule:
+    - cron: '0 9 * * 1' # Every Monday at 9:00 UTC
+
+jobs:
+  compat-test:
+    name: Compatibility Test
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Determine which XcodeGraph version to test.
+      # All external inputs are passed through env vars to avoid injection.
+      - name: Resolve XcodeGraph version
+        id: resolve-version
+        env:
+          INPUT_VERSION: ${{ inputs.xcodegraph_version }}
+          DISPATCH_VERSION: ${{ github.event.client_payload.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Validate version format (digits and dots only, with optional leading v)
+          validate_version() {
+            if [[ ! "$1" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::error::Invalid version format: '$1'. Expected semver like '1.35.0' or 'v1.35.0'."
+              exit 1
+            fi
+          }
+
+          if [[ -n "${INPUT_VERSION}" ]]; then
+            validate_version "${INPUT_VERSION}"
+            echo "version=${INPUT_VERSION}" >> "$GITHUB_OUTPUT"
+            echo "source=manual" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${DISPATCH_VERSION}" ]]; then
+            validate_version "${DISPATCH_VERSION}"
+            echo "version=${DISPATCH_VERSION}" >> "$GITHUB_OUTPUT"
+            echo "source=repository_dispatch" >> "$GITHUB_OUTPUT"
+          else
+            # Fetch latest release tag from XcodeGraph repo
+            LATEST=$(gh api repos/tuist/XcodeGraph/releases/latest --jq '.tag_name')
+            validate_version "${LATEST}"
+            echo "version=${LATEST}" >> "$GITHUB_OUTPUT"
+            echo "source=latest" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Print resolved version
+        env:
+          XCGRAPH_VERSION: ${{ steps.resolve-version.outputs.version }}
+          XCGRAPH_SOURCE: ${{ steps.resolve-version.outputs.source }}
+        run: echo "Testing against XcodeGraph ${XCGRAPH_VERSION} (source: ${XCGRAPH_SOURCE})"
+
+      # Update GraphValidator to use the target XcodeGraph version and regenerate types
+      - name: Update XcodeGraph dependency
+        working-directory: packages/GraphValidator
+        env:
+          XCGRAPH_VERSION: ${{ steps.resolve-version.outputs.version }}
+        run: |
+          # Strip leading 'v' if present (tags are v1.34.5, Package.swift wants 1.34.5)
+          VERSION="${XCGRAPH_VERSION#v}"
+          sed -i '' "s/exact: \"[0-9]*\.[0-9]*\.[0-9]*\"/exact: \"${VERSION}\"/" Package.swift
+          echo "Updated Package.swift to XcodeGraph ${VERSION}"
+          grep XcodeGraph Package.swift
+
+      - name: Resolve Swift dependencies
+        working-directory: packages/GraphValidator
+        run: swift package resolve
+
+      # Find the checked-out XcodeGraph sources for type generation
+      - name: Locate XcodeGraph sources
+        id: xcodegraph-sources
+        working-directory: packages/GraphValidator
+        run: |
+          CHECKOUT_DIR=$(find .build -type d -name "XcodeGraph" -path "*/checkouts/*" | head -1)
+          SOURCES_DIR="${CHECKOUT_DIR}/Sources/XcodeGraph"
+          if [[ ! -d "${SOURCES_DIR}" ]]; then
+            echo "::error::Could not find XcodeGraph sources at ${SOURCES_DIR}"
+            exit 1
+          fi
+          echo "path=${SOURCES_DIR}" >> "$GITHUB_OUTPUT"
+          echo "Found XcodeGraph sources at: ${SOURCES_DIR}"
+
+      # Regenerate TypeScript types from the new XcodeGraph version
+      - name: Regenerate TypeScript types
+        working-directory: packages/GraphValidator
+        env:
+          XCODEGRAPH_SOURCES: ${{ steps.xcodegraph-sources.outputs.path }}
+        run: |
+          swift run transform-graph \
+            --source-dir "${XCODEGRAPH_SOURCES}" \
+            --output ../../src/services/tuist-graph.schema.generated.ts
+
+      # Show what changed in the generated types
+      - name: Diff generated types
+        run: |
+          if git diff --quiet src/services/tuist-graph.schema.generated.ts; then
+            echo "No changes to generated types."
+          else
+            echo "### Generated type changes:" >> "$GITHUB_STEP_SUMMARY"
+            echo '```diff' >> "$GITHUB_STEP_SUMMARY"
+            git diff src/services/tuist-graph.schema.generated.ts >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Run the full test suite including compat tests
+      - name: Run tests
+        run: pnpm test:run
+
+      - name: Run lint
+        run: pnpm check
+
+      # Build to catch type errors
+      - name: Build
+        run: pnpm build:lib
+
+      # Report results
+      - name: Summary
+        if: always()
+        env:
+          XCGRAPH_VERSION: ${{ steps.resolve-version.outputs.version }}
+          XCGRAPH_SOURCE: ${{ steps.resolve-version.outputs.source }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          echo "## XcodeGraph Compatibility Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**XcodeGraph version:** \`${XCGRAPH_VERSION}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Trigger:** ${XCGRAPH_SOURCE}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ "${JOB_STATUS}" == "success" ]]; then
+            echo "### Result: Compatible" >> "$GITHUB_STEP_SUMMARY"
+            echo "All tests, lint, and build passed." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### Result: Incompatible" >> "$GITHUB_STEP_SUMMARY"
+            echo "One or more checks failed. Review the logs above." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Create an issue on failure (only for scheduled/dispatch runs, not manual)
+      - name: Create issue on failure
+        if: failure() && steps.resolve-version.outputs.source != 'manual'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          XCGRAPH_VERSION: ${{ steps.resolve-version.outputs.version }}
+          XCGRAPH_SOURCE: ${{ steps.resolve-version.outputs.source }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue create \
+            --title "XcodeGraph ${XCGRAPH_VERSION} compatibility failure" \
+            --body "The compatibility check failed against XcodeGraph \`${XCGRAPH_VERSION}\`.
+
+          **Trigger:** ${XCGRAPH_SOURCE}
+          **Run:** ${RUN_URL}
+
+          Please investigate and update the schema/transform layer as needed." \
+            --label "compatibility"

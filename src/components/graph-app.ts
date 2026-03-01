@@ -18,6 +18,7 @@
  */
 
 import { SignalWatcher } from '@lit-labs/signals';
+import { ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import {
   type CSSResultGroup,
@@ -28,9 +29,9 @@ import {
   type TemplateResult,
 } from 'lit';
 import { property } from 'lit/decorators.js';
+import { ErrorService } from '@/services/error-service';
 import { GraphAnalysisService } from '@/services/graphAnalysisService';
 import { GraphDataService } from '@/services/graphDataService';
-import type { Graph } from '@/services/tuist-graph.schema.generated';
 import { transformTuistGraph } from '@/services/tuist-graph.service';
 import '@ui/layout/graph-tab';
 import '@ui/components/error-notification-container';
@@ -132,11 +133,44 @@ export class GraphApp extends SignalWatcherLitElement {
   /**
    * Load raw Tuist graph JSON (the output of `tuist graph --format json`).
    * Transforms it into GraphData and sets nodes/edges automatically.
+   * Shows user-facing warnings/errors via ErrorService if the transform has issues.
    */
-  public loadRawGraph(raw: Graph): void {
-    const data = transformTuistGraph(raw);
-    this.nodes = data.nodes;
-    this.edges = data.edges;
+  public loadRawGraph(raw: unknown): void {
+    try {
+      const result = transformTuistGraph(raw);
+
+      if (result.warnings.length > 0) {
+        const errorService = ErrorService.getInstance();
+        errorService.handleWarning(
+          `Graph loaded with ${result.warnings.length} compatibility warning(s)`,
+          ErrorCategory.Data,
+        );
+        for (const warning of result.warnings) {
+          console.warn('[GraphApp]', warning);
+        }
+      }
+
+      if (result.data.nodes.length === 0) {
+        const errorService = ErrorService.getInstance();
+        errorService.handleError(new Error('Graph transform produced no nodes'), {
+          severity: ErrorSeverity.Error,
+          category: ErrorCategory.Data,
+          userMessage: 'Failed to load graph: no nodes found in the data',
+        });
+        return;
+      }
+
+      this.nodes = result.data.nodes;
+      this.edges = result.data.edges;
+    } catch (error) {
+      const errorService = ErrorService.getInstance();
+      errorService.handleError(error, {
+        severity: ErrorSeverity.Critical,
+        category: ErrorCategory.Data,
+        userMessage: 'Failed to load graph data — the format may be incompatible',
+        dismissible: false,
+      });
+    }
   }
 
   // ========================================
