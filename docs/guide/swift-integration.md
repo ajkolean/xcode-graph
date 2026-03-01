@@ -43,15 +43,6 @@ pnpm build:lib            # produces dist/xcodegraph.js
 npm publish               # publishes to xcode-graph
 ```
 
-## What changed from the Cytoscape version
-
-| Before | After |
-|--------|-------|
-| `CytoscapeGraph` + Swift-side transform | Raw `XcodeGraph.Graph` — no transform needed |
-| Bundled Cytoscape assets in Swift resources | HTML loads `<xcode-graph>` from CDN — no bundled assets |
-| Basic node/edge display | Clustered layout, transitive chains, depth highlighting |
-| No filtering | Type, origin, platform, project, package filters |
-
 ## File structure
 
 ```

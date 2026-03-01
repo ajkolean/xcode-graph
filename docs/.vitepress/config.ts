@@ -77,10 +77,6 @@ export default defineConfig({
 					text: "Reference",
 					items: [
 						{ text: "Overview", link: "/reference/" },
-						{
-							text: "Layout Algorithm",
-							link: "/reference/layout-algorithm",
-						},
 					],
 				},
 			],

@@ -73,7 +73,7 @@ Full documentation is available at **[ajkolean.github.io/xcode-graph](https://aj
 
 - [Getting Started](https://ajkolean.github.io/xcode-graph/guide/) — installation, usage, data shape
 - [Swift Integration](https://ajkolean.github.io/xcode-graph/guide/swift-integration) — embedding the component in a Swift server
-- [Maintaining](https://ajkolean.github.io/xcode-graph/maintaining/) — versioning, migration guide
+- [Maintaining](https://ajkolean.github.io/xcode-graph/maintaining/) — versioning, compatibility checks, and publishing
 - [Reference](https://ajkolean.github.io/xcode-graph/reference/) — layout algorithm, API reference
 
 ## Development
