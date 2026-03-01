@@ -58,4 +58,3 @@ declare global {
         'xcode-graph-node-details-panel': GraphNodeDetailsPanel;
     }
 }
-//# sourceMappingURL=node-details-panel.d.ts.map

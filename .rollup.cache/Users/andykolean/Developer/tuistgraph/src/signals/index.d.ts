@@ -14,4 +14,3 @@ export { activeTab, enableAnimation, type PreviewFilter, previewFilter, resetUIS
  * Useful for testing and application reset.
  */
 export declare function resetAllSignals(): void;
-//# sourceMappingURL=index.d.ts.map

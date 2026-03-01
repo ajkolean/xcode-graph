@@ -42,4 +42,3 @@ export interface NodeRenderContext {
     showTransitiveDependents: boolean;
 }
 export declare function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void;
-//# sourceMappingURL=canvas-node-renderer.d.ts.map

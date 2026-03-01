@@ -22,4 +22,3 @@ export interface BoundaryForce {
 }
 export default function forceBoundary(x0: ValueOrAccessor<number>, y0: ValueOrAccessor<number>, x1: ValueOrAccessor<number>, y1: ValueOrAccessor<number>): BoundaryForce;
 export {};
-//# sourceMappingURL=boundary.d.ts.map

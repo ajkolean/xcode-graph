@@ -28,4 +28,3 @@ export declare function getAnimatedAlpha(map: Map<string, AnimatedValue>, key: s
  * Starts the current value at the existing animated value (or 1.0 if new).
  */
 export declare function setAnimatedTarget(map: Map<string, AnimatedValue>, key: string, target: number): void;
-//# sourceMappingURL=canvas-animation.d.ts.map

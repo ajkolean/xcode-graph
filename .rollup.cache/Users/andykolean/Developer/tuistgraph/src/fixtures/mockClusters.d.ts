@@ -10,4 +10,3 @@ export declare const mockClusterExternal: Cluster;
 export declare const allClusterSizes: Cluster[];
 export declare const allClusterTypes: Cluster[];
 export declare const allClusters: Cluster[];
-//# sourceMappingURL=mockClusters.d.ts.map

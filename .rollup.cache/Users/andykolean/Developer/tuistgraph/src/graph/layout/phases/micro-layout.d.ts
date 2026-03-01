@@ -10,4 +10,3 @@ export interface MicroLayoutResult {
  * Compute micro-layout for a single cluster using "Solar System" physics
  */
 export declare function computeClusterInterior(cluster: Cluster, config: LayoutConfig): MicroLayoutResult;
-//# sourceMappingURL=micro-layout.d.ts.map

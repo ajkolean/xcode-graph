@@ -62,4 +62,3 @@ declare global {
         'xcode-graph-panel-header': GraphPanelHeader;
     }
 }
-//# sourceMappingURL=panel-header.d.ts.map

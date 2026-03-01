@@ -42,4 +42,3 @@ declare global {
         'xcode-graph-node-header': GraphNodeHeader;
     }
 }
-//# sourceMappingURL=node-header.d.ts.map

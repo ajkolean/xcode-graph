@@ -15,4 +15,3 @@ export declare function createCircularPositions(nodeIds: string[], radius?: numb
  * Create node positions at origin
  */
 export declare function createCenteredPositions(nodeIds: string[]): TestPosition[];
-//# sourceMappingURL=positions.d.ts.map

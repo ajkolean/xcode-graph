@@ -34,4 +34,3 @@ export declare class NodeListEventsBase extends LitElement {
      */
     protected handleHoverEnd(): void;
 }
-//# sourceMappingURL=node-list-events.d.ts.map

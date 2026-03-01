@@ -37,4 +37,3 @@ declare global {
         'xcode-graph-info-row': GraphInfoRow;
     }
 }
-//# sourceMappingURL=info-row.d.ts.map

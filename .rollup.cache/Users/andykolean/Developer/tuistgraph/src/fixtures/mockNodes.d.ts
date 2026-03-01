@@ -24,4 +24,3 @@ export declare function getNodeWithDependencies(nodeId?: string): {
  * Get nodes for a specific project
  */
 export declare function getNodesForProject(projectName: string): GraphNode[];
-//# sourceMappingURL=mockNodes.d.ts.map

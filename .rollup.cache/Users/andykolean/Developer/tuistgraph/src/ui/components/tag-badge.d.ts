@@ -36,4 +36,3 @@ declare global {
         'xcode-graph-tag-badge': GraphTagBadge;
     }
 }
-//# sourceMappingURL=tag-badge.d.ts.map

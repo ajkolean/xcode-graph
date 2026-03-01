@@ -19,4 +19,3 @@ export * from './types';
  * NOTE: This is now ASYNCHRONOUS as it uses ELK.
  */
 export declare function computeHierarchicalLayout(nodes: GraphNode[], edges: GraphEdge[], clusters: Cluster[], opts?: LayoutOptions): Promise<HierarchicalLayoutResult>;
-//# sourceMappingURL=index.d.ts.map

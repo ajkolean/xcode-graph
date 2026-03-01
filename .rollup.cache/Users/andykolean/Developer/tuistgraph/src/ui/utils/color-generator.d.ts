@@ -35,4 +35,3 @@ export declare function generateColorPalette(items: string[], category?: string)
  * @returns An `rgba()` CSS color string
  */
 export declare function generateColorWithAlpha(input: string, alpha: number, category?: string): string;
-//# sourceMappingURL=color-generator.d.ts.map

@@ -77,4 +77,3 @@ export declare class LayoutController implements ReactiveController {
     hostConnected(): void;
     hostDisconnected(): void;
 }
-//# sourceMappingURL=layout.controller.d.ts.map

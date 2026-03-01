@@ -35,4 +35,3 @@ export declare const GraphStatsService: {
         isolatedNodes: number;
     };
 };
-//# sourceMappingURL=graph-stats-service.d.ts.map

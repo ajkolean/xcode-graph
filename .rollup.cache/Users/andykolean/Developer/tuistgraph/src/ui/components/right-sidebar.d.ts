@@ -72,4 +72,3 @@ declare global {
     }
 }
 export {};
-//# sourceMappingURL=right-sidebar.d.ts.map

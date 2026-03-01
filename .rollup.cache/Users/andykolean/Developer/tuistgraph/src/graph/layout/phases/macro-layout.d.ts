@@ -7,4 +7,3 @@ import type { MicroLayoutResult } from './micro-layout';
  * "Tectonic Plates" stage
  */
 export declare function computeMacroLayout(clusterGraph: ClusterGraph, microLayouts: Map<string, MicroLayoutResult>, config: LayoutConfig): Promise<Map<string, ClusterPosition>>;
-//# sourceMappingURL=macro-layout.d.ts.map

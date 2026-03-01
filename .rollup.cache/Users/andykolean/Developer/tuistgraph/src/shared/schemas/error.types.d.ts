@@ -49,4 +49,3 @@ export interface ErrorNotificationState {
 export declare const DEFAULT_MAX_VISIBLE_TOASTS = 3;
 /** Default toast duration by severity (milliseconds) */
 export declare const DEFAULT_TOAST_DURATION: Record<ErrorSeverity, number>;
-//# sourceMappingURL=error.types.d.ts.map

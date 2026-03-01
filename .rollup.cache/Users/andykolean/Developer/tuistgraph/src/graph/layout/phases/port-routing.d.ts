@@ -19,4 +19,3 @@ export declare function computeClusterPorts(clusterPositions: Map<string, Cluste
  * Compute routed edges for all node-level edges that cross cluster boundaries.
  */
 export declare function computeRoutedEdges(edges: GraphEdge[], nodePositions: Map<string, NodePosition>, clusterPositions: Map<string, ClusterPosition>, clusterPorts: Map<string, ClusterPort[]>, clusterEdges: ClusterEdge[], nodeToCluster: Map<string, string>, config: LayoutConfig): RoutedEdge[];
-//# sourceMappingURL=port-routing.d.ts.map

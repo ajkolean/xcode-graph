@@ -15,4 +15,3 @@ export declare function createEmptyFilters(): FilterState;
  * Create a FilterState with only specific node types
  */
 export declare function createNodeTypeFilter(types: GraphNode['type'][]): FilterState;
-//# sourceMappingURL=filters.d.ts.map

@@ -53,4 +53,3 @@ export declare function waitForUpdates(host: MockHost, count: number, timeout?: 
  * Wait for next update
  */
 export declare function waitForNextUpdate(host: MockHost, timeout?: number): Promise<void>;
-//# sourceMappingURL=controller-helpers.d.ts.map

@@ -19,4 +19,3 @@ export declare function assignLayers(nodes: GraphNode[], anchors: GraphNode[], d
  * Determines the role of a node
  */
 export declare function determineRole(node: GraphNode, isTest: boolean, isAnchor: boolean, dependentCount: number): NodeRole;
-//# sourceMappingURL=cluster-analysis.d.ts.map

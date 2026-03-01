@@ -34,4 +34,3 @@ declare global {
         'xcode-graph-clear-filters-button': GraphClearFiltersButton;
     }
 }
-//# sourceMappingURL=clear-filters-button.d.ts.map

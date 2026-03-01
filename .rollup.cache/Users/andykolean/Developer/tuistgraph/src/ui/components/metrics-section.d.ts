@@ -52,4 +52,3 @@ declare global {
         'xcode-graph-metrics-section': GraphMetricsSection;
     }
 }
-//# sourceMappingURL=metrics-section.d.ts.map

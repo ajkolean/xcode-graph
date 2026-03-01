@@ -84,4 +84,3 @@ interface SidebarMachineSchema extends MachineSchema {
  */
 export declare const sidebarMachine: Machine<SidebarMachineSchema>;
 export type { SidebarMachineSchema };
-//# sourceMappingURL=sidebar.machine.d.ts.map

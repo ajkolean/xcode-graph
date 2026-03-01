@@ -49,4 +49,3 @@ export declare function setEnableAnimation(enabled: boolean): void;
  * @param preview - The preview filter state, or null to clear
  */
 export declare function setPreviewFilter(preview: PreviewFilter): void;
-//# sourceMappingURL=ui.actions.d.ts.map

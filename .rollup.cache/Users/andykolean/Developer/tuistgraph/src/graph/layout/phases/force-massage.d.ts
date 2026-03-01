@@ -7,4 +7,3 @@ import type { LayoutConfig } from '../config';
  * overlaps or awkward gaps while maintaining the general relative positions.
  */
 export declare function applyForceMassage(clusterPositions: Map<string, ClusterPosition>, clusterGraph: ClusterGraph, config: LayoutConfig): Map<string, ClusterPosition>;
-//# sourceMappingURL=force-massage.d.ts.map

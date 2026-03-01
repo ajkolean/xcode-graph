@@ -23,4 +23,3 @@ export declare function getNodeIconPath(type: NodeType | string, platform?: Plat
  * @returns Human-readable display string (e.g., `"Framework"`, `"Swift Package"`)
  */
 export declare function getNodeTypeLabel(type: NodeType | string): string;
-//# sourceMappingURL=node-icons.d.ts.map

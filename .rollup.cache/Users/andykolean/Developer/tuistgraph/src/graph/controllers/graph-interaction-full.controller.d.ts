@@ -61,4 +61,3 @@ export declare class GraphInteractionFullController implements ReactiveControlle
     hostConnected(): void;
     hostDisconnected(): void;
 }
-//# sourceMappingURL=graph-interaction-full.controller.d.ts.map

@@ -10,4 +10,3 @@ export { clearFilters, initializeFromData, setFilters, setSearchQuery, toggleNod
 export { allPackages, allProjects, DEFAULT_FILTERS, filters, hasActiveFilters, resetFilterSignals, searchQuery, } from './filter.signals';
 export { resetZoom, setActiveTab, setBaseZoom, setEnableAnimation, setPreviewFilter, setZoom, toggleAnimation, zoomIn, zoomOut, } from './ui.actions';
 export { activeTab, baseZoom, enableAnimation, type PreviewFilter, previewFilter, resetUISignals, zoom, } from './ui.signals';
-//# sourceMappingURL=index.d.ts.map

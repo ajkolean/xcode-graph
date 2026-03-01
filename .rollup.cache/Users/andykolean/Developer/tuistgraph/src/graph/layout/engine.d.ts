@@ -11,4 +11,3 @@ import type { HierarchicalLayoutResult } from './types';
  * 3. Composition: Combines results
  */
 export declare function computeHierarchicalLayout(nodes: GraphNode[], edges: GraphEdge[], clusters: Cluster[], opts?: LayoutOptions): Promise<HierarchicalLayoutResult>;
-//# sourceMappingURL=engine.d.ts.map

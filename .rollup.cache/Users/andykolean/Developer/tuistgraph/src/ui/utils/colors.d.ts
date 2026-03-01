@@ -9,4 +9,3 @@
  * Based on --colors-chart-5 (160, 140, 255) with 0.7 alpha
  */
 export declare const FILTER_ICON_COLOR = "rgba(160, 140, 255, 0.7)";
-//# sourceMappingURL=colors.d.ts.map

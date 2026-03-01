@@ -19,4 +19,3 @@ export declare function addToMultiMap<K, V>(map: Map<K, V[]>, key: K, value: V):
  * Useful for Map<K, V[]> where you want an empty array as default.
  */
 export declare function getOrDefault<K, V>(map: Map<K, V>, key: K, defaultValue: V): V;
-//# sourceMappingURL=collections.d.ts.map

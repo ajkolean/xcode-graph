@@ -80,4 +80,3 @@ export declare function assertMachineState<TSchema extends MachineSchema>(ctx: M
  * @throws If the current value doesn't match
  */
 export declare function assertMachineContext<TSchema extends MachineSchema, K extends keyof TSchema['context']>(ctx: MachineTestContext<TSchema>, key: K, expectedValue: TSchema['context'][K]): void;
-//# sourceMappingURL=machine-helpers.d.ts.map

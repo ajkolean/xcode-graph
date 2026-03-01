@@ -27,4 +27,3 @@ export declare function resolveClusterPosition(clusterId: string, layoutPos: {
     x: number;
     y: number;
 };
-//# sourceMappingURL=canvas-positions.d.ts.map

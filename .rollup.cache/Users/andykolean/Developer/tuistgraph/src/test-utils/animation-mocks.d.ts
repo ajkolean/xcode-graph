@@ -54,4 +54,3 @@ export declare function installAnimationFrameMock(): MockAnimationFrame;
  * Restore original RAF functions
  */
 export declare function uninstallAnimationFrameMock(): void;
-//# sourceMappingURL=animation-mocks.d.ts.map

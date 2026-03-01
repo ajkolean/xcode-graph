@@ -40,4 +40,3 @@ declare global {
         'xcode-graph-node-info': GraphNodeInfo;
     }
 }
-//# sourceMappingURL=node-info.d.ts.map

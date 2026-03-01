@@ -13,4 +13,3 @@ export declare function convertEdgeFormat(edges: Array<{
  * Create edges for a set of nodes (fully connected)
  */
 export declare function createFullyConnectedEdges(nodeIds: string[]): GraphEdge[];
-//# sourceMappingURL=edges.d.ts.map

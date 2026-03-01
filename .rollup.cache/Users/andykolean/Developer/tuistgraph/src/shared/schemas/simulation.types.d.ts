@@ -37,4 +37,3 @@ export interface ClusterPosition {
     depth?: number | undefined;
     nodeCount: number;
 }
-//# sourceMappingURL=simulation.types.d.ts.map

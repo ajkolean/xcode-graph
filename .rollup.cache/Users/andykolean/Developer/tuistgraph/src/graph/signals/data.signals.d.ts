@@ -17,4 +17,3 @@ export declare const edges: Signal.State<GraphEdge[]>;
  * Useful for testing and cleanup.
  */
 export declare function resetDataSignals(): void;
-//# sourceMappingURL=data.signals.d.ts.map

@@ -53,4 +53,3 @@ export declare class KeyboardShortcutController implements ReactiveController {
      */
     private isInputFocused;
 }
-//# sourceMappingURL=keyboard-shortcut.controller.d.ts.map

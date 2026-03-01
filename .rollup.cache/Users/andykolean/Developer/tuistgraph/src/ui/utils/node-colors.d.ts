@@ -37,4 +37,3 @@ export declare function getProjectColor(projectName: string): string;
  * @returns A shallow copy of the `NODE_TYPE_COLORS` record
  */
 export declare function getAllNodeTypeColors(): Record<string, string>;
-//# sourceMappingURL=node-colors.d.ts.map

@@ -45,4 +45,3 @@ declare global {
         'xcode-graph-panel-section': GraphPanelSection;
     }
 }
-//# sourceMappingURL=panel-section.d.ts.map

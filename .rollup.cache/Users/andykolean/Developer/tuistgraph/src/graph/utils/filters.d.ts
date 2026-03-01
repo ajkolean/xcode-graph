@@ -16,4 +16,3 @@
  * @returns Map of keys to hex color strings
  */
 export declare function generateColorMap<T extends string>(keys: Iterable<T>, category: 'platform' | 'project' | 'package'): Map<T, string>;
-//# sourceMappingURL=filters.d.ts.map

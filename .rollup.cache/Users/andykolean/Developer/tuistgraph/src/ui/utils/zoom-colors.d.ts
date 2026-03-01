@@ -23,4 +23,3 @@ export declare function adjustOpacityForZoom(baseOpacity: number, zoom: number):
  * Thinner strokes when zoomed out for cleaner look
  */
 export declare function getZoomAwareStrokeWidth(baseWidth: number, zoom: number): number;
-//# sourceMappingURL=zoom-colors.d.ts.map

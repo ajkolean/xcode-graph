@@ -19,4 +19,3 @@
  * ```
  */
 export { type SidebarMachineSchema, type SidebarSection, type SidebarTab, sidebarMachine, } from './sidebar.machine';
-//# sourceMappingURL=index.d.ts.map

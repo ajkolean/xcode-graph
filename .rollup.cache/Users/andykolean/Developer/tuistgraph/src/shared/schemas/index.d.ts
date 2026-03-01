@@ -15,4 +15,3 @@ export { NODE_TYPE_VALUES, NodeType, ORIGIN_VALUES, Origin, PLATFORM_VALUES, Pla
 export type { ClusterPosition, NodePosition } from './simulation.types';
 export type { AppError, ErrorNotificationState } from './error.types';
 export { DEFAULT_MAX_VISIBLE_TOASTS, DEFAULT_TOAST_DURATION, ErrorCategory, ErrorSeverity, } from './error.types';
-//# sourceMappingURL=index.d.ts.map

@@ -42,4 +42,3 @@ declare global {
         'xcode-graph-section-header': GraphSectionHeader;
     }
 }
-//# sourceMappingURL=section-header.d.ts.map

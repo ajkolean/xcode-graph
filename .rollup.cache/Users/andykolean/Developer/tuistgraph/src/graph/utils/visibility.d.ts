@@ -56,4 +56,3 @@ export declare function shouldDimNode(node: GraphNodeType, selectedNode: GraphNo
  * @returns True if edge should be shown
  */
 export declare function shouldShowEdge(edge: GraphEdge, selectedNode: GraphNodeType | null, searchQuery: string, nodes: GraphNodeType[]): boolean;
-//# sourceMappingURL=visibility.d.ts.map

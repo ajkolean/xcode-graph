@@ -5,4 +5,3 @@ export declare function createTypedMachine<TSchema extends MachineSchema>(machin
     instance: VanillaMachine<MachineSchema>;
     service: Service<TSchema>;
 };
-//# sourceMappingURL=zag-helpers.d.ts.map

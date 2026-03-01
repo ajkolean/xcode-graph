@@ -59,4 +59,3 @@ export declare class MockLayoutWorkerWithResults extends MockLayoutWorker {
  * Create a mock Worker class for testing
  */
 export declare function createMockWorkerClass(): typeof Worker;
-//# sourceMappingURL=worker-mocks.d.ts.map

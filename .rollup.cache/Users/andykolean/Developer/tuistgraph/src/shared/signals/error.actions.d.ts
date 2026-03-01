@@ -45,4 +45,3 @@ export declare function clearErrorsByCategory(category: ErrorCategory): void;
  * @param max - Maximum number of visible toasts (1-10)
  */
 export declare function setMaxVisibleToasts(max: number): void;
-//# sourceMappingURL=error.actions.d.ts.map

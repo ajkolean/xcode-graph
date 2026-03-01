@@ -22,7 +22,6 @@ export default defineConfig({
     typescript({
       exclude: ['**/*.test.ts', '**/*.spec.ts'],
       compilerOptions: {
-        noCheck: true,
         composite: false,
         declaration: false,
         declarationMap: false,

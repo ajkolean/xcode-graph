@@ -38,4 +38,3 @@ declare global {
         'xcode-graph-cluster-type-badge': GraphClusterTypeBadge;
     }
 }
-//# sourceMappingURL=cluster-type-badge.d.ts.map

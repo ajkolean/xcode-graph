@@ -22,4 +22,3 @@ export declare function getAllPositionedNodeIds(): string[];
  * Get all cluster IDs that have positions
  */
 export declare function getAllPositionedClusterIds(): string[];
-//# sourceMappingURL=mockPositions.d.ts.map

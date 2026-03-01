@@ -54,4 +54,3 @@ export declare function clearFilters(defaults?: FilterState): void;
  * @param packages - Set of all available packages
  */
 export declare function initializeFromData(projects: Set<string>, packages: Set<string>): void;
-//# sourceMappingURL=filter.actions.d.ts.map

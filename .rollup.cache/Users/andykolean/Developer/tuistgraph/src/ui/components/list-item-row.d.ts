@@ -47,4 +47,3 @@ declare global {
         'xcode-graph-list-item-row': GraphListItemRow;
     }
 }
-//# sourceMappingURL=list-item-row.d.ts.map

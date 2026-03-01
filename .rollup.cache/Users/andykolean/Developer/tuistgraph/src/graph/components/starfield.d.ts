@@ -87,4 +87,3 @@ export declare class Starfield {
     /** Clear all stars (e.g. when tearing down the canvas) */
     clear(): void;
 }
-//# sourceMappingURL=starfield.d.ts.map

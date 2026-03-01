@@ -181,4 +181,3 @@ export declare const PLATFORM_VALUES: Platform[];
 export declare const ORIGIN_VALUES: Origin[];
 /** All source type values as array for iteration */
 export declare const SOURCE_TYPE_VALUES: SourceType[];
-//# sourceMappingURL=graph.types.d.ts.map

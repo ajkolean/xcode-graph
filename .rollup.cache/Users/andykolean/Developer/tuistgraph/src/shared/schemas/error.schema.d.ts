@@ -11,4 +11,3 @@ export declare const ErrorSeveritySchema: z.ZodType<ErrorSeverity>;
 export declare const ErrorCategorySchema: z.ZodType<ErrorCategory>;
 export declare const AppErrorSchema: z.ZodType<AppError>;
 export declare const ErrorNotificationStateSchema: z.ZodType<ErrorNotificationState>;
-//# sourceMappingURL=error.schema.d.ts.map

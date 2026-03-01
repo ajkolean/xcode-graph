@@ -60,4 +60,3 @@ export declare function getIcon(name: IconName): string;
  * List of all available icon names
  */
 export declare const iconNames: IconName[];
-//# sourceMappingURL=icon.adapter.d.ts.map

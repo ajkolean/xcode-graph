@@ -11,4 +11,3 @@ export declare const ActiveTabSchema: z.ZodType<ActiveTab>;
 export declare const ViewModeSchema: z.ZodType<ViewMode>;
 export declare const FilterStateInputSchema: z.ZodType<FilterStateInput>;
 export declare const FilterStateSchema: z.ZodPipe<z.ZodType<FilterStateInput>, z.ZodTransform<FilterState, FilterStateInput>>;
-//# sourceMappingURL=app.schema.d.ts.map

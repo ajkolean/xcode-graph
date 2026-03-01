@@ -23,4 +23,3 @@ export declare function transformXcodeGraph(raw: unknown): TransformResult;
 export declare function loadXcodeGraph(jsonPath: string): Promise<TransformResult>;
 /** Parse and transform an XcodeGraph from a JSON string */
 export declare function parseXcodeGraph(jsonString: string): TransformResult;
-//# sourceMappingURL=xcode-graph.service.d.ts.map

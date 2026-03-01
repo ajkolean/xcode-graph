@@ -44,4 +44,3 @@ declare global {
         'xcode-graph-sidebar': GraphSidebar;
     }
 }
-//# sourceMappingURL=sidebar.d.ts.map

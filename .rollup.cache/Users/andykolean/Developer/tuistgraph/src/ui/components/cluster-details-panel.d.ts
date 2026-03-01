@@ -50,4 +50,3 @@ declare global {
         'xcode-graph-cluster-details-panel': GraphClusterDetailsPanel;
     }
 }
-//# sourceMappingURL=cluster-details-panel.d.ts.map

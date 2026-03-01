@@ -16,4 +16,3 @@ export declare function pairwise<T>(items: T[]): Generator<readonly [T, T], void
  * }
  */
 export declare function adjacentPairs<T>(items: T[]): Array<readonly [T, T]>;
-//# sourceMappingURL=pairwise.d.ts.map

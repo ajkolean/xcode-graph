@@ -19,4 +19,3 @@ export { getPlatformColor, getPlatformIconPath, PLATFORM_COLOR } from './platfor
 export { getBaseNodeSize, getNodeSize } from './sizing';
 export { calculateViewportBounds, isCircleInViewport, isLineInViewport, type ViewportBounds, } from './viewport';
 export { generateBezierPath } from './paths';
-//# sourceMappingURL=index.d.ts.map

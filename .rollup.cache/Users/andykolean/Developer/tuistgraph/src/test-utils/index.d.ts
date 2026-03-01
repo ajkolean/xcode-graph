@@ -5,4 +5,3 @@ export { installAnimationFrameMock, MockAnimationFrame, uninstallAnimationFrameM
 export { createMockComlinkWrap, MockLayoutWorkerAPI } from './comlink-mocks';
 export { type ControllerTestContext, createControllerTestContext, MockHost, waitFor, waitForNextUpdate, waitForUpdates, } from './controller-helpers';
 export { createMockWorkerClass, MockLayoutWorker, MockLayoutWorkerWithResults, } from './worker-mocks';
-//# sourceMappingURL=index.d.ts.map

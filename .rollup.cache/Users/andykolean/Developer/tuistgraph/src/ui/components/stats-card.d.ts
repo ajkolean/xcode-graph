@@ -54,4 +54,3 @@ declare global {
         'xcode-graph-stats-card': GraphStatsCard;
     }
 }
-//# sourceMappingURL=stats-card.d.ts.map

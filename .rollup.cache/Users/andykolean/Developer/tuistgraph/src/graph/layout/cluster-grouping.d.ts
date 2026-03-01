@@ -11,4 +11,3 @@ export declare function arrangeClusterGrid(clusters: Cluster[], config?: Cluster
     x: number;
     y: number;
 }>;
-//# sourceMappingURL=cluster-grouping.d.ts.map

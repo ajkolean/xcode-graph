@@ -6,4 +6,3 @@ import type { MicroLayoutResult } from './micro-layout';
  * and resolve any local congestions while preserving the overall structure.
  */
 export declare function applyNodeMassage(micro: MicroLayoutResult, config: LayoutConfig): MicroLayoutResult;
-//# sourceMappingURL=node-massage.d.ts.map

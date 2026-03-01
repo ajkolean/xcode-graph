@@ -32,4 +32,3 @@ export declare class ResizeController implements ReactiveController {
     hostConnected(): void;
     hostDisconnected(): void;
 }
-//# sourceMappingURL=resize.controller.d.ts.map

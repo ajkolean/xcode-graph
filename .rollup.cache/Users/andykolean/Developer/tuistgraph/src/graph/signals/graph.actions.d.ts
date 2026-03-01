@@ -37,4 +37,3 @@ export declare function resetHighlightToggles(): void;
  * Reset to full view with no selection
  */
 export declare function resetView(): void;
-//# sourceMappingURL=graph.actions.d.ts.map

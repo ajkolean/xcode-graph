@@ -66,4 +66,3 @@ export declare const CLUSTER_LABEL_CONFIG: {
     readonly MAX_FONT_SIZE: 800;
 };
 export declare function normalizeZoom(zoom: number): number;
-//# sourceMappingURL=zoom-constants.d.ts.map

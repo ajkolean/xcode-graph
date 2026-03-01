@@ -15,4 +15,3 @@ export { createNode, createNodesForFilterTesting } from './nodes';
 export type { TestPosition } from './positions';
 export { createCenteredPositions, createCircularPositions } from './positions';
 export * from './xcode-graph-data';
-//# sourceMappingURL=index.d.ts.map

@@ -32,4 +32,3 @@ export declare class MockLayoutWorkerAPI implements LayoutWorkerAPI {
     private delay;
     reset(): void;
 }
-//# sourceMappingURL=comlink-mocks.d.ts.map

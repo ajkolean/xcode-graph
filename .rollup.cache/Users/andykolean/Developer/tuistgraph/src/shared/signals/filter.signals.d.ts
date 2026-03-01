@@ -28,4 +28,3 @@ export declare const hasActiveFilters: Signal.Computed<boolean>;
  * Useful for testing and cleanup.
  */
 export declare function resetFilterSignals(): void;
-//# sourceMappingURL=filter.signals.d.ts.map

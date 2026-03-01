@@ -29,4 +29,3 @@ declare global {
         'xcode-graph-placeholder-tab': GraphPlaceholderTab;
     }
 }
-//# sourceMappingURL=placeholder-tab.d.ts.map

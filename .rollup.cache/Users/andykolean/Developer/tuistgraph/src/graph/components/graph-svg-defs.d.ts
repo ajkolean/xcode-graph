@@ -31,4 +31,3 @@ declare global {
         'xcode-graph-svg-defs': GraphSVGDefs;
     }
 }
-//# sourceMappingURL=graph-svg-defs.d.ts.map

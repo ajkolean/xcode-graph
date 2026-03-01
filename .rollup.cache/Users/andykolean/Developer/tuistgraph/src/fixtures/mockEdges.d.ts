@@ -19,4 +19,3 @@ export declare function getEdgesForTarget(targetId: string): GraphEdge[];
  * Get all edges connected to a node (both source and target)
  */
 export declare function getConnectedEdges(nodeId: string): GraphEdge[];
-//# sourceMappingURL=mockEdges.d.ts.map

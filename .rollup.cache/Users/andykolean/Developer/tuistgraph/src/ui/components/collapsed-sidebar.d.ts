@@ -49,4 +49,3 @@ declare global {
         'xcode-graph-collapsed-sidebar': GraphCollapsedSidebar;
     }
 }
-//# sourceMappingURL=collapsed-sidebar.d.ts.map

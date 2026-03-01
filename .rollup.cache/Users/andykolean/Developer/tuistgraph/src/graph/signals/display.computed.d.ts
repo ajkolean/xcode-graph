@@ -49,4 +49,3 @@ export declare const transitiveData: Signal.Computed<{
  * Automatically recomputes when any dependency changes.
  */
 export declare const displayData: Signal.Computed<DisplayData>;
-//# sourceMappingURL=display.computed.d.ts.map

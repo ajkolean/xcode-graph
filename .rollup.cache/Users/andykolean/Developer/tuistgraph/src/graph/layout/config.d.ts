@@ -94,4 +94,3 @@ export interface LayoutOptions {
     /** Function to compute Z-axis offset for a node (for 3D depth model) */
     getNodeZOffset?: (nodeId: string) => number;
 }
-//# sourceMappingURL=config.d.ts.map

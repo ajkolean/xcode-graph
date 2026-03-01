@@ -343,9 +343,5 @@ export var PackageInfo_Target_TargetBuildSettingDescription_SettingName;
     PackageInfo_Target_TargetBuildSettingDescription_SettingName["UnsafeFlags"] = "unsafeFlags";
     PackageInfo_Target_TargetBuildSettingDescription_SettingName["EnableUpcomingFeature"] = "enableUpcomingFeature";
     PackageInfo_Target_TargetBuildSettingDescription_SettingName["EnableExperimentalFeature"] = "enableExperimentalFeature";
-    PackageInfo_Target_TargetBuildSettingDescription_SettingName["InteroperabilityMode"] = "interoperabilityMode";
-    PackageInfo_Target_TargetBuildSettingDescription_SettingName["DefaultIsolation"] = "defaultIsolation";
-    PackageInfo_Target_TargetBuildSettingDescription_SettingName["StrictMemorySafety"] = "strictMemorySafety";
-    PackageInfo_Target_TargetBuildSettingDescription_SettingName["DisableWarning"] = "disableWarning";
 })(PackageInfo_Target_TargetBuildSettingDescription_SettingName || (PackageInfo_Target_TargetBuildSettingDescription_SettingName = {}));
 //# sourceMappingURL=xcode-graph.schema.generated.js.map

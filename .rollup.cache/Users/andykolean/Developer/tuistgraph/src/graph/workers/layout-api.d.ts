@@ -77,4 +77,3 @@ export declare function serializeMap<K, V>(map: Map<K, V>): Array<[K, V]>;
  * Helper to deserialize Map from worker transfer
  */
 export declare function deserializeMap<K, V>(entries: Array<[K, V]>): Map<K, V>;
-//# sourceMappingURL=layout-api.d.ts.map

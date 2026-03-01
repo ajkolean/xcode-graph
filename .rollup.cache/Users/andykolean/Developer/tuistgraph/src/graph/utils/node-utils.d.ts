@@ -90,4 +90,3 @@ export declare function computeFilters(allNodes: GraphNode[]): {
     hasActiveFilters: (filters: FilterState) => boolean;
     createClearFilters: (onFiltersChange: (filters: FilterState) => void) => () => void;
 };
-//# sourceMappingURL=node-utils.d.ts.map

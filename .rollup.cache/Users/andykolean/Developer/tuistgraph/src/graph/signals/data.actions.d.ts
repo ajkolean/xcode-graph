@@ -17,4 +17,3 @@ export declare function setGraphData(newNodes: GraphNode[], newEdges: GraphEdge[
  * Clear all graph data
  */
 export declare function clearGraphData(): void;
-//# sourceMappingURL=data.actions.d.ts.map

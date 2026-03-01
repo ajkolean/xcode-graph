@@ -66,4 +66,3 @@ export declare function generatePortRoutedPath(sourceNode: Point, sourcePort: Po
     curvature?: number;
 }): string;
 export {};
-//# sourceMappingURL=paths.d.ts.map

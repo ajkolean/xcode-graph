@@ -114,4 +114,3 @@ export declare class MockReactiveHost implements ReactiveControllerHost {
      */
     reset(): void;
 }
-//# sourceMappingURL=controller-mocks.d.ts.map

@@ -41,4 +41,3 @@ export declare function getDependencyCount(nodeId: string, edges: GraphEdge[]): 
  * @returns Number of dependents
  */
 export declare function getDependentCount(nodeId: string, edges: GraphEdge[]): number;
-//# sourceMappingURL=connections.d.ts.map

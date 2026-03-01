@@ -113,4 +113,3 @@ export declare const DEFAULT_CLUSTER_CONFIG: ClusterLayoutConfig;
 export declare const NODE_ROLE_VALUES: NodeRole[];
 /** All cluster type values for iteration */
 export declare const CLUSTER_TYPE_VALUES: ClusterType[];
-//# sourceMappingURL=cluster.types.d.ts.map

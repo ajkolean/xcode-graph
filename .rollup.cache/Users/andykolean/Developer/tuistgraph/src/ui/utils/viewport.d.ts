@@ -99,4 +99,3 @@ export declare function estimateCullingRatio(totalElements: number, viewportElem
     ratio: number;
     percentageSaved: number;
 };
-//# sourceMappingURL=viewport.d.ts.map

@@ -131,4 +131,3 @@ export declare function createMachineController<TSchema extends MachineSchema>(h
  * Helper to extract machine schema type
  */
 export type MachineState<T> = T extends Machine<infer S> ? S : never;
-//# sourceMappingURL=zag.controller.d.ts.map

@@ -15,4 +15,3 @@ export interface ClusterRenderContext {
     }>;
 }
 export declare function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds): void;
-//# sourceMappingURL=canvas-cluster-renderer.d.ts.map

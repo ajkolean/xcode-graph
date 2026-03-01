@@ -15,4 +15,3 @@ export declare const GraphAnalysisService: {
      */
     readonly findCircularDependencies: (service: GraphDataService) => string[][];
 };
-//# sourceMappingURL=graph-analysis-service.d.ts.map

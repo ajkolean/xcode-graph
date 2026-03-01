@@ -68,4 +68,3 @@ declare global {
         'xcode-graph-alert-banner': GraphAlertBanner;
     }
 }
-//# sourceMappingURL=alert-banner.d.ts.map

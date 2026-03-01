@@ -40,4 +40,3 @@ export declare function createIsNodeSelected(nodeId: string): Signal.Computed<bo
  * Useful for testing and cleanup.
  */
 export declare function resetGraphSignals(): void;
-//# sourceMappingURL=graph.signals.d.ts.map

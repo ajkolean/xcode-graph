@@ -38,4 +38,3 @@ export declare const zeroCountFilters: FilterItem[];
  * Get filter items with high counts
  */
 export declare const highCountFilters: FilterItem[];
-//# sourceMappingURL=mockFilters.d.ts.map

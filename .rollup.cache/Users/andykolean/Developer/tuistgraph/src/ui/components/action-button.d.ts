@@ -58,4 +58,3 @@ declare global {
         'xcode-graph-action-button': GraphActionButton;
     }
 }
-//# sourceMappingURL=action-button.d.ts.map

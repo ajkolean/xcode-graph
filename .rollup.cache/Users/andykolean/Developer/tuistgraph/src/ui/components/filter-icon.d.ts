@@ -42,4 +42,3 @@ declare global {
         'xcode-graph-filter-icon': GraphFilterIcon;
     }
 }
-//# sourceMappingURL=filter-icon.d.ts.map

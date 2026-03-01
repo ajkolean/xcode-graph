@@ -57,4 +57,3 @@ declare global {
     }
 }
 export {};
-//# sourceMappingURL=graph-tab.d.ts.map

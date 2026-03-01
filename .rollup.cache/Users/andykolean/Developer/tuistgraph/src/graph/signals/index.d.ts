@@ -10,4 +10,3 @@ export { circularDependencies, createIsNodeSelected, hasSelection, highlightDire
 export { clearGraphData, setGraphData } from './data.actions';
 export { edges, nodes, resetDataSignals } from './data.signals';
 export { type DisplayData, displayData, type FilteredData, filteredData, transitiveData, } from './display.computed';
-//# sourceMappingURL=index.d.ts.map

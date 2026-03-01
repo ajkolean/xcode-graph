@@ -29,4 +29,3 @@ export declare function getErrorById(id: string): AppError | undefined;
  * Useful for testing and cleanup.
  */
 export declare function resetErrorSignals(): void;
-//# sourceMappingURL=error.signals.d.ts.map

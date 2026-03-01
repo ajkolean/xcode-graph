@@ -30,4 +30,3 @@ declare global {
         'xcode-graph-sidebar-collapse-icon': GraphSidebarCollapseIcon;
     }
 }
-//# sourceMappingURL=sidebar-collapse-icon.d.ts.map

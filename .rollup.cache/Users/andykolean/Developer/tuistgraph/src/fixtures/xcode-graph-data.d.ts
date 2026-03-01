@@ -10,4 +10,3 @@ import type { GraphData } from '@/shared/schemas/graph.types';
 export declare const rawXcodeGraph: Graph;
 /** Transformed graph data ready for visualization */
 export declare const xcodeGraphData: GraphData;
-//# sourceMappingURL=xcode-graph-data.d.ts.map

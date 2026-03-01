@@ -6,10 +6,6 @@
  * @generated
  */
 export type GraphDependency = {
-    foreignBuildOutput: {
-        _0: GraphDependency_ForeignBuildOutput;
-    };
-} | {
     xcframework: {
         _0: GraphDependency_XCFramework;
     };
@@ -260,25 +256,6 @@ export type FileElement = {
 } | {
     folderReference: {
         path: string;
-    };
-};
-export type ForeignBuild_Input = {
-    file: {
-        _0: string;
-    };
-} | {
-    folder: {
-        _0: string;
-    };
-} | {
-    script: {
-        _0: string;
-    };
-};
-export type ForeignBuild_Artifact = {
-    xcframework: {
-        path: string;
-        linking: BinaryLinking;
     };
 };
 export declare enum LaunchStyle {
@@ -805,11 +782,7 @@ export declare enum PackageInfo_Target_TargetBuildSettingDescription_SettingName
     LinkedFramework = "linkedFramework",
     UnsafeFlags = "unsafeFlags",
     EnableUpcomingFeature = "enableUpcomingFeature",
-    EnableExperimentalFeature = "enableExperimentalFeature",
-    InteroperabilityMode = "interoperabilityMode",
-    DefaultIsolation = "defaultIsolation",
-    StrictMemorySafety = "strictMemorySafety",
-    DisableWarning = "disableWarning"
+    EnableExperimentalFeature = "enableExperimentalFeature"
 }
 export interface DependenciesGraph {
     externalDependencies: {
@@ -843,13 +816,8 @@ export interface GraphDependency_XCFramework {
     moduleMaps: string[];
     expectedSignature?: string;
 }
-export interface GraphDependency_ForeignBuildOutput {
-    name: string;
-    path: string;
-    linking: BinaryLinking;
-}
 export interface GraphEdge {
-    from: GraphDependency;
+    "from": GraphDependency;
     to: GraphDependency;
 }
 export interface GraphTarget {
@@ -896,25 +864,6 @@ export interface BuildRule {
     script?: string;
     runOncePerArchitecture?: boolean;
 }
-export interface BuildableFolderFile {
-    path: string;
-    compilerFlags?: string;
-}
-export interface BuildableFolder {
-    path: string;
-    exceptions: BuildableFolderExceptions;
-    resolvedFiles: BuildableFolderFile[];
-}
-export interface BuildableFolderException {
-    excluded: string[];
-    compilerFlags: (string | string)[];
-    publicHeaders: string[];
-    privateHeaders: string[];
-    platformFilters: (string | PlatformCondition)[];
-}
-export interface BuildableFolderExceptions {
-    exceptions: BuildableFolderException[];
-}
 export interface CopyFilesAction {
     name: string;
     destination: Destination;
@@ -944,14 +893,9 @@ export interface ExecutionAction {
     shellPath?: string;
     showEnvVarsInLog: boolean;
 }
-export interface ForeignBuild {
-    script: string;
-    inputs: ForeignBuild_Input[];
-    output: ForeignBuild_Artifact;
-}
 export interface Headers {
-    public: string[];
-    private: string[];
+    "public": string[];
+    "private": string[];
     project: string[];
 }
 export interface IDETemplateMacros {
@@ -1028,7 +972,6 @@ export interface ProfileAction {
     preActions: ExecutionAction[];
     postActions: ExecutionAction[];
     executable?: TargetReference;
-    askForAppToLaunch: boolean;
     arguments?: Arguments;
 }
 export interface Project {
@@ -1052,7 +995,7 @@ export interface Project {
     ideTemplateMacros?: IDETemplateMacros;
     resourceSynthesizers: ResourceSynthesizer[];
     lastUpgradeCheck?: Version;
-    type: ProjectType;
+    "type": ProjectType;
 }
 export interface Project_Options {
     automaticSchemesOptions: Project_Options_AutomaticSchemesOptions;
@@ -1102,11 +1045,8 @@ export interface RunAction {
     diagnosticsOptions: SchemeDiagnosticsOptions;
     metalOptions?: MetalOptions;
     expandVariableFromTarget?: TargetReference;
-    askForAppToLaunch: boolean;
     launchStyle: LaunchStyle;
     appClipInvocationURL?: string;
-    customWorkingDirectory?: string;
-    useCustomWorkingDirectory: boolean;
 }
 export interface RunActionOptions {
     language?: string;
@@ -1194,10 +1134,8 @@ export interface Target {
     mergeable: boolean;
     onDemandResourcesTags?: OnDemandResourcesTags;
     metadata: TargetMetadata;
-    type: TargetType;
+    "type": TargetType;
     packages: string[];
-    buildableFolders: BuildableFolder[];
-    foreignBuild?: ForeignBuild;
 }
 export interface TargetReference {
     projectPath: string;
@@ -1287,8 +1225,6 @@ export interface PackageInfo {
     name: string;
     products: Product[];
     targets: Target[];
-    traits?: PackageTrait[];
-    dependencies: PackageDependency[];
     platforms: Platform[];
     cLanguageStandard?: string;
     cxxLanguageStandard?: string;
@@ -1303,22 +1239,13 @@ export interface PackageInfo_Platform {
 export interface PackageInfo_PackageConditionDescription {
     platformNames: string[];
     config?: string;
-    traits?: string[];
-}
-export interface PackageDependencyTrait {
-    name: string;
-    condition?: string[];
-}
-export interface PackageDependency {
-    identity: string;
-    traits: PackageDependencyTrait[];
 }
 export interface PackageInfo_Dependency {
     kind: PackageInfo_Dependency_Kind;
 }
 export interface PackageInfo_Product {
     name: string;
-    type: PackageInfo_Product_ProductType;
+    "type": PackageInfo_Product_ProductType;
     targets: string[];
 }
 export interface PackageInfo_Target {
@@ -1330,7 +1257,7 @@ export interface PackageInfo_Target {
     exclude: string[];
     dependencies: PackageInfo_Target_Dependency[];
     publicHeadersPath?: string;
-    type: TargetType;
+    "type": TargetType;
     settings: PackageInfo_Target_TargetBuildSettingDescription_Setting[];
     checksum?: string;
     packageAccess: boolean;
@@ -1346,14 +1273,8 @@ export interface PackageInfo_Target_TargetBuildSettingDescription_Setting {
     condition?: PackageInfo_PackageConditionDescription;
     value: string[];
 }
-export interface PackageTrait {
-    enabledTraits: string[];
-    name: string;
-    description?: string;
-}
 export type Destinations = Destination[];
 export type PlatformFilters = PlatformFilter[];
 export type SettingsDictionary = {
     [key: string]: SettingValue;
 };
-//# sourceMappingURL=xcode-graph.schema.generated.d.ts.map

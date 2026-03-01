@@ -60,4 +60,3 @@ declare global {
         'xcode-graph-virtual-renderer': GraphVirtualRenderer;
     }
 }
-//# sourceMappingURL=virtual-renderer.d.ts.map

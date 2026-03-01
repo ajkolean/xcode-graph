@@ -216,4 +216,3 @@ export declare const animations: {
     readonly slideInRight: "slideInRight";
 };
 export type AnimationName = keyof typeof animations;
-//# sourceMappingURL=tokens.d.ts.map

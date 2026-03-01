@@ -31,4 +31,3 @@ export declare function getBaseNodeSize(type: string): number;
  * @returns Map from node ID to its transitive dependency count
  */
 export declare function computeNodeWeights(nodes: GraphNode[], edges: GraphEdge[]): Map<string, number>;
-//# sourceMappingURL=sizing.d.ts.map

@@ -14,4 +14,3 @@ export declare function createCluster(overrides?: Partial<Cluster>): Cluster;
  * Create a cluster with specific node count
  */
 export declare function createClusterWithNodes(nodeCount: number): Cluster;
-//# sourceMappingURL=clusters.d.ts.map

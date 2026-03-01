@@ -37,4 +37,3 @@ declare global {
         'xcode-graph-right-sidebar-header': GraphRightSidebarHeader;
     }
 }
-//# sourceMappingURL=right-sidebar-header.d.ts.map

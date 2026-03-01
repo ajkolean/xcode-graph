@@ -62,4 +62,3 @@ export declare function handleMouseDown(e: MouseEvent, ctx: InteractionContext):
 export declare function handleMouseMove(e: MouseEvent, ctx: InteractionContext): void;
 export declare function handleMouseUp(e: MouseEvent | undefined, ctx: InteractionContext): void;
 export declare function handleWheel(e: WheelEvent, ctx: InteractionContext): void;
-//# sourceMappingURL=canvas-interaction-handler.d.ts.map

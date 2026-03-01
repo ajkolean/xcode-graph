@@ -36,4 +36,3 @@ export interface EdgeRenderContext {
     showTransitiveDependents: boolean;
 }
 export declare function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): void;
-//# sourceMappingURL=canvas-edge-renderer.d.ts.map

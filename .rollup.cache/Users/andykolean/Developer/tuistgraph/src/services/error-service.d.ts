@@ -146,4 +146,3 @@ export declare class ErrorService {
  * Export singleton instance for convenience
  */
 export declare const errorService: ErrorService;
-//# sourceMappingURL=error-service.d.ts.map

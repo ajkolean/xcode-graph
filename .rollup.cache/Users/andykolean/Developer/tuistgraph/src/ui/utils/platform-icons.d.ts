@@ -28,4 +28,3 @@ export declare function getPlatformIconPath(platform: string): string;
  * Get a label for the platform
  */
 export declare function getPlatformLabel(platform: string): string;
-//# sourceMappingURL=platform-icons.d.ts.map

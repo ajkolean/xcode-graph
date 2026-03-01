@@ -15,4 +15,3 @@ export { generateColorMap } from './filters';
 export { computeClusterStats, computeFilters, computeNodeDependencies, } from './node-utils';
 export { applyGraphFilters } from './graph-filters';
 export { buildAdjacency, computeTransitiveDependencies, type TransitiveResult, traverseGraph, } from './traversal';
-//# sourceMappingURL=index.d.ts.map

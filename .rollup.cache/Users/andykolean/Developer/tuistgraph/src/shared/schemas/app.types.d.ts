@@ -57,4 +57,3 @@ export declare const ACTIVE_TAB_VALUES: ActiveTab[];
 export declare const VIEW_MODE_VALUES: ViewMode[];
 /** Default active tab */
 export declare const DEFAULT_ACTIVE_TAB: ActiveTab;
-//# sourceMappingURL=app.types.d.ts.map

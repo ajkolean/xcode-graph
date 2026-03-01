@@ -51,4 +51,3 @@ declare global {
         'xcode-graph-cluster-card': GraphClusterCard;
     }
 }
-//# sourceMappingURL=cluster-card.d.ts.map

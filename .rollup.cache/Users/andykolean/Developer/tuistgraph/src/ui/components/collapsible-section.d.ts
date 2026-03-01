@@ -51,4 +51,3 @@ declare global {
         'xcode-graph-collapsible-section': GraphCollapsibleSection;
     }
 }
-//# sourceMappingURL=collapsible-section.d.ts.map

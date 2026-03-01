@@ -75,4 +75,3 @@ export declare function hexToHSL(hex: string): HSLDegrees;
  * @returns Hex color string with #
  */
 export declare function hslToHex(h: number, s: number, l: number): string;
-//# sourceMappingURL=color-math.d.ts.map

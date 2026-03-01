@@ -68,4 +68,3 @@ export declare function getTransitiveCacheStats(): {
     maxSize: number;
     version: number;
 };
-//# sourceMappingURL=traversal.d.ts.map

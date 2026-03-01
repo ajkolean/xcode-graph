@@ -22,4 +22,3 @@ export interface CanvasTheme {
 }
 /** Read CSS custom properties from an element's computed style */
 export declare function resolveCanvasTheme(el: HTMLElement): CanvasTheme;
-//# sourceMappingURL=canvas-theme.d.ts.map

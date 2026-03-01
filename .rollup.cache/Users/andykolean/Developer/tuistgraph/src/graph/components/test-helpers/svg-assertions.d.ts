@@ -64,4 +64,3 @@ export declare function assertSvgOpacity(element: SVGElement | null, expectedOpa
  * Count SVG elements matching a selector
  */
 export declare function countSvgElements(parent: Element | DocumentFragment, selector: string): number;
-//# sourceMappingURL=svg-assertions.d.ts.map

@@ -80,4 +80,3 @@ export declare function createNodeOutsideViewport(id: string, viewport: Viewport
     node: GraphNode;
     position: NodePosition;
 };
-//# sourceMappingURL=graph-fixtures.d.ts.map

@@ -20,4 +20,3 @@ export interface ClusterGraph {
  * - Weights reflect the number of dependencies (strata/attraction)
  */
 export declare function buildClusterGraph(_nodes: GraphNode[], edges: GraphEdge[], clusters: Cluster[]): ClusterGraph;
-//# sourceMappingURL=cluster-graph.d.ts.map
