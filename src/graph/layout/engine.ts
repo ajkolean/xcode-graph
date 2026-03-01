@@ -2,10 +2,9 @@ import type { Cluster, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { buildClusterGraph } from './cluster-graph';
 import { DEFAULT_CONFIG, type LayoutOptions } from './config';
+import { computeMicroLayoutsParallel } from './parallel-micro';
 import { applyForceMassage } from './phases/force-massage';
 import { computeMacroLayout } from './phases/macro-layout';
-import { computeClusterInterior } from './phases/micro-layout';
-import { applyNodeMassage } from './phases/node-massage';
 import { computeClusterPorts, computeRoutedEdges } from './phases/port-routing';
 import type { HierarchicalLayoutResult, RoutedEdge } from './types';
 
@@ -39,15 +38,8 @@ export async function computeHierarchicalLayout(
   const clusterGraph = buildClusterGraph(edges, clusters);
 
   // 2. Micro-Layout: Compute dimensions and internal positions for each cluster
-  // (Can run in parallel)
-  const microLayouts = new Map(
-    clusters.map((cluster) => {
-      let micro = computeClusterInterior(cluster, config);
-      // 2b. Node Massage: Gently space out nodes within the cluster
-      micro = applyNodeMassage(micro, config);
-      return [cluster.id, micro];
-    }),
-  );
+  // (Parallelized across web workers for large cluster counts)
+  const microLayouts = await computeMicroLayoutsParallel(clusters, config);
 
   // 3. Macro-Layout: Compute cluster world positions using ELK
   let clusterPositions = await computeMacroLayout(clusterGraph, microLayouts, config);

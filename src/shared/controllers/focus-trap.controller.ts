@@ -114,7 +114,7 @@ export class FocusTrapController implements ReactiveController {
           returnFocusOnDeactivate: this.config.returnFocusOnDeactivate,
           escapeDeactivates: this.config.escapeDeactivates,
           clickOutsideDeactivates: this.config.clickOutsideDeactivates,
-          onDeactivate: this.config.onDeactivate,
+          ...(this.config.onDeactivate ? { onDeactivate: this.config.onDeactivate } : {}),
           allowOutsideClick: true,
           tabbableOptions: {
             displayCheck: 'none',
