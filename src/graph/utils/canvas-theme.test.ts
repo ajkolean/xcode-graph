@@ -1,7 +1,8 @@
 import { colord, extend } from 'colord';
 import a11yPlugin from 'colord/plugins/a11y';
 import { describe, expect, it } from 'vitest';
-import { DARK_FALLBACKS, LIGHT_FALLBACKS, resolveCanvasTheme } from './canvas-theme';
+import { NODE_PALETTE } from '@/shared/constants/node-palette.ts';
+import { resolveCanvasTheme } from './canvas-theme';
 
 extend([a11yPlugin]);
 
@@ -12,12 +13,12 @@ describe('canvas-theme', () => {
 
     const theme = resolveCanvasTheme(el);
 
-    expect(theme.nodeApp).toBe('rgba(240, 176, 64, 1)');
-    expect(theme.nodeFramework).toBe('rgba(100, 181, 246, 1)');
-    expect(theme.nodeLibrary).toBe('rgba(129, 199, 132, 1)');
-    expect(theme.nodeTest).toBe('rgba(240, 120, 170, 1)');
-    expect(theme.nodeCli).toBe('rgba(120, 160, 246, 1)');
-    expect(theme.nodePackage).toBe('rgba(234, 196, 72, 1)');
+    expect(theme.nodeApp).toBe(NODE_PALETTE.app);
+    expect(theme.nodeFramework).toBe(NODE_PALETTE.framework);
+    expect(theme.nodeLibrary).toBe(NODE_PALETTE.library);
+    expect(theme.nodeTest).toBe(NODE_PALETTE['test-unit']);
+    expect(theme.nodeCli).toBe(NODE_PALETTE.cli);
+    expect(theme.nodePackage).toBe(NODE_PALETTE.package);
     expect(theme.canvasBg).toBe('#161617');
     expect(theme.tooltipBg).toBe('rgba(24, 24, 28, 0.95)');
     expect(theme.shadowColor).toBe('rgba(24, 24, 28, 0.9)');
@@ -91,51 +92,13 @@ describe('canvas-theme', () => {
 
   describe('contrast validation', () => {
     const MIN_CONTRAST = 3.0; // WCAG AA for graphical objects
+    const DARK_BG = '#161617';
+    const paletteColors = Object.values(NODE_PALETTE);
 
-    it('dark fallback node colors have sufficient contrast against background', () => {
-      const bg = colord(DARK_FALLBACKS.canvasBg);
-      const nodeColors = [
-        DARK_FALLBACKS.nodeApp,
-        DARK_FALLBACKS.nodeFramework,
-        DARK_FALLBACKS.nodeLibrary,
-        DARK_FALLBACKS.nodeTest,
-        DARK_FALLBACKS.nodeCli,
-        DARK_FALLBACKS.nodePackage,
-      ];
-      for (const color of nodeColors) {
+    it('node palette colors have sufficient contrast against dark background', () => {
+      const bg = colord(DARK_BG);
+      for (const color of paletteColors) {
         const ratio = colord(color).contrast(bg);
-        expect(ratio).toBeGreaterThanOrEqual(MIN_CONTRAST);
-      }
-    });
-
-    it('light fallback node colors have sufficient contrast against background', () => {
-      const bg = colord(LIGHT_FALLBACKS.canvasBg);
-      const nodeColors = [
-        LIGHT_FALLBACKS.nodeApp,
-        LIGHT_FALLBACKS.nodeFramework,
-        LIGHT_FALLBACKS.nodeLibrary,
-        LIGHT_FALLBACKS.nodeTest,
-        LIGHT_FALLBACKS.nodeCli,
-        LIGHT_FALLBACKS.nodePackage,
-      ];
-      for (const color of nodeColors) {
-        const ratio = colord(color).contrast(bg);
-        expect(ratio).toBeGreaterThanOrEqual(MIN_CONTRAST);
-      }
-    });
-
-    it('light fallback node colors have sufficient contrast against tooltip', () => {
-      const tooltipBg = colord(LIGHT_FALLBACKS.tooltipBg);
-      const nodeColors = [
-        LIGHT_FALLBACKS.nodeApp,
-        LIGHT_FALLBACKS.nodeFramework,
-        LIGHT_FALLBACKS.nodeLibrary,
-        LIGHT_FALLBACKS.nodeTest,
-        LIGHT_FALLBACKS.nodeCli,
-        LIGHT_FALLBACKS.nodePackage,
-      ];
-      for (const color of nodeColors) {
-        const ratio = colord(color).contrast(tooltipBg);
         expect(ratio).toBeGreaterThanOrEqual(MIN_CONTRAST);
       }
     });

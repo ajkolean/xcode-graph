@@ -65,53 +65,30 @@ export class GraphDataService {
     }
   }
 
-  // ==================== Node Operations ====================
-
-  /**
-   * Get all nodes
-   */
   getAllNodes(): GraphNode[] {
     return this.nodes;
   }
 
-  /**
-   * Get node by ID
-   */
   getNodeById(id: string): GraphNode | undefined {
     return this.nodeMap.get(id);
   }
 
-  /**
-   * Get nodes by type
-   */
   getNodesByType(type: string): GraphNode[] {
     return this.nodesByType.get(type) || [];
   }
 
-  /**
-   * Get nodes by project
-   */
   getNodesByProject(project: string): GraphNode[] {
     return this.nodesByProject.get(project) || [];
   }
 
-  /**
-   * Get nodes by platform
-   */
   getNodesByPlatform(platform: string): GraphNode[] {
     return this.nodesByPlatform.get(platform) || [];
   }
 
-  /**
-   * Get nodes by origin
-   */
   getNodesByOrigin(origin: Origin): GraphNode[] {
     return this.nodesByOrigin.get(origin) || [];
   }
 
-  /**
-   * Search nodes by name
-   */
   searchNodes(query: string): GraphNode[] {
     const lowerQuery = query.toLowerCase();
     return this.nodes.filter(

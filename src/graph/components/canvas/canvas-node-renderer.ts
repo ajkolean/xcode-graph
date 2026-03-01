@@ -369,11 +369,6 @@ function renderSingleNode(
 export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
   const { ctx, nodes, edges, nodeWeights, connectedNodes } = rc;
 
-  // Skip individual node rendering at extreme zoom-out; centroid dots handle visibility
-  if (rc.zoom < 0.15) {
-    return;
-  }
-
   const isChainActive =
     rc.showDirectDeps ||
     rc.showTransitiveDeps ||

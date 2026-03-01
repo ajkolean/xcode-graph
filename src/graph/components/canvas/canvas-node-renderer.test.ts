@@ -107,15 +107,15 @@ describe('canvas-node-renderer', () => {
     expect(events.length).to.be.greaterThan(0);
   });
 
-  it('should skip rendering at very low zoom levels', () => {
+  it('should render nodes at very low zoom levels', () => {
     const rc = createRenderContext({ zoom: 0.1 });
     const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
 
     renderNodes(rc, viewport);
 
     const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
-    // Only globalAlpha reset or nothing - no draw calls for nodes
-    expect(events.length).to.equal(0);
+    // Nodes should still render at low zoom (no centroid-dot cutoff)
+    expect(events.length).toBeGreaterThan(0);
   });
 
   it('should skip nodes outside the viewport', () => {
