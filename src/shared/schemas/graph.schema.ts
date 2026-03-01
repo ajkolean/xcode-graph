@@ -114,10 +114,10 @@ export const GraphDataSchema: z.ZodType<GraphData> = z
 
 // ==================== Lenient Schemas (Boundary Validation) ====================
 
-export const LenientNodeTypeSchema = z.enum(NodeType).catch(NodeType.Library);
-export const LenientPlatformSchema = z.enum(Platform).catch(Platform.macOS);
-export const LenientOriginSchema = z.enum(Origin).catch(Origin.Local);
-export const LenientDependencyKindSchema = z.enum(DependencyKind).catch(DependencyKind.Target);
+export const LenientNodeTypeSchema: z.ZodType<NodeType> = z.enum(NodeType).catch(NodeType.Library);
+export const LenientPlatformSchema: z.ZodType<Platform> = z.enum(Platform).catch(Platform.macOS);
+export const LenientOriginSchema: z.ZodType<Origin> = z.enum(Origin).catch(Origin.Local);
+export const LenientDependencyKindSchema: z.ZodType<DependencyKind> = z.enum(DependencyKind).catch(DependencyKind.Target);
 
 const LenientGraphNodeSchema = z.object({
   id: z.string().min(1, 'Node ID is required'),
@@ -149,7 +149,7 @@ const LenientGraphEdgeSchema = z.object({
   platformConditions: z.array(LenientPlatformSchema).optional(),
 });
 
-export const LenientGraphDataSchema = z.object({
+export const LenientGraphDataSchema: z.ZodType<GraphData> = z.object({
   nodes: z.array(LenientGraphNodeSchema),
   edges: z.array(LenientGraphEdgeSchema),
 });

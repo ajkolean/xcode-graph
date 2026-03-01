@@ -172,7 +172,7 @@ export class GraphSearchBar extends LitElement {
   // Controllers
   // ========================================
 
-  readonly shortcut = new KeyboardShortcutController(this, {
+  readonly shortcut: KeyboardShortcutController = new KeyboardShortcutController(this, {
     key: '/',
     onTrigger: () => this.inputElement?.focus(),
   });

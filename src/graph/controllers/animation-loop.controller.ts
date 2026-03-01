@@ -16,7 +16,7 @@ export class AnimationLoopController {
 
   time = 0;
   isAnimating = false;
-  nodeAlphaMap = new Map<string, AnimatedValue>();
+  nodeAlphaMap: Map<string, AnimatedValue> = new Map<string, AnimatedValue>();
 
   constructor(private callbacks: AnimationLoopCallbacks) {}
 

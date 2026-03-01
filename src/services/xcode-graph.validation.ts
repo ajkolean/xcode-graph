@@ -17,7 +17,14 @@ import { z } from 'zod';
  * Lenient schema for raw Tuist graph JSON.
  * Validates only the minimal required shape — unknown keys are preserved.
  */
-export const RawGraphSchema = z.looseObject({
+interface RawGraphShape {
+  name: string;
+  path: string;
+  projects: unknown[];
+  dependencies: unknown[];
+}
+
+export const RawGraphSchema: z.ZodType<RawGraphShape> = z.looseObject({
   name: z.string(),
   path: z.string(),
   projects: z.array(z.unknown()),

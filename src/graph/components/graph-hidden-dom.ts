@@ -9,7 +9,7 @@
  */
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import { css, html, LitElement, type PropertyValues, type TemplateResult } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
@@ -35,7 +35,7 @@ export class GraphHiddenDom extends LitElement {
     this.focusedIndex = 0;
   }
 
-  static override styles = css`
+  static override styles: CSSResultGroup = css`
     :host {
       position: absolute;
       width: 1px;

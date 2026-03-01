@@ -27,7 +27,7 @@ const ANIMATION_DURATION_MS = 250;
 export function tickAnimation(
   value: AnimatedValue,
   dt: number,
-  durationMs = ANIMATION_DURATION_MS,
+  durationMs: number = ANIMATION_DURATION_MS,
 ): boolean {
   if (value.progress >= 1) {
     return false;
