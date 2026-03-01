@@ -34,7 +34,7 @@ import {
   type PropertyValues,
   type TemplateResult,
 } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 
 // ==================== Severity Icons ====================
 
@@ -56,7 +56,6 @@ const SEVERITY_ICONS = {
  * @fires dismiss - Dispatched when the toast is dismissed (detail: { errorId })
  * @fires action - Dispatched when the action button is clicked (detail: { error })
  */
-@customElement('xcode-graph-error-toast')
 export class GraphErrorToast extends LitElement {
   // ========================================
   // Properties
@@ -330,4 +329,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-error-toast': GraphErrorToast;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('xcode-graph-error-toast')) {
+  customElements.define('xcode-graph-error-toast', GraphErrorToast);
 }

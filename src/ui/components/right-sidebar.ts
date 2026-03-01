@@ -25,8 +25,16 @@ import type { Cluster } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getPlatformColor } from '@ui/utils/platform-icons';
-import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
+import {
+  type CSSResultGroup,
+  css,
+  html,
+  LitElement,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import { property } from 'lit/decorators.js';
+import { cache } from 'lit/directives/cache.js';
 import { when } from 'lit/directives/when.js';
 import './right-sidebar-header';
 import './sidebar-collapse-icon';
@@ -291,8 +299,12 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   // Computed Values
   // ========================================
 
-  private get filterData() {
-    return computeFilters(this.allNodes);
+  private _filterData = computeFilters([]);
+
+  override willUpdate(changedProperties: PropertyValues<this>): void {
+    if (changedProperties.has('allNodes')) {
+      this._filterData = computeFilters(this.allNodes ?? []);
+    }
   }
 
   private findClusterById(clusterId: string | null): Cluster | undefined {
@@ -359,7 +371,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handleClearFilters() {
-    const clearAll = this.filterData.createClearFilters(setFilters);
+    const clearAll = this._filterData.createClearFilters(setFilters);
     clearAll();
     setSearchQuery('');
   }
@@ -428,12 +440,12 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       <xcode-graph-collapsed-sidebar
         .filteredNodes=${this.filteredNodes}
         .filteredEdges=${this.filteredEdges}
-        .typeCounts=${this.filterData.typeCounts}
-        .platformCounts=${this.filterData.platformCounts}
+        .typeCounts=${this._filterData.typeCounts}
+        .platformCounts=${this._filterData.platformCounts}
         node-types-filter-size=${currentFilters.nodeTypes.size}
         platforms-filter-size=${currentFilters.platforms.size}
-        .projectCounts=${this.filterData.projectCounts}
-        .packageCounts=${this.filterData.packageCounts}
+        .projectCounts=${this._filterData.projectCounts}
+        .packageCounts=${this._filterData.packageCounts}
         projects-filter-size=${currentFilters.projects.size}
         packages-filter-size=${currentFilters.packages.size}
         @expand-to-section=${(e: CustomEvent) =>
@@ -679,34 +691,34 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       items,
     } = options;
 
-    if (selectedNode) {
-      return html`
-        ${this.renderDetailsToolbar()}
-        ${this.renderNodeDetails(selectedNode, currentZoom, {
-          activeDirectDeps,
-          activeTransitiveDeps,
-          activeDirectDependents,
-          activeTransitiveDependents,
-        })}
-      `;
-    }
-    if (selectedCluster) {
-      return html`
-        ${this.renderDetailsToolbar()}
-        ${this.renderClusterDetails(selectedCluster, currentZoom, {
-          activeDirectDeps,
-          activeDirectDependents,
-        })}
-      `;
-    }
-    return this.renderFilterView({
-      filters: currentFilters,
-      searchQuery: currentSearchQuery,
-      zoom: currentZoom,
-      isFiltersActive,
-      expandedSections,
-      items,
-    });
+    return cache(
+      selectedNode
+        ? html`
+            ${this.renderDetailsToolbar()}
+            ${this.renderNodeDetails(selectedNode, currentZoom, {
+              activeDirectDeps,
+              activeTransitiveDeps,
+              activeDirectDependents,
+              activeTransitiveDependents,
+            })}
+          `
+        : selectedCluster
+          ? html`
+              ${this.renderDetailsToolbar()}
+              ${this.renderClusterDetails(selectedCluster, currentZoom, {
+                activeDirectDeps,
+                activeDirectDependents,
+              })}
+            `
+          : this.renderFilterView({
+              filters: currentFilters,
+              searchQuery: currentSearchQuery,
+              zoom: currentZoom,
+              isFiltersActive,
+              expandedSections,
+              items,
+            }),
+    );
   }
 
   // ========================================
@@ -718,7 +730,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     // Reference focusTrap to ensure controller is not tree-shaken
     const _trapActive = this.focusTrap.active;
     const expandedSections = this.sidebar.get('expandedSections');
-    const filterData = this.filterData;
+    const filterData = this._filterData;
     const currentFilters = filters.get();
     const currentSearchQuery = searchQuery.get();
     const currentSelectedNode = selectedNode.get();

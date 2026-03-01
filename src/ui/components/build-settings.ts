@@ -15,6 +15,7 @@
 import type { BuildSettings } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 import './info-row.js';
 
 /**
@@ -256,7 +257,9 @@ export class GraphBuildSettings extends LitElement {
               ? html`
                 <xcode-graph-info-row label="Conditions">
                   <div class="conditions">
-                    ${settings.compilationConditions.map(
+                    ${repeat(
+                      settings.compilationConditions,
+                      (condition) => condition,
                       (condition) => html`<span class="condition-badge">${condition}</span>`,
                     )}
                   </div>

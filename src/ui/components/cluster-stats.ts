@@ -20,6 +20,7 @@ import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { getPlatformColor, getPlatformIconPath } from '@ui/utils/platform-icons';
 import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 import './badge.js';
 import './stats-card';
 
@@ -240,23 +241,27 @@ export class GraphClusterStats extends LitElement {
       <div class="section">
         <div class="section-title">Target Breakdown</div>
         <div class="badges-grid">
-          ${entries.map(([type, count]) => {
-            const color = getNodeTypeColor(type);
-            const label = getNodeTypeLabel(type);
-            return html`
-              <span
-                class="type-badge"
-                style="
-                  color: ${color};
-                  background-color: color-mix(in srgb, ${color} 15%, transparent);
-                  border: var(--border-widths-thin) solid color-mix(in srgb, ${color} 30%, transparent);
-                "
-              >
-                <span>${label}</span>
-                <span class="type-count">${count}</span>
-              </span>
-            `;
-          })}
+          ${repeat(
+            entries,
+            ([type]) => type,
+            ([type, count]) => {
+              const color = getNodeTypeColor(type);
+              const label = getNodeTypeLabel(type);
+              return html`
+                <span
+                  class="type-badge"
+                  style="
+                    color: ${color};
+                    background-color: color-mix(in srgb, ${color} 15%, transparent);
+                    border: var(--border-widths-thin) solid color-mix(in srgb, ${color} 30%, transparent);
+                  "
+                >
+                  <span>${label}</span>
+                  <span class="type-count">${count}</span>
+                </span>
+              `;
+            },
+          )}
         </div>
       </div>
     `;
@@ -295,33 +300,37 @@ export class GraphClusterStats extends LitElement {
               <div class="section">
                 <div class="section-title">Platforms (${platformCount})</div>
                 <div class="badges-grid">
-                  ${Array.from(this.platforms).map((platform) => {
-                    const color = getPlatformColor(platform);
-                    const iconPath = getPlatformIconPath(platform);
+                  ${repeat(
+                    Array.from(this.platforms),
+                    (platform) => platform,
+                    (platform) => {
+                      const color = getPlatformColor(platform);
+                      const iconPath = getPlatformIconPath(platform);
 
-                    return html`
-                      <div
-                        class="platform-badge"
-                        style="
-                          background-color: color-mix(in srgb, ${color} 15%, transparent);
-                          border-color: color-mix(in srgb, ${color} 30%, transparent);
-                        "
-                      >
-                        ${
-                          iconPath
-                            ? svg`
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}">
-                                <path d="${iconPath}" />
-                              </svg>
-                            `
-                            : nothing
-                        }
-                        <span class="platform-name" style="color: ${color}">
-                          ${platform}
-                        </span>
-                      </div>
-                    `;
-                  })}
+                      return html`
+                        <div
+                          class="platform-badge"
+                          style="
+                            background-color: color-mix(in srgb, ${color} 15%, transparent);
+                            border-color: color-mix(in srgb, ${color} 30%, transparent);
+                          "
+                        >
+                          ${
+                            iconPath
+                              ? svg`
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}">
+                                  <path d="${iconPath}" />
+                                </svg>
+                              `
+                              : nothing
+                          }
+                          <span class="platform-name" style="color: ${color}">
+                            ${platform}
+                          </span>
+                        </div>
+                      `;
+                    },
+                  )}
                 </div>
               </div>
             `

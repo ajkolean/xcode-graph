@@ -24,7 +24,6 @@ import { SignalWatcher } from '@lit-labs/signals';
 import type { AppError } from '@shared/schemas/error.types';
 import { getToastErrors } from '@shared/signals/error.signals';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
-import { customElement } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { errorService } from '@/services/error-service';
 import './error-toast';
@@ -40,7 +39,6 @@ const SignalWatcherLitElement = SignalWatcher(LitElement) as typeof LitElement;
  *
  * @summary Error toast notification stack manager
  */
-@customElement('xcode-graph-error-notification-container')
 export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
   // ========================================
   // Styles
@@ -123,4 +121,12 @@ declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-error-notification-container': GraphErrorNotificationContainer;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('xcode-graph-error-notification-container')) {
+  customElements.define(
+    'xcode-graph-error-notification-container',
+    GraphErrorNotificationContainer,
+  );
 }

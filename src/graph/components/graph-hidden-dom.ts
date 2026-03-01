@@ -10,9 +10,9 @@
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { css, html, LitElement, type PropertyValues, type TemplateResult } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 
-@customElement('xcode-graph-hidden-dom')
 export class GraphHiddenDom extends LitElement {
   @property({ attribute: false })
   declare nodes: GraphNode[];
@@ -140,7 +140,9 @@ export class GraphHiddenDom extends LitElement {
           aria-describedby="graph-summary"
           @keydown=${this.handleKeyDown}
         >
-          ${this.nodes.map(
+          ${repeat(
+            this.nodes,
+            (node) => node.id,
             (node, i) => html`
               <div
                 role="treeitem"
@@ -166,4 +168,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-hidden-dom': GraphHiddenDom;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('xcode-graph-hidden-dom')) {
+  customElements.define('xcode-graph-hidden-dom', GraphHiddenDom);
 }

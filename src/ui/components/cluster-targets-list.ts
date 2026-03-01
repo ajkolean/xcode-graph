@@ -21,7 +21,7 @@
 import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
-import { type CSSResultGroup, css, html, type TemplateResult } from 'lit';
+import { type CSSResultGroup, css, html, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
@@ -172,7 +172,20 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     this.isExpanded = !this.isExpanded;
   }
 
-  private get flatItems(): ClusterListItem[] {
+  // Derived state: flat list of headers and nodes for virtualized rendering
+  private _flatItems: ClusterListItem[] = [];
+
+  // ========================================
+  // Lifecycle
+  // ========================================
+
+  override willUpdate(changedProperties: PropertyValues<this>): void {
+    if (changedProperties.has('nodesByType') || changedProperties.has('edges')) {
+      this._flatItems = this.computeFlatItems();
+    }
+  }
+
+  private computeFlatItems(): ClusterListItem[] {
     if (!this.nodesByType) return [];
 
     // Pre-compute edge counts for O(1) lookups per node
@@ -247,7 +260,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
           <div class="content">
             <div class="target-list">
               ${virtualize({
-                items: this.flatItems,
+                items: this._flatItems,
                 renderItem: (item: ClusterListItem) =>
                   item.kind === 'header'
                     ? html`<div class="type-header">${getNodeTypeLabel(item.nodeType)} (${item.count})</div>`

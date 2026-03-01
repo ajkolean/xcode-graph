@@ -18,6 +18,7 @@ import type { GraphNode } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { when } from 'lit/directives/when.js';
 import './section-header.js';
 
@@ -295,10 +296,13 @@ export class GraphClusterComposition extends LitElement {
                 () => html`
                     <div class="notable-resources">
                       ${when(this.hasPrivacyManifest, () => html`<span class="resource-badge privacy">Privacy Manifest</span>`)}
-                      ${Array.from(this.notableResources)
-                        .filter((r) => r !== 'PrivacyInfo.xcprivacy')
-                        .slice(0, 3)
-                        .map((r) => html`<span class="resource-badge">${r}</span>`)}
+                      ${repeat(
+                        Array.from(this.notableResources)
+                          .filter((r) => r !== 'PrivacyInfo.xcprivacy')
+                          .slice(0, 3),
+                        (r) => r,
+                        (r) => html`<span class="resource-badge">${r}</span>`,
+                      )}
                     </div>
                   `,
               )}
@@ -309,7 +313,9 @@ export class GraphClusterComposition extends LitElement {
                     <div class="section-divider"></div>
                     <div class="sub-title">Largest Targets</div>
                     <div class="largest-targets">
-                      ${this.largestTargets.map(
+                      ${repeat(
+                        this.largestTargets,
+                        (target) => target.name,
                         (target) => html`
                           <div class="target-row">
                             <span class="target-name" title=${target.name}>${target.name}</span>

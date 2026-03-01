@@ -23,6 +23,7 @@ import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
 import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 import './badge.js';
 import './panel-header.js';
 import './tag-badge.js';
@@ -206,7 +207,11 @@ export class GraphNodeHeader extends LitElement {
         hasTags && this.node.tags
           ? html`
             <div class="tags-container">
-              ${this.node.tags.map((tag) => html`<xcode-graph-tag-badge tag=${tag}></xcode-graph-tag-badge>`)}
+              ${repeat(
+                this.node.tags,
+                (tag) => tag,
+                (tag) => html`<xcode-graph-tag-badge tag=${tag}></xcode-graph-tag-badge>`,
+              )}
             </div>
           `
           : nothing

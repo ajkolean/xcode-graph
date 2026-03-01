@@ -30,7 +30,7 @@ import {
   type PropertyValues,
   type TemplateResult,
 } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
 import { renderClusters } from './canvas/canvas-cluster-renderer';
 import { renderEdges } from './canvas/canvas-edge-renderer';
 import {
@@ -59,7 +59,6 @@ import './graph-hidden-dom';
  * @fires zoom-out - Dispatched when zoom out is requested via keyboard
  * @fires zoom-reset - Dispatched when zoom reset is requested via keyboard
  */
-@customElement('xcode-graph-canvas')
 export class GraphCanvas extends LitElement {
   // ========================================
   // Properties
@@ -966,4 +965,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'xcode-graph-canvas': GraphCanvas;
   }
+}
+
+// Register custom element with HMR support
+if (!customElements.get('xcode-graph-canvas')) {
+  customElements.define('xcode-graph-canvas', GraphCanvas);
 }
