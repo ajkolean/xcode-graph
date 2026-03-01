@@ -112,17 +112,17 @@ jobs:
         run: |
           swift run transform-graph \
             --source-dir "${XCODEGRAPH_SOURCES}" \
-            --output ../../src/services/tuist-graph.schema.generated.ts
+            --output ../../src/services/xcode-graph.schema.generated.ts
 
       # Show what changed in the generated types
       - name: Diff generated types
         run: |
-          if git diff --quiet src/services/tuist-graph.schema.generated.ts; then
+          if git diff --quiet src/services/xcode-graph.schema.generated.ts; then
             echo "No changes to generated types."
           else
             echo "### Generated type changes:" >> "$GITHUB_STEP_SUMMARY"
             echo '```diff' >> "$GITHUB_STEP_SUMMARY"
-            git diff src/services/tuist-graph.schema.generated.ts >> "$GITHUB_STEP_SUMMARY"
+            git diff src/services/xcode-graph.schema.generated.ts >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
           fi
 

@@ -5,6 +5,7 @@
  * Tests selection, highlight toggles, circular dependencies, and complex interactions.
  */
 
+import { nextFrame } from '@open-wc/testing';
 import { ViewMode } from '@shared/schemas/app.types';
 import type { GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
@@ -164,17 +165,17 @@ describe('graph.actions', () => {
   describe('setHoveredNode', () => {
     it('should set hovered node ID', async () => {
       setHoveredNode('node-1');
-      await new Promise(requestAnimationFrame);
+      await nextFrame();
 
       expect(hoveredNode.get()).toBe('node-1');
     });
 
     it('should allow clearing hovered node with null', async () => {
       setHoveredNode('node-1');
-      await new Promise(requestAnimationFrame);
+      await nextFrame();
 
       setHoveredNode(null);
-      await new Promise(requestAnimationFrame);
+      await nextFrame();
 
       expect(hoveredNode.get()).toBeNull();
     });
@@ -182,7 +183,7 @@ describe('graph.actions', () => {
     it('should allow changing hovered node', async () => {
       setHoveredNode('node-1');
       setHoveredNode('node-2');
-      await new Promise(requestAnimationFrame);
+      await nextFrame();
 
       expect(hoveredNode.get()).toBe('node-2');
     });
@@ -372,7 +373,7 @@ describe('graph.actions', () => {
       const node = createTestNode('node-1');
 
       setHoveredNode('node-2');
-      await new Promise(requestAnimationFrame);
+      await nextFrame();
       selectNode(node);
 
       expect(hoveredNode.get()).toBe('node-2');

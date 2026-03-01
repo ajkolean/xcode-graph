@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: TuistGraph
+  name: XcodeGraph
   text: Dependency Graph Visualization
   tagline: An interactive, zoomable web component for visualizing Tuist dependency graphs — with filtering, search, transitive highlighting, and cluster-based layouts.
   actions:

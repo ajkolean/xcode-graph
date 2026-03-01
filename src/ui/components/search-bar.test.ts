@@ -2,7 +2,7 @@
  * SearchBar Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphSearchBar } from './search-bar';
 import './search-bar';
@@ -51,18 +51,13 @@ describe('xcode-graph-search-bar', () => {
       <xcode-graph-search-bar></xcode-graph-search-bar>
     `);
 
-    let eventDetail: { query: string } | undefined;
-    el.addEventListener('search-change', ((e: CustomEvent<{ query: string }>) => {
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
     input.value = 'new query';
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    await el.updateComplete;
+    setTimeout(() => input.dispatchEvent(new Event('input', { bubbles: true })));
+    const event = (await oneEvent(el, 'search-change')) as CustomEvent<{ query: string }>;
 
-    expect(eventDetail).to.exist;
-    expect(eventDetail?.query).to.equal('new query');
+    expect(event).to.exist;
+    expect(event.detail.query).to.equal('new query');
   });
 
   it('should dispatch search-clear on clear button click', async () => {
@@ -70,16 +65,11 @@ describe('xcode-graph-search-bar', () => {
       <xcode-graph-search-bar search-query="test"></xcode-graph-search-bar>
     `);
 
-    let eventFired = false;
-    el.addEventListener('search-clear', () => {
-      eventFired = true;
-    });
-
     const clearButton = el.shadowRoot?.querySelector('xcode-graph-icon-button') as HTMLElement;
-    clearButton.click();
-    await el.updateComplete;
+    setTimeout(() => clearButton.click());
+    const event = await oneEvent(el, 'search-clear');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should dispatch search-clear on Escape key', async () => {
@@ -87,16 +77,12 @@ describe('xcode-graph-search-bar', () => {
       <xcode-graph-search-bar search-query="test"></xcode-graph-search-bar>
     `);
 
-    let eventFired = false;
-    el.addEventListener('search-clear', () => {
-      eventFired = true;
-    });
-
     const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
-    const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
-    input.dispatchEvent(escapeEvent);
-    await el.updateComplete;
+    setTimeout(() =>
+      input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })),
+    );
+    const event = await oneEvent(el, 'search-clear');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 });

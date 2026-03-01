@@ -177,7 +177,7 @@ export class GraphCollapsibleSection extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <button class="header-button" @click=${this.handleToggle}>
+      <button class="header-button" aria-expanded=${this.isExpanded} @click=${this.handleToggle}>
         <div class="header-icon">
           <slot name="icon"></slot>
         </div>

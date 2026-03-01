@@ -2,7 +2,7 @@
  * NodeList Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import type { GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, it } from 'vitest';
@@ -86,26 +86,21 @@ describe('xcode-graph-node-list', () => {
       ></xcode-graph-node-list>
     `);
 
-    let eventFired = false;
-    let eventDetail: unknown = null;
-
-    el.addEventListener('node-select', ((e: CustomEvent) => {
-      eventFired = true;
-      eventDetail = e.detail;
-    }) as EventListener);
-
     // Trigger the row-select event on the list item
     const row = el.shadowRoot?.querySelector('xcode-graph-list-item-row');
-    row?.dispatchEvent(
-      new CustomEvent('row-select', {
-        detail: { node: mockNodes[0] },
-        bubbles: true,
-        composed: true,
-      }),
+    setTimeout(() =>
+      row?.dispatchEvent(
+        new CustomEvent('row-select', {
+          detail: { node: mockNodes[0] },
+          bubbles: true,
+          composed: true,
+        }),
+      ),
     );
+    const event = (await oneEvent(el, 'node-select')) as CustomEvent;
 
-    expect(eventFired).to.be.true;
-    expect((eventDetail as { node: GraphNode }).node.id).to.equal('node1');
+    expect(event).to.exist;
+    expect(event.detail.node.id).to.equal('node1');
   });
 
   it('should format subtitle correctly for internal nodes', async () => {

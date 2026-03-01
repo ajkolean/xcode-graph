@@ -126,6 +126,19 @@ export class GraphNode extends LitElement {
     );
   }
 
+  private handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.dispatchEvent(
+        new CustomEvent('node-click', {
+          detail: { originalEvent: e },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
+  }
+
   // ========================================
   // Helpers
   // ========================================
@@ -413,12 +426,18 @@ export class GraphNode extends LitElement {
           })
         : '';
 
+    const nodeTypeLabel = this.node.type ? `${this.node.type} target` : 'target';
+
     return svg`
       <g
+        role="img"
+        aria-label="${this.node.name}, ${nodeTypeLabel}"
+        tabindex="0"
         @mouseenter=${this.handleMouseEnter}
         @mouseleave=${this.handleMouseLeave}
         @mousedown=${this.handleMouseDown}
         @click=${this.handleClick}
+        @keydown=${this.handleKeyDown}
         style="cursor: pointer; transition: opacity var(--durations-slow) ease, transform var(--durations-normal) var(--easings-bounce)"
         opacity="${isDimmed ? 0.25 : 1}"
         transform="scale(${scale}) rotate(${rotation}, ${x}, ${y})"

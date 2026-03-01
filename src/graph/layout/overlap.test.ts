@@ -1,6 +1,6 @@
 import type { ClusterPosition } from '@shared/schemas';
 import { describe, expect, it } from 'vitest';
-import { tuistGraphData } from '@/fixtures/tuist-graph-data';
+import { xcodeGraphData } from '@/fixtures/xcode-graph-data';
 import { analyzeCluster } from './cluster-analysis';
 import { groupIntoClusters } from './cluster-grouping';
 import { computeHierarchicalLayout } from './engine';
@@ -39,7 +39,7 @@ function findOverlappingPairs(positions: ClusterPosition[]): string[] {
 
 describe('Layout Overlap', () => {
   it('should not produce overlapping clusters in Tuist graph', async () => {
-    const { nodes, edges } = tuistGraphData;
+    const { nodes, edges } = xcodeGraphData;
 
     // 1. Prepare Clusters (mimic LayoutController)
     const clusters = groupIntoClusters(nodes, edges);

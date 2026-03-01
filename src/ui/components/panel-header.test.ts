@@ -2,7 +2,7 @@
  * PanelHeader Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphPanelHeader } from './panel-header';
 import './panel-header';
@@ -103,15 +103,11 @@ describe('xcode-graph-panel-header', () => {
       <xcode-graph-panel-header title="Test"></xcode-graph-panel-header>
     `);
 
-    let eventFired = false;
-    el.addEventListener('back', () => {
-      eventFired = true;
-    });
-
     const button = el.shadowRoot?.querySelector('.back-button') as HTMLButtonElement;
-    button.click();
+    setTimeout(() => button.click());
+    const event = await oneEvent(el, 'back');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   // ========================================

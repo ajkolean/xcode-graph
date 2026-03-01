@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   resolve: {
+    conditions: ['development'],
     extensions: ['.js', '.ts', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),

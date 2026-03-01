@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "plugins": [{ "name": "ts-lit-plugin", "strict": true }],
     "target": "ES2024",
     "useDefineForClassFields": true,
     "experimentalDecorators": true,

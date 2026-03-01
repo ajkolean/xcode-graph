@@ -1,7 +1,7 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
-	title: "TuistGraph",
+	title: "XcodeGraph",
 	description:
 		"Interactive dependency graph visualization for Tuist projects",
 	base: "/xcodegrapher/",

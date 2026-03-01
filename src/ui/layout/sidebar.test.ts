@@ -2,7 +2,7 @@
  * Sidebar Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { ActiveTab } from '@shared/schemas/app.types';
 import { describe, it } from 'vitest';
 import type { GraphSidebar } from './sidebar';
@@ -34,21 +34,16 @@ describe('xcode-graph-sidebar', () => {
       <xcode-graph-sidebar active-tab="overview"></xcode-graph-sidebar>
     `);
 
-    let eventDetail: { tab: string } | undefined;
-    el.addEventListener('tab-change', ((e: CustomEvent<{ tab: string }>) => {
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const buttons = el.shadowRoot?.querySelectorAll('.nav-button');
     const graphButton = Array.from(buttons || []).find((btn) =>
       btn.textContent?.includes('Graph'),
     ) as HTMLButtonElement;
 
-    graphButton?.click();
-    await el.updateComplete;
+    setTimeout(() => graphButton?.click());
+    const event = (await oneEvent(el, 'tab-change')) as CustomEvent<{ tab: string }>;
 
-    expect(eventDetail).to.exist;
-    expect(eventDetail?.tab).to.equal('graph');
+    expect(event).to.exist;
+    expect(event.detail.tab).to.equal('graph');
   });
 
   it('should update active state when activeTab changes', async () => {

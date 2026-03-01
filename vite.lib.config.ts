@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { minifyTemplateLiterals } from 'rollup-plugin-minify-template-literals';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
@@ -9,13 +10,14 @@ import { defineConfig } from 'vite';
  *   pnpm build:lib
  *
  * Output:
- *   dist/tuistgraph.js  — ES module, registers <graph-app> custom element
+ *   dist/xcodegraph.js  — ES module, registers <graph-app> custom element
  *
  * Consumers load it via:
- *   <script type="module" src="https://cdn.jsdelivr.net/npm/@tuist/graph/dist/tuistgraph.js"></script>
+ *   <script type="module" src="https://cdn.jsdelivr.net/npm/xcode-graph/dist/xcodegraph.js"></script>
  */
 export default defineConfig({
   plugins: [
+    minifyTemplateLiterals(),
     visualizer({
       filename: 'dist/bundle-stats.html',
       gzipSize: true,
@@ -46,7 +48,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, './src/components/graph-app.ts'),
       formats: ['es'],
-      fileName: () => 'tuistgraph.js',
+      fileName: () => 'xcodegraph.js',
     },
     rollupOptions: {
       // Bundle everything — no externals for CDN usage

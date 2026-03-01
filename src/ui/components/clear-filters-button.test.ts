@@ -2,7 +2,7 @@
  * ClearFiltersButton Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphClearFiltersButton } from './clear-filters-button';
 import './clear-filters-button';
@@ -81,16 +81,11 @@ describe('xcode-graph-clear-filters-button', () => {
       <xcode-graph-clear-filters-button is-active></xcode-graph-clear-filters-button>
     `);
 
-    let eventFired = false;
-    el.addEventListener('clear-filters', () => {
-      eventFired = true;
-    });
-
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    button.click();
-    await el.updateComplete;
+    setTimeout(() => button.click());
+    const event = await oneEvent(el, 'clear-filters');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should not dispatch event when clicked and disabled', async () => {

@@ -2,7 +2,7 @@
  * IconButton Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphIconButton } from './icon-button';
 import './icon-button';
@@ -83,15 +83,11 @@ describe('xcode-graph-icon-button', () => {
       <xcode-graph-icon-button></xcode-graph-icon-button>
     `);
 
-    let eventFired = false;
-    el.addEventListener('click', () => {
-      eventFired = true;
-    });
-
     const button = el.shadowRoot?.querySelector('button');
-    button?.click();
+    setTimeout(() => button?.click());
+    const event = await oneEvent(el, 'click');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should not fire click event when disabled', async () => {

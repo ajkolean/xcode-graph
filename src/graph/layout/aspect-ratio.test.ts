@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { tuistGraphData } from '@/fixtures/tuist-graph-data';
+import { xcodeGraphData } from '@/fixtures/xcode-graph-data';
 import { analyzeCluster } from './cluster-analysis';
 import { groupIntoClusters } from './cluster-grouping';
 import { computeHierarchicalLayout } from './engine';
 
 describe('Layout Aspect Ratio', () => {
   it('should produce a roughly square layout (between 3:4 and 4:3)', async () => {
-    const { nodes, edges } = tuistGraphData;
+    const { nodes, edges } = xcodeGraphData;
 
     // 1. Prepare
     const clusters = groupIntoClusters(nodes, edges);

@@ -2,7 +2,7 @@
  * ListItemRow Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphListItemRow } from './list-item-row';
 import './list-item-row';
@@ -63,17 +63,12 @@ describe('xcode-graph-list-item-row', () => {
       <xcode-graph-list-item-row .node=${mockNode}></xcode-graph-list-item-row>
     `);
 
-    let eventDetail: { node: typeof mockNode } | undefined;
-    el.addEventListener('row-select', ((e: CustomEvent<{ node: typeof mockNode }>) => {
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    button.click();
-    await el.updateComplete;
+    setTimeout(() => button.click());
+    const event = (await oneEvent(el, 'row-select')) as CustomEvent<{ node: typeof mockNode }>;
 
-    expect(eventDetail).to.exist;
-    expect(eventDetail?.node).to.deep.equal(mockNode);
+    expect(event).to.exist;
+    expect(event.detail.node).to.deep.equal(mockNode);
   });
 
   it('should dispatch row-hover event on mouse enter', async () => {
@@ -81,18 +76,12 @@ describe('xcode-graph-list-item-row', () => {
       <xcode-graph-list-item-row .node=${mockNode}></xcode-graph-list-item-row>
     `);
 
-    let eventDetail: { nodeId: string } | undefined;
-    el.addEventListener('row-hover', ((e: CustomEvent<{ nodeId: string }>) => {
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    const event = new MouseEvent('mouseenter', { bubbles: true });
-    button.dispatchEvent(event);
-    await el.updateComplete;
+    setTimeout(() => button.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true })));
+    const event = (await oneEvent(el, 'row-hover')) as CustomEvent<{ nodeId: string }>;
 
-    expect(eventDetail).to.exist;
-    expect(eventDetail?.nodeId).to.equal('test-node');
+    expect(event).to.exist;
+    expect(event.detail.nodeId).to.equal('test-node');
   });
 
   it('should dispatch row-hover-end event on mouse leave', async () => {
@@ -100,16 +89,10 @@ describe('xcode-graph-list-item-row', () => {
       <xcode-graph-list-item-row .node=${mockNode}></xcode-graph-list-item-row>
     `);
 
-    let eventFired = false;
-    el.addEventListener('row-hover-end', () => {
-      eventFired = true;
-    });
-
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    const event = new MouseEvent('mouseleave', { bubbles: true });
-    button.dispatchEvent(event);
-    await el.updateComplete;
+    setTimeout(() => button.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true })));
+    const event = await oneEvent(el, 'row-hover-end');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 });

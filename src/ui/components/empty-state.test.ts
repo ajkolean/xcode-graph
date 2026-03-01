@@ -2,7 +2,7 @@
  * EmptyState Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphEmptyState } from './empty-state';
 import './empty-state';
@@ -44,16 +44,11 @@ describe('xcode-graph-empty-state', () => {
       <xcode-graph-empty-state has-active-filters></xcode-graph-empty-state>
     `);
 
-    let eventFired = false;
-    el.addEventListener('clear-filters', () => {
-      eventFired = true;
-    });
-
     const button = el.shadowRoot?.querySelector('.clear-button') as HTMLButtonElement;
-    button.click();
-    await el.updateComplete;
+    setTimeout(() => button.click());
+    const event = await oneEvent(el, 'clear-filters');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should toggle button visibility when hasActiveFilters changes', async () => {

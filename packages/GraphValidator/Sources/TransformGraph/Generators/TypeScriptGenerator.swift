@@ -96,7 +96,7 @@ struct TypeScriptGenerator {
         /**
          * AUTO-GENERATED from XcodeGraph Swift sources
          * Do not edit manually - regenerate using:
-         *   swift run transform-graph --source-dir <xcodegraph-sources> -o tuist-graph.schema.generated.ts
+         *   swift run transform-graph --source-dir <xcodegraph-sources> -o xcode-graph.schema.generated.ts
          *
          * @generated
          */

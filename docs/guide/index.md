@@ -4,7 +4,7 @@ title: Getting Started
 
 # Getting Started
 
-TuistGraph is a Lit web component for visualizing [Tuist](https://tuist.dev) dependency graphs.
+XcodeGraph is a Lit web component for visualizing Xcode project dependency graphs.
 
 ## Installation
 
@@ -29,16 +29,16 @@ Import the component and pass `GraphNode[]` / `GraphEdge[]` arrays as properties
 ></xcode-graph>
 ```
 
-### Raw Tuist JSON
+### Raw XcodeGraph JSON
 
-If you have the raw JSON output from `tuist graph`, use the convenience method:
+If you have the raw JSON output from XcodeGraph, use the convenience method:
 
 ```js
 const app = document.querySelector('xcode-graph');
-app.loadRawGraph(tuistGraphJson);
+app.loadRawGraph(xcodeGraphJson);
 ```
 
-`loadRawGraph` validates and transforms the Tuist JSON into the internal `GraphNode` / `GraphEdge` format automatically.
+`loadRawGraph` validates and transforms the XcodeGraph JSON into the internal `GraphNode` / `GraphEdge` format automatically.
 
 ## Data Shape
 

@@ -69,7 +69,7 @@ No action needed — if it fails, an issue is automatically created.
 ## What the check does
 
 1. Updates the `GraphValidator` Swift package to the target XcodeGraph version
-2. Regenerates `tuist-graph.schema.generated.ts` from the new XcodeGraph sources
+2. Regenerates `xcode-graph.schema.generated.ts` from the new XcodeGraph sources
 3. Runs all tests (including forward-compatibility tests)
 4. Runs biome lint
 5. Runs the production build

@@ -72,7 +72,7 @@
       }
     },
     {
-      "includes": ["**/tuist-graph.types.ts", "**/tuist-graph.schema.generated.ts"],
+      "includes": ["**/tuist-graph.types.ts", "**/xcode-graph.schema.generated.ts"],
       "linter": {
         "enabled": false
       }

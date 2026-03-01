@@ -215,6 +215,7 @@ export class GraphSearchBar extends LitElement {
         <input
           type="text"
           placeholder="Filter nodes..."
+          aria-label="Filter nodes"
           .value=${this.searchQuery || ''}
           @input=${this.handleInput}
           @keydown=${this.handleKeyDown}

@@ -2,7 +2,7 @@ import Foundation
 import Testing
 import XcodeGraph
 
-@Test func decodeTuistGraphJSON() throws {
+@Test func decodeXcodeGraphJSON() throws {
     let graphURL = Bundle.module.url(forResource: "graph", withExtension: "json", subdirectory: "Resources")!
     let data = try Data(contentsOf: graphURL)
 

@@ -4,7 +4,7 @@
  * Tests for GraphBackground, GraphControls, GraphEmptyState, and GraphInstructions.
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type {
   GraphBackground,
@@ -97,15 +97,11 @@ describe('xcode-graph-controls', () => {
       html`<xcode-graph-controls zoom="1" base-zoom="1"></xcode-graph-controls>`,
     );
 
-    let eventFired = false;
-    el.addEventListener('zoom-step', () => {
-      eventFired = true;
-    });
-
     const zoomInBtn = el.shadowRoot?.querySelector('button[title="Zoom in"]') as HTMLButtonElement;
-    zoomInBtn.click();
+    setTimeout(() => zoomInBtn.click());
+    const event = await oneEvent(el, 'zoom-step');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should dispatch zoom-step event when zoom out button clicked', async () => {
@@ -113,17 +109,13 @@ describe('xcode-graph-controls', () => {
       html`<xcode-graph-controls zoom="1" base-zoom="1"></xcode-graph-controls>`,
     );
 
-    let eventFired = false;
-    el.addEventListener('zoom-step', () => {
-      eventFired = true;
-    });
-
     const zoomOutBtn = el.shadowRoot?.querySelector(
       'button[title="Zoom out"]',
     ) as HTMLButtonElement;
-    zoomOutBtn.click();
+    setTimeout(() => zoomOutBtn.click());
+    const event = await oneEvent(el, 'zoom-step');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should dispatch zoom-reset event when reset button clicked', async () => {
@@ -131,17 +123,13 @@ describe('xcode-graph-controls', () => {
       html`<xcode-graph-controls zoom="1"></xcode-graph-controls>`,
     );
 
-    let eventFired = false;
-    el.addEventListener('zoom-reset', () => {
-      eventFired = true;
-    });
-
     const resetBtn = el.shadowRoot?.querySelector(
       'button[title="Fit to view"]',
     ) as HTMLButtonElement;
-    resetBtn.click();
+    setTimeout(() => resetBtn.click());
+    const event = await oneEvent(el, 'zoom-reset');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 });
 

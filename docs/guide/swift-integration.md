@@ -31,14 +31,14 @@ The `<xcode-graph>` web component is published to npm as `xcode-graph`.
 The server loads it from:
 
 ```
-https://cdn.jsdelivr.net/npm/xcode-graph/dist/tuistgraph.js
+https://cdn.jsdelivr.net/npm/xcode-graph/dist/xcodegraph.js
 ```
 
 To publish a new version:
 
 ```bash
 cd /path/to/tuistgraph
-pnpm build:lib            # produces dist/tuistgraph.js
+pnpm build:lib            # produces dist/xcodegraph.js
 npm publish               # publishes to xcode-graph
 ```
 
@@ -56,7 +56,7 @@ npm publish               # publishes to xcode-graph
 ```
 swift/
 ├── Package.swift                          # Reference SPM manifest
-├── Sources/TuistGraph/
+├── Sources/XcodeGraphServer/
 │   ├── GraphServer.swift                  # SwiftNIO server + browser open
 │   └── GraphHTTPHandler.swift             # Routes: / (generated HTML), /graph.json
 ```

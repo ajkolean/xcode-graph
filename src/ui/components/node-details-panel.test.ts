@@ -5,7 +5,7 @@
  * Tests rendering, computed properties, event bubbling, and props propagation.
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, it } from 'vitest';
@@ -303,15 +303,13 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
       ></xcode-graph-node-details-panel>
     `);
 
-    let eventFired = false;
-    el.addEventListener('close', () => {
-      eventFired = true;
-    });
-
     const header = el.shadowRoot?.querySelector('xcode-graph-node-header');
-    header?.dispatchEvent(new CustomEvent('close', { bubbles: true, composed: true }));
+    setTimeout(() =>
+      header?.dispatchEvent(new CustomEvent('close', { bubbles: true, composed: true })),
+    );
+    const event = await oneEvent(el, 'close');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should bubble cluster-select event', async () => {
@@ -323,25 +321,20 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
       ></xcode-graph-node-details-panel>
     `);
 
-    let eventFired = false;
-    let eventDetail: unknown = null;
-
-    el.addEventListener('cluster-select', ((e: CustomEvent) => {
-      eventFired = true;
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const header = el.shadowRoot?.querySelector('xcode-graph-node-header');
-    header?.dispatchEvent(
-      new CustomEvent('cluster-click', {
-        detail: { clusterId: 'MyApp' },
-        bubbles: true,
-        composed: true,
-      }),
+    setTimeout(() =>
+      header?.dispatchEvent(
+        new CustomEvent('cluster-click', {
+          detail: { clusterId: 'MyApp' },
+          bubbles: true,
+          composed: true,
+        }),
+      ),
     );
+    const event = (await oneEvent(el, 'cluster-select')) as CustomEvent;
 
-    expect(eventFired).to.be.true;
-    expect((eventDetail as { clusterId: string }).clusterId).to.equal('MyApp');
+    expect(event).to.exist;
+    expect(event.detail.clusterId).to.equal('MyApp');
   });
 
   it('should bubble toggle-direct-deps event from metrics section', async () => {
@@ -353,20 +346,15 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
       ></xcode-graph-node-details-panel>
     `);
 
-    let eventFired = false;
-    el.addEventListener('toggle-direct-deps', () => {
-      eventFired = true;
-    });
-
     const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
-    metrics?.dispatchEvent(
-      new CustomEvent('toggle-direct-deps', {
-        bubbles: true,
-        composed: true,
-      }),
+    setTimeout(() =>
+      metrics?.dispatchEvent(
+        new CustomEvent('toggle-direct-deps', { bubbles: true, composed: true }),
+      ),
     );
+    const event = await oneEvent(el, 'toggle-direct-deps');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should bubble toggle-direct-dependents event from metrics section', async () => {
@@ -378,20 +366,15 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
       ></xcode-graph-node-details-panel>
     `);
 
-    let eventFired = false;
-    el.addEventListener('toggle-direct-dependents', () => {
-      eventFired = true;
-    });
-
     const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
-    metrics?.dispatchEvent(
-      new CustomEvent('toggle-direct-dependents', {
-        bubbles: true,
-        composed: true,
-      }),
+    setTimeout(() =>
+      metrics?.dispatchEvent(
+        new CustomEvent('toggle-direct-dependents', { bubbles: true, composed: true }),
+      ),
     );
+    const event = await oneEvent(el, 'toggle-direct-dependents');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should bubble node-select event from dependency list', async () => {
@@ -403,27 +386,21 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
       ></xcode-graph-node-details-panel>
     `);
 
-    let eventFired = false;
-    let eventDetail: unknown = null;
-
-    el.addEventListener('node-select', ((e: CustomEvent) => {
-      eventFired = true;
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
     const depList = lists?.[0];
-
-    depList?.dispatchEvent(
-      new CustomEvent('node-select', {
-        detail: { node: mockDependency },
-        bubbles: true,
-        composed: true,
-      }),
+    setTimeout(() =>
+      depList?.dispatchEvent(
+        new CustomEvent('node-select', {
+          detail: { node: mockDependency },
+          bubbles: true,
+          composed: true,
+        }),
+      ),
     );
+    const event = (await oneEvent(el, 'node-select')) as CustomEvent;
 
-    expect(eventFired).to.be.true;
-    expect((eventDetail as { node: GraphNode }).node).to.equal(mockDependency);
+    expect(event).to.exist;
+    expect(event.detail.node).to.equal(mockDependency);
   });
 
   it('should bubble node-hover event', async () => {
@@ -435,27 +412,21 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
       ></xcode-graph-node-details-panel>
     `);
 
-    let eventFired = false;
-    let eventDetail: unknown = null;
-
-    el.addEventListener('node-hover', ((e: CustomEvent) => {
-      eventFired = true;
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
     const depList = lists?.[0];
-
-    depList?.dispatchEvent(
-      new CustomEvent('node-hover', {
-        detail: { nodeId: 'dep1' },
-        bubbles: true,
-        composed: true,
-      }),
+    setTimeout(() =>
+      depList?.dispatchEvent(
+        new CustomEvent('node-hover', {
+          detail: { nodeId: 'dep1' },
+          bubbles: true,
+          composed: true,
+        }),
+      ),
     );
+    const event = (await oneEvent(el, 'node-hover')) as CustomEvent;
 
-    expect(eventFired).to.be.true;
-    expect((eventDetail as { nodeId: string }).nodeId).to.equal('dep1');
+    expect(event).to.exist;
+    expect(event.detail.nodeId).to.equal('dep1');
   });
 });
 

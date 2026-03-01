@@ -2,7 +2,7 @@
  * CollapsibleSection Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphCollapsibleSection } from './collapsible-section';
 import './collapsible-section';
@@ -56,15 +56,11 @@ describe('xcode-graph-collapsible-section', () => {
       <xcode-graph-collapsible-section title="Test"></xcode-graph-collapsible-section>
     `);
 
-    let eventFired = false;
-    el.addEventListener('toggle', () => {
-      eventFired = true;
-    });
-
     const button = el.shadowRoot?.querySelector('.header-button') as HTMLButtonElement;
-    button.click();
+    setTimeout(() => button.click());
+    const event = await oneEvent(el, 'toggle');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should render icon slot', async () => {

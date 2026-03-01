@@ -32,7 +32,7 @@ import { property } from 'lit/decorators.js';
 import { ErrorService } from '@/services/error-service';
 import { GraphAnalysisService } from '@/services/graph-analysis-service';
 import { GraphDataService } from '@/services/graph-data-service';
-import { transformTuistGraph } from '@/services/tuist-graph.service';
+import { transformXcodeGraph } from '@/services/xcode-graph.service';
 import '@ui/layout/graph-tab';
 import '@ui/components/error-notification-container';
 
@@ -144,7 +144,7 @@ export class GraphApp extends SignalWatcherLitElement {
    */
   public loadRawGraph(raw: unknown): void {
     try {
-      const result = transformTuistGraph(raw);
+      const result = transformXcodeGraph(raw);
 
       if (result.warnings.length > 0) {
         const errorService = ErrorService.getInstance();

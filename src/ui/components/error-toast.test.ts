@@ -5,7 +5,7 @@
  * Tests rendering, interactions, and animations.
  */
 
-import { fixture, html } from '@open-wc/testing';
+import { aTimeout, fixture, html, nextFrame, oneEvent } from '@open-wc/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GraphErrorToast } from './error-toast';
 import './error-toast';
@@ -118,18 +118,11 @@ describe('GraphErrorToast', () => {
       element.error = error;
       await element.updateComplete;
 
-      const dismissSpy = vi.fn();
-      element.addEventListener('dismiss', dismissSpy);
-
       const closeIcon = element.shadowRoot?.querySelector('.close-icon') as HTMLElement;
-      closeIcon?.click();
+      setTimeout(() => closeIcon?.click());
+      const event = (await oneEvent(element, 'dismiss')) as CustomEvent;
 
-      // Wait for animation
-      await new Promise((resolve) => setTimeout(resolve, 350));
-
-      expect(dismissSpy).toHaveBeenCalled();
-      const firstCall = dismissSpy.mock.calls[0];
-      const event = firstCall?.[0] as CustomEvent;
+      expect(event).to.exist;
       expect(event.detail.errorId).toBe('test-123');
     });
 
@@ -144,7 +137,7 @@ describe('GraphErrorToast', () => {
       // Try to call handleDismiss directly (no close button exists)
       (element as unknown as { handleDismiss: () => void }).handleDismiss();
 
-      await new Promise((resolve) => setTimeout(resolve, 350));
+      await aTimeout(350);
 
       expect(dismissSpy).not.toHaveBeenCalled();
     });
@@ -154,16 +147,11 @@ describe('GraphErrorToast', () => {
       element.error = error;
       await element.updateComplete;
 
-      const dismissSpy = vi.fn();
-      element.addEventListener('dismiss', dismissSpy);
-
       const closeIcon = element.shadowRoot?.querySelector('.close-icon') as HTMLElement;
-      const event = new KeyboardEvent('keydown', { key: 'Enter' });
-      closeIcon?.dispatchEvent(event);
+      setTimeout(() => closeIcon?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })));
+      const event = await oneEvent(element, 'dismiss');
 
-      await new Promise((resolve) => setTimeout(resolve, 350));
-
-      expect(dismissSpy).toHaveBeenCalled();
+      expect(event).to.exist;
     });
 
     it('should handle keyboard dismiss (Space)', async () => {
@@ -171,16 +159,11 @@ describe('GraphErrorToast', () => {
       element.error = error;
       await element.updateComplete;
 
-      const dismissSpy = vi.fn();
-      element.addEventListener('dismiss', dismissSpy);
-
       const closeIcon = element.shadowRoot?.querySelector('.close-icon') as HTMLElement;
-      const event = new KeyboardEvent('keydown', { key: ' ' });
-      closeIcon?.dispatchEvent(event);
+      setTimeout(() => closeIcon?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ' })));
+      const event = await oneEvent(element, 'dismiss');
 
-      await new Promise((resolve) => setTimeout(resolve, 350));
-
-      expect(dismissSpy).toHaveBeenCalled();
+      expect(event).to.exist;
     });
   });
 
@@ -215,15 +198,11 @@ describe('GraphErrorToast', () => {
       element.error = error;
       await element.updateComplete;
 
-      const actionSpy = vi.fn();
-      element.addEventListener('action', actionSpy);
-
       const actionButton = element.shadowRoot?.querySelector('.action-button') as HTMLElement;
-      actionButton?.click();
+      setTimeout(() => actionButton?.click());
+      const event = (await oneEvent(element, 'action')) as CustomEvent;
 
-      expect(actionSpy).toHaveBeenCalled();
-      const firstCall = actionSpy.mock.calls[0];
-      const event = firstCall?.[0] as CustomEvent;
+      expect(event).to.exist;
       expect(event.detail.error).toEqual(error);
     });
   });
@@ -273,7 +252,7 @@ describe('GraphErrorToast', () => {
       await element.updateComplete;
 
       // Wait for animation frame
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await nextFrame();
       await element.updateComplete;
 
       expect(element.visible).toBe(true);
@@ -283,7 +262,7 @@ describe('GraphErrorToast', () => {
       const error = createMockError();
       element.error = error;
       await element.updateComplete;
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await nextFrame();
 
       expect(element.visible).toBe(true);
 

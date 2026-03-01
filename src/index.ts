@@ -1,5 +1,5 @@
 /**
- * TuistGraph - Public API
+ * XcodeGraph - Public API
  *
  * Main entry point exporting all public modules for documentation generation.
  *

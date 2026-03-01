@@ -2,7 +2,7 @@
  * Tests for GraphCycleWarning component
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphCycleWarning } from './cycle-warning';
 import './cycle-warning';
@@ -161,16 +161,11 @@ describe('xcode-graph-cycle-warning', () => {
         <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
-      let eventFired = false;
-      el.addEventListener('dismiss', () => {
-        eventFired = true;
-      });
-
       const dismissBtn = el.shadowRoot?.querySelector('.btn-dismiss') as HTMLButtonElement;
-      dismissBtn.click();
-      await el.updateComplete;
+      setTimeout(() => dismissBtn.click());
+      const event = await oneEvent(el, 'dismiss');
 
-      expect(eventFired).to.be.true;
+      expect(event).to.exist;
     });
 
     it('should hide banner when close button (×) is clicked', async () => {

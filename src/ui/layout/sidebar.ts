@@ -19,7 +19,7 @@ import { ActiveTab, type ActiveTab as ActiveTabType } from '@shared/schemas';
 
 export type { ActiveTab } from '@shared/schemas';
 
-import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
+import { type CSSResultGroup, css, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -354,6 +354,7 @@ export class GraphSidebar extends LitElement {
                 return html`
                 <button
                   class=${classMap({ 'nav-button': true, active: isActive })}
+                  aria-current=${isActive ? 'page' : nothing}
                   @click=${() => this.handleTabClick(item.id)}
                 >
                   <div class="nav-content">

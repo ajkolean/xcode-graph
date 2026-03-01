@@ -19,7 +19,7 @@ struct TransformGraph: ParsableCommand {
     var sourceDir: String
 
     @Option(name: .shortAndLong, help: "Output path for generated TypeScript file")
-    var output: String = "tuist-graph.schema.generated.ts"
+    var output: String = "xcode-graph.schema.generated.ts"
 
     @Flag(name: .shortAndLong, help: "Show verbose output including extracted types")
     var verbose: Bool = false

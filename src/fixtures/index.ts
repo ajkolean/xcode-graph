@@ -33,5 +33,5 @@ export { createNode, createNodesForFilterTesting } from './nodes';
 // Position fixtures
 export type { TestPosition } from './positions';
 export { createCenteredPositions, createCircularPositions } from './positions';
-// Real Tuist graph data
-export * from './tuist-graph-data';
+// Real XcodeGraph data
+export * from './xcode-graph-data';

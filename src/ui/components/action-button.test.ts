@@ -2,7 +2,7 @@
  * ActionButton Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphActionButton } from './action-button';
 import './action-button';
@@ -82,14 +82,10 @@ describe('xcode-graph-action-button', () => {
       <xcode-graph-action-button>Click Me</xcode-graph-action-button>
     `);
 
-    let eventFired = false;
-    el.addEventListener('click', () => {
-      eventFired = true;
-    });
-
     const button = el.shadowRoot?.querySelector('button');
-    button?.click();
+    setTimeout(() => button?.click());
+    const event = await oneEvent(el, 'click');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 });

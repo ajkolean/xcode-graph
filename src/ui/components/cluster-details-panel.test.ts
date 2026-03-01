@@ -5,7 +5,7 @@
  * Tests rendering, computed properties, event bubbling, and props propagation.
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import type { Cluster } from '@shared/schemas';
 import { ClusterType } from '@shared/schemas/cluster.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
@@ -274,15 +274,13 @@ describe('xcode-graph-cluster-details-panel - Event Bubbling', () => {
       ></xcode-graph-cluster-details-panel>
     `);
 
-    let eventFired = false;
-    el.addEventListener('close', () => {
-      eventFired = true;
-    });
-
     const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
-    header?.dispatchEvent(new CustomEvent('back', { bubbles: true, composed: true }));
+    setTimeout(() =>
+      header?.dispatchEvent(new CustomEvent('back', { bubbles: true, composed: true })),
+    );
+    const event = await oneEvent(el, 'close');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should bubble node-select event from targets list', async () => {
@@ -295,25 +293,20 @@ describe('xcode-graph-cluster-details-panel - Event Bubbling', () => {
       ></xcode-graph-cluster-details-panel>
     `);
 
-    let eventFired = false;
-    let eventDetail: unknown = null;
-
-    el.addEventListener('node-select', ((e: CustomEvent) => {
-      eventFired = true;
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
-    targetsList?.dispatchEvent(
-      new CustomEvent('node-select', {
-        detail: { node: mockClusterNodes[0] },
-        bubbles: true,
-        composed: true,
-      }),
+    setTimeout(() =>
+      targetsList?.dispatchEvent(
+        new CustomEvent('node-select', {
+          detail: { node: mockClusterNodes[0] },
+          bubbles: true,
+          composed: true,
+        }),
+      ),
     );
+    const event = (await oneEvent(el, 'node-select')) as CustomEvent;
 
-    expect(eventFired).to.be.true;
-    expect((eventDetail as { node: GraphNode }).node).to.equal(mockClusterNodes[0]);
+    expect(event).to.exist;
+    expect(event.detail.node).to.equal(mockClusterNodes[0]);
   });
 
   it('should bubble node-hover event from targets list', async () => {
@@ -326,25 +319,20 @@ describe('xcode-graph-cluster-details-panel - Event Bubbling', () => {
       ></xcode-graph-cluster-details-panel>
     `);
 
-    let eventFired = false;
-    let eventDetail: unknown = null;
-
-    el.addEventListener('node-hover', ((e: CustomEvent) => {
-      eventFired = true;
-      eventDetail = e.detail;
-    }) as EventListener);
-
     const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
-    targetsList?.dispatchEvent(
-      new CustomEvent('node-hover', {
-        detail: { nodeId: 'node1' },
-        bubbles: true,
-        composed: true,
-      }),
+    setTimeout(() =>
+      targetsList?.dispatchEvent(
+        new CustomEvent('node-hover', {
+          detail: { nodeId: 'node1' },
+          bubbles: true,
+          composed: true,
+        }),
+      ),
     );
+    const event = (await oneEvent(el, 'node-hover')) as CustomEvent;
 
-    expect(eventFired).to.be.true;
-    expect((eventDetail as { nodeId: string }).nodeId).to.equal('node1');
+    expect(event).to.exist;
+    expect(event.detail.nodeId).to.equal('node1');
   });
 });
 

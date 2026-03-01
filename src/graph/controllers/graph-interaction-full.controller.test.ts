@@ -3,6 +3,7 @@
  * Ensures pan, zoom, and drag interactions work correctly
  */
 
+import { aTimeout } from '@open-wc/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ClusterPosition, NodePosition } from '@/shared/schemas';
 import { MockHost } from '@/test-utils';
@@ -336,7 +337,7 @@ describe('GraphInteractionFullController', () => {
       controller.handleMouseUp();
 
       // Wait for timeout
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await aTimeout(10);
 
       expect(controller.hasMoved).toBe(false);
     });

@@ -1,5 +1,5 @@
 /**
- * TuistGraph - Public API
+ * XcodeGraph - Public API
  *
  * Entry point for API Extractor containing all public modules
  * and utilities for graph visualization.

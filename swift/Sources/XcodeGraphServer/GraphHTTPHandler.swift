@@ -43,7 +43,7 @@ final class GraphHTTPHandler: ChannelInboundHandler {
 
     /// The CDN URL for the web component bundle.
     /// Update the version tag when publishing new releases.
-    private static let cdnURL = "https://cdn.jsdelivr.net/npm/@tuist/graph/dist/tuistgraph.js"
+    private static let cdnURL = "https://cdn.jsdelivr.net/npm/xcode-graph/dist/xcodegraph.js"
 
     private static func generateHTML() -> String {
         """
@@ -52,7 +52,7 @@ final class GraphHTTPHandler: ChannelInboundHandler {
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Tuist Graph</title>
+          <title>Xcode Graph</title>
           <style>
             html, body { margin: 0; padding: 0; height: 100%; background: #0a0a0c; overflow: hidden; }
             #root { height: 100%; }

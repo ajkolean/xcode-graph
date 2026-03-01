@@ -2,7 +2,7 @@
  * AlertBanner Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphAlertBanner } from './alert-banner';
 import './alert-banner';
@@ -65,15 +65,11 @@ describe('xcode-graph-alert-banner', () => {
       <xcode-graph-alert-banner dismissible></xcode-graph-alert-banner>
     `);
 
-    let eventFired = false;
-    el.addEventListener('dismiss', () => {
-      eventFired = true;
-    });
-
     const closeBtn = el.shadowRoot?.querySelector('.close-btn') as HTMLButtonElement;
-    closeBtn.click();
+    setTimeout(() => closeBtn.click());
+    const event = await oneEvent(el, 'dismiss');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should hide content after dismiss', async () => {

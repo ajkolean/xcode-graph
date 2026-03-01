@@ -2,7 +2,7 @@
  * ClusterHeader Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { describe, it } from 'vitest';
 import type { GraphClusterHeader } from './cluster-header';
 import type { GraphPanelHeader } from './panel-header';
@@ -65,19 +65,15 @@ describe('xcode-graph-cluster-header', () => {
       ></xcode-graph-cluster-header>
     `);
 
-    let eventFired = false;
-    el.addEventListener('back', () => {
-      eventFired = true;
-    });
-
     // The back event bubbles from panel-header
     const panelHeader = el.shadowRoot?.querySelector(
       'xcode-graph-panel-header',
     ) as GraphPanelHeader;
     const button = panelHeader.shadowRoot?.querySelector('.back-button') as HTMLButtonElement;
-    button.click();
+    setTimeout(() => button.click());
+    const event = await oneEvent(el, 'back');
 
-    expect(eventFired).to.be.true;
+    expect(event).to.exist;
   });
 
   it('should pass color to panel-header', async () => {
