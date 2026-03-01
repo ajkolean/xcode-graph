@@ -1,25 +1,47 @@
 /**
  * Lightweight animation utilities for smooth canvas state transitions.
  *
- * AnimatedValue lerps between current and target values at a configurable speed.
- * Used primarily for opacity transitions on selection/deselection.
+ * AnimatedValue interpolates between start and target values using d3-ease
+ * easing functions for natural-feeling motion. Used primarily for opacity
+ * transitions on selection/deselection.
  */
+
+import { easeQuadInOut } from 'd3-ease';
 
 export interface AnimatedValue {
   current: number;
   target: number;
+  /** Value when the current animation started */
+  start: number;
+  /** Normalized progress 0-1 of the current animation */
+  progress: number;
 }
 
+/** Default animation duration in milliseconds */
+const ANIMATION_DURATION_MS = 250;
+
 /**
- * Advance an animated value toward its target.
+ * Advance an animated value toward its target using eased interpolation.
  * @returns true if the value is still animating (hasn't settled).
  */
-export function tickAnimation(value: AnimatedValue, dt: number, speed = 8): boolean {
-  value.current += (value.target - value.current) * Math.min(1, (speed * dt) / 1000);
-  if (Math.abs(value.current - value.target) < 0.01) {
+export function tickAnimation(
+  value: AnimatedValue,
+  dt: number,
+  durationMs = ANIMATION_DURATION_MS,
+): boolean {
+  if (value.progress >= 1) {
+    return false;
+  }
+
+  value.progress = Math.min(1, value.progress + dt / durationMs);
+  const easedT = easeQuadInOut(value.progress);
+  value.current = value.start + (value.target - value.start) * easedT;
+
+  if (value.progress >= 1) {
     value.current = value.target;
     return false;
   }
+
   return true;
 }
 
@@ -51,7 +73,7 @@ export function getAnimatedAlpha(map: Map<string, AnimatedValue>, key: string): 
 
 /**
  * Set the target alpha for a key, creating the entry if needed.
- * Starts the current value at the existing animated value (or 1.0 if new).
+ * Resets progress and captures the current value as the new start.
  */
 export function setAnimatedTarget(
   map: Map<string, AnimatedValue>,
@@ -60,11 +82,15 @@ export function setAnimatedTarget(
 ): void {
   const existing = map.get(key);
   if (existing) {
-    existing.target = target;
+    if (existing.target !== target) {
+      existing.start = existing.current;
+      existing.target = target;
+      existing.progress = 0;
+    }
   } else {
     // Only create an entry if the target differs from default (1.0)
     if (target !== 1.0) {
-      map.set(key, { current: 1.0, target });
+      map.set(key, { current: 1.0, target, start: 1.0, progress: 0 });
     }
   }
 }
