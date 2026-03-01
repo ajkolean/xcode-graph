@@ -117,7 +117,8 @@ describe('traverseGraph', () => {
 describe('computeTransitiveDependencies', () => {
   it('should return empty results in full view mode', () => {
     const { nodes, edges } = createLinearChain(3);
-    const selectedNode = nodes[0]!;
+    const selectedNode = nodes[0];
+    if (!selectedNode) throw new Error('Node not found');
 
     const result = computeTransitiveDependencies(ViewMode.Full, selectedNode, edges);
 
@@ -136,7 +137,8 @@ describe('computeTransitiveDependencies', () => {
 
   it('should compute dependencies in focused mode', () => {
     const { nodes, edges } = createLinearChain(4);
-    const selectedNode = nodes[0]!; // A
+    const selectedNode = nodes[0]; // A
+    if (!selectedNode) throw new Error('Node not found');
 
     const result = computeTransitiveDependencies(ViewMode.Focused, selectedNode, edges);
 
@@ -148,7 +150,8 @@ describe('computeTransitiveDependencies', () => {
 
   it('should compute dependents in dependents mode', () => {
     const { nodes, edges } = createLinearChain(4);
-    const selectedNode = nodes[3]!; // D
+    const selectedNode = nodes[3]; // D
+    if (!selectedNode) throw new Error('Node not found');
 
     const result = computeTransitiveDependencies(ViewMode.Dependents, selectedNode, edges);
 
@@ -160,7 +163,8 @@ describe('computeTransitiveDependencies', () => {
 
   it('should compute both dependencies and dependents in both mode', () => {
     const { nodes, edges } = createDiamondGraph();
-    const selectedNode = nodes.find((n) => n.id === 'B')!;
+    const selectedNode = nodes.find((n) => n.id === 'B');
+    if (!selectedNode) throw new Error('Node B not found');
 
     const result = computeTransitiveDependencies(ViewMode.Both, selectedNode, edges);
 
@@ -184,7 +188,8 @@ describe('computeTransitiveDependencies', () => {
 
   it('should use caching for repeated calls with same edges', () => {
     const { nodes, edges } = createLinearChain(4);
-    const selectedNode = nodes[0]!;
+    const selectedNode = nodes[0];
+    if (!selectedNode) throw new Error('Node not found');
 
     // First call computes
     computeTransitiveDependencies(ViewMode.Focused, selectedNode, edges);
@@ -199,7 +204,8 @@ describe('computeTransitiveDependencies', () => {
 
   it('should invalidate cache when edges change', () => {
     const { nodes, edges } = createLinearChain(4);
-    const selectedNode = nodes[0]!;
+    const selectedNode = nodes[0];
+    if (!selectedNode) throw new Error('Node not found');
 
     computeTransitiveDependencies(ViewMode.Focused, selectedNode, edges);
     const stats1 = getTransitiveCacheStats();

@@ -71,7 +71,7 @@ export function applyNodeMassage(
 
   for (const node of nodes) {
     newPositions.set(node.id, {
-      ...micro.relativePositions.get(node.id)!,
+      ...micro.relativePositions.get(node.id),
       x: node.x,
       y: node.y,
     });

@@ -108,8 +108,8 @@ export function buildAdjacency(edges: GraphEdge[]): {
     if (!outgoing.has(edge.source)) outgoing.set(edge.source, []);
     if (!incoming.has(edge.target)) incoming.set(edge.target, []);
 
-    outgoing.get(edge.source)!.push(edge.target);
-    incoming.get(edge.target)!.push(edge.source);
+    outgoing.get(edge.source)?.push(edge.target);
+    incoming.get(edge.target)?.push(edge.source);
   }
 
   return { outgoing: outgoing, incoming: incoming };
@@ -137,7 +137,9 @@ export function traverseGraph(
   const stack: Array<{ id: string; depth: number }> = [{ id: startId, depth: 0 }];
 
   while (stack.length > 0) {
-    const { id, depth } = stack.pop()!;
+    const item = stack.pop();
+    if (!item) break;
+    const { id, depth } = item;
     if (visitedNodes.has(id)) continue;
     visitedNodes.add(id);
     nodeDepths.set(id, depth);
@@ -175,8 +177,8 @@ export function computeTransitiveDependencies(
 
   // Build adjacency only if we need to compute (not cached)
   let adjacencyBuilt = false;
-  let outgoing: Map<string, string[]> | null = null;
-  let incoming: Map<string, string[]> | null = null;
+  let outgoing = new Map<string, string[]>();
+  let incoming = new Map<string, string[]>();
 
   const buildAdjacencyOnce = () => {
     if (!adjacencyBuilt) {
@@ -185,7 +187,7 @@ export function computeTransitiveDependencies(
       incoming = adj.incoming;
       adjacencyBuilt = true;
     }
-    return { outgoing: outgoing!, incoming: incoming! };
+    return { outgoing, incoming };
   };
 
   // Dependencies (outgoing edges) - with caching

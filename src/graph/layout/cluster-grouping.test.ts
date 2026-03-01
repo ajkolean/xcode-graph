@@ -99,7 +99,8 @@ describe('groupIntoClusters', () => {
     for (const cluster of clusters) {
       for (const node of cluster.nodes) {
         expect(cluster.metadata.has(node.id)).toBe(true);
-        const meta = cluster.metadata.get(node.id)!;
+        const meta = cluster.metadata.get(node.id);
+        expect(meta).toBeDefined();
         expect(meta).toHaveProperty('role');
         expect(meta).toHaveProperty('layer');
         expect(meta).toHaveProperty('isAnchor');
@@ -117,8 +118,10 @@ describe('groupIntoClusters', () => {
     const clusters = groupIntoClusters(nodes, []);
 
     expect(clusters).toHaveLength(1);
-    expect(clusters[0]!.nodes).toHaveLength(3);
-    expect(clusters[0]!.id).toBe('SharedProject');
+    const first = clusters[0];
+    expect(first).toBeDefined();
+    expect(first?.nodes).toHaveLength(3);
+    expect(first?.id).toBe('SharedProject');
   });
 
   it('should set path from first available node path', () => {
@@ -129,6 +132,6 @@ describe('groupIntoClusters', () => {
 
     const clusters = groupIntoClusters(nodes, []);
 
-    expect(clusters[0]!.path).toBe('/path/to/project');
+    expect(clusters[0]?.path).toBe('/path/to/project');
   });
 });

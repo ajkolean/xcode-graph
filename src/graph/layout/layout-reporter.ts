@@ -241,7 +241,7 @@ export function printStrataVisualization(
   for (const [id, pos] of result.clusterPositions) {
     const stratum = Math.floor(pos.y / strataSpacing);
     if (!strata.has(stratum)) strata.set(stratum, []);
-    strata.get(stratum)!.push({ id, x: pos.x, width: pos.width });
+    strata.get(stratum)?.push({ id, x: pos.x, width: pos.width });
   }
 
   console.log('\n═══ STRATA VISUALIZATION ═══\n');

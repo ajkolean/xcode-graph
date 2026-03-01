@@ -96,7 +96,7 @@ function groupIntoBands(
     }
 
     if (!bands.has(bandIndex)) bands.set(bandIndex, []);
-    bands.get(bandIndex)!.push(node);
+    bands.get(bandIndex)?.push(node);
   }
 
   return bands;
@@ -123,15 +123,18 @@ function wrapNodesIntoRows(nodes: ElkNode[], spacing: number, maxWidth: number):
 
   for (const node of nodes) {
     const wEff = getEffectiveDiameter(node);
-    const nextWidth = rows[rows.length - 1]!.length === 0 ? wEff : currentRowWidth + spacing + wEff;
+    const currentRow = rows[rows.length - 1];
+    const nextWidth =
+      currentRow && currentRow.length === 0 ? wEff : currentRowWidth + spacing + wEff;
 
-    if (nextWidth > maxWidth && rows[rows.length - 1]!.length > 0) {
+    if (nextWidth > maxWidth && currentRow && currentRow.length > 0) {
       rows.push([]);
       currentRowWidth = wEff;
     } else {
       currentRowWidth = nextWidth;
     }
-    rows[rows.length - 1]!.push(node);
+    const lastRow = rows[rows.length - 1];
+    if (lastRow) lastRow.push(node);
   }
 
   return rows;
@@ -150,12 +153,15 @@ function layoutRow(row: ElkNode[], spacing: number, currentY: number): void {
   let currentCX = -totalWidth / 2 + (rowItems[0]?.r ?? 0);
 
   for (let i = 0; i < rowItems.length; i++) {
-    const { node, r } = rowItems[i]!;
+    const item = rowItems[i];
+    if (!item) continue;
+    const { node, r } = item;
     node.x = currentCX - (node.width ?? 0) / 2;
     node.y = currentY - (node.height ?? 0) / 2;
 
     if (i < rowItems.length - 1) {
-      const nextR = rowItems[i + 1]!.r;
+      const nextItem = rowItems[i + 1];
+      const nextR = nextItem ? nextItem.r : 0;
       currentCX += r + spacing + nextR;
     }
   }

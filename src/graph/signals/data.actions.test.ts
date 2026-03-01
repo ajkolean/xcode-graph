@@ -247,10 +247,10 @@ describe('data.actions', () => {
 
       const storedNodes = nodes.get();
       expect(storedNodes).toHaveLength(2);
-      expect(storedNodes[0]!.type).toBe(NodeType.Framework);
-      expect(storedNodes[1]!.type).toBe(NodeType.Package);
-      expect(storedNodes[0]!.origin).toBe(Origin.Local);
-      expect(storedNodes[1]!.origin).toBe(Origin.External);
+      expect(storedNodes[0]?.type).toBe(NodeType.Framework);
+      expect(storedNodes[1]?.type).toBe(NodeType.Package);
+      expect(storedNodes[0]?.origin).toBe(Origin.Local);
+      expect(storedNodes[1]?.origin).toBe(Origin.External);
     });
   });
 });

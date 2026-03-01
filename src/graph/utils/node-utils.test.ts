@@ -25,7 +25,9 @@ describe('computeNodeDependencies', () => {
 
   it('should compute direct dependencies', () => {
     const { nodes, edges } = createDiamondGraph();
-    const nodeA = nodes.find((n) => n.id === 'A')!;
+    const nodeA = nodes.find((n) => n.id === 'A');
+    expect(nodeA).toBeDefined();
+    if (!nodeA) return;
 
     const result = computeNodeDependencies(nodeA, nodes, edges);
 
@@ -36,7 +38,9 @@ describe('computeNodeDependencies', () => {
 
   it('should compute direct dependents', () => {
     const { nodes, edges } = createDiamondGraph();
-    const nodeD = nodes.find((n) => n.id === 'D')!;
+    const nodeD = nodes.find((n) => n.id === 'D');
+    expect(nodeD).toBeDefined();
+    if (!nodeD) return;
 
     const result = computeNodeDependencies(nodeD, nodes, edges);
 
@@ -47,18 +51,20 @@ describe('computeNodeDependencies', () => {
 
   it('should include edge info with each dependency', () => {
     const { nodes, edges } = createLinearChain(3);
-    const nodeA = nodes.find((n) => n.id === 'A')!;
+    const nodeA = nodes.find((n) => n.id === 'A');
+    if (!nodeA) throw new Error('Node A not found');
 
     const result = computeNodeDependencies(nodeA, nodes, edges);
 
     expect(result.dependencies).toHaveLength(1);
-    expect(result.dependencies[0]!.edge.source).toBe('A');
-    expect(result.dependencies[0]!.edge.target).toBe('B');
+    expect(result.dependencies[0]?.edge.source).toBe('A');
+    expect(result.dependencies[0]?.edge.target).toBe('B');
   });
 
   it('should compute transitive counts', () => {
     const { nodes, edges } = createLinearChain(4);
-    const nodeA = nodes.find((n) => n.id === 'A')!;
+    const nodeA = nodes.find((n) => n.id === 'A');
+    if (!nodeA) throw new Error('Node A not found');
 
     const result = computeNodeDependencies(nodeA, nodes, edges);
 
@@ -70,7 +76,8 @@ describe('computeNodeDependencies', () => {
 
   it('should compute total counts from unfiltered edges', () => {
     const { nodes, edges } = createDiamondGraph();
-    const nodeA = nodes.find((n) => n.id === 'A')!;
+    const nodeA = nodes.find((n) => n.id === 'A');
+    if (!nodeA) throw new Error('Node A not found');
     // Only use one edge as filtered
     const filteredEdges: GraphEdge[] = [{ source: 'A', target: 'B' }];
 
@@ -97,7 +104,9 @@ describe('computeNodeDependencies', () => {
       { source: 'd', target: 'target' },
     ];
 
-    const result = computeNodeDependencies(nodes[0]!, nodes, edges);
+    const target = nodes[0];
+    if (!target) throw new Error('Target node not found');
+    const result = computeNodeDependencies(target, nodes, edges);
 
     expect(result.metrics.isHighFanIn).toBe(true);
     expect(result.metrics.dependentCount).toBe(4);
@@ -118,7 +127,9 @@ describe('computeNodeDependencies', () => {
       { source: 'source', target: 'd' },
     ];
 
-    const result = computeNodeDependencies(nodes[0]!, nodes, edges);
+    const source = nodes[0];
+    if (!source) throw new Error('Source node not found');
+    const result = computeNodeDependencies(source, nodes, edges);
 
     expect(result.metrics.isHighFanOut).toBe(true);
     expect(result.metrics.dependencyCount).toBe(4);
@@ -126,7 +137,8 @@ describe('computeNodeDependencies', () => {
 
   it('should compute totalConnections as sum of deps + dependents', () => {
     const { nodes, edges } = createDiamondGraph();
-    const nodeB = nodes.find((n) => n.id === 'B')!;
+    const nodeB = nodes.find((n) => n.id === 'B');
+    if (!nodeB) throw new Error('Node B not found');
 
     const result = computeNodeDependencies(nodeB, nodes, edges);
 
@@ -280,10 +292,10 @@ describe('computeFilters', () => {
     clearFn();
 
     expect(capturedFilters).not.toBeNull();
-    expect(capturedFilters!.nodeTypes.size).toBe(result.typeCounts.size);
-    expect(capturedFilters!.platforms.size).toBe(result.platformCounts.size);
-    expect(capturedFilters!.projects.size).toBe(result.projectCounts.size);
-    expect(capturedFilters!.packages.size).toBe(result.packageCounts.size);
+    expect(capturedFilters?.nodeTypes.size).toBe(result.typeCounts.size);
+    expect(capturedFilters?.platforms.size).toBe(result.platformCounts.size);
+    expect(capturedFilters?.projects.size).toBe(result.projectCounts.size);
+    expect(capturedFilters?.packages.size).toBe(result.packageCounts.size);
   });
 
   it('should handle empty node list', () => {

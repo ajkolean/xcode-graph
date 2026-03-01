@@ -21,8 +21,9 @@ function findOverlappingPairs(positions: ClusterPosition[]): string[] {
 
   for (let i = 0; i < positions.length; i++) {
     for (let j = i + 1; j < positions.length; j++) {
-      const c1 = positions[i]!;
-      const c2 = positions[j]!;
+      const c1 = positions[i];
+      const c2 = positions[j];
+      if (!c1 || !c2) continue;
       const { isOverlap, dist, minSpace } = checkCircularOverlap(c1, c2);
 
       if (isOverlap) {

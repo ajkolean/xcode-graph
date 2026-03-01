@@ -46,7 +46,8 @@ export function buildClusterGraph(
       if (!edgeMap.has(key)) {
         edgeMap.set(key, { source: cSrc, target: cTgt, w: 0 });
       }
-      edgeMap.get(key)!.w += 1;
+      const entry = edgeMap.get(key);
+      if (entry) entry.w += 1;
     }
   }
 

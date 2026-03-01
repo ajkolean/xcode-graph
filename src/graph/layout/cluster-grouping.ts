@@ -30,7 +30,8 @@ export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Clust
     }
 
     // Update path if not set (use first available node path)
-    const cluster = clusterMap.get(clusterId)!;
+    const cluster = clusterMap.get(clusterId);
+    if (!cluster) return;
     if (!cluster.path && node.path) {
       cluster.path = node.path;
     }

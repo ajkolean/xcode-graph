@@ -16,9 +16,11 @@ export function colorWithAlpha(color: string, newAlpha: number): string {
   }
   const hexMatch = color.match(/^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/);
   if (hexMatch) {
-    const r = Number.parseInt(hexMatch[1]!, 16);
-    const g = Number.parseInt(hexMatch[2]!, 16);
-    const b = Number.parseInt(hexMatch[3]!, 16);
+    const [, rHex, gHex, bHex] = hexMatch;
+    if (!rHex || !gHex || !bHex) return color;
+    const r = Number.parseInt(rHex, 16);
+    const g = Number.parseInt(gHex, 16);
+    const b = Number.parseInt(bHex, 16);
     return `rgba(${r},${g},${b},${newAlpha})`;
   }
   return color;

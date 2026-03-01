@@ -107,7 +107,8 @@ export function applyForceMassage(
   const newPositions = new Map<string, ClusterPosition>();
   for (const node of nodes) {
     // Preserve the original width/height/id, just update x/y
-    const original = clusterPositions.get(node.id)!;
+    const original = clusterPositions.get(node.id);
+    if (!original) continue;
     newPositions.set(node.id, {
       ...original,
       x: node.x,

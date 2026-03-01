@@ -16,7 +16,7 @@
       "complexity": {
         "noUselessFragments": "warn",
         "useOptionalChain": "warn",
-        "noBannedTypes": "warn",
+        "noBannedTypes": "error",
         "noExcessiveCognitiveComplexity": {
           "level": "warn",
           "options": {
@@ -29,7 +29,7 @@
         "noUnusedVariables": "error"
       },
       "style": {
-        "noNonNullAssertion": "warn",
+        "noNonNullAssertion": "error",
         "useConst": "warn",
         "useImportType": "warn"
       },

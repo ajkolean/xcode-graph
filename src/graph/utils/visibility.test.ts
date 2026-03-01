@@ -65,7 +65,8 @@ describe('getConnectedNodeIds', () => {
 
   it('should include direct dependencies and dependents', () => {
     const { nodes, edges } = createDiamondGraph();
-    const selectedNode = nodes.find((n) => n.id === 'B')!;
+    const selectedNode = nodes.find((n) => n.id === 'B');
+    if (!selectedNode) throw new Error('Node B not found');
 
     const result = getConnectedNodeIds(selectedNode, edges);
 
@@ -76,7 +77,8 @@ describe('getConnectedNodeIds', () => {
 
   it('should not include nodes that are not directly connected', () => {
     const { nodes, edges } = createDiamondGraph();
-    const selectedNode = nodes.find((n) => n.id === 'B')!;
+    const selectedNode = nodes.find((n) => n.id === 'B');
+    if (!selectedNode) throw new Error('Node B not found');
 
     const result = getConnectedNodeIds(selectedNode, edges);
 
@@ -165,12 +167,14 @@ describe('shouldShowEdge', () => {
   });
 
   it('should show edge connected to selected node', () => {
-    const selectedNode = nodes[0]!;
+    const selectedNode = nodes[0];
+    if (!selectedNode) throw new Error('Node not found');
     expect(shouldShowEdge(edge, selectedNode, '', nodes)).toBe(true);
   });
 
   it('should hide edge not connected to selected node', () => {
-    const selectedNode = nodes[2]!; // C
+    const selectedNode = nodes[2]; // C
+    if (!selectedNode) throw new Error('Node C not found');
     expect(shouldShowEdge(edge, selectedNode, '', nodes)).toBe(false);
   });
 
