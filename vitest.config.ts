@@ -26,6 +26,8 @@ export default defineConfig({
         'src/**/*.d.ts',
         'src/fixtures/**',
         'src/vite-env.d.ts',
+        'src/**/test-helpers/**',
+        'src/test-utils/**',
       ],
       thresholds: {
         statements: 70,
