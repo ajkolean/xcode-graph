@@ -7,9 +7,7 @@ import './graph-svg-defs';
 // In jsdom, custom elements inside <svg> don't trigger Lit lifecycle,
 // so we fixture standalone and query the rendered content.
 const createFixture = async () => {
-  const el = await fixture<GraphSVGDefs>(
-    html`<xcode-graph-svg-defs></xcode-graph-svg-defs>`,
-  );
+  const el = await fixture<GraphSVGDefs>(html`<xcode-graph-svg-defs></xcode-graph-svg-defs>`);
   await el.updateComplete;
   return el;
 };

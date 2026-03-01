@@ -30,17 +30,19 @@ function makeNode(overrides: Partial<Parameters<typeof createTestNode>[0]> = {})
  * to SVG, because elements created directly inside <svg> in JSDOM are in
  * the SVG namespace and do not get upgraded as custom elements.
  */
-async function renderNode(props: {
-  node?: ReturnType<typeof makeNode>;
-  x?: number;
-  y?: number;
-  size?: number;
-  color?: string;
-  isSelected?: boolean;
-  isHovered?: boolean;
-  isDimmed?: boolean;
-  zoom?: number;
-} = {}) {
+async function renderNode(
+  props: {
+    node?: ReturnType<typeof makeNode>;
+    x?: number;
+    y?: number;
+    size?: number;
+    color?: string;
+    isSelected?: boolean;
+    isHovered?: boolean;
+    isDimmed?: boolean;
+    zoom?: number;
+  } = {},
+) {
   const el = new GraphNode();
   if (props.node !== undefined) el.node = props.node;
   el.x = props.x ?? 100;
@@ -77,7 +79,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
     const g = el.querySelector('g[role="img"]');
     expect(g).to.exist;
-    const label = g!.getAttribute('aria-label');
+    const label = g?.getAttribute('aria-label');
     expect(label).to.equal('CoreLib, framework target');
   });
 
@@ -86,7 +88,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
     const g = el.querySelector('g[role="img"]');
     expect(g).to.exist;
-    expect(g!.getAttribute('tabindex')).to.equal('0');
+    expect(g?.getAttribute('tabindex')).to.equal('0');
   });
 
   it('should render an icon path element', async () => {
@@ -94,7 +96,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
     const path = el.querySelector('path');
     expect(path).to.exist;
-    expect(path!.getAttribute('d')).to.be.a('string').that.is.not.empty;
+    expect(path?.getAttribute('d')).to.be.a('string').that.is.not.empty;
   });
 
   it('should set opacity to 0.25 when isDimmed is true', async () => {
@@ -102,7 +104,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node, isDimmed: true });
     const g = el.querySelector('g[role="img"]');
     expect(g).to.exist;
-    expect(g!.getAttribute('opacity')).to.equal('0.25');
+    expect(g?.getAttribute('opacity')).to.equal('0.25');
   });
 
   it('should set opacity to 1 when not dimmed', async () => {
@@ -110,7 +112,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node, isDimmed: false });
     const g = el.querySelector('g[role="img"]');
     expect(g).to.exist;
-    expect(g!.getAttribute('opacity')).to.equal('1');
+    expect(g?.getAttribute('opacity')).to.equal('1');
   });
 
   it('should dispatch node-mouseenter on mouseenter', async () => {
@@ -118,7 +120,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
 
     setTimeout(() => {
-      const g = el.querySelector('g[role="img"]')!;
+      const g = el.querySelector('g[role="img"]') as Element;
       g.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
     });
     const event = await oneEvent(el, 'node-mouseenter');
@@ -131,7 +133,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
 
     setTimeout(() => {
-      const g = el.querySelector('g[role="img"]')!;
+      const g = el.querySelector('g[role="img"]') as Element;
       g.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
     });
     const event = await oneEvent(el, 'node-mouseleave');
@@ -144,7 +146,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
 
     setTimeout(() => {
-      const g = el.querySelector('g[role="img"]')!;
+      const g = el.querySelector('g[role="img"]') as Element;
       g.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
     const event = await oneEvent(el, 'node-click');
@@ -157,7 +159,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
 
     setTimeout(() => {
-      const g = el.querySelector('g[role="img"]')!;
+      const g = el.querySelector('g[role="img"]') as Element;
       g.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
     });
     const event = await oneEvent(el, 'node-mousedown');
@@ -170,7 +172,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
 
     setTimeout(() => {
-      const g = el.querySelector('g[role="img"]')!;
+      const g = el.querySelector('g[role="img"]') as Element;
       g.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     });
     const event = await oneEvent(el, 'node-click');
@@ -183,7 +185,7 @@ describe('xcode-graph-node', () => {
     const { el } = await renderNode({ node });
 
     setTimeout(() => {
-      const g = el.querySelector('g[role="img"]')!;
+      const g = el.querySelector('g[role="img"]') as Element;
       g.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
     });
     const event = await oneEvent(el, 'node-click');
@@ -194,10 +196,12 @@ describe('xcode-graph-node', () => {
   it('should not dispatch node-click on other keydown events', async () => {
     const node = makeNode();
     const { el } = await renderNode({ node });
-    const g = el.querySelector('g[role="img"]')!;
+    const g = el.querySelector('g[role="img"]') as Element;
 
     let fired = false;
-    el.addEventListener('node-click', () => { fired = true; });
+    el.addEventListener('node-click', () => {
+      fired = true;
+    });
     g.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
 
     await new Promise((r) => setTimeout(r, 50));
@@ -234,8 +238,6 @@ describe('xcode-graph-node', () => {
     expect(textElements.length).to.be.greaterThan(0);
     const labelText = textElements[0]?.textContent?.trim();
     expect(labelText).to.contain('...');
-    expect(labelText!.length).to.be.lessThan(
-      'VeryLongNodeNameThatExceedsTwentyCharacters'.length,
-    );
+    expect(labelText?.length).to.be.lessThan('VeryLongNodeNameThatExceedsTwentyCharacters'.length);
   });
 });

@@ -6,20 +6,16 @@ import './graph-canvas';
 
 describe('xcode-graph-canvas', () => {
   it('should set up a canvas element on render', async () => {
-    const el = await fixture<GraphCanvas>(
-      html`<xcode-graph-canvas></xcode-graph-canvas>`,
-    );
+    const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const canvas = el.shadowRoot!.querySelector('canvas');
+    const canvas = el.shadowRoot?.querySelector('canvas');
     expect(canvas).to.exist;
     expect(canvas?.tagName.toLowerCase()).to.equal('canvas');
   });
 
   it('should initialize constructor with default values', async () => {
-    const el = await fixture<GraphCanvas>(
-      html`<xcode-graph-canvas></xcode-graph-canvas>`,
-    );
+    const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
 
     expect(el.nodes).to.deep.equal([]);
     expect(el.edges).to.deep.equal([]);
@@ -37,22 +33,18 @@ describe('xcode-graph-canvas', () => {
   });
 
   it('should have canvas with tabindex for keyboard accessibility', async () => {
-    const el = await fixture<GraphCanvas>(
-      html`<xcode-graph-canvas></xcode-graph-canvas>`,
-    );
+    const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const canvas = el.shadowRoot!.querySelector('canvas');
+    const canvas = el.shadowRoot?.querySelector('canvas');
     expect(canvas?.getAttribute('tabindex')).to.equal('-1');
   });
 
   it('should dispatch zoom-in event on "+" keydown', async () => {
-    const el = await fixture<GraphCanvas>(
-      html`<xcode-graph-canvas></xcode-graph-canvas>`,
-    );
+    const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const canvas = el.shadowRoot!.querySelector('canvas')!;
+    const canvas = el.shadowRoot?.querySelector('canvas') as HTMLCanvasElement;
     setTimeout(() =>
       canvas.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true })),
     );
@@ -61,12 +53,10 @@ describe('xcode-graph-canvas', () => {
   });
 
   it('should dispatch zoom-out event on "-" keydown', async () => {
-    const el = await fixture<GraphCanvas>(
-      html`<xcode-graph-canvas></xcode-graph-canvas>`,
-    );
+    const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const canvas = el.shadowRoot!.querySelector('canvas')!;
+    const canvas = el.shadowRoot?.querySelector('canvas') as HTMLCanvasElement;
     setTimeout(() =>
       canvas.dispatchEvent(new KeyboardEvent('keydown', { key: '-', bubbles: true })),
     );
@@ -75,12 +65,10 @@ describe('xcode-graph-canvas', () => {
   });
 
   it('should dispatch zoom-reset event on "0" keydown', async () => {
-    const el = await fixture<GraphCanvas>(
-      html`<xcode-graph-canvas></xcode-graph-canvas>`,
-    );
+    const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const canvas = el.shadowRoot!.querySelector('canvas')!;
+    const canvas = el.shadowRoot?.querySelector('canvas') as HTMLCanvasElement;
     setTimeout(() =>
       canvas.dispatchEvent(new KeyboardEvent('keydown', { key: '0', bubbles: true })),
     );
@@ -89,12 +77,10 @@ describe('xcode-graph-canvas', () => {
   });
 
   it('should dispatch node-select with null on "Escape" keydown', async () => {
-    const el = await fixture<GraphCanvas>(
-      html`<xcode-graph-canvas></xcode-graph-canvas>`,
-    );
+    const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const canvas = el.shadowRoot!.querySelector('canvas')!;
+    const canvas = el.shadowRoot?.querySelector('canvas') as HTMLCanvasElement;
     setTimeout(() =>
       canvas.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })),
     );

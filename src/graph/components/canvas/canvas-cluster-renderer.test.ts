@@ -6,9 +6,9 @@
 
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
+import { ClusterType } from '@shared/schemas/cluster.types';
 import type { GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { ClusterType } from '@shared/schemas/cluster.types';
 import { describe, expect, it } from 'vitest';
 import { type ClusterRenderContext, renderClusters } from './canvas-cluster-renderer';
 
@@ -40,15 +40,17 @@ function createTestNode(overrides: Partial<GraphNode> = {}): GraphNode {
   };
 }
 
-function createCluster(overrides: Partial<{
-  id: string;
-  name: string;
-  type: string;
-  origin: string;
-  nodes: GraphNode[];
-  anchors: string[];
-  metadata: Map<string, unknown>;
-}> = {}) {
+function createCluster(
+  overrides: Partial<{
+    id: string;
+    name: string;
+    type: string;
+    origin: string;
+    nodes: GraphNode[];
+    anchors: string[];
+    metadata: Map<string, unknown>;
+  }> = {},
+) {
   return {
     id: overrides.id ?? 'cluster1',
     name: overrides.name ?? 'ProjectA',
@@ -62,7 +64,19 @@ function createCluster(overrides: Partial<{
 
 function createMockLayout(
   clusters: ReturnType<typeof createCluster>[],
-  clusterPositions: Map<string, { id: string; x: number; y: number; vx: number; vy: number; width: number; height: number; nodeCount: number }>,
+  clusterPositions: Map<
+    string,
+    {
+      id: string;
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      width: number;
+      height: number;
+      nodeCount: number;
+    }
+  >,
 ): GraphLayoutController {
   return {
     clusters,
@@ -72,7 +86,9 @@ function createMockLayout(
   } as unknown as GraphLayoutController;
 }
 
-function createClusterRenderContext(overrides: Partial<ClusterRenderContext> = {}): ClusterRenderContext {
+function createClusterRenderContext(
+  overrides: Partial<ClusterRenderContext> = {},
+): ClusterRenderContext {
   const canvas = document.createElement('canvas');
   canvas.width = 800;
   canvas.height = 600;
@@ -80,7 +96,10 @@ function createClusterRenderContext(overrides: Partial<ClusterRenderContext> = {
 
   const cluster = createCluster();
   const clusterPositions = new Map([
-    ['cluster1', { id: 'cluster1', x: 100, y: 100, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 }],
+    [
+      'cluster1',
+      { id: 'cluster1', x: 100, y: 100, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 },
+    ],
   ]);
 
   return {
@@ -183,7 +202,10 @@ describe('canvas-cluster-renderer', () => {
     // Active cluster (nodeCount irrelevant, returns 0.08)
     const activeCluster = createCluster({ id: 'active', name: 'Active' });
     const activePos = new Map([
-      ['active', { id: 'active', x: 100, y: 100, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 3 }],
+      [
+        'active',
+        { id: 'active', x: 100, y: 100, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 3 },
+      ],
     ]);
     const rcActive = createClusterRenderContext({
       layout: createMockLayout([activeCluster], activePos),
@@ -196,7 +218,10 @@ describe('canvas-cluster-renderer', () => {
     // Small cluster (nodeCount=3, <=5 returns 0.06)
     const smallCluster = createCluster({ id: 'small', name: 'Small' });
     const smallPos = new Map([
-      ['small', { id: 'small', x: 100, y: 100, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 3 }],
+      [
+        'small',
+        { id: 'small', x: 100, y: 100, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 3 },
+      ],
     ]);
     const rcSmall = createClusterRenderContext({
       layout: createMockLayout([smallCluster], smallPos),
@@ -211,7 +236,10 @@ describe('canvas-cluster-renderer', () => {
     );
     const largeCluster = createCluster({ id: 'large', name: 'Large', nodes: largeNodes });
     const largePos = new Map([
-      ['large', { id: 'large', x: 100, y: 100, vx: 0, vy: 0, width: 400, height: 400, nodeCount: 25 }],
+      [
+        'large',
+        { id: 'large', x: 100, y: 100, vx: 0, vy: 0, width: 400, height: 400, nodeCount: 25 },
+      ],
     ]);
     const rcLarge = createClusterRenderContext({
       layout: createMockLayout([largeCluster], largePos),

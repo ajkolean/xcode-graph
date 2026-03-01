@@ -42,7 +42,10 @@ function createTestNode(overrides: Partial<GraphNode> = {}): GraphNode {
 
 function createMockLayout(
   nodePositions: Map<string, { x: number; y: number }>,
-  clusterPositions: Map<string, { x: number; y: number; width: number; height: number; nodeCount: number }>,
+  clusterPositions: Map<
+    string,
+    { x: number; y: number; width: number; height: number; nodeCount: number }
+  >,
   overrides: {
     cycleNodes?: Set<string>;
     clusters?: unknown[];
@@ -68,7 +71,12 @@ function createEdgeRenderContext(overrides: Partial<EdgeRenderContext> = {}): Ed
 
   const nodes: GraphNode[] = [
     createTestNode({ id: 'node1', name: 'AppModule', project: 'ProjectA' }),
-    createTestNode({ id: 'node2', name: 'Framework', type: NodeType.Framework, project: 'ProjectB' }),
+    createTestNode({
+      id: 'node2',
+      name: 'Framework',
+      type: NodeType.Framework,
+      project: 'ProjectB',
+    }),
   ];
   const edges: GraphEdge[] = [{ source: 'node1', target: 'node2' }];
 
@@ -77,8 +85,14 @@ function createEdgeRenderContext(overrides: Partial<EdgeRenderContext> = {}): Ed
     ['node2', { x: 100, y: 100, vx: 0, vy: 0, id: 'node2', clusterId: 'ProjectB', radius: 10 }],
   ]);
   const clusterPositions = new Map([
-    ['ProjectA', { id: 'ProjectA', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 }],
-    ['ProjectB', { id: 'ProjectB', x: 300, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 }],
+    [
+      'ProjectA',
+      { id: 'ProjectA', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 },
+    ],
+    [
+      'ProjectB',
+      { id: 'ProjectB', x: 300, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 },
+    ],
   ]);
 
   const nodeMap = new Map<string, GraphNode>();
@@ -159,7 +173,10 @@ describe('canvas-edge-renderer', () => {
       ['nodeB', { x: 100, y: 100, vx: 0, vy: 0, id: 'nodeB', clusterId: 'ProjectA', radius: 10 }],
     ]);
     const clusterPositions = new Map([
-      ['ProjectA', { id: 'ProjectA', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 2 }],
+      [
+        'ProjectA',
+        { id: 'ProjectA', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 2 },
+      ],
     ]);
 
     // Set SCC data so both nodes are in the same cycle
@@ -184,7 +201,8 @@ describe('canvas-edge-renderer', () => {
       (e: unknown) => (e as { type: string }).type === 'strokeStyle',
     );
     const hasCycleColor = strokeStyleEvents.some(
-      (e: unknown) => (e as { props?: { value?: string } }).props?.value === 'rgba(239, 68, 68, 0.8)',
+      (e: unknown) =>
+        (e as { props?: { value?: string } }).props?.value === 'rgba(239, 68, 68, 0.8)',
     );
     expect(hasCycleColor).to.equal(true);
   });
@@ -193,7 +211,12 @@ describe('canvas-edge-renderer', () => {
     const nodes: GraphNode[] = [
       createTestNode({ id: 'root', name: 'Root', project: 'ProjA' }),
       createTestNode({ id: 'direct', name: 'Direct', type: NodeType.Framework, project: 'ProjB' }),
-      createTestNode({ id: 'transitive', name: 'Transitive', type: NodeType.Library, project: 'ProjC' }),
+      createTestNode({
+        id: 'transitive',
+        name: 'Transitive',
+        type: NodeType.Library,
+        project: 'ProjC',
+      }),
     ];
     const edges: GraphEdge[] = [
       { source: 'root', target: 'direct' },
@@ -205,7 +228,10 @@ describe('canvas-edge-renderer', () => {
     const nodePositions = new Map([
       ['root', { x: 0, y: 0, vx: 0, vy: 0, id: 'root', clusterId: 'ProjA', radius: 10 }],
       ['direct', { x: 100, y: 0, vx: 0, vy: 0, id: 'direct', clusterId: 'ProjB', radius: 10 }],
-      ['transitive', { x: 200, y: 0, vx: 0, vy: 0, id: 'transitive', clusterId: 'ProjC', radius: 10 }],
+      [
+        'transitive',
+        { x: 200, y: 0, vx: 0, vy: 0, id: 'transitive', clusterId: 'ProjC', radius: 10 },
+      ],
     ]);
     const clusterPositions = new Map([
       ['ProjA', { id: 'ProjA', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 }],
@@ -266,7 +292,10 @@ describe('canvas-edge-renderer', () => {
       ['n2', { x: 50, y: 50, vx: 0, vy: 0, id: 'n2', clusterId: 'Cluster1', radius: 10 }],
     ]);
     const clusterPositions = new Map([
-      ['Cluster1', { id: 'Cluster1', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 2 }],
+      [
+        'Cluster1',
+        { id: 'Cluster1', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 2 },
+      ],
     ]);
 
     const rc = createEdgeRenderContext({
@@ -365,8 +394,22 @@ describe('canvas-edge-renderer', () => {
       targetNodeId: 'node2',
       sourceClusterId: 'ProjectA',
       targetClusterId: 'ProjectB',
-      sourcePort: { id: 'port1', clusterId: 'ProjectA', side: 'EAST' as const, x: 100, y: 50, index: 0 },
-      targetPort: { id: 'port2', clusterId: 'ProjectB', side: 'WEST' as const, x: 200, y: 50, index: 0 },
+      sourcePort: {
+        id: 'port1',
+        clusterId: 'ProjectA',
+        side: 'EAST' as const,
+        x: 100,
+        y: 50,
+        index: 0,
+      },
+      targetPort: {
+        id: 'port2',
+        clusterId: 'ProjectB',
+        side: 'WEST' as const,
+        x: 200,
+        y: 50,
+        index: 0,
+      },
       waypoints: [],
       weight: 1,
     });
