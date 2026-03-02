@@ -683,9 +683,7 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
 
     // Dispatch toggle-collapse from header to collapse the sidebar
     const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    header?.dispatchEvent(
-      new CustomEvent('toggle-collapse', { bubbles: true, composed: true }),
-    );
+    header?.dispatchEvent(new CustomEvent('toggle-collapse', { bubbles: true, composed: true }));
     await el.updateComplete;
 
     expect(el.hasAttribute('collapsed')).toBe(true);
@@ -708,9 +706,7 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
 
     // First collapse the sidebar
     const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    header?.dispatchEvent(
-      new CustomEvent('toggle-collapse', { bubbles: true, composed: true }),
-    );
+    header?.dispatchEvent(new CustomEvent('toggle-collapse', { bubbles: true, composed: true }));
     await el.updateComplete;
 
     expect(el.hasAttribute('collapsed')).toBe(true);

@@ -69,6 +69,14 @@ describe('xcode-graph-sidebar', () => {
     expect(el.collapsed).toBe(true);
   });
 
+  it('should start collapsed when defaultCollapsed property is set', async () => {
+    const el = await fixture<GraphSidebar>(html`
+      <xcode-graph-sidebar active-tab="graph" .defaultCollapsed=${true}></xcode-graph-sidebar>
+    `);
+
+    expect(el.collapsed).toBe(true);
+  });
+
   it('should toggle collapsed state on collapse button click', async () => {
     const el = await fixture<GraphSidebar>(html`
       <xcode-graph-sidebar active-tab="graph"></xcode-graph-sidebar>

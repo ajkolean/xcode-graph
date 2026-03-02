@@ -215,15 +215,11 @@ describe('xcode-graph-tab', () => {
     const controls = el.shadowRoot?.querySelector('xcode-graph-controls');
 
     const initialZoom = zoom.get();
-    controls?.dispatchEvent(
-      new CustomEvent('zoom-in', { bubbles: true, composed: true }),
-    );
+    controls?.dispatchEvent(new CustomEvent('zoom-in', { bubbles: true, composed: true }));
     expect(zoom.get()).toBeGreaterThan(initialZoom);
 
     const afterZoomIn = zoom.get();
-    controls?.dispatchEvent(
-      new CustomEvent('zoom-out', { bubbles: true, composed: true }),
-    );
+    controls?.dispatchEvent(new CustomEvent('zoom-out', { bubbles: true, composed: true }));
     expect(zoom.get()).toBeLessThan(afterZoomIn);
 
     controls?.dispatchEvent(
@@ -250,9 +246,7 @@ describe('xcode-graph-tab', () => {
 
     const initial = enableAnimation.get();
     const controls = el.shadowRoot?.querySelector('xcode-graph-controls');
-    controls?.dispatchEvent(
-      new CustomEvent('toggle-animation', { bubbles: true, composed: true }),
-    );
+    controls?.dispatchEvent(new CustomEvent('toggle-animation', { bubbles: true, composed: true }));
     expect(enableAnimation.get()).toBe(!initial);
   });
 

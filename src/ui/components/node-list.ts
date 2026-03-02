@@ -39,6 +39,11 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
   [DependencyKind.XCFramework]: { label: 'XCF', color: 'var(--colors-warning)' },
 };
 
+function getNodeSubtitle(node: GraphNode): string {
+  const typeLabel = node.type.charAt(0).toUpperCase() + node.type.slice(1);
+  return node.origin === Origin.External ? `External ${typeLabel}` : typeLabel;
+}
+
 /**
  * A unified list component for displaying nodes with a section header.
  * Used for dependencies, dependents, and other node list displays.
@@ -48,11 +53,6 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
  * @fires node-select - Dispatched when a node row is clicked (detail: { node })
  * @fires node-hover - Dispatched on node row hover (detail: { nodeId })
  */
-function getNodeSubtitle(node: GraphNode): string {
-  const typeLabel = node.type.charAt(0).toUpperCase() + node.type.slice(1);
-  return node.origin === Origin.External ? `External ${typeLabel}` : typeLabel;
-}
-
 export class GraphNodeList extends NodeListEventsBase {
   /**
    * Section title (e.g., "Dependencies", "Dependents")

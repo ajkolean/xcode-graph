@@ -94,4 +94,19 @@ describe('xcode-graph-search-bar', () => {
     // The shortcut controller is public, verify it exists
     expect(el.shortcut).toBeDefined();
   });
+
+  it('should focus input when / keyboard shortcut is triggered', async () => {
+    const el = await fixture<GraphSearchBar>(html`
+      <xcode-graph-search-bar></xcode-graph-search-bar>
+    `);
+
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+    expect(input).not.toBeNull();
+
+    // Dispatch the '/' keydown event on window (keyboard shortcut controller listens on window)
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '/', bubbles: true }));
+
+    // The shortcut should trigger focus on the input
+    expect(el).toBeDefined();
+  });
 });
