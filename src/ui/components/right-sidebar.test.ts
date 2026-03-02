@@ -1512,7 +1512,7 @@ describe('xcode-graph-right-sidebar - Back to Filters Navigation', () => {
     expect(selectedNode.get()).toBeNull();
   });
 
-  it('should switch view when selectCluster is called after selectNode', async () => {
+  it('should switch view when selectCluster is called after selectNode', () => {
     // This tests the signal-level transition that happens when the
     // @cluster-select handler on node-details-panel fires selectCluster()
     selectNode(mockNodeCoreLib);
@@ -1551,7 +1551,7 @@ describe('xcode-graph-right-sidebar - Back to Filters Navigation', () => {
     expect(el).toBeDefined();
   });
 
-  it('should switch view when selectNode is called after selectCluster', async () => {
+  it('should switch view when selectNode is called after selectCluster', () => {
     // This tests the signal-level transition that happens when the
     // @node-select handler on cluster-details-panel fires selectNode()
     selectCluster('MyApp');

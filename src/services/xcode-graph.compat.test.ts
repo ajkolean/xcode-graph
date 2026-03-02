@@ -99,7 +99,8 @@ describe('forward-compatibility: missing or empty sections', () => {
 
   it('should handle empty dependencies array', () => {
     const raw = loadFixture(FUTURE_FIXTURE_PATH) as Record<string, unknown>;
-    raw.dependencies = [];
+    // biome-ignore lint/complexity/useLiteralKeys: bracket notation required for Record index signature (TS4111)
+    raw['dependencies'] = [];
     const result = transformXcodeGraph(raw);
 
     expect(result.data.nodes.length).toBeGreaterThan(0);

@@ -7,6 +7,7 @@
 
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { NODE_PALETTE } from '@/shared/constants/node-palette';
+import type { NodeType } from '@/shared/schemas/graph.types';
 
 /**
  * Color mapping for different node types
@@ -16,7 +17,7 @@ import { NODE_PALETTE } from '@/shared/constants/node-palette';
  *
  * @public
  */
-export const NODE_TYPE_COLORS: Record<string, string> = {
+export const NODE_TYPE_COLORS: Record<NodeType, string> = {
   // Orange (apps, main entry points) — Noora orange-500
   app: NODE_PALETTE.app,
 
@@ -48,7 +49,7 @@ const DEFAULT_NODE_COLOR = NODE_PALETTE.app;
  * @public
  */
 export function getNodeTypeColor(type: string): string {
-  return NODE_TYPE_COLORS[type] ?? DEFAULT_NODE_COLOR;
+  return (NODE_TYPE_COLORS as Record<string, string>)[type] ?? DEFAULT_NODE_COLOR;
 }
 
 /** Node-color keys of CanvasTheme (excludes non-string props like isDark) */

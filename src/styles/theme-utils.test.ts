@@ -133,8 +133,8 @@ describe('theme-utils', () => {
 
     it('should return true when matchMedia is undefined', () => {
       const original = globalThis.matchMedia;
-      const g = globalThis as { matchMedia?: typeof globalThis.matchMedia };
-      delete g.matchMedia;
+      const mutableGlobal = globalThis as { matchMedia?: typeof globalThis.matchMedia };
+      delete mutableGlobal.matchMedia;
       try {
         const result = prefersDarkMode();
         expect(result).toBe(true);
@@ -157,8 +157,8 @@ describe('theme-utils', () => {
 
     it('should return noop when matchMedia is undefined', () => {
       const original = globalThis.matchMedia;
-      const g = globalThis as { matchMedia?: typeof globalThis.matchMedia };
-      delete g.matchMedia;
+      const mutableGlobal = globalThis as { matchMedia?: typeof globalThis.matchMedia };
+      delete mutableGlobal.matchMedia;
       try {
         const callback = vi.fn();
         const cleanup = onColorSchemeChange(callback);

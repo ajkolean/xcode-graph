@@ -2,13 +2,16 @@
  * Platform icon utilities for consistent platform representation
  */
 
+import type { Platform } from '@/shared/schemas/graph.types';
+
 /**
  * Per-platform colors for visual distinction.
  * These values match the --colors-platform-* tokens in tokens.css (dark mode).
  * Kept as hex literals because callers use string interpolation (e.g. color-mix).
+ *
+ * @public
  */
-/** @public */
-export const PLATFORM_COLORS: Record<string, string> = {
+export const PLATFORM_COLORS: Record<Platform, string> = {
   iOS: '#007AFF', // --colors-platform-ios
   macOS: '#64D2FF', // --colors-platform-macos
   tvOS: '#B87BFF', // --colors-platform-tvos
@@ -24,7 +27,7 @@ export const PLATFORM_COLORS: Record<string, string> = {
 export const PLATFORM_COLOR = '#6F2CFF';
 
 /** Maps platform names to their CSS custom property names */
-const PLATFORM_CSS_PROPS: Record<string, string> = {
+const PLATFORM_CSS_PROPS: Record<Platform, string> = {
   iOS: '--colors-platform-ios',
   macOS: '--colors-platform-macos',
   tvOS: '--colors-platform-tvos',
@@ -47,13 +50,13 @@ const PLATFORM_CSS_PROPS: Record<string, string> = {
  */
 export function getPlatformColor(platform: string, el?: HTMLElement): string {
   if (el) {
-    const prop = PLATFORM_CSS_PROPS[platform];
+    const prop = (PLATFORM_CSS_PROPS as Record<string, string>)[platform];
     if (prop) {
       const value = getComputedStyle(el).getPropertyValue(prop).trim();
       if (value) return value;
     }
   }
-  return PLATFORM_COLORS[platform] || PLATFORM_COLOR;
+  return (PLATFORM_COLORS as Record<string, string>)[platform] || PLATFORM_COLOR;
 }
 
 /**

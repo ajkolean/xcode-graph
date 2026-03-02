@@ -14,7 +14,8 @@ import { Starfield } from './starfield';
 // a real HTMLCanvasElement.
 beforeAll(() => {
   if (typeof globalThis.OffscreenCanvas === 'undefined') {
-    (globalThis as Record<string, unknown>).OffscreenCanvas = class {
+    // biome-ignore lint/complexity/useLiteralKeys: bracket notation required for Record index signature (TS4111)
+    (globalThis as Record<string, unknown>)['OffscreenCanvas'] = class {
       width: number;
       height: number;
       constructor(width: number, height: number) {

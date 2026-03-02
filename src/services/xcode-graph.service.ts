@@ -160,7 +160,8 @@ function getBaseString(base: Record<string, unknown>, key: string): string | und
 
 /** Parse compilation conditions from build settings */
 function parseCompilationConditions(base: Record<string, unknown>): string[] | undefined {
-  const conditions = base.SWIFT_ACTIVE_COMPILATION_CONDITIONS as string[] | string | undefined;
+  // biome-ignore lint/complexity/useLiteralKeys: bracket notation required for Record index signature (TS4111)
+  const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as string[] | string | undefined;
   if (!conditions) return undefined;
   if (Array.isArray(conditions)) return conditions.map(String);
   if (typeof conditions === 'string') return conditions.split(' ').filter(Boolean);
