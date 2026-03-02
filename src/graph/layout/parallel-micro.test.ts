@@ -193,10 +193,8 @@ describe('parallel-micro', () => {
       const originalWorker = globalThis.Worker;
 
       // Mock Worker that throws on construction
-      globalThis.Worker = class ThrowingWorker {
-        constructor() {
-          throw new Error('Worker creation failed');
-        }
+      globalThis.Worker = function ThrowingWorker() {
+        throw new Error('Worker creation failed');
       } as unknown as typeof Worker;
 
       try {
