@@ -14,7 +14,6 @@
     "rules": {
       "recommended": true,
       "complexity": {
-        "useLiteralKeys": "off",
         "noUselessFragments": "warn",
         "useOptionalChain": "warn",
         "noBannedTypes": "error",
