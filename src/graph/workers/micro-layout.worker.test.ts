@@ -20,9 +20,21 @@ vi.mock('@graph/layout/phases/node-massage', () => ({
   applyNodeMassage: vi.fn((micro) => micro),
 }));
 
-let capturedWorkerApi: Record<string, unknown> | null = null;
+interface MicroWorkerApi {
+  computeMicro: (
+    cluster: unknown,
+    config: unknown,
+  ) => {
+    clusterId: string;
+    width: number;
+    height: number;
+    relativePositions: Array<[string, unknown]>;
+  };
+}
+
+let capturedWorkerApi: MicroWorkerApi | null = null;
 vi.mock('comlink', () => ({
-  expose: vi.fn((api: Record<string, unknown>) => {
+  expose: vi.fn((api: MicroWorkerApi) => {
     capturedWorkerApi = api;
   }),
 }));
@@ -71,24 +83,15 @@ describe('micro-layout.worker', () => {
       ] as Array<[string, unknown]>,
     };
 
-    const computeMicro = capturedWorkerApi?.computeMicro as (
-      cluster: unknown,
-      config: unknown,
-    ) => {
-      clusterId: string;
-      width: number;
-      height: number;
-      relativePositions: Array<[string, unknown]>;
-    };
+    const result = capturedWorkerApi?.computeMicro(serializedCluster, DEFAULT_CONFIG);
+    expect(result).toBeDefined();
 
-    const result = computeMicro(serializedCluster, DEFAULT_CONFIG);
-
-    expect(result.clusterId).toBe('test-cluster');
-    expect(result.width).toBe(200);
-    expect(result.height).toBe(150);
-    expect(Array.isArray(result.relativePositions)).toBe(true);
-    expect(result.relativePositions).toHaveLength(1);
-    expect(result.relativePositions[0]?.[0]).toBe('n1');
+    expect(result?.clusterId).toBe('test-cluster');
+    expect(result?.width).toBe(200);
+    expect(result?.height).toBe(150);
+    expect(Array.isArray(result?.relativePositions)).toBe(true);
+    expect(result?.relativePositions).toHaveLength(1);
+    expect(result?.relativePositions[0]?.[0]).toBe('n1');
   });
 
   it('computeMicro passes deserialized cluster with Map metadata to computeClusterInterior', async () => {
@@ -118,12 +121,7 @@ describe('micro-layout.worker', () => {
       ] as Array<[string, unknown]>,
     };
 
-    const computeMicro = capturedWorkerApi?.computeMicro as (
-      cluster: unknown,
-      config: unknown,
-    ) => unknown;
-
-    computeMicro(serializedCluster, DEFAULT_CONFIG);
+    capturedWorkerApi?.computeMicro(serializedCluster, DEFAULT_CONFIG);
 
     expect(computeClusterInterior).toHaveBeenCalled();
     const calledCluster = vi.mocked(computeClusterInterior).mock.calls.at(-1)?.[0];

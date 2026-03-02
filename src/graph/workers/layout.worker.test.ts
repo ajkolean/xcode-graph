@@ -49,10 +49,19 @@ vi.mock('@graph/layout/hierarchical-layout', () => ({
   })),
 }));
 
+interface WorkerApi {
+  computeLayout: (
+    nodes: unknown,
+    edges: unknown,
+    clusters: unknown,
+    opts?: unknown,
+  ) => Promise<unknown>;
+}
+
 // Use an object to avoid TDZ issues with vi.mock hoisting
-const captured: { workerApi: Record<string, unknown> | null } = { workerApi: null };
+const captured: { workerApi: WorkerApi | null } = { workerApi: null };
 vi.mock('comlink', () => ({
-  expose: vi.fn((api: Record<string, unknown>) => {
+  expose: vi.fn((api: WorkerApi) => {
     captured.workerApi = api;
   }),
 }));
@@ -176,14 +185,11 @@ describe('layout.worker', () => {
         },
       ];
 
-      const computeLayout = captured.workerApi?.computeLayout as (
-        nodes: unknown,
-        edges: unknown,
-        clusters: unknown,
-        opts?: unknown,
-      ) => Promise<unknown>;
-
-      const result = (await computeLayout(nodes, edges, serializedClusters)) as {
+      const result = (await captured.workerApi?.computeLayout(
+        nodes,
+        edges,
+        serializedClusters,
+      )) as {
         nodePositions: Array<[string, unknown]>;
         clusterPositions: Array<[string, unknown]>;
         clusters: unknown[];
