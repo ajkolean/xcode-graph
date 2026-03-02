@@ -156,7 +156,7 @@ export class GraphNodeDetailsPanel extends LitElement {
 
   override render(): TemplateResult {
     // Reference focusTrap to ensure controller is not tree-shaken
-    void this.focusTrap.active;
+    const _trapActive = this.focusTrap.active;
     if (!this.node) return html``;
 
     const { dependencies, dependents, metrics } = this.nodeData;

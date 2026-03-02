@@ -710,7 +710,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   override render(): TemplateResult {
     const isCollapsed = this.isCollapsed;
     // Reference focusTrap to ensure controller is not tree-shaken
-    void this.focusTrap.active;
+    const _trapActive = this.focusTrap.active;
     const expandedSections = this.sidebar.get('expandedSections');
     const filterData = this._filterData;
     const currentFilters = filters.get();

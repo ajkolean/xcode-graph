@@ -140,7 +140,7 @@ export class GraphClusterDetailsPanel extends LitElement {
 
   override render(): TemplateResult {
     // Reference focusTrap to ensure controller is not tree-shaken
-    void this.focusTrap.active;
+    const _trapActive = this.focusTrap.active;
     if (!this.cluster) return html``;
 
     const isExternal = this.cluster.origin === 'external';
