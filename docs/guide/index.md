@@ -113,6 +113,40 @@ xcode-graph {
 
 The component automatically adapts to the user's system preference via `prefers-color-scheme`. Both dark and light token sets are built in — no extra setup needed. Your `--graph-*` overrides apply to whichever mode is active.
 
+To explicitly force a color scheme regardless of the user's system preference, set the `color-scheme` attribute:
+
+```html
+<!-- Force light mode -->
+<xcode-graph color-scheme="light"></xcode-graph>
+
+<!-- Force dark mode -->
+<xcode-graph color-scheme="dark"></xcode-graph>
+
+<!-- Follow system preference (default) -->
+<xcode-graph color-scheme="auto"></xcode-graph>
+```
+
+Or set it programmatically:
+
+```js
+const app = document.querySelector('xcode-graph');
+app.colorScheme = 'light';
+```
+
+### Platform colors
+
+Each Apple platform has its own accent color used in badges and icons. Override them to match your design system:
+
+```css
+xcode-graph {
+  --graph-platform-ios: #007AFF;
+  --graph-platform-macos: #64D2FF;
+  --graph-platform-tvos: #B87BFF;
+  --graph-platform-watchos: #5AC8FA;
+  --graph-platform-visionos: #7D7AFF;
+}
+```
+
 See [Component API — CSS Custom Properties](/reference/component-api#css-custom-properties) for the full list of themeable properties with their default values in both modes.
 
 ## Component API
@@ -125,6 +159,7 @@ See [Component API](/reference/component-api) for the full reference. Here's a q
 | `edges` | — | `GraphEdge[]` | Graph edges connecting nodes |
 | `layoutOptions` | — | `LayoutOptions` | Layout configuration overrides |
 | `showUpload` | `show-upload` | `boolean` | Show the file upload button |
+| `colorScheme` | `color-scheme` | `'light' \| 'dark' \| 'auto'` | Force light/dark mode or follow system |
 
 | Method | Parameters | Description |
 |---|---|---|

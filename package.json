@@ -101,7 +101,7 @@
     "test:coverage": "vitest run --coverage",
     "analyze": "cem analyze",
     "analyze:check": "cem analyze && git diff --exit-code custom-elements.json vscode.html-custom-data.json vscode.css-custom-data.json web-types.json",
-    "docs:dev": "vitepress dev docs --port 5174",
+    "docs:dev": "pnpm typedoc --out docs/.vitepress/dist/api && vitepress dev docs --port 5174",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs --port 5174",
     "docs:api": "typedoc",

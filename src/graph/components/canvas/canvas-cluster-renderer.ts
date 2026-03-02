@@ -6,6 +6,7 @@ import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-config';
 
 /** Minimum screen-pixel size for cluster labels before they are hidden */
 const MIN_LABEL_SCREEN_PX = 6;
+
 import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
@@ -114,7 +115,6 @@ function drawClusterFillAndBorder(
   ctx.setLineDash([]);
   ctx.lineDashOffset = 0;
 }
-
 
 function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
   if (ctx.measureText(text).width <= maxWidth) return text;

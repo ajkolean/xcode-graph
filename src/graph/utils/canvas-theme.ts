@@ -116,11 +116,23 @@ export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
     nodeTest: get('--colors-node-test', NODE_PALETTE['test-unit']),
     nodeCli: get('--colors-node-cli', NODE_PALETTE.cli),
     nodePackage: get('--colors-node-package', NODE_PALETTE.package),
-    canvasBg: get('--colors-canvas-bg', '#161617'),
-    tooltipBg: get('--colors-canvas-tooltip-bg', 'rgba(24, 24, 28, 0.95)'),
-    shadowColor: get('--colors-canvas-shadow', 'rgba(24, 24, 28, 0.9)'),
-    cycleEdgeColor: get('--colors-canvas-cycle-edge', 'rgba(239, 68, 68, 0.8)'),
-    cycleGlowColor: get('--colors-canvas-cycle-glow', 'rgba(239, 68, 68, 0.6)'),
+    canvasBg: get('--colors-canvas-bg', isDark ? '#161617' : '#f5f5f7'),
+    tooltipBg: get(
+      '--colors-canvas-tooltip-bg',
+      isDark ? 'rgba(24, 24, 28, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+    ),
+    shadowColor: get(
+      '--colors-canvas-shadow',
+      isDark ? 'rgba(24, 24, 28, 0.9)' : 'rgba(0, 0, 0, 0.1)',
+    ),
+    cycleEdgeColor: get(
+      '--colors-canvas-cycle-edge',
+      isDark ? 'rgba(239, 68, 68, 0.8)' : 'rgba(220, 38, 38, 0.8)',
+    ),
+    cycleGlowColor: get(
+      '--colors-canvas-cycle-glow',
+      isDark ? 'rgba(239, 68, 68, 0.6)' : 'rgba(220, 38, 38, 0.4)',
+    ),
     isDark,
   };
 }

@@ -13,6 +13,7 @@
  * @packageDocumentation
  */
 
+export type { ColorScheme } from './components/xcode-graph';
 export { GraphInteractionFullController } from './graph/controllers/graph-interaction-full.controller';
 export {
   type GraphLayoutConfig,
@@ -43,4 +44,14 @@ export type {
 } from './shared/schemas/cluster.types';
 export type { ClusterPosition, NodePosition } from './shared/schemas/simulation.types';
 export * from './shared/signals';
+export {
+  contrastRatio,
+  darken,
+  ensureContrast,
+  lighten,
+  meetsContrast,
+  onColorSchemeChange,
+  prefersDarkMode,
+  withAlpha,
+} from './styles/theme-utils';
 export * from './ui/utils';

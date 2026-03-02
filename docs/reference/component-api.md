@@ -27,6 +27,7 @@ el.layoutOptions = { configOverrides: { elkDirection: 'RIGHT' } };
 | `edges` | [`GraphEdge[]`](/reference/data-types#graphedge) | `undefined` | Graph edges connecting the nodes. |
 | `layoutOptions` | [`LayoutOptions`](/reference/layout-configuration) | `undefined` | Optional layout configuration. Override ELK parameters, force strengths, or hook into layout lifecycle. |
 | `showUpload` | `boolean` | `undefined` | Whether to show the file upload overlay. Can also be set via the `show-upload` HTML attribute. |
+| `colorScheme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Color scheme preference. `'auto'` follows the user's system preference. Set to `'light'` or `'dark'` to force a specific mode. |
 
 ### Attributes
 
@@ -35,10 +36,14 @@ HTML attributes that can be set declaratively:
 | Attribute | Type | Description |
 |---|---|---|
 | `show-upload` | `boolean` | Show the file upload button in the bottom-left corner. Presence of the attribute enables it. |
+| `color-scheme` | `'light' \| 'dark' \| 'auto'` | Force a color scheme. Defaults to `'auto'` (follows system preference). |
 
 ```html
 <!-- Enable file upload via attribute -->
 <xcode-graph show-upload></xcode-graph>
+
+<!-- Force light mode -->
+<xcode-graph color-scheme="light"></xcode-graph>
 ```
 
 ### Methods
@@ -96,6 +101,16 @@ The component is fully themeable via `--graph-*` CSS custom properties. Set thes
 | `--graph-node-cli` | `#3B82F6` | CLI tool nodes |
 | `--graph-node-package` | `#EAB308` | Package dependency nodes |
 
+#### Platform Colors
+
+| Property | Default (Dark) | Default (Light) | Description |
+|---|---|---|---|
+| `--graph-platform-ios` | `#007AFF` | `#0064D2` | iOS platform accent |
+| `--graph-platform-macos` | `#64D2FF` | `#0891B2` | macOS platform accent |
+| `--graph-platform-tvos` | `#B87BFF` | `#7C3AED` | tvOS platform accent |
+| `--graph-platform-watchos` | `#5AC8FA` | `#0284C7` | watchOS platform accent |
+| `--graph-platform-visionos` | `#7D7AFF` | `#6366F1` | visionOS platform accent |
+
 #### Typography
 
 | Property | Default | Description |
@@ -124,7 +139,18 @@ The component is fully themeable via `--graph-*` CSS custom properties. Set thes
 
 ### Color Scheme
 
-The component automatically adapts to light and dark mode via `prefers-color-scheme`. All internal tokens have both dark (default) and light variants. You can override individual colors using the `--graph-*` properties above.
+By default (`color-scheme="auto"`), the component adapts to light and dark mode via the system's `prefers-color-scheme`. All internal tokens have both dark and light variants.
+
+To force a specific mode regardless of system preference:
+
+```html
+<xcode-graph color-scheme="light"></xcode-graph>
+<xcode-graph color-scheme="dark"></xcode-graph>
+```
+
+The component sets a `data-theme` attribute on its host element (`data-theme="light"` or `data-theme="dark"`) and the CSS `color-scheme` property so native browser elements (scrollbars, form controls) match the chosen mode.
+
+You can override individual colors using the `--graph-*` properties above. Your overrides apply in both modes.
 
 ### Sizing
 

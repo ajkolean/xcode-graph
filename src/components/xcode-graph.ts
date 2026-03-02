@@ -32,6 +32,7 @@ import {
 import { property } from 'lit/decorators.js';
 
 export type ColorScheme = 'light' | 'dark' | 'auto';
+
 import { ErrorService } from '@/services/error-service';
 import { GraphAnalysisService } from '@/services/graph-analysis-service';
 import { GraphDataService } from '@/services/graph-data-service';

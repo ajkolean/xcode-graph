@@ -18,13 +18,34 @@ export const PLATFORM_COLORS: Record<string, string> = {
 /** Default fallback platform color — matches --colors-platform-default */
 export const PLATFORM_COLOR = '#6F2CFF';
 
+/** Maps platform names to their CSS custom property names */
+const PLATFORM_CSS_PROPS: Record<string, string> = {
+  iOS: '--colors-platform-ios',
+  macOS: '--colors-platform-macos',
+  tvOS: '--colors-platform-tvos',
+  watchOS: '--colors-platform-watchos',
+  visionOS: '--colors-platform-visionos',
+};
+
 /**
  * Get the color for a specific platform.
  *
+ * When an element is provided, reads theme-aware colors from CSS custom
+ * properties (set in tokens.css). Falls back to static hex values when
+ * no element is available or the property is not set.
+ *
  * @param platform - Platform name (e.g., `'iOS'`, `'macOS'`)
- * @returns Hex color string
+ * @param el - Optional host element to read CSS custom properties from
+ * @returns CSS color string
  */
-export function getPlatformColor(platform: string): string {
+export function getPlatformColor(platform: string, el?: HTMLElement): string {
+  if (el) {
+    const prop = PLATFORM_CSS_PROPS[platform];
+    if (prop) {
+      const value = getComputedStyle(el).getPropertyValue(prop).trim();
+      if (value) return value;
+    }
+  }
   return PLATFORM_COLORS[platform] || PLATFORM_COLOR;
 }
 
