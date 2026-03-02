@@ -102,6 +102,17 @@
   --colors-canvas-cycle-edge: rgba(239, 68, 68, 0.8);
   --colors-canvas-cycle-glow: rgba(239, 68, 68, 0.6);
 
+  /* Filter icon color */
+  --colors-filter-icon: rgba(160, 140, 255, 0.7);
+
+  /* Platform colors — overridable via --graph-platform-* */
+  --colors-platform-ios: var(--graph-platform-ios, #007AFF);
+  --colors-platform-macos: var(--graph-platform-macos, #64D2FF);
+  --colors-platform-tvos: var(--graph-platform-tvos, #B87BFF);
+  --colors-platform-watchos: var(--graph-platform-watchos, #5AC8FA);
+  --colors-platform-visionos: var(--graph-platform-visionos, #7D7AFF);
+  --colors-platform-default: var(--graph-platform-default, #6F2CFF);
+
   /* Sidebar colors */
   --colors-sidebar: var(--graph-bg-secondary, #1c1c1e);
   --colors-sidebar-rgb: 28, 28, 30;

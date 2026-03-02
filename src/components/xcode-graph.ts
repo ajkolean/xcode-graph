@@ -30,6 +30,8 @@ import {
   type TemplateResult,
 } from 'lit';
 import { property } from 'lit/decorators.js';
+
+export type ColorScheme = 'light' | 'dark' | 'auto';
 import { ErrorService } from '@/services/error-service';
 import { GraphAnalysisService } from '@/services/graph-analysis-service';
 import { GraphDataService } from '@/services/graph-data-service';
@@ -75,9 +77,17 @@ export class GraphApp extends SignalWatcherLitElement {
   @property({ type: Boolean, attribute: 'show-upload' })
   declare showUpload: boolean;
 
+  /**
+   * Color scheme preference. Set to `'light'` or `'dark'` to force a mode,
+   * or `'auto'` (default) to follow the user's system preference.
+   */
+  @property({ attribute: 'color-scheme' })
+  declare colorScheme: ColorScheme;
+
   private graphDataService: GraphDataService | null = null;
   private dataFingerprint: string | null = null;
   private filtersInitialized = false;
+  private mediaQueryCleanup: (() => void) | null = null;
 
   private refreshGraphData(nodes: GraphNode[], edges: GraphEdge[]) {
     const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((n) => n.id).join(',')}-${edges.map((e) => `${e.source}->${e.target}`).join(',')}`;
@@ -114,17 +124,64 @@ export class GraphApp extends SignalWatcherLitElement {
       font-family: var(--fonts-body);
       overflow: hidden;
     }
+
+    :host([data-theme='light']) {
+      color-scheme: light;
+    }
+
+    :host([data-theme='dark']) {
+      color-scheme: dark;
+    }
   `;
 
   override connectedCallback(): void {
     super.connectedCallback();
+    if (!this.colorScheme) {
+      this.colorScheme = 'auto';
+    }
+    this.applyColorScheme();
     this.seedData();
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.mediaQueryCleanup?.();
+    this.mediaQueryCleanup = null;
   }
 
   override willUpdate(changed: PropertyValues<this>): void {
     if (changed.has('nodes') || changed.has('edges')) {
       this.seedData();
     }
+    if (changed.has('colorScheme')) {
+      this.applyColorScheme();
+    }
+  }
+
+  private applyColorScheme(): void {
+    // Clean up previous listener
+    this.mediaQueryCleanup?.();
+    this.mediaQueryCleanup = null;
+
+    if (this.colorScheme === 'auto') {
+      const mql = globalThis.matchMedia?.('(prefers-color-scheme: dark)');
+      if (mql) {
+        this.setThemeAttribute(mql.matches ? 'dark' : 'light');
+        const handler = (e: MediaQueryListEvent) => {
+          this.setThemeAttribute(e.matches ? 'dark' : 'light');
+        };
+        mql.addEventListener('change', handler);
+        this.mediaQueryCleanup = () => mql.removeEventListener('change', handler);
+      } else {
+        this.setThemeAttribute('dark');
+      }
+    } else {
+      this.setThemeAttribute(this.colorScheme);
+    }
+  }
+
+  private setThemeAttribute(theme: 'light' | 'dark'): void {
+    this.setAttribute('data-theme', theme);
   }
 
   private seedData(): void {
