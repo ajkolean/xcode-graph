@@ -91,41 +91,26 @@ describe('ZagController', () => {
       });
 
       host.connectedCallback();
-
-      // Stopping a machine that has already been tampered with
-      // Force an error by stopping the instance directly then calling disconnect
-      host.disconnectedCallback();
-
-      // Second disconnect - instance.stop() may throw on already-stopped machine
-      try {
-        host.disconnectedCallback();
-      } catch {
-        // Expected in some cases
-      }
-
-      warnSpy.mockRestore();
-    });
-
-    it('should catch errors during cleanup and still clear unsubscribe (line 120)', () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
-        /* suppress */
-      });
-
-      // Connect normally
-      host.connectedCallback();
       expect(controller.service.getStatus()).toBe(MachineStatus.Started);
 
-      // Disconnect should work cleanly the first time
-      host.disconnectedCallback();
-      expect(controller.service.getStatus()).toBe(MachineStatus.Stopped);
+      // Access the internal instance via the controller to make stop() throw.
+      // The controller stores the instance as a private field; we use bracket
+      // notation to reach it and stub its stop method.
+      const ctrl = controller as unknown as { instance: { stop: () => void } };
+      const originalStop = ctrl.instance.stop.bind(ctrl.instance);
+      ctrl.instance.stop = () => {
+        throw new Error('simulated stop error');
+      };
 
-      // Now try to disconnect again - the machine is already stopped,
-      // so instance.stop() may throw, triggering the catch block (line 120)
-      host.connectedCallback();
-      host.disconnectedCallback();
+      // hostDisconnected should catch the error and warn
+      expect(() => host.disconnectedCallback()).not.toThrow();
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[ZagController] Error during cleanup:',
+        expect.any(Error),
+      );
 
-      // The finally block (line 122) should always set unsubscribe to undefined
-      // regardless of whether the catch block was entered
+      // Restore original stop so afterEach cleanup doesn't fail
+      ctrl.instance.stop = originalStop;
       warnSpy.mockRestore();
     });
   });

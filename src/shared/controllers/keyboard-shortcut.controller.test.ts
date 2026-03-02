@@ -204,88 +204,62 @@ describe('KeyboardShortcutController', () => {
       expect(onTrigger).toHaveBeenCalledTimes(1);
     });
 
-    it('should detect input inside shadow root of focused element (lines 103-104)', () => {
+    it('should skip when shadow root has focused input (lines 105-106)', () => {
       host.connectedCallback();
 
-      // Create a custom element with a shadow root containing an input
-      const wrapper = document.createElement('div');
-      wrapper.tabIndex = 0;
-      document.body.appendChild(wrapper);
-
-      // Attach shadow root and add an input inside
-      const shadow = wrapper.attachShadow({ mode: 'open' });
+      // jsdom does not support shadow DOM focus delegation, so we mock
+      // document.activeElement to return an element whose shadowRoot.activeElement
+      // points to an input element.
       const innerInput = document.createElement('input');
-      shadow.appendChild(innerInput);
+      const fakeShadowRoot = { activeElement: innerInput } as unknown as ShadowRoot;
+      const fakeActive = document.createElement('div');
+      Object.defineProperty(fakeActive, 'shadowRoot', { value: fakeShadowRoot });
 
-      // Focus the wrapper (the shadow root's activeElement would be the inner input
-      // if it were focused, but jsdom has limited shadow DOM focus support)
-      wrapper.focus();
+      const activeElementSpy = vi
+        .spyOn(document, 'activeElement', 'get')
+        .mockReturnValue(fakeActive);
 
-      // The isInputFocused checks root.activeElement when the focused element has a shadowRoot
-      // In jsdom, shadow root focus delegation is limited, so the branch is tested
-      // by checking that the code path doesn't crash
       window.dispatchEvent(new KeyboardEvent('keydown', { key: '/' }));
+      expect(onTrigger).not.toHaveBeenCalled();
 
-      wrapper.remove();
+      activeElementSpy.mockRestore();
     });
 
-    it('should skip when shadow root has focused textarea (lines 103-104)', () => {
-      const testHost = new MockHost();
-      const trigger = vi.fn();
-      const instance = new KeyboardShortcutController(testHost, {
-        key: 'k',
-        onTrigger: trigger,
-        ignoreWhenInputFocused: true,
-      });
-      expect(instance).toBeDefined();
-      testHost.connectedCallback();
+    it('should skip when shadow root has focused textarea (lines 105-106)', () => {
+      host.connectedCallback();
 
-      // Create element with shadow root
-      const el = document.createElement('div');
-      el.tabIndex = 0;
-      document.body.appendChild(el);
-      const shadow = el.attachShadow({ mode: 'open' });
-      const textarea = document.createElement('textarea');
-      shadow.appendChild(textarea);
+      const innerTextarea = document.createElement('textarea');
+      const fakeShadowRoot = { activeElement: innerTextarea } as unknown as ShadowRoot;
+      const fakeActive = document.createElement('div');
+      Object.defineProperty(fakeActive, 'shadowRoot', { value: fakeShadowRoot });
 
-      el.focus();
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k' }));
+      const activeElementSpy = vi
+        .spyOn(document, 'activeElement', 'get')
+        .mockReturnValue(fakeActive);
 
-      el.remove();
-      testHost.disconnectedCallback();
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '/' }));
+      expect(onTrigger).not.toHaveBeenCalled();
+
+      activeElementSpy.mockRestore();
     });
 
-    it('should detect input inside shadow root via activeElement (lines 105-106)', () => {
-      const testHost = new MockHost();
-      const trigger = vi.fn();
-      const instance = new KeyboardShortcutController(testHost, {
-        key: 'j',
-        onTrigger: trigger,
-        ignoreWhenInputFocused: true,
-      });
-      expect(instance).toBeDefined();
-      testHost.connectedCallback();
+    it('should not skip when shadow root active element is not an input (lines 105-106)', () => {
+      host.connectedCallback();
 
-      // Create a custom element with shadow root containing an input
-      const wrapper = document.createElement('div');
-      wrapper.tabIndex = 0;
-      document.body.appendChild(wrapper);
-      const shadow = wrapper.attachShadow({ mode: 'open' });
-      const innerInput = document.createElement('input');
-      shadow.appendChild(innerInput);
+      // Shadow root has a focused div, not an input/textarea - should NOT skip
+      const innerDiv = document.createElement('div');
+      const fakeShadowRoot = { activeElement: innerDiv } as unknown as ShadowRoot;
+      const fakeActive = document.createElement('div');
+      Object.defineProperty(fakeActive, 'shadowRoot', { value: fakeShadowRoot });
 
-      // Focus the wrapper element so it becomes document.activeElement
-      wrapper.focus();
-      expect(document.activeElement).toBe(wrapper);
+      const activeElementSpy = vi
+        .spyOn(document, 'activeElement', 'get')
+        .mockReturnValue(fakeActive);
 
-      // The isInputFocused method checks:
-      // 1. If activeElement itself is input/textarea (no, it's a div)
-      // 2. If activeElement has a shadowRoot with an activeElement that is input/textarea
-      // In jsdom, shadow root focus support is limited, but the code path is exercised
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'j' }));
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '/' }));
+      expect(onTrigger).toHaveBeenCalledTimes(1);
 
-      wrapper.remove();
-      testHost.disconnectedCallback();
+      activeElementSpy.mockRestore();
     });
   });
 });
