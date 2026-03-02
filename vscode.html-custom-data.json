@@ -10,7 +10,7 @@
     },
     {
       "name": "xcode-graph-canvas",
-      "description": "Canvas-based interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard",
+      "description": "Canvas-based interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard\n\n### **Methods:**\n - **fitToViewport(): _void_** - Adjusts zoom and pan so that all clusters fit within the visible viewport.",
       "attributes": [
         {
           "name": "search-query",
