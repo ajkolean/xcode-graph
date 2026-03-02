@@ -172,6 +172,7 @@ export class GraphApp extends SignalWatcherLitElement {
       if (mql) {
         /* v8 ignore next 6 -- matchMedia handler: tested via mock in xcode-graph.test.ts */
         this.setThemeAttribute(mql.matches ? 'dark' : 'light');
+        /** Updates the theme attribute when the system color scheme changes. */
         const handler = (e: MediaQueryListEvent) => {
           this.setThemeAttribute(e.matches ? 'dark' : 'light');
         };
