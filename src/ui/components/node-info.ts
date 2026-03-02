@@ -198,7 +198,7 @@ export class GraphNodeInfo extends LitElement {
   private get hasDeploymentTargets(): boolean {
     return (
       Boolean(this.node.deploymentTargets) &&
-      Object.values(this.node.deploymentTargets).some((v) => v != null)
+      Object.values(this.node.deploymentTargets).some((value) => value != null)
     );
   }
 

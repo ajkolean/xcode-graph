@@ -48,6 +48,11 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
  * @fires node-select - Dispatched when a node row is clicked (detail: { node })
  * @fires node-hover - Dispatched on node row hover (detail: { nodeId })
  */
+function getNodeSubtitle(node: GraphNode): string {
+  const typeLabel = node.type.charAt(0).toUpperCase() + node.type.slice(1);
+  return node.origin === Origin.External ? `External ${typeLabel}` : typeLabel;
+}
+
 export class GraphNodeList extends NodeListEventsBase {
   /**
    * Section title (e.g., "Dependencies", "Dependents")
@@ -223,11 +228,6 @@ export class GraphNodeList extends NodeListEventsBase {
     return [];
   }
 
-  private getNodeSubtitle(node: GraphNode): string {
-    const typeLabel = node.type.charAt(0).toUpperCase() + node.type.slice(1);
-    return node.origin === Origin.External ? `External ${typeLabel}` : typeLabel;
-  }
-
   private renderKindBadge(item: NodeWithEdge) {
     if (!this.showKind || !item.edge.kind) return nothing;
 
@@ -285,7 +285,7 @@ export class GraphNodeList extends NodeListEventsBase {
                           <div class="item-content">
                             <xcode-graph-list-item-row
                               .node=${item.node}
-                              subtitle=${this.getNodeSubtitle(item.node)}
+                              subtitle=${getNodeSubtitle(item.node)}
                               .zoom=${this.zoom}
                               @row-select=${this.handleNodeSelect}
                               @row-hover=${this.handleNodeHover}

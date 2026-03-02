@@ -182,9 +182,9 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     const dependencyCount = new Map<string, number>();
     const dependentCount = new Map<string, number>();
     if (this.edges) {
-      for (const e of this.edges) {
-        dependencyCount.set(e.source, (dependencyCount.get(e.source) ?? 0) + 1);
-        dependentCount.set(e.target, (dependentCount.get(e.target) ?? 0) + 1);
+      for (const edge of this.edges) {
+        dependencyCount.set(edge.source, (dependencyCount.get(edge.source) ?? 0) + 1);
+        dependentCount.set(edge.target, (dependentCount.get(edge.target) ?? 0) + 1);
       }
     }
 

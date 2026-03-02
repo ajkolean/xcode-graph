@@ -70,6 +70,62 @@ export type ErrorActionHandler = (error: AppError) => void | Promise<void>;
 
 const DEFAULT_USER_MESSAGE = 'An unexpected error occurred';
 
+function generateErrorId(): string {
+  return `error-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+function extractErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String(error.message);
+  }
+  return 'Unknown error';
+}
+
+function extractErrorDetails(error: unknown): string | undefined {
+  if (error instanceof Error) {
+    return error.stack;
+  }
+  if (error && typeof error === 'object') {
+    try {
+      return JSON.stringify(error, null, 2);
+    } catch {
+      return String(error);
+    }
+  }
+  return undefined;
+}
+
+function logError(appError: AppError, originalError: unknown): void {
+  const prefix = `[ErrorService][${appError.category}]`;
+  const logData = {
+    severity: appError.severity,
+    message: appError.message,
+    details: appError.details,
+    originalError,
+  };
+
+  switch (appError.severity) {
+    case ErrorSeverityEnum.Critical:
+    case ErrorSeverityEnum.Error:
+      console.error(prefix, logData);
+      break;
+    case ErrorSeverityEnum.Warning:
+      console.warn(prefix, logData);
+      break;
+    case ErrorSeverityEnum.Info:
+      console.log(prefix, logData);
+      break;
+    default:
+      break;
+  }
+}
+
 /**
  * Centralized error handling service (Singleton)
  */
@@ -120,11 +176,11 @@ export class ErrorService {
       autoDismissMs,
     } = options;
 
-    const errorMessage = this.extractErrorMessage(error);
-    const errorDetails = this.extractErrorDetails(error);
+    const errorMessage = extractErrorMessage(error);
+    const errorDetails = extractErrorDetails(error);
 
     const appError: AppError = {
-      id: this.generateErrorId(),
+      id: generateErrorId(),
       severity,
       category,
       message: userMessage || errorMessage || DEFAULT_USER_MESSAGE,
@@ -137,7 +193,7 @@ export class ErrorService {
     };
 
     if (logToConsole) {
-      this.logError(appError, error);
+      logError(appError, error);
     }
 
     addError(appError);
@@ -256,62 +312,6 @@ export class ErrorService {
     setTimeout(() => {
       removeError(errorId);
     }, 1000);
-  }
-
-  private generateErrorId(): string {
-    return `error-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-  }
-
-  private extractErrorMessage(error: unknown): string {
-    if (error instanceof Error) {
-      return error.message;
-    }
-    if (typeof error === 'string') {
-      return error;
-    }
-    if (error && typeof error === 'object' && 'message' in error) {
-      return String(error.message);
-    }
-    return 'Unknown error';
-  }
-
-  private extractErrorDetails(error: unknown): string | undefined {
-    if (error instanceof Error) {
-      return error.stack;
-    }
-    if (error && typeof error === 'object') {
-      try {
-        return JSON.stringify(error, null, 2);
-      } catch {
-        return String(error);
-      }
-    }
-    return undefined;
-  }
-
-  private logError(appError: AppError, originalError: unknown): void {
-    const prefix = `[ErrorService][${appError.category}]`;
-    const logData = {
-      severity: appError.severity,
-      message: appError.message,
-      details: appError.details,
-      originalError,
-    };
-
-    switch (appError.severity) {
-      case ErrorSeverityEnum.Critical:
-      case ErrorSeverityEnum.Error:
-        console.error(prefix, logData);
-        break;
-      case ErrorSeverityEnum.Warning:
-        console.warn(prefix, logData);
-        break;
-      case ErrorSeverityEnum.Info:
-        console.log(prefix, logData);
-        break;
-      default:
-        break;
-    }
   }
 
   private setupAutoDismiss(

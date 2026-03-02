@@ -297,18 +297,18 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   private findClusterById(clusterId: string | null): Cluster | undefined {
     if (!clusterId) return undefined;
 
-    const existing = this.clusters?.find((c) => c.id === clusterId);
+    const existing = this.clusters?.find((cluster) => cluster.id === clusterId);
     if (existing) return existing;
 
     const clusterNodes = this.allNodes.filter(
-      (n) => (n.type === NodeType.Package ? n.name : n.project) === clusterId,
+      (node) => (node.type === NodeType.Package ? node.name : node.project) === clusterId,
     );
     if (clusterNodes.length === 0) return undefined;
 
     const firstNode = clusterNodes[0];
     if (!firstNode) return undefined;
     const type = firstNode.type === NodeType.Package ? 'package' : 'project';
-    const origin = clusterNodes.some((n) => n.origin === Origin.External)
+    const origin = clusterNodes.some((node) => node.origin === Origin.External)
       ? Origin.External
       : Origin.Local;
 
@@ -350,6 +350,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handleSearchChange(query: string) {
+    // skipcq: JS-0105
     setSearchQuery(query);
   }
 
@@ -360,6 +361,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handleItemToggle(
+    // skipcq: JS-0105
     type: 'nodeType' | 'platform' | 'project' | 'package',
     key: string,
     checked: boolean,
@@ -384,6 +386,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handlePreviewChange(preview: PreviewFilter) {
+    // skipcq: JS-0105
     setPreviewFilter(preview);
   }
 
@@ -472,7 +475,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       <xcode-graph-cluster-details-panel
         .cluster=${this.findClusterById(clusterId)}
         .clusterNodes=${this.allNodes.filter(
-          (n) => (n.type === NodeType.Package ? n.name : n.project) === clusterId,
+          (node) => (node.type === NodeType.Package ? node.name : node.project) === clusterId,
         )}
         .allNodes=${this.allNodes}
         .edges=${this.allEdges}

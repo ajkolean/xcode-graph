@@ -9,7 +9,7 @@ import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.
  * @param allEdges - All graph edges (includes cross-cluster edges for external dependent detection)
  */
 export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
-  const nodeIds = new Set(cluster.nodes.map((n) => n.id));
+  const nodeIds = new Set(cluster.nodes.map((node) => node.id));
 
   const dependents = new Map<string, Set<string>>();
   const dependencies = new Map<string, Set<string>>();
@@ -43,7 +43,7 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
 
       // Find what this test depends on (its subjects)
       const subjects = Array.from(dependencies.get(node.id) || []).filter((depId) => {
-        const depNode = cluster.nodes.find((n) => n.id === depId);
+        const depNode = cluster.nodes.find((node) => node.id === depId);
         return depNode && depNode.type !== NodeType.TestUnit && depNode.type !== NodeType.TestUi;
       });
 
@@ -54,9 +54,9 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
   });
 
   // 2. Identify anchors (entry points)
-  const nonTestNodes = cluster.nodes.filter((n) => !testNodes.has(n.id));
+  const nonTestNodes = cluster.nodes.filter((node) => !testNodes.has(node.id));
   const anchors = identifyAnchors(nonTestNodes, dependents, externalDependents);
-  cluster.anchors = anchors.map((n) => n.id);
+  cluster.anchors = anchors.map((node) => node.id);
 
   // 3. Assign layers based on internal connectivity (edge count within cluster)
   const layers = assignLayers(nonTestNodes, anchors, dependencies, testNodes);
@@ -100,18 +100,18 @@ export function identifyAnchors(
   externalDependents: Map<string, number>,
 ): GraphNode[] {
   // 1. Try apps first
-  const apps = nodes.filter((n) => n.type === NodeType.App);
+  const apps = nodes.filter((node) => node.type === NodeType.App);
   if (apps.length > 0) return apps;
 
   // 2. Try CLIs
-  const clis = nodes.filter((n) => n.type === NodeType.Cli);
+  const clis = nodes.filter((node) => node.type === NodeType.Cli);
   if (clis.length > 0) return clis;
 
   // 3. Try frameworks/libs with external dependents
   const externalEntryPoints = nodes.filter(
-    (n) =>
-      (n.type === NodeType.Framework || n.type === NodeType.Library) &&
-      (externalDependents.get(n.id) || 0) > 0,
+    (node) =>
+      (node.type === NodeType.Framework || node.type === NodeType.Library) &&
+      (externalDependents.get(node.id) || 0) > 0,
   );
   if (externalEntryPoints.length > 0) {
     const sorted = externalEntryPoints.toSorted(
@@ -171,7 +171,7 @@ function calculateInternalEdgeCounts(
   testNodes: Set<string>,
 ): Map<string, number> {
   const internalEdgeCounts = new Map<string, number>();
-  const nodeIds = new Set(nodes.map((n) => n.id));
+  const nodeIds = new Set(nodes.map((node) => node.id));
 
   for (const node of nodes) {
     if (testNodes.has(node.id)) continue;
@@ -228,7 +228,7 @@ export function assignLayers(
 
   // Sort remaining nodes by internal edge count (descending)
   const nonAnchorNodes = nodes.filter(
-    (n) => !anchors.some((a) => a.id === n.id) && !testNodes.has(n.id),
+    (node) => !anchors.some((anchor) => anchor.id === node.id) && !testNodes.has(node.id),
   );
 
   const sortedByConnectivity = [...nonAnchorNodes].sort((a, b) => {

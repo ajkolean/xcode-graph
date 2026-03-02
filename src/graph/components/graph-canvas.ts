@@ -253,7 +253,7 @@ export class GraphCanvas extends LitElement {
     const prevNodes = changedProps.get('nodes') as GraphNode[] | undefined;
     if (!prevNodes || prevNodes.length === 0) return;
 
-    const currentIds = new Set(this.nodes.map((n) => n.id));
+    const currentIds = new Set(this.nodes.map((node) => node.id));
     const now = performance.now();
     for (const node of prevNodes) {
       if (!currentIds.has(node.id) && !this.fadingOutNodes.has(node.id)) {
@@ -572,7 +572,7 @@ export class GraphCanvas extends LitElement {
       case ' ':
         e.preventDefault();
         if (this.interactionState.hoveredNode) {
-          const node = this.nodes.find((n) => n.id === this.interactionState.hoveredNode);
+          const node = this.nodes.find((node) => node.id === this.interactionState.hoveredNode);
           if (node) {
             const newSelection = this.selectedNode?.id === node.id ? null : node;
             ctx.dispatchCanvasEvent('node-select', { node: newSelection });

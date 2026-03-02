@@ -282,10 +282,10 @@ export class GraphClusterComposition extends LitElement {
                       ${when(this.hasPrivacyManifest, () => html`<span class="resource-badge privacy">Privacy Manifest</span>`)}
                       ${repeat(
                         Array.from(this.notableResources)
-                          .filter((r) => r !== 'PrivacyInfo.xcprivacy')
+                          .filter((resource) => resource !== 'PrivacyInfo.xcprivacy')
                           .slice(0, 3),
-                        (r) => r,
-                        (r) => html`<span class="resource-badge">${r}</span>`,
+                        (resource) => resource,
+                        (resource) => html`<span class="resource-badge">${resource}</span>`,
                       )}
                     </div>
                   `,

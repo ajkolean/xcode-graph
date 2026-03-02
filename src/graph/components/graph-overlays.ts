@@ -169,7 +169,7 @@ export class GraphControls extends LitElement {
 
   private handleZoomIn() {
     const current = this.zoomRatio;
-    const nextStep = GraphControls.ZOOM_STEPS.find((s) => s > current + 0.01);
+    const nextStep = GraphControls.ZOOM_STEPS.find((step) => step > current + 0.01);
     if (nextStep !== undefined) {
       const newZoom = nextStep * (this.baseZoom > 0 ? this.baseZoom : 1);
       this.dispatchEvent(

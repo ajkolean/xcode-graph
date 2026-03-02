@@ -52,10 +52,10 @@ export function buildClusterGraph(edges: GraphEdge[], clusters: Cluster[]): Clus
     if (cSrc && cTgt && cSrc !== cTgt) {
       const key = `${cSrc}->${cTgt}`;
       if (!edgeMap.has(key)) {
-        edgeMap.set(key, { source: cSrc, target: cTgt, w: 0 });
+        edgeMap.set(key, { source: cSrc, target: cTgt, weight: 0 });
       }
       const entry = edgeMap.get(key);
-      if (entry) entry.w += 1;
+      if (entry) entry.weight += 1;
     }
   }
 
@@ -66,13 +66,13 @@ export function buildClusterGraph(edges: GraphEdge[], clusters: Cluster[]): Clus
 
   for (const edge of directedEdges) {
     const reverseKey = `${edge.target}->${edge.source}`;
-    const reverseWeight = edgeMap.get(reverseKey)?.w ?? 0;
+    const reverseWeight = edgeMap.get(reverseKey)?.weight ?? 0;
 
     clusterEdges.push({
       source: edge.source,
       target: edge.target,
-      weight: edge.w,
-      tieStrength: edge.w + reverseWeight,
+      weight: edge.weight,
+      tieStrength: edge.weight + reverseWeight,
     });
   }
 

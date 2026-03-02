@@ -150,8 +150,8 @@ export class GraphHiddenDom extends LitElement {
 
   /** Build an aria-label for an edge row */
   private getEdgeRowLabel(edge: GraphEdge): string {
-    const sourceName = this.nodes.find((n) => n.id === edge.source)?.name ?? edge.source;
-    const targetName = this.nodes.find((n) => n.id === edge.target)?.name ?? edge.target;
+    const sourceName = this.nodes.find((node) => node.id === edge.source)?.name ?? edge.source;
+    const targetName = this.nodes.find((node) => node.id === edge.target)?.name ?? edge.target;
     const kind = edge.kind ?? 'dependency';
     return `${sourceName} depends on ${targetName}, kind ${kind}`;
   }
@@ -204,8 +204,8 @@ export class GraphHiddenDom extends LitElement {
             ${this.edges.map(
               (edge, i) => html`
                 <tr id="edge-${i}" role="row" aria-label="${this.getEdgeRowLabel(edge)}">
-                  <td>${this.nodes.find((n) => n.id === edge.source)?.name ?? edge.source}</td>
-                  <td>${this.nodes.find((n) => n.id === edge.target)?.name ?? edge.target}</td>
+                  <td>${this.nodes.find((node) => node.id === edge.source)?.name ?? edge.source}</td>
+                  <td>${this.nodes.find((node) => node.id === edge.target)?.name ?? edge.target}</td>
                   <td>${edge.kind ?? 'dependency'}</td>
                 </tr>
               `,

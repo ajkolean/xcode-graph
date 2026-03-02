@@ -192,7 +192,7 @@ export class GraphDeploymentTargets extends LitElement {
 
   override render(): TemplateResult | typeof nothing {
     const hasPlatforms =
-      this.deploymentTargets && Object.values(this.deploymentTargets).some((v) => v != null);
+      this.deploymentTargets && Object.values(this.deploymentTargets).some((value) => value != null);
     const hasDestinations = this.destinations && this.destinations.length > 0;
 
     if (!hasPlatforms && !hasDestinations) {
