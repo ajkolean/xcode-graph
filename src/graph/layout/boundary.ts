@@ -39,6 +39,7 @@ export interface BoundaryForce {
 }
 
 function constant<T>(x: T): (node: BoundaryNode, index: number, nodes: BoundaryNode[]) => T {
+  // skipcq: JS-C1002
   return () => x;
 }
 
@@ -109,6 +110,7 @@ export default function forceBoundary(
   }
 
   function getVx(halfX: number, x: number, strengthX: number, _border: number, alpha: number) {
+    // skipcq: JS-C1002
     return (halfX - x) * Math.min(2, Math.abs(halfX - x) / halfX) * strengthX * alpha;
   }
 

@@ -40,7 +40,7 @@ export interface TooltipContext {
  */
 export function renderNodeTooltip(tc: TooltipContext): void {
   if (!tc.hoveredNode) return;
-  const node = tc.nodes.find((n) => n.id === tc.hoveredNode);
+  const node = tc.nodes.find((graphNode) => graphNode.id === tc.hoveredNode);
   if (!node) return;
   // At low zoom, always show tooltip (labels are likely hidden).
   // At higher zoom, only show if label would be truncated.
@@ -94,7 +94,7 @@ export function renderClusterTooltip(tc: TooltipContext): void {
   const clusterId = tc.hoveredCluster;
   if (!clusterId || tc.hoveredNode) return;
 
-  const cluster = tc.layout.clusters.find((c) => c.id === clusterId);
+  const cluster = tc.layout.clusters.find((cl) => cl.id === clusterId);
   if (!cluster) return;
   const layoutPos = tc.layout.clusterPositions.get(clusterId);
   if (!layoutPos) return;

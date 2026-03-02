@@ -90,7 +90,7 @@ export class GraphApp extends SignalWatcherLitElement {
   private mediaQueryCleanup: (() => void) | null = null;
 
   private refreshGraphData(nodes: GraphNode[], edges: GraphEdge[]) {
-    const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((n) => n.id).join(',')}-${edges.map((e) => `${e.source}->${e.target}`).join(',')}`;
+    const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((node) => node.id).join(',')}-${edges.map((edge) => `${edge.source}->${edge.target}`).join(',')}`;
     if (fingerprint === this.dataFingerprint) return;
     this.dataFingerprint = fingerprint;
 

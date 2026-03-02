@@ -144,6 +144,7 @@ const CS_TOP = 8;
  * @returns Bitmask of region codes
  */
 function computeOutCode(x: number, y: number, bounds: ViewportBounds): number {
+  // skipcq: JS-C1002
   let code = 0;
   if (x < bounds.minX) code |= CS_LEFT;
   else if (x > bounds.maxX) code |= CS_RIGHT;

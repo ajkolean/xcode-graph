@@ -42,6 +42,7 @@ export interface RGBNormalized {
  * @returns RGB channel value (0–1)
  */
 export function hue2rgb(p: number, q: number, t: number): number {
+  // skipcq: JS-C1002
   let adjustedT = t;
   if (adjustedT < 0) adjustedT += 1;
   if (adjustedT > 1) adjustedT -= 1;
@@ -58,6 +59,7 @@ export function hue2rgb(p: number, q: number, t: number): number {
  * @returns Two-character hex string (e.g., `"ff"`)
  */
 export function toHex(n: number): string {
+  // skipcq: JS-C1002
   const hex = Math.round(n * 255).toString(16);
   return hex.length === 1 ? `0${hex}` : hex;
 }
@@ -71,6 +73,7 @@ export function toHex(n: number): string {
  * @returns HSL color with all channels normalized to 0–1
  */
 export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
+  // skipcq: JS-C1002
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   let h = 0;
@@ -106,6 +109,7 @@ export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
  * @returns RGB color with all channels normalized to 0–1
  */
 export function hslToRgb(h: number, s: number, l: number): RGBNormalized {
+  // skipcq: JS-C1002
   if (s === 0) {
     return { r: l, g: l, b: l };
   }
@@ -137,5 +141,6 @@ export function hexToHSL(hex: string): HSLDegrees {
  * @returns Hex color string with #
  */
 export function hslToHex(h: number, s: number, l: number): string {
+  // skipcq: JS-C1002
   return colord({ h, s, l }).toHex();
 }

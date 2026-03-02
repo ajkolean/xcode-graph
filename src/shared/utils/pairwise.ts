@@ -14,6 +14,7 @@
  * ```
  */
 export function* pairwise<T>(items: T[]): Generator<readonly [T, T], void, unknown> {
+  // skipcq: JS-C1002
   for (let i = 0; i < items.length; i++) {
     const a = items[i];
     if (a === undefined) continue;

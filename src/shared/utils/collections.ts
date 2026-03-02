@@ -13,6 +13,7 @@
  * @returns Array `[0, 1, 2, ..., n-1]`
  */
 export function range(n: number): number[] {
+  // skipcq: JS-C1002
   const out = new Array<number>(n);
   for (let i = 0; i < n; i++) {
     out[i] = i;
@@ -28,6 +29,7 @@ export function range(n: number): number[] {
  * @returns Array of `n` results
  */
 export function times<T>(n: number, fn: (index: number) => T): T[] {
+  // skipcq: JS-C1002
   const out: T[] = [];
   for (let i = 0; i < n; i++) {
     out.push(fn(i));

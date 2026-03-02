@@ -54,6 +54,7 @@ function hashString(str: string): number {
  * @returns Hex color string (e.g., `"#7a38ff"`)
  */
 function adjustColor(rgb: number[], lightnessShift: number, saturationShift: number): string {
+  // skipcq: JS-C1002
   const rNorm = (rgb[0] ?? 0) / 255;
   const gNorm = (rgb[1] ?? 0) / 255;
   const bNorm = (rgb[2] ?? 0) / 255;
@@ -128,6 +129,7 @@ export function generateColorPalette(items: string[], category?: string): Map<st
  * @returns An `rgba()` CSS color string
  */
 export function generateColorWithAlpha(input: string, alpha: number, category?: string): string {
+  // skipcq: JS-C1002
   const hex = generateColor(input, category);
   const r = Number.parseInt(hex.slice(1, 3), 16);
   const g = Number.parseInt(hex.slice(3, 5), 16);

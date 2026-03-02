@@ -163,7 +163,7 @@ export function handleMouseDown(e: MouseEvent, ctx: InteractionContext): void {
 function handleDragNode(worldPos: { x: number; y: number }, ctx: InteractionContext): void {
   const { state } = ctx;
   state.hasMoved = true;
-  const dragNode = ctx.nodes.find((n) => n.id === state.draggedNodeId);
+  const dragNode = ctx.nodes.find((node) => node.id === state.draggedNodeId);
   if (!dragNode) return;
 
   const clusterId = dragNode.project || 'External';
