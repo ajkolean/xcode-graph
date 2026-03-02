@@ -509,7 +509,9 @@ describe('xcode-graph-canvas', () => {
       // Nullify the canvas reference to simulate missing canvas
       Object.defineProperty(internal, 'canvas', { value: null, writable: true });
 
-      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        /* suppress console output */
+      });
       // Call firstUpdated again which checks for canvas
       el.firstUpdated();
       expect(errorSpy).toHaveBeenCalledWith('Canvas element not found in firstUpdated');
@@ -548,7 +550,9 @@ describe('xcode-graph-canvas', () => {
     let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
-      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        /* suppress console output */
+      });
     });
 
     afterEach(() => {
