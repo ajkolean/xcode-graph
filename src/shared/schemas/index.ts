@@ -1,18 +1,14 @@
 /**
- * Schema Module - Type and Zod schema exports
+ * Schema Module - Type, enum, and constant exports
  *
- * Centralized exports for all types, enums, constants, and Zod validation schemas.
+ * Centralized exports for all types, enums, and constants.
+ * Zod validation schemas are NOT re-exported here to keep Zod out of the
+ * main bundle. Import directly from the individual `.schema` files when
+ * validation is needed (e.g., in tests).
  *
  * @module schemas
  */
 
-// Zod validation schemas
-export {
-  ActiveTabSchema,
-  FilterStateInputSchema,
-  FilterStateSchema,
-  ViewModeSchema,
-} from './app.schema';
 export type { FilterState, FilterStateInput } from './app.types';
 export {
   ACTIVE_TAB_VALUES,
@@ -22,16 +18,6 @@ export {
   VIEW_MODE_VALUES,
   ViewMode,
 } from './app.types';
-export {
-  ClusterBoundsSchema,
-  ClusterLayoutConfigSchema,
-  ClusterNodeMetadataSchema,
-  ClusterSchema,
-  ClusterTypeSchema,
-  ForceStrengthSchema,
-  NodeRoleSchema,
-  PositionedNodeSchema,
-} from './cluster.schema';
 export type {
   Cluster,
   ClusterBounds,
@@ -48,12 +34,6 @@ export {
   NODE_ROLE_VALUES,
   NodeRole,
 } from './cluster.types';
-export {
-  AppErrorSchema,
-  ErrorCategorySchema,
-  ErrorNotificationStateSchema,
-  ErrorSeveritySchema,
-} from './error.schema';
 export type { AppError, ErrorNotificationState } from './error.types';
 export {
   DEFAULT_MAX_VISIBLE_TOASTS,
@@ -61,25 +41,6 @@ export {
   ErrorCategory,
   ErrorSeverity,
 } from './error.types';
-export {
-  BuildSettingsSchema,
-  DependencyKindSchema,
-  DeploymentTargetsSchema,
-  DestinationSchema,
-  ForeignBuildInfoSchema,
-  GraphDataSchema,
-  GraphEdgeSchema,
-  GraphNodeSchema,
-  LenientDependencyKindSchema,
-  LenientGraphDataSchema,
-  LenientNodeTypeSchema,
-  LenientOriginSchema,
-  LenientPlatformSchema,
-  NodeTypeSchema,
-  OriginSchema,
-  PlatformSchema,
-  SourceTypeSchema,
-} from './graph.schema';
 export type { GraphData, GraphEdge, GraphNode } from './graph.types';
 export {
   NODE_TYPE_VALUES,
@@ -89,5 +50,4 @@ export {
   PLATFORM_VALUES,
   Platform,
 } from './graph.types';
-export { ClusterPositionSchema, NodePositionSchema } from './simulation.schema';
 export type { ClusterPosition, NodePosition } from './simulation.types';

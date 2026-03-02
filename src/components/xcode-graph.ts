@@ -36,7 +36,6 @@ export type ColorScheme = 'light' | 'dark' | 'auto';
 import { ErrorService } from '@/services/error-service';
 import { GraphAnalysisService } from '@/services/graph-analysis-service';
 import { GraphDataService } from '@/services/graph-data-service';
-import { transformXcodeGraph } from '@/services/xcode-graph.service';
 import '@ui/layout/graph-tab';
 import '@ui/components/toast-container';
 import '@ui/components/file-upload';
@@ -195,9 +194,13 @@ export class GraphApp extends SignalWatcherLitElement {
    * Load raw Tuist graph JSON (the output of `tuist graph --format json`).
    * Transforms it into GraphData and sets nodes/edges automatically.
    * Shows user-facing warnings/errors via ErrorService if the transform has issues.
+   *
+   * The transform service (and its Zod dependency) is lazy-loaded on first
+   * call so the main bundle stays small until validation is actually needed.
    */
-  public loadRawGraph(raw: unknown): void {
+  public async loadRawGraph(raw: unknown): Promise<void> {
     try {
+      const { transformXcodeGraph } = await import('@/services/xcode-graph.service');
       const result = transformXcodeGraph(raw);
 
       if (result.warnings.length > 0) {
@@ -234,8 +237,8 @@ export class GraphApp extends SignalWatcherLitElement {
     }
   }
 
-  private handleFileLoaded(e: CustomEvent<{ raw: unknown }>) {
-    this.loadRawGraph(e.detail.raw);
+  private async handleFileLoaded(e: CustomEvent<{ raw: unknown }>) {
+    await this.loadRawGraph(e.detail.raw);
   }
 
   override render(): TemplateResult {

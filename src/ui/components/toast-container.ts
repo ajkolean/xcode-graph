@@ -91,11 +91,11 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
         toasts,
         (error) => error.id,
         (error) => html`
-          <xcode-xcode-graph-error-toast
+          <xcode-graph-error-toast
             .error=${error}
             @dismiss=${this.handleDismiss}
             @action=${this.handleAction}
-          ></xcode-xcode-graph-error-toast>
+          ></xcode-graph-error-toast>
         `,
       )}
     `;
