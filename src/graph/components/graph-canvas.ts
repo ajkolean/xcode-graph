@@ -141,10 +141,12 @@ export class GraphCanvas extends LitElement {
   });
 
   private readonly _resize = new ResizeController(this, {
+    /* v8 ignore next 1 -- ResizeObserver callback: not triggered in jsdom */
     callback: () => this.resizeCanvas(),
   });
 
   private readonly _visibility = new IntersectionController(this, {
+    /* v8 ignore next 1 -- IntersectionObserver callback: not triggered in jsdom */
     callback: (entries) => entries.some((e) => e.isIntersecting),
   });
 
@@ -390,6 +392,7 @@ export class GraphCanvas extends LitElement {
       return this.routedEdgeMapCache;
     }
     const map = new Map<string, RoutedEdge>();
+    /* v8 ignore next 5 -- requires ELK layout worker output: not available in jsdom */
     if (currentRouted) {
       for (const re of currentRouted) {
         map.set(`${re.sourceNodeId}->${re.targetNodeId}`, re);

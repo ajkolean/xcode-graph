@@ -424,6 +424,23 @@ describe('GraphInteractionFullController', () => {
       }).not.toThrow();
     });
 
+    it('should handle mouseup via window listener (line 55)', () => {
+      host.connectedCallback();
+
+      // Start a drag so we can verify the window mouseup handler resets state
+      const downEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 });
+      Object.defineProperty(downEvent, 'target', { value: mockSvgElement, writable: false });
+      controller.handleMouseDown(downEvent);
+      expect(controller.isDragging).toBe(true);
+
+      // Dispatch mouseup on window — triggers the handleWindowMouseUp arrow fn
+      window.dispatchEvent(new MouseEvent('mouseup'));
+      expect(controller.isDragging).toBe(false);
+      expect(controller.draggedNode).toBeNull();
+
+      host.disconnectedCallback();
+    });
+
     it('should cleanup on hostDisconnected', () => {
       // Start drag
       const downEvent = new MouseEvent('mousedown', {

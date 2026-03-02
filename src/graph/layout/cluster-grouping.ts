@@ -37,6 +37,7 @@ export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Clust
     }
 
     const cluster = clusterMap.get(clusterId);
+    /* v8 ignore next 1 -- clusterId was just set via clusterMap.set above */
     if (!cluster) return;
     if (!cluster.path && node.path) {
       cluster.path = node.path;

@@ -627,6 +627,44 @@ describe('xcode-graph-canvas', () => {
       // isAnimating should be true
       expect(internal.isAnimating).to.equal(true);
     });
+
+    it('should call updateNodeAlphaTargets directly and trigger animation', async () => {
+      const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
+      await el.updateComplete;
+
+      // Use three nodes where b3 is NOT connected to b1 (no edge between them)
+      const node1 = createTestNode({ id: 'b1', name: 'Beta1', project: 'ProjA' });
+      const node2 = createTestNode({
+        id: 'b2',
+        name: 'Beta2',
+        type: NodeType.Framework,
+        project: 'ProjB',
+      });
+      const node3 = createTestNode({
+        id: 'b3',
+        name: 'Beta3',
+        type: NodeType.Library,
+        project: 'ProjC',
+      });
+
+      el.nodes = [node1, node2, node3];
+      // Only b1->b2 edge; b3 is unconnected
+      el.edges = [{ source: 'b1', target: 'b2' }];
+      el.selectedNode = node1;
+      await el.updateComplete;
+
+      const internal = el as unknown as GraphCanvasInternals;
+      // Reset animation state to verify the method re-enables it
+      internal.isAnimating = false;
+
+      // Call updateNodeAlphaTargets directly — b3 is not selected and not connected,
+      // so it gets target 0.3 which creates an entry in nodeAlphaMap
+      // and sets isAnimating = true (lines 370-371)
+      internal.updateNodeAlphaTargets();
+
+      expect(internal.nodeAlphaMap.size).to.be.greaterThan(0);
+      expect(internal.isAnimating).to.equal(true);
+    });
   });
 
   describe('fitToViewport non-finite bounds check (line 442)', () => {

@@ -402,6 +402,29 @@ describe('xcode-graph-hidden-dom', () => {
     expect(items?.[0]?.hasAttribute('aria-describedby')).toBe(true);
   });
 
+  it('should handle unrecognized keys without error (default branch)', async () => {
+    const nodes = [makeNode('a', 'NodeA'), makeNode('b', 'NodeB')];
+    const selectHandler = vi.fn();
+
+    const el = await fixture<GraphHiddenDom>(html`
+      <xcode-graph-hidden-dom
+        .nodes=${nodes}
+        .edges=${[]}
+        @node-select=${selectHandler}
+      ></xcode-graph-hidden-dom>
+    `);
+
+    const tree = el.shadowRoot?.querySelector('[role="tree"]') as HTMLElement;
+    tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    await el.updateComplete;
+
+    // Tab is unrecognized, so no node-select should fire and no navigation should occur
+    expect(selectHandler).not.toHaveBeenCalled();
+    const items = el.shadowRoot?.querySelectorAll('[role="treeitem"]');
+    // Focus should remain on the first item (index 0)
+    expect(items?.[0]?.getAttribute('tabindex')).to.equal('0');
+  });
+
   it('should have proper ARIA roles and labels', async () => {
     const nodes = [makeNode('a', 'NodeA')];
     const edges = [makeEdge('a', 'b')];

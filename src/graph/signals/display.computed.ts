@@ -120,6 +120,7 @@ function isNodeInChain(
   showTransitive: boolean,
 ): boolean {
   if (!chain.nodes.has(nodeId)) return false;
+  /* v8 ignore next 1 -- nodeDepths is always a Map; optional chain is defensive */
   const depth = chain.nodeDepths?.get(nodeId) ?? 0;
   return depth <= 1 ? showDirect : showTransitive;
 }

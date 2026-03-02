@@ -185,20 +185,23 @@ describe('arrangeClusterGrid', () => {
 
   it('should sort local clusters before external', () => {
     const clusters = [
-      makeCluster('Ext', Origin.External, 2),
+      makeCluster('Ext1', Origin.External, 2),
+      makeCluster('Ext2', Origin.External, 1),
       makeCluster('Local', Origin.Local, 2),
     ];
 
     const positions = arrangeClusterGrid(clusters);
 
     const localPos = positions.get('Local');
-    const extPos = positions.get('Ext');
+    const ext1Pos = positions.get('Ext1');
+    const ext2Pos = positions.get('Ext2');
     expect(localPos).toBeDefined();
-    expect(extPos).toBeDefined();
+    expect(ext1Pos).toBeDefined();
+    expect(ext2Pos).toBeDefined();
     // Local should come first (smaller position)
-    if (localPos && extPos) {
+    if (localPos && ext1Pos) {
       const localOrder = localPos.y * 10000 + localPos.x;
-      const extOrder = extPos.y * 10000 + extPos.x;
+      const extOrder = ext1Pos.y * 10000 + ext1Pos.x;
       expect(localOrder).toBeLessThanOrEqual(extOrder);
     }
   });
