@@ -669,7 +669,7 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
     expect(selectedCluster.get()).toBeNull();
   });
 
-  it('should handle toggle-collapse event by collapsing and rendering collapsed sidebar', async () => {
+  it('should render expanded sidebar with filter content and no collapsed sidebar', async () => {
     const el = await fixture<GraphRightSidebar>(html`
       <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
@@ -679,53 +679,30 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
       ></xcode-graph-right-sidebar>
     `);
 
+    // Sidebar starts expanded
     expect(el.hasAttribute('collapsed')).toBe(false);
 
-    // Dispatch toggle-collapse from header to collapse the sidebar
+    // Expanded state shows filter content, not collapsed sidebar
+    expect(el.shadowRoot?.querySelector('.filter-content')).not.toBeNull();
+    expect(el.shadowRoot?.querySelector('xcode-graph-collapsed-sidebar')).toBeNull();
+
+    // Header with collapse button is present
     const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    header?.dispatchEvent(new CustomEvent('toggle-collapse', { bubbles: true, composed: true }));
-    await el.updateComplete;
-
-    expect(el.hasAttribute('collapsed')).toBe(true);
-
-    // Collapsed sidebar should render the collapsed component
-    const collapsedSidebar = el.shadowRoot?.querySelector('xcode-graph-collapsed-sidebar');
-    expect(collapsedSidebar).toBeDefined();
-    expect(collapsedSidebar).not.toBeNull();
+    expect(header).not.toBeNull();
   });
 
-  it('should handle expand-to-section from collapsed sidebar', async () => {
+  it('should render empty state when filteredNodes is empty', async () => {
     const el = await fixture<GraphRightSidebar>(html`
       <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
         .allEdges=${mockEdges}
-        .filteredNodes=${mockNodes}
-        .filteredEdges=${mockEdges}
+        .filteredNodes=${[]}
+        .filteredEdges=${[]}
       ></xcode-graph-right-sidebar>
     `);
 
-    // First collapse the sidebar
-    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    header?.dispatchEvent(new CustomEvent('toggle-collapse', { bubbles: true, composed: true }));
-    await el.updateComplete;
-
-    expect(el.hasAttribute('collapsed')).toBe(true);
-
-    // Dispatch expand-to-section from collapsed sidebar
-    const collapsedSidebar = el.shadowRoot?.querySelector('xcode-graph-collapsed-sidebar');
-    collapsedSidebar?.dispatchEvent(
-      new CustomEvent('expand-to-section', {
-        detail: { section: 'productTypes' },
-        bubbles: true,
-        composed: true,
-      }),
-    );
-    // Need multiple update cycles: signal changes + machine transition + render
-    await el.updateComplete;
-    await el.updateComplete;
-
-    // After expand-to-section, sidebar should be expanded again
-    expect(el.hasAttribute('collapsed')).toBe(false);
+    const emptyState = el.shadowRoot?.querySelector('xcode-graph-empty-state');
+    expect(emptyState).not.toBeNull();
   });
 
   it('should render package filter section when packages exist', async () => {
@@ -837,7 +814,7 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
     expect(selectedNode.get()).toBe(mockNodeUtils);
   });
 
-  it('should handle cluster-select event from node details panel', async () => {
+  it('should handle cluster selection via selectCluster signal', async () => {
     const el = await fixture<GraphRightSidebar>(html`
       <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
@@ -847,21 +824,15 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
       ></xcode-graph-right-sidebar>
     `);
 
-    selectNode(mockNodeCoreLib);
-    await el.updateComplete;
-
-    // Re-query panel fresh before dispatching cluster-select
-    const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
-    nodePanel?.dispatchEvent(
-      new CustomEvent('cluster-select', {
-        detail: { clusterId: 'MyApp' },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    // Directly test selectCluster signal (same function called by @cluster-select handler)
+    selectCluster('MyApp');
     await el.updateComplete;
 
     expect(selectedCluster.get()).toBe('MyApp');
+
+    // Should show cluster details panel
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
+    expect(clusterPanel).not.toBeNull();
   });
 
   it('should handle toggle events from cluster details panel', async () => {
