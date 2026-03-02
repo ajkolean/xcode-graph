@@ -53,7 +53,7 @@ describe('xcode-graph-edge', () => {
     const { el } = await renderEdge({ x1: 0, y1: 0, x2: 100, y2: 100 });
     const path = el.querySelector('g.graph-edge path:last-of-type');
     expect(path).toBeDefined();
-    const d = path?.getAttribute('d');
+    const d = path?.getAttribute('d'); // skipcq: JS-C1002
     expect(d).to.contain('M ');
     expect(d).to.contain('L ');
   });
@@ -62,7 +62,7 @@ describe('xcode-graph-edge', () => {
     const { el } = await renderEdge({ x1: 0, y1: 0, x2: 300, y2: 300 });
     const path = el.querySelector('g.graph-edge path:last-of-type');
     expect(path).toBeDefined();
-    const d = path?.getAttribute('d');
+    const d = path?.getAttribute('d'); // skipcq: JS-C1002
     expect(d).to.contain('M ');
     expect(d).to.contain('C ');
   });
@@ -139,7 +139,7 @@ describe('xcode-graph-edge', () => {
     const svgEl = await fixture(html`<svg></svg>`);
     svgEl.appendChild(el);
     await el.updateComplete;
-    const g = el.querySelector('g.graph-edge');
-    expect(g).toBeDefined();
+    const group = el.querySelector('g.graph-edge');
+    expect(group).toBeDefined();
   });
 });

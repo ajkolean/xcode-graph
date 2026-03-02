@@ -77,10 +77,10 @@ export function applyForceMassage(
         .distance((d) => {
           // Ideal distance based on size of connected nodes
           // r1 + r2 + buffer
-          const s = d.source as ClusterSimNode;
-          const t = d.target as ClusterSimNode;
-          const r1 = Math.max(s.width, s.height) / 2;
-          const r2 = Math.max(t.width, t.height) / 2;
+          const sourceNode = d.source as ClusterSimNode;
+          const targetNode = d.target as ClusterSimNode;
+          const r1 = Math.max(sourceNode.width, sourceNode.height) / 2;
+          const r2 = Math.max(targetNode.width, targetNode.height) / 2;
           return r1 + r2 + config.elkLayerSpacing;
         })
         .strength(0.1), // Gentle pull

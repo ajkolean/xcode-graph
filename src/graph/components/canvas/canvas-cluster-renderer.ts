@@ -136,7 +136,7 @@ function drawTextAlongArc(
   const charWidths: number[] = [];
   let totalWidth = 0;
   for (const ch of text) {
-    const w = ctx.measureText(ch).width;
+    const w = ctx.measureText(ch).width; // skipcq: JS-C1002
     charWidths.push(w);
     totalWidth += w;
   }

@@ -64,8 +64,8 @@ describe('force-massage', () => {
       const posB = result.get('B');
       expect(posA).toBeDefined();
       expect(posB).toBeDefined();
-      const driftA = Math.hypot((posA?.x ?? 0) - 0, (posA?.y ?? 0) - 0);
-      const driftB = Math.hypot((posB?.x ?? 0) - 600, (posB?.y ?? 0) - 0);
+      const driftA = Math.hypot(posA?.x ?? 0, posA?.y ?? 0);
+      const driftB = Math.hypot((posB?.x ?? 0) - 600, posB?.y ?? 0);
 
       // Should stay within a reasonable distance of originals
       expect(driftA).toBeLessThan(300);

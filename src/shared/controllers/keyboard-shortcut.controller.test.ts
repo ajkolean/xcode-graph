@@ -107,21 +107,21 @@ describe('KeyboardShortcutController', () => {
     });
 
     it('should not preventDefault when configured to false', () => {
-      const h = new MockHost();
-      const instance = new KeyboardShortcutController(h, {
+      const testHost = new MockHost();
+      const instance = new KeyboardShortcutController(testHost, {
         key: '/',
         onTrigger: vi.fn(),
         preventDefault: false,
       });
       expect(instance).toBeDefined();
-      h.connectedCallback();
+      testHost.connectedCallback();
 
       const event = new KeyboardEvent('keydown', { key: '/', cancelable: true });
       const spy = vi.spyOn(event, 'preventDefault');
       window.dispatchEvent(event);
       expect(spy).not.toHaveBeenCalled();
 
-      h.disconnectedCallback();
+      testHost.disconnectedCallback();
     });
   });
 
@@ -171,15 +171,15 @@ describe('KeyboardShortcutController', () => {
     });
 
     it('should not skip input detection when ignoreWhenInputFocused is false', () => {
-      const h = new MockHost();
+      const testHost = new MockHost();
       const trigger = vi.fn();
-      const instance = new KeyboardShortcutController(h, {
+      const instance = new KeyboardShortcutController(testHost, {
         key: '/',
         onTrigger: trigger,
         ignoreWhenInputFocused: false,
       });
       expect(instance).toBeDefined();
-      h.connectedCallback();
+      testHost.connectedCallback();
 
       const input = document.createElement('input');
       document.body.appendChild(input);
@@ -189,7 +189,7 @@ describe('KeyboardShortcutController', () => {
       expect(trigger).toHaveBeenCalledTimes(1);
 
       input.remove();
-      h.disconnectedCallback();
+      testHost.disconnectedCallback();
     });
 
     it('should trigger when no input is focused', () => {

@@ -25,9 +25,9 @@ import { NODE_PALETTE } from '@/shared/constants/node-palette';
  * @returns CSS rgba() color string
  */
 export function hexToRgba(hex: string, alpha: number): string {
-  const r = Number.parseInt(hex.slice(1, 3), 16);
-  const g = Number.parseInt(hex.slice(3, 5), 16);
-  const b = Number.parseInt(hex.slice(5, 7), 16);
+  const r = Number.parseInt(hex.slice(1, 3), 16); // skipcq: JS-C1002
+  const g = Number.parseInt(hex.slice(3, 5), 16); // skipcq: JS-C1002
+  const b = Number.parseInt(hex.slice(5, 7), 16); // skipcq: JS-C1002
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
@@ -48,9 +48,9 @@ export function colorWithAlpha(color: string, newAlpha: number): string {
   if (hexMatch) {
     const [, rHex, gHex, bHex] = hexMatch;
     if (!rHex || !gHex || !bHex) return color;
-    const r = Number.parseInt(rHex, 16);
-    const g = Number.parseInt(gHex, 16);
-    const b = Number.parseInt(bHex, 16);
+    const r = Number.parseInt(rHex, 16); // skipcq: JS-C1002
+    const g = Number.parseInt(gHex, 16); // skipcq: JS-C1002
+    const b = Number.parseInt(bHex, 16); // skipcq: JS-C1002
     return `rgba(${r},${g},${b},${newAlpha})`;
   }
   return color;
@@ -102,8 +102,10 @@ export interface CanvasTheme {
  * @returns Resolved canvas theme with all color values
  */
 export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
-  const s = getComputedStyle(el);
-  const get = (prop: string, fallback: string) => s.getPropertyValue(prop).trim() || fallback;
+  // skipcq: JS-C1002
+  const computedStyles = getComputedStyle(el);
+  const get = (prop: string, fallback: string) =>
+    computedStyles.getPropertyValue(prop).trim() || fallback;
 
   // Detect if we're in dark mode by checking background luminance
   const bgColor = get('--colors-background', '#161617');
@@ -140,9 +142,9 @@ export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
 /** Simple luminance check to determine if a color is dark */
 function isDarkColor(color: string): boolean {
   // Parse hex or rgba
-  let r = 0;
-  let g = 0;
-  let b = 0;
+  let r = 0; // skipcq: JS-C1002
+  let g = 0; // skipcq: JS-C1002
+  let b = 0; // skipcq: JS-C1002
   if (color.startsWith('#')) {
     const hex = color.replace('#', '');
     r = Number.parseInt(hex.substring(0, 2), 16);

@@ -134,7 +134,7 @@ export function computeClusterInterior(cluster: Cluster, config: LayoutConfig): 
         const maxR = band.max * (radius - 20);
 
         // Current distance
-        const d = Math.hypot(node.x, node.y) || 1e-6;
+        const d = Math.hypot(node.x, node.y) || 1e-6; // skipcq: JS-C1002
 
         // Only apply force if outside band
         if (d < minR) {

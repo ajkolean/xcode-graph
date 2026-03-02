@@ -118,9 +118,9 @@ describe('canvas-interaction-handler', () => {
   describe('handleMouseDown', () => {
     it('should set draggedNodeId and dispatch node-select on node hit', () => {
       const ctx = createMockContext();
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseDown(e, ctx);
+      handleMouseDown(evt, ctx);
 
       expect(ctx.state.draggedNodeId).toBe('node1');
       expect(ctx.dispatchCanvasEvent).toHaveBeenCalledWith('node-select', {
@@ -132,9 +132,9 @@ describe('canvas-interaction-handler', () => {
     it('should toggle off selection when clicking already-selected node', () => {
       const node = createTestNode();
       const ctx = createMockContext({ selectedNode: node });
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseDown(e, ctx);
+      handleMouseDown(evt, ctx);
 
       expect(ctx.dispatchCanvasEvent).toHaveBeenCalledWith('node-select', { node: null });
     });
@@ -147,9 +147,9 @@ describe('canvas-interaction-handler', () => {
       // Remove node positions so node hit test fails
       ctx.layout.nodePositions.clear();
 
-      const e = createMouseEvent({ shiftKey: true });
+      const evt = createMouseEvent({ shiftKey: true });
 
-      handleMouseDown(e, ctx);
+      handleMouseDown(evt, ctx);
 
       expect(ctx.state.draggedClusterId).toBe('ProjectA');
       expect(ctx.dispatchCanvasEvent).toHaveBeenCalledWith('cluster-select', {
@@ -164,9 +164,9 @@ describe('canvas-interaction-handler', () => {
       (ctx.screenToWorld as ReturnType<typeof vi.fn>).mockReturnValue({ x: 50, y: 50 });
       ctx.layout.nodePositions.clear();
 
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseDown(e, ctx);
+      handleMouseDown(evt, ctx);
 
       expect(ctx.dispatchCanvasEvent).toHaveBeenCalledWith('cluster-select', {
         clusterId: 'ProjectA',
@@ -178,9 +178,9 @@ describe('canvas-interaction-handler', () => {
       // Return a position far away from any node or cluster
       (ctx.screenToWorld as ReturnType<typeof vi.fn>).mockReturnValue({ x: 9999, y: 9999 });
 
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseDown(e, ctx);
+      handleMouseDown(evt, ctx);
 
       expect(ctx.state.clickedEmptySpace).toBe(true);
       expect(ctx.state.isDragging).toBe(true);
@@ -190,9 +190,9 @@ describe('canvas-interaction-handler', () => {
       const ctx = createMockContext();
       (ctx.screenToWorld as ReturnType<typeof vi.fn>).mockReturnValue({ x: 9999, y: 9999 });
 
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseDown(e, ctx);
+      handleMouseDown(evt, ctx);
 
       expect(ctx.state.hasMoved).toBe(false);
     });
@@ -201,9 +201,9 @@ describe('canvas-interaction-handler', () => {
       const ctx = createMockContext();
       (ctx.screenToWorld as ReturnType<typeof vi.fn>).mockReturnValue({ x: 9999, y: 9999 });
 
-      const e = createMouseEvent({ clientX: 250, clientY: 350 });
+      const evt = createMouseEvent({ clientX: 250, clientY: 350 });
 
-      handleMouseDown(e, ctx);
+      handleMouseDown(evt, ctx);
 
       expect(ctx.state.lastMousePos).toEqual({ x: 250, y: 350 });
     });
@@ -218,9 +218,9 @@ describe('canvas-interaction-handler', () => {
         }),
       });
 
-      const e = createMouseEvent({ clientX: 120, clientY: 130 });
+      const evt = createMouseEvent({ clientX: 120, clientY: 130 });
 
-      handleMouseMove(e, ctx);
+      handleMouseMove(evt, ctx);
 
       expect(ctx.state.pan).toEqual({ x: 20, y: 30 });
       expect(ctx.state.lastMousePos).toEqual({ x: 120, y: 130 });
@@ -234,9 +234,9 @@ describe('canvas-interaction-handler', () => {
       // The drag destination in world coords
       (ctx.screenToWorld as ReturnType<typeof vi.fn>).mockReturnValue({ x: 200, y: 250 });
 
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseMove(e, ctx);
+      handleMouseMove(evt, ctx);
 
       expect(ctx.state.hasMoved).toBe(true);
       // manualNodePositions should be set: world(200,250) - clusterPos(50,50) = (150, 200)
@@ -250,9 +250,9 @@ describe('canvas-interaction-handler', () => {
       });
       (ctx.screenToWorld as ReturnType<typeof vi.fn>).mockReturnValue({ x: 300, y: 400 });
 
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseMove(e, ctx);
+      handleMouseMove(evt, ctx);
 
       expect(ctx.state.hasMoved).toBe(true);
       const pos = ctx.manualClusterPositions.get('ProjectA');
@@ -262,9 +262,9 @@ describe('canvas-interaction-handler', () => {
     it('should dispatch node-hover when hovering over a node', () => {
       const ctx = createMockContext();
       // Not dragging, so hover detection runs
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseMove(e, ctx);
+      handleMouseMove(evt, ctx);
 
       expect(ctx.dispatchCanvasEvent).toHaveBeenCalledWith('node-hover', { nodeId: 'node1' });
     });
@@ -276,9 +276,9 @@ describe('canvas-interaction-handler', () => {
       // Move to empty space
       (ctx.screenToWorld as ReturnType<typeof vi.fn>).mockReturnValue({ x: 9999, y: 9999 });
 
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseMove(e, ctx);
+      handleMouseMove(evt, ctx);
 
       expect(ctx.dispatchCanvasEvent).toHaveBeenCalledWith('node-hover', { nodeId: null });
     });
@@ -286,9 +286,9 @@ describe('canvas-interaction-handler', () => {
     it('should dispatch cluster-hover when hovering a cluster', () => {
       const ctx = createMockContext();
       // Hover over node which is in cluster ProjectA
-      const e = createMouseEvent();
+      const evt = createMouseEvent();
 
-      handleMouseMove(e, ctx);
+      handleMouseMove(evt, ctx);
 
       // Hovering a node also hovers its cluster
       expect(ctx.dispatchCanvasEvent).toHaveBeenCalledWith('cluster-hover', {
@@ -394,22 +394,22 @@ describe('canvas-interaction-handler', () => {
       const ctx = createMockContext({
         state: createDefaultState({ zoom: 1.0 }),
       });
-      const e = createWheelEvent({ deltaY: -100 });
+      const evt = createWheelEvent({ deltaY: -100 });
 
-      handleWheel(e, ctx);
+      handleWheel(evt, ctx);
 
       expect(ctx.state.zoom).toBeGreaterThan(1.0);
       expect(ctx.dispatchZoomChange).toHaveBeenCalledWith(ctx.state.zoom);
-      expect(e.preventDefault).toHaveBeenCalled();
+      expect(evt.preventDefault).toHaveBeenCalled();
     });
 
     it('should zoom out on positive deltaY (scroll down)', () => {
       const ctx = createMockContext({
         state: createDefaultState({ zoom: 1.0 }),
       });
-      const e = createWheelEvent({ deltaY: 100 });
+      const evt = createWheelEvent({ deltaY: 100 });
 
-      handleWheel(e, ctx);
+      handleWheel(evt, ctx);
 
       expect(ctx.state.zoom).toBeLessThan(1.0);
       expect(ctx.dispatchZoomChange).toHaveBeenCalledWith(ctx.state.zoom);
@@ -419,9 +419,9 @@ describe('canvas-interaction-handler', () => {
       const ctx = createMockContext({
         state: createDefaultState({ zoom: ZOOM_CONFIG.MAX_ZOOM }),
       });
-      const e = createWheelEvent({ deltaY: -1000 });
+      const evt = createWheelEvent({ deltaY: -1000 });
 
-      handleWheel(e, ctx);
+      handleWheel(evt, ctx);
 
       expect(ctx.state.zoom).toBeLessThanOrEqual(ZOOM_CONFIG.MAX_ZOOM);
     });
@@ -430,9 +430,9 @@ describe('canvas-interaction-handler', () => {
       const ctx = createMockContext({
         state: createDefaultState({ zoom: ZOOM_CONFIG.MIN_ZOOM }),
       });
-      const e = createWheelEvent({ deltaY: 1000 });
+      const evt = createWheelEvent({ deltaY: 1000 });
 
-      handleWheel(e, ctx);
+      handleWheel(evt, ctx);
 
       // Zoom should not go below MIN_ZOOM; since zoom is already at MIN, no change
       expect(ctx.state.zoom).toBeGreaterThanOrEqual(ZOOM_CONFIG.MIN_ZOOM);
@@ -443,9 +443,9 @@ describe('canvas-interaction-handler', () => {
         state: createDefaultState({ zoom: ZOOM_CONFIG.MAX_ZOOM }),
       });
       // deltaY = 0 means no scroll
-      const e = createWheelEvent({ deltaY: 0 });
+      const evt = createWheelEvent({ deltaY: 0 });
 
-      handleWheel(e, ctx);
+      handleWheel(evt, ctx);
 
       expect(ctx.dispatchZoomChange).not.toHaveBeenCalled();
     });
@@ -457,9 +457,9 @@ describe('canvas-interaction-handler', () => {
       (ctx.getMousePos as ReturnType<typeof vi.fn>).mockReturnValue({ x: 400, y: 300 });
       (ctx.screenToWorld as ReturnType<typeof vi.fn>).mockReturnValue({ x: 400, y: 300 });
 
-      const e = createWheelEvent({ deltaY: -100 });
+      const evt = createWheelEvent({ deltaY: -100 });
 
-      handleWheel(e, ctx);
+      handleWheel(evt, ctx);
 
       // Pan should be adjusted so world pos under cursor is stable
       const newZoom = ctx.state.zoom;

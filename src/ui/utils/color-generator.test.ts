@@ -158,9 +158,9 @@ describe('colorGenerator', () => {
       const rgbaColor = generateColorWithAlpha('test', 1);
 
       // Extract RGB from hex
-      const r = Number.parseInt(hexColor.slice(1, 3), 16);
-      const g = Number.parseInt(hexColor.slice(3, 5), 16);
-      const b = Number.parseInt(hexColor.slice(5, 7), 16);
+      const r = Number.parseInt(hexColor.slice(1, 3), 16); // skipcq: JS-C1002
+      const g = Number.parseInt(hexColor.slice(3, 5), 16); // skipcq: JS-C1002
+      const b = Number.parseInt(hexColor.slice(5, 7), 16); // skipcq: JS-C1002
 
       expect(rgbaColor).toBe(`rgba(${r}, ${g}, ${b}, 1)`);
     });

@@ -51,7 +51,7 @@ export const allPackages: Signal.State<Set<string>> = signal<Set<string>>(new Se
  * Returns true if any filter is restricting the view
  */
 export const hasActiveFilters: Signal.Computed<boolean> = new Signal.Computed(() => {
-  const f = filters.get();
+  const currentFilters = filters.get();
   const query = searchQuery.get();
   const projects = allProjects.get();
   const packages = allPackages.get();
@@ -59,15 +59,15 @@ export const hasActiveFilters: Signal.Computed<boolean> = new Signal.Computed(()
   const allTypes = NODE_TYPE_VALUES.length;
   const allPlatforms = PLATFORM_VALUES.length;
   const allOrigins = ORIGIN_VALUES.length;
-  const projectCount = projects.size || f.projects.size;
-  const packageCount = packages.size || f.packages.size;
+  const projectCount = projects.size || currentFilters.projects.size;
+  const packageCount = packages.size || currentFilters.packages.size;
 
   return (
-    f.nodeTypes.size < allTypes ||
-    f.platforms.size < allPlatforms ||
-    f.origins.size < allOrigins ||
-    (projectCount > 0 && f.projects.size < projectCount) ||
-    (packageCount > 0 && f.packages.size < packageCount) ||
+    currentFilters.nodeTypes.size < allTypes ||
+    currentFilters.platforms.size < allPlatforms ||
+    currentFilters.origins.size < allOrigins ||
+    (projectCount > 0 && currentFilters.projects.size < projectCount) ||
+    (packageCount > 0 && currentFilters.packages.size < packageCount) ||
     query !== ''
   );
 });

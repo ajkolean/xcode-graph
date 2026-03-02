@@ -8,10 +8,10 @@ import { applyNodeMassage } from './node-massage';
 function assertNoOverlap(positions: Array<{ x: number; y: number }>, minDist: number) {
   for (let i = 0; i < positions.length; i++) {
     for (let j = i + 1; j < positions.length; j++) {
-      const a = positions[i];
-      const b = positions[j];
-      assert(a && b, 'positions must exist');
-      const dist = Math.hypot(a.x - b.x, a.y - b.y);
+      const posA = positions[i];
+      const posB = positions[j];
+      assert(posA && posB, 'positions must exist');
+      const dist = Math.hypot(posA.x - posB.x, posA.y - posB.y);
       expect(dist).toBeGreaterThan(minDist);
     }
   }

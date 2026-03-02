@@ -21,11 +21,11 @@ describe('parallel-micro', () => {
     });
 
     it('produces structurally equivalent results to sync path', async () => {
-      const clusters = Array.from({ length: 4 }, (_, i) => {
-        const c = createClusterWithNodes(3);
-        c.id = `cluster-${i}`;
-        c.name = `Cluster${i}`;
-        return c;
+      const clusters = Array.from({ length: 4 }, (_, index) => {
+        const cluster = createClusterWithNodes(3);
+        cluster.id = `cluster-${index}`;
+        cluster.name = `Cluster${index}`;
+        return cluster;
       });
 
       const parallelResult = await computeMicroLayoutsParallel(clusters, DEFAULT_CONFIG);
@@ -63,11 +63,11 @@ describe('parallel-micro', () => {
     });
 
     it('produces finite coordinates for all nodes', async () => {
-      const clusters = Array.from({ length: 3 }, (_, i) => {
-        const c = createClusterWithNodes(5);
-        c.id = `c${i}`;
-        c.name = `C${i}`;
-        return c;
+      const clusters = Array.from({ length: 3 }, (_, index) => {
+        const cluster = createClusterWithNodes(5);
+        cluster.id = `c${index}`;
+        cluster.name = `C${index}`;
+        return cluster;
       });
 
       const result = await computeMicroLayoutsParallel(clusters, DEFAULT_CONFIG);

@@ -70,13 +70,13 @@ describe('macro-layout', () => {
       // Check no bounding box overlaps (center-to-center distance > sum of half-sizes)
       for (let i = 0; i < posArray.length; i++) {
         for (let j = i + 1; j < posArray.length; j++) {
-          const a = posArray[i];
-          const b = posArray[j];
-          assert(a && b, 'positions must exist');
-          const dx = Math.abs(a.x - b.x);
-          const dy = Math.abs(a.y - b.y);
-          const minSepX = (a.width + b.width) / 2;
-          const minSepY = (a.height + b.height) / 2;
+          const posA = posArray[i];
+          const posB = posArray[j];
+          assert(posA && posB, 'positions must exist');
+          const dx = Math.abs(posA.x - posB.x);
+          const dy = Math.abs(posA.y - posB.y);
+          const minSepX = (posA.width + posB.width) / 2;
+          const minSepY = (posA.height + posB.height) / 2;
           // At least one axis must have sufficient separation
           const separated = dx >= minSepX * 0.8 || dy >= minSepY * 0.8;
           expect(separated).toBe(true);
