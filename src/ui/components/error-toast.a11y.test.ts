@@ -4,7 +4,7 @@
  * Uses vitest-axe to verify the error toast meets accessibility standards.
  */
 
-import { expect as chaiExpect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import type { AppError } from '@shared/schemas/error.types';
 import { ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
 import { describe, expect, it } from 'vitest';

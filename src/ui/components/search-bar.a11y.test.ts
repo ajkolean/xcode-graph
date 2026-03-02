@@ -4,7 +4,7 @@
  * Uses vitest-axe to verify the search bar has no accessibility violations.
  */
 
-import { expect as chaiExpect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
 import type { GraphSearchBar } from './search-bar';

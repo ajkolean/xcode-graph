@@ -2,8 +2,8 @@
  * StatsCard Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
-import { describe, it } from 'vitest';
+import { fixture, html } from '@open-wc/testing';
+import { describe, expect, it } from 'vitest';
 import type { GraphStatsCard } from './stats-card';
 import './stats-card';
 

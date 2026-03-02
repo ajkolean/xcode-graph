@@ -17,6 +17,10 @@ import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
+function formatCycle(cycle: string[]): string {
+  return cycle.join(' \u2192 ');
+}
+
 /**
  * Displays a warning banner when circular dependencies are detected in the graph.
  * Shows the number of cycles and allows users to expand details or dismiss the warning.
@@ -204,10 +208,6 @@ export class GraphCycleWarning extends LitElement {
     );
   }
 
-  private formatCycle(cycle: string[]): string {
-    return cycle.join(' → ');
-  }
-
   override render(): TemplateResult | null {
     if (this.isDismissed || !this.cycles || this.cycles.length === 0) {
       return null;
@@ -240,7 +240,7 @@ export class GraphCycleWarning extends LitElement {
                     renderItem: (cycle: string[], index: number) => html`
                       <div class="cycle-item">
                         <span class="cycle-index">${index + 1}.</span>
-                        <span class="cycle-path">${this.formatCycle(cycle)}</span>
+                        <span class="cycle-path">${formatCycle(cycle)}</span>
                       </div>
                     `,
                   })}

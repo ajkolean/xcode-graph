@@ -14,3 +14,6 @@ name = "javascript"
 name = "test-coverage"
 
   [analyzers.meta]
+
+[[analyzers]]
+name = "sca"

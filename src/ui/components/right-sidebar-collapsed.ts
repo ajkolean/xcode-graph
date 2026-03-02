@@ -21,6 +21,45 @@ import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } 
 import { property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
+function renderProductTypesIcon() {
+  return svg`
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+      <line x1="12" y1="22.08" x2="12" y2="12" />
+    </svg>
+  `;
+}
+
+function renderPlatformsIcon() {
+  return svg`
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
+    </svg>
+  `;
+}
+
+function renderProjectsIcon() {
+  return svg`
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+    </svg>
+  `;
+}
+
+function renderPackagesIcon() {
+  return svg`
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16.5 9.4 7.55 4.24" />
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <polyline points="3.29 7 12 12 20.71 7" />
+      <line x1="12" y1="22" x2="12" y2="12" />
+    </svg>
+  `;
+}
+
 /**
  * Vertical icon bar shown when sidebar is collapsed.
  * Displays filter section icons with active filter badges.
@@ -178,45 +217,6 @@ export class GraphCollapsedSidebar extends LitElement {
     );
   }
 
-  private renderProductTypesIcon() {
-    return svg`
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-        <line x1="12" y1="22.08" x2="12" y2="12" />
-      </svg>
-    `;
-  }
-
-  private renderPlatformsIcon() {
-    return svg`
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-        <line x1="8" y1="21" x2="16" y2="21" />
-        <line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-    `;
-  }
-
-  private renderProjectsIcon() {
-    return svg`
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-      </svg>
-    `;
-  }
-
-  private renderPackagesIcon() {
-    return svg`
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M16.5 9.4 7.55 4.24" />
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-        <polyline points="3.29 7 12 12 20.71 7" />
-        <line x1="12" y1="22" x2="12" y2="12" />
-      </svg>
-    `;
-  }
-
   override render(): TemplateResult {
     const showProductTypesBadge = this.nodeTypesFilterSize < (this.typeCounts?.size || 0);
     const showPlatformsBadge = this.platformsFilterSize < (this.platformCounts?.size || 0);
@@ -230,7 +230,7 @@ export class GraphCollapsedSidebar extends LitElement {
         @click=${() => this.handleExpandToSection('productTypes')}
         title="Product Types"
       >
-        ${this.renderProductTypesIcon()}
+        ${renderProductTypesIcon()}
         ${when(showProductTypesBadge, () => html`<div class="badge">${this.nodeTypesFilterSize}</div>`)}
       </button>
 
@@ -240,7 +240,7 @@ export class GraphCollapsedSidebar extends LitElement {
         @click=${() => this.handleExpandToSection('platforms')}
         title="Platforms"
       >
-        ${this.renderPlatformsIcon()}
+        ${renderPlatformsIcon()}
         ${when(showPlatformsBadge, () => html`<div class="badge">${this.platformsFilterSize}</div>`)}
       </button>
 
@@ -250,7 +250,7 @@ export class GraphCollapsedSidebar extends LitElement {
         @click=${() => this.handleExpandToSection('projects')}
         title="Projects"
       >
-        ${this.renderProjectsIcon()}
+        ${renderProjectsIcon()}
         ${when(showProjectsBadge, () => html`<div class="badge">${this.projectsFilterSize}</div>`)}
       </button>
 
@@ -260,7 +260,7 @@ export class GraphCollapsedSidebar extends LitElement {
         @click=${() => this.handleExpandToSection('packages')}
         title="Packages"
       >
-        ${this.renderPackagesIcon()}
+        ${renderPackagesIcon()}
         ${when(showPackagesBadge, () => html`<div class="badge">${this.packagesFilterSize}</div>`)}
       </button>
 

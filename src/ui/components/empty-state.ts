@@ -15,6 +15,26 @@
 import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+function renderSearchIcon() {
+  return svg`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.3-4.3"></path>
+      <path d="M8 11h6"></path>
+    </svg>
+  `;
+}
+
+function renderClearIcon() {
+  return svg`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18"></path>
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+      <path d="M19 6l-1.5 14.5a2 2 0 0 1-2 1.5H8.5a2 2 0 0 1-2-1.5L5 6"></path>
+    </svg>
+  `;
+}
+
 /**
  * Displays an empty state message when no nodes match the current filters.
  * Features animated icon and optional clear filters button.
@@ -160,30 +180,10 @@ export class GraphEmptyState extends LitElement {
     );
   }
 
-  private renderSearchIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"></circle>
-        <path d="m21 21-4.3-4.3"></path>
-        <path d="M8 11h6"></path>
-      </svg>
-    `;
-  }
-
-  private renderClearIcon() {
-    return svg`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 6h18"></path>
-        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-        <path d="M19 6l-1.5 14.5a2 2 0 0 1-2 1.5H8.5a2 2 0 0 1-2-1.5L5 6"></path>
-      </svg>
-    `;
-  }
-
   override render(): TemplateResult {
     return html`
       <div class="icon-container">
-        ${this.renderSearchIcon()}
+        ${renderSearchIcon()}
       </div>
       <div class="title">No nodes match filters</div>
       <div class="description">Try adjusting your filter settings or search query</div>
@@ -191,7 +191,7 @@ export class GraphEmptyState extends LitElement {
         this.hasActiveFilters
           ? html`
             <button class="clear-button" @click=${this.handleClearFilters}>
-              ${this.renderClearIcon()}
+              ${renderClearIcon()}
               Clear all filters
             </button>
           `

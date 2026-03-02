@@ -1,4 +1,4 @@
-import { expect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import {
   DependencyKind,
   type GraphEdge,

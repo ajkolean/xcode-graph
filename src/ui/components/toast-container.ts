@@ -69,12 +69,14 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
     }
   `;
 
-  private handleDismiss(e: CustomEvent<{ errorId: string }>): void { // skipcq: JS-0105
+  private handleDismiss(e: CustomEvent<{ errorId: string }>): void {
+    // skipcq: JS-0105
     const { errorId } = e.detail;
     errorService.dismiss(errorId);
   }
 
-  private handleAction(e: CustomEvent<{ error: AppError }>): void { // skipcq: JS-0105
+  private handleAction(e: CustomEvent<{ error: AppError }>): void {
+    // skipcq: JS-0105
     const { error } = e.detail;
     errorService.executeAction(error);
   }

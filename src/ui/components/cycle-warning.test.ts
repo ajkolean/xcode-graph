@@ -2,8 +2,8 @@
  * Tests for GraphCycleWarning component
  */
 
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
-import { describe, it } from 'vitest';
+import { fixture, html, oneEvent } from '@open-wc/testing';
+import { describe, expect, it } from 'vitest';
 import type { GraphCycleWarning } from './cycle-warning';
 import './cycle-warning';
 

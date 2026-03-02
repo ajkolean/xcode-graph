@@ -5,8 +5,8 @@
  * highlighting, dash patterns, animation, and opacity.
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
-import { describe, it } from 'vitest';
+import { fixture, html } from '@open-wc/testing';
+import { describe, expect, it } from 'vitest';
 import { GraphEdge } from './graph-edge';
 import './graph-edge';
 

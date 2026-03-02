@@ -1,6 +1,6 @@
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
+import { fixture, html, oneEvent } from '@open-wc/testing';
 import { ViewMode } from '@shared/schemas';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { GraphCanvas } from './graph-canvas';
 import './graph-canvas';
 

@@ -2,8 +2,8 @@
  * FilterIcon Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
-import { describe, it } from 'vitest';
+import { fixture, html } from '@open-wc/testing';
+import { describe, expect, it } from 'vitest';
 import type { GraphFilterIcon } from './filter-icon';
 import './filter-icon';
 

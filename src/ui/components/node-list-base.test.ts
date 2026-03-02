@@ -2,9 +2,9 @@
  * NodeListEventsBase tests - branch coverage for event forwarding
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import type { GraphNode } from '@shared/schemas/graph.types';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { NodeListEventsBase } from './node-list-base';
 
 // Create a concrete subclass for testing since NodeListEventsBase is abstract-like

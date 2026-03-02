@@ -8,7 +8,7 @@
 
 import { edges as edgesSignal, nodes as nodesSignal } from '@graph/signals/data.signals';
 import { resetGraphSignals } from '@graph/signals/graph.signals';
-import { expect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { resetFilterSignals } from '@shared/signals/filter.signals';

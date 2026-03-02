@@ -2,7 +2,7 @@
  * FileUpload Lit Component Tests
  */
 
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
+import { fixture, html, oneEvent } from '@open-wc/testing';
 import { afterEach, beforeEach, describe, it, vi, expect as vitestExpect } from 'vitest';
 import { ErrorService } from '@/services/error-service';
 import type { GraphFileUpload } from './file-upload';

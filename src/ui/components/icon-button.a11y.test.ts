@@ -4,7 +4,7 @@
  * Uses vitest-axe to verify the icon button meets accessibility standards.
  */
 
-import { expect as chaiExpect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
 import type { GraphIconButton } from './icon-button';

@@ -4,7 +4,7 @@
  * Uses vitest-axe to verify the node list meets accessibility standards.
  */
 
-import { expect as chaiExpect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';

@@ -2,9 +2,9 @@
  * ClusterTargetsList Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import { type GraphNode, NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { GraphClusterTargetsList } from './cluster-targets-list';
 import './cluster-targets-list';
 

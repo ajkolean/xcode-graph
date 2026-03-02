@@ -5,12 +5,12 @@
  * Tests rendering, computed properties, event bubbling, and props propagation.
  */
 
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
+import { fixture, html, oneEvent } from '@open-wc/testing';
 import type { Cluster } from '@shared/schemas';
 import { ClusterType } from '@shared/schemas/cluster.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { GraphClusterDetailsPanel } from './cluster-details-panel';
 import './cluster-details-panel';
 

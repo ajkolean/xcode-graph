@@ -5,12 +5,12 @@
  * Tests panel switching, state management, event coordination, and filter logic.
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import type { Cluster } from '@shared/schemas';
 import { ClusterType } from '@shared/schemas/cluster.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { beforeEach, describe, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import type { GraphRightSidebar } from './right-sidebar';
 import './right-sidebar';
 

@@ -2,9 +2,9 @@
  * BuildSettings Lit Component Tests
  */
 
-import { expect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import type { BuildSettings } from '@shared/schemas/graph.types';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { GraphBuildSettings } from './build-settings';
 import './build-settings';
 

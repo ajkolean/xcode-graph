@@ -2,8 +2,8 @@
  * ListItemRow Lit Component Tests
  */
 
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
-import { describe, it } from 'vitest';
+import { fixture, html, oneEvent } from '@open-wc/testing';
+import { describe, expect, it } from 'vitest';
 import type { GraphListItemRow } from './list-item-row';
 import './list-item-row';
 

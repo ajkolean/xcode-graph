@@ -2,9 +2,9 @@
  * Sidebar Lit Component Tests
  */
 
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
+import { fixture, html, oneEvent } from '@open-wc/testing';
 import { ActiveTab } from '@shared/schemas/app.types';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { GraphSidebar } from './sidebar';
 import './sidebar';
 

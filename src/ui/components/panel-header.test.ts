@@ -2,8 +2,8 @@
  * PanelHeader Lit Component Tests
  */
 
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
-import { describe, it } from 'vitest';
+import { fixture, html, oneEvent } from '@open-wc/testing';
+import { describe, expect, it } from 'vitest';
 import type { GraphPanelHeader } from './panel-header';
 import './panel-header';
 

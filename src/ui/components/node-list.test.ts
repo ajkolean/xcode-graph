@@ -2,10 +2,10 @@
  * NodeList Lit Component Tests
  */
 
-import { expect, fixture, html, oneEvent } from '@open-wc/testing';
+import { fixture, html, oneEvent } from '@open-wc/testing';
 import type { GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { GraphNodeList } from './node-list';
 import './node-list';
 
