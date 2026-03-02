@@ -1,6 +1,6 @@
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import type * as d3Force2D from 'd3-force';
+import type * as d3Force2D from 'd3-force'; // skipcq: JS-C1003
 
 /** D3 simulation node extended with cluster membership */
 export interface SimNode extends d3Force2D.SimulationNodeDatum {

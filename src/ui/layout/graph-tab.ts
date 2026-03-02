@@ -135,26 +135,32 @@ export class GraphTab extends SignalWatcherLitElement {
   `;
 
   private handleNodeSelect(e: CustomEvent) {
+    // skipcq: JS-0105
     selectNode(e.detail.node);
   }
 
   private handleClusterSelect(e: CustomEvent) {
+    // skipcq: JS-0105
     selectCluster(e.detail.clusterId);
   }
 
   private handleNodeHover(e: CustomEvent) {
+    // skipcq: JS-0105
     setHoveredNode(e.detail.nodeId);
   }
 
   private handleZoomIn() {
+    // skipcq: JS-0105
     zoomIn();
   }
 
   private handleZoomOut() {
+    // skipcq: JS-0105
     zoomOut();
   }
 
   private handleZoomStep(e: CustomEvent<number>) {
+    // skipcq: JS-0105
     setZoom(e.detail);
   }
 
@@ -164,10 +170,12 @@ export class GraphTab extends SignalWatcherLitElement {
   }
 
   private handleToggleAnimation() {
+    // skipcq: JS-0105
     toggleAnimation();
   }
 
   private handleZoomChange(e: CustomEvent) {
+    // skipcq: JS-0105
     setZoom(e.detail);
   }
 

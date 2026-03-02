@@ -282,6 +282,7 @@ export class GraphSidebar extends LitElement {
   `;
 
   private get navItems(): NavItem[] {
+    // skipcq: JS-0105
     return [
       {
         id: ActiveTab.Overview,

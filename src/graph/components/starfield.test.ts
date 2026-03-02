@@ -22,6 +22,7 @@ beforeAll(() => {
         this.height = height;
       }
       getContext() {
+        // skipcq: JS-0105
         // Minimal 2d context mock for renderToCache
         return {
           clearRect: () => {}, // skipcq: JS-0321

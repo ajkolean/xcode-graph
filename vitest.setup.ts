@@ -5,16 +5,16 @@
 import 'vitest-canvas-mock';
 import { expect, vi } from 'vitest';
 import 'vitest-axe/extend-expect';
-import * as vitestAxeMatchers from 'vitest-axe/matchers';
+import * as vitestAxeMatchers from 'vitest-axe/matchers'; // skipcq: JS-C1003
 
 expect.extend(vitestAxeMatchers);
 
 // @lit-labs/virtualizer requires ResizeObserver which jsdom doesn't provide
 if (typeof globalThis.ResizeObserver === 'undefined') {
   globalThis.ResizeObserver = class ResizeObserver {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+    observe() {} // skipcq: JS-0105, JS-0321
+    unobserve() {} // skipcq: JS-0105, JS-0321
+    disconnect() {} // skipcq: JS-0105, JS-0321
   } as unknown as typeof globalThis.ResizeObserver;
 }
 

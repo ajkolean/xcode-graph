@@ -326,6 +326,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private get isViewingDetails(): boolean {
+    // skipcq: JS-0105
     return Boolean(selectedNode.get()) || Boolean(selectedCluster.get());
   }
 
@@ -628,6 +629,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handleBackToFilters() {
+    // skipcq: JS-0105
     selectNode(null);
     selectCluster(null);
   }

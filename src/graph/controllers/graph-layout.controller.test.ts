@@ -18,7 +18,7 @@ class MockHost {
     this.controllers.push(controller);
   }
 
-  removeController(_controller: ReactiveController): void {}
+  removeController(_controller: ReactiveController): void {} // skipcq: JS-0105, JS-0321
 
   requestUpdate() {
     this.updateCount++;
