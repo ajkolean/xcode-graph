@@ -207,10 +207,10 @@ function computePortPositionsOnSide(
 
   // Calculate the usable length along this side (excluding margins)
   let sideLength: number;
-  let startX: number;
-  let startY: number;
-  let dx: number;
-  let dy: number;
+  let startX = 0;
+  let startY = 0;
+  let dx = 0;
+  let dy = 0;
 
   switch (side) {
     case 'NORTH':

@@ -78,11 +78,14 @@ export function applyNodeMassage(
     maxY = -Infinity;
 
   for (const node of nodes) {
-    newPositions.set(node.id, {
-      ...micro.relativePositions.get(node.id),
-      x: node.x,
-      y: node.y,
-    });
+    const existingPos = micro.relativePositions.get(node.id);
+    if (existingPos) {
+      newPositions.set(node.id, {
+        ...existingPos,
+        x: node.x,
+        y: node.y,
+      });
+    }
 
     if (node.x < minX) minX = node.x;
     if (node.x > maxX) maxX = node.x;

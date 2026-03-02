@@ -9,7 +9,15 @@
  */
 
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import { css, html, LitElement, nothing, type PropertyValues, type TemplateResult } from 'lit';
+import {
+  type CSSResultGroup,
+  css,
+  html,
+  LitElement,
+  nothing,
+  type PropertyValues,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('xcode-graph-hidden-dom')
@@ -38,7 +46,7 @@ export class GraphHiddenDom extends LitElement {
     this.focusedIndex = 0;
   }
 
-  static override styles = css`
+  static override styles: CSSResultGroup = css`
     :host {
       position: absolute;
       width: 1px;
@@ -140,7 +148,7 @@ export class GraphHiddenDom extends LitElement {
   private getNodeDescription(node: GraphNode): string {
     const deps = this.edges.filter((e) => e.source === node.id).length;
     const dependents = this.edges.filter((e) => e.target === node.id).length;
-    const parts = [node.type];
+    const parts: string[] = [node.type];
     if (node.platform) parts.push(`platform ${node.platform}`);
     if (node.project) parts.push(`project ${node.project}`);
     parts.push(`${deps} dependencies`);

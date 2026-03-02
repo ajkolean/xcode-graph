@@ -6,7 +6,7 @@
  */
 
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
-import { NODE_PALETTE } from '@/shared/constants/node-palette.ts';
+import { NODE_PALETTE } from '@/shared/constants/node-palette';
 
 /**
  * Color mapping for different node types
@@ -47,8 +47,13 @@ export function getNodeTypeColor(type: string): string {
   return NODE_TYPE_COLORS[type] ?? DEFAULT_NODE_COLOR;
 }
 
+/** Node-color keys of CanvasTheme (excludes non-string props like isDark) */
+type NodeColorKey = {
+  [K in keyof CanvasTheme]: CanvasTheme[K] extends string ? K : never;
+}[keyof CanvasTheme];
+
 /** Map from node type to CanvasTheme key */
-const THEME_KEY_MAP: Record<string, keyof CanvasTheme> = {
+const THEME_KEY_MAP: Record<string, NodeColorKey> = {
   app: 'nodeApp',
   framework: 'nodeFramework',
   library: 'nodeLibrary',

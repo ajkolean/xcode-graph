@@ -345,7 +345,7 @@ describe('ErrorService', () => {
     });
 
     it('should handle async action handlers', async () => {
-      const handler = vi.fn().mockResolvedValue();
+      const handler = vi.fn().mockResolvedValue(undefined);
       service.registerActionHandler('async-action', handler);
 
       const appError = service.handleError(new Error('Test'), {

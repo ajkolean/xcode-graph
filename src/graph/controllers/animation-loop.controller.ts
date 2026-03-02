@@ -61,7 +61,7 @@ export interface AnimationLoopConfig {
    * Optional visibility check. When provided and returning false,
    * the loop will not schedule frames (e.g., element off-screen).
    */
-  isVisible?: () => boolean;
+  isVisible?: (() => boolean) | undefined;
 }
 
 /**

@@ -263,11 +263,11 @@ describe('Layout worker serialization round-trips', () => {
     const clusters = deserializeClusters(serialized);
 
     expect(clusters).toHaveLength(1);
-    expect(clusters[0].id).toBe('proj-a');
-    expect(clusters[0].metadata).toBeInstanceOf(Map);
-    expect(clusters[0].metadata.size).toBe(2);
-    expect(clusters[0].metadata.get('n1')?.role).toBe(NodeRole.Entry);
-    expect(clusters[0].metadata.get('n2')?.role).toBe(NodeRole.Utility);
+    expect(clusters[0]?.id).toBe('proj-a');
+    expect(clusters[0]?.metadata).toBeInstanceOf(Map);
+    expect(clusters[0]?.metadata.size).toBe(2);
+    expect(clusters[0]?.metadata.get('n1')?.role).toBe(NodeRole.Entry);
+    expect(clusters[0]?.metadata.get('n2')?.role).toBe(NodeRole.Utility);
   });
 
   it('should deserialize multiple clusters preserving all fields', () => {
@@ -296,10 +296,10 @@ describe('Layout worker serialization round-trips', () => {
     const clusters = deserializeClusters(serialized);
 
     expect(clusters).toHaveLength(2);
-    expect(clusters[0].path).toBe('/path/a');
-    expect(clusters[1].path).toBeUndefined();
-    expect(clusters[0].metadata).toBeInstanceOf(Map);
-    expect(clusters[1].metadata).toBeInstanceOf(Map);
+    expect(clusters[0]?.path).toBe('/path/a');
+    expect(clusters[1]?.path).toBeUndefined();
+    expect(clusters[0]?.metadata).toBeInstanceOf(Map);
+    expect(clusters[1]?.metadata).toBeInstanceOf(Map);
   });
 
   it('should handle empty metadata in deserialization', () => {
@@ -317,8 +317,8 @@ describe('Layout worker serialization round-trips', () => {
 
     const clusters = deserializeClusters(serialized);
 
-    expect(clusters[0].metadata).toBeInstanceOf(Map);
-    expect(clusters[0].metadata.size).toBe(0);
+    expect(clusters[0]?.metadata).toBeInstanceOf(Map);
+    expect(clusters[0]?.metadata.size).toBe(0);
   });
 
   it('should serialize layout result Maps to arrays', () => {
@@ -385,10 +385,10 @@ describe('Layout worker serialization round-trips', () => {
 
     const serialized = serializeResult(result);
 
-    expect(Array.isArray(serialized.clusters[0].metadata)).toBe(true);
-    const metaEntries = serialized.clusters[0].metadata;
+    expect(Array.isArray(serialized.clusters[0]?.metadata)).toBe(true);
+    const metaEntries = serialized.clusters[0]?.metadata;
     expect(metaEntries).toHaveLength(1);
-    expect(metaEntries[0]?.[0]).toBe('n1');
+    expect(metaEntries?.[0]?.[0]).toBe('n1');
   });
 
   it('should handle optional fields in layout result', () => {
@@ -464,10 +464,10 @@ describe('Layout worker serialization round-trips', () => {
     const serialized = serializeResult(result);
     const restored = deserializeClusters(serialized.clusters);
 
-    expect(restored[0].metadata).toBeInstanceOf(Map);
-    expect(restored[0].metadata.size).toBe(2);
+    expect(restored[0]?.metadata).toBeInstanceOf(Map);
+    expect(restored[0]?.metadata.size).toBe(2);
 
-    const restoredMeta = restored[0].metadata.get('n2');
+    const restoredMeta = restored[0]?.metadata.get('n2');
     expect(restoredMeta?.role).toBe(NodeRole.InternalFramework);
     expect(restoredMeta?.layer).toBe(1);
     expect(restoredMeta?.isAnchor).toBe(false);

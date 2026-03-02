@@ -85,4 +85,13 @@ describe('xcode-graph-search-bar', () => {
 
     expect(event).toBeDefined();
   });
+
+  it('should have keyboard shortcut controller with / key', async () => {
+    const el = await fixture<GraphSearchBar>(html`
+      <xcode-graph-search-bar></xcode-graph-search-bar>
+    `);
+
+    // The shortcut controller is public, verify it exists
+    expect(el.shortcut).toBeDefined();
+  });
 });

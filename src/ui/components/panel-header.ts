@@ -208,7 +208,7 @@ export class GraphPanelHeader extends LitElement {
       <div class="header-row">
         <!-- Back Button -->
         <button class="back-button" aria-label="Back to overview" @click=${this.handleBack}>
-          ${icons.ChevronLeft}
+          ${icons['ChevronLeft']}
         </button>
 
         <div class="content">

@@ -72,4 +72,16 @@ describe('xcode-graph-filter-icon', () => {
     expect(svg?.getAttribute('width')).to.equal('24');
     expect(svg?.getAttribute('height')).to.equal('24');
   });
+
+  it('should render product-types icon for unknown name (default case)', async () => {
+    const el = await fixture<GraphFilterIcon>(html`
+      <xcode-graph-filter-icon name="unknown-icon"></xcode-graph-filter-icon>
+    `);
+
+    const svg = el.shadowRoot?.querySelector('svg');
+    expect(svg).toBeDefined();
+    // Default case renders product-types icon which has 4 rects
+    const rects = svg?.querySelectorAll('rect');
+    expect(rects?.length).to.equal(4);
+  });
 });

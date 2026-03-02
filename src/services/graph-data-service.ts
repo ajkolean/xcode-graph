@@ -4,7 +4,7 @@
  */
 
 import { bfsTraverseGraph, type TransitiveResult } from '@graph/utils/traversal';
-import type { Cluster } from '@shared/schemas';
+import { type Cluster, ClusterType } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { addToMultiMap } from '@shared/utils/collections';
 
@@ -257,7 +257,8 @@ export class GraphDataService {
     }
 
     const firstNode = clusterNodes[0];
-    const clusterType = firstNode?.type === NodeType.Package ? NodeType.Package : 'project';
+    const clusterType =
+      firstNode?.type === NodeType.Package ? ClusterType.Package : ClusterType.Project;
     const clusterOrigin = clusterNodes.some((n) => n.origin === Origin.External)
       ? Origin.External
       : Origin.Local;

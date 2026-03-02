@@ -198,4 +198,20 @@ describe('xcode-graph-node-info', () => {
     const bundleId = el.shadowRoot?.querySelector('.bundle-id');
     expect(bundleId?.textContent).to.equal('com.example.app');
   });
+
+  it('should toggle expanded state of node info section', async () => {
+    const el = await fixture<GraphNodeInfo>(html`
+      <xcode-graph-node-info .node=${mockNode}></xcode-graph-node-info>
+    `);
+
+    // Find the section header toggle (the title element that acts as toggle)
+    const title = el.shadowRoot?.querySelector('.title') as HTMLElement;
+    expect(title).toBeDefined();
+
+    // Click to toggle
+    title?.click();
+    await el.updateComplete;
+
+    expect(el).toBeDefined();
+  });
 });

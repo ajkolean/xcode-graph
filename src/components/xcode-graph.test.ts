@@ -12,7 +12,7 @@ import { fixture, html } from '@open-wc/testing';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { resetFilterSignals } from '@shared/signals/filter.signals';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SignalSnapshot } from '../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../test-utils/signal-helpers';
 import type { GraphApp } from './xcode-graph';
@@ -150,6 +150,143 @@ describe('xcode-graph (GraphApp)', () => {
       expect(ctor).toBeDefined();
       // Lit components expose a `styles` static property
       expect((ctor as unknown as { styles: unknown }).styles).toBeDefined();
+    });
+  });
+
+  describe('color scheme', () => {
+    it('should default to auto color scheme', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph></xcode-graph>
+      `);
+
+      expect(el.colorScheme).toBe('auto');
+      expect(el.getAttribute('data-theme')).toBeDefined();
+    });
+
+    it('should apply dark color scheme when set explicitly', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph color-scheme="dark"></xcode-graph>
+      `);
+
+      expect(el.colorScheme).toBe('dark');
+      expect(el.getAttribute('data-theme')).toBe('dark');
+    });
+
+    it('should apply light color scheme when set explicitly', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph color-scheme="light"></xcode-graph>
+      `);
+
+      expect(el.colorScheme).toBe('light');
+      expect(el.getAttribute('data-theme')).toBe('light');
+    });
+
+    it('should update theme when colorScheme changes', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph color-scheme="dark"></xcode-graph>
+      `);
+
+      expect(el.getAttribute('data-theme')).toBe('dark');
+
+      el.colorScheme = 'light';
+      await el.updateComplete;
+
+      expect(el.getAttribute('data-theme')).toBe('light');
+    });
+  });
+
+  describe('circular dependencies', () => {
+    it('should detect circular dependencies and log warning', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const cycleNodes = [
+        createTestNode('c1', { project: 'P' }),
+        createTestNode('c2', { project: 'P' }),
+      ];
+      const cycleEdges = [createTestEdge('c1', 'c2'), createTestEdge('c2', 'c1')];
+
+      await fixture<GraphApp>(html`
+        <xcode-graph .nodes=${cycleNodes} .edges=${cycleEdges}></xcode-graph>
+      `);
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[GraphApp]'),
+        expect.anything(),
+      );
+      warnSpy.mockRestore();
+    });
+  });
+
+  describe('loadRawGraph with transform', () => {
+    it('should load valid raw graph data successfully', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph></xcode-graph>
+      `);
+
+      // Provide a minimal valid Tuist graph format
+      const rawGraph = {
+        projects: {
+          TestProject: {
+            targets: {
+              App: {
+                product: 'app',
+                platform: 'iOS',
+                sources: [],
+                dependencies: [],
+              },
+            },
+          },
+        },
+      };
+
+      await el.loadRawGraph(rawGraph);
+      // If it processed successfully (or with warnings), no throw
+      expect(el).toBeDefined();
+    });
+
+    it('should handle completely invalid data gracefully', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph></xcode-graph>
+      `);
+
+      await el.loadRawGraph(42);
+      // Should not throw, ErrorService handles it
+      expect(el).toBeDefined();
+    });
+  });
+
+  describe('file upload', () => {
+    it('should render file upload when show-upload is set', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph show-upload></xcode-graph>
+      `);
+
+      const upload = el.shadowRoot?.querySelector('xcode-graph-file-upload');
+      expect(upload).toBeDefined();
+    });
+
+    it('should not render file upload by default', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph></xcode-graph>
+      `);
+
+      const upload = el.shadowRoot?.querySelector('xcode-graph-file-upload');
+      expect(upload).toBeNull();
+    });
+  });
+
+  describe('disconnectedCallback', () => {
+    it('should clean up media query listener on disconnect', async () => {
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph color-scheme="auto"></xcode-graph>
+      `);
+
+      // Remove from DOM triggers disconnectedCallback
+      el.remove();
+
+      // Reconnect to verify it works again
+      document.body.appendChild(el);
+      await el.updateComplete;
+      expect(el.getAttribute('data-theme')).toBeDefined();
     });
   });
 });

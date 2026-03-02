@@ -7,10 +7,10 @@
  * @module shared/signals/reduced-motion.signals
  */
 
-import { signal } from '@lit-labs/signals';
+import { type Signal, signal } from '@lit-labs/signals';
 
 /** Whether the user prefers reduced motion (tracks OS media query) */
-export const prefersReducedMotion = signal(
+export const prefersReducedMotion: Signal.State<boolean> = signal(
   globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false,
 );
 

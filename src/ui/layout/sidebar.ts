@@ -372,7 +372,7 @@ export class GraphSidebar extends LitElement {
                     <div class="icon-container">${item.iconSvg}</div>
                     <span class="label">${item.label}</span>
                   </div>
-                  ${when(item.hasDropdown, () => html`<span class="dropdown-icon">${icons.ChevronDown}</span>`)}
+                  ${when(item.hasDropdown, () => html`<span class="dropdown-icon">${icons['ChevronDown']}</span>`)}
                 </button>
               `;
               },

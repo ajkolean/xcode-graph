@@ -42,7 +42,7 @@ export enum ElkHierarchyHandling {
  * ELK-specific layout options that can be set per-cluster
  */
 export interface ClusterElkOptions {
-  hierarchyHandling?: ElkHierarchyHandling;
+  hierarchyHandling?: ElkHierarchyHandling | undefined;
 }
 
 /** Node metadata within cluster */
@@ -52,7 +52,7 @@ export interface ClusterNodeMetadata {
   layer: number;
   isAnchor: boolean;
   hasExternalDependents: boolean;
-  testSubjects?: string[];
+  testSubjects?: string[] | undefined;
   dependencyCount: number;
   dependsOnCount: number;
 }
@@ -71,12 +71,12 @@ export interface Cluster {
   name: string;
   type: ClusterType;
   origin: Origin;
-  path?: string;
+  path?: string | undefined;
   nodes: GraphNode[];
   anchors: string[];
   metadata: Map<string, ClusterNodeMetadata>;
-  elkOptions?: ClusterElkOptions;
-  bounds?: ClusterBounds;
+  elkOptions?: ClusterElkOptions | undefined;
+  bounds?: ClusterBounds | undefined;
 }
 
 /** Serialized cluster format (metadata as array for JSON) */
@@ -91,10 +91,10 @@ export interface PositionedNode {
   y: number;
   clusterId: string;
   metadata: ClusterNodeMetadata;
-  localX?: number;
-  localY?: number;
-  targetRadius?: number;
-  targetAngle?: number;
+  localX?: number | undefined;
+  localY?: number | undefined;
+  targetRadius?: number | undefined;
+  targetAngle?: number | undefined;
 }
 
 /** Physics force strengths */

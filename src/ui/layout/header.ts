@@ -342,7 +342,7 @@ export class GraphHeader extends LitElement {
         <div class="right-section">
           <!-- Docs Button -->
           <button class="action-button" title="Documentation">
-            <span class="icon">${icons.Book}</span>
+            <span class="icon">${icons['Book']}</span>
           </button>
 
           <!-- User Avatar -->

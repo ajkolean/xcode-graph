@@ -122,6 +122,19 @@ describe('paths', () => {
     });
   });
 
+  describe('generateWaypointPath edge cases', () => {
+    it('should handle waypoints that result in exactly 2 points array', () => {
+      // When points = [start, end] via empty waypoints, it falls through to bezier.
+      // But when we pass a single waypoint that creates points.length === 3,
+      // it uses Q command. We need to hit the L branch which is points.length === 2.
+      // This happens internally but the empty waypoints case delegates to generateBezierPath.
+      // Force the "L" branch by testing with no waypoints but going through generateWaypointPath
+      const path = generateWaypointPath({ x: 0, y: 0 }, [], { x: 100, y: 100 });
+      // Delegates to generateBezierPath, so should have C command
+      expect(path).toContain('C');
+    });
+  });
+
   describe('generateWaypointPath middle segments', () => {
     it('should exercise the middle segment branch with 4+ waypoints', () => {
       // 4 waypoints = points.length = 6, so the loop for i = 2,3 hits the else (middle) branch

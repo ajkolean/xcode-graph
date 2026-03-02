@@ -107,9 +107,46 @@ describe('xcode-graph-file-upload', () => {
 
     const input = getInput(el);
     const clickSpy = vi.spyOn(input, 'click');
-    const container = el.shadowRoot?.querySelector('.container');
+    const container = el.shadowRoot?.querySelector<HTMLElement>('.container');
     container?.click();
 
     expect(clickSpy).toHaveBeenCalled();
+  });
+
+  it('should handle FileReader error via ErrorService', async () => {
+    const el = await fixture<GraphFileUpload>(html`
+      <xcode-graph-file-upload></xcode-graph-file-upload>
+    `);
+
+    const handleErrorSpy = vi.spyOn(ErrorService.getInstance(), 'handleError');
+
+    // Mock FileReader to simulate an error
+    const OriginalFileReader = globalThis.FileReader;
+
+    class MockFileReader {
+      onload: ((e: unknown) => void) | null = null;
+      onerror: (() => void) | null = null;
+      readAsText() {
+        // Simulate async error
+        setTimeout(() => this.onerror?.(), 0);
+      }
+    }
+
+    vi.stubGlobal('FileReader', MockFileReader);
+
+    const file = new File(['content'], 'test.json', { type: 'application/json' });
+    const input = getInput(el);
+
+    Object.defineProperty(input, 'files', { value: [file], configurable: true });
+    input.dispatchEvent(new Event('change'));
+
+    // Wait for the async onerror callback
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(handleErrorSpy).toHaveBeenCalled();
+    const errorArg = handleErrorSpy.mock.calls[0]?.[0] as Error;
+    expect(errorArg.message).toContain('Failed to read file');
+
+    vi.stubGlobal('FileReader', OriginalFileReader);
   });
 });

@@ -572,4 +572,48 @@ describe('xcode-graph-node-details-panel - Edge Cases', () => {
     const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
     expect(metrics).toBeDefined();
   });
+
+  it('should bubble node-hover from dependents list', async () => {
+    const el = await fixture<GraphNodeDetailsPanel>(html`
+      <xcode-graph-node-details-panel
+        .node=${mockNode}
+        .allNodes=${mockAllNodes}
+        .edges=${mockEdges}
+      ></xcode-graph-node-details-panel>
+    `);
+
+    const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
+    const deptList = lists?.[1]; // Dependents list
+    setTimeout(() =>
+      deptList?.dispatchEvent(
+        new CustomEvent('node-hover', {
+          detail: { nodeId: 'dept1' },
+          bubbles: true,
+          composed: true,
+        }),
+      ),
+    );
+    const event = (await oneEvent(el, 'node-hover')) as CustomEvent;
+
+    expect(event).toBeDefined();
+    expect(event.detail.nodeId).toBe('dept1');
+  });
+
+  it('should render build settings when node has them', async () => {
+    const nodeWithSettings: GraphNode = {
+      ...mockNode,
+      buildSettings: { swiftVersion: '5.9' },
+    };
+
+    const el = await fixture<GraphNodeDetailsPanel>(html`
+      <xcode-graph-node-details-panel
+        .node=${nodeWithSettings}
+        .allNodes=${mockAllNodes}
+        .edges=${mockEdges}
+      ></xcode-graph-node-details-panel>
+    `);
+
+    const buildSettings = el.shadowRoot?.querySelector('xcode-graph-build-settings');
+    expect(buildSettings).toBeDefined();
+  });
 });

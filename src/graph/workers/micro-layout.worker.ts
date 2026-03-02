@@ -20,7 +20,7 @@ export interface SerializedMicroCluster {
   name: string;
   type: string;
   origin: string;
-  path?: string;
+  path?: string | undefined;
   nodes: GraphNode[];
   anchors: string[];
   metadata: Array<[string, ClusterNodeMetadata]>;

@@ -172,4 +172,44 @@ describe('xcode-graph-collapsed-sidebar', () => {
     expect(statValues?.[0]?.textContent).to.equal('0');
     expect(statValues?.[1]?.textContent).to.equal('0');
   });
+
+  it('should dispatch expand-to-section event with projects section', async () => {
+    const el = await fixture<GraphCollapsedSidebar>(html`
+      <xcode-graph-collapsed-sidebar
+        node-types-filter-size="5"
+        platforms-filter-size="5"
+        projects-filter-size="5"
+        packages-filter-size="5"
+      ></xcode-graph-collapsed-sidebar>
+    `);
+
+    const buttons = el.shadowRoot?.querySelectorAll('.icon-button');
+    const projectsButton = buttons?.[2] as HTMLButtonElement;
+
+    setTimeout(() => projectsButton.click());
+    const event = await oneEvent(el, 'expand-to-section');
+
+    expect(event).toBeDefined();
+    expect((event as CustomEvent).detail.section).to.equal('projects');
+  });
+
+  it('should dispatch expand-to-section event with packages section', async () => {
+    const el = await fixture<GraphCollapsedSidebar>(html`
+      <xcode-graph-collapsed-sidebar
+        node-types-filter-size="5"
+        platforms-filter-size="5"
+        projects-filter-size="5"
+        packages-filter-size="5"
+      ></xcode-graph-collapsed-sidebar>
+    `);
+
+    const buttons = el.shadowRoot?.querySelectorAll('.icon-button');
+    const packagesButton = buttons?.[3] as HTMLButtonElement;
+
+    setTimeout(() => packagesButton.click());
+    const event = await oneEvent(el, 'expand-to-section');
+
+    expect(event).toBeDefined();
+    expect((event as CustomEvent).detail.section).to.equal('packages');
+  });
 });

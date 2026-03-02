@@ -1,7 +1,7 @@
 import { colord, extend } from 'colord';
 import a11yPlugin from 'colord/plugins/a11y';
 import { describe, expect, it } from 'vitest';
-import { NODE_PALETTE } from '@/shared/constants/node-palette.ts';
+import { NODE_PALETTE } from '@/shared/constants/node-palette';
 import { colorWithAlpha, hexToRgba, resolveCanvasTheme } from './canvas-theme';
 
 extend([a11yPlugin]);

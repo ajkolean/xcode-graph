@@ -25,12 +25,12 @@ export interface SerializedCluster {
   name: string;
   type: string;
   origin: string;
-  path?: string;
+  path?: string | undefined;
   nodes: GraphNode[];
   anchors: string[];
   metadata: Array<[string, ClusterNodeMetadata]>;
-  elkOptions?: Cluster['elkOptions'];
-  bounds?: Cluster['bounds'];
+  elkOptions?: Cluster['elkOptions'] | undefined;
+  bounds?: Cluster['bounds'] | undefined;
 }
 
 /**
@@ -45,13 +45,13 @@ export interface SerializedLayoutResult {
     [string, HierarchicalLayoutResult['clusterPositions'] extends Map<string, infer V> ? V : never]
   >;
   clusters: SerializedCluster[];
-  clusterEdges?: HierarchicalLayoutResult['clusterEdges'];
-  routedEdges?: HierarchicalLayoutResult['routedEdges'];
-  cycleNodes?: string[];
-  nodeSccId?: Array<[string, number]>;
-  sccSizes?: Array<[number, number]>;
-  maxStratum?: number;
-  maxClusterStratum?: number;
+  clusterEdges?: HierarchicalLayoutResult['clusterEdges'] | undefined;
+  routedEdges?: HierarchicalLayoutResult['routedEdges'] | undefined;
+  cycleNodes?: string[] | undefined;
+  nodeSccId?: Array<[string, number]> | undefined;
+  sccSizes?: Array<[number, number]> | undefined;
+  maxStratum?: number | undefined;
+  maxClusterStratum?: number | undefined;
 }
 
 /**

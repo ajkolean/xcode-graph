@@ -196,14 +196,13 @@ export class GraphNodeInfo extends LitElement {
   }
 
   private get hasDeploymentTargets(): boolean {
-    return (
-      Boolean(this.node.deploymentTargets) &&
-      Object.values(this.node.deploymentTargets).some((value) => value != null)
-    );
+    if (!this.node.deploymentTargets) return false;
+    return Object.values(this.node.deploymentTargets).some((value) => value != null);
   }
 
   private get hasDestinations(): boolean {
-    return Boolean(this.node.destinations) && this.node.destinations.length > 0;
+    if (!this.node.destinations) return false;
+    return this.node.destinations.length > 0;
   }
 
   private renderForeignBuild() {

@@ -43,7 +43,7 @@ export function buildClusterGraph(edges: GraphEdge[], clusters: Cluster[]): Clus
     }
   }
 
-  const edgeMap = new Map<string, { source: string; target: string; w: number }>();
+  const edgeMap = new Map<string, { source: string; target: string; weight: number }>();
 
   for (const edge of edges) {
     const cSrc = nodeToCluster.get(edge.source);

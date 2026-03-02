@@ -5,20 +5,20 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { installAnimationFrameMock, type MockAnimationFrame, MockHost } from '@/test-utils';
-import { AnimationLoopController } from './animation-loop.controller';
+import { AnimationLoopController, type RenderCallback } from './animation-loop.controller';
 
 describe('AnimationLoopController', () => {
   let host: MockHost;
-  let renderSpy: ReturnType<typeof vi.fn>;
-  let shouldAnimate: ReturnType<typeof vi.fn>;
+  let renderSpy: ReturnType<typeof vi.fn<RenderCallback>>;
+  let shouldAnimate: ReturnType<typeof vi.fn<() => boolean>>;
   let mockRaf: MockAnimationFrame;
   let originalRaf: typeof globalThis.requestAnimationFrame;
   let originalCaf: typeof globalThis.cancelAnimationFrame;
 
   beforeEach(() => {
     host = new MockHost();
-    renderSpy = vi.fn();
-    shouldAnimate = vi.fn().mockReturnValue(false);
+    renderSpy = vi.fn<RenderCallback>();
+    shouldAnimate = vi.fn<() => boolean>().mockReturnValue(false);
 
     originalRaf = globalThis.requestAnimationFrame;
     originalCaf = globalThis.cancelAnimationFrame;

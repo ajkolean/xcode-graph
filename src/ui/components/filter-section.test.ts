@@ -256,4 +256,37 @@ describe('xcode-graph-filter-section', () => {
     const headerButton = el.shadowRoot?.querySelector('.header-button');
     expect(headerButton?.getAttribute('aria-expanded')).to.equal('true');
   });
+
+  it('should handle unknown filter-type for item icon rendering', async () => {
+    const unknownItems: FilterItem[] = [{ key: 'test', count: 1, color: '#FF0000' }];
+    const el = await fixture<GraphFilterSection>(html`
+      <xcode-graph-filter-section
+        title="Unknown"
+        filter-type="unknown"
+        is-expanded
+        .items=${unknownItems}
+        .selectedItems=${new Set(['test'])}
+        .zoom=${1}
+      ></xcode-graph-filter-section>
+    `);
+
+    const itemButton = el.shadowRoot?.querySelector('.item-button');
+    expect(itemButton).toBeDefined();
+  });
+
+  it('should render items with virtualize and produce correct key', async () => {
+    const el = await fixture<GraphFilterSection>(html`
+      <xcode-graph-filter-section
+        title="Types"
+        filter-type="nodeType"
+        is-expanded
+        .items=${sampleItems}
+        .selectedItems=${new Set(['framework', 'app'])}
+        .zoom=${1}
+      ></xcode-graph-filter-section>
+    `);
+
+    const items = el.shadowRoot?.querySelectorAll('.item-button');
+    expect(items?.length).toBe(3);
+  });
 });

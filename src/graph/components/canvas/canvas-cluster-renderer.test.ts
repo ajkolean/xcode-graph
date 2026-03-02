@@ -29,6 +29,7 @@ function createTestTheme(): CanvasTheme {
     shadowColor: 'rgba(24, 24, 28, 0.9)',
     cycleEdgeColor: 'rgba(239, 68, 68, 0.8)',
     cycleGlowColor: 'rgba(239, 68, 68, 0.6)',
+    isDark: true,
   };
 }
 

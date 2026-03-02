@@ -23,15 +23,15 @@ export interface LayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
   clusters: Cluster[];
   /** Aggregated edges between clusters */
-  clusterEdges?: { source: string; target: string; weight: number }[];
+  clusterEdges?: { source: string; target: string; weight: number }[] | undefined;
   /** Port-routed edges for cross-cluster connections */
-  routedEdges?: RoutedEdge[];
+  routedEdges?: RoutedEdge[] | undefined;
   /** Nodes that are part of cycles (SCC size > 1) */
-  cycleNodes?: Set<string>;
+  cycleNodes?: Set<string> | undefined;
   /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */
-  nodeSccId?: Map<string, number>;
+  nodeSccId?: Map<string, number> | undefined;
   /** Size of each SCC (size > 1 indicates a cycle) */
-  sccSizes?: Map<number, number>;
+  sccSizes?: Map<number, number> | undefined;
 }
 
 /**

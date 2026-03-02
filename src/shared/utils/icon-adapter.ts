@@ -83,7 +83,7 @@ export type IconName = keyof typeof icons;
  * @returns SVGTemplateResult
  */
 export function getIcon(name: IconName): SVGTemplateResult {
-  return icons[name];
+  return icons[name] as SVGTemplateResult;
 }
 
 /**

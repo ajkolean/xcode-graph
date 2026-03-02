@@ -126,6 +126,31 @@ describe('xcode-graph-node-header', () => {
     expect(tagsContainer).toBeNull();
   });
 
+  it('should use node type color as cluster color when no project', async () => {
+    const el = await fixture<GraphNodeHeader>(html`
+      <xcode-graph-node-header
+        .node=${makeNode({ project: undefined, type: NodeType.Framework })}
+        zoom="1"
+      ></xcode-graph-node-header>
+    `);
+
+    // Should render without cluster badge since no project
+    const panelHeader = el.shadowRoot?.querySelector('xcode-graph-panel-header');
+    expect(panelHeader).toBeDefined();
+  });
+
+  it('should render package type with package color', async () => {
+    const el = await fixture<GraphNodeHeader>(html`
+      <xcode-graph-node-header
+        .node=${makeNode({ type: NodeType.Package, name: 'MyPackage', project: undefined })}
+        zoom="1"
+      ></xcode-graph-node-header>
+    `);
+
+    const panelHeader = el.shadowRoot?.querySelector('xcode-graph-panel-header');
+    expect(panelHeader).toBeDefined();
+  });
+
   // ========================================
   // Event Tests
   // ========================================

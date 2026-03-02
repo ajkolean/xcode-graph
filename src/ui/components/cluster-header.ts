@@ -188,7 +188,7 @@ export class GraphClusterHeader extends LitElement {
 
   override render(): TemplateResult {
     const isPackage = this.clusterType === 'package';
-    const clusterIcon = isPackage ? icons.Package : icons.Folder;
+    const clusterIcon = isPackage ? icons['Package'] : icons['Folder'];
     const color = this.clusterColor || '#8B5CF6';
     const sourceType = this.getSourceType();
     const sourceConfig = SOURCE_TYPE_CONFIG[sourceType];

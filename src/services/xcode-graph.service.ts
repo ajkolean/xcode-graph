@@ -160,7 +160,6 @@ function getBaseString(base: Record<string, unknown>, key: string): string | und
 
 /** Parse compilation conditions from build settings */
 function parseCompilationConditions(base: Record<string, unknown>): string[] | undefined {
-  // biome-ignore lint/complexity/useLiteralKeys: TS noPropertyAccessFromIndexSignature requires bracket notation
   const conditions = base['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] as string[] | string | undefined;
   if (!conditions) return undefined;
   if (Array.isArray(conditions)) return conditions.map(String);

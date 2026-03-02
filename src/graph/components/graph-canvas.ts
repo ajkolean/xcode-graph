@@ -140,7 +140,8 @@ export class GraphCanvas extends LitElement {
     animationTicks: 30,
   });
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: Lit ResizeController lifecycle manages this
+  // @ts-expect-error TS6133 — side-effect lifecycle controller
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: ResizeController is retained for its side-effect lifecycle
   private readonly _resize = new ResizeController(this, {
     callback: () => this.resizeCanvas(),
   });
@@ -754,6 +755,7 @@ export class GraphCanvas extends LitElement {
 
   private renderFadingNodes() {
     if (this.fadingOutNodes.size === 0) return;
+    if (!this.ctx || !this.theme) return;
 
     const now = performance.now();
     const toRemove: string[] = [];

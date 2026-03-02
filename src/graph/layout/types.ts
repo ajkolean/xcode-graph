@@ -5,7 +5,7 @@ import type * as d3Force2D from 'd3-force'; // skipcq: JS-C1003
 /** D3 simulation node extended with cluster membership */
 export interface SimNode extends d3Force2D.SimulationNodeDatum {
   id: string;
-  clusterId?: string;
+  clusterId?: string | undefined;
   x: number;
   y: number;
   vx: number;
@@ -41,21 +41,21 @@ export interface HierarchicalLayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
   nodePositions: Map<string, NodePosition>;
   clusters: Cluster[];
-  bundledEdges?: Array<Array<{ x: number; y: number }>>;
+  bundledEdges?: Array<Array<{ x: number; y: number }>> | undefined;
   /** Aggregated edges between clusters */
-  clusterEdges?: ClusterEdgeResult[];
+  clusterEdges?: ClusterEdgeResult[] | undefined;
   /** Nodes that are part of cycles (SCC size > 1) */
-  cycleNodes?: Set<string>;
+  cycleNodes?: Set<string> | undefined;
   /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */
-  nodeSccId?: Map<string, number>;
+  nodeSccId?: Map<string, number> | undefined;
   /** Size of each SCC (size > 1 indicates a cycle) */
-  sccSizes?: Map<number, number>;
+  sccSizes?: Map<number, number> | undefined;
   /** Maximum stratum value (for rendering stratum bands) */
-  maxStratum?: number;
+  maxStratum?: number | undefined;
   /** Maximum cluster stratum value */
-  maxClusterStratum?: number;
+  maxClusterStratum?: number | undefined;
   /** Routed cross-cluster edges with port assignments */
-  routedEdges?: RoutedEdge[];
+  routedEdges?: RoutedEdge[] | undefined;
 }
 
 /** Cardinal direction for port placement on cluster boundary */
@@ -97,9 +97,9 @@ export interface ClusterPositionWithPorts extends ClusterPosition {
  */
 export interface LayoutHooks {
   /** Called before layout computation starts */
-  onBeforeLayout?: (nodes: GraphNode[], edges: GraphEdge[]) => void;
+  onBeforeLayout?: ((nodes: GraphNode[], edges: GraphEdge[]) => void) | undefined;
   /** Called after micro-layout (per-cluster interior) completes */
-  onAfterMicroLayout?: (clusters: Cluster[]) => void;
+  onAfterMicroLayout?: ((clusters: Cluster[]) => void) | undefined;
   /** Called when layout computation is fully complete */
-  onLayoutComplete?: (result: HierarchicalLayoutResult) => void;
+  onLayoutComplete?: ((result: HierarchicalLayoutResult) => void) | undefined;
 }

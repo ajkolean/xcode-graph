@@ -60,4 +60,26 @@ describe('xcode-graph-sidebar', () => {
     activeButton = el.shadowRoot?.querySelector('.nav-button.active');
     expect(activeButton?.textContent).to.include('Graph');
   });
+
+  it('should start collapsed when collapsed attribute is set', async () => {
+    const el = await fixture<GraphSidebar>(html`
+      <xcode-graph-sidebar active-tab="graph" collapsed></xcode-graph-sidebar>
+    `);
+
+    expect(el.collapsed).toBe(true);
+  });
+
+  it('should toggle collapsed state on collapse button click', async () => {
+    const el = await fixture<GraphSidebar>(html`
+      <xcode-graph-sidebar active-tab="graph"></xcode-graph-sidebar>
+    `);
+
+    const collapseButton = el.shadowRoot?.querySelector('.collapse-button') as HTMLButtonElement;
+    expect(collapseButton).toBeDefined();
+
+    collapseButton?.click();
+    await el.updateComplete;
+
+    expect(el.collapsed).toBe(true);
+  });
 });

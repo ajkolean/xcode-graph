@@ -3,8 +3,14 @@
  */
 
 import { fixture, html, oneEvent } from '@open-wc/testing';
-import type { GraphNode } from '@shared/schemas/graph.types';
-import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
+import {
+  DependencyKind,
+  type GraphEdge,
+  type GraphNode,
+  NodeType,
+  Origin,
+  Platform,
+} from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
 import type { GraphNodeList } from './node-list';
 import './node-list';
@@ -125,5 +131,91 @@ describe('xcode-graph-node-list', () => {
 
     const row = el.shadowRoot?.querySelector('xcode-graph-list-item-row');
     expect(row?.getAttribute('subtitle')).to.equal('External Library');
+  });
+
+  it('should toggle expanded state when header is clicked', async () => {
+    const el = await fixture<GraphNodeList>(html`
+      <xcode-graph-node-list
+        title="Dependencies"
+        .nodes=${mockNodes}
+      ></xcode-graph-node-list>
+    `);
+
+    // Initially expanded
+    const header = el.shadowRoot?.querySelector('.header') as HTMLButtonElement;
+    expect(header?.getAttribute('aria-expanded')).toBe('true');
+
+    // Click to collapse
+    header?.click();
+    await el.updateComplete;
+
+    expect(el.shadowRoot?.querySelector('.header')?.getAttribute('aria-expanded')).toBe('false');
+
+    // Click to expand again
+    (el.shadowRoot?.querySelector('.header') as HTMLButtonElement)?.click();
+    await el.updateComplete;
+
+    expect(el.shadowRoot?.querySelector('.header')?.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('should render kind badges for items with edge kind', async () => {
+    const itemsWithKind = [
+      {
+        node: mockNodes[0],
+        edge: { source: 'node2', target: 'node1', kind: DependencyKind.Target } as GraphEdge,
+      },
+    ];
+
+    const el = await fixture<GraphNodeList>(html`
+      <xcode-graph-node-list
+        title="Dependencies"
+        .items=${itemsWithKind}
+        show-kind
+      ></xcode-graph-node-list>
+    `);
+
+    const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
+    expect(badges?.length).toBeGreaterThan(0);
+  });
+
+  it('should render fallback kind badge for unknown edge kind', async () => {
+    const itemsWithUnknownKind = [
+      {
+        node: mockNodes[0],
+        edge: { source: 'node2', target: 'node1', kind: 'custom-kind' } as unknown as GraphEdge,
+      },
+    ];
+
+    const el = await fixture<GraphNodeList>(html`
+      <xcode-graph-node-list
+        title="Dependencies"
+        .items=${itemsWithUnknownKind}
+        show-kind
+      ></xcode-graph-node-list>
+    `);
+
+    const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
+    expect(badges?.length).toBeGreaterThan(0);
+  });
+
+  it('should use items prop over legacy nodes prop', async () => {
+    const items = [
+      {
+        node: mockNodes[0],
+        edge: { source: '', target: 'node1' } as GraphEdge,
+      },
+    ];
+
+    const el = await fixture<GraphNodeList>(html`
+      <xcode-graph-node-list
+        title="Test"
+        .items=${items}
+        .nodes=${mockNodes}
+      ></xcode-graph-node-list>
+    `);
+
+    // Only 1 item from items prop, not 2 from nodes
+    const rows = el.shadowRoot?.querySelectorAll('xcode-graph-list-item-row');
+    expect(rows?.length).toBe(1);
   });
 });

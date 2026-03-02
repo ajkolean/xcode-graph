@@ -14,15 +14,15 @@ export interface NodePosition {
   y: number;
   vx: number;
   vy: number;
-  z?: number;
-  vz?: number;
+  z?: number | undefined;
+  vz?: number | undefined;
   clusterId: string;
   radius: number;
-  targetRadius?: number;
-  targetAngle?: number;
-  isAnchor?: boolean;
-  isTest?: boolean;
-  testSubject?: string;
+  targetRadius?: number | undefined;
+  targetAngle?: number | undefined;
+  isAnchor?: boolean | undefined;
+  isTest?: boolean | undefined;
+  testSubject?: string | undefined;
 }
 
 /** Cluster position during simulation */
@@ -32,10 +32,10 @@ export interface ClusterPosition {
   y: number;
   vx: number;
   vy: number;
-  z?: number;
-  vz?: number;
+  z?: number | undefined;
+  vz?: number | undefined;
   width: number;
   height: number;
-  depth?: number;
+  depth?: number | undefined;
   nodeCount: number;
 }

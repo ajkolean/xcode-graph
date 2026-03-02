@@ -80,11 +80,11 @@ export enum SourceType {
 
 /** Deployment target versions per platform */
 export interface DeploymentTargets {
-  iOS?: string;
-  macOS?: string;
-  tvOS?: string;
-  watchOS?: string;
-  visionOS?: string;
+  iOS?: string | undefined;
+  macOS?: string | undefined;
+  tvOS?: string | undefined;
+  watchOS?: string | undefined;
+  visionOS?: string | undefined;
 }
 
 /** Target destination enum */
@@ -102,15 +102,15 @@ export type Destination =
 /** Curated build settings extracted from target */
 export interface BuildSettings {
   /** Swift language version */
-  swiftVersion?: string;
+  swiftVersion?: string | undefined;
   /** Active compilation conditions (DEBUG, RELEASE, etc.) */
-  compilationConditions?: string[];
+  compilationConditions?: string[] | undefined;
   /** Code signing identity */
-  codeSignIdentity?: string;
+  codeSignIdentity?: string | undefined;
   /** Development team ID */
-  developmentTeam?: string;
+  developmentTeam?: string | undefined;
   /** Provisioning profile specifier */
-  provisioningProfile?: string;
+  provisioningProfile?: string | undefined;
 }
 
 /** Foreign build info (non-Xcode build systems like KMP/Gradle, Bazel, CMake) */
@@ -144,35 +144,35 @@ export interface GraphNode {
   /** Whether local or external */
   origin: Origin;
   /** Parent project/package name */
-  project?: string;
+  project?: string | undefined;
   /** Number of targets in this node */
-  targetCount?: number;
+  targetCount?: number | undefined;
   /** Bundle identifier for the target */
-  bundleId?: string;
+  bundleId?: string | undefined;
   /** Product name for the target */
-  productName?: string;
+  productName?: string | undefined;
   /** Deployment target versions per platform */
-  deploymentTargets?: DeploymentTargets;
+  deploymentTargets?: DeploymentTargets | undefined;
   /** Supported destinations (devices) */
-  destinations?: Destination[];
+  destinations?: Destination[] | undefined;
   /** Source file paths */
-  sourcePaths?: string[];
+  sourcePaths?: string[] | undefined;
   /** Metadata tags */
-  tags?: string[];
+  tags?: string[] | undefined;
   /** Path to the target/project */
-  path?: string;
+  path?: string | undefined;
   /** Whether this is a remote/external target type */
-  isRemote?: boolean;
+  isRemote?: boolean | undefined;
   /** Curated build settings (from Release config) */
-  buildSettings?: BuildSettings;
+  buildSettings?: BuildSettings | undefined;
   /** Total source file count */
-  sourceCount?: number;
+  sourceCount?: number | undefined;
   /** Total resource file count */
-  resourceCount?: number;
+  resourceCount?: number | undefined;
   /** Notable resources (privacy manifests, storyboards, etc.) */
-  notableResources?: string[];
+  notableResources?: string[] | undefined;
   /** Foreign build info (non-Xcode build systems) */
-  foreignBuild?: ForeignBuildInfo;
+  foreignBuild?: ForeignBuildInfo | undefined;
 }
 
 /** Graph edge structure */
@@ -182,9 +182,9 @@ export interface GraphEdge {
   /** ID of the target node (dependency) */
   target: string;
   /** Type of dependency (target, project, sdk, xcframework) */
-  kind?: DependencyKind;
+  kind?: DependencyKind | undefined;
   /** Platform conditions for this edge (e.g., ["iOS", "macOS"]) */
-  platformConditions?: Platform[];
+  platformConditions?: Platform[] | undefined;
 }
 
 /** Complete graph data structure */
