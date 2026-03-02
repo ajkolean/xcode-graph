@@ -444,7 +444,7 @@ describe('ErrorService', () => {
 
     it('should fallback to String() when JSON.stringify fails on circular object', () => {
       const circular: Record<string, unknown> = { name: 'circular' };
-      circular.self = circular;
+      circular['self'] = circular;
       const appError = service.handleError(circular, { logToConsole: false });
 
       expect(appError.details).toBe('[object Object]');

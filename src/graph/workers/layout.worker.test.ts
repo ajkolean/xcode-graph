@@ -1,5 +1,6 @@
 import type { HierarchicalLayoutResult } from '@graph/layout/types';
 import type { Cluster, NodePosition } from '@shared/schemas';
+import { NodeRole } from '@shared/schemas/cluster.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -74,7 +75,7 @@ describe('layout.worker', () => {
               'n1',
               {
                 nodeId: 'n1',
-                role: 'entry',
+                role: NodeRole.Entry,
                 layer: 0,
                 isAnchor: true,
                 hasExternalDependents: false,
@@ -118,7 +119,7 @@ describe('layout.worker', () => {
                 'n1',
                 {
                   nodeId: 'n1',
-                  role: 'entry',
+                  role: NodeRole.Entry,
                   layer: 0,
                   isAnchor: true,
                   hasExternalDependents: false,
@@ -146,7 +147,7 @@ describe('layout.worker', () => {
 
       expect(expose).toHaveBeenCalled();
       expect(captured.workerApi).not.toBeNull();
-      expect(typeof captured.workerApi?.computeLayout).toBe('function');
+      expect(typeof captured.workerApi?.['computeLayout']).toBe('function');
     });
 
     it('deserializes clusters, computes layout, and serializes result', async () => {
@@ -175,7 +176,7 @@ describe('layout.worker', () => {
         },
       ];
 
-      const computeLayout = captured.workerApi?.computeLayout as (
+      const computeLayout = captured.workerApi?.['computeLayout'] as (
         nodes: unknown,
         edges: unknown,
         clusters: unknown,

@@ -4,7 +4,7 @@
  * and error handling during disconnect.
  */
 
-import { sidebarMachine } from '@shared/machines/sidebar.machine';
+import { type SidebarMachineSchema, sidebarMachine } from '@shared/machines/sidebar.machine';
 import { MachineStatus } from '@zag-js/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MockHost } from '@/test-utils';
@@ -12,15 +12,13 @@ import { createMachineController, ZagController } from './zag.controller';
 
 describe('ZagController', () => {
   let host: MockHost;
-  let controller: ZagController<
-    typeof sidebarMachine extends infer M ? (M extends { __schema: infer S } ? S : never) : never
-  >;
+  let controller: ZagController<SidebarMachineSchema>;
 
   beforeEach(() => {
     host = new MockHost();
     controller = createMachineController(host, sidebarMachine, {
       id: 'test-sidebar',
-    }) as typeof controller;
+    });
   });
 
   afterEach(() => {
