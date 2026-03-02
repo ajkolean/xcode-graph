@@ -451,7 +451,7 @@ function computeWaypoints(
     // Vertical exit and entry - route via horizontal midline
     waypoints.push({ x: sourcePort.x, y: midY });
     waypoints.push({ x: targetPort.x, y: midY });
-    /* v8 ignore next 8 -- source/target ports always share orientation axis via getOppositeSide */
+    /* v8 ignore start -- source/target ports always share orientation axis via getOppositeSide */
   } else {
     // Mixed orientation - single bend point
     if (sourcePort.side === 'EAST' || sourcePort.side === 'WEST') {
@@ -462,6 +462,7 @@ function computeWaypoints(
       waypoints.push({ x: sourcePort.x, y: targetPort.y });
     }
   }
+  /* v8 ignore stop */
 
   return waypoints;
 }

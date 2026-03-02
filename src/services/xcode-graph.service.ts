@@ -539,13 +539,14 @@ function ensureDependencyNode(
   if (nodes.has(key)) return key;
 
   const lookupData = lookup.get(key);
-  /* v8 ignore next 3 -- defensive: extractProjectTargets populates both maps together */
+  /* v8 ignore start -- defensive: extractProjectTargets populates both maps together */
   if (lookupData) {
     const { target, projectName, projectPath, origin } = lookupData;
     nodes.set(key, createNodeFromTarget(key, target, projectName, projectPath, origin, collector));
   } else {
     nodes.set(key, createNodeFromDependency(dep, fallbackProject));
   }
+  /* v8 ignore stop */
 
   return key;
 }
