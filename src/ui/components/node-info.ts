@@ -45,6 +45,7 @@ export class GraphNodeInfo extends LitElement {
     this.scriptExpanded = false;
   }
 
+  /** Syncs expanded state from property on connect */
   override connectedCallback(): void {
     super.connectedCallback();
     this.isExpanded = this.expanded;
@@ -187,6 +188,7 @@ export class GraphNodeInfo extends LitElement {
     }
   `;
 
+  /** Toggles the section expanded/collapsed state */
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }

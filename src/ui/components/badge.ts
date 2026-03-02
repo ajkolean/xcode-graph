@@ -182,6 +182,7 @@ export class GraphBadge extends LitElement {
     }
   `;
 
+  /** Renders the component template */
   override render(): TemplateResult {
     const color = this.color || '#8B5CF6';
 

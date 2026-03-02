@@ -128,12 +128,10 @@ export class GraphLayoutController implements ReactiveController {
   }
 
   hostConnected(): void {
-    // skipcq: JS-0105
     // Sub-controllers handle their own lifecycle
   }
 
   hostDisconnected(): void {
-    // skipcq: JS-0105
     // ELK runs via Promise; no persistent handles to clean up.
   }
 }

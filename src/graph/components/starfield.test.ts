@@ -23,13 +23,12 @@ beforeAll(() => {
         this.height = height;
       }
       getContext() {
-        // skipcq: JS-0105
         // Minimal 2d context mock for renderToCache
         return {
-          clearRect: () => {}, // skipcq: JS-0321
-          beginPath: () => {}, // skipcq: JS-0321
-          arc: () => {}, // skipcq: JS-0321
-          fill: () => {}, // skipcq: JS-0321
+          clearRect: () => {},
+          beginPath: () => {},
+          arc: () => {},
+          fill: () => {},
           globalAlpha: 1,
           fillStyle: '',
         };
@@ -45,7 +44,7 @@ function createSpiedCtx() {
   canvas.width = 800;
   canvas.height = 600;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-  const drawImageSpy = vi.spyOn(ctx, 'drawImage').mockImplementation(() => {}); // skipcq: JS-0321
+  const drawImageSpy = vi.spyOn(ctx, 'drawImage').mockImplementation(() => {});
   return { ctx, drawImageSpy };
 }
 

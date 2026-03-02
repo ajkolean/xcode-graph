@@ -72,6 +72,7 @@ export class GraphNodeHeader extends LitElement {
     }
   `;
 
+  /** Handles back navigation to parent cluster or dispatches close event */
   private handleBack() {
     if (this.showClusterLink) {
       const clusterId = this.node.type === NodeType.Package ? this.node.name : this.node.project;
@@ -95,6 +96,7 @@ export class GraphNodeHeader extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     if (!this.node) return html``;
 
@@ -116,6 +118,7 @@ export class GraphNodeHeader extends LitElement {
     const clusterDisplayColor = adjustColorForZoom(clusterColor, this.zoom);
 
     const showClusterBadge = this.node.project || this.node.type === NodeType.Package;
+    /** Returns the subtitle based on node type (package name or project) */
     const getSubtitle = (): string | undefined => {
       if (!showClusterBadge) return undefined;
       if (this.node.type === NodeType.Package) return this.node.name;

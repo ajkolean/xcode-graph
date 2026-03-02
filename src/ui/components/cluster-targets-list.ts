@@ -206,7 +206,6 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
   }
 
   private formatNodeStatsSubtitle(stats: {
-    // skipcq: JS-0105
     dependencies: number;
     dependents: number;
   }): string | undefined {

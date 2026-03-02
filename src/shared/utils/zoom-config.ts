@@ -67,6 +67,6 @@ export const CLUSTER_LABEL_CONFIG = {
  * @returns Normalized value between 0 and 1
  */
 export function normalizeZoom(zoom: number): number {
-  const t = (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM); // skipcq: JS-C1002
+  const t = (zoom - ZOOM_CONFIG.MIN_ZOOM) / (ZOOM_CONFIG.MAX_ZOOM - ZOOM_CONFIG.MIN_ZOOM);
   return Math.max(0, Math.min(1, t));
 }

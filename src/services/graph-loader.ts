@@ -268,7 +268,6 @@ export class GraphLoader {
   }
 
   private delay(ms: number): Promise<void> {
-    // skipcq: JS-0105
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

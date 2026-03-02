@@ -81,11 +81,13 @@ export class GraphFileUpload extends LitElement {
     }
   `;
 
+  /** Opens the hidden file input dialog */
   private handleClick() {
     const input = this.shadowRoot?.querySelector<HTMLInputElement>('input[type="file"]');
     input?.click();
   }
 
+  /** Handles keyboard activation (Enter/Space) to open file dialog */
   private handleKeyDown(e: KeyboardEvent) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -93,6 +95,7 @@ export class GraphFileUpload extends LitElement {
     }
   }
 
+  /** Handles file input change and reads the selected file */
   private handleFileChange(e: Event) {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -102,15 +105,18 @@ export class GraphFileUpload extends LitElement {
     input.value = '';
   }
 
+  /** Handles dragover to enable drop and show visual feedback */
   private handleDragOver(e: DragEvent) {
     e.preventDefault();
     this.isDragOver = true;
   }
 
+  /** Handles dragleave to reset visual feedback */
   private handleDragLeave() {
     this.isDragOver = false;
   }
 
+  /** Handles file drop and reads the dropped file */
   private handleDrop(e: DragEvent) {
     e.preventDefault();
     this.isDragOver = false;
@@ -120,6 +126,7 @@ export class GraphFileUpload extends LitElement {
     }
   }
 
+  /** Reads a file as text, parses JSON, and dispatches graph-file-loaded event */
   private readFile(file: File) {
     const reader = new FileReader();
 
@@ -151,6 +158,7 @@ export class GraphFileUpload extends LitElement {
     reader.readAsText(file);
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     return html`
       <div

@@ -83,7 +83,6 @@ export class FocusTrapController implements ReactiveController {
   }
 
   hostConnected(): void {
-    // skipcq: JS-0105
     // Trap is lazily created on first activation in hostUpdated
   }
 

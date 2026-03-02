@@ -46,6 +46,7 @@ export class GraphBuildSettings extends LitElement {
     this.isExpanded = false;
   }
 
+  /** Syncs the expanded state from the attribute on connect */
   override connectedCallback(): void {
     super.connectedCallback();
     this.isExpanded = this.expanded;
@@ -160,6 +161,7 @@ export class GraphBuildSettings extends LitElement {
     }
   `;
 
+  /** Toggles the expanded/collapsed state */
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }

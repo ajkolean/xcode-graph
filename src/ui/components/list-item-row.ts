@@ -180,6 +180,7 @@ export class GraphListItemRow extends LitElement {
     }
   `;
 
+  /** Handles row click and dispatches row-select event */
   private handleClick() {
     this.dispatchEvent(
       new CustomEvent('row-select', {
@@ -190,6 +191,7 @@ export class GraphListItemRow extends LitElement {
     );
   }
 
+  /** Handles mouse enter and dispatches row-hover event */
   private handleMouseEnter() {
     this.isHovered = true;
     this.dispatchEvent(
@@ -201,6 +203,7 @@ export class GraphListItemRow extends LitElement {
     );
   }
 
+  /** Handles mouse leave and dispatches row-hover-end event */
   private handleMouseLeave() {
     this.isHovered = false;
     this.dispatchEvent(
@@ -211,6 +214,7 @@ export class GraphListItemRow extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     if (!this.node) return html``;
 

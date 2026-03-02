@@ -92,6 +92,7 @@ export class GraphMetricsSection extends LitElement {
     this.isExpanded = true;
   }
 
+  /** Syncs expanded state from property on connect */
   override connectedCallback(): void {
     super.connectedCallback();
     this.isExpanded = this.expanded;
@@ -163,10 +164,12 @@ export class GraphMetricsSection extends LitElement {
     }
   `;
 
+  /** Toggles the section expanded/collapsed state */
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
 
+  /** Dispatches a toggle event for the specified metric card */
   private handleCardToggle(card: string) {
     this.dispatchEvent(
       new CustomEvent(card, {
@@ -176,6 +179,7 @@ export class GraphMetricsSection extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     return html`
       <button class="header" aria-expanded=${this.isExpanded} @click=${this.toggleExpanded}>

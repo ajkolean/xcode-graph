@@ -86,7 +86,6 @@ export class KeyboardShortcutController implements ReactiveController {
    * Also checks within shadow roots for active input elements.
    */
   private isInputFocused(): boolean {
-    // skipcq: JS-0105
     const active = document.activeElement;
     if (!active) return false;
     const tag = active.tagName.toLowerCase();

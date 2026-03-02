@@ -202,12 +202,10 @@ export class GraphControls extends LitElement {
   }
 
   private handleWheel(e: WheelEvent) {
-    // skipcq: JS-0105
     e.stopPropagation();
   }
 
   private handleMouseDown(e: MouseEvent) {
-    // skipcq: JS-0105
     e.stopPropagation();
   }
 

@@ -22,7 +22,7 @@ export function prefersDarkMode(): boolean {
  */
 export function onColorSchemeChange(callback: (isDark: boolean) => void): () => void {
   const mql = globalThis.matchMedia?.('(prefers-color-scheme: dark)');
-  if (!mql) return () => {}; // skipcq: JS-0321
+  if (!mql) return () => {};
   const handler = (e: MediaQueryListEvent) => callback(e.matches);
   mql.addEventListener('change', handler);
   return () => mql.removeEventListener('change', handler);

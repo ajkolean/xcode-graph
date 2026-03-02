@@ -327,7 +327,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private get isViewingDetails(): boolean {
-    // skipcq: JS-0105
     return Boolean(selectedNode.get()) || Boolean(selectedCluster.get());
   }
 
@@ -352,7 +351,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handleSearchChange(query: string) {
-    // skipcq: JS-0105
     setSearchQuery(query);
   }
 
@@ -365,7 +363,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
   /** Toggles a single filter item on or off within its filter category */
   private handleItemToggle(
-    // skipcq: JS-0105
     type: 'nodeType' | 'platform' | 'project' | 'package',
     key: string,
     checked: boolean,
@@ -390,7 +387,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handlePreviewChange(preview: PreviewFilter) {
-    // skipcq: JS-0105
     setPreviewFilter(preview);
   }
 
@@ -640,7 +636,6 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private handleBackToFilters() {
-    // skipcq: JS-0105
     selectNode(null);
     selectCluster(null);
   }
@@ -715,7 +710,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   override render(): TemplateResult {
     const isCollapsed = this.isCollapsed;
     // Reference focusTrap to ensure controller is not tree-shaken
-    void this.focusTrap.active; // skipcq: JS-0098
+    void this.focusTrap.active;
     const expandedSections = this.sidebar.get('expandedSections');
     const filterData = this._filterData;
     const currentFilters = filters.get();

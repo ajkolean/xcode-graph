@@ -168,7 +168,6 @@ export class LayoutController implements ReactiveController {
   }
 
   hostConnected(): void {
-    // skipcq: JS-0105
     // Required by ReactiveControllerHost interface - no initialization needed
   }
 

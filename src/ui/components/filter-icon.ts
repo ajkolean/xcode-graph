@@ -42,6 +42,7 @@ export class GraphFilterIcon extends LitElement {
     }
   `;
 
+  /** Renders the product types grid icon */
   private renderProductTypes() {
     return svg`
       <svg
@@ -62,6 +63,7 @@ export class GraphFilterIcon extends LitElement {
     `;
   }
 
+  /** Renders the platforms grid icon */
   private renderPlatforms() {
     return svg`
       <svg
@@ -87,6 +89,7 @@ export class GraphFilterIcon extends LitElement {
     `;
   }
 
+  /** Renders the projects folder icon */
   private renderProjects() {
     return svg`
       <svg
@@ -104,6 +107,7 @@ export class GraphFilterIcon extends LitElement {
     `;
   }
 
+  /** Renders the packages box icon */
   private renderPackages() {
     return svg`
       <svg
@@ -124,6 +128,7 @@ export class GraphFilterIcon extends LitElement {
     `;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     switch (this.name) {
       case 'product-types':

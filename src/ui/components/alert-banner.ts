@@ -216,6 +216,7 @@ export class GraphAlertBanner extends LitElement {
     }
   `;
 
+  /** Handles the dismiss event and hides the banner */
   private handleDismiss() {
     this.isDismissed = true;
     this.dispatchEvent(
@@ -226,6 +227,7 @@ export class GraphAlertBanner extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult | typeof nothing {
     if (this.isDismissed) {
       return nothing;

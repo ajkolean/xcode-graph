@@ -12,7 +12,7 @@ import { applyNodeMassage } from '@graph/layout/phases/node-massage';
 import type { Cluster, NodePosition } from '@shared/schemas';
 import type { ClusterNodeMetadata } from '@shared/schemas/cluster.types';
 import type { GraphNode } from '@shared/schemas/graph.types';
-import * as Comlink from 'comlink'; // skipcq: JS-C1003
+import * as Comlink from 'comlink';
 
 /** Serialized cluster for worker transfer (Maps → Arrays) */
 export interface SerializedMicroCluster {

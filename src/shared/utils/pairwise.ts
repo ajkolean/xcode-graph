@@ -15,12 +15,10 @@
  */
 export function* pairwise<T>(items: T[]): Generator<readonly [T, T], void, unknown> {
   for (let i = 0; i < items.length; i++) {
-    // skipcq: JS-C1002
-    const a = items[i]; // skipcq: JS-C1002
+    const a = items[i];
     if (a === undefined) continue;
     for (let j = i + 1; j < items.length; j++) {
-      // skipcq: JS-C1002
-      const b = items[j]; // skipcq: JS-C1002
+      const b = items[j];
       if (b === undefined) continue;
       yield [a, b] as const;
     }

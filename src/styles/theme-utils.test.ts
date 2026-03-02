@@ -150,7 +150,7 @@ describe('theme-utils', () => {
     });
 
     it('should return a cleanup function', () => {
-      const cleanup = onColorSchemeChange(() => {}); // skipcq: JS-0321
+      const cleanup = onColorSchemeChange(() => {});
       expect(typeof cleanup).to.equal('function');
       cleanup();
     });

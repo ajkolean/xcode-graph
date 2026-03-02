@@ -275,7 +275,9 @@ describe('xcode-graph-cluster-header', () => {
     });
 
     it('should copy path to clipboard', async () => {
-      const writeTextMock = vi.fn().mockResolvedValue();
+      const writeTextMock = vi
+        .fn<(text: string) => Promise<void>>()
+        .mockImplementation(() => Promise.resolve());
       Object.assign(navigator, { clipboard: { writeText: writeTextMock } });
 
       const el = await fixture<GraphClusterHeader>(html`
@@ -296,7 +298,9 @@ describe('xcode-graph-cluster-header', () => {
     });
 
     it('should show copied state temporarily', async () => {
-      const writeTextMock = vi.fn().mockResolvedValue();
+      const writeTextMock = vi
+        .fn<(text: string) => Promise<void>>()
+        .mockImplementation(() => Promise.resolve());
       Object.assign(navigator, { clipboard: { writeText: writeTextMock } });
 
       const el = await fixture<GraphClusterHeader>(html`
@@ -354,7 +358,9 @@ describe('xcode-graph-cluster-header', () => {
     });
 
     it('should be a no-op when clusterPath is empty', async () => {
-      const writeTextMock = vi.fn().mockResolvedValue();
+      const writeTextMock = vi
+        .fn<(text: string) => Promise<void>>()
+        .mockImplementation(() => Promise.resolve());
       Object.assign(navigator, { clipboard: { writeText: writeTextMock } });
 
       const el = await fixture<GraphClusterHeader>(html`

@@ -43,6 +43,7 @@ export interface TransformResult {
 class WarningCollector {
   readonly warnings: string[] = [];
 
+  /** Adds a warning message to the collector */
   warn(message: string): void {
     this.warnings.push(message);
   }
@@ -258,12 +259,14 @@ const NOTABLE_RESOURCE_PATTERNS = [
   'LaunchScreen',
 ];
 
+/** Extracts the file path from a resource file element */
 function getResourceFilePath(res: ResourceFileElement): string {
   if ('file' in res) return res.file.path;
   if ('folderReference' in res) return res.folderReference.path;
   return '';
 }
 
+/** Collects notable resource file patterns (e.g., .xcassets, .storyboard) into the output array */
 function collectNotablePatterns(
   resources: NonNullable<ResourceFileElements['resources']>,
   notableResources: string[],
@@ -315,6 +318,7 @@ function getOriginFromProject(projectPath: string, projectType: ProjectType): Or
   return Origin.Local;
 }
 
+/** Returns a unique string key for a graph dependency based on its type and path */
 function getDependencyKey(dep: GraphDependency): string {
   if ('target' in dep) return `target:${dep.target.path}:${dep.target.name}`;
   if ('packageProduct' in dep)
@@ -328,6 +332,7 @@ function getDependencyKey(dep: GraphDependency): string {
   return `unknown:${JSON.stringify(dep)}`;
 }
 
+/** Extracts a display name from a file path by stripping the given extensions */
 function getNameFromPath(path: string, extensions: string[]): string {
   const filename = path.split('/').pop() ?? 'Unknown';
   let result = filename;
@@ -337,6 +342,7 @@ function getNameFromPath(path: string, extensions: string[]): string {
   return result;
 }
 
+/** Returns a human-readable name for a graph dependency */
 function getDependencyName(dep: GraphDependency): string {
   if ('target' in dep) return dep.target.name;
   if ('packageProduct' in dep) return dep.packageProduct.product;
@@ -349,12 +355,14 @@ function getDependencyName(dep: GraphDependency): string {
   return 'Unknown';
 }
 
+/** Maps a graph dependency to its corresponding NodeType */
 function getNodeTypeForDependency(dep: GraphDependency): NodeType {
   if ('sdk' in dep || 'xcframework' in dep || 'framework' in dep) return NodeType.Framework;
   if ('packageProduct' in dep) return NodeType.Package;
   return NodeType.Library;
 }
 
+/** Determines whether a dependency is local or external */
 function getOriginForDependency(dep: GraphDependency): Origin {
   if ('sdk' in dep || 'xcframework' in dep || 'packageProduct' in dep) return Origin.External;
   if ('target' in dep) {
@@ -364,6 +372,7 @@ function getOriginForDependency(dep: GraphDependency): Origin {
   return Origin.Local;
 }
 
+/** Maps a graph dependency to its DependencyKind classification */
 function getDependencyKind(dep: GraphDependency): DependencyKind {
   if ('target' in dep) return DependencyKind.Target;
   if ('packageProduct' in dep) return DependencyKind.Project;

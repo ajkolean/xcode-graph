@@ -25,7 +25,7 @@ import { hexToHSL, hslToHex, hslToRgb, rgbToHsl } from './color-math';
  * @returns Saturation multiplier (0.3 at min zoom, 1.0 at max zoom)
  */
 function getSaturationMultiplier(zoom: number): number {
-  const t = normalizeZoom(zoom); // skipcq: JS-C1002
+  const t = normalizeZoom(zoom);
   return ZOOM_SATURATION.MIN + (ZOOM_SATURATION.MAX - ZOOM_SATURATION.MIN) * t;
 }
 
@@ -64,10 +64,10 @@ export function adjustColorForZoom(color: string, zoom: number): string {
     const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/);
     if (!match) return color;
 
-    const r = Number(match[1]) / 255; // skipcq: JS-C1002
-    const g = Number(match[2]) / 255; // skipcq: JS-C1002
-    const b = Number(match[3]) / 255; // skipcq: JS-C1002
-    const a = match[4] !== undefined ? Number(match[4]) : 1; // skipcq: JS-C1002
+    const r = Number(match[1]) / 255;
+    const g = Number(match[2]) / 255;
+    const b = Number(match[3]) / 255;
+    const a = match[4] !== undefined ? Number(match[4]) : 1;
 
     const hsl = rgbToHsl(r, g, b);
     const adjS = hsl.s * saturationMultiplier;
@@ -95,7 +95,7 @@ export function adjustColorForZoom(color: string, zoom: number): string {
  * @public
  */
 export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number {
-  const t = normalizeZoom(zoom); // skipcq: JS-C1002
+  const t = normalizeZoom(zoom);
   const opacityMultiplier =
     ZOOM_OPACITY.MIN_MULTIPLIER + (ZOOM_OPACITY.MAX_MULTIPLIER - ZOOM_OPACITY.MIN_MULTIPLIER) * t;
   return baseOpacity * opacityMultiplier;

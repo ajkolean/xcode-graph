@@ -5,7 +5,7 @@
 import 'vitest-canvas-mock';
 import { expect, vi } from 'vitest';
 import 'vitest-axe/extend-expect';
-import * as vitestAxeMatchers from 'vitest-axe/matchers'; // skipcq: JS-C1003
+import * as vitestAxeMatchers from 'vitest-axe/matchers';
 
 expect.extend(vitestAxeMatchers);
 
@@ -13,9 +13,9 @@ expect.extend(vitestAxeMatchers);
 if (typeof globalThis.ResizeObserver === 'undefined') {
   /** No-op ResizeObserver polyfill for jsdom */
   globalThis.ResizeObserver = class ResizeObserver {
-    observe() {} // skipcq: JS-0105, JS-0321
-    unobserve() {} // skipcq: JS-0105, JS-0321
-    disconnect() {} // skipcq: JS-0105, JS-0321
+    observe() {}
+    unobserve() {}
+    disconnect() {}
   } as unknown as typeof globalThis.ResizeObserver;
 }
 

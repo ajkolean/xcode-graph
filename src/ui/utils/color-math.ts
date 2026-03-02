@@ -42,7 +42,6 @@ export interface RGBNormalized {
  * @returns RGB channel value (0–1)
  */
 export function hue2rgb(p: number, q: number, t: number): number {
-  // skipcq: JS-C1002
   let adjustedT = t;
   if (adjustedT < 0) adjustedT += 1;
   if (adjustedT > 1) adjustedT -= 1;
@@ -59,7 +58,6 @@ export function hue2rgb(p: number, q: number, t: number): number {
  * @returns Two-character hex string (e.g., `"ff"`)
  */
 export function toHex(n: number): string {
-  // skipcq: JS-C1002
   const hex = Math.round(n * 255).toString(16);
   return hex.length === 1 ? `0${hex}` : hex;
 }
@@ -73,15 +71,14 @@ export function toHex(n: number): string {
  * @returns HSL color with all channels normalized to 0–1
  */
 export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
-  // skipcq: JS-C1002
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  let h = 0; // skipcq: JS-C1002
-  let s = 0; // skipcq: JS-C1002
-  const l = (max + min) / 2; // skipcq: JS-C1002
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
 
   if (max !== min) {
-    const d = max - min; // skipcq: JS-C1002
+    const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
 
     switch (max) {
@@ -112,13 +109,12 @@ export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
  * @returns RGB color with all channels normalized to 0–1
  */
 export function hslToRgb(h: number, s: number, l: number): RGBNormalized {
-  // skipcq: JS-C1002
   if (s === 0) {
     return { r: l, g: l, b: l };
   }
 
-  const q = l < 0.5 ? l * (1 + s) : l + s - l * s; // skipcq: JS-C1002
-  const p = 2 * l - q; // skipcq: JS-C1002
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
   return {
     r: hue2rgb(p, q, h + 1 / 3),
     g: hue2rgb(p, q, h),
@@ -144,6 +140,5 @@ export function hexToHSL(hex: string): HSLDegrees {
  * @returns Hex color string with #
  */
 export function hslToHex(h: number, s: number, l: number): string {
-  // skipcq: JS-C1002
   return colord({ h, s, l }).toHex();
 }

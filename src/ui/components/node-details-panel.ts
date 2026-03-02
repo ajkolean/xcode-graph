@@ -143,6 +143,7 @@ export class GraphNodeDetailsPanel extends LitElement {
     return computeNodeDependencies(this.node, this.allNodes, this.edges, this.filteredEdges);
   }
 
+  /** Dispatches a composed bubbling custom event with the given name and detail */
   private bubbleEvent(eventName: string, detail?: unknown) {
     this.dispatchEvent(
       new CustomEvent(eventName, {
@@ -155,7 +156,7 @@ export class GraphNodeDetailsPanel extends LitElement {
 
   override render(): TemplateResult {
     // Reference focusTrap to ensure controller is not tree-shaken
-    void this.focusTrap.active; // skipcq: JS-0098
+    void this.focusTrap.active;
     if (!this.node) return html``;
 
     const { dependencies, dependents, metrics } = this.nodeData;
