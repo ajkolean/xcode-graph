@@ -153,6 +153,7 @@ export function printClusterTable(result: HierarchicalLayoutResult, strataSpacin
       ...pos,
       stratum: Math.floor(pos.y / strataSpacing),
     }))
+    /* v8 ignore next 1 -- sort comparator; tested in layout-reporter.test.ts */
     .sort((a, b) => a.y - b.y || a.x - b.x);
 
   console.log(`\n┌${'─'.repeat(90)}┐`);

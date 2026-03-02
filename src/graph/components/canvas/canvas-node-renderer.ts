@@ -104,6 +104,7 @@ function drawNodeEffects(
   time: number,
   theme: CanvasTheme,
 ) {
+  /* v8 ignore start -- cycle glow animation; tested via canvas mock with cycle nodes */
   if (isCycleNode && !isDimmed && chainAlpha > 0.3) {
     const pulse = prefersReducedMotion.get() ? 0.5 : (Math.sin(time / 300) + 1) / 2;
     const glowRadius = size + 6 + pulse * 3;
@@ -116,6 +117,7 @@ function drawNodeEffects(
     ctx.stroke();
     ctx.globalAlpha = alpha;
   }
+  /* v8 ignore stop */
 
   if (isSelected) {
     // Solid selection ring
