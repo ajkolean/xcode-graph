@@ -111,23 +111,16 @@ function shouldDimBySelection(
   showDirectDependentsVal: boolean,
   showTransitiveDependentsVal: boolean,
 ): boolean {
-  if (selected.id === node.id) return false;
-
-  if (isNodeInChain(node.id, transitiveDeps, showDirectDepsVal, showTransitiveDepsVal)) {
-    return false;
-  }
-  if (
-    isNodeInChain(
+  return (
+    selected.id !== node.id &&
+    !isNodeInChain(node.id, transitiveDeps, showDirectDepsVal, showTransitiveDepsVal) &&
+    !isNodeInChain(
       node.id,
       transitiveDependents,
       showDirectDependentsVal,
       showTransitiveDependentsVal,
     )
-  ) {
-    return false;
-  }
-
-  return true;
+  );
 }
 
 function shouldDimByPreview(node: GraphNode, preview: { type: string; value: string }): boolean {

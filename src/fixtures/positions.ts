@@ -12,7 +12,7 @@ export interface TestPosition {
 /**
  * Create node positions in a circle
  */
-export function createCircularPositions(nodeIds: string[], radius: number = 100): TestPosition[] {
+export function createCircularPositions(nodeIds: string[], radius = 100): TestPosition[] {
   return nodeIds.map((id, index) => {
     const angle = (2 * Math.PI * index) / nodeIds.length;
     return {

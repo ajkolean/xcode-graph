@@ -14,12 +14,13 @@
  * ```
  */
 export function* pairwise<T>(items: T[]): Generator<readonly [T, T], void, unknown> {
-  // skipcq: JS-C1002
   for (let i = 0; i < items.length; i++) {
-    const a = items[i];
+    // skipcq: JS-C1002
+    const a = items[i]; // skipcq: JS-C1002
     if (a === undefined) continue;
     for (let j = i + 1; j < items.length; j++) {
-      const b = items[j];
+      // skipcq: JS-C1002
+      const b = items[j]; // skipcq: JS-C1002
       if (b === undefined) continue;
       yield [a, b] as const;
     }

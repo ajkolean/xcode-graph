@@ -76,12 +76,12 @@ export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
   // skipcq: JS-C1002
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  let h = 0;
-  let s = 0;
-  const l = (max + min) / 2;
+  let h = 0; // skipcq: JS-C1002
+  let s = 0; // skipcq: JS-C1002
+  const l = (max + min) / 2; // skipcq: JS-C1002
 
   if (max !== min) {
-    const d = max - min;
+    const d = max - min; // skipcq: JS-C1002
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
 
     switch (max) {
@@ -93,6 +93,8 @@ export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
         break;
       case b:
         h = ((r - g) / d + 4) / 6;
+        break;
+      default:
         break;
     }
   }
@@ -114,8 +116,8 @@ export function hslToRgb(h: number, s: number, l: number): RGBNormalized {
     return { r: l, g: l, b: l };
   }
 
-  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-  const p = 2 * l - q;
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s; // skipcq: JS-C1002
+  const p = 2 * l - q; // skipcq: JS-C1002
   return {
     r: hue2rgb(p, q, h + 1 / 3),
     g: hue2rgb(p, q, h),

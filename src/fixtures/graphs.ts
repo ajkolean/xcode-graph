@@ -11,7 +11,7 @@ import { createNode } from './nodes';
  * Create a simple linear dependency chain: A -> B -> C -> D
  * Supports arbitrary lengths with numeric IDs for chains > 26 nodes
  */
-export function createLinearChain(length: number = 4): { nodes: GraphNode[]; edges: GraphEdge[] } {
+export function createLinearChain(length = 4): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodes: GraphNode[] = [];
   const edges: GraphEdge[] = [];
 
@@ -216,8 +216,8 @@ export function createMultiCycleGraph(): { nodes: GraphNode[]; edges: GraphEdge[
  * @param nodesPerLayer Number of nodes in each layer
  */
 export function createLayeredGraph(
-  layers: number = 4,
-  nodesPerLayer: number = 3,
+  layers = 4,
+  nodesPerLayer = 3,
 ): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodes: GraphNode[] = [];
   const edges: GraphEdge[] = [];
@@ -265,8 +265,8 @@ export function createLayeredGraph(
  * @param nodesPerCluster Number of nodes in each cluster
  */
 export function createMultiClusterGraph(
-  clusterCount: number = 4,
-  nodesPerCluster: number = 5,
+  clusterCount = 4,
+  nodesPerCluster = 5,
 ): { nodes: GraphNode[]; edges: GraphEdge[] } {
   const nodes: GraphNode[] = [];
   const edges: GraphEdge[] = [];

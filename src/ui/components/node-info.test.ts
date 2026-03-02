@@ -123,8 +123,9 @@ describe('xcode-graph-node-info', () => {
     toggle.click();
     await el.updateComplete;
 
-    expect(el.shadowRoot?.querySelector('.script-block')?.classList.contains('expanded')).to.be
-      .true;
+    expect(el.shadowRoot?.querySelector('.script-block')?.classList.contains('expanded')).toBe(
+      true,
+    );
     expect(el.shadowRoot?.querySelector('.expand-toggle')?.textContent).to.contain('Collapse');
   });
 

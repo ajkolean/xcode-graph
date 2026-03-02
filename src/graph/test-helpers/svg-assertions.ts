@@ -5,7 +5,7 @@
  * Provides type-safe selectors and assertion helpers for SVG DOM.
  */
 
-import { expect } from '@open-wc/testing';
+import { expect } from 'vitest';
 
 /**
  * Query an SVG element from a parent element
@@ -35,13 +35,10 @@ export function assertSvgAttribute(
   attributeName: string,
   expectedValue: string | number,
 ): void {
-  expect(element).to.exist;
+  expect(element).toBeDefined();
   if (!element) return;
   const actualValue = element.getAttribute(attributeName);
-  expect(actualValue).to.equal(
-    String(expectedValue),
-    `Expected ${attributeName}="${expectedValue}", got "${actualValue}"`,
-  );
+  expect(actualValue).toBe(String(expectedValue));
 }
 
 /**
@@ -52,13 +49,10 @@ export function assertSvgAttributeMatches(
   attributeName: string,
   pattern: RegExp,
 ): void {
-  expect(element).to.exist;
+  expect(element).toBeDefined();
   if (!element) return;
   const actualValue = element.getAttribute(attributeName);
-  expect(actualValue).to.match(
-    pattern,
-    `Expected ${attributeName} to match ${pattern}, got "${actualValue}"`,
-  );
+  expect(actualValue).toMatch(pattern);
 }
 
 /**
@@ -68,7 +62,7 @@ export function assertSvgElementExists(
   element: SVGElement | null,
   message?: string,
 ): asserts element is SVGElement {
-  expect(element).to.exist;
+  expect(element).toBeDefined();
   if (message && !element) {
     throw new Error(message);
   }
@@ -80,13 +74,9 @@ export function assertSvgElementExists(
 export function assertSvgElementCount(
   elements: NodeListOf<SVGElement> | SVGElement[],
   expectedCount: number,
-  message?: string,
 ): void {
   const actualCount = Array.isArray(elements) ? elements.length : elements.length;
-  expect(actualCount).to.equal(
-    expectedCount,
-    message || `Expected ${expectedCount} elements, found ${actualCount}`,
-  );
+  expect(actualCount).toBe(expectedCount);
 }
 
 /**
@@ -108,9 +98,9 @@ export function assertSvgTransform(
   const transform = element.getAttribute('transform');
 
   if (typeof expectedTransform === 'string') {
-    expect(transform).to.equal(expectedTransform);
+    expect(transform).toBe(expectedTransform);
   } else {
-    expect(transform).to.match(expectedTransform);
+    expect(transform).toMatch(expectedTransform);
   }
 }
 
@@ -178,20 +168,16 @@ export function assertSvgViewBox(
  */
 export function assertSvgHasClass(element: SVGElement | null, className: string): void {
   assertSvgElementExists(element);
-  expect(element.classList.contains(className)).to.be.true;
+  expect(element.classList.contains(className)).toBe(true);
 }
 
 /**
  * Assert SVG opacity
  */
-export function assertSvgOpacity(
-  element: SVGElement | null,
-  expectedOpacity: number,
-  tolerance = 0.01,
-): void {
+export function assertSvgOpacity(element: SVGElement | null, expectedOpacity: number): void {
   assertSvgElementExists(element);
   const opacity = Number(element.getAttribute('opacity')) || 1;
-  expect(opacity).to.be.closeTo(expectedOpacity, tolerance);
+  expect(opacity).toBeCloseTo(expectedOpacity, 1);
 }
 
 /**

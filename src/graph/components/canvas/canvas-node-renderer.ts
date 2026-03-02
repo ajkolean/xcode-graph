@@ -221,10 +221,7 @@ function shouldShowNodeLabel(
   nodeId: string,
   rc: NodeRenderContext,
 ): boolean {
-  if (rc.zoom >= 0.3 || isHovered || isSelected || isConnected) return true;
-  // Always show labels for hub nodes regardless of zoom
-  if (isHubNode(nodeId, rc)) return true;
-  return false;
+  return Boolean(rc.zoom >= 0.3 || isHovered || isSelected || isConnected || isHubNode(nodeId, rc));
 }
 
 interface NodeVisualState {

@@ -41,9 +41,7 @@ function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
     return false;
 
   // Package filter: only applies to package nodes
-  if (node.type === NodeType.Package && !filters.packages.has(node.name)) return false;
-
-  return true;
+  return !(node.type === NodeType.Package && !filters.packages.has(node.name));
 }
 
 /**
