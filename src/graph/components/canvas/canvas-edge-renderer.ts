@@ -59,6 +59,7 @@ export interface EdgeRenderContext {
   showTransitiveDependents: boolean;
 }
 
+/** Resolves source and target world-space coordinates for an edge. */
 function resolveEdgeEndpoints(
   edge: GraphEdge,
   rc: EdgeRenderContext,
@@ -124,6 +125,7 @@ function resolveEdgeEndpoints(
   };
 }
 
+/** Returns true if the edge connects two nodes in the same strongly-connected component. */
 function isCycleEdge(edge: GraphEdge, layout: GraphLayoutController): boolean {
   const sourceScc = layout.nodeSccId?.get(edge.source);
   const targetScc = layout.nodeSccId?.get(edge.target);

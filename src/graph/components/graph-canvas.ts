@@ -230,6 +230,7 @@ export class GraphCanvas extends LitElement {
     }
   `;
 
+  /** Initializes the canvas context, resolves the theme, and starts the render loop. */
   override firstUpdated(): void {
     this.theme = resolveCanvasTheme(this);
     if (this.canvas) {

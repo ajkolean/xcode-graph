@@ -5,7 +5,7 @@ import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@graph/layout/hierarchical-layout', () => ({
-  computeHierarchicalLayout: vi.fn(async () => ({
+  computeHierarchicalLayout: vi.fn(() => ({
     nodePositions: new Map([
       [
         'n1',

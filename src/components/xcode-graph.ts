@@ -89,6 +89,7 @@ export class GraphApp extends SignalWatcherLitElement {
   private filtersInitialized = false;
   private mediaQueryCleanup: (() => void) | null = null;
 
+  /** Recomputes graph services and circular dependency analysis when data changes. */
   private refreshGraphData(nodes: GraphNode[], edges: GraphEdge[]) {
     const fingerprint = `${nodes.length}-${edges.length}-${nodes.map((node) => node.id).join(',')}-${edges.map((edge) => `${edge.source}->${edge.target}`).join(',')}`;
     if (fingerprint === this.dataFingerprint) return;
@@ -134,6 +135,7 @@ export class GraphApp extends SignalWatcherLitElement {
     }
   `;
 
+  /** Initializes color scheme and seeds graph data when the element is added to the DOM. */
   override connectedCallback(): void {
     super.connectedCallback();
     if (!this.colorScheme) {
@@ -143,6 +145,7 @@ export class GraphApp extends SignalWatcherLitElement {
     this.seedData();
   }
 
+  /** Cleans up the media query listener when the element is removed from the DOM. */
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.mediaQueryCleanup?.();
