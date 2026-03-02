@@ -8,7 +8,7 @@ import type { GraphLayoutController } from '@graph/controllers/graph-layout.cont
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   renderClusterTooltip,
   renderNodeTooltip,
@@ -115,9 +115,14 @@ describe('renderNodeTooltip', () => {
       hoveredNode: 'node1',
       zoom: 0.3,
     });
+    const saveSpy = vi.spyOn(tc.ctx, 'save');
+    const restoreSpy = vi.spyOn(tc.ctx, 'restore');
+    const fillTextSpy = vi.spyOn(tc.ctx, 'fillText');
     // Low zoom (< 0.5) should always show tooltip
     renderNodeTooltip(tc);
-    expect(true).toBe(true);
+    expect(saveSpy).toHaveBeenCalled();
+    expect(restoreSpy).toHaveBeenCalled();
+    expect(fillTextSpy).toHaveBeenCalledWith('AppModule', expect.any(Number), expect.any(Number));
   });
 
   it('should render tooltip for long-named node at high zoom', () => {
@@ -133,8 +138,13 @@ describe('renderNodeTooltip', () => {
       layout: createMockLayout(nodePositions, clusterPositions),
       zoom: 0.8,
     });
+    const fillTextSpy = vi.spyOn(tc.ctx, 'fillText');
     renderNodeTooltip(tc);
-    expect(true).toBe(true);
+    expect(fillTextSpy).toHaveBeenCalledWith(
+      'AVeryLongModuleNameThatExceedsTwenty',
+      expect.any(Number),
+      expect.any(Number),
+    );
   });
 
   it('should not render when node has no world position', () => {
@@ -187,8 +197,15 @@ describe('renderClusterTooltip', () => {
       hoveredNode: null,
       layout: createMockLayout(new Map(), clusterPositions, clusters),
     });
+    const saveSpy = vi.spyOn(tc.ctx, 'save');
+    const restoreSpy = vi.spyOn(tc.ctx, 'restore');
+    const fillTextSpy = vi.spyOn(tc.ctx, 'fillText');
     renderClusterTooltip(tc);
-    expect(true).toBe(true);
+    expect(saveSpy).toHaveBeenCalled();
+    expect(restoreSpy).toHaveBeenCalled();
+    // Should render cluster name and subtitle
+    expect(fillTextSpy).toHaveBeenCalledWith('ProjectA', expect.any(Number), expect.any(Number));
+    expect(fillTextSpy).toHaveBeenCalledWith('1 targets', expect.any(Number), expect.any(Number));
   });
 
   it('should not render when cluster has no layout position', () => {

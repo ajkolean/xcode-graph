@@ -130,6 +130,154 @@ describe('xcode-graph-tab', () => {
     const sidebar = el.shadowRoot?.querySelector('xcode-graph-right-sidebar');
     expect(sidebar).toBeDefined();
   });
+
+  it('should handle node-select event from canvas', async () => {
+    const el = await fixture<GraphTab>(html`
+      <xcode-graph-tab
+        .displayNodes=${mockNodes}
+        .displayEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+      ></xcode-graph-tab>
+    `);
+
+    const canvas = el.shadowRoot?.querySelector('xcode-graph-canvas');
+    canvas?.dispatchEvent(
+      new CustomEvent('node-select', {
+        detail: { node: mockNodes[0] },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    expect(selectedNode.get()).toBe(mockNodes[0]);
+  });
+
+  it('should handle cluster-select event from canvas', async () => {
+    const el = await fixture<GraphTab>(html`
+      <xcode-graph-tab
+        .displayNodes=${mockNodes}
+        .displayEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+      ></xcode-graph-tab>
+    `);
+
+    const canvas = el.shadowRoot?.querySelector('xcode-graph-canvas');
+    canvas?.dispatchEvent(
+      new CustomEvent('cluster-select', {
+        detail: { clusterId: 'MyApp' },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    expect(selectedCluster.get()).toBe('MyApp');
+  });
+
+  it('should handle node-hover event from canvas', async () => {
+    const el = await fixture<GraphTab>(html`
+      <xcode-graph-tab
+        .displayNodes=${mockNodes}
+        .displayEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+      ></xcode-graph-tab>
+    `);
+
+    const canvas = el.shadowRoot?.querySelector('xcode-graph-canvas');
+    canvas?.dispatchEvent(
+      new CustomEvent('node-hover', {
+        detail: { nodeId: 'node1' },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    expect(el).toBeDefined();
+  });
+
+  it('should handle zoom events from controls', async () => {
+    const el = await fixture<GraphTab>(html`
+      <xcode-graph-tab
+        .displayNodes=${mockNodes}
+        .displayEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+      ></xcode-graph-tab>
+    `);
+
+    const controls = el.shadowRoot?.querySelector('xcode-graph-controls');
+
+    const initialZoom = zoom.get();
+    controls?.dispatchEvent(
+      new CustomEvent('zoom-in', { bubbles: true, composed: true }),
+    );
+    expect(zoom.get()).toBeGreaterThan(initialZoom);
+
+    const afterZoomIn = zoom.get();
+    controls?.dispatchEvent(
+      new CustomEvent('zoom-out', { bubbles: true, composed: true }),
+    );
+    expect(zoom.get()).toBeLessThan(afterZoomIn);
+
+    controls?.dispatchEvent(
+      new CustomEvent('zoom-step', {
+        detail: 0.75,
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    expect(zoom.get()).toBe(0.75);
+  });
+
+  it('should handle toggle-animation event', async () => {
+    const el = await fixture<GraphTab>(html`
+      <xcode-graph-tab
+        .displayNodes=${mockNodes}
+        .displayEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+      ></xcode-graph-tab>
+    `);
+
+    const initial = enableAnimation.get();
+    const controls = el.shadowRoot?.querySelector('xcode-graph-controls');
+    controls?.dispatchEvent(
+      new CustomEvent('toggle-animation', { bubbles: true, composed: true }),
+    );
+    expect(enableAnimation.get()).toBe(!initial);
+  });
+
+  it('should handle zoom-change event from canvas', async () => {
+    const el = await fixture<GraphTab>(html`
+      <xcode-graph-tab
+        .displayNodes=${mockNodes}
+        .displayEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+      ></xcode-graph-tab>
+    `);
+
+    const canvas = el.shadowRoot?.querySelector('xcode-graph-canvas');
+    canvas?.dispatchEvent(
+      new CustomEvent('zoom-change', {
+        detail: 0.5,
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    expect(zoom.get()).toBe(0.5);
+  });
 });
 
 /**

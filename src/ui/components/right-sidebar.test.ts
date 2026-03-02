@@ -668,4 +668,215 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
 
     expect(selectedCluster.get()).toBeNull();
   });
+
+  it('should handle toggle-collapse event by collapsing and rendering collapsed sidebar', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    expect(el.hasAttribute('collapsed')).toBe(false);
+
+    // Dispatch toggle-collapse from header to collapse the sidebar
+    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
+    header?.dispatchEvent(
+      new CustomEvent('toggle-collapse', { bubbles: true, composed: true }),
+    );
+    await el.updateComplete;
+
+    expect(el.hasAttribute('collapsed')).toBe(true);
+
+    // Collapsed sidebar should render the collapsed component
+    const collapsedSidebar = el.shadowRoot?.querySelector('xcode-graph-collapsed-sidebar');
+    expect(collapsedSidebar).toBeDefined();
+    expect(collapsedSidebar).not.toBeNull();
+  });
+
+  it('should handle expand-to-section from collapsed sidebar', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    // First collapse the sidebar
+    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
+    header?.dispatchEvent(
+      new CustomEvent('toggle-collapse', { bubbles: true, composed: true }),
+    );
+    await el.updateComplete;
+
+    expect(el.hasAttribute('collapsed')).toBe(true);
+
+    // Dispatch expand-to-section from collapsed sidebar
+    const collapsedSidebar = el.shadowRoot?.querySelector('xcode-graph-collapsed-sidebar');
+    collapsedSidebar?.dispatchEvent(
+      new CustomEvent('expand-to-section', {
+        detail: { section: 'productTypes' },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    await el.updateComplete;
+
+    // After expand-to-section, sidebar should be expanded again
+    expect(el.hasAttribute('collapsed')).toBe(false);
+  });
+
+  it('should render package filter section when packages exist', async () => {
+    setFilters({
+      nodeTypes: new Set([NodeType.Framework, NodeType.Library, NodeType.Package]),
+      platforms: new Set([Platform.iOS, Platform.macOS]),
+      origins: new Set([Origin.Local, Origin.External]),
+      projects: new Set(['MyApp', 'OtherApp']),
+      packages: new Set(['MyPackage']),
+    });
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const filterSections = el.shadowRoot?.querySelectorAll('xcode-graph-filter-section');
+    const titles = Array.from(filterSections || []).map((s) => s.getAttribute('title'));
+    // Should include the Packages section since mockNodes has a Package node
+    expect(titles).toContain('Packages');
+  });
+
+  it('should render details toolbar with collapse icon when node is selected', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectNode(mockNodeCoreLib);
+    await el.updateComplete;
+
+    const toolbar = el.shadowRoot?.querySelector('.details-toolbar');
+    expect(toolbar).not.toBeNull();
+
+    const collapseButton = toolbar?.querySelector('xcode-graph-icon-button');
+    expect(collapseButton).not.toBeNull();
+
+    const collapseIcon = toolbar?.querySelector('xcode-graph-sidebar-collapse-icon');
+    expect(collapseIcon).not.toBeNull();
+  });
+
+  it('should handle toggle events from node details panel', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectNode(mockNodeCoreLib);
+    await el.updateComplete;
+
+    const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
+    expect(nodePanel).not.toBeNull();
+
+    // Dispatch toggle events from node details panel
+    nodePanel?.dispatchEvent(
+      new CustomEvent('toggle-direct-deps', { bubbles: true, composed: true }),
+    );
+    nodePanel?.dispatchEvent(
+      new CustomEvent('toggle-transitive-deps', { bubbles: true, composed: true }),
+    );
+    nodePanel?.dispatchEvent(
+      new CustomEvent('toggle-direct-dependents', { bubbles: true, composed: true }),
+    );
+    nodePanel?.dispatchEvent(
+      new CustomEvent('toggle-transitive-dependents', { bubbles: true, composed: true }),
+    );
+    await el.updateComplete;
+
+    expect(el).toBeDefined();
+  });
+
+  it('should handle node-select and cluster-select events from node details panel', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectNode(mockNodeCoreLib);
+    await el.updateComplete;
+
+    const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
+
+    // Dispatch node-select event
+    nodePanel?.dispatchEvent(
+      new CustomEvent('node-select', {
+        detail: { node: mockNodeUtils },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    await el.updateComplete;
+
+    expect(selectedNode.get()).toBe(mockNodeUtils);
+
+    // Dispatch cluster-select event
+    nodePanel?.dispatchEvent(
+      new CustomEvent('cluster-select', {
+        detail: { clusterId: 'MyApp' },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    await el.updateComplete;
+
+    expect(selectedCluster.get()).toBe('MyApp');
+  });
+
+  it('should handle toggle events from cluster details panel', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .clusters=${[mockCluster]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectCluster('MyApp');
+    await el.updateComplete;
+
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
+    expect(clusterPanel).not.toBeNull();
+
+    // Dispatch toggle events from cluster details panel
+    clusterPanel?.dispatchEvent(
+      new CustomEvent('toggle-direct-deps', { bubbles: true, composed: true }),
+    );
+    clusterPanel?.dispatchEvent(
+      new CustomEvent('toggle-direct-dependents', { bubbles: true, composed: true }),
+    );
+    await el.updateComplete;
+
+    expect(el).toBeDefined();
+  });
 });
