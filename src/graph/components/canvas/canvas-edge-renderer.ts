@@ -137,6 +137,7 @@ function isCycleEdge(edge: GraphEdge, layout: GraphLayoutController): boolean {
   );
 }
 
+/** Determines the stroke color for an edge based on cycle state, emphasis, and zoom level. */
 function resolveEdgeColor(
   sourceNode: GraphNode,
   targetNode: GraphNode,
@@ -179,6 +180,7 @@ function getZoomOpacityFactor(zoom: number, isEmphasized: boolean): number {
   return 1.0;
 }
 
+/** Computes the final opacity for an edge considering highlight, chain depth, cycle, and zoom. */
 function computeEdgeOpacity(
   edgeKey: string,
   isHighlighted: boolean,
@@ -204,6 +206,7 @@ function computeEdgeOpacity(
   return Math.min(1, cycleOpacity * zoomFactor);
 }
 
+/** Draws an ELK-routed edge path for cross-cluster edges, using a cached Path2D when available. */
 function drawRoutedEdgePath(
   ctx: CanvasRenderingContext2D,
   routedEdge: RoutedEdge,
@@ -233,6 +236,7 @@ function drawRoutedEdgePath(
   ctx.stroke(path);
 }
 
+/** Draws a triangular arrowhead at the target end of an edge. */
 function drawArrowhead(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -257,6 +261,7 @@ function drawArrowhead(
   ctx.restore();
 }
 
+/** Draws an intra-cluster edge as a bezier curve (long distances) or straight line (short). */
 function drawDirectEdgePath(
   ctx: CanvasRenderingContext2D,
   x1: number,
@@ -275,6 +280,7 @@ function drawDirectEdgePath(
   }
 }
 
+/** Configures the canvas stroke style, opacity, line width, and dash pattern for an edge. */
 function applyEdgeStyle(
   ctx: CanvasRenderingContext2D,
   edgeKey: string,
@@ -323,6 +329,7 @@ function applyEdgeStyle(
   ctx.lineDashOffset = animateEdge && !prefersReducedMotion.get() ? rc.time / 20 : 0;
 }
 
+/** Returns true if an intra-cluster edge should be hidden at low zoom when its cluster is not hovered. */
 function shouldHideIntraClusterEdge(
   sourceClusterId: string,
   isHighlighted: boolean,
@@ -332,6 +339,7 @@ function shouldHideIntraClusterEdge(
   return zoom < 0.6 && hoveredCluster !== sourceClusterId && !isHighlighted;
 }
 
+/** Checks whether an edge is within the viewport and not hidden by intra-cluster rules. */
 function isEdgeVisible(
   endpoints: NonNullable<ReturnType<typeof resolveEdgeEndpoints>>,
   viewport: ViewportBounds,
@@ -349,6 +357,7 @@ function isEdgeVisible(
   return isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport);
 }
 
+/** Draws an edge path, choosing routed or direct rendering based on cross-cluster status. */
 function drawEdgePath(
   edgeKey: string,
   endpoints: NonNullable<ReturnType<typeof resolveEdgeEndpoints>>,
@@ -376,6 +385,7 @@ function drawEdgePath(
   }
 }
 
+/** Renders a single edge with glow, style, path, and arrowhead passes. */
 function renderSingleEdge(
   edge: GraphEdge,
   edgeKey: string,
@@ -475,6 +485,7 @@ function isEdgeInActiveChain(edgeKey: string, rc: EdgeRenderContext): boolean {
   );
 }
 
+/** Renders all visible edges onto the canvas, applying highlight and chain logic. */
 export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): void {
   const { ctx, edges } = rc;
 

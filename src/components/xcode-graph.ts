@@ -152,6 +152,7 @@ export class GraphApp extends SignalWatcherLitElement {
     this.mediaQueryCleanup = null;
   }
 
+  /** Re-seeds graph data or reapplies color scheme when relevant properties change. */
   override willUpdate(changed: PropertyValues<this>): void {
     if (changed.has('nodes') || changed.has('edges')) {
       this.seedData();
@@ -170,6 +171,7 @@ export class GraphApp extends SignalWatcherLitElement {
       const mql = globalThis.matchMedia?.('(prefers-color-scheme: dark)');
       if (mql) {
         this.setThemeAttribute(mql.matches ? 'dark' : 'light');
+        /** Updates the theme attribute when the system color scheme preference changes. */
         const handler = (e: MediaQueryListEvent) => {
           this.setThemeAttribute(e.matches ? 'dark' : 'light');
         };
@@ -183,10 +185,12 @@ export class GraphApp extends SignalWatcherLitElement {
     }
   }
 
+  /** Sets the `data-theme` attribute on the host element to the given theme. */
   private setThemeAttribute(theme: 'light' | 'dark'): void {
     this.setAttribute('data-theme', theme);
   }
 
+  /** Pushes current nodes and edges into global signals and refreshes the graph data service. */
   private seedData(): void {
     if (!this.nodes?.length) return;
     setGraphData(this.nodes, this.edges ?? []);
@@ -240,10 +244,12 @@ export class GraphApp extends SignalWatcherLitElement {
     }
   }
 
+  /** Handles the `graph-file-loaded` event from the file upload component. */
   private async handleFileLoaded(e: CustomEvent<{ raw: unknown }>) {
     await this.loadRawGraph(e.detail.raw);
   }
 
+  /** Renders the graph tab, optional file upload overlay, and error notification container. */
   override render(): TemplateResult {
     const display = displayData.get();
     const filtered = filteredData.get();

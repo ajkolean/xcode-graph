@@ -81,6 +81,7 @@ export class GraphEdge extends LitElement {
   @property({ type: Boolean })
   declare animated: boolean | undefined;
 
+  /** Resolves edge properties by merging declared values with defaults. */
   private resolveEdgeProps() {
     return resolveDefaults(this, EDGE_DEFAULTS);
   }

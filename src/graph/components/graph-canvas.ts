@@ -244,11 +244,13 @@ export class GraphCanvas extends LitElement {
     }
   }
 
+  /** Stops the animation loop when the component is removed from the DOM. */
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.animationLoop.stop();
   }
 
+  /** Detects nodes removed between updates and queues them for fade-out animation. */
   private trackRemovedNodesForFadeOut(changedProps: PropertyValues<this>) {
     const prevNodes = changedProps.get('nodes') as GraphNode[] | undefined;
     if (!prevNodes || prevNodes.length === 0) return;
@@ -265,6 +267,7 @@ export class GraphCanvas extends LitElement {
     }
   }
 
+  /** Recomputes layout, caches, and animation state when reactive properties change. */
   override willUpdate(changedProps: PropertyValues<this>): void {
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       this.trackRemovedNodesForFadeOut(changedProps);
@@ -321,6 +324,7 @@ export class GraphCanvas extends LitElement {
     this.requestRender();
   }
 
+  /** Performs initial fit-to-viewport once cluster positions are available. */
   override updated(changedProps: PropertyValues<this>): void {
     super.updated(changedProps);
 
@@ -330,11 +334,13 @@ export class GraphCanvas extends LitElement {
     }
   }
 
+  /** Clears cached Path2D objects for nodes and edges, forcing re-creation on next render. */
   private updatePathCache() {
     this.pathCache.clear();
     this.edgePathCache.clear();
   }
 
+  /** Rebuilds the node lookup map from the current nodes array. */
   private rebuildNodeMap() {
     this.nodeMap.clear();
     for (const node of this.nodes) {
@@ -342,6 +348,7 @@ export class GraphCanvas extends LitElement {
     }
   }
 
+  /** Updates opacity animation targets based on current selection and cluster state. */
   private updateNodeAlphaTargets() {
     const connected = this.selectedNode
       ? getConnectedNodes(this.selectedNode.id, this.edges)
@@ -365,6 +372,7 @@ export class GraphCanvas extends LitElement {
     }
   }
 
+  /** Returns the cached set of node IDs connected to the selected node. */
   private getConnectedNodesSet(): Set<string> {
     if (!this.selectedNode) return new Set<string>();
     if (this.connectedNodesCache && this.connectedNodesCache.nodeId === this.selectedNode.id) {
@@ -375,6 +383,7 @@ export class GraphCanvas extends LitElement {
     return result;
   }
 
+  /** Returns a cached map of routed edges keyed by "source->target" for fast lookup. */
   private getRoutedEdgeMap(): Map<string, RoutedEdge> {
     const currentRouted = this.layout.routedEdges;
     if (this.routedEdgeMapCache && this.lastRoutedEdgesRef === currentRouted) {
@@ -400,11 +409,13 @@ export class GraphCanvas extends LitElement {
     return this.pathCache.get(key) as Path2D;
   };
 
+  /** Centers the pan offset to the middle of the component's bounding rectangle. */
   private centerGraph() {
     const rect = this.getBoundingClientRect();
     this.interactionState.pan = { x: rect.width / 2, y: rect.height / 2 };
   }
 
+  /** Adjusts zoom and pan so that all clusters fit within the visible viewport. */
   fitToViewport(): void {
     if (!this.layout.clusterPositions.size) return;
     const rect = this.getBoundingClientRect();
@@ -452,6 +463,7 @@ export class GraphCanvas extends LitElement {
     );
   }
 
+  /** Builds the interaction context object used by canvas mouse/wheel event handlers. */
   private getInteractionContext(): InteractionContext {
     return {
       state: this.interactionState,
@@ -474,6 +486,7 @@ export class GraphCanvas extends LitElement {
     };
   }
 
+  /** Resizes the canvas buffer to match the element dimensions and device pixel ratio. */
   private resizeCanvas() {
     if (!this.canvas || !this.ctx) return;
     const dpr = window.devicePixelRatio || 1;
@@ -590,6 +603,7 @@ export class GraphCanvas extends LitElement {
     this.requestRender();
   };
 
+  /** Schedules a canvas render on the next animation frame. */
   private requestRender() {
     this.animationLoop.requestRender();
   }
@@ -615,6 +629,7 @@ export class GraphCanvas extends LitElement {
     }
   }
 
+  /** Recalculates whether the animation loop should remain active based on current state. */
   private updateAnimatingState() {
     const hasSelectedNode = Boolean(this.selectedNode);
     const hasSelectedCluster = Boolean(this.selectedCluster);
@@ -631,6 +646,7 @@ export class GraphCanvas extends LitElement {
       hasAlphaAnimations;
   }
 
+  /** Clears and redraws the entire canvas including clusters, edges, nodes, and tooltips. */
   private renderCanvas() {
     if (!this.ctx || !this.canvas || !this.theme) return;
 
@@ -752,6 +768,7 @@ export class GraphCanvas extends LitElement {
     renderClusterTooltip(tooltipCtx);
   }
 
+  /** Renders nodes that are fading out after removal, cleaning up completed animations. */
   private renderFadingNodes() {
     if (this.fadingOutNodes.size === 0) return;
     if (!this.ctx || !this.theme) return;
@@ -826,6 +843,7 @@ export class GraphCanvas extends LitElement {
     };
   };
 
+  /** Renders the canvas element and hidden DOM accessibility tree. */
   override render(): TemplateResult {
     return html`
       <canvas

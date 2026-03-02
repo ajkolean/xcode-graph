@@ -89,6 +89,7 @@ function isNodeDimmed(
   return rc.dimmedNodeIds.has(node.id) || Boolean(clusterDim);
 }
 
+/** Draws cycle glow and selection ring effects behind a node. */
 function drawNodeEffects(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -129,6 +130,7 @@ function drawNodeEffects(
   }
 }
 
+/** Draws the scaled Path2D icon shape for a node with fill and stroke. */
 function drawNodeIcon(
   ctx: CanvasRenderingContext2D,
   node: GraphNode,
@@ -166,6 +168,7 @@ const NODE_LABEL_FONT_SIZE = 12;
 /** Fixed gap between node icon and label in graph-space pixels */
 const NODE_LABEL_PADDING = 8;
 
+/** Draws the text label below a node with a dark halo for readability. */
 function drawNodeLabel(
   ctx: CanvasRenderingContext2D,
   node: GraphNode,
@@ -209,11 +212,13 @@ function drawNodeLabel(
   ctx.fillText(labelText, x, labelY);
 }
 
+/** Returns true if the node's edge weight meets or exceeds the hub threshold. */
 function isHubNode(nodeId: string, rc: NodeRenderContext): boolean {
   const weight = rc.nodeWeights.get(nodeId) ?? 0;
   return weight >= rc.hubWeightThreshold && weight > 0;
 }
 
+/** Determines whether a node's label should be visible based on zoom, hover, selection, or hub status. */
 function shouldShowNodeLabel(
   isHovered: boolean,
   isSelected: boolean,
@@ -236,6 +241,7 @@ interface NodeVisualState {
   isInChain: boolean;
 }
 
+/** Computes the full visual state for a node including color, opacity, dimming, and chain membership. */
 function resolveNodeVisualState(
   node: GraphNode,
   size: number,
@@ -277,6 +283,7 @@ function resolveNodeVisualState(
   };
 }
 
+/** Renders a single node with its effects, icon, and optional label. */
 function renderSingleNode(
   node: GraphNode,
   x: number,
@@ -334,6 +341,7 @@ function renderSingleNode(
   }
 }
 
+/** Renders all visible nodes onto the canvas, skipping those outside the viewport. */
 export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
   const { ctx, nodes, edges, nodeWeights, connectedNodes } = rc;
 

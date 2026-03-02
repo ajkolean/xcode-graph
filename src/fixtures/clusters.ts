@@ -37,6 +37,7 @@ export function createCluster(overrides: Partial<Cluster> = {}): Cluster {
   ];
 
   const metadata = new Map<string, ClusterNodeMetadata>();
+  /** Returns the node role based on its position in the default cluster. */
   const getRoleForIndex = (idx: number): NodeRole => {
     if (idx === 0) return NodeRole.Entry;
     if (idx === 2) return NodeRole.Test;
@@ -73,6 +74,7 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
   const nodes: GraphNode[] = [];
   const metadata = new Map<string, ClusterNodeMetadata>();
 
+  /** Returns the node role based on its index within the generated cluster. */
   const roleForIndex = (i: number): NodeRole => {
     if (i === 0) return NodeRole.Entry;
     if (i === nodeCount - 1 && nodeCount > 2) return NodeRole.Test;
@@ -84,6 +86,7 @@ export function createClusterWithNodes(nodeCount: number): Cluster {
     const isAnchor = i === 0;
     const isTest = i === nodeCount - 1 && nodeCount > 2;
 
+    /** Determines the node type based on whether the node is an anchor, test, or internal library. */
     const getNodeType = (): NodeType => {
       if (isTest) return NodeType.TestUnit;
       if (isAnchor) return NodeType.Framework;

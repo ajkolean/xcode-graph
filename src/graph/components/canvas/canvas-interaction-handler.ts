@@ -68,6 +68,7 @@ export interface InteractionContext {
   dispatchZoomChange: (zoom: number) => void;
 }
 
+/** Returns the ID of the cluster under the given world position, or null if none. */
 function hitTestCluster(
   worldPos: { x: number; y: number },
   ctx: InteractionContext,
@@ -122,6 +123,7 @@ function hitTestNode(
   return null;
 }
 
+/** Handles mousedown events for node/cluster selection and pan initiation. */
 export function handleMouseDown(e: MouseEvent, ctx: InteractionContext): void {
   const { state } = ctx;
   state.isDragging = true;
@@ -160,6 +162,7 @@ export function handleMouseDown(e: MouseEvent, ctx: InteractionContext): void {
   state.clickedEmptySpace = true;
 }
 
+/** Updates the manual position of a dragged node relative to its cluster. */
 function handleDragNode(worldPos: { x: number; y: number }, ctx: InteractionContext): void {
   const { state } = ctx;
   state.hasMoved = true;
@@ -181,6 +184,7 @@ function handleDragNode(worldPos: { x: number; y: number }, ctx: InteractionCont
   });
 }
 
+/** Detects node and cluster hover state changes and dispatches the corresponding events. */
 function handleHoverDetection(worldPos: { x: number; y: number }, ctx: InteractionContext): void {
   const { state } = ctx;
   const hitNode = hitTestNode(worldPos, ctx);
@@ -199,6 +203,7 @@ function handleHoverDetection(worldPos: { x: number; y: number }, ctx: Interacti
   }
 }
 
+/** Handles mousemove events for dragging nodes/clusters, panning, and hover detection. */
 export function handleMouseMove(e: MouseEvent, ctx: InteractionContext): void {
   const { state } = ctx;
   const { x, y } = ctx.getMousePos(e);
@@ -223,6 +228,7 @@ export function handleMouseMove(e: MouseEvent, ctx: InteractionContext): void {
   }
 }
 
+/** Handles mouseup and mouseleave events, clearing drag state and deselecting on empty-space clicks. */
 export function handleMouseUp(e: MouseEvent | undefined, ctx: InteractionContext): void {
   const { state } = ctx;
 
@@ -251,6 +257,7 @@ export function handleMouseUp(e: MouseEvent | undefined, ctx: InteractionContext
   }
 }
 
+/** Handles wheel events for zooming, adjusting pan to keep the cursor position stable. */
 export function handleWheel(e: WheelEvent, ctx: InteractionContext): void {
   e.preventDefault();
   const { state } = ctx;
