@@ -134,7 +134,6 @@ describe('theme-utils', () => {
     it('should return true when matchMedia is undefined', () => {
       const original = globalThis.matchMedia;
       const g = globalThis as { matchMedia?: typeof globalThis.matchMedia };
-      // biome-ignore lint/performance/noDelete: test needs undefined
       delete g.matchMedia;
       try {
         const result = prefersDarkMode();
@@ -159,7 +158,6 @@ describe('theme-utils', () => {
     it('should return noop when matchMedia is undefined', () => {
       const original = globalThis.matchMedia;
       const g = globalThis as { matchMedia?: typeof globalThis.matchMedia };
-      // biome-ignore lint/performance/noDelete: test needs undefined
       delete g.matchMedia;
       try {
         const callback = vi.fn();

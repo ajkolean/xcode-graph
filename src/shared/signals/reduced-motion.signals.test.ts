@@ -51,12 +51,12 @@ describe('reduced-motion signal', () => {
 
       // Simulate change to reduced motion enabled
       expect(capturedHandler).not.toBeNull();
-      if (capturedHandler === null) throw new Error('Handler not captured');
-      capturedHandler({ matches: true });
+      const handler = capturedHandler as unknown as (e: { matches: boolean }) => void;
+      handler({ matches: true });
       expect(prefersReducedMotion.get()).toBe(true);
 
       // Simulate change back to no reduced motion
-      capturedHandler({ matches: false });
+      handler({ matches: false });
       expect(prefersReducedMotion.get()).toBe(false);
     } finally {
       globalThis.matchMedia = original;
