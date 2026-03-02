@@ -113,7 +113,7 @@ describe('GraphLoader', () => {
       expect(firstChunk).not.toBeNull();
       const chunk = firstChunk as unknown as LoadProgress;
       expect(chunk.chunk).toBeDefined();
-      expect(chunk.chunk!.nodes.length).toBeLessThanOrEqual(20);
+      expect(chunk.chunk?.nodes.length).toBeLessThanOrEqual(20);
     });
   });
 

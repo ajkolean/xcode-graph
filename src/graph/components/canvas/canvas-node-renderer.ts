@@ -179,7 +179,6 @@ function drawNodeLabel(
   isConnected: boolean | null,
   isInChain: boolean,
   theme: CanvasTheme,
-  zoom: number,
 ) {
   const labelText =
     node.name.length > 20 && !isHovered && !isConnected
@@ -334,7 +333,6 @@ function renderSingleNode(
       vs.isConnected,
       vs.isInChain,
       theme,
-      rc.zoom,
     );
   }
 }

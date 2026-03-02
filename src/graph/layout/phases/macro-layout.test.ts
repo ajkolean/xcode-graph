@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import { describe, expect, it } from 'vitest';
 import { createClusterWithNodes } from '@/fixtures';
 import { buildClusterGraph } from '../cluster-graph';
@@ -16,7 +17,10 @@ describe('macro-layout', () => {
       clusterB.name = 'ClusterB';
       const clusters = [clusterA, clusterB];
 
-      const edges = [{ source: clusterA.nodes[0]!.id, target: clusterB.nodes[0]!.id }];
+      const nodeA0 = clusterA.nodes[0];
+      const nodeB0 = clusterB.nodes[0];
+      assert(nodeA0 && nodeB0, 'clusters must have nodes');
+      const edges = [{ source: nodeA0.id, target: nodeB0.id }];
       const clusterGraph = buildClusterGraph(edges, clusters);
 
       const microLayouts = new Map(
@@ -46,9 +50,13 @@ describe('macro-layout', () => {
       clusterC.name = 'ClusterC';
       const clusters = [clusterA, clusterB, clusterC];
 
+      const nodeA0 = clusterA.nodes[0];
+      const nodeB0 = clusterB.nodes[0];
+      const nodeC0 = clusterC.nodes[0];
+      assert(nodeA0 && nodeB0 && nodeC0, 'clusters must have nodes');
       const edges = [
-        { source: clusterA.nodes[0]!.id, target: clusterB.nodes[0]!.id },
-        { source: clusterB.nodes[0]!.id, target: clusterC.nodes[0]!.id },
+        { source: nodeA0.id, target: nodeB0.id },
+        { source: nodeB0.id, target: nodeC0.id },
       ];
       const clusterGraph = buildClusterGraph(edges, clusters);
 
@@ -62,8 +70,9 @@ describe('macro-layout', () => {
       // Check no bounding box overlaps (center-to-center distance > sum of half-sizes)
       for (let i = 0; i < posArray.length; i++) {
         for (let j = i + 1; j < posArray.length; j++) {
-          const a = posArray[i]!;
-          const b = posArray[j]!;
+          const a = posArray[i];
+          const b = posArray[j];
+          assert(a && b, 'positions must exist');
           const dx = Math.abs(a.x - b.x);
           const dy = Math.abs(a.y - b.y);
           const minSepX = (a.width + b.width) / 2;

@@ -65,28 +65,14 @@ describe('xcode-graph.schema.generated types match Swift Codable JSON', () => {
     const json = readFileSync(FIXTURE_PATH, 'utf-8');
     const graph: Graph = JSON.parse(json);
 
-    // Find a project with targets (every other element is a Project)
-    for (let i = 1; i < graph.projects.length; i += 2) {
-      const project = graph.projects[i];
-      if (typeof project === 'object' && project !== null && 'targets' in project) {
-        // targets is { [key: string]: Target } because key is String
-        const targetNames = Object.keys(project.targets);
-        if (targetNames.length > 0) {
-          const targetName = targetNames[0];
-          if (!targetName) return;
-          const target = project.targets[targetName];
-          if (!target) return;
+    const { targetName, target } = findFirstTarget(graph.projects);
+    if (!targetName || !target) return;
 
-          expect(typeof targetName).toBe('string');
-          expect(typeof target.name).toBe('string');
-          expect(typeof target.bundleId).toBe('string');
-          expect(target.product).toBeDefined();
-          expect(target.destinations).toBeDefined();
-
-          return;
-        }
-      }
-    }
+    expect(typeof targetName).toBe('string');
+    expect(typeof target.name).toBe('string');
+    expect(typeof target.bundleId).toBe('string');
+    expect(target.product).toBeDefined();
+    expect(target.destinations).toBeDefined();
   });
 });
 

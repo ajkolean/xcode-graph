@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import { describe, expect, it } from 'vitest';
 import { createCluster, createClusterWithNodes } from '@/fixtures';
 import { DEFAULT_CONFIG } from '../config';

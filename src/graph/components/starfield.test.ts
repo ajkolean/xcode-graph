@@ -13,8 +13,8 @@ import { Starfield } from './starfield';
 // drawImage arguments, so we stub OffscreenCanvas as a thin wrapper around
 // a real HTMLCanvasElement.
 beforeAll(() => {
-  if (typeof globalThis['OffscreenCanvas'] === 'undefined') {
-    (globalThis as Record<string, unknown>)['OffscreenCanvas'] = class {
+  if (typeof (globalThis as any).OffscreenCanvas === 'undefined') {
+    (globalThis as any).OffscreenCanvas = class {
       width: number;
       height: number;
       constructor(width: number, height: number) {

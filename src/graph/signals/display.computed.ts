@@ -86,6 +86,53 @@ export const displayData: Signal.Computed<DisplayData> = new Signal.Computed<Dis
   };
 });
 
+function shouldDimBySearch(node: GraphNode, lowerQuery: string): boolean {
+  return lowerQuery !== '' && !node.name.toLowerCase().includes(lowerQuery);
+}
+
+function shouldDimBySelection(
+  node: GraphNode,
+  selected: GraphNode,
+  transitiveDeps: TransitiveResult,
+  transitiveDependents: TransitiveResult,
+  showDirectDepsVal: boolean,
+  showTransitiveDepsVal: boolean,
+  showDirectDependentsVal: boolean,
+  showTransitiveDependentsVal: boolean,
+): boolean {
+  if (selected.id === node.id) return false;
+
+  let inActiveChain = false;
+
+  if (transitiveDeps.nodes.has(node.id)) {
+    const depth = transitiveDeps.nodeDepths?.get(node.id) ?? 0;
+    if (depth <= 1 ? showDirectDepsVal : showTransitiveDepsVal) inActiveChain = true;
+  }
+  if (!inActiveChain && transitiveDependents.nodes.has(node.id)) {
+    const depth = transitiveDependents.nodeDepths?.get(node.id) ?? 0;
+    if (depth <= 1 ? showDirectDependentsVal : showTransitiveDependentsVal) inActiveChain = true;
+  }
+
+  return !inActiveChain;
+}
+
+function shouldDimByPreview(node: GraphNode, preview: { type: string; value: string }): boolean {
+  switch (preview.type) {
+    case 'nodeType':
+      return node.type !== preview.value;
+    case 'platform':
+      return node.platform !== preview.value;
+    case 'origin':
+      return node.origin !== preview.value;
+    case 'project':
+      return node.project !== preview.value;
+    case 'package':
+      return !(node.type === NodeType.Package && node.name === preview.value);
+    default:
+      return false;
+  }
+}
+
 /**
  * Pre-computed set of dimmed node IDs.
  *
@@ -116,55 +163,27 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
   const lowerQuery = query ? query.toLowerCase() : '';
 
   for (const node of filteredNodes) {
-    // Search dimming
-    if (lowerQuery && !node.name.toLowerCase().includes(lowerQuery)) {
+    if (shouldDimBySearch(node, lowerQuery)) {
       dimmed.add(node.id);
       continue;
     }
 
-    // Selection + highlight-toggle dimming
-    if (selected && selected.id !== node.id && isChainActive) {
-      let inActiveChain = false;
-
-      if (transitiveDeps.nodes.has(node.id)) {
-        const depth = transitiveDeps.nodeDepths?.get(node.id) ?? 0;
-        if (depth <= 1 ? showDirectDepsVal : showTransitiveDepsVal) inActiveChain = true;
-      }
-      if (!inActiveChain && transitiveDependents.nodes.has(node.id)) {
-        const depth = transitiveDependents.nodeDepths?.get(node.id) ?? 0;
-        if (depth <= 1 ? showDirectDependentsVal : showTransitiveDependentsVal)
-          inActiveChain = true;
-      }
-
-      if (!inActiveChain) {
-        dimmed.add(node.id);
-        continue;
-      }
+    if (selected && isChainActive && shouldDimBySelection(
+      node,
+      selected,
+      transitiveDeps,
+      transitiveDependents,
+      showDirectDepsVal,
+      showTransitiveDepsVal,
+      showDirectDependentsVal,
+      showTransitiveDependentsVal,
+    )) {
+      dimmed.add(node.id);
+      continue;
     }
 
-    // Preview filter dimming
-    if (preview) {
-      let previewDimmed = false;
-      switch (preview.type) {
-        case 'nodeType':
-          previewDimmed = node.type !== preview.value;
-          break;
-        case 'platform':
-          previewDimmed = node.platform !== preview.value;
-          break;
-        case 'origin':
-          previewDimmed = node.origin !== preview.value;
-          break;
-        case 'project':
-          previewDimmed = node.project !== preview.value;
-          break;
-        case 'package':
-          previewDimmed = !(node.type === NodeType.Package && node.name === preview.value);
-          break;
-      }
-      if (previewDimmed) {
-        dimmed.add(node.id);
-      }
+    if (preview && shouldDimByPreview(node, preview)) {
+      dimmed.add(node.id);
     }
   }
 

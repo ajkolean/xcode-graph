@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import type { ClusterPosition, NodePosition } from '@shared/schemas';
 import { describe, expect, it } from 'vitest';
 import type { ClusterEdge } from '../cluster-graph';

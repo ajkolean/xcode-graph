@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import type { ClusterPosition } from '@shared/schemas';
 import { describe, expect, it } from 'vitest';
 import { createClusterWithNodes } from '@/fixtures';
@@ -19,7 +20,10 @@ describe('force-massage', () => {
       clusterB.id = 'B';
       clusterB.name = 'ClusterB';
 
-      const edges = [{ source: clusterA.nodes[0]!.id, target: clusterB.nodes[0]!.id }];
+      const nodeA0 = clusterA.nodes[0];
+      const nodeB0 = clusterB.nodes[0];
+      assert(nodeA0 && nodeB0, 'clusters must have nodes');
+      const edges = [{ source: nodeA0.id, target: nodeB0.id }];
       const clusterGraph = buildClusterGraph(edges, [clusterA, clusterB]);
 
       const positions = new Map<string, ClusterPosition>([
@@ -42,7 +46,10 @@ describe('force-massage', () => {
       clusterB.id = 'B';
       clusterB.name = 'ClusterB';
 
-      const edges = [{ source: clusterA.nodes[0]!.id, target: clusterB.nodes[0]!.id }];
+      const nodeA0 = clusterA.nodes[0];
+      const nodeB0 = clusterB.nodes[0];
+      assert(nodeA0 && nodeB0, 'clusters must have nodes');
+      const edges = [{ source: nodeA0.id, target: nodeB0.id }];
       const clusterGraph = buildClusterGraph(edges, [clusterA, clusterB]);
 
       const positions = new Map<string, ClusterPosition>([

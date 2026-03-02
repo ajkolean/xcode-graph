@@ -149,7 +149,7 @@ function drawTextAlongArc(
   let angle = -Math.PI / 2 - totalAngle / 2;
 
   for (let i = 0; i < text.length; i++) {
-    const charWidth = charWidths[i]!;
+    const charWidth = charWidths[i] ?? 0;
     // Advance by half the character width to center it on the arc position
     angle += charWidth / (2 * arcRadius);
 
@@ -160,7 +160,7 @@ function drawTextAlongArc(
     ctx.translate(x, y);
     // Rotate so the character is perpendicular to the radius
     ctx.rotate(angle + Math.PI / 2);
-    ctx.fillText(text[i]!, 0, 0);
+    ctx.fillText(text[i] ?? '', 0, 0);
     ctx.restore();
 
     // Advance by the other half

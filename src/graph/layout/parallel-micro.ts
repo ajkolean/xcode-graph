@@ -112,7 +112,8 @@ export async function computeMicroLayoutsParallel(
     }
 
     const tasks = clusters.map((cluster, i) => {
-      const api = apis[i % poolSize]!;
+      const api = apis[i % poolSize];
+      if (!api) throw new Error(`Worker API missing for index ${i % poolSize}`);
       const serialized = serializeCluster(cluster);
       return api.computeMicro(serialized, config).then(deserializeResult);
     });

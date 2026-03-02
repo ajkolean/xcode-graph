@@ -140,6 +140,7 @@ export class GraphCanvas extends LitElement {
     animationTicks: 30,
   });
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: Lit ResizeController lifecycle manages this
   private readonly _resize = new ResizeController(this, {
     callback: () => this.resizeCanvas(),
   });
