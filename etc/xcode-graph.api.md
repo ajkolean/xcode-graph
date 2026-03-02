@@ -825,7 +825,7 @@ export function matchesSearch(node: GraphNode_2, searchQuery: string): boolean;
 export const NODE_ROLE_VALUES: NodeRole[];
 
 // @public
-export const NODE_TYPE_COLORS: Record<string, string>;
+export const NODE_TYPE_COLORS: Record<NodeType_2, string>;
 
 // @public
 export const NODE_TYPE_VALUES: NodeType[];
