@@ -720,6 +720,8 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
         composed: true,
       }),
     );
+    // Need multiple update cycles: signal changes + machine transition + render
+    await el.updateComplete;
     await el.updateComplete;
 
     // After expand-to-section, sidebar should be expanded again
@@ -807,7 +809,7 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
     expect(el).toBeDefined();
   });
 
-  it('should handle node-select and cluster-select events from node details panel', async () => {
+  it('should handle node-select event from node details panel', async () => {
     const el = await fixture<GraphRightSidebar>(html`
       <xcode-graph-right-sidebar
         .allNodes=${mockNodes}
@@ -833,8 +835,23 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
     await el.updateComplete;
 
     expect(selectedNode.get()).toBe(mockNodeUtils);
+  });
 
-    // Dispatch cluster-select event
+  it('should handle cluster-select event from node details panel', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectNode(mockNodeCoreLib);
+    await el.updateComplete;
+
+    // Re-query panel fresh before dispatching cluster-select
+    const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
     nodePanel?.dispatchEvent(
       new CustomEvent('cluster-select', {
         detail: { clusterId: 'MyApp' },

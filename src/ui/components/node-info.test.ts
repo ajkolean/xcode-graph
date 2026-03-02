@@ -204,14 +204,25 @@ describe('xcode-graph-node-info', () => {
       <xcode-graph-node-info .node=${mockNode}></xcode-graph-node-info>
     `);
 
-    // Find the section header toggle (the title element that acts as toggle)
-    const title = el.shadowRoot?.querySelector('.title') as HTMLElement;
-    expect(title).toBeDefined();
+    // Initially expanded
+    const header = el.shadowRoot?.querySelector('.header') as HTMLButtonElement;
+    expect(header).not.toBeNull();
+    expect(header?.getAttribute('aria-expanded')).toBe('true');
 
-    // Click to toggle
-    title?.click();
+    // Click header to collapse
+    header?.click();
     await el.updateComplete;
 
-    expect(el).toBeDefined();
+    expect(el.shadowRoot?.querySelector('.header')?.getAttribute('aria-expanded')).toBe('false');
+    // Content should be hidden
+    const content = el.shadowRoot?.querySelector('.content');
+    expect(content).toBeNull();
+
+    // Click header to expand again
+    (el.shadowRoot?.querySelector('.header') as HTMLButtonElement)?.click();
+    await el.updateComplete;
+
+    expect(el.shadowRoot?.querySelector('.header')?.getAttribute('aria-expanded')).toBe('true');
+    expect(el.shadowRoot?.querySelector('.content')).not.toBeNull();
   });
 });
