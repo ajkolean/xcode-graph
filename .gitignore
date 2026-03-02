@@ -49,7 +49,7 @@ vite.config.ts.timestamp-*
 .rollup.cache/
 tsconfig.tsbuildinfo
 custom-elements.json
-etc/
+etc/*
 !etc/xcode-graph.schema.json
 !etc/xcode-graph.api.md
 
