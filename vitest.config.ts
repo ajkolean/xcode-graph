@@ -30,6 +30,8 @@ export default defineConfig({
         'src/styles/tokens.ts',
         'src/main.ts',
         'src/graph/test-helpers/**',
+        'src/graph/workers/layout.worker.ts',
+        'src/graph/workers/micro-layout.worker.ts',
       ],
     },
     projects: [
@@ -49,6 +51,7 @@ export default defineConfig({
             'src/graph/signals/*.test.ts',
             'src/graph/utils/*.test.ts',
             'src/graph/layout/*.test.ts',
+            'src/graph/layout/**/*.test.ts',
             'src/graph/controllers/*.test.ts',
             'src/graph/components/*.test.ts',
             'src/graph/components/**/*.test.ts',

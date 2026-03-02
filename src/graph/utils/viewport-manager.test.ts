@@ -1,6 +1,6 @@
 import type { ClusterPosition } from '@shared/schemas';
 import { describe, expect, it } from 'vitest';
-import { centerGraph, fitToViewport, screenToWorld } from './viewport-manager';
+import { centerGraph, fitToViewport, getMousePos, screenToWorld } from './viewport-manager';
 
 function makeRect(width: number, height: number): DOMRect {
   return {
@@ -95,6 +95,52 @@ describe('viewport-manager', () => {
       const worldCenterY = ((result?.panY ?? 0) - 300) / -(result?.zoom ?? 1);
       expect(Math.abs(worldCenterX - 100)).toBeLessThan(1);
       expect(Math.abs(worldCenterY - 100)).toBeLessThan(1);
+    });
+
+    it('returns null when cluster positions contain non-finite values', () => {
+      const positions = new Map<string, ClusterPosition>([
+        ['A', makeClusterPos('A', Number.NaN, Number.NaN, 200)],
+      ]);
+      const result = fitToViewport({
+        rect: makeRect(800, 600),
+        clusterPositions: positions,
+      });
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getMousePos', () => {
+    it('returns mouse position relative to canvas element', () => {
+      const mockCanvas = {
+        getBoundingClientRect: () => makeRect(800, 600),
+      } as unknown as HTMLCanvasElement;
+      const mockEvent = {
+        clientX: 150,
+        clientY: 250,
+      } as MouseEvent;
+
+      const pos = getMousePos(mockEvent, mockCanvas);
+      expect(pos.x).toBe(150);
+      expect(pos.y).toBe(250);
+    });
+
+    it('offsets by canvas position', () => {
+      const mockCanvas = {
+        getBoundingClientRect: () =>
+          ({
+            ...makeRect(800, 600),
+            left: 50,
+            top: 100,
+          }) as DOMRect,
+      } as unknown as HTMLCanvasElement;
+      const mockEvent = {
+        clientX: 200,
+        clientY: 300,
+      } as MouseEvent;
+
+      const pos = getMousePos(mockEvent, mockCanvas);
+      expect(pos.x).toBe(150);
+      expect(pos.y).toBe(200);
     });
   });
 });

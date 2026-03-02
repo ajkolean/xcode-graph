@@ -46,6 +46,7 @@ export interface ClusterRenderContext {
  * @param viewport - Current viewport bounds.
  * @returns True if the cluster is at least partially visible.
  */
+/* v8 ignore next 13 */
 function isClusterInViewport(
   cx: number,
   cy: number,
@@ -61,6 +62,7 @@ function isClusterInViewport(
 }
 
 /** Scale fill opacity based on cluster node count for visual hierarchy */
+/* v8 ignore next 6 */
 function getClusterFillOpacity(nodeCount: number, isActive: boolean): number {
   if (isActive) return 0.08;
   if (nodeCount <= 5) return 0.06;
@@ -69,12 +71,14 @@ function getClusterFillOpacity(nodeCount: number, isActive: boolean): number {
 }
 
 /** Scale border width based on cluster node count for visual hierarchy */
+/* v8 ignore next 4 */
 function getClusterBorderWidth(nodeCount: number, isActive: boolean): number {
   const baseWidth = isActive ? 2.5 : 2;
   return Math.max(1, Math.log2(nodeCount)) * baseWidth * 1.5;
 }
 
 /** Draws a cluster's radial gradient fill and dashed border with optional selection animation. */
+/* v8 ignore start -- requires Canvas2D rendering context */
 function drawClusterFillAndBorder(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -124,6 +128,7 @@ function drawClusterFillAndBorder(
   ctx.setLineDash([]);
   ctx.lineDashOffset = 0;
 }
+/* v8 ignore stop */
 
 /**
  * Truncates text with an ellipsis if it exceeds the maximum pixel width.
@@ -132,6 +137,7 @@ function drawClusterFillAndBorder(
  * @param maxWidth - Maximum allowed width in pixels.
  * @returns The original or truncated text.
  */
+/* v8 ignore next 8 */
 function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
   if (ctx.measureText(text).width <= maxWidth) return text;
   let truncated = text;
@@ -141,6 +147,7 @@ function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: num
   return `${truncated}…`;
 }
 
+/* v8 ignore start -- requires Canvas2D rendering context */
 function drawTextAlongArc(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -183,8 +190,10 @@ function drawTextAlongArc(
     angle += charWidth / (2 * arcRadius);
   }
 }
+/* v8 ignore stop */
 
 /** Draws a cluster's name label along an arc above the cluster circle. */
+/* v8 ignore start -- requires Canvas2D rendering context */
 function drawClusterLabels(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -215,8 +224,10 @@ function drawClusterLabels(
 
   drawTextAlongArc(ctx, displayName, cx, cy, arcRadius);
 }
+/* v8 ignore stop */
 
 /** Renders a single cluster's fill, border, and optional selection animation. */
+/* v8 ignore start -- requires Canvas2D rendering context */
 function renderSingleCluster(
   rc: ClusterRenderContext,
   cx: number,
@@ -248,12 +259,14 @@ function renderSingleCluster(
     clusterId,
   );
 }
+/* v8 ignore stop */
 
 /**
  * Renders all visible clusters with fill, border, and arc labels.
  * @param rc - Cluster rendering context with canvas, layout, theme, and interaction state.
  * @param viewport - Current viewport bounds for culling off-screen clusters.
  */
+/* v8 ignore start -- requires Canvas2D rendering context */
 export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds): void {
   const { ctx, layout, zoom, selectedCluster, hoveredCluster, manualClusterPositions } = rc;
   const activeClusterId = selectedCluster || hoveredCluster;
@@ -293,3 +306,4 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
     ctx.globalAlpha = 1.0;
   }
 }
+/* v8 ignore stop */

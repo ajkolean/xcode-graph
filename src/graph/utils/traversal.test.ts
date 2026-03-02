@@ -1,7 +1,12 @@
 import { ViewMode } from '@shared/schemas';
 import type { GraphEdge } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
-import { createDiamondGraph, createEmptyGraph, createLinearChain } from '../../fixtures';
+import {
+  createDiamondGraph,
+  createEmptyGraph,
+  createLinearChain,
+  createNode,
+} from '../../fixtures';
 import {
   bfsTraverseGraph,
   buildAdjacency,
@@ -315,5 +320,50 @@ describe('computeTransitiveDependencies', () => {
     // Cache should have been invalidated and repopulated
     const stats2 = getTransitiveCacheStats();
     expect(stats2.version).not.toBe(stats1.version);
+  });
+
+  it('should return cached dependents on second call with same edges', () => {
+    const { nodes, edges } = createLinearChain(4);
+    const selectedNode = nodes[3]; // D - has dependents A, B, C
+    if (!selectedNode) throw new Error('Node not found');
+
+    // First call computes dependents
+    const result1 = computeTransitiveDependencies(ViewMode.Dependents, selectedNode, edges);
+    expect(result1.transitiveDependents.nodes.size).toBeGreaterThan(0);
+
+    // Second call should return cached result (same edges reference)
+    const result2 = computeTransitiveDependencies(ViewMode.Dependents, selectedNode, edges);
+    expect(result2.transitiveDependents.nodes.size).toBe(result1.transitiveDependents.nodes.size);
+  });
+
+  it('should evict oldest cache entry when cache is full', () => {
+    // Use a unique edges reference to get a fresh cache version
+    const edges: GraphEdge[] = [];
+    // Create a chain of 102 nodes (A0 -> A1 -> ... -> A101)
+    const nodeNames: string[] = [];
+    for (let i = 0; i < 102; i++) {
+      nodeNames.push(`X${i}`);
+      if (i > 0) {
+        edges.push({ source: `X${i - 1}`, target: `X${i}` });
+      }
+    }
+
+    // Reset cache with new edges reference
+    computeTransitiveDependencies(ViewMode.Focused, null, edges);
+
+    // Fill cache with > 100 entries by alternating focused/dependents for 51 nodes
+    // Each call adds one cache entry (direction + nodeId)
+    const nodeBase = nodeNames.map((name) => createNode({ id: name, name }));
+
+    for (let i = 0; i < 51; i++) {
+      const node = nodeBase[i];
+      if (!node) continue;
+      // Each computes deps + dependents = 2 entries per iteration
+      computeTransitiveDependencies(ViewMode.Both, node, edges);
+    }
+
+    // Cache should have entries and not crash (LRU eviction handles overflow)
+    const stats = getTransitiveCacheStats();
+    expect(stats.size).toBeLessThanOrEqual(stats.maxSize);
   });
 });

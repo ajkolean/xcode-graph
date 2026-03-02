@@ -96,5 +96,22 @@ describe('micro-layout', () => {
         expect(Number.isFinite(pos.y)).toBe(true);
       }
     });
+
+    it('returns early with min dimensions when cluster has zero nodes', () => {
+      const cluster = createCluster({
+        id: 'empty-cluster',
+        nodes: [],
+        metadata: new Map(),
+        anchors: [],
+      });
+
+      const result = computeClusterInterior(cluster, DEFAULT_CONFIG);
+
+      expect(result.clusterId).toBe('empty-cluster');
+      expect(result.width).toBe(DEFAULT_CONFIG.minClusterSize);
+      expect(result.height).toBe(DEFAULT_CONFIG.minClusterSize);
+      expect(result.relativePositions).toBeInstanceOf(Map);
+      expect(result.relativePositions.size).toBe(0);
+    });
   });
 });

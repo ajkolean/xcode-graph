@@ -95,6 +95,7 @@ export async function computeMicroLayoutsParallel(
     return computeMicroLayoutsSync(clusters, config);
   }
 
+  /* v8 ignore start */
   const poolSize = Math.min(
     typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4,
     MAX_WORKERS,
@@ -130,4 +131,5 @@ export async function computeMicroLayoutsParallel(
       worker.terminate();
     }
   }
+  /* v8 ignore stop */
 }

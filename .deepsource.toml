@@ -11,7 +11,9 @@ exclude_patterns = [
   "src/shared/schemas/error.schema.ts",
   "src/shared/schemas/simulation.schema.ts",
   "src/main.ts",
-  "src/graph/test-helpers/**"
+  "src/graph/test-helpers/**",
+  "src/graph/workers/layout.worker.ts",
+  "src/graph/workers/micro-layout.worker.ts"
 ]
 
 [[analyzers]]

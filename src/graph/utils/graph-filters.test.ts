@@ -126,6 +126,53 @@ describe('applyGraphFilters - matchesFilterCriteria edge cases', () => {
   });
 });
 
+describe('applyGraphFilters - package filter', () => {
+  it('excludes package node when its name is not in packages filter', () => {
+    const pkgNode: GraphNode[] = [
+      {
+        id: 'pkg',
+        name: 'Alamofire',
+        type: NodeType.Package,
+        platform: Platform.iOS,
+        origin: Origin.External,
+      },
+    ];
+    const filters: FilterState = {
+      nodeTypes: new Set([NodeType.Package]),
+      platforms: new Set([Platform.iOS]),
+      origins: new Set([Origin.External]),
+      projects: new Set(),
+      packages: new Set(['OtherPackage']),
+    };
+
+    const result = applyGraphFilters(pkgNode, [], filters, '');
+    expect(result.filteredNodes).toHaveLength(0);
+  });
+
+  it('includes package node when its name is in packages filter', () => {
+    const pkgNode: GraphNode[] = [
+      {
+        id: 'pkg',
+        name: 'Alamofire',
+        type: NodeType.Package,
+        platform: Platform.iOS,
+        origin: Origin.External,
+      },
+    ];
+    const filters: FilterState = {
+      nodeTypes: new Set([NodeType.Package]),
+      platforms: new Set([Platform.iOS]),
+      origins: new Set([Origin.External]),
+      projects: new Set(),
+      packages: new Set(['Alamofire']),
+    };
+
+    const result = applyGraphFilters(pkgNode, [], filters, '');
+    expect(result.filteredNodes).toHaveLength(1);
+    expect(result.filteredNodes[0]?.id).toBe('pkg');
+  });
+});
+
 describe('matchesSearch', () => {
   const node = createNode({
     id: '1',

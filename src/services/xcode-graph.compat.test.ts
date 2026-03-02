@@ -182,6 +182,22 @@ describe('safeParseGraph boundary validation', () => {
     expect(result.success).toBe(true);
     expect(result.warnings.some((w) => w.includes('odd length'))).toBe(true);
   });
+
+  it('should warn about odd-length dependencies array', () => {
+    const raw = {
+      name: 'OddDeps',
+      path: '/tmp',
+      projects: [],
+      dependencies: [
+        { target: { name: 'A', path: '/a', status: 'required' } },
+        [{ target: { name: 'B', path: '/b', status: 'required' } }],
+        { target: { name: 'C', path: '/c', status: 'required' } },
+      ],
+    };
+    const result = safeParseGraph(raw);
+    expect(result.success).toBe(true);
+    expect(result.warnings.some((w) => w.includes('Dependencies array has odd length'))).toBe(true);
+  });
 });
 
 describe('real fixture transforms correctly', () => {
