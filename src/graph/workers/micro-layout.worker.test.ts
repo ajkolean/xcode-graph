@@ -34,7 +34,7 @@ describe('micro-layout.worker', () => {
 
     expect(expose).toHaveBeenCalled();
     expect(capturedWorkerApi).not.toBeNull();
-    expect(typeof capturedWorkerApi?.['computeMicro']).toBe('function');
+    expect(typeof capturedWorkerApi?.computeMicro).toBe('function');
   });
 
   it('computeMicro deserializes cluster and returns serialized result', async () => {
@@ -71,7 +71,7 @@ describe('micro-layout.worker', () => {
       ] as Array<[string, unknown]>,
     };
 
-    const computeMicro = capturedWorkerApi?.['computeMicro'] as (
+    const computeMicro = capturedWorkerApi?.computeMicro as (
       cluster: unknown,
       config: unknown,
     ) => {
@@ -118,7 +118,7 @@ describe('micro-layout.worker', () => {
       ] as Array<[string, unknown]>,
     };
 
-    const computeMicro = capturedWorkerApi?.['computeMicro'] as (
+    const computeMicro = capturedWorkerApi?.computeMicro as (
       cluster: unknown,
       config: unknown,
     ) => unknown;

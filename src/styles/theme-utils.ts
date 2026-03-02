@@ -27,6 +27,7 @@ export function onColorSchemeChange(callback: (isDark: boolean) => void): () => 
     return () => {
       /* no-op: matchMedia unavailable */
     };
+  /** Forwards media query change events to the callback as a boolean. */
   const handler = (e: MediaQueryListEvent) => callback(e.matches);
   mql.addEventListener('change', handler);
   return () => mql.removeEventListener('change', handler);

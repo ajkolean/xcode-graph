@@ -155,7 +155,7 @@ describe('parallel-micro', () => {
   describe('worker pool fallback', () => {
     it('falls back to sync when Worker is unavailable and cluster count is high', async () => {
       const originalWorker = globalThis.Worker;
-      (globalThis as Record<string, unknown>)['Worker'] = undefined;
+      (globalThis as Record<string, unknown>).Worker = undefined;
 
       try {
         const clusters = Array.from({ length: 5 }, (_, i) => {

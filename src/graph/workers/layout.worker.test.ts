@@ -147,7 +147,7 @@ describe('layout.worker', () => {
 
       expect(expose).toHaveBeenCalled();
       expect(captured.workerApi).not.toBeNull();
-      expect(typeof captured.workerApi?.['computeLayout']).toBe('function');
+      expect(typeof captured.workerApi?.computeLayout).toBe('function');
     });
 
     it('deserializes clusters, computes layout, and serializes result', async () => {
@@ -176,7 +176,7 @@ describe('layout.worker', () => {
         },
       ];
 
-      const computeLayout = captured.workerApi?.['computeLayout'] as (
+      const computeLayout = captured.workerApi?.computeLayout as (
         nodes: unknown,
         edges: unknown,
         clusters: unknown,
