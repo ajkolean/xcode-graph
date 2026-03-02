@@ -435,6 +435,62 @@ describe('printClusterTable', () => {
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
   });
+
+  it('sorts clusters by y then x in output', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {
+      /* suppress output */
+    });
+    const result = makeLayoutResult([
+      {
+        id: 'BottomRight',
+        pos: makeClusterPosition({
+          id: 'BottomRight',
+          x: 500,
+          y: 800,
+          width: 200,
+          height: 100,
+          nodeCount: 1,
+        }),
+        nodeIds: [],
+      },
+      {
+        id: 'TopLeft',
+        pos: makeClusterPosition({
+          id: 'TopLeft',
+          x: 0,
+          y: 0,
+          width: 200,
+          height: 100,
+          nodeCount: 1,
+        }),
+        nodeIds: [],
+      },
+      {
+        id: 'TopRight',
+        pos: makeClusterPosition({
+          id: 'TopRight',
+          x: 500,
+          y: 0,
+          width: 200,
+          height: 100,
+          nodeCount: 1,
+        }),
+        nodeIds: [],
+      },
+    ]);
+    printClusterTable(result);
+
+    // Verify that rows are printed in order: TopLeft (y=0,x=0), TopRight (y=0,x=500), BottomRight (y=800,x=500)
+    const calls = spy.mock.calls.map((c) => c[0] as string);
+    const dataRows = calls.filter(
+      (c) => c.includes('TopLeft') || c.includes('TopRight') || c.includes('BottomRight'),
+    );
+    expect(dataRows.length).toBe(3);
+    expect(dataRows[0]).toContain('TopLeft');
+    expect(dataRows[1]).toContain('TopRight');
+    expect(dataRows[2]).toContain('BottomRight');
+    spy.mockRestore();
+  });
 });
 
 describe('printNodesByCluster', () => {

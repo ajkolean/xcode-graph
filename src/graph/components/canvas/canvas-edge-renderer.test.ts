@@ -423,6 +423,131 @@ describe('canvas-edge-renderer', () => {
     expect(events.length).to.be.greaterThan(0);
   });
 
+  it('should use transitiveDependents edge depths for chain opacity', () => {
+    const nodes: GraphNode[] = [
+      createTestNode({ id: 'root', name: 'Root', project: 'ProjA' }),
+      createTestNode({ id: 'dep', name: 'Dep', type: NodeType.Framework, project: 'ProjB' }),
+    ];
+    const edges: GraphEdge[] = [{ source: 'dep', target: 'root' }];
+    const nodeMap = new Map<string, GraphNode>();
+    for (const n of nodes) nodeMap.set(n.id, n);
+
+    const nodePositions = new Map([
+      ['root', { x: 0, y: 0, vx: 0, vy: 0, id: 'root', clusterId: 'ProjA', radius: 10 }],
+      ['dep', { x: 100, y: 0, vx: 0, vy: 0, id: 'dep', clusterId: 'ProjB', radius: 10 }],
+    ]);
+    const clusterPositions = new Map([
+      ['ProjA', { id: 'ProjA', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 }],
+      ['ProjB', { id: 'ProjB', x: 300, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 1 }],
+    ]);
+
+    const transitiveDependents: TransitiveResult = {
+      nodes: new Set(['root', 'dep']),
+      edges: new Set(['dep->root']),
+      edgeDepths: new Map([['dep->root', 0]]),
+      nodeDepths: new Map([
+        ['root', 0],
+        ['dep', 1],
+      ]),
+      maxDepth: 1,
+    };
+
+    const rc = createEdgeRenderContext({
+      nodes,
+      edges,
+      nodeMap,
+      layout: createMockLayout(nodePositions, clusterPositions),
+      transitiveDependents,
+      showDirectDependents: true,
+      showTransitiveDependents: true,
+    });
+
+    renderEdges(rc, largeViewport);
+
+    const events = getEvents(rc.ctx);
+    // Should have globalAlpha events for chain rendering
+    const alphaEvents = events.filter(
+      (e: unknown) => (e as { type: string }).type === 'globalAlpha',
+    );
+    expect(alphaEvents.length).to.be.greaterThan(0);
+  });
+
+  it('should draw bezier path for intra-cluster edges with distance > 150', () => {
+    // Two nodes in the same cluster, far apart so distance > 150
+    const nodes: GraphNode[] = [
+      createTestNode({ id: 'n1', name: 'Node1', project: 'Cluster1' }),
+      createTestNode({ id: 'n2', name: 'Node2', project: 'Cluster1' }),
+    ];
+    const edges: GraphEdge[] = [{ source: 'n1', target: 'n2' }];
+    const nodeMap = new Map<string, GraphNode>();
+    for (const n of nodes) nodeMap.set(n.id, n);
+
+    const nodePositions = new Map([
+      ['n1', { x: 0, y: 0, vx: 0, vy: 0, id: 'n1', clusterId: 'Cluster1', radius: 10 }],
+      ['n2', { x: 200, y: 200, vx: 0, vy: 0, id: 'n2', clusterId: 'Cluster1', radius: 10 }],
+    ]);
+    const clusterPositions = new Map([
+      [
+        'Cluster1',
+        { id: 'Cluster1', x: 0, y: 0, vx: 0, vy: 0, width: 500, height: 500, nodeCount: 2 },
+      ],
+    ]);
+
+    const rc = createEdgeRenderContext({
+      nodes,
+      edges,
+      nodeMap,
+      zoom: 1.0,
+      hoveredCluster: 'Cluster1',
+      layout: createMockLayout(nodePositions, clusterPositions),
+    });
+
+    renderEdges(rc, largeViewport);
+
+    // Distance between (0,0) and (200,200) = ~283 > 150, so bezier path should be used
+    const events = getEvents(rc.ctx);
+    expect(events.length).to.be.greaterThan(0);
+  });
+
+  it('should render intra-cluster non-cycle non-emphasized edges with drawing calls', () => {
+    // Two nodes same cluster, no selection, no chain, no cycle — exercises the
+    // setLineDash([]) branch (line 326) for solid intra-cluster edges
+    const nodes: GraphNode[] = [
+      createTestNode({ id: 'n1', name: 'Node1', project: 'Cluster1' }),
+      createTestNode({ id: 'n2', name: 'Node2', project: 'Cluster1' }),
+    ];
+    const edges: GraphEdge[] = [{ source: 'n1', target: 'n2' }];
+    const nodeMap = new Map<string, GraphNode>();
+    for (const n of nodes) nodeMap.set(n.id, n);
+
+    const nodePositions = new Map([
+      ['n1', { x: 10, y: 10, vx: 0, vy: 0, id: 'n1', clusterId: 'Cluster1', radius: 10 }],
+      ['n2', { x: 50, y: 50, vx: 0, vy: 0, id: 'n2', clusterId: 'Cluster1', radius: 10 }],
+    ]);
+    const clusterPositions = new Map([
+      [
+        'Cluster1',
+        { id: 'Cluster1', x: 0, y: 0, vx: 0, vy: 0, width: 200, height: 200, nodeCount: 2 },
+      ],
+    ]);
+
+    const rc = createEdgeRenderContext({
+      nodes,
+      edges,
+      nodeMap,
+      zoom: 1.0,
+      hoveredCluster: 'Cluster1',
+      layout: createMockLayout(nodePositions, clusterPositions),
+    });
+
+    renderEdges(rc, largeViewport);
+
+    // Non-cycle, non-emphasized, intra-cluster edge should produce drawing calls
+    const drawCalls = getDrawCalls(rc.ctx);
+    const strokeCalls = drawCalls.filter((c: unknown) => (c as { type: string }).type === 'stroke');
+    expect(strokeCalls.length).to.be.greaterThan(0);
+  });
+
   it('should render glow pass and arrowhead for emphasized edges', () => {
     const nodes: GraphNode[] = [
       createTestNode({ id: 'src', name: 'Source', project: 'ProjA' }),

@@ -458,6 +458,33 @@ describe('GraphInteractionFullController', () => {
 
       consoleSpy.mockRestore();
     });
+
+    it('should reset state in catch block when removeEventListener throws', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        /* suppress output */
+      });
+      const removeSpy = vi.spyOn(window, 'removeEventListener').mockImplementation(() => {
+        throw new Error('removeEventListener failed');
+      });
+
+      // Set some drag state so we can verify it gets reset in the catch block
+      controller.isDragging = true;
+      controller.draggedNode = 'n1';
+
+      host.connectedCallback();
+      expect(() => host.disconnectedCallback()).not.toThrow();
+
+      // Lines 166-167: catch block resets isDragging and draggedNode
+      expect(controller.isDragging).toBe(false);
+      expect(controller.draggedNode).toBeNull();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[GraphInteractionFullController] Error during cleanup:',
+        expect.any(Error),
+      );
+
+      consoleSpy.mockRestore();
+      removeSpy.mockRestore();
+    });
   });
 
   describe('Edge Cases', () => {

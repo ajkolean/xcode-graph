@@ -677,6 +677,233 @@ describe('transformXcodeGraph: getDependencyKind for library/bundle/macro/framew
   });
 });
 
+describe('transformXcodeGraph: getResourceFilePath fallback for unknown resource type', () => {
+  it('should return empty string for resource element with neither file nor folderReference', () => {
+    const raw = makeRawGraph({
+      targetOverrides: {
+        resources: {
+          resources: [
+            // A resource element that has neither 'file' nor 'folderReference'
+            // This exercises the fallback return '' path in getResourceFilePath
+            { unknownType: { path: 'SomeAsset.dat' } } as never,
+          ],
+        },
+      },
+    });
+    const result = transformXcodeGraph(raw);
+    const node = result.data.nodes.find((n) => n.name === 'MyApp');
+    // The unknown resource still counts toward resourceCount
+    expect(node?.resourceCount).toBe(1);
+    // But its empty-string path won't match any notable pattern
+    expect(node?.notableResources).toBeUndefined();
+  });
+});
+
+describe('transformXcodeGraph: extractResourceMetadata error handling', () => {
+  it('should warn and return defaults when resources iteration throws', () => {
+    const badResources = {
+      get resources() {
+        return {
+          get length() {
+            return 1;
+          },
+          [Symbol.iterator]() {
+            throw new Error('iterator exploded');
+          },
+        };
+      },
+    };
+
+    const raw = makeRawGraph({
+      targetOverrides: {
+        resources: badResources,
+      },
+    });
+    const result = transformXcodeGraph(raw);
+    expect(result.warnings.some((w) => w.includes('Failed to extract resource metadata'))).toBe(
+      true,
+    );
+  });
+});
+
+describe('transformXcodeGraph: extractForeignBuild error handling', () => {
+  it('should warn and return undefined when foreignBuild processing throws', () => {
+    const badForeignBuild = {
+      get script() {
+        throw new Error('script access exploded');
+      },
+    };
+
+    const raw = makeRawGraph({
+      targetOverrides: {
+        foreignBuild: badForeignBuild,
+      },
+    });
+    const result = transformXcodeGraph(raw);
+    expect(result.warnings.some((w) => w.includes('Failed to extract foreign build info'))).toBe(
+      true,
+    );
+    const node = result.data.nodes.find((n) => n.name === 'MyApp');
+    expect(node?.foreignBuild).toBeUndefined();
+  });
+});
+
+describe('transformXcodeGraph: ensureDependencyNode lookup path', () => {
+  it('should create node from lookup data when key is in lookup but not nodes', () => {
+    // This tests the defensive path where a dependency references a target
+    // that exists in the project data. We create two projects where the
+    // second project's target is referenced as a dependency.
+    const raw = {
+      name: 'TestGraph',
+      path: '/Users/test/MyApp',
+      workspace: {},
+      projects: [
+        '/Users/test/MyApp',
+        {
+          path: '/Users/test/MyApp',
+          sourceRootPath: '/Users/test/MyApp',
+          xcodeProjPath: '/Users/test/MyApp/MyApp.xcodeproj',
+          name: 'MyApp',
+          options: {
+            automaticSchemesOptions: { disabled: {} },
+            disableBundleAccessors: false,
+            disableShowEnvironmentVarsInScriptPhases: false,
+            disableSynthesizedResourceAccessors: false,
+            textSettings: {},
+          },
+          targets: {
+            MyApp: {
+              validSourceCompatibleFolderExtensions: [],
+              validSourceExtensions: ['.swift'],
+              validResourceExtensions: [],
+              validResourceCompatibleFolderExtensions: [],
+              validFolderExtensions: [],
+              name: 'MyApp',
+              destinations: { iPhone: {} },
+              product: 'app',
+              bundleId: 'com.test.MyApp',
+              productName: 'MyApp',
+              deploymentTargets: { iOS: '17.0' },
+              dependencies: [],
+              sources: [{ path: '/src/App.swift' }],
+              resources: { resources: [] },
+              copyFiles: [],
+              coreDataModels: [],
+              scripts: [],
+              environmentVariables: {},
+              launchArguments: [],
+              filesGroup: { group: { name: 'MyApp' } },
+              rawScriptBuildPhases: [],
+              playgrounds: [],
+              additionalFiles: [],
+              buildRules: [],
+              prune: false,
+              mergedBinaryType: { disabled: {} },
+              mergeable: false,
+              metadata: { tags: [] },
+              type: 'local',
+              packages: [],
+              buildableFolders: [],
+            },
+          },
+          packages: [],
+          schemes: [],
+          settings: {
+            base: {},
+            baseDebug: {},
+            configurations: [],
+            defaultSettings: { recommended: { excluding: [] } },
+          },
+          filesGroup: { group: { name: 'MyApp' } },
+          additionalFiles: [],
+          resourceSynthesizers: [],
+          type: { local: {} },
+        },
+        '/Users/test/Lib',
+        {
+          path: '/Users/test/Lib',
+          sourceRootPath: '/Users/test/Lib',
+          xcodeProjPath: '/Users/test/Lib/Lib.xcodeproj',
+          name: 'LibProject',
+          options: {
+            automaticSchemesOptions: { disabled: {} },
+            disableBundleAccessors: false,
+            disableShowEnvironmentVarsInScriptPhases: false,
+            disableSynthesizedResourceAccessors: false,
+            textSettings: {},
+          },
+          targets: {
+            MyLib: {
+              validSourceCompatibleFolderExtensions: [],
+              validSourceExtensions: ['.swift'],
+              validResourceExtensions: [],
+              validResourceCompatibleFolderExtensions: [],
+              validFolderExtensions: [],
+              name: 'MyLib',
+              destinations: { iPhone: {} },
+              product: 'framework',
+              bundleId: 'com.test.MyLib',
+              productName: 'MyLib',
+              deploymentTargets: { iOS: '17.0' },
+              dependencies: [],
+              sources: [{ path: '/src/Lib.swift' }],
+              resources: { resources: [] },
+              copyFiles: [],
+              coreDataModels: [],
+              scripts: [],
+              environmentVariables: {},
+              launchArguments: [],
+              filesGroup: { group: { name: 'MyLib' } },
+              rawScriptBuildPhases: [],
+              playgrounds: [],
+              additionalFiles: [],
+              buildRules: [],
+              prune: false,
+              mergedBinaryType: { disabled: {} },
+              mergeable: false,
+              metadata: { tags: [] },
+              type: 'local',
+              packages: [],
+              buildableFolders: [],
+            },
+          },
+          packages: [],
+          schemes: [],
+          settings: {
+            base: {},
+            baseDebug: {},
+            configurations: [],
+            defaultSettings: { recommended: { excluding: [] } },
+          },
+          filesGroup: { group: { name: 'LibProject' } },
+          additionalFiles: [],
+          resourceSynthesizers: [],
+          type: { local: {} },
+        },
+      ],
+      dependencies: [
+        { target: { name: 'MyApp', path: '/Users/test/MyApp', status: 'required' } },
+        [{ target: { name: 'MyLib', path: '/Users/test/Lib', status: 'required' } }],
+      ],
+      packages: [],
+      dependencyConditions: [],
+    };
+
+    const result = transformXcodeGraph(raw);
+    // Both nodes should exist
+    const appNode = result.data.nodes.find((n) => n.name === 'MyApp');
+    const libNode = result.data.nodes.find((n) => n.name === 'MyLib');
+    expect(appNode).toBeDefined();
+    expect(libNode).toBeDefined();
+    // There should be an edge from MyApp to MyLib
+    expect(result.data.edges.length).toBeGreaterThan(0);
+    const edge = result.data.edges.find(
+      (e) => e.source.includes('MyApp') && e.target.includes('MyLib'),
+    );
+    expect(edge).toBeDefined();
+  });
+});
+
 describe('transformXcodeGraph: origin detection', () => {
   it('should detect external origin from project type', () => {
     const raw = makeRawGraph({

@@ -13,6 +13,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { SignalSnapshot } from '../../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
 import {
+  type HighlightCard,
   resetHighlightToggles,
   resetView,
   selectCluster,
@@ -240,6 +241,18 @@ describe('graph.actions', () => {
       expect(highlightDirectDeps.get()).toBe(true);
       expect(highlightDirectDependents.get()).toBe(true);
       expect(highlightTransitiveDeps.get()).toBe(false);
+    });
+
+    it('should do nothing for an unrecognized highlight card value', () => {
+      highlightDirectDeps.set(true);
+
+      toggleHighlight('unknown-card' as HighlightCard);
+
+      // All toggles should remain unchanged
+      expect(highlightDirectDeps.get()).toBe(true);
+      expect(highlightTransitiveDeps.get()).toBe(false);
+      expect(highlightDirectDependents.get()).toBe(false);
+      expect(highlightTransitiveDependents.get()).toBe(false);
     });
   });
 

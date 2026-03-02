@@ -423,4 +423,96 @@ describe('xcode-graph (GraphApp)', () => {
       expect(el.getAttribute('data-theme')).toBeDefined();
     });
   });
+
+  describe('applyColorScheme auto mode with matchMedia', () => {
+    it('should register a change handler and respond to media query changes', async () => {
+      const listeners: Array<(e: MediaQueryListEvent) => void> = [];
+      const mockMql = {
+        matches: false,
+        addEventListener: vi.fn((event: string, handler: (e: MediaQueryListEvent) => void) => {
+          if (event === 'change') listeners.push(handler);
+        }),
+        removeEventListener: vi.fn(),
+      };
+
+      const originalMatchMedia = globalThis.matchMedia;
+      globalThis.matchMedia = vi.fn().mockReturnValue(mockMql) as unknown as typeof matchMedia;
+
+      try {
+        const el = await fixture<GraphApp>(html`
+          <xcode-graph color-scheme="auto"></xcode-graph>
+        `);
+
+        // Auto mode with mql.matches = false should set 'light'
+        expect(el.getAttribute('data-theme')).toBe('light');
+        expect(mockMql.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+
+        // Simulate media query change to dark
+        const handler = listeners[0];
+        if (handler) {
+          handler({ matches: true } as MediaQueryListEvent);
+        }
+        expect(el.getAttribute('data-theme')).toBe('dark');
+
+        // Simulate media query change back to light
+        if (handler) {
+          handler({ matches: false } as MediaQueryListEvent);
+        }
+        expect(el.getAttribute('data-theme')).toBe('light');
+
+        // Disconnect should clean up the listener
+        el.remove();
+        expect(mockMql.removeEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+      } finally {
+        globalThis.matchMedia = originalMatchMedia;
+      }
+    });
+  });
+
+  describe('loadRawGraph with mocked transform', () => {
+    it('should set nodes and edges when transform returns valid data', async () => {
+      const mockNodes: GraphNode[] = [
+        createTestNode('mock-a', { project: 'MockProject' }),
+        createTestNode('mock-b', { project: 'MockProject' }),
+      ];
+      const mockEdges: GraphEdge[] = [createTestEdge('mock-a', 'mock-b')];
+
+      vi.doMock('@/services/xcode-graph.service', () => ({
+        transformXcodeGraph: () => ({
+          data: { nodes: mockNodes, edges: mockEdges },
+          warnings: [],
+        }),
+      }));
+
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph></xcode-graph>
+      `);
+
+      await el.loadRawGraph({ some: 'data' });
+      await el.updateComplete;
+
+      expect(el.nodes).toEqual(mockNodes);
+      expect(el.edges).toEqual(mockEdges);
+
+      vi.doUnmock('@/services/xcode-graph.service');
+    });
+
+    it('should call ErrorService.handleError when transform throws', async () => {
+      vi.doMock('@/services/xcode-graph.service', () => ({
+        transformXcodeGraph: () => {
+          throw new Error('Transform exploded');
+        },
+      }));
+
+      const el = await fixture<GraphApp>(html`
+        <xcode-graph></xcode-graph>
+      `);
+
+      // Should not throw — the catch block handles it
+      await el.loadRawGraph({ bad: 'data' });
+      expect(el).toBeDefined();
+
+      vi.doUnmock('@/services/xcode-graph.service');
+    });
+  });
 });

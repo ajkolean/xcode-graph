@@ -517,6 +517,75 @@ describe('canvas-node-renderer', () => {
     });
   });
 
+  describe('drawNodeEffects for cycle nodes', () => {
+    it('should draw cycle glow ring for a node in a strongly-connected component', () => {
+      const nodes = [createTestNode({ id: 'cycleNode', name: 'CycleA', project: 'ProjectA' })];
+      const nodePositions = new Map([['cycleNode', { x: 50, y: 50 }]]);
+      const clusterPositions = new Map([['ProjectA', { x: 0, y: 0 }]]);
+
+      const layout = {
+        nodePositions,
+        clusterPositions,
+        cycleNodes: new Set(['cycleNode']),
+      } as unknown as GraphLayoutController;
+
+      const rc = createRenderContext({
+        nodes,
+        layout,
+        time: 600,
+      });
+      const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
+
+      renderNodes(rc, viewport);
+
+      // Cycle node should trigger arc + stroke calls for the glow ring
+      const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
+      const strokeStyleEvents = events.filter(
+        (e: unknown) => (e as { type: string }).type === 'strokeStyle',
+      );
+      const hasCycleGlow = strokeStyleEvents.some(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: string } }).props?.value ===
+          'rgba(239, 68, 68, 0.6)',
+      );
+      expect(hasCycleGlow).toBe(true);
+    });
+
+    it('should not draw cycle glow for dimmed cycle nodes', () => {
+      const nodes = [createTestNode({ id: 'cycleNode', name: 'CycleA', project: 'ProjectA' })];
+      const nodePositions = new Map([['cycleNode', { x: 50, y: 50 }]]);
+      const clusterPositions = new Map([['ProjectA', { x: 0, y: 0 }]]);
+
+      const layout = {
+        nodePositions,
+        clusterPositions,
+        cycleNodes: new Set(['cycleNode']),
+      } as unknown as GraphLayoutController;
+
+      const rc = createRenderContext({
+        nodes,
+        layout,
+        dimmedNodeIds: new Set(['cycleNode']),
+        time: 600,
+      });
+      const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
+
+      renderNodes(rc, viewport);
+
+      // Dimmed node should NOT get cycle glow ring
+      const events = (rc.ctx as unknown as { __getEvents(): unknown[] }).__getEvents();
+      const strokeStyleEvents = events.filter(
+        (e: unknown) => (e as { type: string }).type === 'strokeStyle',
+      );
+      const hasCycleGlow = strokeStyleEvents.some(
+        (e: unknown) =>
+          (e as { type: string; props?: { value?: string } }).props?.value ===
+          'rgba(239, 68, 68, 0.6)',
+      );
+      expect(hasCycleGlow).toBe(false);
+    });
+  });
+
   describe('drawNodeLabel truncation', () => {
     it('should truncate long names when not hovered or connected', () => {
       const longNameNode = createTestNode({

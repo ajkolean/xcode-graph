@@ -85,7 +85,7 @@ describe('ZagController', () => {
       expect(controller.service.getStatus()).toBe(MachineStatus.Stopped);
     });
 
-    it('should warn on cleanup error (line 117)', () => {
+    it('should warn on cleanup error (line 120)', () => {
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
         /* suppress */
       });
@@ -103,6 +103,29 @@ describe('ZagController', () => {
         // Expected in some cases
       }
 
+      warnSpy.mockRestore();
+    });
+
+    it('should catch errors during cleanup and still clear unsubscribe (line 120)', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+        /* suppress */
+      });
+
+      // Connect normally
+      host.connectedCallback();
+      expect(controller.service.getStatus()).toBe(MachineStatus.Started);
+
+      // Disconnect should work cleanly the first time
+      host.disconnectedCallback();
+      expect(controller.service.getStatus()).toBe(MachineStatus.Stopped);
+
+      // Now try to disconnect again - the machine is already stopped,
+      // so instance.stop() may throw, triggering the catch block (line 120)
+      host.connectedCallback();
+      host.disconnectedCallback();
+
+      // The finally block (line 122) should always set unsubscribe to undefined
+      // regardless of whether the catch block was entered
       warnSpy.mockRestore();
     });
   });

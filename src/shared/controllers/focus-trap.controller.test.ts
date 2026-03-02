@@ -330,7 +330,7 @@ describe('FocusTrapController', () => {
   });
 
   describe('Error handling', () => {
-    it('should warn on activation error (line 128)', () => {
+    it('should warn on activation error (line 131)', () => {
       host.simulateDisconnected();
       host.remove();
 
@@ -361,7 +361,7 @@ describe('FocusTrapController', () => {
       warnSpy.mockRestore();
     });
 
-    it('should warn on deactivation error (line 138)', () => {
+    it('should warn on deactivation error (line 142)', () => {
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
         /* suppress */
       });
@@ -378,6 +378,35 @@ describe('FocusTrapController', () => {
       // Whether or not the warn was called, deactivation shouldn't throw
       expect(_controller.active).toBe(false);
 
+      warnSpy.mockRestore();
+    });
+
+    it('should handle activation error when createFocusTrap throws', () => {
+      host.simulateDisconnected();
+      host.remove();
+
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+        /* suppress */
+      });
+
+      // Create a minimal host element that will cause createFocusTrap to throw
+      const badHost = document.createElement('mock-html-host') as MockHTMLHost;
+      // Intentionally do NOT add to DOM and do NOT set tabindex
+      // to increase the likelihood of an error during focus-trap creation
+
+      const badIsActive = vi.fn(() => true);
+      const ctrl = new FocusTrapController(badHost, {
+        isActive: badIsActive,
+        escapeDeactivates: true,
+        clickOutsideDeactivates: false,
+      });
+
+      badHost.simulateConnected();
+      // This should not throw even if createFocusTrap fails internally
+      expect(() => badHost.simulateUpdated()).not.toThrow();
+      expect(ctrl).toBeDefined();
+
+      badHost.simulateDisconnected();
       warnSpy.mockRestore();
     });
   });

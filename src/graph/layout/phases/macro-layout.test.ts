@@ -99,5 +99,57 @@ describe('macro-layout', () => {
       expect(Number.isFinite(pos.x)).toBe(true);
       expect(Number.isFinite(pos.y)).toBe(true);
     });
+
+    it('handles multiple clusters in same layer with positionId sorting', async () => {
+      // Create several clusters that should end up in the same ELK layer
+      const clusterA = createClusterWithNodes(2);
+      clusterA.id = 'A';
+      clusterA.name = 'ClusterA';
+      const clusterB = createClusterWithNodes(2);
+      clusterB.id = 'B';
+      clusterB.name = 'ClusterB';
+      const clusterC = createClusterWithNodes(2);
+      clusterC.id = 'C';
+      clusterC.name = 'ClusterC';
+      const clusterD = createClusterWithNodes(2);
+      clusterD.id = 'D';
+      clusterD.name = 'ClusterD';
+      const clusters = [clusterA, clusterB, clusterC, clusterD];
+
+      // All depend on A, so B/C/D should be in the same layer
+      const nodeA0 = clusterA.nodes[0];
+      const nodeB0 = clusterB.nodes[0];
+      const nodeC0 = clusterC.nodes[0];
+      const nodeD0 = clusterD.nodes[0];
+      assert(nodeA0 && nodeB0 && nodeC0 && nodeD0, 'clusters must have nodes');
+      const edges = [
+        { source: nodeA0.id, target: nodeB0.id },
+        { source: nodeA0.id, target: nodeC0.id },
+        { source: nodeA0.id, target: nodeD0.id },
+      ];
+      const clusterGraph = buildClusterGraph(edges, clusters);
+
+      const microLayouts = new Map(
+        clusters.map((c) => [c.id, computeClusterInterior(c, DEFAULT_CONFIG)]),
+      );
+
+      const positions = await computeMacroLayout(clusterGraph, microLayouts, DEFAULT_CONFIG);
+
+      expect(positions.size).toBe(4);
+      for (const [_id, pos] of positions) {
+        expect(Number.isFinite(pos.x)).toBe(true);
+        expect(Number.isFinite(pos.y)).toBe(true);
+      }
+    });
+
+    it('returns empty map when layout produces no children', async () => {
+      const clusters: ReturnType<typeof createClusterWithNodes>[] = [];
+      const clusterGraph = buildClusterGraph([], clusters);
+      const microLayouts = new Map<string, ReturnType<typeof computeClusterInterior>>();
+
+      const positions = await computeMacroLayout(clusterGraph, microLayouts, DEFAULT_CONFIG);
+
+      expect(positions.size).toBe(0);
+    });
   });
 });
