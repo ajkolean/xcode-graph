@@ -161,14 +161,10 @@ function drawNodeIcon(
   ctx.translate(-x, -y);
 }
 
-/** Compute adaptive font size that maintains readable screen-apparent size at low zoom */
-function getAdaptiveNodeFontSize(zoom: number): number {
-  const targetScreenSize = 12;
-  if (zoom >= 0.5) return targetScreenSize;
-  // Scale inversely with zoom to maintain readable screen size, capped
-  const graphSize = targetScreenSize / zoom;
-  return Math.min(graphSize, 200);
-}
+/** Fixed node label font size in graph-space pixels */
+const NODE_LABEL_FONT_SIZE = 12;
+/** Fixed gap between node icon and label in graph-space pixels */
+const NODE_LABEL_PADDING = 8;
 
 function drawNodeLabel(
   ctx: CanvasRenderingContext2D,
@@ -190,12 +186,12 @@ function drawNodeLabel(
       ? `${node.name.substring(0, 20)}...`
       : node.name;
 
-  const fontSize = getAdaptiveNodeFontSize(zoom);
+  const fontSize = NODE_LABEL_FONT_SIZE;
   ctx.font = `${isSelected ? '600' : isConnected || isInChain ? '500' : '400'} ${fontSize}px var(--fonts-body, sans-serif)`;
   ctx.textAlign = 'center';
   ctx.fillStyle = adjustedColor;
 
-  const labelY = y + size + fontSize * 1.8;
+  const labelY = y + size + NODE_LABEL_PADDING + fontSize;
 
   // Dark halo pass: draw text in shadow color at small offsets for readability
   ctx.globalAlpha = alpha * 0.7;

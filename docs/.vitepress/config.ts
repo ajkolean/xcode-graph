@@ -31,6 +31,11 @@ export default defineConfig({
 	},
 
 	head: [
+		["link", { rel: "icon", type: "image/x-icon", href: "/xcode-graph/favicon.ico" }],
+		["link", { rel: "icon", type: "image/png", sizes: "32x32", href: "/xcode-graph/favicon-32x32.png" }],
+		["link", { rel: "icon", type: "image/png", sizes: "16x16", href: "/xcode-graph/favicon-16x16.png" }],
+		["link", { rel: "apple-touch-icon", sizes: "180x180", href: "/xcode-graph/apple-touch-icon.png" }],
+		["link", { rel: "manifest", href: "/xcode-graph/site.webmanifest" }],
 		[
 			"meta",
 			{
@@ -42,6 +47,8 @@ export default defineConfig({
 	],
 
 	themeConfig: {
+		logo: "/xcode-graph-icon.png",
+
 		nav: [
 			{ text: "Guide", link: "/guide/" },
 			{ text: "Demo", link: "/demo" },
@@ -77,6 +84,18 @@ export default defineConfig({
 					text: "Reference",
 					items: [
 						{ text: "Overview", link: "/reference/" },
+						{
+							text: "Component API",
+							link: "/reference/component-api",
+						},
+						{
+							text: "Data Types",
+							link: "/reference/data-types",
+						},
+						{
+							text: "Layout Configuration",
+							link: "/reference/layout-configuration",
+						},
 					],
 				},
 			],

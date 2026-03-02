@@ -48,14 +48,15 @@ export const ZOOM_STROKE_WIDTH = {
 } as const;
 
 /**
- * Cluster label adaptive sizing configuration
- * Labels scale inversely with zoom to remain legible at low zoom levels
+ * Cluster label sizing configuration
+ * Fixed graph-space values — labels scale naturally with the canvas zoom
+ * transform like every other element (no per-frame counter-scaling).
  */
 export const CLUSTER_LABEL_CONFIG = {
-  /** Target screen-apparent size for cluster name (px) */
-  NAME_SCREEN_SIZE: 24,
-  /** Absolute max graph-space font size cap (prevents enormous values at tiny zoom) */
-  MAX_FONT_SIZE: 800,
+  /** Fixed font size in graph-space pixels */
+  FONT_SIZE: 28,
+  /** Fixed gap between cluster border and label arc in graph-space pixels */
+  LABEL_PADDING: 20,
 } as const;
 
 /**

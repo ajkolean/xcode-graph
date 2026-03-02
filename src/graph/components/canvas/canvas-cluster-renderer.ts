@@ -3,6 +3,9 @@ import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { hexToRgba } from '@graph/utils/canvas-theme';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-config';
+
+/** Minimum screen-pixel size for cluster labels before they are hidden */
+const MIN_LABEL_SCREEN_PX = 6;
 import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
@@ -112,10 +115,6 @@ function drawClusterFillAndBorder(
   ctx.lineDashOffset = 0;
 }
 
-function getAdaptiveClusterFontSize(targetScreenSize: number, zoom: number): number {
-  const graphSize = targetScreenSize / zoom;
-  return Math.min(graphSize, CLUSTER_LABEL_CONFIG.MAX_FONT_SIZE);
-}
 
 function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
   if (ctx.measureText(text).width <= maxWidth) return text;
@@ -124,6 +123,49 @@ function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: num
     truncated = truncated.slice(0, -1);
   }
   return `${truncated}…`;
+}
+
+function drawTextAlongArc(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  cx: number,
+  cy: number,
+  arcRadius: number,
+) {
+  // Measure each character width
+  const charWidths: number[] = [];
+  let totalWidth = 0;
+  for (const ch of text) {
+    const w = ctx.measureText(ch).width;
+    charWidths.push(w);
+    totalWidth += w;
+  }
+
+  // Calculate angular span of the full text
+  const totalAngle = totalWidth / arcRadius;
+
+  // Start at top-center, offset left by half the text span
+  // -π/2 is 12 o'clock; we go from left to right
+  let angle = -Math.PI / 2 - totalAngle / 2;
+
+  for (let i = 0; i < text.length; i++) {
+    const charWidth = charWidths[i]!;
+    // Advance by half the character width to center it on the arc position
+    angle += charWidth / (2 * arcRadius);
+
+    const x = cx + arcRadius * Math.cos(angle);
+    const y = cy + arcRadius * Math.sin(angle);
+
+    ctx.save();
+    ctx.translate(x, y);
+    // Rotate so the character is perpendicular to the radius
+    ctx.rotate(angle + Math.PI / 2);
+    ctx.fillText(text[i]!, 0, 0);
+    ctx.restore();
+
+    // Advance by the other half
+    angle += charWidth / (2 * arcRadius);
+  }
 }
 
 function drawClusterLabels(
@@ -137,18 +179,24 @@ function drawClusterLabels(
   name: string,
   zoom: number,
 ) {
+  const nameFontSize = CLUSTER_LABEL_CONFIG.FONT_SIZE;
+
+  // Hide labels when they'd be too small to read on screen
+  if (nameFontSize * zoom < MIN_LABEL_SCREEN_PX) return;
+
   const dimFactor = shouldDim ? 0.3 : 1.0;
-  const nameFontSize = getAdaptiveClusterFontSize(CLUSTER_LABEL_CONFIG.NAME_SCREEN_SIZE, zoom);
   const maxTextWidth = radius * 1.6;
-  const nameY = cy - radius - nameFontSize * 0.9;
 
   ctx.fillStyle = clusterColor;
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'alphabetic';
+  ctx.textBaseline = 'middle';
   ctx.font = `${isActive ? 600 : 500} ${nameFontSize}px var(--fonts-body, sans-serif)`;
   const displayName = truncateText(ctx, name, maxTextWidth);
   ctx.globalAlpha = (isActive ? 1 : 0.85) * dimFactor;
-  ctx.fillText(displayName, cx, nameY);
+
+  const arcRadius = radius + CLUSTER_LABEL_CONFIG.LABEL_PADDING;
+
+  drawTextAlongArc(ctx, displayName, cx, cy, arcRadius);
 }
 
 function renderSingleCluster(
