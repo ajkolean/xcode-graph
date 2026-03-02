@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ajkolean/xcode-graph/main/docs/public/xcode-graph-icon-readme.png" alt="XcodeGraph" width="180" />
+  <img src="https://ajkolean.github.io/xcode-graph/xcode-graph-icon-readme.png" alt="XcodeGraph" width="180" />
 </p>
 
 <h1 align="center">xcode-graph</h1>
