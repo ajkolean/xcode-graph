@@ -11,6 +11,8 @@ import type { NodeType, Origin, Platform } from './graph.types';
 
 /**
  * Active tab enum - application navigation tabs
+ *
+ * @public
  */
 export enum ActiveTab {
   Overview = 'overview',
@@ -26,6 +28,8 @@ export enum ActiveTab {
 
 /**
  * View mode enum - determines graph visualization mode
+ *
+ * @public
  */
 export enum ViewMode {
   Full = 'full',
@@ -35,7 +39,11 @@ export enum ViewMode {
   Both = 'both',
 }
 
-/** Serializable filter state with arrays */
+/**
+ * Serializable filter state with arrays
+ *
+ * @public
+ */
 export interface FilterStateInput {
   nodeTypes: string[];
   platforms: string[];
@@ -44,7 +52,11 @@ export interface FilterStateInput {
   packages: string[];
 }
 
-/** Runtime filter state with Sets for efficient lookup */
+/**
+ * Runtime filter state with Sets for efficient lookup
+ *
+ * @public
+ */
 export interface FilterState {
   nodeTypes: Set<NodeType>;
   platforms: Set<Platform>;
@@ -58,6 +70,8 @@ export interface FilterState {
  *
  * @param state - Runtime filter state with Sets
  * @returns Serializable filter state with arrays
+ *
+ * @public
  */
 export function serializeFilterState(state: FilterState): FilterStateInput {
   return {
@@ -69,9 +83,23 @@ export function serializeFilterState(state: FilterState): FilterStateInput {
   };
 }
 
-/** All active tab values for iteration */
+/**
+ * All active tab values for iteration
+ *
+ * @public
+ */
 export const ACTIVE_TAB_VALUES: ActiveTab[] = Object.values(ActiveTab);
-/** All view mode values for iteration */
+
+/**
+ * All view mode values for iteration
+ *
+ * @public
+ */
 export const VIEW_MODE_VALUES: ViewMode[] = Object.values(ViewMode);
-/** Default active tab */
+
+/**
+ * Default active tab
+ *
+ * @public
+ */
 export const DEFAULT_ACTIVE_TAB: ActiveTab = ActiveTab.Graph;

@@ -7,6 +7,8 @@ import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.
  *
  * @param cluster - The cluster to analyze
  * @param allEdges - All graph edges (includes cross-cluster edges for external dependent detection)
+ *
+ * @public
  */
 export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
   const nodeIds = new Set(cluster.nodes.map((node) => node.id));
@@ -93,6 +95,8 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
  * @param dependents - Map of node ID to its internal dependent IDs
  * @param externalDependents - Map of node ID to count of external dependents
  * @returns Array of anchor nodes (typically one, but apps/CLIs may return multiple)
+ *
+ * @public
  */
 export function identifyAnchors(
   nodes: GraphNode[],
@@ -250,6 +254,8 @@ export function assignLayers(
  * @param isAnchor - Whether this is an anchor (entry point) node
  * @param dependentCount - Number of internal dependents
  * @returns The assigned NodeRole
+ *
+ * @public
  */
 export function determineRole(
   node: GraphNode,

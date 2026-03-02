@@ -43,6 +43,8 @@ function getPathCacheKey(x1: number, y1: number, x2: number, y2: number): string
  * @param x2 - End X coordinate
  * @param y2 - End Y coordinate
  * @returns SVG path string (M ... C ...)
+ *
+ * @public
  */
 export function generateBezierPath(x1: number, y1: number, x2: number, y2: number): string {
   const cacheKey = getPathCacheKey(x1, y1, x2, y2);

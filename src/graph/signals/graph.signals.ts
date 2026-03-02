@@ -11,31 +11,67 @@ import { Signal, signal } from '@lit-labs/signals';
 import { ViewMode } from '@shared/schemas/app.types';
 import type { GraphNode } from '@shared/schemas/graph.types';
 
-/** Currently selected node (null if none) */
+/**
+ * Currently selected node (null if none)
+ *
+ * @public
+ */
 export const selectedNode: Signal.State<GraphNode | null> = signal<GraphNode | null>(null);
 
-/** Currently selected cluster ID (null if none) */
+/**
+ * Currently selected cluster ID (null if none)
+ *
+ * @public
+ */
 export const selectedCluster: Signal.State<string | null> = signal<string | null>(null);
 
-/** Currently hovered node ID (null if none) */
+/**
+ * Currently hovered node ID (null if none)
+ *
+ * @public
+ */
 export const hoveredNode: Signal.State<string | null> = signal<string | null>(null);
 
-/** Detected circular dependency paths */
+/**
+ * Detected circular dependency paths
+ *
+ * @public
+ */
 export const circularDependencies: Signal.State<string[][]> = signal<string[][]>([]);
 
-/** Whether direct dependencies are highlighted */
+/**
+ * Whether direct dependencies are highlighted
+ *
+ * @public
+ */
 export const highlightDirectDeps: Signal.State<boolean> = signal<boolean>(false);
 
-/** Whether transitive dependencies are highlighted */
+/**
+ * Whether transitive dependencies are highlighted
+ *
+ * @public
+ */
 export const highlightTransitiveDeps: Signal.State<boolean> = signal<boolean>(false);
 
-/** Whether direct dependents are highlighted */
+/**
+ * Whether direct dependents are highlighted
+ *
+ * @public
+ */
 export const highlightDirectDependents: Signal.State<boolean> = signal<boolean>(false);
 
-/** Whether transitive dependents are highlighted */
+/**
+ * Whether transitive dependents are highlighted
+ *
+ * @public
+ */
 export const highlightTransitiveDependents: Signal.State<boolean> = signal<boolean>(false);
 
-/** Current graph visualization mode, derived from highlight toggles */
+/**
+ * Current graph visualization mode, derived from highlight toggles
+ *
+ * @public
+ */
 export const viewMode: Signal.Computed<ViewMode> = new Signal.Computed(() => {
   const anyDeps = highlightDirectDeps.get() || highlightTransitiveDeps.get();
   const anyDependents = highlightDirectDependents.get() || highlightTransitiveDependents.get();
@@ -46,12 +82,20 @@ export const viewMode: Signal.Computed<ViewMode> = new Signal.Computed(() => {
   return ViewMode.Full;
 });
 
-/** Check if any node or cluster is currently selected */
+/**
+ * Check if any node or cluster is currently selected
+ *
+ * @public
+ */
 export const hasSelection: Signal.Computed<boolean> = new Signal.Computed(
   () => selectedNode.get() !== null || selectedCluster.get() !== null,
 );
 
-/** Factory to create a computed signal that checks if a specific node is selected */
+/**
+ * Factory to create a computed signal that checks if a specific node is selected
+ *
+ * @public
+ */
 export function createIsNodeSelected(nodeId: string): Signal.Computed<boolean> {
   return new Signal.Computed(() => selectedNode.get()?.id === nodeId);
 }
@@ -59,6 +103,8 @@ export function createIsNodeSelected(nodeId: string): Signal.Computed<boolean> {
 /**
  * Reset all graph signals to their initial state.
  * Useful for testing and cleanup.
+ *
+ * @public
  */
 export function resetGraphSignals(): void {
   selectedNode.set(null);

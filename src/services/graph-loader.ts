@@ -5,6 +5,8 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
 /**
  * Progress update during graph loading
+ *
+ * @public
  */
 export interface LoadProgress {
   /** Whether this is a chunk update or completion */
@@ -24,6 +26,8 @@ export interface LoadProgress {
 
 /**
  * Configuration for progressive graph loading
+ *
+ * @public
  */
 export interface ProgressiveLoadConfig {
   /** Number of nodes to load per chunk (default: 100) */
@@ -39,6 +43,8 @@ export interface ProgressiveLoadConfig {
  *
  * Nodes are sorted by cluster priority and type importance (apps first, tests last),
  * then delivered in configurable chunks with delays between them to keep the UI responsive.
+ *
+ * @public
  */
 export class GraphLoader {
   private readonly config: Required<ProgressiveLoadConfig>;

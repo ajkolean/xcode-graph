@@ -13,6 +13,8 @@ import { addToMultiMap } from '@shared/utils/collections';
  *
  * Builds internal indices on construction for O(1) access by type, project,
  * platform, origin, and edge direction. All query methods are read-only.
+ *
+ * @public
  */
 export class GraphDataService {
   private readonly nodes: GraphNode[];

@@ -14,6 +14,8 @@ import {
 /**
  * Check if a node matches the search query.
  * Searches node name, type, and project fields (case-insensitive).
+ *
+ * @public
  */
 export function matchesSearch(node: GraphNode, searchQuery: string): boolean {
   if (!searchQuery) return true;
@@ -65,6 +67,8 @@ function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
  *   'MyFramework',
  * );
  * ```
+ *
+ * @public
  */
 export function applyGraphFilters(
   nodes: GraphNode[],

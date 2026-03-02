@@ -16,12 +16,15 @@ import { createMachine, type Machine, type MachineSchema } from '@zag-js/core';
  * - `clusterDetails`: Shows details for the selected cluster
  * - `filters`: Shows filter controls for the graph
  */
+/** @public */
 export type SidebarTab = 'nodeDetails' | 'clusterDetails' | 'filters';
 
 /**
  * Collapsible section identifiers for the filters accordion
  *
  * Each section can be independently expanded or collapsed.
+ *
+ * @public
  */
 export type SidebarSection = 'productTypes' | 'platforms' | 'projects' | 'packages';
 
@@ -29,6 +32,8 @@ export type SidebarSection = 'productTypes' | 'platforms' | 'projects' | 'packag
  * Type-safe schema for the sidebar state machine
  *
  * Defines props, context, states, events, and actions for full type safety.
+ *
+ * @public
  */
 interface SidebarMachineSchema extends MachineSchema {
   props: {
@@ -82,6 +87,8 @@ interface SidebarMachineSchema extends MachineSchema {
  * service.start();
  * service.send({ type: 'SWITCH_TAB', tab: 'filters' });
  * ```
+ *
+ * @public
  */
 export const sidebarMachine: Machine<SidebarMachineSchema> = createMachine<SidebarMachineSchema>({
   /**

@@ -19,6 +19,7 @@ import {
   selectedNode,
 } from './graph.signals';
 
+/** @public */
 export type HighlightCard =
   | 'direct-deps'
   | 'transitive-deps'
@@ -28,6 +29,8 @@ export type HighlightCard =
 /**
  * Select a node (clears cluster selection)
  * @param node - The node to select, or null to deselect
+ *
+ * @public
  */
 export function selectNode(node: GraphNode | null): void {
   selectedNode.set(node);
@@ -46,6 +49,8 @@ export function selectNode(node: GraphNode | null): void {
 /**
  * Select a cluster (clears node selection)
  * @param clusterId - The cluster ID to select, or null to deselect
+ *
+ * @public
  */
 export function selectCluster(clusterId: string | null): void {
   selectedCluster.set(clusterId);
@@ -60,13 +65,16 @@ export function selectCluster(clusterId: string | null): void {
   }
 }
 
-/**
- * Set the hovered node for highlighting (throttled via RAF)
- * @param nodeId - The node ID to highlight, or null to clear
- */
 let pendingHoverUpdate: string | null | undefined;
 let hoverRafId: number | null = null;
 
+/**
+ * Set the hovered node for highlighting (throttled via RAF)
+ *
+ * @param nodeId - The node ID to highlight, or null to clear
+ *
+ * @public
+ */
 export function setHoveredNode(nodeId: string | null): void {
   pendingHoverUpdate = nodeId;
 
@@ -82,6 +90,8 @@ export function setHoveredNode(nodeId: string | null): void {
 /**
  * Update detected circular dependencies
  * @param cycles - Array of circular dependency paths
+ *
+ * @public
  */
 export function setCircularDependencies(cycles: string[][]): void {
   circularDependencies.set(cycles);
@@ -90,6 +100,8 @@ export function setCircularDependencies(cycles: string[][]): void {
 /**
  * Toggle a highlight card on/off
  * @param card - Which highlight card to toggle
+ *
+ * @public
  */
 export function toggleHighlight(card: HighlightCard): void {
   switch (card) {
@@ -112,6 +124,8 @@ export function toggleHighlight(card: HighlightCard): void {
 
 /**
  * Reset all highlight toggles to false
+ *
+ * @public
  */
 export function resetHighlightToggles(): void {
   highlightDirectDeps.set(false);
@@ -122,6 +136,8 @@ export function resetHighlightToggles(): void {
 
 /**
  * Reset to full view with no selection
+ *
+ * @public
  */
 export function resetView(): void {
   selectedNode.set(null);

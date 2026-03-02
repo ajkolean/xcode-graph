@@ -14,6 +14,8 @@ import { type ActiveTab, DEFAULT_ACTIVE_TAB } from '@shared/schemas';
  * Preview filter for hover highlights
  *
  * When hovering over filter options, shows which nodes would be affected
+ *
+ * @public
  */
 export type PreviewFilter = {
   /** Type of filter being previewed */
@@ -22,24 +24,46 @@ export type PreviewFilter = {
   value: string;
 } | null;
 
-/** Currently active application tab */
+/**
+ * Currently active application tab
+ *
+ * @public
+ */
 export const activeTab: Signal.State<ActiveTab> = signal<ActiveTab>(DEFAULT_ACTIVE_TAB);
 
-/** Current zoom level (0.2 - 2.0) */
+/**
+ * Current zoom level (0.2 - 2.0)
+ *
+ * @public
+ */
 export const zoom: Signal.State<number> = signal<number>(1);
 
-/** Base zoom level (scale factor that fits the graph) */
+/**
+ * Base zoom level (scale factor that fits the graph)
+ *
+ * @public
+ */
 export const baseZoom: Signal.State<number> = signal<number>(1);
 
-/** Whether layout animation is enabled */
+/**
+ * Whether layout animation is enabled
+ *
+ * @public
+ */
 export const enableAnimation: Signal.State<boolean> = signal<boolean>(false);
 
-/** Current preview filter for hover effects */
+/**
+ * Current preview filter for hover effects
+ *
+ * @public
+ */
 export const previewFilter: Signal.State<PreviewFilter> = signal<PreviewFilter>(null);
 
 /**
  * Reset all UI signals to their initial state.
  * Useful for testing and cleanup.
+ *
+ * @public
  */
 export function resetUISignals(): void {
   activeTab.set(DEFAULT_ACTIVE_TAB);

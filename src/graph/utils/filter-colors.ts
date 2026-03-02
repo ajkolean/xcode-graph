@@ -17,6 +17,8 @@ import { generateColor } from '@ui/utils/color-generator';
  * @param keys - Iterable of string keys to generate colors for
  * @param category - Color category for hue selection
  * @returns Map of keys to hex color strings
+ *
+ * @public
  */
 export function generateColorMap<T extends string>(
   keys: Iterable<T>,

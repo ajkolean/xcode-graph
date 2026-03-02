@@ -7,6 +7,12 @@
 
 import type { GraphDataService } from './graph-data-service';
 
+/**
+ * Provides algorithms for analyzing graph structure, such as finding paths and cycles.
+ * Stateless service that operates on GraphDataService.
+ *
+ * @public
+ */
 export const GraphAnalysisService = {
   /**
    * Check if there is a directed path from one node to another via BFS.

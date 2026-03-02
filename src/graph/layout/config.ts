@@ -2,6 +2,8 @@
  * Default layout configuration.
  * Contains tuning parameters for ELK macro-layout, D3 micro-layout, edge routing, and clustering.
  * Exported for parameter sweep testing.
+ *
+ * @public
  */
 export const DEFAULT_CONFIG = {
   // Node-level forces (D3 Legacy)
@@ -103,7 +105,11 @@ export const DEFAULT_CONFIG = {
   maxPortsPerSide: 8,
 } as const;
 
-/** ELK Hierarchy Handling strategy */
+/**
+ * ELK Hierarchy Handling strategy
+ *
+ * @public
+ */
 export enum ElkHierarchyHandling {
   Inherit = 'INHERIT',
   IncludeChildren = 'INCLUDE_CHILDREN',
@@ -112,17 +118,25 @@ export enum ElkHierarchyHandling {
 
 /**
  * ELK-specific layout options that can be set per-cluster
+ *
+ * @public
  */
 export interface ClusterElkOptions {
   hierarchyHandling?: ElkHierarchyHandling;
 }
 
-/** Type for layout configuration */
+/**
+ * Type for layout configuration
+ *
+ * @public
+ */
 export type LayoutConfig = typeof DEFAULT_CONFIG;
 
 /**
  * Options passed to the main layout computation function.
  * Allows overriding config values and hooking into layout lifecycle stages.
+ *
+ * @public
  */
 export interface LayoutOptions {
   /** Override specific config values */

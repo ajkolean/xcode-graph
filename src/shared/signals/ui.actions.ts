@@ -20,7 +20,10 @@ import {
 
 /**
  * Change the active tab
+ *
  * @param tab - The tab to activate
+ *
+ * @public
  */
 export function setActiveTab(tab: ActiveTab): void {
   activeTab.set(tab);
@@ -28,7 +31,10 @@ export function setActiveTab(tab: ActiveTab): void {
 
 /**
  * Set zoom level (clamped to 0.1-5.0)
+ *
  * @param value - The new zoom level
+ *
+ * @public
  */
 export function setZoom(value: number): void {
   zoom.set(Math.max(ZOOM_CONFIG.MIN_ZOOM, Math.min(ZOOM_CONFIG.MAX_ZOOM, value)));
@@ -36,6 +42,8 @@ export function setZoom(value: number): void {
 
 /**
  * Increase zoom by 0.1
+ *
+ * @public
  */
 export function zoomIn(): void {
   zoom.set(Math.min(ZOOM_CONFIG.MAX_ZOOM, zoom.get() + 0.1));
@@ -43,6 +51,8 @@ export function zoomIn(): void {
 
 /**
  * Decrease zoom by 0.1
+ *
+ * @public
  */
 export function zoomOut(): void {
   zoom.set(Math.max(ZOOM_CONFIG.MIN_ZOOM, zoom.get() - 0.1));
@@ -50,6 +60,8 @@ export function zoomOut(): void {
 
 /**
  * Reset zoom to 1.0
+ *
+ * @public
  */
 export function resetZoom(): void {
   zoom.set(1);
@@ -57,7 +69,10 @@ export function resetZoom(): void {
 
 /**
  * Set base zoom level (fit scale)
+ *
  * @param value - The base scale factor
+ *
+ * @public
  */
 export function setBaseZoom(value: number): void {
   baseZoom.set(value);
@@ -65,6 +80,8 @@ export function setBaseZoom(value: number): void {
 
 /**
  * Toggle animation on/off
+ *
+ * @public
  */
 export function toggleAnimation(): void {
   enableAnimation.set(!enableAnimation.get());
@@ -72,7 +89,10 @@ export function toggleAnimation(): void {
 
 /**
  * Set animation enabled state
+ *
  * @param enabled - Whether animation should be enabled
+ *
+ * @public
  */
 export function setEnableAnimation(enabled: boolean): void {
   enableAnimation.set(enabled);
@@ -80,7 +100,10 @@ export function setEnableAnimation(enabled: boolean): void {
 
 /**
  * Set preview filter for hover effects
+ *
  * @param preview - The preview filter state, or null to clear
+ *
+ * @public
  */
 export function setPreviewFilter(preview: PreviewFilter): void {
   previewFilter.set(preview);

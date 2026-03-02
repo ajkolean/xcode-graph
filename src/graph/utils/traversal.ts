@@ -9,6 +9,7 @@
 import type { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
+/** @public */
 export interface TransitiveResult {
   /** Set of visited node IDs */
   nodes: Set<string>;
@@ -111,6 +112,8 @@ const transitiveCache = new TransitiveCache();
  * outgoing.get('A'); // ['B', 'C']
  * incoming.get('B'); // ['A']
  * ```
+ *
+ * @public
  */
 export function buildAdjacency(edges: GraphEdge[]): {
   outgoing: Map<string, string[]>;
@@ -137,6 +140,8 @@ export function buildAdjacency(edges: GraphEdge[]): {
  * @param getNeighbors - Function to get neighboring node IDs
  * @param getEdgeKey - Function to construct edge key from current and neighbor IDs
  * @returns Traversal result with visited nodes, edges, depths, and max depth
+ *
+ * @public
  */
 export function traverseGraph(
   startId: string,
@@ -183,6 +188,8 @@ export function traverseGraph(
  * @param getNeighbors - Function to get neighboring node IDs
  * @param getEdgeKey - Function to construct edge key from current and neighbor IDs
  * @returns Traversal result with visited nodes, edges, depths, and max depth
+ *
+ * @public
  */
 export function bfsTraverseGraph(
   startId: string,
@@ -241,6 +248,8 @@ const EMPTY_RESULT: TransitiveResult = {
  * @param selectedNode - The node to start traversal from (or `null` for empty result)
  * @param edges - All graph edges
  * @returns Object containing `transitiveDeps` and `transitiveDependents` traversal results
+ *
+ * @public
  */
 export function computeTransitiveDependencies(
   viewMode: ViewMode,

@@ -81,6 +81,8 @@ function adjustColor(rgb: number[], lightnessShift: number, saturationShift: num
  * const color = generateColor('MyApp', 'project');
  * // => "#7a38ff"
  * ```
+ *
+ * @public
  */
 export function generateColor(input: string, category?: string): string {
   const hash = hashString(input);
@@ -111,6 +113,8 @@ export function generateColor(input: string, category?: string): string {
  * @param items - Strings to generate colors for
  * @param category - Optional category passed to {@link generateColor}
  * @returns A `Map` from each item to its hex color
+ *
+ * @public
  */
 export function generateColorPalette(items: string[], category?: string): Map<string, string> {
   const palette = new Map<string, string>();
@@ -127,6 +131,8 @@ export function generateColorPalette(items: string[], category?: string): Map<st
  * @param alpha - Opacity value between 0 and 1
  * @param category - Optional category passed to {@link generateColor}
  * @returns An `rgba()` CSS color string
+ *
+ * @public
  */
 export function generateColorWithAlpha(input: string, alpha: number, category?: string): string {
   const hex = generateColor(input, category);

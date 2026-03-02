@@ -7,6 +7,7 @@
  * These values match the --colors-platform-* tokens in tokens.css (dark mode).
  * Kept as hex literals because callers use string interpolation (e.g. color-mix).
  */
+/** @public */
 export const PLATFORM_COLORS: Record<string, string> = {
   iOS: '#007AFF', // --colors-platform-ios
   macOS: '#64D2FF', // --colors-platform-macos
@@ -15,7 +16,11 @@ export const PLATFORM_COLORS: Record<string, string> = {
   visionOS: '#7D7AFF', // --colors-platform-visionos
 };
 
-/** Default fallback platform color — matches --colors-platform-default */
+/**
+ * Default fallback platform color — matches --colors-platform-default
+ *
+ * @public
+ */
 export const PLATFORM_COLOR = '#6F2CFF';
 
 /** Maps platform names to their CSS custom property names */
@@ -37,6 +42,8 @@ const PLATFORM_CSS_PROPS: Record<string, string> = {
  * @param platform - Platform name (e.g., `'iOS'`, `'macOS'`)
  * @param el - Optional host element to read CSS custom properties from
  * @returns CSS color string
+ *
+ * @public
  */
 export function getPlatformColor(platform: string, el?: HTMLElement): string {
   if (el) {
@@ -55,6 +62,8 @@ export function getPlatformColor(platform: string, el?: HTMLElement): string {
  *
  * @param platform - Platform name (e.g., `'iOS'`, `'macOS'`)
  * @returns SVG path `d` attribute string
+ *
+ * @public
  */
 export function getPlatformIconPath(platform: string): string {
   const pathMap: Record<string, string> = {

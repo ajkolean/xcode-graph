@@ -5,6 +5,7 @@
  * Provides 5-10x performance improvement for large graphs by reducing DOM elements.
  */
 
+/** @public */
 export interface ViewportBounds {
   minX: number;
   maxX: number;
@@ -44,6 +45,8 @@ export interface BoundingBox {
  * const bounds = calculateViewportBounds(1920, 1080, 0, 0, 1);
  * // bounds.minX === -200, bounds.maxX === 2120
  * ```
+ *
+ * @public
  */
 export function calculateViewportBounds(
   svgWidth: number,
@@ -102,6 +105,8 @@ export function isBoundingBoxInViewport(box: BoundingBox, bounds: ViewportBounds
  * @param end - End point of the line segment
  * @param bounds - The viewport bounds
  * @returns `true` if any part of the segment is inside the viewport
+ *
+ * @public
  */
 export function isLineInViewport(start: Point, end: Point, bounds: ViewportBounds): boolean {
   // Quick check: if either endpoint is in viewport, line is visible
@@ -228,6 +233,8 @@ function cohenSutherlandIntersect(start: Point, end: Point, bounds: ViewportBoun
  * @param radius - Radius of the circle
  * @param bounds - The viewport bounds
  * @returns `true` if the circle's bounding box intersects the viewport
+ *
+ * @public
  */
 export function isCircleInViewport(center: Point, radius: number, bounds: ViewportBounds): boolean {
   const circleBounds: BoundingBox = {

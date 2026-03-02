@@ -48,6 +48,8 @@ function getLightnessAdjustment(zoom: number): number {
  * @param color - Hex color string
  * @param zoom - Current zoom level (0.5 to 2.0)
  * @returns Adjusted hex color string
+ *
+ * @public
  */
 export function adjustColorForZoom(color: string, zoom: number): string {
   // Safety check for undefined or invalid colors
@@ -89,6 +91,8 @@ export function adjustColorForZoom(color: string, zoom: number): string {
  * @param baseOpacity - Base opacity value (0-1)
  * @param zoom - Current zoom level
  * @returns Adjusted opacity value (0-1)
+ *
+ * @public
  */
 export function adjustOpacityForZoom(baseOpacity: number, zoom: number): number {
   const t = normalizeZoom(zoom); // skipcq: JS-C1002

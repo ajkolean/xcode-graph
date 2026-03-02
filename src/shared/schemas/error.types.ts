@@ -9,6 +9,8 @@
 
 /**
  * Error severity levels
+ *
+ * @public
  */
 export enum ErrorSeverity {
   Info = 'info',
@@ -19,6 +21,8 @@ export enum ErrorSeverity {
 
 /**
  * Error category enum - categorizes errors by domain
+ *
+ * @public
  */
 export enum ErrorCategory {
   Network = 'network',
@@ -30,7 +34,11 @@ export enum ErrorCategory {
   Unknown = 'unknown',
 }
 
-/** Application error with metadata */
+/**
+ * Application error with metadata
+ *
+ * @public
+ */
 export interface AppError {
   id: string;
   severity: ErrorSeverity;
@@ -44,16 +52,28 @@ export interface AppError {
   actionType?: string | undefined;
 }
 
-/** Error notification state */
+/**
+ * Error notification state
+ *
+ * @public
+ */
 export interface ErrorNotificationState {
   errors: AppError[];
   maxVisible: number;
 }
 
-/** Default maximum visible toasts */
+/**
+ * Default maximum visible toasts
+ *
+ * @public
+ */
 export const DEFAULT_MAX_VISIBLE_TOASTS = 3;
 
-/** Default toast duration by severity (milliseconds) */
+/**
+ * Default toast duration by severity (milliseconds)
+ *
+ * @public
+ */
 export const DEFAULT_TOAST_DURATION: Record<ErrorSeverity, number> = {
   [ErrorSeverity.Info]: 3000,
   [ErrorSeverity.Warning]: 5000,

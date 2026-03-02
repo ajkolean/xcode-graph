@@ -123,6 +123,8 @@ export function getAppIconPath(platform: Platform | string): string {
  * @param type - The node type to get an icon for
  * @param platform - Optional platform (used to select a platform-specific app icon)
  * @returns SVG path `d` attribute string
+ *
+ * @public
  */
 export function getNodeIconPath(type: NodeType | string, platform?: Platform | string): string {
   if (type === NodeType.App && platform) {
@@ -247,6 +249,8 @@ export function getNodeIconPath(type: NodeType | string, platform?: Platform | s
  *
  * @param type - The node type to label
  * @returns Human-readable display string (e.g., `"Framework"`, `"Swift Package"`)
+ *
+ * @public
  */
 export function getNodeTypeLabel(type: NodeType | string): string {
   const labels: Record<string, string> = {

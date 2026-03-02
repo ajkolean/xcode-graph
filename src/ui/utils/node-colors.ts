@@ -13,6 +13,8 @@ import { NODE_PALETTE } from '@/shared/constants/node-palette';
  * Uses the Noora palette with high contrast colors
  *
  * Derived from `NODE_PALETTE` (single source of truth).
+ *
+ * @public
  */
 export const NODE_TYPE_COLORS: Record<string, string> = {
   // Orange (apps, main entry points) — Noora orange-500
@@ -42,6 +44,8 @@ const DEFAULT_NODE_COLOR = NODE_PALETTE.app;
  *
  * @param type - The node type string (e.g., `'app'`, `'framework'`)
  * @returns Hex color string from the Noora palette
+ *
+ * @public
  */
 export function getNodeTypeColor(type: string): string {
   return NODE_TYPE_COLORS[type] ?? DEFAULT_NODE_COLOR;
@@ -70,6 +74,8 @@ const THEME_KEY_MAP: Record<string, NodeColorKey> = {
  * @param type - The node type string
  * @param theme - A resolved `CanvasTheme` object
  * @returns The themed color string for the given type
+ *
+ * @public
  */
 export function getNodeTypeColorFromTheme(type: string, theme: CanvasTheme): string {
   const key = THEME_KEY_MAP[type];

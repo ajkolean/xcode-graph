@@ -17,6 +17,8 @@
  * - TestUi: UI/integration test target
  * - Cli: Command-line tool
  * - Package: External dependency
+ *
+ * @public
  */
 export enum NodeType {
   App = 'app',
@@ -30,6 +32,8 @@ export enum NodeType {
 
 /**
  * Platform enum - Apple platform targets
+ *
+ * @public
  */
 export enum Platform {
   iOS = 'iOS',
@@ -44,6 +48,8 @@ export enum Platform {
  *
  * - Local: Part of the workspace/project
  * - External: Third-party dependency
+ *
+ * @public
  */
 export enum Origin {
   Local = 'local',
@@ -57,6 +63,8 @@ export enum Origin {
  * - Project: Cross-project/cross-package dependency
  * - Sdk: System SDK/framework dependency
  * - XCFramework: Binary XCFramework dependency
+ *
+ * @public
  */
 export enum DependencyKind {
   Target = 'target',
@@ -71,6 +79,8 @@ export enum DependencyKind {
  * - Local: Local workspace project
  * - Registry: Downloaded from Swift Package Registry
  * - Git: Cloned from Git repository
+ *
+ * @public
  */
 export enum SourceType {
   Local = 'local',
@@ -78,7 +88,11 @@ export enum SourceType {
   Git = 'git',
 }
 
-/** Deployment target versions per platform */
+/**
+ * Deployment target versions per platform
+ *
+ * @public
+ */
 export interface DeploymentTargets {
   iOS?: string | undefined;
   macOS?: string | undefined;
@@ -87,7 +101,11 @@ export interface DeploymentTargets {
   visionOS?: string | undefined;
 }
 
-/** Target destination enum */
+/**
+ * Target destination enum
+ *
+ * @public
+ */
 export type Destination =
   | 'iPhone'
   | 'iPad'
@@ -99,7 +117,11 @@ export type Destination =
   | 'appleVision'
   | 'appleVisionWithiPadDesign';
 
-/** Curated build settings extracted from target */
+/**
+ * Curated build settings extracted from target
+ *
+ * @public
+ */
 export interface BuildSettings {
   /** Swift language version */
   swiftVersion?: string | undefined;
@@ -113,7 +135,11 @@ export interface BuildSettings {
   provisioningProfile?: string | undefined;
 }
 
-/** Foreign build info (non-Xcode build systems like KMP/Gradle, Bazel, CMake) */
+/**
+ * Foreign build info (non-Xcode build systems like KMP/Gradle, Bazel, CMake)
+ *
+ * @public
+ */
 export interface ForeignBuildInfo {
   /** Build script content */
   script: string;
@@ -131,7 +157,11 @@ export interface ForeignBuildInfo {
   };
 }
 
-/** Graph node structure */
+/**
+ * Graph node structure
+ *
+ * @public
+ */
 export interface GraphNode {
   /** Unique identifier for the node */
   id: string;
@@ -175,7 +205,11 @@ export interface GraphNode {
   foreignBuild?: ForeignBuildInfo | undefined;
 }
 
-/** Graph edge structure */
+/**
+ * Graph edge structure
+ *
+ * @public
+ */
 export interface GraphEdge {
   /** ID of the source node (depends on target) */
   source: string;
@@ -187,7 +221,11 @@ export interface GraphEdge {
   platformConditions?: Platform[] | undefined;
 }
 
-/** Complete graph data structure */
+/**
+ * Complete graph data structure
+ *
+ * @public
+ */
 export interface GraphData {
   /** All nodes in the graph */
   nodes: GraphNode[];
@@ -195,11 +233,30 @@ export interface GraphData {
   edges: GraphEdge[];
 }
 
-/** All node type values as array for iteration */
+/**
+ * All node type values as array for iteration
+ *
+ * @public
+ */
 export const NODE_TYPE_VALUES: NodeType[] = Object.values(NodeType);
-/** All platform values as array for iteration */
+
+/**
+ * All platform values as array for iteration
+ *
+ * @public
+ */
 export const PLATFORM_VALUES: Platform[] = Object.values(Platform);
-/** All origin values as array for iteration */
+
+/**
+ * All origin values as array for iteration
+ *
+ * @public
+ */
 export const ORIGIN_VALUES: Origin[] = Object.values(Origin);
-/** All source type values as array for iteration */
+
+/**
+ * All source type values as array for iteration
+ *
+ * @public
+ */
 export const SOURCE_TYPE_VALUES: SourceType[] = Object.values(SourceType);

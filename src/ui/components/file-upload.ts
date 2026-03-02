@@ -164,7 +164,7 @@ export class GraphFileUpload extends LitElement {
         @dragleave=${this.handleDragLeave}
         @drop=${this.handleDrop}
       >
-        <span class="icon">${icons['Upload']}</span>
+        <span class="icon">${icons.Upload}</span>
         <span>Load graph JSON</span>
         <input type="file" accept=".json" @change=${this.handleFileChange} />
       </div>

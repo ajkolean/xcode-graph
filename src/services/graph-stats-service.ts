@@ -7,6 +7,12 @@
 
 import type { GraphDataService } from './graph-data-service';
 
+/**
+ * Calculates statistics for nodes, clusters, and the entire graph.
+ * Stateless service that operates on GraphDataService.
+ *
+ * @public
+ */
 export const GraphStatsService = {
   /**
    * Compute direct and transitive dependency/dependent counts for a single node.

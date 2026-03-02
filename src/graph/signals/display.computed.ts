@@ -26,6 +26,8 @@ import {
 
 /**
  * Result of filtering graph data
+ *
+ * @public
  */
 export interface FilteredData {
   /** Nodes that pass current filters */
@@ -38,6 +40,8 @@ export interface FilteredData {
 
 /**
  * Extended filtered data with transitive dependency info
+ *
+ * @public
  */
 export interface DisplayData extends FilteredData {
   /** Transitive dependencies of selected node */
@@ -46,7 +50,11 @@ export interface DisplayData extends FilteredData {
   transitiveDependents: TransitiveResult;
 }
 
-/** Computed signal for filtered graph data. */
+/**
+ * Computed signal for filtered graph data.
+ *
+ * @public
+ */
 export const filteredData: Signal.Computed<FilteredData> = new Signal.Computed<FilteredData>(() => {
   const currentNodes = nodes.get();
   const currentEdges = edges.get();
@@ -56,7 +64,11 @@ export const filteredData: Signal.Computed<FilteredData> = new Signal.Computed<F
   return applyGraphFilters(currentNodes, currentEdges, currentFilters, currentSearchQuery);
 });
 
-/** Computed signal for transitive dependency data. */
+/**
+ * Computed signal for transitive dependency data.
+ *
+ * @public
+ */
 export const transitiveData: Signal.Computed<{
   transitiveDeps: TransitiveResult;
   transitiveDependents: TransitiveResult;
@@ -72,6 +84,8 @@ export const transitiveData: Signal.Computed<{
  * Computed signal for final display data.
  * Always passes all filtered nodes/edges through to the canvas.
  * The canvas handles visibility (direct mode = hide non-chain, highlight mode = depth alpha).
+ *
+ * @public
  */
 export const displayData: Signal.Computed<DisplayData> = new Signal.Computed<DisplayData>(() => {
   const { filteredNodes, filteredEdges, searchResults } = filteredData.get();
@@ -148,6 +162,8 @@ function shouldDimByPreview(node: GraphNode, preview: { type: string; value: str
  *
  * Cluster dimming is intentionally excluded because `hoveredCluster` and
  * `selectedCluster` are local interaction state in GraphCanvas, not signals.
+ *
+ * @public
  */
 export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed(() => {
   const { filteredNodes } = filteredData.get();

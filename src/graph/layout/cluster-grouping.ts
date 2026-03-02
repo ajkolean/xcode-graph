@@ -14,6 +14,8 @@ import { analyzeCluster } from './cluster-analysis';
  * @param nodes - All graph nodes to group
  * @param edges - All graph edges (used for cluster analysis)
  * @returns Array of clusters with metadata populated
+ *
+ * @public
  */
 export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Cluster[] {
   const clusterMap = new Map<string, Cluster>();
@@ -57,6 +59,8 @@ export function groupIntoClusters(nodes: GraphNode[], edges: GraphEdge[]): Clust
  * @param clusters - Clusters to arrange
  * @param config - Layout config with spacing parameters
  * @returns Map of cluster ID to grid position
+ *
+ * @public
  */
 export function arrangeClusterGrid(
   clusters: Cluster[],

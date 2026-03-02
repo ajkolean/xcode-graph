@@ -18,7 +18,11 @@ import {
   type Platform,
 } from '@shared/schemas/graph.types';
 
-/** Default filter configuration - show everything */
+/**
+ * Default filter configuration - show everything
+ *
+ * @public
+ */
 export const DEFAULT_FILTERS: FilterState = {
   nodeTypes: new Set<NodeType>(NODE_TYPE_VALUES),
   platforms: new Set<Platform>(PLATFORM_VALUES),
@@ -27,7 +31,11 @@ export const DEFAULT_FILTERS: FilterState = {
   packages: new Set<string>(),
 };
 
-/** Current active filters */
+/**
+ * Current active filters
+ *
+ * @public
+ */
 export const filters: Signal.State<FilterState> = signal<FilterState>({
   ...DEFAULT_FILTERS,
   nodeTypes: new Set(DEFAULT_FILTERS.nodeTypes),
@@ -37,18 +45,32 @@ export const filters: Signal.State<FilterState> = signal<FilterState>({
   packages: new Set(DEFAULT_FILTERS.packages),
 });
 
-/** Current search query */
+/**
+ * Current search query
+ *
+ * @public
+ */
 export const searchQuery: Signal.State<string> = signal<string>('');
 
-/** All available projects (for active filter detection) */
+/**
+ * All available projects (for active filter detection)
+ *
+ * @public
+ */
 export const allProjects: Signal.State<Set<string>> = signal<Set<string>>(new Set());
 
-/** All available packages (for active filter detection) */
+/**
+ * All available packages (for active filter detection)
+ *
+ * @public
+ */
 export const allPackages: Signal.State<Set<string>> = signal<Set<string>>(new Set());
 
 /**
  * Check if any filters are active (not showing everything)
  * Returns true if any filter is restricting the view
+ *
+ * @public
  */
 export const hasActiveFilters: Signal.Computed<boolean> = new Signal.Computed(() => {
   const currentFilters = filters.get();
@@ -75,6 +97,8 @@ export const hasActiveFilters: Signal.Computed<boolean> = new Signal.Computed(()
 /**
  * Reset all filter signals to their initial state.
  * Useful for testing and cleanup.
+ *
+ * @public
  */
 export function resetFilterSignals(): void {
   filters.set({

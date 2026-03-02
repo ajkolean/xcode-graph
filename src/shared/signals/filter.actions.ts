@@ -29,7 +29,10 @@ function toggleSetValue<T>(set: Set<T>, value: T): Set<T> {
 
 /**
  * Replace all filters
+ *
  * @param newFilters - The new filter state
+ *
+ * @public
  */
 export function setFilters(newFilters: FilterState): void {
   filters.set(newFilters);
@@ -37,7 +40,10 @@ export function setFilters(newFilters: FilterState): void {
 
 /**
  * Update search query
+ *
  * @param query - The new search query
+ *
+ * @public
  */
 export function setSearchQuery(query: string): void {
   searchQuery.set(query);
@@ -45,7 +51,10 @@ export function setSearchQuery(query: string): void {
 
 /**
  * Toggle a node type filter on/off
+ *
  * @param type - The node type to toggle
+ *
+ * @public
  */
 export function toggleNodeType(type: NodeType): void {
   const current = filters.get();
@@ -57,7 +66,10 @@ export function toggleNodeType(type: NodeType): void {
 
 /**
  * Toggle a platform filter on/off
+ *
  * @param platform - The platform to toggle
+ *
+ * @public
  */
 export function togglePlatform(platform: Platform): void {
   const current = filters.get();
@@ -69,7 +81,10 @@ export function togglePlatform(platform: Platform): void {
 
 /**
  * Toggle an origin filter on/off
+ *
  * @param origin - The origin to toggle
+ *
+ * @public
  */
 export function toggleOrigin(origin: Origin): void {
   const current = filters.get();
@@ -81,7 +96,10 @@ export function toggleOrigin(origin: Origin): void {
 
 /**
  * Toggle a project filter on/off
+ *
  * @param project - The project to toggle
+ *
+ * @public
  */
 export function toggleProject(project: string): void {
   const current = filters.get();
@@ -93,7 +111,10 @@ export function toggleProject(project: string): void {
 
 /**
  * Toggle a package filter on/off
+ *
  * @param pkg - The package to toggle
+ *
+ * @public
  */
 export function togglePackage(pkg: string): void {
   const current = filters.get();
@@ -105,7 +126,10 @@ export function togglePackage(pkg: string): void {
 
 /**
  * Reset filters to defaults
+ *
  * @param defaults - Optional custom defaults (uses DEFAULT_FILTERS if not provided)
+ *
+ * @public
  */
 export function clearFilters(defaults?: FilterState): void {
   filters.set(defaults ?? { ...DEFAULT_FILTERS });
@@ -114,8 +138,11 @@ export function clearFilters(defaults?: FilterState): void {
 
 /**
  * Initialize filters from available data
+ *
  * @param projects - Set of all available projects
  * @param packages - Set of all available packages
+ *
+ * @public
  */
 export function initializeFromData(projects: Set<string>, packages: Set<string>): void {
   filters.set({

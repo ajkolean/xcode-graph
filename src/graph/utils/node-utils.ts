@@ -19,6 +19,8 @@ import { buildAdjacency, traverseGraph } from './traversal';
 
 /**
  * A node with its associated edge information
+ *
+ * @public
  */
 export interface NodeWithEdge {
   node: GraphNode;
@@ -27,6 +29,8 @@ export interface NodeWithEdge {
 
 /**
  * Statistics about a cluster's connectivity
+ *
+ * @public
  */
 export interface ClusterStatsResult {
   filteredDependencies: number;
@@ -58,6 +62,8 @@ export interface ClusterStatsResult {
  * );
  * console.log(`${metrics.transitiveDependencyCount} transitive deps`);
  * ```
+ *
+ * @public
  */
 export function computeNodeDependencies(
   node: GraphNode | null,
@@ -173,6 +179,8 @@ export function computeNodeDependencies(
  * @param edges - All graph edges
  * @param filteredEdges - Optional filtered edges for metrics
  * @returns Cluster connectivity statistics
+ *
+ * @public
  */
 export function computeClusterStats(
   clusterNodes: GraphNode[],
@@ -229,6 +237,8 @@ export function computeClusterStats(
  *
  * @param allNodes - All graph nodes
  * @returns Filter counts and utility functions
+ *
+ * @public
  */
 export function computeFilters(allNodes: GraphNode[]): {
   typeCounts: Map<string, number>;

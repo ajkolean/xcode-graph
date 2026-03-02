@@ -11,6 +11,8 @@ import type { GraphNode, Origin } from './graph.types';
 
 /**
  * Node role enum - determines positioning strategy within a cluster
+ *
+ * @public
  */
 export enum NodeRole {
   Entry = 'entry',
@@ -23,6 +25,8 @@ export enum NodeRole {
 
 /**
  * Cluster type enum - distinguishes local projects from packages
+ *
+ * @public
  */
 export enum ClusterType {
   Project = 'project',
@@ -31,6 +35,8 @@ export enum ClusterType {
 
 /**
  * ELK Hierarchy Handling strategy
+ *
+ * @public
  */
 export enum ElkHierarchyHandling {
   Inherit = 'INHERIT',
@@ -40,12 +46,18 @@ export enum ElkHierarchyHandling {
 
 /**
  * ELK-specific layout options that can be set per-cluster
+ *
+ * @public
  */
 export interface ClusterElkOptions {
   hierarchyHandling?: ElkHierarchyHandling | undefined;
 }
 
-/** Node metadata within cluster */
+/**
+ * Node metadata within cluster
+ *
+ * @public
+ */
 export interface ClusterNodeMetadata {
   nodeId: string;
   role: NodeRole;
@@ -57,7 +69,11 @@ export interface ClusterNodeMetadata {
   dependsOnCount: number;
 }
 
-/** Cluster bounding box */
+/**
+ * Cluster bounding box
+ *
+ * @public
+ */
 export interface ClusterBounds {
   x: number;
   y: number;
@@ -65,7 +81,11 @@ export interface ClusterBounds {
   height: number;
 }
 
-/** Cluster type with runtime metadata Map */
+/**
+ * Cluster type with runtime metadata Map
+ *
+ * @public
+ */
 export interface Cluster {
   id: string;
   name: string;
@@ -79,12 +99,20 @@ export interface Cluster {
   bounds?: ClusterBounds | undefined;
 }
 
-/** Serialized cluster format (metadata as array for JSON) */
+/**
+ * Serialized cluster format (metadata as array for JSON)
+ *
+ * @public
+ */
 export interface ClusterSerialized extends Omit<Cluster, 'metadata'> {
   metadata: ClusterNodeMetadata[];
 }
 
-/** Node with position data */
+/**
+ * Node with position data
+ *
+ * @public
+ */
 export interface PositionedNode {
   node: GraphNode;
   x: number;
@@ -97,7 +125,11 @@ export interface PositionedNode {
   targetAngle?: number | undefined;
 }
 
-/** Physics force strengths */
+/**
+ * Physics force strengths
+ *
+ * @public
+ */
 export interface ForceStrength {
   boundary: number;
   radial: number;
@@ -106,7 +138,11 @@ export interface ForceStrength {
   testSatellite: number;
 }
 
-/** Layout configuration */
+/**
+ * Layout configuration
+ *
+ * @public
+ */
 export interface ClusterLayoutConfig {
   clusterPadding: number;
   clusterSpacing: number;
@@ -120,7 +156,11 @@ export interface ClusterLayoutConfig {
   forceStrength: ForceStrength;
 }
 
-/** Default layout configuration values */
+/**
+ * Default layout configuration values
+ *
+ * @public
+ */
 export const DEFAULT_CLUSTER_CONFIG: ClusterLayoutConfig = {
   ringRadius: 75,
   layerSpacing: 75,
@@ -140,7 +180,16 @@ export const DEFAULT_CLUSTER_CONFIG: ClusterLayoutConfig = {
   },
 };
 
-/** All node role values for iteration */
+/**
+ * All node role values for iteration
+ *
+ * @public
+ */
 export const NODE_ROLE_VALUES: NodeRole[] = Object.values(NodeRole);
-/** All cluster type values for iteration */
+
+/**
+ * All cluster type values for iteration
+ *
+ * @public
+ */
 export const CLUSTER_TYPE_VALUES: ClusterType[] = Object.values(ClusterType);

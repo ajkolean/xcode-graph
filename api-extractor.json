@@ -41,7 +41,7 @@
         "logLevel": "warning"
       },
       "ae-missing-release-tag": {
-        "logLevel": "none"
+        "logLevel": "warning"
       },
       "ae-wrong-input-file-type": {
         "logLevel": "none"

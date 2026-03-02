@@ -2,7 +2,11 @@ import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type * as d3Force2D from 'd3-force'; // skipcq: JS-C1003
 
-/** D3 simulation node extended with cluster membership */
+/**
+ * D3 simulation node extended with cluster membership
+ *
+ * @public
+ */
 export interface SimNode extends d3Force2D.SimulationNodeDatum {
   id: string;
   clusterId?: string | undefined;
@@ -12,14 +16,22 @@ export interface SimNode extends d3Force2D.SimulationNodeDatum {
   vy: number;
 }
 
-/** D3 simulation link with intra/inter-cluster flag */
+/**
+ * D3 simulation link with intra/inter-cluster flag
+ *
+ * @public
+ */
 export interface SimLink extends d3Force2D.SimulationLinkDatum<SimNode> {
   source: string | SimNode;
   target: string | SimNode;
   sameCluster: boolean;
 }
 
-/** Interface for cluster centers in simulation */
+/**
+ * Interface for cluster centers in simulation
+ *
+ * @public
+ */
 export interface ClusterCenter {
   id: string;
   cx: number;
@@ -27,7 +39,11 @@ export interface ClusterCenter {
   radius: number;
 }
 
-/** Aggregated edge between clusters for macro-level rendering */
+/**
+ * Aggregated edge between clusters for macro-level rendering
+ *
+ * @public
+ */
 export interface ClusterEdgeResult {
   source: string;
   target: string;
@@ -36,6 +52,8 @@ export interface ClusterEdgeResult {
 
 /**
  * Result of the hierarchical layout computation
+ *
+ * @public
  */
 export interface HierarchicalLayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
@@ -58,10 +76,18 @@ export interface HierarchicalLayoutResult {
   routedEdges?: RoutedEdge[] | undefined;
 }
 
-/** Cardinal direction for port placement on cluster boundary */
+/**
+ * Cardinal direction for port placement on cluster boundary
+ *
+ * @public
+ */
 export type PortSide = 'NORTH' | 'SOUTH' | 'EAST' | 'WEST';
 
-/** A port on a cluster boundary where edges can exit/enter */
+/**
+ * A port on a cluster boundary where edges can exit/enter
+ *
+ * @public
+ */
 export interface ClusterPort {
   /** Unique port identifier (e.g., "cluster-A_EAST_0") */
   id: string;
@@ -73,7 +99,11 @@ export interface ClusterPort {
   index: number;
 }
 
-/** An edge routed through cluster boundary ports */
+/**
+ * An edge routed through cluster boundary ports
+ *
+ * @public
+ */
 export interface RoutedEdge {
   sourceNodeId: string;
   targetNodeId: string;
@@ -85,7 +115,11 @@ export interface RoutedEdge {
   weight: number;
 }
 
-/** Extended cluster position with port information */
+/**
+ * Extended cluster position with port information
+ *
+ * @public
+ */
 export interface ClusterPositionWithPorts extends ClusterPosition {
   /** Ports on this cluster's boundary */
   ports: ClusterPort[];
@@ -94,6 +128,8 @@ export interface ClusterPositionWithPorts extends ClusterPosition {
 /**
  * Lifecycle hooks for layout customization.
  * Consumers can observe or modify data at key points during layout computation.
+ *
+ * @public
  */
 export interface LayoutHooks {
   /** Called before layout computation starts */

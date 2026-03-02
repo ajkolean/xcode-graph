@@ -7,7 +7,11 @@
  * @module schemas/simulation
  */
 
-/** Node position during simulation */
+/**
+ * Node position during simulation
+ *
+ * @public
+ */
 export interface NodePosition {
   id: string;
   x: number;
@@ -25,7 +29,11 @@ export interface NodePosition {
   testSubject?: string | undefined;
 }
 
-/** Cluster position during simulation */
+/**
+ * Cluster position during simulation
+ *
+ * @public
+ */
 export interface ClusterPosition {
   id: string;
   x: number;

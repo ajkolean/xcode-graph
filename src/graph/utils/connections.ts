@@ -17,6 +17,8 @@ import type { GraphEdge } from '@shared/schemas/graph.types';
  * @param nodeId - The node to find connections for
  * @param edges - All graph edges
  * @returns Set of connected node IDs
+ *
+ * @public
  */
 export function getConnectedNodes(nodeId: string, edges: GraphEdge[]): Set<string> {
   const connected = new Set<string>();
@@ -38,6 +40,8 @@ export function getConnectedNodes(nodeId: string, edges: GraphEdge[]): Set<strin
  * @param nodeId - The node to count connections for
  * @param edges - All graph edges
  * @returns Total number of connections
+ *
+ * @public
  */
 export function getConnectionCount(nodeId: string, edges: GraphEdge[]): number {
   return edges.filter((e) => e.source === nodeId || e.target === nodeId).length;
@@ -49,6 +53,8 @@ export function getConnectionCount(nodeId: string, edges: GraphEdge[]): number {
  * @param nodeId - The node to count dependencies for
  * @param edges - All graph edges
  * @returns Number of dependencies
+ *
+ * @public
  */
 export function getDependencyCount(nodeId: string, edges: GraphEdge[]): number {
   return edges.filter((e) => e.source === nodeId).length;
@@ -60,6 +66,8 @@ export function getDependencyCount(nodeId: string, edges: GraphEdge[]): number {
  * @param nodeId - The node to count dependents for
  * @param edges - All graph edges
  * @returns Number of dependents
+ *
+ * @public
  */
 export function getDependentCount(nodeId: string, edges: GraphEdge[]): number {
   return edges.filter((e) => e.target === nodeId).length;

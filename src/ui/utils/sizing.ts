@@ -28,6 +28,8 @@ const DEFAULT_BASE_SIZE = 10;
  * @param edges - All graph edges (used as fallback when weight is not provided)
  * @param weight - Optional pre-computed transitive dependency weight
  * @returns Computed radius in graph units
+ *
+ * @public
  */
 export function getNodeSize(node: GraphNode, edges: GraphEdge[], weight?: number): number {
   const baseSize = BASE_NODE_SIZES[node.type] ?? DEFAULT_BASE_SIZE;
@@ -49,6 +51,8 @@ export function getNodeSize(node: GraphNode, edges: GraphEdge[], weight?: number
  *
  * @param type - The node type string (e.g., `'app'`, `'framework'`)
  * @returns Base radius in graph units
+ *
+ * @public
  */
 export function getBaseNodeSize(type: string): number {
   return BASE_NODE_SIZES[type] ?? DEFAULT_BASE_SIZE;

@@ -593,7 +593,7 @@ export function getPlatformColor(platform: string, el?: HTMLElement): string;
 // @public
 export function getPlatformIconPath(platform: string): string;
 
-// @public (undocumented)
+// @public
 export const GraphAnalysisService: {
     readonly hasPath: (service: GraphDataService, fromId: string, toId: string) => boolean;
     readonly findCircularDependencies: (service: GraphDataService) => string[][];
@@ -696,7 +696,7 @@ export interface GraphNode {
     type: NodeType;
 }
 
-// @public (undocumented)
+// @public
 export const GraphStatsService: {
     readonly getNodeStats: (service: GraphDataService, nodeId: string) => {
         dependencies: number;
@@ -1051,7 +1051,7 @@ export function setFilters(newFilters: FilterState_2): void;
 // @public
 export function setGraphData(newNodes: GraphNode_2[], newEdges: GraphEdge_2[]): void;
 
-// @public (undocumented)
+// @public
 export function setHoveredNode(nodeId: string | null): void;
 
 // @public
@@ -1105,7 +1105,7 @@ export interface SidebarMachineSchema extends MachineSchema {
 // @public
 export type SidebarSection = 'productTypes' | 'platforms' | 'projects' | 'packages';
 
-// @public
+// @public (undocumented)
 export type SidebarTab = 'nodeDetails' | 'clusterDetails' | 'filters';
 
 // @public
@@ -1195,7 +1195,7 @@ export enum ViewMode {
 // @public
 export const viewMode: Signal.Computed<ViewMode_2>;
 
-// @public
+// @public (undocumented)
 export interface ViewportBounds {
     // (undocumented)
     margin?: number;
@@ -1220,6 +1220,6 @@ export function zoomOut(): void;
 
 // Warnings were encountered during analysis:
 //
-// src/graph/utils/node-utils.ts:68:3 - (ae-forgotten-export) The symbol "NodeWithEdge" needs to be exported by the entry point api.d.ts
+// src/graph/utils/node-utils.ts:74:3 - (ae-forgotten-export) The symbol "NodeWithEdge" needs to be exported by the entry point api.d.ts
 
 ```

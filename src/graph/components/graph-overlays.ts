@@ -227,17 +227,17 @@ export class GraphControls extends LitElement {
             @click=${this.handleZoomIn}
             title="Zoom in"
           >
-            ${icons['ZoomIn']}
+            ${icons.ZoomIn}
           </button>
           <button
             class=${classMap({ 'zoom-button': true, disabled: this.atMinZoom })}
             @click=${this.handleZoomOut}
             title="Zoom out"
           >
-            ${icons['ZoomOut']}
+            ${icons.ZoomOut}
           </button>
           <button class="zoom-button" @click=${this.handleZoomReset} title="Fit to view">
-            ${icons['Focus']}
+            ${icons.Focus}
           </button>
         </div>
       </div>

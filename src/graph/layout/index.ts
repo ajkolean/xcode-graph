@@ -26,6 +26,8 @@ export * from './types';
  * Delegates to the core ELK-based engine.
  *
  * NOTE: This is ASYNCHRONOUS as it uses ELK.
+ *
+ * @public
  */
 export function computeHierarchicalLayout(
   nodes: GraphNode[],
