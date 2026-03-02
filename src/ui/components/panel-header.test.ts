@@ -32,7 +32,7 @@ describe('xcode-graph-panel-header', () => {
     `);
 
     const subtitle = el.shadowRoot?.querySelector('.subtitle');
-    expect(subtitle).to.not.exist;
+    expect(subtitle).toBeNull();
   });
 
   it('should default to lg title size', async () => {
@@ -49,7 +49,7 @@ describe('xcode-graph-panel-header', () => {
     `);
 
     const title = el.shadowRoot?.querySelector('.title');
-    expect(title?.classList.contains('size-md')).to.be.true;
+    expect(title?.classList.contains('size-md')).toBe(true);
   });
 
   it('should apply color to icon box', async () => {
@@ -82,7 +82,7 @@ describe('xcode-graph-panel-header', () => {
     setTimeout(() => button.click());
     const event = await oneEvent(el, 'back');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should render icon slot content', async () => {

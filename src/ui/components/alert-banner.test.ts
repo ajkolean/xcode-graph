@@ -13,9 +13,9 @@ describe('xcode-graph-alert-banner', () => {
       <xcode-graph-alert-banner></xcode-graph-alert-banner>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.variant).to.equal('info');
-    expect(el.dismissible).to.be.false;
+    expect(el.dismissible).toBe(false);
   });
 
   it('should render title and message', async () => {
@@ -48,7 +48,7 @@ describe('xcode-graph-alert-banner', () => {
     `);
 
     const closeBtn = el.shadowRoot?.querySelector('.close-btn');
-    expect(closeBtn).to.exist;
+    expect(closeBtn).toBeDefined();
   });
 
   it('should hide close button when not dismissible', async () => {
@@ -57,7 +57,7 @@ describe('xcode-graph-alert-banner', () => {
     `);
 
     const closeBtn = el.shadowRoot?.querySelector('.close-btn');
-    expect(closeBtn).to.not.exist;
+    expect(closeBtn).toBeNull();
   });
 
   it('should dispatch dismiss event when close button clicked', async () => {
@@ -69,7 +69,7 @@ describe('xcode-graph-alert-banner', () => {
     setTimeout(() => closeBtn.click());
     const event = await oneEvent(el, 'dismiss');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should hide content after dismiss', async () => {
@@ -82,7 +82,7 @@ describe('xcode-graph-alert-banner', () => {
     await el.updateComplete;
 
     const banner = el.shadowRoot?.querySelector('.banner');
-    expect(banner).to.not.exist;
+    expect(banner).toBeNull();
   });
 
   it('should render icon slot', async () => {
@@ -93,7 +93,7 @@ describe('xcode-graph-alert-banner', () => {
     `);
 
     const iconSlot = el.shadowRoot?.querySelector('slot[name="icon"]');
-    expect(iconSlot).to.exist;
+    expect(iconSlot).toBeDefined();
   });
 
   it('should render actions slot', async () => {
@@ -104,6 +104,6 @@ describe('xcode-graph-alert-banner', () => {
     `);
 
     const actionsSlot = el.shadowRoot?.querySelector('slot[name="actions"]');
-    expect(actionsSlot).to.exist;
+    expect(actionsSlot).toBeDefined();
   });
 });

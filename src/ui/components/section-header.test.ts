@@ -13,7 +13,7 @@ describe('xcode-graph-section-header', () => {
       <xcode-graph-section-header title="Dependencies"></xcode-graph-section-header>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const title = el.shadowRoot?.querySelector('.title');
     expect(title?.textContent).to.equal('Dependencies');
   });

@@ -22,7 +22,7 @@ describe('xcode-graph-background', () => {
     );
 
     const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
-    expect(svg).to.exist;
+    expect(svg).toBeDefined();
   });
 
   it('should define grid pattern in defs', async () => {
@@ -31,15 +31,15 @@ describe('xcode-graph-background', () => {
     );
 
     const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
-    expect(svg).to.exist;
+    expect(svg).toBeDefined();
     if (!svg) return;
 
     const defs = querySvgElement(svg, 'defs');
-    expect(defs).to.exist;
+    expect(defs).toBeDefined();
     if (!defs) return;
 
     const pattern = querySvgElement(defs, 'pattern#grid');
-    expect(pattern).to.exist;
+    expect(pattern).toBeDefined();
   });
 
   it('should have rect with grid pattern fill', async () => {
@@ -48,11 +48,11 @@ describe('xcode-graph-background', () => {
     );
 
     const svg = el.shadowRoot ? querySvgElement(el.shadowRoot, 'svg') : null;
-    expect(svg).to.exist;
+    expect(svg).toBeDefined();
     if (!svg) return;
 
     const rect = querySvgElement(svg, 'rect');
-    expect(rect).to.exist;
+    expect(rect).toBeDefined();
     expect(rect?.getAttribute('fill')).to.equal('url(#grid)');
   });
 });
@@ -63,7 +63,7 @@ describe('xcode-graph-controls', () => {
       html`<xcode-graph-controls zoom="1"></xcode-graph-controls>`,
     );
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.zoom).to.equal(1);
   });
 
@@ -87,9 +87,9 @@ describe('xcode-graph-controls', () => {
     const zoomOutBtn = el.shadowRoot?.querySelector('button[title="Zoom out"]');
     const resetBtn = el.shadowRoot?.querySelector('button[title="Fit to view"]');
 
-    expect(zoomInBtn).to.exist;
-    expect(zoomOutBtn).to.exist;
-    expect(resetBtn).to.exist;
+    expect(zoomInBtn).toBeDefined();
+    expect(zoomOutBtn).toBeDefined();
+    expect(resetBtn).toBeDefined();
   });
 
   it('should dispatch zoom-step event when zoom in button clicked', async () => {
@@ -101,7 +101,7 @@ describe('xcode-graph-controls', () => {
     setTimeout(() => zoomInBtn.click());
     const event = await oneEvent(el, 'zoom-step');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch zoom-step event when zoom out button clicked', async () => {
@@ -115,7 +115,7 @@ describe('xcode-graph-controls', () => {
     setTimeout(() => zoomOutBtn.click());
     const event = await oneEvent(el, 'zoom-step');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch zoom-reset event when reset button clicked', async () => {
@@ -129,7 +129,7 @@ describe('xcode-graph-controls', () => {
     setTimeout(() => resetBtn.click());
     const event = await oneEvent(el, 'zoom-reset');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 });
 
@@ -139,9 +139,9 @@ describe('xcode-graph-visualization-empty-state', () => {
       html`<xcode-graph-visualization-empty-state></xcode-graph-visualization-empty-state>`,
     );
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const message = el.shadowRoot?.querySelector('.message');
-    expect(message).to.exist;
+    expect(message).toBeDefined();
     expect(message?.textContent).to.include('No nodes to display');
   });
 
@@ -151,7 +151,7 @@ describe('xcode-graph-visualization-empty-state', () => {
     );
 
     const hint = el.shadowRoot?.querySelector('.hint');
-    expect(hint).to.exist;
+    expect(hint).toBeDefined();
     expect(hint?.textContent).to.include('Try adjusting your filters');
   });
 });
@@ -162,9 +162,9 @@ describe('xcode-graph-instructions', () => {
       html`<xcode-graph-instructions></xcode-graph-instructions>`,
     );
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const container = el.shadowRoot?.querySelector('.container');
-    expect(container).to.exist;
+    expect(container).toBeDefined();
     expect(container?.textContent).to.include('Drag nodes to reposition');
     expect(container?.textContent).to.include('Click to inspect');
     expect(container?.textContent).to.include('Scroll to zoom');

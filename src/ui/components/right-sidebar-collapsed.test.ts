@@ -134,7 +134,7 @@ describe('xcode-graph-collapsed-sidebar', () => {
     setTimeout(() => productTypesButton.click());
     const event = await oneEvent(el, 'expand-to-section');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect((event as CustomEvent).detail.section).to.equal('productTypes');
   });
 
@@ -154,7 +154,7 @@ describe('xcode-graph-collapsed-sidebar', () => {
     setTimeout(() => platformsButton.click());
     const event = await oneEvent(el, 'expand-to-section');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect((event as CustomEvent).detail.section).to.equal('platforms');
   });
 

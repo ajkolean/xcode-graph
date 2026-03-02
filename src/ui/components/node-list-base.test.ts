@@ -59,6 +59,6 @@ describe('NodeListEventsBase', () => {
     }) as EventListener);
 
     el.triggerHoverEnd();
-    expect(receivedId).to.be.null;
+    expect(receivedId).toBeNull();
   });
 });

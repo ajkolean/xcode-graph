@@ -543,7 +543,7 @@ describe('canvas-node-renderer', () => {
       const hasTruncated = textCalls.some(
         (c: unknown) => (c as { props: { text: string } }).props.text === truncatedName,
       );
-      expect(hasTruncated).to.be.true;
+      expect(hasTruncated).toBe(true);
     });
 
     it('should not truncate long names when node is hovered', () => {
@@ -572,7 +572,7 @@ describe('canvas-node-renderer', () => {
         (c: unknown) =>
           (c as { props: { text: string } }).props.text === 'AVeryLongModuleNameThatExceedsTwenty',
       );
-      expect(hasFullName).to.be.true;
+      expect(hasFullName).toBe(true);
     });
   });
 });

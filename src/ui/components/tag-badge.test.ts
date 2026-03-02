@@ -32,7 +32,7 @@ describe('xcode-graph-tag-badge', () => {
     const prefix = el.shadowRoot?.querySelector('.prefix');
     const value = el.shadowRoot?.querySelector('.value');
 
-    expect(prefix).to.not.exist;
+    expect(prefix).toBeNull();
     expect(value?.textContent).to.equal('standalone');
   });
 
@@ -85,7 +85,7 @@ describe('xcode-graph-tag-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.tag-badge');
-    expect(badge).to.not.exist;
+    expect(badge).toBeNull();
   });
 
   // ========================================
@@ -98,7 +98,7 @@ describe('xcode-graph-tag-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.tag-badge');
-    expect(badge?.classList.contains('interactive')).to.be.true;
+    expect(badge?.classList.contains('interactive')).toBe(true);
   });
 
   it('should not have interactive class by default', async () => {
@@ -107,6 +107,6 @@ describe('xcode-graph-tag-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.tag-badge');
-    expect(badge?.classList.contains('interactive')).to.be.false;
+    expect(badge?.classList.contains('interactive')).toBe(false);
   });
 });

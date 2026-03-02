@@ -13,7 +13,7 @@ describe('xcode-graph-filter-icon', () => {
       <xcode-graph-filter-icon></xcode-graph-filter-icon>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.name).to.equal('product-types');
     expect(el.size).to.equal(18);
   });
@@ -24,7 +24,7 @@ describe('xcode-graph-filter-icon', () => {
     `);
 
     const svg = el.shadowRoot?.querySelector('svg');
-    expect(svg).to.exist;
+    expect(svg).toBeDefined();
     const rects = svg?.querySelectorAll('rect');
     expect(rects?.length).to.equal(4); // 4 squares for product types
   });
@@ -35,7 +35,7 @@ describe('xcode-graph-filter-icon', () => {
     `);
 
     const svg = el.shadowRoot?.querySelector('svg');
-    expect(svg).to.exist;
+    expect(svg).toBeDefined();
     const circles = svg?.querySelectorAll('circle');
     expect(circles?.length).to.equal(4); // 4 circles for platforms
   });
@@ -46,7 +46,7 @@ describe('xcode-graph-filter-icon', () => {
     `);
 
     const svg = el.shadowRoot?.querySelector('svg');
-    expect(svg).to.exist;
+    expect(svg).toBeDefined();
     const paths = svg?.querySelectorAll('path');
     expect(paths?.length).to.be.greaterThan(0);
   });
@@ -57,7 +57,7 @@ describe('xcode-graph-filter-icon', () => {
     `);
 
     const svg = el.shadowRoot?.querySelector('svg');
-    expect(svg).to.exist;
+    expect(svg).toBeDefined();
     const polylines = svg?.querySelectorAll('polyline');
     expect(polylines?.length).to.equal(1);
   });

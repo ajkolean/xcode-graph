@@ -105,6 +105,8 @@ export class GraphHiddenDom extends LitElement {
         }
         break;
       }
+      default:
+        break;
     }
   }
 

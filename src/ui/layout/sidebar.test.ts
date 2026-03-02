@@ -26,7 +26,7 @@ describe('xcode-graph-sidebar', () => {
     const buttons = el.shadowRoot?.querySelectorAll('.nav-button');
     const graphButton = Array.from(buttons || []).find((btn) => btn.textContent?.includes('Graph'));
 
-    expect(graphButton?.classList.contains('active')).to.be.true;
+    expect(graphButton?.classList.contains('active')).toBe(true);
   });
 
   it('should dispatch tab-change event on click', async () => {
@@ -42,7 +42,7 @@ describe('xcode-graph-sidebar', () => {
     setTimeout(() => graphButton?.click());
     const event = (await oneEvent(el, 'tab-change')) as CustomEvent<{ tab: string }>;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.tab).to.equal('graph');
   });
 

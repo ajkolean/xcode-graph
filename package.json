@@ -7,7 +7,7 @@
   "homepage": "https://ajkolean.github.io/xcode-graph/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ajkolean/xcode-graph.git"
+    "url": "git+https://github.com/ajkolean/xcode-graph.git"
   },
   "bugs": {
     "url": "https://github.com/ajkolean/xcode-graph/issues"

@@ -19,11 +19,10 @@ export function matchesSearch(node: GraphNode, searchQuery: string): boolean {
   if (!searchQuery) return true;
 
   const query = searchQuery.toLowerCase();
-  return (
+  return Boolean(
     node.name.toLowerCase().includes(query) ||
     node.type.toLowerCase().includes(query) ||
-    node.project?.toLowerCase().includes(query) ||
-    false
+    node.project?.toLowerCase().includes(query),
   );
 }
 

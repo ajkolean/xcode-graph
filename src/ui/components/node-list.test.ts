@@ -35,9 +35,9 @@ describe('xcode-graph-node-list', () => {
       ></xcode-graph-node-list>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const header = el.shadowRoot?.querySelector('.header');
-    expect(header).to.exist;
+    expect(header).toBeDefined();
   });
 
   it('should render list items for each node', async () => {
@@ -99,7 +99,7 @@ describe('xcode-graph-node-list', () => {
     );
     const event = (await oneEvent(el, 'node-select')) as CustomEvent;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.node.id).to.equal('node1');
   });
 

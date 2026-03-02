@@ -26,7 +26,7 @@ describe('xcode-graph-empty-state', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('.clear-button');
-    expect(button).to.not.exist;
+    expect(button).toBeNull();
   });
 
   it('should show clear button when hasActiveFilters is true', async () => {
@@ -35,7 +35,7 @@ describe('xcode-graph-empty-state', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('.clear-button');
-    expect(button).to.exist;
+    expect(button).toBeDefined();
     expect(button?.textContent?.trim()).to.equal('Clear all filters');
   });
 
@@ -48,7 +48,7 @@ describe('xcode-graph-empty-state', () => {
     setTimeout(() => button.click());
     const event = await oneEvent(el, 'clear-filters');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should toggle button visibility when hasActiveFilters changes', async () => {
@@ -57,18 +57,18 @@ describe('xcode-graph-empty-state', () => {
     `);
 
     let button = el.shadowRoot?.querySelector('.clear-button');
-    expect(button).to.not.exist;
+    expect(button).toBeNull();
 
     el.hasActiveFilters = true;
     await el.updateComplete;
 
     button = el.shadowRoot?.querySelector('.clear-button');
-    expect(button).to.exist;
+    expect(button).toBeDefined();
 
     el.hasActiveFilters = false;
     await el.updateComplete;
 
     button = el.shadowRoot?.querySelector('.clear-button');
-    expect(button).to.not.exist;
+    expect(button).toBeNull();
   });
 });

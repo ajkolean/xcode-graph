@@ -46,21 +46,21 @@ import { addError, dismissError, removeError } from '@shared/signals/error.actio
  */
 export interface ErrorHandlingOptions {
   /** Error category - defaults to Unknown */
-  category?: ErrorCategory | undefined;
+  category?: ErrorCategory;
   /** Error severity - defaults to Error */
-  severity?: ErrorSeverity | undefined;
+  severity?: ErrorSeverity;
   /** User-facing message - defaults to generic message */
-  userMessage?: string | undefined;
+  userMessage?: string;
   /** Whether error can be dismissed - defaults to true */
-  dismissible?: boolean | undefined;
+  dismissible?: boolean;
   /** Optional action label (e.g., "Retry") */
-  actionLabel?: string | undefined;
+  actionLabel?: string;
   /** Optional action type identifier */
-  actionType?: string | undefined;
+  actionType?: string;
   /** Whether to log to console - defaults to true */
-  logToConsole?: boolean | undefined;
+  logToConsole?: boolean;
   /** Auto-dismiss duration in ms - defaults based on severity */
-  autoDismissMs?: number | undefined;
+  autoDismissMs?: number;
 }
 
 /**
@@ -308,6 +308,8 @@ export class ErrorService {
         break;
       case ErrorSeverityEnum.Info:
         console.log(prefix, logData);
+        break;
+      default:
         break;
     }
   }

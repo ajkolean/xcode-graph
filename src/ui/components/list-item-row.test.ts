@@ -33,7 +33,7 @@ describe('xcode-graph-list-item-row', () => {
     `);
 
     const subtitle = el.shadowRoot?.querySelector('.subtitle');
-    expect(subtitle).to.exist;
+    expect(subtitle).toBeDefined();
     expect(subtitle?.textContent).to.equal('Framework');
   });
 
@@ -43,7 +43,7 @@ describe('xcode-graph-list-item-row', () => {
     `);
 
     const subtitle = el.shadowRoot?.querySelector('.subtitle');
-    expect(subtitle).to.not.exist;
+    expect(subtitle).toBeNull();
   });
 
   it('should apply selected class when isSelected is true', async () => {
@@ -55,7 +55,7 @@ describe('xcode-graph-list-item-row', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button');
-    expect(button?.classList.contains('selected')).to.be.true;
+    expect(button?.classList.contains('selected')).toBe(true);
   });
 
   it('should dispatch row-select event on click', async () => {
@@ -67,7 +67,7 @@ describe('xcode-graph-list-item-row', () => {
     setTimeout(() => button.click());
     const event = (await oneEvent(el, 'row-select')) as CustomEvent<{ node: typeof mockNode }>;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.node).to.deep.equal(mockNode);
   });
 
@@ -80,7 +80,7 @@ describe('xcode-graph-list-item-row', () => {
     setTimeout(() => button.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true })));
     const event = (await oneEvent(el, 'row-hover')) as CustomEvent<{ nodeId: string }>;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.nodeId).to.equal('test-node');
   });
 
@@ -93,7 +93,7 @@ describe('xcode-graph-list-item-row', () => {
     setTimeout(() => button.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true })));
     const event = await oneEvent(el, 'row-hover-end');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should render empty when no node is set', async () => {
@@ -102,6 +102,6 @@ describe('xcode-graph-list-item-row', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button');
-    expect(button).to.not.exist;
+    expect(button).toBeNull();
   });
 });

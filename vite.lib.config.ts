@@ -74,6 +74,12 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
+    rollupOptions: {
+      output: {
+        // Emit worker as a separate file with a stable name
+        entryFileNames: '[name].js',
+      },
+    },
     plugins: () => [
       typescript({
         exclude: ['**/*.test.ts', '**/*.spec.ts'],

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/public/xcode-graph-icon-readme.png" alt="XcodeGraph" width="180" />
+  <img src="https://raw.githubusercontent.com/ajkolean/xcode-graph/main/docs/public/xcode-graph-icon-readme.png" alt="XcodeGraph" width="180" />
 </p>
 
 <h1 align="center">xcode-graph</h1>
@@ -17,6 +17,8 @@
   <a href="https://github.com/ajkolean/xcode-graph/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License" /></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/types-TypeScript-3178C6" alt="TypeScript" /></a>
   <a href="https://lit.dev"><img src="https://img.shields.io/badge/built%20with-Lit-324FFF" alt="Built with Lit" /></a>
+  <a href="https://app.deepsource.com/gh/ajkolean/xcode-graph/"><img src="https://app.deepsource.com/gh/ajkolean/xcode-graph.svg/?label=code+coverage&show_trend=true&token=bpb3vqsaKxh829cTU452ydmW" alt="DeepSource Code Coverage" /></a>
+  <a href="https://app.deepsource.com/gh/ajkolean/xcode-graph/"><img src="https://app.deepsource.com/gh/ajkolean/xcode-graph.svg/?label=active+issues&show_trend=true&token=bpb3vqsaKxh829cTU452ydmW" alt="DeepSource Active Issues" /></a>
 </p>
 
 <p align="center">

@@ -13,9 +13,9 @@ describe('xcode-graph-header', () => {
       <xcode-graph-header></xcode-graph-header>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const header = el.shadowRoot?.querySelector('header');
-    expect(header).to.exist;
+    expect(header).toBeDefined();
   });
 
   it('should render logo', async () => {
@@ -24,7 +24,7 @@ describe('xcode-graph-header', () => {
     `);
 
     const logo = el.shadowRoot?.querySelector('.logo');
-    expect(logo).to.exist;
+    expect(logo).toBeDefined();
   });
 
   it('should render breadcrumbs', async () => {
@@ -42,7 +42,7 @@ describe('xcode-graph-header', () => {
     `);
 
     const docsButton = el.shadowRoot?.querySelector('.action-button[title="Documentation"]');
-    expect(docsButton).to.exist;
+    expect(docsButton).toBeDefined();
   });
 
   it('should render user avatar', async () => {
@@ -51,7 +51,7 @@ describe('xcode-graph-header', () => {
     `);
 
     const avatar = el.shadowRoot?.querySelector('.user-avatar');
-    expect(avatar).to.exist;
+    expect(avatar).toBeDefined();
     expect(avatar?.textContent).to.equal('A');
   });
 
@@ -73,7 +73,7 @@ describe('xcode-graph-header', () => {
     `);
 
     const avatar = el.shadowRoot?.querySelector('.breadcrumb-button .avatar');
-    expect(avatar).to.exist;
+    expect(avatar).toBeDefined();
     expect(avatar?.textContent).to.equal('T');
   });
 
@@ -84,8 +84,8 @@ describe('xcode-graph-header', () => {
 
     const logo = el.shadowRoot?.querySelector('.logo');
     const svg = logo?.querySelector('svg');
-    expect(svg).to.exist;
-    expect(svg?.querySelector('path')).to.exist;
+    expect(svg).toBeDefined();
+    expect(svg?.querySelector('path')).toBeDefined();
   });
 
   it('should render status dot with Connected title', async () => {
@@ -94,7 +94,7 @@ describe('xcode-graph-header', () => {
     `);
 
     const statusDot = el.shadowRoot?.querySelector('.status-dot');
-    expect(statusDot).to.exist;
+    expect(statusDot).toBeDefined();
     expect(statusDot?.getAttribute('title')).to.equal('Connected');
   });
 });

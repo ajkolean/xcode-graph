@@ -52,13 +52,13 @@ describe('xcode-graph (GraphApp)', () => {
         <xcode-graph></xcode-graph>
       `);
 
-      expect(el).to.exist;
+      expect(el).toBeDefined();
       expect(el.tagName.toLowerCase()).to.equal('xcode-graph');
     });
 
     it('should be registered as a custom element', () => {
       const ctor = customElements.get('xcode-graph');
-      expect(ctor).to.exist;
+      expect(ctor).toBeDefined();
     });
 
     it('should have a shadow root', async () => {
@@ -66,7 +66,7 @@ describe('xcode-graph (GraphApp)', () => {
         <xcode-graph></xcode-graph>
       `);
 
-      expect(el.shadowRoot).to.exist;
+      expect(el.shadowRoot).toBeDefined();
     });
 
     it('should render with default state (no data)', async () => {
@@ -75,10 +75,10 @@ describe('xcode-graph (GraphApp)', () => {
       `);
 
       // With no data, the component should still render successfully
-      expect(el.shadowRoot).to.exist;
+      expect(el.shadowRoot).toBeDefined();
       // The graph-tab sub-component should be present in shadow DOM
       const graphTab = el.shadowRoot?.querySelector('xcode-graph-tab');
-      expect(graphTab).to.exist;
+      expect(graphTab).toBeDefined();
     });
   });
 

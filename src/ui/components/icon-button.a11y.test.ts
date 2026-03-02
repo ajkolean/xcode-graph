@@ -41,7 +41,7 @@ describe('xcode-graph-icon-button a11y', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button');
-    chaiExpect(button).to.exist;
+    chaiExpect(button).toBeDefined();
     chaiExpect(button?.getAttribute('aria-label')).to.equal('Settings');
   });
 });

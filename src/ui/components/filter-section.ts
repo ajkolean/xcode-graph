@@ -388,6 +388,8 @@ export class GraphFilterSection extends LitElement {
             ${icons.Package}
           </span>
         `;
+      default:
+        return undefined;
     }
   }
 

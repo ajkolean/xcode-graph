@@ -13,7 +13,7 @@ describe('xcode-graph-info-row', () => {
       <xcode-graph-info-row label="Platform" value="iOS"></xcode-graph-info-row>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const label = el.shadowRoot?.querySelector('.label');
     const value = el.shadowRoot?.querySelector('.value');
 
@@ -38,7 +38,7 @@ describe('xcode-graph-info-row', () => {
     `);
 
     const slot = el.shadowRoot?.querySelector('slot');
-    expect(slot).to.exist;
+    expect(slot).toBeDefined();
   });
 
   it('should update when properties change', async () => {

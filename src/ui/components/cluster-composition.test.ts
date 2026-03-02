@@ -27,7 +27,7 @@ describe('xcode-graph-cluster-composition', () => {
       <xcode-graph-cluster-composition .nodes=${[makeNode()]}></xcode-graph-cluster-composition>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.tagName.toLowerCase()).to.equal('xcode-graph-cluster-composition');
   });
 
@@ -39,7 +39,7 @@ describe('xcode-graph-cluster-composition', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('.header');
-    expect(header).to.not.exist;
+    expect(header).toBeNull();
   });
 
   it('should render nothing when nodes array is empty', async () => {
@@ -48,7 +48,7 @@ describe('xcode-graph-cluster-composition', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('.header');
-    expect(header).to.not.exist;
+    expect(header).toBeNull();
   });
 
   it('should start collapsed by default', async () => {
@@ -57,7 +57,7 @@ describe('xcode-graph-cluster-composition', () => {
     `);
 
     const content = el.shadowRoot?.querySelector('.content');
-    expect(content).to.not.exist;
+    expect(content).toBeNull();
   });
 
   it('should start expanded when expanded attribute is set', async () => {
@@ -66,7 +66,7 @@ describe('xcode-graph-cluster-composition', () => {
     `);
 
     const content = el.shadowRoot?.querySelector('.content');
-    expect(content).to.exist;
+    expect(content).toBeDefined();
   });
 
   it('should toggle expansion on header click', async () => {
@@ -79,7 +79,7 @@ describe('xcode-graph-cluster-composition', () => {
     await el.updateComplete;
 
     const content = el.shadowRoot?.querySelector('.content');
-    expect(content).to.exist;
+    expect(content).toBeDefined();
   });
 
   it('should display total source files when expanded', async () => {

@@ -95,9 +95,9 @@ describe('xcode-graph-right-sidebar - Rendering', () => {
       ></xcode-graph-right-sidebar>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    expect(header).to.exist;
+    expect(header).toBeDefined();
   });
 
   it('should render filter view by default', async () => {
@@ -113,7 +113,7 @@ describe('xcode-graph-right-sidebar - Rendering', () => {
     const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
     const filterSections = el.shadowRoot?.querySelectorAll('xcode-graph-filter-section');
 
-    expect(searchBar).to.exist;
+    expect(searchBar).toBeDefined();
     expect(filterSections?.length).to.be.greaterThan(0);
   });
 
@@ -142,7 +142,7 @@ describe('xcode-graph-right-sidebar - Rendering', () => {
     `);
 
     const clearButton = el.shadowRoot?.querySelector('xcode-graph-clear-filters-button');
-    expect(clearButton).to.exist;
+    expect(clearButton).toBeDefined();
   });
 
   it('should render collapsed sidebar when collapsed', async () => {
@@ -156,11 +156,11 @@ describe('xcode-graph-right-sidebar - Rendering', () => {
     `);
 
     // Initially not collapsed
-    expect(el.hasAttribute('collapsed')).to.be.false;
+    expect(el.hasAttribute('collapsed')).toBe(false);
 
     // The component renders filter view when expanded
     const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
-    expect(searchBar).to.exist;
+    expect(searchBar).toBeDefined();
   });
 });
 
@@ -179,7 +179,7 @@ describe('xcode-graph-right-sidebar - Panel Switching', () => {
     await el.updateComplete;
 
     const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
-    expect(nodePanel).to.exist;
+    expect(nodePanel).toBeDefined();
   });
 
   it('should show cluster details when cluster is selected', async () => {
@@ -197,7 +197,7 @@ describe('xcode-graph-right-sidebar - Panel Switching', () => {
     await el.updateComplete;
 
     const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
-    expect(clusterPanel).to.exist;
+    expect(clusterPanel).toBeDefined();
   });
 
   it('should show filter view when nothing is selected', async () => {
@@ -215,7 +215,7 @@ describe('xcode-graph-right-sidebar - Panel Switching', () => {
     await el.updateComplete;
 
     const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
-    expect(searchBar).to.exist;
+    expect(searchBar).toBeDefined();
   });
 
   it('should update header title based on selection', async () => {
@@ -237,9 +237,9 @@ describe('xcode-graph-right-sidebar - Panel Switching', () => {
     await el.updateComplete;
 
     header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    expect(header).to.not.exist;
+    expect(header).toBeNull();
     const toolbar = el.shadowRoot?.querySelector('.details-toolbar');
-    expect(toolbar).to.exist;
+    expect(toolbar).toBeDefined();
 
     // Cluster details also uses toolbar instead of header
     selectNode(null);
@@ -247,7 +247,7 @@ describe('xcode-graph-right-sidebar - Panel Switching', () => {
     await el.updateComplete;
 
     header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    expect(header).to.not.exist;
+    expect(header).toBeNull();
   });
 });
 
@@ -269,11 +269,11 @@ describe('xcode-graph-right-sidebar - State Management', () => {
     `);
 
     // Initially not collapsed
-    expect(el.hasAttribute('collapsed')).to.be.false;
+    expect(el.hasAttribute('collapsed')).toBe(false);
 
     // Header should exist
     const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    expect(header).to.exist;
+    expect(header).toBeDefined();
   });
 });
 
@@ -294,7 +294,7 @@ describe('xcode-graph-right-sidebar - Event Coordination', () => {
     expect(selectedNode.get()).to.equal(mockNodes[0]);
 
     const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
-    expect(nodePanel).to.exist;
+    expect(nodePanel).toBeDefined();
   });
 
   it('should show cluster details panel when cluster is selected', async () => {
@@ -313,7 +313,7 @@ describe('xcode-graph-right-sidebar - Event Coordination', () => {
     expect(selectedCluster.get()).to.equal('MyApp');
 
     const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
-    expect(clusterPanel).to.exist;
+    expect(clusterPanel).toBeDefined();
   });
 });
 
@@ -370,7 +370,7 @@ describe('xcode-graph-right-sidebar - Edge Cases', () => {
 
     // Should still render header and filter view
     const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
-    expect(header).to.exist;
+    expect(header).toBeDefined();
   });
 
   it('should create synthetic cluster when not in clusters list', async () => {
@@ -387,7 +387,7 @@ describe('xcode-graph-right-sidebar - Edge Cases', () => {
     await el.updateComplete;
 
     const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
-    expect(clusterPanel).to.exist;
+    expect(clusterPanel).toBeDefined();
   });
 
   it('should update when properties change', async () => {

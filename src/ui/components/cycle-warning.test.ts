@@ -15,9 +15,9 @@ describe('xcode-graph-cycle-warning', () => {
         <xcode-graph-cycle-warning .cycles=${cycles}></xcode-graph-cycle-warning>
       `);
 
-      expect(el).to.exist;
+      expect(el).toBeDefined();
       const banner = el.shadowRoot?.querySelector('.warning-banner');
-      expect(banner).to.exist;
+      expect(banner).toBeDefined();
     });
 
     it('should not render when cycles array is empty', async () => {
@@ -26,7 +26,7 @@ describe('xcode-graph-cycle-warning', () => {
       `);
 
       const banner = el.shadowRoot?.querySelector('.warning-banner');
-      expect(banner).to.not.exist;
+      expect(banner).toBeNull();
     });
 
     it('should display correct cycle count', async () => {
@@ -65,7 +65,7 @@ describe('xcode-graph-cycle-warning', () => {
       `);
 
       const cycleList = el.shadowRoot?.querySelector('.cycle-list');
-      expect(cycleList).to.not.exist;
+      expect(cycleList).toBeNull();
     });
 
     it('should show cycle list when expand button is clicked', async () => {
@@ -75,13 +75,13 @@ describe('xcode-graph-cycle-warning', () => {
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;
-      expect(expandBtn).to.exist;
+      expect(expandBtn).toBeDefined();
 
       expandBtn.click();
       await el.updateComplete;
 
       const cycleList = el.shadowRoot?.querySelector('.cycle-list');
-      expect(cycleList).to.exist;
+      expect(cycleList).toBeDefined();
     });
 
     it('should toggle button text when expanding/collapsing', async () => {
@@ -145,14 +145,14 @@ describe('xcode-graph-cycle-warning', () => {
       `);
 
       let banner = el.shadowRoot?.querySelector('.warning-banner');
-      expect(banner).to.exist;
+      expect(banner).toBeDefined();
 
       const dismissBtn = el.shadowRoot?.querySelector('.btn-dismiss') as HTMLButtonElement;
       dismissBtn.click();
       await el.updateComplete;
 
       banner = el.shadowRoot?.querySelector('.warning-banner');
-      expect(banner).to.not.exist;
+      expect(banner).toBeNull();
     });
 
     it('should dispatch dismiss event when dismissed', async () => {
@@ -165,7 +165,7 @@ describe('xcode-graph-cycle-warning', () => {
       setTimeout(() => dismissBtn.click());
       const event = await oneEvent(el, 'dismiss');
 
-      expect(event).to.exist;
+      expect(event).toBeDefined();
     });
 
     it('should hide banner when close button (×) is clicked', async () => {
@@ -179,7 +179,7 @@ describe('xcode-graph-cycle-warning', () => {
       await el.updateComplete;
 
       const banner = el.shadowRoot?.querySelector('.warning-banner');
-      expect(banner).to.not.exist;
+      expect(banner).toBeNull();
     });
   });
 
@@ -216,7 +216,7 @@ describe('xcode-graph-cycle-warning', () => {
       await el.updateComplete;
 
       const cycleList = el.shadowRoot?.querySelector('.cycle-list');
-      expect(cycleList).to.exist;
+      expect(cycleList).toBeDefined();
       // Verify the long cycle path is rendered (JSDOM doesn't compute scrollHeight)
       const cyclePath = el.shadowRoot?.querySelector('.cycle-path');
       expect(cyclePath?.textContent).to.include('Node0');
@@ -250,10 +250,10 @@ describe('xcode-graph-cycle-warning', () => {
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;
-      expect(expandBtn.textContent).to.not.be.empty;
+      expect(expandBtn.textContent).not.toBe("");
 
       const dismissBtn = el.shadowRoot?.querySelector('.btn-dismiss') as HTMLButtonElement;
-      expect(dismissBtn.textContent).to.not.be.empty;
+      expect(dismissBtn.textContent).not.toBe("");
 
       const closeBtn = el.shadowRoot?.querySelector('.close-btn') as HTMLButtonElement;
       expect(closeBtn.getAttribute('title')).to.equal('Dismiss');

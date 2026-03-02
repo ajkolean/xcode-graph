@@ -60,7 +60,7 @@ describe('xcode-graph-node-info', () => {
 
     const rows = el.shadowRoot?.querySelectorAll('xcode-graph-info-row');
     // getNodeTypeLabel should return proper label
-    expect(rows?.[2]?.getAttribute('value')).to.exist;
+    expect(rows?.[2]?.getAttribute('value')).toBeDefined();
   });
 
   it('should render foreign build section when foreignBuild is present', async () => {
@@ -97,7 +97,7 @@ describe('xcode-graph-node-info', () => {
     const titles = el.shadowRoot?.querySelectorAll('.title');
     const titleTexts = Array.from(titles ?? []).map((t) => t.textContent);
     expect(titleTexts).to.not.include('Foreign Build');
-    expect(el.shadowRoot?.querySelector('.script-block')).to.be.null;
+    expect(el.shadowRoot?.querySelector('.script-block')).toBeNull();
   });
 
   it('should toggle script expansion on click', async () => {
@@ -116,7 +116,7 @@ describe('xcode-graph-node-info', () => {
     `);
 
     const scriptBlock = el.shadowRoot?.querySelector('.script-block');
-    expect(scriptBlock?.classList.contains('expanded')).to.be.false;
+    expect(scriptBlock?.classList.contains('expanded')).toBe(false);
 
     const toggle = el.shadowRoot?.querySelector('.expand-toggle') as HTMLButtonElement;
     expect(toggle?.textContent).to.contain('Expand');

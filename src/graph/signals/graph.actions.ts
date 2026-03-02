@@ -105,6 +105,8 @@ export function toggleHighlight(card: HighlightCard): void {
     case 'transitive-dependents':
       highlightTransitiveDependents.set(!highlightTransitiveDependents.get());
       break;
+    default:
+      break;
   }
 }
 

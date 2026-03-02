@@ -13,9 +13,9 @@ describe('xcode-graph-search-bar', () => {
       <xcode-graph-search-bar></xcode-graph-search-bar>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const input = el.shadowRoot?.querySelector('input');
-    expect(input).to.exist;
+    expect(input).toBeDefined();
   });
 
   it('should render with search query', async () => {
@@ -33,7 +33,7 @@ describe('xcode-graph-search-bar', () => {
     `);
 
     const hint = el.shadowRoot?.querySelector('.keyboard-hint');
-    expect(hint).to.exist;
+    expect(hint).toBeDefined();
     expect(hint?.textContent).to.equal('/');
   });
 
@@ -43,7 +43,7 @@ describe('xcode-graph-search-bar', () => {
     `);
 
     const clearButton = el.shadowRoot?.querySelector('xcode-graph-icon-button');
-    expect(clearButton).to.exist;
+    expect(clearButton).toBeDefined();
   });
 
   it('should dispatch search-change on input', async () => {
@@ -56,7 +56,7 @@ describe('xcode-graph-search-bar', () => {
     setTimeout(() => input.dispatchEvent(new Event('input', { bubbles: true })));
     const event = (await oneEvent(el, 'search-change')) as CustomEvent<{ query: string }>;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.query).to.equal('new query');
   });
 
@@ -69,7 +69,7 @@ describe('xcode-graph-search-bar', () => {
     setTimeout(() => clearButton.click());
     const event = await oneEvent(el, 'search-clear');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch search-clear on Escape key', async () => {
@@ -83,6 +83,6 @@ describe('xcode-graph-search-bar', () => {
     );
     const event = await oneEvent(el, 'search-clear');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 });

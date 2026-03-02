@@ -59,8 +59,8 @@ describe('xcode-graph-filter-section a11y', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('.header-button');
-    chaiExpect(button).to.exist;
-    chaiExpect(button?.hasAttribute('aria-expanded')).to.be.true;
+    chaiExpect(button).toBeDefined();
+    chaiExpect(button?.hasAttribute('aria-expanded')).toBe(true);
   });
 
   it('should have aria-pressed on item buttons when expanded', async () => {
@@ -80,7 +80,7 @@ describe('xcode-graph-filter-section a11y', () => {
     const itemButtons = el.shadowRoot?.querySelectorAll('.item-button');
     if (itemButtons && itemButtons.length > 0) {
       const firstButton = itemButtons[0];
-      chaiExpect(firstButton?.hasAttribute('aria-pressed')).to.be.true;
+      chaiExpect(firstButton?.hasAttribute('aria-pressed')).toBe(true);
     }
   });
 });

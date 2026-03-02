@@ -62,6 +62,8 @@ function getOppositeSide(side: PortSide): PortSide {
       return 'WEST';
     case 'WEST':
       return 'EAST';
+    default:
+      return 'EAST';
   }
 }
 
@@ -238,6 +240,8 @@ function computePortPositionsOnSide(
       startY = clusterPos.y - halfHeight + margin;
       dx = 0;
       dy = sideLength / (portCount + 1);
+      break;
+    default:
       break;
   }
 

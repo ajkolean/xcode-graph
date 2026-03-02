@@ -53,7 +53,7 @@ describe('GraphErrorToast', () => {
       await element.updateComplete;
 
       const details = element.shadowRoot?.querySelector('.details');
-      expect(details).to.exist;
+      expect(details).toBeDefined();
       expect(details?.textContent).toBe('Stack trace here');
     });
 
@@ -101,7 +101,7 @@ describe('GraphErrorToast', () => {
       await element.updateComplete;
 
       const closeIcon = element.shadowRoot?.querySelector('.close-icon');
-      expect(closeIcon).to.exist;
+      expect(closeIcon).toBeDefined();
     });
 
     it('should not render close button when not dismissible', async () => {
@@ -122,7 +122,7 @@ describe('GraphErrorToast', () => {
       setTimeout(() => closeIcon?.click());
       const event = (await oneEvent(element, 'dismiss')) as CustomEvent;
 
-      expect(event).to.exist;
+      expect(event).toBeDefined();
       expect(event.detail.errorId).toBe('test-123');
     });
 
@@ -151,7 +151,7 @@ describe('GraphErrorToast', () => {
       setTimeout(() => closeIcon?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })));
       const event = await oneEvent(element, 'dismiss');
 
-      expect(event).to.exist;
+      expect(event).toBeDefined();
     });
 
     it('should handle keyboard dismiss (Space)', async () => {
@@ -163,7 +163,7 @@ describe('GraphErrorToast', () => {
       setTimeout(() => closeIcon?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ' })));
       const event = await oneEvent(element, 'dismiss');
 
-      expect(event).to.exist;
+      expect(event).toBeDefined();
     });
   });
 
@@ -177,7 +177,7 @@ describe('GraphErrorToast', () => {
       await element.updateComplete;
 
       const actionButton = element.shadowRoot?.querySelector('.action-button');
-      expect(actionButton).to.exist;
+      expect(actionButton).toBeDefined();
       expect(actionButton?.textContent?.trim()).toBe('Retry');
     });
 
@@ -202,7 +202,7 @@ describe('GraphErrorToast', () => {
       setTimeout(() => actionButton?.click());
       const event = (await oneEvent(element, 'action')) as CustomEvent;
 
-      expect(event).to.exist;
+      expect(event).toBeDefined();
       expect(event.detail.error).toEqual(error);
     });
   });

@@ -10,7 +10,7 @@ describe('xcode-graph-canvas', () => {
     await el.updateComplete;
 
     const canvas = el.shadowRoot?.querySelector('canvas');
-    expect(canvas).to.exist;
+    expect(canvas).toBeDefined();
   });
 
   it('should initialize constructor with default values', async () => {
@@ -18,9 +18,9 @@ describe('xcode-graph-canvas', () => {
 
     expect(el.nodes).to.deep.equal([]);
     expect(el.edges).to.deep.equal([]);
-    expect(el.selectedNode).to.be.null;
-    expect(el.selectedCluster).to.be.null;
-    expect(el.hoveredNode).to.be.null;
+    expect(el.selectedNode).toBeNull();
+    expect(el.selectedCluster).toBeNull();
+    expect(el.hoveredNode).toBeNull();
     expect(el.searchQuery).to.equal('');
     expect(el.viewMode).to.equal(ViewMode.Full);
     expect(el.zoom).to.equal(1);
@@ -48,7 +48,7 @@ describe('xcode-graph-canvas', () => {
       canvas.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true })),
     );
     const event = await oneEvent(el, 'zoom-in');
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch zoom-out event on "-" keydown', async () => {
@@ -60,7 +60,7 @@ describe('xcode-graph-canvas', () => {
       canvas.dispatchEvent(new KeyboardEvent('keydown', { key: '-', bubbles: true })),
     );
     const event = await oneEvent(el, 'zoom-out');
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch zoom-reset event on "0" keydown', async () => {
@@ -72,7 +72,7 @@ describe('xcode-graph-canvas', () => {
       canvas.dispatchEvent(new KeyboardEvent('keydown', { key: '0', bubbles: true })),
     );
     const event = await oneEvent(el, 'zoom-reset');
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch node-select with null on "Escape" keydown', async () => {
@@ -84,7 +84,7 @@ describe('xcode-graph-canvas', () => {
       canvas.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })),
     );
     const event = await oneEvent(el, 'node-select');
-    expect(event).to.exist;
-    expect((event as CustomEvent).detail.node).to.be.null;
+    expect(event).toBeDefined();
+    expect((event as CustomEvent).detail.node).toBeNull();
   });
 });

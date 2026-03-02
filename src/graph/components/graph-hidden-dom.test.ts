@@ -167,7 +167,7 @@ describe('xcode-graph-hidden-dom', () => {
     tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
     vitestExpect(selectHandler).toHaveBeenCalledOnce();
-    expect(selectHandler.mock.calls[0][0].detail.node).to.be.null;
+    expect(selectHandler.mock.calls[0][0].detail.node).toBeNull();
   });
 
   it('should handle Home and End keys', async () => {
@@ -216,10 +216,10 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     // The host element should be clipped
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     // Check that the component renders
     const region = el.shadowRoot?.querySelector('[role="region"]');
-    expect(region).to.exist;
+    expect(region).toBeDefined();
   });
 
   it('should handle empty nodes gracefully', async () => {
@@ -255,7 +255,7 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     const table = el.shadowRoot?.querySelector('table[role="grid"]');
-    expect(table).to.exist;
+    expect(table).toBeDefined();
 
     const caption = el.shadowRoot?.querySelector('table caption');
     expect(caption?.textContent).to.contain('Edge relationships');
@@ -276,7 +276,7 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     const row = el.shadowRoot?.querySelector('table tbody tr');
-    expect(row).to.exist;
+    expect(row).toBeDefined();
     expect(row?.getAttribute('role')).to.equal('row');
     expect(row?.getAttribute('id')).to.equal('edge-0');
 
@@ -310,7 +310,7 @@ describe('xcode-graph-hidden-dom', () => {
     `);
 
     const table = el.shadowRoot?.querySelector('table[role="grid"]');
-    expect(table).to.exist;
+    expect(table).toBeDefined();
 
     const rows = el.shadowRoot?.querySelectorAll('table tbody tr');
     expect(rows?.length).to.equal(0);
@@ -399,7 +399,7 @@ describe('xcode-graph-hidden-dom', () => {
     const items = el.shadowRoot?.querySelectorAll('[role="treeitem"]');
 
     // NodeA has edge, so aria-describedby should be present
-    expect(items?.[0]?.hasAttribute('aria-describedby')).to.be.true;
+    expect(items?.[0]?.hasAttribute('aria-describedby')).toBe(true);
   });
 
   it('should have proper ARIA roles and labels', async () => {
@@ -412,23 +412,23 @@ describe('xcode-graph-hidden-dom', () => {
 
     // Region role
     const region = el.shadowRoot?.querySelector('[role="region"]');
-    expect(region).to.exist;
+    expect(region).toBeDefined();
     expect(region?.getAttribute('aria-label')).to.equal('Graph navigation');
 
     // Tree role
     const tree = el.shadowRoot?.querySelector('[role="tree"]');
-    expect(tree).to.exist;
+    expect(tree).toBeDefined();
     expect(tree?.getAttribute('aria-label')).to.equal('Graph nodes');
     expect(tree?.getAttribute('aria-describedby')).to.equal('graph-summary');
 
     // Grid role on edge table
     const table = el.shadowRoot?.querySelector('[role="grid"]');
-    expect(table).to.exist;
+    expect(table).toBeDefined();
     expect(table?.getAttribute('aria-label')).to.equal('Edge relationships');
 
     // Live region
     const live = el.shadowRoot?.querySelector('[aria-live="polite"]');
-    expect(live).to.exist;
+    expect(live).toBeDefined();
     expect(live?.getAttribute('aria-atomic')).to.equal('true');
   });
 });

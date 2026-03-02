@@ -98,15 +98,15 @@ describe('xcode-graph-cluster-details-panel - Rendering', () => {
       ></xcode-graph-cluster-details-panel>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
 
     const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
     const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
 
-    expect(header).to.exist;
-    expect(stats).to.exist;
-    expect(targetsList).to.exist;
+    expect(header).toBeDefined();
+    expect(stats).toBeDefined();
+    expect(targetsList).toBeDefined();
   });
 
   it('should render empty when cluster is null', async () => {
@@ -119,7 +119,7 @@ describe('xcode-graph-cluster-details-panel - Rendering', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
-    expect(header).to.not.exist;
+    expect(header).toBeNull();
   });
 
   it('should render scrollable container', async () => {
@@ -133,7 +133,7 @@ describe('xcode-graph-cluster-details-panel - Rendering', () => {
     `);
 
     const scrollable = el.shadowRoot?.querySelector('.scrollable');
-    expect(scrollable).to.exist;
+    expect(scrollable).toBeDefined();
   });
 });
 
@@ -153,7 +153,7 @@ describe('xcode-graph-cluster-details-panel - Computed Properties', () => {
     `);
 
     const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
-    expect(stats).to.exist;
+    expect(stats).toBeDefined();
 
     // Should compute dependencies (outgoing edges from cluster nodes)
     // node1->node2, node1->external1, node3->node1 = 3 total
@@ -175,7 +175,7 @@ describe('xcode-graph-cluster-details-panel - Computed Properties', () => {
     `);
 
     const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
-    expect(stats).to.exist;
+    expect(stats).toBeDefined();
   });
 
   it('should compute filtered stats when filteredEdges provided', async () => {
@@ -210,7 +210,7 @@ describe('xcode-graph-cluster-details-panel - Computed Properties', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
-    expect(header?.hasAttribute('is-external')).to.be.true;
+    expect(header?.hasAttribute('is-external')).toBe(true);
   });
 
   it('should not mark local cluster as external', async () => {
@@ -224,7 +224,7 @@ describe('xcode-graph-cluster-details-panel - Computed Properties', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
-    expect(header?.hasAttribute('is-external')).to.be.false;
+    expect(header?.hasAttribute('is-external')).toBe(false);
   });
 
   it('should compute cluster color based on name and type', async () => {
@@ -239,7 +239,7 @@ describe('xcode-graph-cluster-details-panel - Computed Properties', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
-    expect(header?.getAttribute('cluster-color')).to.exist;
+    expect(header?.getAttribute('cluster-color')).toBeDefined();
   });
 
   it('should adjust cluster color based on zoom', async () => {
@@ -255,7 +255,7 @@ describe('xcode-graph-cluster-details-panel - Computed Properties', () => {
 
     const header = el.shadowRoot?.querySelector('xcode-graph-cluster-header');
     const color = header?.getAttribute('cluster-color');
-    expect(color).to.exist;
+    expect(color).toBeDefined();
   });
 });
 
@@ -280,7 +280,7 @@ describe('xcode-graph-cluster-details-panel - Event Bubbling', () => {
     );
     const event = await oneEvent(el, 'close');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should bubble node-select event from targets list', async () => {
@@ -305,7 +305,7 @@ describe('xcode-graph-cluster-details-panel - Event Bubbling', () => {
     );
     const event = (await oneEvent(el, 'node-select')) as CustomEvent;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.node).to.equal(mockClusterNodes[0]);
   });
 
@@ -331,7 +331,7 @@ describe('xcode-graph-cluster-details-panel - Event Bubbling', () => {
     );
     const event = (await oneEvent(el, 'node-hover')) as CustomEvent;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.nodeId).to.equal('node1');
   });
 });
@@ -394,7 +394,7 @@ describe('xcode-graph-cluster-details-panel - Props Propagation', () => {
     `);
 
     const targetsList = el.shadowRoot?.querySelector('xcode-graph-cluster-targets-list');
-    expect(targetsList).to.exist;
+    expect(targetsList).toBeDefined();
   });
 });
 
@@ -419,7 +419,7 @@ describe('xcode-graph-cluster-details-panel - Edge Cases', () => {
     `);
 
     const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
-    expect(stats).to.exist;
+    expect(stats).toBeDefined();
   });
 
   it('should handle empty edges array', async () => {
@@ -458,7 +458,7 @@ describe('xcode-graph-cluster-details-panel - Edge Cases', () => {
     `);
 
     const stats = el.shadowRoot?.querySelector('xcode-graph-cluster-stats');
-    expect(stats).to.exist;
+    expect(stats).toBeDefined();
   });
 
   it('should update when cluster changes', async () => {

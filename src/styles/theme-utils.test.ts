@@ -35,31 +35,31 @@ describe('theme-utils', () => {
 
   describe('meetsContrast', () => {
     it('should pass AA for black on white', () => {
-      expect(meetsContrast('#000000', '#ffffff', 'AA')).to.be.true;
+      expect(meetsContrast('#000000', '#ffffff', 'AA')).toBe(true);
     });
 
     it('should pass AAA for black on white', () => {
-      expect(meetsContrast('#000000', '#ffffff', 'AAA')).to.be.true;
+      expect(meetsContrast('#000000', '#ffffff', 'AAA')).toBe(true);
     });
 
     it('should fail for low contrast colors', () => {
-      expect(meetsContrast('#777777', '#888888', 'AA')).to.be.false;
+      expect(meetsContrast('#777777', '#888888', 'AA')).toBe(false);
     });
 
     it('should default to AA level', () => {
-      expect(meetsContrast('#000000', '#ffffff')).to.be.true;
+      expect(meetsContrast('#000000', '#ffffff')).toBe(true);
     });
   });
 
   describe('ensureContrast', () => {
     it('should return a color that meets AA contrast on dark background', () => {
       const result = ensureContrast('#333333', '#000000', 'AA');
-      expect(meetsContrast(result, '#000000', 'AA')).to.be.true;
+      expect(meetsContrast(result, '#000000', 'AA')).toBe(true);
     });
 
     it('should return a color that meets AA contrast on light background', () => {
       const result = ensureContrast('#cccccc', '#ffffff', 'AA');
-      expect(meetsContrast(result, '#ffffff', 'AA')).to.be.true;
+      expect(meetsContrast(result, '#ffffff', 'AA')).toBe(true);
     });
 
     it('should return the original color if it already meets contrast', () => {

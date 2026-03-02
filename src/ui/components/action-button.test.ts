@@ -13,11 +13,11 @@ describe('xcode-graph-action-button', () => {
       <xcode-graph-action-button>Click Me</xcode-graph-action-button>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.variant).to.equal('neutral');
-    expect(el.active).to.be.false;
-    expect(el.fullWidth).to.be.false;
-    expect(el.disabled).to.be.false;
+    expect(el.active).toBe(false);
+    expect(el.fullWidth).toBe(false);
+    expect(el.disabled).toBe(false);
   });
 
   it('should render slotted content', async () => {
@@ -26,7 +26,7 @@ describe('xcode-graph-action-button', () => {
     `);
 
     const slot = el.shadowRoot?.querySelector('slot:not([name])');
-    expect(slot).to.exist;
+    expect(slot).toBeDefined();
   });
 
   it('should support variant property', async () => {
@@ -43,8 +43,8 @@ describe('xcode-graph-action-button', () => {
       <xcode-graph-action-button active>Active</xcode-graph-action-button>
     `);
 
-    expect(el.active).to.be.true;
-    expect(el.hasAttribute('active')).to.be.true;
+    expect(el.active).toBe(true);
+    expect(el.hasAttribute('active')).toBe(true);
   });
 
   it('should support full-width attribute', async () => {
@@ -52,8 +52,8 @@ describe('xcode-graph-action-button', () => {
       <xcode-graph-action-button full-width>Full Width</xcode-graph-action-button>
     `);
 
-    expect(el.fullWidth).to.be.true;
-    expect(el.hasAttribute('full-width')).to.be.true;
+    expect(el.fullWidth).toBe(true);
+    expect(el.hasAttribute('full-width')).toBe(true);
   });
 
   it('should support disabled state', async () => {
@@ -62,7 +62,7 @@ describe('xcode-graph-action-button', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button');
-    expect(button?.hasAttribute('disabled')).to.be.true;
+    expect(button?.hasAttribute('disabled')).toBe(true);
   });
 
   it('should render icon slot', async () => {
@@ -74,7 +74,7 @@ describe('xcode-graph-action-button', () => {
     `);
 
     const iconSlot = el.shadowRoot?.querySelector('slot[name="icon"]');
-    expect(iconSlot).to.exist;
+    expect(iconSlot).toBeDefined();
   });
 
   it('should fire click event when clicked', async () => {
@@ -86,7 +86,7 @@ describe('xcode-graph-action-button', () => {
     setTimeout(() => button?.click());
     const event = await oneEvent(el, 'click');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should not fire click event when disabled', async () => {
@@ -103,6 +103,6 @@ describe('xcode-graph-action-button', () => {
     button.click();
     await el.updateComplete;
 
-    expect(clicked).to.be.false;
+    expect(clicked).toBe(false);
   });
 });

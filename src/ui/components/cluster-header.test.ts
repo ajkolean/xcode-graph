@@ -21,7 +21,7 @@ describe('xcode-graph-cluster-header', () => {
     const panelHeader = el.shadowRoot?.querySelector(
       'xcode-graph-panel-header',
     ) as GraphPanelHeader;
-    expect(panelHeader).to.exist;
+    expect(panelHeader).toBeDefined();
     expect(panelHeader.title).to.equal('TestCluster');
   });
 
@@ -73,7 +73,7 @@ describe('xcode-graph-cluster-header', () => {
     setTimeout(() => button.click());
     const event = await oneEvent(el, 'back');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should pass color to panel-header', async () => {
@@ -180,7 +180,7 @@ describe('xcode-graph-cluster-header', () => {
       `);
 
       const pathText = el.shadowRoot?.querySelector('.path-text');
-      expect(pathText).to.exist;
+      expect(pathText).toBeDefined();
       expect(pathText?.textContent).to.equal('github.com/Alamofire');
     });
 
@@ -195,7 +195,7 @@ describe('xcode-graph-cluster-header', () => {
       `);
 
       const pathText = el.shadowRoot?.querySelector('.path-text');
-      expect(pathText).to.exist;
+      expect(pathText).toBeDefined();
       expect(pathText?.textContent).to.equal('swift-argument-parser');
     });
 
@@ -210,7 +210,7 @@ describe('xcode-graph-cluster-header', () => {
       `);
 
       const pathText = el.shadowRoot?.querySelector('.path-text');
-      expect(pathText).to.exist;
+      expect(pathText).toBeDefined();
       expect(pathText?.textContent).to.equal('Projects/MyApp/Sources');
     });
 
@@ -224,7 +224,7 @@ describe('xcode-graph-cluster-header', () => {
       `);
 
       const pathRow = el.shadowRoot?.querySelector('.path-row');
-      expect(pathRow).to.not.exist;
+      expect(pathRow).toBeNull();
     });
   });
 
@@ -239,7 +239,7 @@ describe('xcode-graph-cluster-header', () => {
       `);
 
       const iconSpan = el.shadowRoot?.querySelector('.cluster-icon');
-      expect(iconSpan).to.exist;
+      expect(iconSpan).toBeDefined();
       // Package badge should show
       const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
       const badgeLabels = Array.from(badges ?? []).map((b) => b.label);
@@ -256,7 +256,7 @@ describe('xcode-graph-cluster-header', () => {
       `);
 
       const iconSpan = el.shadowRoot?.querySelector('.cluster-icon');
-      expect(iconSpan).to.exist;
+      expect(iconSpan).toBeDefined();
       // Project badge should show
       const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
       const badgeLabels = Array.from(badges ?? []).map((b) => b.label);

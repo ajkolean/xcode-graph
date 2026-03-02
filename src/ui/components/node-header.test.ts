@@ -30,7 +30,7 @@ describe('xcode-graph-node-header', () => {
       <xcode-graph-node-header .node=${makeNode()} zoom="1"></xcode-graph-node-header>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.tagName.toLowerCase()).to.equal('xcode-graph-node-header');
   });
 
@@ -40,7 +40,7 @@ describe('xcode-graph-node-header', () => {
     `);
 
     const panelHeader = el.shadowRoot?.querySelector('xcode-graph-panel-header');
-    expect(panelHeader).to.not.exist;
+    expect(panelHeader).toBeNull();
   });
 
   it('should render panel header with node name', async () => {
@@ -111,7 +111,7 @@ describe('xcode-graph-node-header', () => {
     `);
 
     const tagsContainer = el.shadowRoot?.querySelector('.tags-container');
-    expect(tagsContainer).to.exist;
+    expect(tagsContainer).toBeDefined();
 
     const tagBadges = el.shadowRoot?.querySelectorAll('xcode-graph-tag-badge');
     expect(tagBadges?.length).to.equal(2);
@@ -123,7 +123,7 @@ describe('xcode-graph-node-header', () => {
     `);
 
     const tagsContainer = el.shadowRoot?.querySelector('.tags-container');
-    expect(tagsContainer).to.not.exist;
+    expect(tagsContainer).toBeNull();
   });
 
   // ========================================
@@ -143,7 +143,7 @@ describe('xcode-graph-node-header', () => {
     setTimeout(() => panelHeader?.dispatchEvent(new CustomEvent('back', { bubbles: true })));
     const event = await oneEvent(el, 'cluster-click');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.clusterId).to.equal('MyProject');
   });
 
@@ -162,6 +162,6 @@ describe('xcode-graph-node-header', () => {
     setTimeout(() => panelHeader?.dispatchEvent(new CustomEvent('back', { bubbles: true })));
     const event = await oneEvent(el, 'close');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 });

@@ -23,7 +23,7 @@ describe('xcode-graph-stats-card', () => {
     expect(el.label).to.equal('Total Nodes');
     expect(el.value).to.equal('42');
     // Boolean attributes default to undefined/falsy when not set
-    expect(el.highlighted).to.not.be.true;
+    expect(el.highlighted).not.toBe(true);
   });
 
   it('should accept number value', async () => {
@@ -46,7 +46,7 @@ describe('xcode-graph-stats-card', () => {
       ></xcode-graph-stats-card>
     `);
 
-    expect(el.highlighted).to.be.true;
+    expect(el.highlighted).toBe(true);
   });
 
   // ========================================
@@ -59,7 +59,7 @@ describe('xcode-graph-stats-card', () => {
     `);
 
     const value = el.shadowRoot?.querySelector('.value');
-    expect(value?.classList.contains('highlighted')).to.be.true;
+    expect(value?.classList.contains('highlighted')).toBe(true);
   });
 
   it('should not apply highlighted class when highlighted prop is false', async () => {
@@ -68,7 +68,7 @@ describe('xcode-graph-stats-card', () => {
     `);
 
     const value = el.shadowRoot?.querySelector('.value');
-    expect(value?.classList.contains('highlighted')).to.be.false;
+    expect(value?.classList.contains('highlighted')).toBe(false);
   });
 
   // ========================================
@@ -111,13 +111,13 @@ describe('xcode-graph-stats-card', () => {
     `);
 
     const value = el.shadowRoot?.querySelector('.value');
-    expect(value?.classList.contains('highlighted')).to.be.false;
+    expect(value?.classList.contains('highlighted')).toBe(false);
 
     // Update property
     el.highlighted = true;
     await el.updateComplete;
 
-    expect(value?.classList.contains('highlighted')).to.be.true;
+    expect(value?.classList.contains('highlighted')).toBe(true);
   });
 
   // ========================================
@@ -129,7 +129,7 @@ describe('xcode-graph-stats-card', () => {
       <xcode-graph-stats-card value="42"></xcode-graph-stats-card>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const label = el.shadowRoot?.querySelector('.label');
     expect(label?.textContent).to.equal('');
   });
@@ -139,7 +139,7 @@ describe('xcode-graph-stats-card', () => {
       <xcode-graph-stats-card label="Count"></xcode-graph-stats-card>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     const value = el.shadowRoot?.querySelector('.value');
     expect(value?.textContent?.trim()).to.equal('');
   });
@@ -156,7 +156,7 @@ describe('xcode-graph-stats-card', () => {
 
     const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
     container.click();
-    expect(fired).to.be.true;
+    expect(fired).toBe(true);
   });
 
   it('should not dispatch card-toggle when non-toggleable card is clicked', async () => {
@@ -171,7 +171,7 @@ describe('xcode-graph-stats-card', () => {
 
     const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
     container.click();
-    expect(fired).to.be.false;
+    expect(fired).toBe(false);
   });
 
   it('should apply toggleable and active classes', async () => {
@@ -180,8 +180,8 @@ describe('xcode-graph-stats-card', () => {
     `);
 
     const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
-    expect(container.classList.contains('toggleable')).to.be.true;
-    expect(container.classList.contains('active')).to.be.true;
+    expect(container.classList.contains('toggleable')).toBe(true);
+    expect(container.classList.contains('active')).toBe(true);
   });
 
   it('should handle zero value', async () => {

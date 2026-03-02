@@ -13,7 +13,7 @@ describe('xcode-graph-metrics-section', () => {
       <xcode-graph-metrics-section></xcode-graph-metrics-section>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.tagName.toLowerCase()).to.equal('xcode-graph-metrics-section');
   });
 
@@ -32,7 +32,7 @@ describe('xcode-graph-metrics-section', () => {
     `);
 
     const grid = el.shadowRoot?.querySelector('.grid');
-    expect(grid).to.exist;
+    expect(grid).toBeDefined();
   });
 
   it('should collapse on header click', async () => {
@@ -45,7 +45,7 @@ describe('xcode-graph-metrics-section', () => {
     await el.updateComplete;
 
     const grid = el.shadowRoot?.querySelector('.grid');
-    expect(grid).to.not.exist;
+    expect(grid).toBeNull();
   });
 
   it('should set aria-expanded attribute', async () => {
@@ -90,7 +90,7 @@ describe('xcode-graph-metrics-section', () => {
     setTimeout(() => depsCard?.dispatchEvent(new CustomEvent('card-toggle', { bubbles: true })));
     const event = await oneEvent(el, 'toggle-direct-deps');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch toggle-direct-dependents event', async () => {
@@ -108,7 +108,7 @@ describe('xcode-graph-metrics-section', () => {
     );
     const event = await oneEvent(el, 'toggle-direct-dependents');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should reflect attribute properties', async () => {
@@ -154,7 +154,7 @@ describe('xcode-graph-metrics-section', () => {
       transitiveDepsCard?.dispatchEvent(new CustomEvent('card-toggle', { bubbles: true })),
     );
     const event = await oneEvent(el, 'toggle-transitive-deps');
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch toggle-transitive-dependents event', async () => {
@@ -170,6 +170,6 @@ describe('xcode-graph-metrics-section', () => {
       transitiveDependentsCard?.dispatchEvent(new CustomEvent('card-toggle', { bubbles: true })),
     );
     const event = await oneEvent(el, 'toggle-transitive-dependents');
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 });

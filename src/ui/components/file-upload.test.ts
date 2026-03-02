@@ -28,15 +28,15 @@ describe('xcode-graph-file-upload', () => {
       <xcode-graph-file-upload></xcode-graph-file-upload>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
 
     const container = el.shadowRoot?.querySelector('.container');
-    expect(container).to.exist;
+    expect(container).toBeDefined();
     expect(container?.getAttribute('role')).to.equal('button');
     expect(container?.getAttribute('tabindex')).to.equal('0');
 
     const input = el.shadowRoot?.querySelector('input[type="file"]');
-    expect(input).to.exist;
+    expect(input).toBeDefined();
     expect(input?.getAttribute('accept')).to.equal('.json');
   });
 
@@ -54,7 +54,7 @@ describe('xcode-graph-file-upload', () => {
     setTimeout(() => input.dispatchEvent(new Event('change')));
     const event = await oneEvent(el, 'graph-file-loaded');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect((event as CustomEvent).detail.raw).to.deep.equal(testData);
   });
 
@@ -86,18 +86,18 @@ describe('xcode-graph-file-upload', () => {
     `);
 
     const container = el.shadowRoot?.querySelector('.container');
-    expect(container).to.exist;
-    expect(container?.classList.contains('drag-over')).to.be.false;
+    expect(container).toBeDefined();
+    expect(container?.classList.contains('drag-over')).toBe(false);
 
     container?.dispatchEvent(new Event('dragover', { bubbles: true, cancelable: true }));
     await el.updateComplete;
 
-    expect(container?.classList.contains('drag-over')).to.be.true;
+    expect(container?.classList.contains('drag-over')).toBe(true);
 
     container?.dispatchEvent(new Event('dragleave', { bubbles: true }));
     await el.updateComplete;
 
-    expect(container?.classList.contains('drag-over')).to.be.false;
+    expect(container?.classList.contains('drag-over')).toBe(false);
   });
 
   it('should trigger file input on click', async () => {

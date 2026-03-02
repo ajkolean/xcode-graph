@@ -86,7 +86,7 @@ function isNodeDimmed(
   clusterDim: boolean | '' | null,
   rc: NodeRenderContext,
 ): boolean {
-  return rc.dimmedNodeIds.has(node.id) || !!clusterDim;
+  return rc.dimmedNodeIds.has(node.id) || Boolean(clusterDim);
 }
 
 function drawNodeEffects(

@@ -14,7 +14,7 @@ describe('xcode-graph-clear-filters-button', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button');
-    expect(button).to.exist;
+    expect(button).toBeDefined();
     expect(button?.textContent?.trim()).to.equal('Clear all filters');
   });
 
@@ -24,7 +24,7 @@ describe('xcode-graph-clear-filters-button', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    expect(button.disabled).to.be.true;
+    expect(button.disabled).toBe(true);
   });
 
   it('should be enabled when active', async () => {
@@ -33,7 +33,7 @@ describe('xcode-graph-clear-filters-button', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    expect(button.disabled).to.be.false;
+    expect(button.disabled).toBe(false);
   });
 
   it('should update disabled state when isActive changes', async () => {
@@ -42,17 +42,17 @@ describe('xcode-graph-clear-filters-button', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button') as HTMLButtonElement;
-    expect(button.disabled).to.be.true;
+    expect(button.disabled).toBe(true);
 
     // Activate
     el.isActive = true;
     await el.updateComplete;
-    expect(button.disabled).to.be.false;
+    expect(button.disabled).toBe(false);
 
     // Deactivate
     el.isActive = false;
     await el.updateComplete;
-    expect(button.disabled).to.be.true;
+    expect(button.disabled).toBe(true);
   });
 
   it('should dispatch clear-filters event when clicked and active', async () => {
@@ -64,7 +64,7 @@ describe('xcode-graph-clear-filters-button', () => {
     setTimeout(() => button.click());
     const event = await oneEvent(el, 'clear-filters');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should not dispatch event when clicked and disabled', async () => {
@@ -81,6 +81,6 @@ describe('xcode-graph-clear-filters-button', () => {
     button.click();
     await el.updateComplete;
 
-    expect(eventFired).to.be.false;
+    expect(eventFired).toBe(false);
   });
 });

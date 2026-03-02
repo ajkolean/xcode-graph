@@ -62,7 +62,7 @@ describe('xcode-graph-node-list a11y', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('.header');
-    chaiExpect(button).to.exist;
+    chaiExpect(button).toBeDefined();
     chaiExpect(button?.getAttribute('aria-expanded')).to.equal('true');
   });
 });

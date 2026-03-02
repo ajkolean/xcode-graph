@@ -17,7 +17,7 @@ describe('xcode-graph-right-sidebar-header', () => {
       <xcode-graph-right-sidebar-header title="Filters"></xcode-graph-right-sidebar-header>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.tagName.toLowerCase()).to.equal('xcode-graph-right-sidebar-header');
   });
 
@@ -40,7 +40,7 @@ describe('xcode-graph-right-sidebar-header', () => {
     `);
 
     const title = el.shadowRoot?.querySelector('.title');
-    expect(title).to.not.exist;
+    expect(title).toBeNull();
   });
 
   it('should show title when not collapsed', async () => {
@@ -49,7 +49,7 @@ describe('xcode-graph-right-sidebar-header', () => {
     `);
 
     const title = el.shadowRoot?.querySelector('.title');
-    expect(title).to.exist;
+    expect(title).toBeDefined();
   });
 
   // ========================================
@@ -62,7 +62,7 @@ describe('xcode-graph-right-sidebar-header', () => {
     `);
 
     const dot = el.shadowRoot?.querySelector('.filters-active-dot');
-    expect(dot).to.exist;
+    expect(dot).toBeDefined();
   });
 
   it('should not show active filters dot when has-active-filters is false', async () => {
@@ -71,7 +71,7 @@ describe('xcode-graph-right-sidebar-header', () => {
     `);
 
     const dot = el.shadowRoot?.querySelector('.filters-active-dot');
-    expect(dot).to.not.exist;
+    expect(dot).toBeNull();
   });
 
   it('should not show active filters dot when collapsed even if filters active', async () => {
@@ -84,7 +84,7 @@ describe('xcode-graph-right-sidebar-header', () => {
     `);
 
     const dot = el.shadowRoot?.querySelector('.filters-active-dot');
-    expect(dot).to.not.exist;
+    expect(dot).toBeNull();
   });
 
   // ========================================
@@ -100,7 +100,7 @@ describe('xcode-graph-right-sidebar-header', () => {
     setTimeout(() => iconButton.click());
     const event = await oneEvent(el, 'toggle-collapse');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   // ========================================
@@ -113,7 +113,7 @@ describe('xcode-graph-right-sidebar-header', () => {
     `);
 
     const collapseIcon = el.shadowRoot?.querySelector('xcode-graph-sidebar-collapse-icon');
-    expect(collapseIcon).to.exist;
+    expect(collapseIcon).toBeDefined();
   });
 
   it('should pass collapsed state to collapse icon', async () => {
@@ -122,7 +122,7 @@ describe('xcode-graph-right-sidebar-header', () => {
     `);
 
     const collapseIcon = el.shadowRoot?.querySelector('xcode-graph-sidebar-collapse-icon');
-    expect(collapseIcon?.hasAttribute('is-collapsed')).to.be.true;
+    expect(collapseIcon?.hasAttribute('is-collapsed')).toBe(true);
   });
 
   it('should set appropriate title on icon button', async () => {

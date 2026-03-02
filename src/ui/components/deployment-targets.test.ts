@@ -88,7 +88,7 @@ describe('xcode-graph-deployment-targets', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('xcode-graph-badge');
-    expect(badge).to.exist;
+    expect(badge).toBeDefined();
     expect(badge?.getAttribute('label')).to.equal('unknownDevice');
     expect(badge?.getAttribute('color')).to.equal('#8E8E93');
   });

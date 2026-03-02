@@ -22,7 +22,7 @@ describe('xcode-graph-build-settings', () => {
       <xcode-graph-build-settings .settings=${fullSettings}></xcode-graph-build-settings>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.tagName.toLowerCase()).to.equal('xcode-graph-build-settings');
   });
 
@@ -32,7 +32,7 @@ describe('xcode-graph-build-settings', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('.header');
-    expect(header).to.not.exist;
+    expect(header).toBeNull();
   });
 
   it('should render nothing when settings is empty', async () => {
@@ -41,7 +41,7 @@ describe('xcode-graph-build-settings', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('.header');
-    expect(header).to.not.exist;
+    expect(header).toBeNull();
   });
 
   it('should render header with title', async () => {
@@ -59,7 +59,7 @@ describe('xcode-graph-build-settings', () => {
     `);
 
     const content = el.shadowRoot?.querySelector('.content');
-    expect(content).to.not.exist;
+    expect(content).toBeNull();
   });
 
   it('should start expanded when expanded attribute is set', async () => {
@@ -68,7 +68,7 @@ describe('xcode-graph-build-settings', () => {
     `);
 
     const content = el.shadowRoot?.querySelector('.content');
-    expect(content).to.exist;
+    expect(content).toBeDefined();
   });
 
   it('should toggle expansion on header click', async () => {
@@ -81,7 +81,7 @@ describe('xcode-graph-build-settings', () => {
     await el.updateComplete;
 
     const content = el.shadowRoot?.querySelector('.content');
-    expect(content).to.exist;
+    expect(content).toBeDefined();
   });
 
   it('should set aria-expanded on header button', async () => {
@@ -123,7 +123,7 @@ describe('xcode-graph-build-settings', () => {
     `);
 
     const codeSignSection = el.shadowRoot?.querySelector('.code-sign-section');
-    expect(codeSignSection).to.exist;
+    expect(codeSignSection).toBeDefined();
   });
 
   it('should not show code signing section when no code sign settings', async () => {
@@ -133,6 +133,6 @@ describe('xcode-graph-build-settings', () => {
     `);
 
     const codeSignSection = el.shadowRoot?.querySelector('.code-sign-section');
-    expect(codeSignSection).to.not.exist;
+    expect(codeSignSection).toBeNull();
   });
 });

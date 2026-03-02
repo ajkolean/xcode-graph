@@ -36,12 +36,12 @@ export interface AppError {
   severity: ErrorSeverity;
   category: ErrorCategory;
   message: string;
-  details?: string | undefined;
+  details?: string;
   timestamp: number;
   dismissed: boolean;
   dismissible: boolean;
-  actionLabel?: string | undefined;
-  actionType?: string | undefined;
+  actionLabel?: string;
+  actionType?: string;
 }
 
 /** Error notification state */

@@ -18,7 +18,7 @@ describe('xcode-graph-cluster-type-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('xcode-graph-badge') as GraphBadge;
-    expect(badge).to.exist;
+    expect(badge).toBeDefined();
     expect(badge.label).to.equal('Package');
   });
 
@@ -31,7 +31,7 @@ describe('xcode-graph-cluster-type-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('xcode-graph-badge') as GraphBadge;
-    expect(badge).to.exist;
+    expect(badge).toBeDefined();
     expect(badge.label).to.equal('Project');
   });
 
@@ -58,7 +58,7 @@ describe('xcode-graph-cluster-type-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('xcode-graph-badge') as GraphBadge;
-    expect(badge).to.exist;
+    expect(badge).toBeDefined();
     expect(badge.color).to.equal('#8B5CF6');
   });
 
@@ -97,8 +97,8 @@ describe('xcode-graph-cluster-type-badge', () => {
     const badge = el.shadowRoot?.querySelector('xcode-graph-badge') as GraphBadge;
     expect(badge.variant).to.equal('accent');
     expect(badge.size).to.equal('sm');
-    expect(badge.interactive).to.be.true;
-    expect(badge.glow).to.be.true;
+    expect(badge.interactive).toBe(true);
+    expect(badge.glow).toBe(true);
   });
 
   it('should handle different color formats', async () => {

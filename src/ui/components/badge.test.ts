@@ -51,7 +51,7 @@ describe('xcode-graph-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('variant-rounded')).to.be.true;
+    expect(badge?.classList.contains('variant-rounded')).toBe(true);
   });
 
   it('should apply accent variant class', async () => {
@@ -60,7 +60,7 @@ describe('xcode-graph-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('variant-accent')).to.be.true;
+    expect(badge?.classList.contains('variant-accent')).toBe(true);
   });
 
   // ========================================
@@ -73,7 +73,7 @@ describe('xcode-graph-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('size-sm')).to.be.true;
+    expect(badge?.classList.contains('size-sm')).toBe(true);
   });
 
   it('should apply md size class', async () => {
@@ -82,7 +82,7 @@ describe('xcode-graph-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('size-md')).to.be.true;
+    expect(badge?.classList.contains('size-md')).toBe(true);
   });
 
   // ========================================
@@ -95,7 +95,7 @@ describe('xcode-graph-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('interactive')).to.be.true;
+    expect(badge?.classList.contains('interactive')).toBe(true);
   });
 
   it('should apply glow class when glow is true', async () => {
@@ -104,7 +104,7 @@ describe('xcode-graph-badge', () => {
     `);
 
     const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('glow')).to.be.true;
+    expect(badge?.classList.contains('glow')).toBe(true);
   });
 
   // ========================================
@@ -169,10 +169,10 @@ describe('xcode-graph-badge', () => {
 
     const badge = el.shadowRoot?.querySelector('.badge');
     expect(badge?.textContent?.trim()).to.equal('Package');
-    expect(badge?.classList.contains('variant-accent')).to.be.true;
-    expect(badge?.classList.contains('size-sm')).to.be.true;
-    expect(badge?.classList.contains('interactive')).to.be.true;
-    expect(badge?.classList.contains('glow')).to.be.true;
+    expect(badge?.classList.contains('variant-accent')).toBe(true);
+    expect(badge?.classList.contains('size-sm')).toBe(true);
+    expect(badge?.classList.contains('interactive')).toBe(true);
+    expect(badge?.classList.contains('glow')).toBe(true);
   });
 
   // ========================================

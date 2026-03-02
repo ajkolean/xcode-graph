@@ -15,11 +15,11 @@ describe('xcode-graph-icon-button', () => {
       </xcode-graph-icon-button>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.variant).to.equal('ghost');
     expect(el.color).to.equal('neutral');
     expect(el.size).to.equal('md');
-    expect(el.disabled).to.be.false;
+    expect(el.disabled).toBe(false);
   });
 
   it('should render slotted icon', async () => {
@@ -30,7 +30,7 @@ describe('xcode-graph-icon-button', () => {
     `);
 
     const slot = el.shadowRoot?.querySelector('slot');
-    expect(slot).to.exist;
+    expect(slot).toBeDefined();
   });
 
   it('should apply title attribute', async () => {
@@ -48,7 +48,7 @@ describe('xcode-graph-icon-button', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('button');
-    expect(button?.hasAttribute('disabled')).to.be.true;
+    expect(button?.hasAttribute('disabled')).toBe(true);
   });
 
   it('should support variant property', async () => {
@@ -87,7 +87,7 @@ describe('xcode-graph-icon-button', () => {
     setTimeout(() => button?.click());
     const event = await oneEvent(el, 'click');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should not fire click event when disabled', async () => {
@@ -103,6 +103,6 @@ describe('xcode-graph-icon-button', () => {
     const button = el.shadowRoot?.querySelector('button');
     button?.click();
 
-    expect(eventFired).to.be.false;
+    expect(eventFired).toBe(false);
   });
 });

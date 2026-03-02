@@ -30,7 +30,7 @@ describe('xcode-graph-cluster-targets-list', () => {
       ></xcode-graph-cluster-targets-list>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.tagName.toLowerCase()).to.equal('xcode-graph-cluster-targets-list');
   });
 
@@ -39,7 +39,7 @@ describe('xcode-graph-cluster-targets-list', () => {
       <xcode-graph-cluster-targets-list></xcode-graph-cluster-targets-list>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
   });
 
   it('should show target counts in header', async () => {
@@ -68,7 +68,7 @@ describe('xcode-graph-cluster-targets-list', () => {
     `);
 
     const content = el.shadowRoot?.querySelector('.content');
-    expect(content).to.exist;
+    expect(content).toBeDefined();
   });
 
   it('should collapse on header click', async () => {
@@ -86,7 +86,7 @@ describe('xcode-graph-cluster-targets-list', () => {
     await el.updateComplete;
 
     const content = el.shadowRoot?.querySelector('.content');
-    expect(content).to.not.exist;
+    expect(content).toBeNull();
   });
 
   it('should render type headers for each node type', async () => {

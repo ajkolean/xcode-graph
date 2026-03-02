@@ -20,8 +20,8 @@ describe('xcode-graph-sidebar-collapse-icon', () => {
     const expandedSvg = expanded.shadowRoot?.querySelector('svg');
     const collapsedSvg = collapsed.shadowRoot?.querySelector('svg');
 
-    expect(expandedSvg).to.exist;
-    expect(collapsedSvg).to.exist;
+    expect(expandedSvg).toBeDefined();
+    expect(collapsedSvg).toBeDefined();
 
     const expandedPaths = expandedSvg?.querySelectorAll('path');
     const collapsedPaths = collapsedSvg?.querySelectorAll('path');

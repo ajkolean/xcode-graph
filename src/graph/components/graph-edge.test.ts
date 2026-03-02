@@ -52,7 +52,7 @@ describe('xcode-graph-edge', () => {
   it('should render a straight line path for short distances (<=150)', async () => {
     const { el } = await renderEdge({ x1: 0, y1: 0, x2: 100, y2: 100 });
     const path = el.querySelector('g.graph-edge path:last-of-type');
-    expect(path).to.exist;
+    expect(path).toBeDefined();
     const d = path?.getAttribute('d');
     expect(d).to.contain('M ');
     expect(d).to.contain('L ');
@@ -61,7 +61,7 @@ describe('xcode-graph-edge', () => {
   it('should render a bezier curve path for long distances (>150)', async () => {
     const { el } = await renderEdge({ x1: 0, y1: 0, x2: 300, y2: 300 });
     const path = el.querySelector('g.graph-edge path:last-of-type');
-    expect(path).to.exist;
+    expect(path).toBeDefined();
     const d = path?.getAttribute('d');
     expect(d).to.contain('M ');
     expect(d).to.contain('C ');
@@ -86,49 +86,49 @@ describe('xcode-graph-edge', () => {
   it('should use dash pattern 8,4 for dependent edges', async () => {
     const { el } = await renderEdge({ isDependent: true });
     const path = el.querySelector('g.graph-edge path:last-of-type');
-    expect(path).to.exist;
+    expect(path).toBeDefined();
     expect(path?.getAttribute('stroke-dasharray')).to.equal('8,4');
   });
 
   it('should use dash pattern 4,2 for regular edges', async () => {
     const { el } = await renderEdge({ isDependent: false });
     const path = el.querySelector('g.graph-edge path:last-of-type');
-    expect(path).to.exist;
+    expect(path).toBeDefined();
     expect(path?.getAttribute('stroke-dasharray')).to.equal('4,2');
   });
 
   it('should apply flow-animation class when animated is true', async () => {
     const { el } = await renderEdge({ animated: true });
     const path = el.querySelector('g.graph-edge path:last-of-type');
-    expect(path).to.exist;
-    expect(path?.classList.contains('flow-animation')).to.be.true;
+    expect(path).toBeDefined();
+    expect(path?.classList.contains('flow-animation')).toBe(true);
   });
 
   it('should not apply flow-animation class when animated is false', async () => {
     const { el } = await renderEdge({ animated: false });
     const path = el.querySelector('g.graph-edge path:last-of-type');
-    expect(path).to.exist;
-    expect(path?.classList.contains('flow-animation')).to.be.false;
+    expect(path).toBeDefined();
+    expect(path?.classList.contains('flow-animation')).toBe(false);
   });
 
   it('should set stroke-width to 2 when highlighted', async () => {
     const { el } = await renderEdge({ isHighlighted: true });
     const mainPath = el.querySelector('g.graph-edge path:last-of-type');
-    expect(mainPath).to.exist;
+    expect(mainPath).toBeDefined();
     expect(mainPath?.getAttribute('stroke-width')).to.equal('2');
   });
 
   it('should set stroke-width to 1 when not highlighted', async () => {
     const { el } = await renderEdge({ isHighlighted: false });
     const mainPath = el.querySelector('g.graph-edge path:last-of-type');
-    expect(mainPath).to.exist;
+    expect(mainPath).toBeDefined();
     expect(mainPath?.getAttribute('stroke-width')).to.equal('1');
   });
 
   it('should apply opacity to the main path', async () => {
     const { el } = await renderEdge({ opacity: 0.5 });
     const path = el.querySelector('g.graph-edge path:last-of-type');
-    expect(path).to.exist;
+    expect(path).toBeDefined();
     const opacityVal = Number(path?.getAttribute('opacity'));
     expect(opacityVal).to.be.greaterThan(0);
     expect(opacityVal).to.be.lessThan(1);
@@ -140,6 +140,6 @@ describe('xcode-graph-edge', () => {
     svgEl.appendChild(el);
     await el.updateComplete;
     const g = el.querySelector('g.graph-edge');
-    expect(g).to.exist;
+    expect(g).toBeDefined();
   });
 });

@@ -66,7 +66,7 @@ describe('xcode-graph-node-details-panel - Rendering', () => {
       ></xcode-graph-node-details-panel>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
 
     // Check for all sub-components
     const header = el.shadowRoot?.querySelector('xcode-graph-node-header');
@@ -74,9 +74,9 @@ describe('xcode-graph-node-details-panel - Rendering', () => {
     const info = el.shadowRoot?.querySelector('xcode-graph-node-info');
     const lists = el.shadowRoot?.querySelectorAll('xcode-graph-node-list');
 
-    expect(header).to.exist;
-    expect(metrics).to.exist;
-    expect(info).to.exist;
+    expect(header).toBeDefined();
+    expect(metrics).toBeDefined();
+    expect(info).toBeDefined();
     expect(lists?.length).to.equal(2); // Dependencies and Dependents
   });
 
@@ -89,7 +89,7 @@ describe('xcode-graph-node-details-panel - Rendering', () => {
     `);
 
     const header = el.shadowRoot?.querySelector('xcode-graph-node-header');
-    expect(header).to.not.exist;
+    expect(header).toBeNull();
   });
 });
 
@@ -225,7 +225,7 @@ describe('xcode-graph-node-details-panel - Computed Properties', () => {
     `);
 
     const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
-    expect(metrics?.hasAttribute('is-high-fan-in')).to.be.true;
+    expect(metrics?.hasAttribute('is-high-fan-in')).toBe(true);
   });
 
   it('should detect high fan-out', async () => {
@@ -285,7 +285,7 @@ describe('xcode-graph-node-details-panel - Computed Properties', () => {
     `);
 
     const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
-    expect(metrics?.hasAttribute('is-high-fan-out')).to.be.true;
+    expect(metrics?.hasAttribute('is-high-fan-out')).toBe(true);
   });
 });
 
@@ -309,7 +309,7 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
     );
     const event = await oneEvent(el, 'close');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should bubble cluster-select event', async () => {
@@ -333,7 +333,7 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
     );
     const event = (await oneEvent(el, 'cluster-select')) as CustomEvent;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.clusterId).to.equal('MyApp');
   });
 
@@ -354,7 +354,7 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
     );
     const event = await oneEvent(el, 'toggle-direct-deps');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should bubble toggle-direct-dependents event from metrics section', async () => {
@@ -374,7 +374,7 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
     );
     const event = await oneEvent(el, 'toggle-direct-dependents');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should bubble node-select event from dependency list', async () => {
@@ -399,7 +399,7 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
     );
     const event = (await oneEvent(el, 'node-select')) as CustomEvent;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.node).to.equal(mockDependency);
   });
 
@@ -425,7 +425,7 @@ describe('xcode-graph-node-details-panel - Event Bubbling', () => {
     );
     const event = (await oneEvent(el, 'node-hover')) as CustomEvent;
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.nodeId).to.equal('dep1');
   });
 });
@@ -446,7 +446,7 @@ describe('xcode-graph-node-details-panel - Props Propagation', () => {
     `);
 
     const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
-    expect(metrics?.hasAttribute('active-direct-deps')).to.be.true;
+    expect(metrics?.hasAttribute('active-direct-deps')).toBe(true);
   });
 
   it('should render dependency list with correct attributes', async () => {
@@ -534,7 +534,7 @@ describe('xcode-graph-node-details-panel - Edge Cases', () => {
     `);
 
     const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
-    expect(metrics).to.exist;
+    expect(metrics).toBeDefined();
   });
 
   it('should update when node changes', async () => {
@@ -547,13 +547,13 @@ describe('xcode-graph-node-details-panel - Edge Cases', () => {
     `);
 
     let header = el.shadowRoot?.querySelector('xcode-graph-node-header');
-    expect(header).to.exist;
+    expect(header).toBeDefined();
 
     el.node = mockDependency;
     await el.updateComplete;
 
     header = el.shadowRoot?.querySelector('xcode-graph-node-header');
-    expect(header).to.exist;
+    expect(header).toBeDefined();
   });
 
   it('should handle self-referencing edges gracefully', async () => {
@@ -570,6 +570,6 @@ describe('xcode-graph-node-details-panel - Edge Cases', () => {
     `);
 
     const metrics = el.shadowRoot?.querySelector('xcode-graph-metrics-section');
-    expect(metrics).to.exist;
+    expect(metrics).toBeDefined();
   });
 });
