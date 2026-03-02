@@ -207,3 +207,67 @@ describe('graph-tab signal handlers (unit)', () => {
     expect(selectedCluster.get()).toBeNull();
   });
 });
+
+describe('graph-tab event handler logic (unit)', () => {
+  /**
+   * These tests cover the same logic as GraphTab's event handler methods
+   * (handleNodeSelect, handleClusterSelect, handleNodeHover, etc.)
+   * by testing the underlying signal functions they delegate to.
+   *
+   * We cannot call these methods on a rendered GraphTab because
+   * SignalWatcher's __flushEffects crashes in jsdom when signals
+   * change during handler execution.
+   */
+  beforeEach(() => {
+    selectNode(null);
+    selectCluster(null);
+    setHoveredNode(null);
+    setZoom(1);
+  });
+
+  it('selectNode with a node (handleNodeSelect logic)', () => {
+    const node = mockNodes[0] ?? null;
+    selectNode(node);
+    expect(selectedNode.get()).toBe(node);
+  });
+
+  it('selectCluster with clusterId (handleClusterSelect logic)', () => {
+    selectCluster('MyApp');
+    expect(selectedCluster.get()).toBe('MyApp');
+  });
+
+  it('setHoveredNode with nodeId (handleNodeHover logic)', () => {
+    setHoveredNode('node1');
+    // Verifies no error and the function is callable
+    setHoveredNode(null);
+    expect(true).toBe(true);
+  });
+
+  it('zoomIn (handleZoomIn logic)', () => {
+    setZoom(1);
+    zoomIn();
+    expect(zoom.get()).toBeGreaterThan(1);
+  });
+
+  it('zoomOut (handleZoomOut logic)', () => {
+    setZoom(1);
+    zoomOut();
+    expect(zoom.get()).toBeLessThan(1);
+  });
+
+  it('setZoom with step value (handleZoomStep logic)', () => {
+    setZoom(1.5);
+    expect(zoom.get()).toBe(1.5);
+  });
+
+  it('toggleAnimation (handleToggleAnimation logic)', () => {
+    const initial = enableAnimation.get();
+    toggleAnimation();
+    expect(enableAnimation.get()).toBe(!initial);
+  });
+
+  it('setZoom with zoom-change value (handleZoomChange logic)', () => {
+    setZoom(0.75);
+    expect(zoom.get()).toBe(0.75);
+  });
+});

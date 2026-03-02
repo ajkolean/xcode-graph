@@ -3,7 +3,7 @@
  */
 
 import { fixture, html, oneEvent } from '@open-wc/testing';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { GraphClearFiltersButton } from './clear-filters-button';
 import './clear-filters-button';
 
@@ -82,5 +82,20 @@ describe('xcode-graph-clear-filters-button', () => {
     await el.updateComplete;
 
     expect(eventFired).toBe(false);
+  });
+
+  it('should not dispatch clear-filters when handleClick is called directly with isActive false', async () => {
+    const el = await fixture<GraphClearFiltersButton>(html`
+      <xcode-graph-clear-filters-button></xcode-graph-clear-filters-button>
+    `);
+
+    const spy = vi.fn();
+    el.addEventListener('clear-filters', spy);
+
+    // Call handleClick directly bypassing the disabled button
+    (el as unknown as { handleClick: () => void }).handleClick();
+    await el.updateComplete;
+
+    expect(spy).not.toHaveBeenCalled();
   });
 });

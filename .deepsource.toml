@@ -4,7 +4,12 @@ test_patterns = ["src/**/*.test.ts"]
 
 exclude_patterns = [
   ".typedoc-out/**",
-  "templates/**"
+  "templates/**",
+  "src/test-utils/**",
+  "src/styles/tokens.ts",
+  "src/shared/schemas/cluster.schema.ts",
+  "src/shared/schemas/error.schema.ts",
+  "src/shared/schemas/simulation.schema.ts"
 ]
 
 [[analyzers]]

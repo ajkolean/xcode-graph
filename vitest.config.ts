@@ -26,6 +26,8 @@ export default defineConfig({
         'src/**/*.d.ts',
         'src/fixtures/**',
         'src/vite-env.d.ts',
+        'src/test-utils/**',
+        'src/styles/tokens.ts',
       ],
     },
     projects: [
@@ -54,6 +56,7 @@ export default defineConfig({
             'src/ui/components/*.test.ts',
             'src/ui/layout/*.test.ts',
             'src/components/*.test.ts',
+            'src/styles/*.test.ts',
           ],
         },
       },

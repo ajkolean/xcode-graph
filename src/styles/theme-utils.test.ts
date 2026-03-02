@@ -2,7 +2,7 @@
  * Theme Utilities Tests
  */
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   contrastRatio,
   darken,
@@ -130,13 +130,86 @@ describe('theme-utils', () => {
       const result = prefersDarkMode();
       expect(typeof result).to.equal('boolean');
     });
+
+    it('should return true when matchMedia is undefined', () => {
+      const original = globalThis.matchMedia;
+      const g = globalThis as { matchMedia?: typeof globalThis.matchMedia };
+      // biome-ignore lint/performance/noDelete: test needs undefined
+      delete g.matchMedia;
+      try {
+        const result = prefersDarkMode();
+        expect(result).toBe(true);
+      } finally {
+        globalThis.matchMedia = original;
+      }
+    });
   });
 
   describe('onColorSchemeChange', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
     it('should return a cleanup function', () => {
       const cleanup = onColorSchemeChange(() => {}); // skipcq: JS-0321
       expect(typeof cleanup).to.equal('function');
       cleanup();
+    });
+
+    it('should return noop when matchMedia is undefined', () => {
+      const original = globalThis.matchMedia;
+      const g = globalThis as { matchMedia?: typeof globalThis.matchMedia };
+      // biome-ignore lint/performance/noDelete: test needs undefined
+      delete g.matchMedia;
+      try {
+        const callback = vi.fn();
+        const cleanup = onColorSchemeChange(callback);
+        expect(typeof cleanup).to.equal('function');
+        cleanup(); // should not throw
+        expect(callback).not.toHaveBeenCalled();
+      } finally {
+        globalThis.matchMedia = original;
+      }
+    });
+
+    it('should call callback on change event and remove listener on cleanup', () => {
+      const addSpy = vi.fn();
+      const removeSpy = vi.fn();
+      const original = globalThis.matchMedia;
+      globalThis.matchMedia = vi.fn().mockReturnValue({
+        matches: false,
+        addEventListener: addSpy,
+        removeEventListener: removeSpy,
+      }) as unknown as typeof globalThis.matchMedia;
+
+      try {
+        const callback = vi.fn();
+        const cleanup = onColorSchemeChange(callback);
+
+        expect(addSpy).toHaveBeenCalledWith('change', expect.any(Function));
+
+        // Simulate a change event
+        const call = addSpy.mock.calls[0];
+        if (!call) throw new Error('No calls recorded');
+        const handler = call[1];
+        handler({ matches: true } as MediaQueryListEvent);
+        expect(callback).toHaveBeenCalledWith(true);
+
+        // Cleanup should remove listener
+        cleanup();
+        expect(removeSpy).toHaveBeenCalledWith('change', handler);
+      } finally {
+        globalThis.matchMedia = original;
+      }
+    });
+  });
+
+  describe('ensureContrast - loop exhaustion', () => {
+    it('should return adjusted color after max iterations for nearly identical colors', () => {
+      // Two very similar gray colors that may not reach AA contrast in 20 iterations
+      const result = ensureContrast('#808080', '#7f7f7f', 'AAA');
+      // Should still return a valid hex color
+      expect(result).to.match(/^#[0-9a-f]{6}$/i);
     });
   });
 });

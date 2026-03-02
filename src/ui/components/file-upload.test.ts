@@ -113,6 +113,75 @@ describe('xcode-graph-file-upload', () => {
     expect(clickSpy).toHaveBeenCalled();
   });
 
+  it('should trigger file input on Enter key', async () => {
+    const el = await fixture<GraphFileUpload>(html`
+      <xcode-graph-file-upload></xcode-graph-file-upload>
+    `);
+
+    const input = getInput(el);
+    const clickSpy = vi.spyOn(input, 'click');
+    const container = el.shadowRoot?.querySelector<HTMLElement>('.container');
+    container?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+    expect(clickSpy).toHaveBeenCalled();
+  });
+
+  it('should trigger file input on Space key', async () => {
+    const el = await fixture<GraphFileUpload>(html`
+      <xcode-graph-file-upload></xcode-graph-file-upload>
+    `);
+
+    const input = getInput(el);
+    const clickSpy = vi.spyOn(input, 'click');
+    const container = el.shadowRoot?.querySelector<HTMLElement>('.container');
+    container?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+
+    expect(clickSpy).toHaveBeenCalled();
+  });
+
+  it('should not trigger file input on other keys', async () => {
+    const el = await fixture<GraphFileUpload>(html`
+      <xcode-graph-file-upload></xcode-graph-file-upload>
+    `);
+
+    const input = getInput(el);
+    const clickSpy = vi.spyOn(input, 'click');
+    const container = el.shadowRoot?.querySelector<HTMLElement>('.container');
+    container?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+
+    expect(clickSpy).not.toHaveBeenCalled();
+  });
+
+  it('should handle drop event and clear isDragOver', async () => {
+    const el = await fixture<GraphFileUpload>(html`
+      <xcode-graph-file-upload></xcode-graph-file-upload>
+    `);
+
+    const container = el.shadowRoot?.querySelector<HTMLElement>('.container');
+
+    // First set drag over
+    container?.dispatchEvent(new Event('dragover', { bubbles: true, cancelable: true }));
+    await el.updateComplete;
+    expect(container?.classList.contains('drag-over')).toBe(true);
+
+    // Create a mock drop event with a file
+    const testData = { nodes: [], edges: [] };
+    const file = new File([JSON.stringify(testData)], 'graph.json', { type: 'application/json' });
+    const dropEvent = new Event('drop', {
+      bubbles: true,
+      cancelable: true,
+    }) as unknown as DragEvent;
+    Object.defineProperty(dropEvent, 'dataTransfer', {
+      value: { files: [file] },
+    });
+
+    container?.dispatchEvent(dropEvent);
+    await el.updateComplete;
+
+    // isDragOver should be cleared
+    expect(container?.classList.contains('drag-over')).toBe(false);
+  });
+
   it('should handle FileReader error via ErrorService', async () => {
     const el = await fixture<GraphFileUpload>(html`
       <xcode-graph-file-upload></xcode-graph-file-upload>

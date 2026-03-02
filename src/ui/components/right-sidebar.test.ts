@@ -10,13 +10,25 @@ import type { Cluster } from '@shared/schemas';
 import { ClusterType } from '@shared/schemas/cluster.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { GraphRightSidebar } from './right-sidebar';
 import './right-sidebar';
 
 // Import signals for testing
-import { selectCluster, selectedCluster, selectedNode, selectNode } from '@graph/signals/index';
-import { filters, searchQuery, setFilters, setSearchQuery } from '@shared/signals/index';
+import {
+  resetGraphSignals,
+  selectCluster,
+  selectedCluster,
+  selectedNode,
+  selectNode,
+} from '@graph/signals/index';
+import {
+  filters,
+  resetFilterSignals,
+  searchQuery,
+  setFilters,
+  setSearchQuery,
+} from '@shared/signals/index';
 
 const mockNodeCoreLib: GraphNode = {
   id: 'node1',
@@ -73,10 +85,8 @@ const mockCluster: Cluster = {
 
 describe('xcode-graph-right-sidebar - Rendering', () => {
   beforeEach(() => {
-    // Reset signals before each test
-    selectNode(null);
-    selectCluster(null);
-    setSearchQuery('');
+    resetGraphSignals();
+    resetFilterSignals();
     setFilters({
       nodeTypes: new Set([NodeType.Framework, NodeType.Library, NodeType.Package]),
       platforms: new Set([Platform.iOS, Platform.macOS]),
@@ -84,6 +94,11 @@ describe('xcode-graph-right-sidebar - Rendering', () => {
       projects: new Set(['MyApp', 'OtherApp']),
       packages: new Set(['MyPackage']),
     });
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
   });
   it('should render with header', async () => {
     const el = await fixture<GraphRightSidebar>(html`
@@ -253,9 +268,13 @@ describe('xcode-graph-right-sidebar - Panel Switching', () => {
 
 describe('xcode-graph-right-sidebar - State Management', () => {
   beforeEach(() => {
-    selectNode(null);
-    selectCluster(null);
-    setSearchQuery('');
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
   });
 
   it('should track collapsed state', async () => {
@@ -353,9 +372,13 @@ describe('xcode-graph-right-sidebar - Filter Logic', () => {
 
 describe('xcode-graph-right-sidebar - Edge Cases', () => {
   beforeEach(() => {
-    selectNode(null);
-    selectCluster(null);
-    setSearchQuery('');
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
   });
 
   it('should handle empty nodes array', async () => {
@@ -420,9 +443,8 @@ describe('xcode-graph-right-sidebar - Edge Cases', () => {
 
 describe('xcode-graph-right-sidebar - Event Handlers', () => {
   beforeEach(() => {
-    selectNode(null);
-    selectCluster(null);
-    setSearchQuery('');
+    resetGraphSignals();
+    resetFilterSignals();
     setFilters({
       nodeTypes: new Set([NodeType.Framework, NodeType.Library, NodeType.Package]),
       platforms: new Set([Platform.iOS, Platform.macOS]),
@@ -430,6 +452,11 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
       projects: new Set(['MyApp', 'OtherApp']),
       packages: new Set(['MyPackage']),
     });
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
   });
 
   it('should handle search-change event from search bar', async () => {
@@ -862,5 +889,739 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
     await el.updateComplete;
 
     expect(el).toBeDefined();
+  });
+});
+
+describe('xcode-graph-right-sidebar - workspaceName derivation', () => {
+  beforeEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  it('should derive workspace name from the largest local project', async () => {
+    const nodes: GraphNode[] = [
+      {
+        id: 'a1',
+        name: 'A1',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+        project: 'SmallProject',
+      },
+      {
+        id: 'b1',
+        name: 'B1',
+        type: NodeType.Framework,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+        project: 'BigProject',
+      },
+      {
+        id: 'b2',
+        name: 'B2',
+        type: NodeType.Library,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+        project: 'BigProject',
+      },
+      {
+        id: 'b3',
+        name: 'B3',
+        type: NodeType.App,
+        origin: Origin.Local,
+        platform: Platform.iOS,
+        project: 'BigProject',
+      },
+    ];
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${nodes}
+        .allEdges=${[]}
+        .filteredNodes=${nodes}
+        .filteredEdges=${[]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
+    expect(header?.getAttribute('title')).toBe('BigProject');
+  });
+
+  it('should return "Project Overview" when no local nodes with projects exist', async () => {
+    const nodes: GraphNode[] = [
+      {
+        id: 'ext1',
+        name: 'External',
+        type: NodeType.Package,
+        origin: Origin.External,
+        platform: Platform.iOS,
+      },
+    ];
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${nodes}
+        .allEdges=${[]}
+        .filteredNodes=${nodes}
+        .filteredEdges=${[]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
+    expect(header?.getAttribute('title')).toBe('Project Overview');
+  });
+
+  it('should return "Project Overview" when allNodes is empty', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${[]}
+        .allEdges=${[]}
+        .filteredNodes=${[]}
+        .filteredEdges=${[]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const header = el.shadowRoot?.querySelector('xcode-graph-right-sidebar-header');
+    expect(header?.getAttribute('title')).toBe('Project Overview');
+  });
+});
+
+describe('xcode-graph-right-sidebar - findClusterById', () => {
+  beforeEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  it('should find cluster from provided clusters list', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .clusters=${[mockCluster]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectCluster('MyApp');
+    await el.updateComplete;
+
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
+    expect(clusterPanel).not.toBeNull();
+  });
+
+  it('should create synthetic cluster for package nodes using name', async () => {
+    // MyPackage is a Package type node, so findClusterById matches by node.name
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectCluster('MyPackage');
+    await el.updateComplete;
+
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
+    expect(clusterPanel).not.toBeNull();
+  });
+
+  it('should create synthetic cluster for project nodes using project field', async () => {
+    // MyApp nodes are Framework/Library types, so findClusterById matches by node.project
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    // No clusters provided - will create synthetic
+    selectCluster('MyApp');
+    await el.updateComplete;
+
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
+    expect(clusterPanel).not.toBeNull();
+  });
+
+  it('should return undefined for non-existent cluster and not show panel', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectCluster('NonExistentCluster');
+    await el.updateComplete;
+
+    // The panel still renders but cluster prop will be undefined
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
+    expect(clusterPanel).not.toBeNull();
+  });
+
+  it('should detect external origin for synthetic cluster with external nodes', async () => {
+    const externalNodes: GraphNode[] = [
+      {
+        id: 'ext1',
+        name: 'ExtLib',
+        type: NodeType.Framework,
+        origin: Origin.External,
+        platform: Platform.iOS,
+        project: 'ExternalProject',
+      },
+    ];
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${externalNodes}
+        .allEdges=${[]}
+        .filteredNodes=${externalNodes}
+        .filteredEdges=${[]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectCluster('ExternalProject');
+    await el.updateComplete;
+
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
+    expect(clusterPanel).not.toBeNull();
+  });
+});
+
+describe('xcode-graph-right-sidebar - Collapse/Expand', () => {
+  beforeEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  /** Wait for Zag machine state to propagate through requestUpdate */
+  async function waitForMachineUpdate(el: GraphRightSidebar): Promise<void> {
+    // Zag machine calls requestUpdate asynchronously via subscribe callback
+    await new Promise((r) => setTimeout(r, 0));
+    await el.updateComplete;
+  }
+
+  it('should toggle collapsed state via handleToggleCollapse', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    expect(el.hasAttribute('collapsed')).toBe(false);
+
+    // Call the toggle method directly (Zag machine events are handled internally)
+    (el as unknown as { handleToggleCollapse: () => void }).handleToggleCollapse();
+    await waitForMachineUpdate(el);
+
+    expect(el.hasAttribute('collapsed')).toBe(true);
+
+    // Should now show collapsed sidebar
+    const collapsedSidebar = el.shadowRoot?.querySelector('xcode-graph-collapsed-sidebar');
+    expect(collapsedSidebar).not.toBeNull();
+  });
+
+  it('should show collapsed sidebar content when collapsed', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    // Collapse the sidebar via method
+    (el as unknown as { handleToggleCollapse: () => void }).handleToggleCollapse();
+    await waitForMachineUpdate(el);
+
+    // Filter content should be gone, collapsed sidebar should be rendered
+    expect(el.shadowRoot?.querySelector('.filter-content')).toBeNull();
+    expect(el.shadowRoot?.querySelector('xcode-graph-collapsed-sidebar')).not.toBeNull();
+  });
+
+  it('should expand back from collapsed state via toggle', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    // Collapse first
+    (el as unknown as { handleToggleCollapse: () => void }).handleToggleCollapse();
+    await waitForMachineUpdate(el);
+    expect(el.hasAttribute('collapsed')).toBe(true);
+
+    // Toggle again to expand
+    (el as unknown as { handleToggleCollapse: () => void }).handleToggleCollapse();
+    await waitForMachineUpdate(el);
+    expect(el.hasAttribute('collapsed')).toBe(false);
+  });
+
+  it('should toggle collapse via details toolbar when viewing node details', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectNode(mockNodeCoreLib);
+    await el.updateComplete;
+
+    // Verify toolbar is present
+    const toolbar = el.shadowRoot?.querySelector('.details-toolbar');
+    expect(toolbar).not.toBeNull();
+
+    // Call toggle collapse directly
+    (el as unknown as { handleToggleCollapse: () => void }).handleToggleCollapse();
+    await waitForMachineUpdate(el);
+
+    expect(el.hasAttribute('collapsed')).toBe(true);
+  });
+
+  it('should handle expand-to-section from collapsed sidebar', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    // Collapse first
+    (el as unknown as { handleToggleCollapse: () => void }).handleToggleCollapse();
+    await waitForMachineUpdate(el);
+    expect(el.hasAttribute('collapsed')).toBe(true);
+
+    // Use handleExpandToSection to expand and navigate
+    (el as unknown as { handleExpandToSection: (section: string) => void }).handleExpandToSection(
+      'platforms',
+    );
+    await waitForMachineUpdate(el);
+
+    // Should be expanded now
+    expect(el.hasAttribute('collapsed')).toBe(false);
+  });
+});
+
+describe('xcode-graph-right-sidebar - Search and Clear', () => {
+  beforeEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+    setFilters({
+      nodeTypes: new Set([NodeType.Framework, NodeType.Library, NodeType.Package]),
+      platforms: new Set([Platform.iOS, Platform.macOS]),
+      origins: new Set([Origin.Local, Origin.External]),
+      projects: new Set(['MyApp', 'OtherApp']),
+      packages: new Set(['MyPackage']),
+    });
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  it('should handle search-clear event from search bar', async () => {
+    setSearchQuery('some query');
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
+    searchBar?.dispatchEvent(new CustomEvent('search-clear', { bubbles: true }));
+    await el.updateComplete;
+
+    expect(searchQuery.get()).toBe('');
+  });
+
+  it('should clear both filters and search on clear-filters', async () => {
+    setSearchQuery('test');
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const clearButton = el.shadowRoot?.querySelector('xcode-graph-clear-filters-button');
+    clearButton?.dispatchEvent(new CustomEvent('clear-filters', { bubbles: true }));
+    await el.updateComplete;
+
+    expect(searchQuery.get()).toBe('');
+  });
+
+  it('should show stats cards with correct values when filtering', async () => {
+    const filteredNodes = mockNodes.slice(0, 2);
+    const filteredEdges = mockEdges.slice(0, 1);
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${filteredNodes}
+        .filteredEdges=${filteredEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const statsCards = el.shadowRoot?.querySelectorAll('xcode-graph-stats-card');
+    expect(statsCards?.length).toBe(2);
+
+    // First card is Nodes: 2/4 (highlighted since different)
+    const nodesCard = statsCards?.[0];
+    expect(nodesCard?.getAttribute('value')).toBe(`${filteredNodes.length}/${mockNodes.length}`);
+    expect(nodesCard?.hasAttribute('highlighted')).toBe(true);
+  });
+});
+
+describe('xcode-graph-right-sidebar - Section Toggle', () => {
+  beforeEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+    setFilters({
+      nodeTypes: new Set([NodeType.Framework, NodeType.Library, NodeType.Package]),
+      platforms: new Set([Platform.iOS, Platform.macOS]),
+      origins: new Set([Origin.Local, Origin.External]),
+      projects: new Set(['MyApp', 'OtherApp']),
+      packages: new Set(['MyPackage']),
+    });
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  it('should handle section-toggle on platforms filter section', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const filterSections = el.shadowRoot?.querySelectorAll('xcode-graph-filter-section');
+    // Second filter section is Platforms
+    const platformSection = filterSections?.[1];
+    platformSection?.dispatchEvent(new CustomEvent('section-toggle', { bubbles: true }));
+    await el.updateComplete;
+
+    expect(el).toBeDefined();
+  });
+
+  it('should handle item-toggle on platform filter section', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const filterSections = el.shadowRoot?.querySelectorAll('xcode-graph-filter-section');
+    const platformSection = filterSections?.[1];
+    platformSection?.dispatchEvent(
+      new CustomEvent('item-toggle', {
+        detail: { key: 'iOS', checked: false },
+        bubbles: true,
+      }),
+    );
+    await el.updateComplete;
+
+    const currentFilters = filters.get();
+    expect(currentFilters.platforms.has('iOS' as Platform)).toBe(false);
+  });
+
+  it('should handle item-toggle on project filter section', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const filterSections = el.shadowRoot?.querySelectorAll('xcode-graph-filter-section');
+    const projectSection = filterSections?.[2];
+    projectSection?.dispatchEvent(
+      new CustomEvent('item-toggle', {
+        detail: { key: 'MyApp', checked: false },
+        bubbles: true,
+      }),
+    );
+    await el.updateComplete;
+
+    const currentFilters = filters.get();
+    expect(currentFilters.projects.has('MyApp')).toBe(false);
+  });
+
+  it('should handle item-toggle on package filter section', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const filterSections = el.shadowRoot?.querySelectorAll('xcode-graph-filter-section');
+    // Package section is the last one (after divider)
+    const packageSection = Array.from(filterSections || []).find(
+      (s) => s.getAttribute('title') === 'Packages',
+    );
+    packageSection?.dispatchEvent(
+      new CustomEvent('item-toggle', {
+        detail: { key: 'MyPackage', checked: false },
+        bubbles: true,
+      }),
+    );
+    await el.updateComplete;
+
+    const currentFilters = filters.get();
+    expect(currentFilters.packages.has('MyPackage')).toBe(false);
+  });
+});
+
+describe('xcode-graph-right-sidebar - Back to Filters Navigation', () => {
+  beforeEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  it('should navigate back from cluster details to filters view', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .clusters=${[mockCluster]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectCluster('MyApp');
+    await el.updateComplete;
+
+    expect(el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel')).not.toBeNull();
+
+    const breadcrumb = el.shadowRoot?.querySelector('.breadcrumb-button') as HTMLButtonElement;
+    breadcrumb?.click();
+    await el.updateComplete;
+
+    expect(selectedCluster.get()).toBeNull();
+    expect(selectedNode.get()).toBeNull();
+
+    // Should show filter view again
+    const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
+    expect(searchBar).not.toBeNull();
+  });
+
+  it('should handle node-hover event from node details panel', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectNode(mockNodeCoreLib);
+    await el.updateComplete;
+
+    const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
+    nodePanel?.dispatchEvent(
+      new CustomEvent('node-hover', {
+        detail: { nodeId: 'node2' },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    await el.updateComplete;
+
+    expect(el).toBeDefined();
+  });
+
+  it('should handle close event from node details panel', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectNode(mockNodeCoreLib);
+    await el.updateComplete;
+
+    const nodePanel = el.shadowRoot?.querySelector('xcode-graph-node-details-panel');
+    nodePanel?.dispatchEvent(new CustomEvent('close', { bubbles: true, composed: true }));
+    await el.updateComplete;
+
+    expect(selectedNode.get()).toBeNull();
+  });
+
+  it('should switch view when selectCluster is called after selectNode', async () => {
+    // This tests the signal-level transition that happens when the
+    // @cluster-select handler on node-details-panel fires selectCluster()
+    selectNode(mockNodeCoreLib);
+    expect(selectedNode.get()).toBe(mockNodeCoreLib);
+    expect(selectedCluster.get()).toBeNull();
+
+    selectCluster('MyApp');
+    expect(selectedCluster.get()).toBe('MyApp');
+    expect(selectedNode.get()).toBeNull();
+  });
+
+  it('should handle node-hover event from cluster details panel', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${mockNodes}
+        .filteredEdges=${mockEdges}
+        .clusters=${[mockCluster]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    selectCluster('MyApp');
+    await el.updateComplete;
+
+    const clusterPanel = el.shadowRoot?.querySelector('xcode-graph-cluster-details-panel');
+    clusterPanel?.dispatchEvent(
+      new CustomEvent('node-hover', {
+        detail: { nodeId: 'node1' },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    await el.updateComplete;
+
+    expect(el).toBeDefined();
+  });
+
+  it('should switch view when selectNode is called after selectCluster', async () => {
+    // This tests the signal-level transition that happens when the
+    // @node-select handler on cluster-details-panel fires selectNode()
+    selectCluster('MyApp');
+    expect(selectedCluster.get()).toBe('MyApp');
+    expect(selectedNode.get()).toBeNull();
+
+    selectNode(mockNodeCoreLib);
+    expect(selectedNode.get()).toBe(mockNodeCoreLib);
+    expect(selectedCluster.get()).toBeNull();
+  });
+});
+
+describe('xcode-graph-right-sidebar - Empty State with Filters', () => {
+  beforeEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  afterEach(() => {
+    resetGraphSignals();
+    resetFilterSignals();
+  });
+
+  it('should show empty state with has-active-filters when search is active', async () => {
+    setSearchQuery('nonexistent');
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${[]}
+        .filteredEdges=${[]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const emptyState = el.shadowRoot?.querySelector('xcode-graph-empty-state');
+    expect(emptyState).not.toBeNull();
+    expect(emptyState?.hasAttribute('has-active-filters')).toBe(true);
+  });
+
+  it('should show empty state without has-active-filters when no filtering', async () => {
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${[]}
+        .allEdges=${[]}
+        .filteredNodes=${[]}
+        .filteredEdges=${[]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const emptyState = el.shadowRoot?.querySelector('xcode-graph-empty-state');
+    expect(emptyState).not.toBeNull();
+  });
+
+  it('should handle clear-filters event from empty state', async () => {
+    setSearchQuery('test');
+
+    const el = await fixture<GraphRightSidebar>(html`
+      <xcode-graph-right-sidebar
+        .allNodes=${mockNodes}
+        .allEdges=${mockEdges}
+        .filteredNodes=${[]}
+        .filteredEdges=${[]}
+      ></xcode-graph-right-sidebar>
+    `);
+
+    const emptyState = el.shadowRoot?.querySelector('xcode-graph-empty-state');
+    emptyState?.dispatchEvent(new CustomEvent('clear-filters', { bubbles: true }));
+    await el.updateComplete;
+
+    expect(searchQuery.get()).toBe('');
   });
 });

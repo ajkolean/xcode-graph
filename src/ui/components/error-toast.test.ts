@@ -205,6 +205,20 @@ describe('GraphErrorToast', () => {
       expect(event).toBeDefined();
       expect(event.detail.error).toEqual(error);
     });
+
+    it('should not dispatch action event when error is null', async () => {
+      element.error = null;
+      await element.updateComplete;
+
+      const spy = vi.fn();
+      element.addEventListener('action', spy);
+
+      // Call handleAction directly with null error
+      (element as unknown as { handleAction: () => void }).handleAction();
+      await element.updateComplete;
+
+      expect(spy).not.toHaveBeenCalled();
+    });
   });
 
   describe('Severity Styling', () => {

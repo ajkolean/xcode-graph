@@ -23,6 +23,31 @@
 
 import { type SVGTemplateResult, svg } from 'lit';
 
+/** Map of icon name to SVG template */
+interface IconMap {
+  ArrowRight: SVGTemplateResult;
+  Book: SVGTemplateResult;
+  ChevronDown: SVGTemplateResult;
+  Circle: SVGTemplateResult;
+  ChevronLeft: SVGTemplateResult;
+  ChevronRight: SVGTemplateResult;
+  Eye: SVGTemplateResult;
+  EyeOff: SVGTemplateResult;
+  Focus: SVGTemplateResult;
+  Folder: SVGTemplateResult;
+  Keyboard: SVGTemplateResult;
+  Layers: SVGTemplateResult;
+  Maximize2: SVGTemplateResult;
+  Minus: SVGTemplateResult;
+  Package: SVGTemplateResult;
+  Plus: SVGTemplateResult;
+  Search: SVGTemplateResult;
+  X: SVGTemplateResult;
+  ZoomIn: SVGTemplateResult;
+  Upload: SVGTemplateResult;
+  ZoomOut: SVGTemplateResult;
+}
+
 /**
  * Icon SVG paths from lucide v0.555.0
  *
@@ -30,7 +55,7 @@ import { type SVGTemplateResult, svg } from 'lit';
  * expressed as Lit svg tagged template literals for CSP compatibility.
  * @see https://github.com/lucide-icons/lucide/tree/main/icons
  */
-export const icons: Record<string, SVGTemplateResult> = {
+export const icons: IconMap = {
   ArrowRight: svg`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
 
   Book: svg`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>`,

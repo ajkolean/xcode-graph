@@ -125,4 +125,39 @@ describe('xcode-graph-cluster-composition', () => {
     expect(targetNames?.length).to.equal(2);
     expect(targetNames?.[0]?.textContent?.trim()).to.equal('TargetA');
   });
+
+  it('should exclude PrivacyInfo.xcprivacy from notable resources when hasPrivacyManifest is true', async () => {
+    const nodes = [
+      makeNode({
+        notableResources: ['PrivacyInfo.xcprivacy', 'LaunchScreen.storyboard', 'Assets.xcassets'],
+      }),
+    ];
+    const el = await fixture<GraphClusterComposition>(html`
+      <xcode-graph-cluster-composition .nodes=${nodes} expanded></xcode-graph-cluster-composition>
+    `);
+
+    const resourceBadges = el.shadowRoot?.querySelectorAll('.resource-badge:not(.privacy)');
+    const badgeTexts = Array.from(resourceBadges ?? []).map((b) => b.textContent?.trim());
+    // PrivacyInfo.xcprivacy should be shown as "Privacy Manifest" badge (with .privacy class), not as a regular notable resource
+    expect(badgeTexts).not.to.include('PrivacyInfo.xcprivacy');
+    expect(badgeTexts).to.include('LaunchScreen.storyboard');
+    expect(badgeTexts).to.include('Assets.xcassets');
+    // Privacy manifest badge should be present
+    const privacyBadge = el.shadowRoot?.querySelector('.resource-badge.privacy');
+    expect(privacyBadge).toBeDefined();
+  });
+
+  it('should limit notable resources to 3 items', async () => {
+    const nodes = [
+      makeNode({
+        notableResources: ['Res1.xib', 'Res2.xib', 'Res3.xib', 'Res4.xib', 'Res5.xib'],
+      }),
+    ];
+    const el = await fixture<GraphClusterComposition>(html`
+      <xcode-graph-cluster-composition .nodes=${nodes} expanded></xcode-graph-cluster-composition>
+    `);
+
+    const resourceBadges = el.shadowRoot?.querySelectorAll('.resource-badge:not(.privacy)');
+    expect(resourceBadges?.length).to.equal(3);
+  });
 });

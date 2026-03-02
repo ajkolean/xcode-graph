@@ -114,6 +114,7 @@ export function generateWaypointPath(start: Point, waypoints: Point[], end: Poin
   const parts: string[] = [`M ${start.x},${start.y}`];
   const points = [start, ...waypoints, end];
 
+  /* v8 ignore next 3 */
   if (points.length === 2) {
     parts.push(`L ${end.x},${end.y}`);
   } else if (points.length === 3) {

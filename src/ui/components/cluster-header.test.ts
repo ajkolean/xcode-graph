@@ -3,7 +3,7 @@
  */
 
 import { fixture, html, oneEvent } from '@open-wc/testing';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GraphClusterHeader } from './cluster-header';
 import type { GraphPanelHeader } from './panel-header';
 import './cluster-header';
@@ -261,6 +261,115 @@ describe('xcode-graph-cluster-header', () => {
       const badges = el.shadowRoot?.querySelectorAll('xcode-graph-badge');
       const badgeLabels = Array.from(badges ?? []).map((b) => b.label);
       expect(badgeLabels).to.include('Project');
+    });
+  });
+
+  describe('handleCopyPath()', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+    });
+
+    it('should copy path to clipboard', async () => {
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+      Object.assign(navigator, { clipboard: { writeText: writeTextMock } });
+
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="Test"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/Projects/MyApp"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const copyButton = el.shadowRoot?.querySelector('.copy-button') as HTMLButtonElement;
+      copyButton.click();
+      // Flush the microtask for the async clipboard write
+      await vi.waitFor(() => {
+        expect(writeTextMock).toHaveBeenCalledWith('/Users/dev/Projects/MyApp');
+      });
+    });
+
+    it('should show copied state temporarily', async () => {
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+      Object.assign(navigator, { clipboard: { writeText: writeTextMock } });
+
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="Test"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/Projects/MyApp"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const copyButton = el.shadowRoot?.querySelector('.copy-button') as HTMLButtonElement;
+      copyButton.click();
+
+      // Wait for the async clipboard write to resolve
+      await vi.waitFor(() => {
+        expect(writeTextMock).toHaveBeenCalled();
+      });
+      await el.updateComplete;
+
+      // Should be in copied state
+      expect(copyButton.classList.contains('copied')).toBe(true);
+
+      // Advance past the 2000ms timeout
+      vi.advanceTimersByTime(2000);
+      await el.updateComplete;
+
+      // Should no longer be in copied state
+      expect(copyButton.classList.contains('copied')).toBe(false);
+    });
+
+    it('should handle clipboard API failure gracefully', async () => {
+      const writeTextMock = vi.fn().mockRejectedValue(new Error('Clipboard denied'));
+      Object.assign(navigator, { clipboard: { writeText: writeTextMock } });
+
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="Test"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+          cluster-path="/Users/dev/Projects/MyApp"
+        ></xcode-graph-cluster-header>
+      `);
+
+      const copyButton = el.shadowRoot?.querySelector('.copy-button') as HTMLButtonElement;
+      // Should not throw
+      copyButton.click();
+      await vi.waitFor(() => {
+        expect(writeTextMock).toHaveBeenCalled();
+      });
+      await el.updateComplete;
+
+      // Should not be in copied state since it failed
+      expect(copyButton.classList.contains('copied')).toBe(false);
+    });
+
+    it('should be a no-op when clusterPath is empty', async () => {
+      const writeTextMock = vi.fn().mockResolvedValue(undefined);
+      Object.assign(navigator, { clipboard: { writeText: writeTextMock } });
+
+      const el = await fixture<GraphClusterHeader>(html`
+        <xcode-graph-cluster-header
+          cluster-name="Test"
+          cluster-type="package"
+          cluster-color="#8B5CF6"
+        ></xcode-graph-cluster-header>
+      `);
+
+      // No path row rendered, so call handleCopyPath directly
+      (el as unknown as { handleCopyPath: () => Promise<void> }).handleCopyPath();
+      await el.updateComplete;
+
+      expect(writeTextMock).not.toHaveBeenCalled();
     });
   });
 });

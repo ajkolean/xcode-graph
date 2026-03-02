@@ -12,7 +12,7 @@ import {
 
 describe('getPlatformColor', () => {
   it('returns color for known platform', () => {
-    expect(getPlatformColor('iOS')).to.equal(PLATFORM_COLORS.iOS);
+    expect(getPlatformColor('iOS')).to.equal(PLATFORM_COLORS['iOS']);
   });
 
   it('returns fallback color for unknown platform', () => {
@@ -24,7 +24,7 @@ describe('getPlatformColor', () => {
     document.body.appendChild(el);
     // CSS custom props won't be set in test env, so it falls back to static value
     const color = getPlatformColor('iOS', el);
-    expect(color).toBe(PLATFORM_COLORS.iOS);
+    expect(color).toBe(PLATFORM_COLORS['iOS']);
     document.body.removeChild(el);
   });
 

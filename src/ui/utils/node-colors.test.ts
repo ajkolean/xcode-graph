@@ -8,12 +8,12 @@ import { getNodeTypeColor, getNodeTypeColorFromTheme, NODE_TYPE_COLORS } from '.
 describe('getNodeTypeColor', () => {
   it('returns mapped color for known type', () => {
     const color = getNodeTypeColor('app');
-    expect(color).to.equal(NODE_TYPE_COLORS.app);
+    expect(color).to.equal(NODE_TYPE_COLORS['app']);
   });
 
   it('returns default color for unknown type', () => {
     const color = getNodeTypeColor('unknown-type');
-    expect(color).to.equal(NODE_TYPE_COLORS.app);
+    expect(color).to.equal(NODE_TYPE_COLORS['app']);
   });
 });
 

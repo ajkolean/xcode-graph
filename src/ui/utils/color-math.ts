@@ -94,6 +94,7 @@ export function rgbToHsl(r: number, g: number, b: number): HSLNormalized {
       case b:
         h = ((r - g) / d + 4) / 6;
         break;
+      /* v8 ignore next 2 */
       default:
         break;
     }

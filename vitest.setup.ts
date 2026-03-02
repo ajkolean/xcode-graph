@@ -25,9 +25,15 @@ vi.mock('@lit-labs/virtualizer/virtualize.js', () => ({
   virtualize: ({
     items,
     renderItem,
+    keyFunction,
   }: {
     items: unknown[];
     renderItem: (item: unknown, index: number) => unknown;
     keyFunction?: (item: unknown) => unknown;
-  }) => items.map((item, index) => renderItem(item, index)),
+  }) => {
+    if (keyFunction) {
+      for (const item of items) keyFunction(item);
+    }
+    return items.map((item, index) => renderItem(item, index));
+  },
 }));
