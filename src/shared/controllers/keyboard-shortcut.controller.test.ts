@@ -108,11 +108,12 @@ describe('KeyboardShortcutController', () => {
 
     it('should not preventDefault when configured to false', () => {
       const h = new MockHost();
-      new KeyboardShortcutController(h, {
+      const instance = new KeyboardShortcutController(h, {
         key: '/',
         onTrigger: vi.fn(),
         preventDefault: false,
       });
+      expect(instance).toBeDefined();
       h.connectedCallback();
 
       const event = new KeyboardEvent('keydown', { key: '/', cancelable: true });
@@ -172,11 +173,12 @@ describe('KeyboardShortcutController', () => {
     it('should not skip input detection when ignoreWhenInputFocused is false', () => {
       const h = new MockHost();
       const trigger = vi.fn();
-      new KeyboardShortcutController(h, {
+      const instance = new KeyboardShortcutController(h, {
         key: '/',
         onTrigger: trigger,
         ignoreWhenInputFocused: false,
       });
+      expect(instance).toBeDefined();
       h.connectedCallback();
 
       const input = document.createElement('input');

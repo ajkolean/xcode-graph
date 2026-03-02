@@ -36,6 +36,6 @@ describe('xcode-graph-search-bar a11y', () => {
 
     const input = el.shadowRoot?.querySelector('input');
     expect(input).toBeDefined();
-    chaiExpect(input?.getAttribute('aria-label')).to.equal('Filter nodes');
+    expect(input?.getAttribute('aria-label')).to.equal('Filter nodes');
   });
 });

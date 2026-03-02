@@ -39,7 +39,7 @@ describe('xcode-graph-error-toast a11y', () => {
 
     const toast = el.shadowRoot?.querySelector('.toast');
     expect(toast).toBeDefined();
-    chaiExpect(toast?.getAttribute('role')).to.equal('alert');
+    expect(toast?.getAttribute('role')).to.equal('alert');
   });
 
   it('should have aria-live="assertive"', async () => {
@@ -49,7 +49,7 @@ describe('xcode-graph-error-toast a11y', () => {
 
     const toast = el.shadowRoot?.querySelector('.toast');
     expect(toast).toBeDefined();
-    chaiExpect(toast?.getAttribute('aria-live')).to.equal('assertive');
+    expect(toast?.getAttribute('aria-live')).to.equal('assertive');
   });
 
   it('should have aria-label on dismiss button', async () => {
@@ -59,7 +59,7 @@ describe('xcode-graph-error-toast a11y', () => {
 
     const closeIcon = el.shadowRoot?.querySelector('.close-icon');
     expect(closeIcon).toBeDefined();
-    chaiExpect(closeIcon?.getAttribute('aria-label')).to.equal('Dismiss notification');
+    expect(closeIcon?.getAttribute('aria-label')).to.equal('Dismiss notification');
   });
 
   it('should have no violations with info severity', async () => {

@@ -46,6 +46,6 @@ describe('xcode-graph-panel-header a11y', () => {
 
     const backButton = el.shadowRoot?.querySelector('.back-button');
     expect(backButton).toBeDefined();
-    chaiExpect(backButton?.getAttribute('aria-label')).to.equal('Back to overview');
+    expect(backButton?.getAttribute('aria-label')).to.equal('Back to overview');
   });
 });

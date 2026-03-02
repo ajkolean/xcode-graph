@@ -12,7 +12,7 @@ import { fixture, html } from '@open-wc/testing';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { resetFilterSignals } from '@shared/signals/filter.signals';
-import { afterEach, beforeEach, describe, it, expect as vitestExpect } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { SignalSnapshot } from '../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../test-utils/signal-helpers';
 import type { GraphApp } from './xcode-graph';
@@ -91,8 +91,8 @@ describe('xcode-graph (GraphApp)', () => {
         <xcode-graph .nodes=${testNodes} .edges=${testEdges}></xcode-graph>
       `);
 
-      vitestExpect(el.nodes).toEqual(testNodes);
-      vitestExpect(el.edges).toEqual(testEdges);
+      expect(el.nodes).toEqual(testNodes);
+      expect(el.edges).toEqual(testEdges);
     });
 
     it('should update signals when nodes and edges are set', async () => {
@@ -107,8 +107,8 @@ describe('xcode-graph (GraphApp)', () => {
       `);
 
       // The component should have propagated data to the signals
-      vitestExpect(nodesSignal.get()).toEqual(testNodes);
-      vitestExpect(edgesSignal.get()).toEqual(testEdges);
+      expect(nodesSignal.get()).toEqual(testNodes);
+      expect(edgesSignal.get()).toEqual(testEdges);
     });
 
     it('should handle empty arrays for nodes and edges', async () => {
@@ -116,8 +116,8 @@ describe('xcode-graph (GraphApp)', () => {
         <xcode-graph .nodes=${[]} .edges=${[]}></xcode-graph>
       `);
 
-      vitestExpect(el.nodes).toEqual([]);
-      vitestExpect(el.edges).toEqual([]);
+      expect(el.nodes).toEqual([]);
+      expect(el.edges).toEqual([]);
     });
   });
 
@@ -127,7 +127,7 @@ describe('xcode-graph (GraphApp)', () => {
         <xcode-graph></xcode-graph>
       `);
 
-      vitestExpect(typeof el.loadRawGraph).toBe('function');
+      expect(typeof el.loadRawGraph).toBe('function');
     });
 
     it('should handle invalid raw data without throwing', async () => {
@@ -136,9 +136,9 @@ describe('xcode-graph (GraphApp)', () => {
       `);
 
       // Should not throw even with invalid data
-      expect(() => el.loadRawGraph(null)).to.not.throw;
-      expect(() => el.loadRawGraph({})).to.not.throw;
-      expect(() => el.loadRawGraph('invalid')).to.not.throw;
+      expect(() => el.loadRawGraph(null)).not.toThrow();
+      expect(() => el.loadRawGraph({})).not.toThrow();
+      expect(() => el.loadRawGraph('invalid')).not.toThrow();
     });
   });
 
@@ -147,9 +147,9 @@ describe('xcode-graph (GraphApp)', () => {
       // In jsdom, shadow DOM computed styles are not applied,
       // so we verify the static styles property exists on the class instead.
       const ctor = customElements.get('xcode-graph') as typeof GraphApp | undefined;
-      vitestExpect(ctor).toBeDefined();
+      expect(ctor).toBeDefined();
       // Lit components expose a `styles` static property
-      vitestExpect((ctor as unknown as { styles: unknown }).styles).toBeDefined();
+      expect((ctor as unknown as { styles: unknown }).styles).toBeDefined();
     });
   });
 });

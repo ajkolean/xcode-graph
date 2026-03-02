@@ -233,12 +233,13 @@ describe('FocusTrapController', () => {
       const newOnDeactivate = vi.fn();
       const newIsActive = vi.fn(() => true);
 
-      new FocusTrapController(newHost, {
+      const instance = new FocusTrapController(newHost, {
         isActive: newIsActive,
         onDeactivate: newOnDeactivate,
         escapeDeactivates: false,
         clickOutsideDeactivates: false,
       });
+      expect(instance).toBeDefined();
 
       newHost.simulateConnected();
       newHost.simulateUpdated();

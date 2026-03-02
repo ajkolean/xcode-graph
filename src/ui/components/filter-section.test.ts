@@ -24,7 +24,7 @@ describe('xcode-graph-filter-section', () => {
       ></xcode-graph-filter-section>
     `);
 
-    expect(el).to.exist;
+    expect(el).toBeDefined();
     expect(el.tagName.toLowerCase()).to.equal('xcode-graph-filter-section');
   });
 
@@ -53,7 +53,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const items = el.shadowRoot?.querySelector('.items');
-    expect(items).to.exist;
+    expect(items).toBeDefined();
     expect(items?.classList.contains('collapsed')).to.equal(true);
   });
 
@@ -69,7 +69,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const items = el.shadowRoot?.querySelector('.items');
-    expect(items).to.exist;
+    expect(items).toBeDefined();
   });
 
   it('should dispatch section-toggle event on header click', async () => {
@@ -86,7 +86,7 @@ describe('xcode-graph-filter-section', () => {
     setTimeout(() => headerButton.click());
     const event = await oneEvent(el, 'section-toggle');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
   });
 
   it('should dispatch item-toggle event on item click', async () => {
@@ -104,7 +104,7 @@ describe('xcode-graph-filter-section', () => {
     setTimeout(() => itemButton.click());
     const event = await oneEvent(el, 'item-toggle');
 
-    expect(event).to.exist;
+    expect(event).toBeDefined();
     expect(event.detail.key).to.equal('framework');
   });
 
@@ -169,7 +169,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const itemButton = el.shadowRoot?.querySelector('.item-button');
-    expect(itemButton).to.exist;
+    expect(itemButton).toBeDefined();
   });
 
   it('should render project filter type with color swatch', async () => {
@@ -186,7 +186,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const itemButton = el.shadowRoot?.querySelector('.item-button');
-    expect(itemButton).to.exist;
+    expect(itemButton).toBeDefined();
   });
 
   it('should render package filter type with package icon', async () => {
@@ -203,7 +203,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const itemButton = el.shadowRoot?.querySelector('.item-button');
-    expect(itemButton).to.exist;
+    expect(itemButton).toBeDefined();
   });
 
   it('should dispatch preview-change with item on hover', async () => {
@@ -239,7 +239,7 @@ describe('xcode-graph-filter-section', () => {
     const itemButton = el.shadowRoot?.querySelector('.item-button') as HTMLButtonElement;
     setTimeout(() => itemButton.dispatchEvent(new MouseEvent('mouseleave')));
     const event = await oneEvent(el, 'preview-change');
-    expect(event.detail).to.be.null;
+    expect(event.detail).toBeNull();
   });
 
   it('should set aria-expanded on header button', async () => {

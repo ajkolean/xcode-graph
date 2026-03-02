@@ -3,7 +3,7 @@
  */
 
 import { fixture, html, oneEvent } from '@open-wc/testing';
-import { afterEach, beforeEach, describe, it, vi, expect as vitestExpect } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ErrorService } from '@/services/error-service';
 import type { GraphFileUpload } from './file-upload';
 import './file-upload';
@@ -75,7 +75,7 @@ describe('xcode-graph-file-upload', () => {
     // Wait for FileReader to complete
     await new Promise((resolve) => setTimeout(resolve, 50));
 
-    vitestExpect(handleErrorSpy).toHaveBeenCalled();
+    expect(handleErrorSpy).toHaveBeenCalled();
     const errorArg = handleErrorSpy.mock.calls[0]?.[0] as Error;
     expect(errorArg.message).to.include('Invalid JSON');
   });
@@ -110,6 +110,6 @@ describe('xcode-graph-file-upload', () => {
     const container = el.shadowRoot?.querySelector('.container');
     container?.click();
 
-    vitestExpect(clickSpy).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
   });
 });

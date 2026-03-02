@@ -42,6 +42,6 @@ describe('xcode-graph-icon-button a11y', () => {
 
     const button = el.shadowRoot?.querySelector('button');
     expect(button).toBeDefined();
-    chaiExpect(button?.getAttribute('aria-label')).to.equal('Settings');
+    expect(button?.getAttribute('aria-label')).to.equal('Settings');
   });
 });

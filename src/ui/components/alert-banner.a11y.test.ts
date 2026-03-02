@@ -49,7 +49,7 @@ describe('xcode-graph-alert-banner a11y', () => {
 
     const banner = el.shadowRoot?.querySelector('.banner');
     expect(banner).toBeDefined();
-    chaiExpect(banner?.getAttribute('role')).to.equal('alert');
+    expect(banner?.getAttribute('role')).to.equal('alert');
   });
 
   it('should have aria-label on dismiss button', async () => {
@@ -64,7 +64,7 @@ describe('xcode-graph-alert-banner a11y', () => {
 
     const closeBtn = el.shadowRoot?.querySelector('.close-btn');
     expect(closeBtn).toBeDefined();
-    chaiExpect(closeBtn?.getAttribute('aria-label')).to.equal('Dismiss');
+    expect(closeBtn?.getAttribute('aria-label')).to.equal('Dismiss');
   });
 
   it('should have no accessibility violations with all variants', async () => {

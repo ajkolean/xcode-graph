@@ -63,6 +63,6 @@ describe('xcode-graph-node-list a11y', () => {
 
     const button = el.shadowRoot?.querySelector('.header');
     expect(button).toBeDefined();
-    chaiExpect(button?.getAttribute('aria-expanded')).to.equal('true');
+    expect(button?.getAttribute('aria-expanded')).to.equal('true');
   });
 });

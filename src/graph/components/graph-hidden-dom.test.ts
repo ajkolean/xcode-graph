@@ -7,7 +7,7 @@ import {
   Origin,
   Platform,
 } from '@shared/schemas/graph.types';
-import { describe, it, vi, expect as vitestExpect } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import './graph-hidden-dom';
 import type { GraphHiddenDom } from './graph-hidden-dom';
 
@@ -79,7 +79,7 @@ describe('xcode-graph-hidden-dom', () => {
     const tree = el.shadowRoot?.querySelector('[role="tree"]') as HTMLElement;
     tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
-    vitestExpect(selectHandler).toHaveBeenCalledOnce();
+    expect(selectHandler).toHaveBeenCalledOnce();
     expect(selectHandler.mock.calls[0][0].detail.node.id).to.equal('a');
   });
 
@@ -166,7 +166,7 @@ describe('xcode-graph-hidden-dom', () => {
     const tree = el.shadowRoot?.querySelector('[role="tree"]') as HTMLElement;
     tree?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
 
-    vitestExpect(selectHandler).toHaveBeenCalledOnce();
+    expect(selectHandler).toHaveBeenCalledOnce();
     expect(selectHandler.mock.calls[0][0].detail.node).toBeNull();
   });
 
