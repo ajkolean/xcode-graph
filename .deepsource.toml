@@ -14,9 +14,6 @@ name = "javascript"
     "browser",
     "nodejs"
   ]
-  skip_rules = [
-    "JS-T1001"
-  ]
 
 [[analyzers]]
 name = "test-coverage"
