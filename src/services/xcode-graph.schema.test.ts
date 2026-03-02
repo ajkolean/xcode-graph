@@ -7,6 +7,22 @@ import { safeParseGraph } from './xcode-graph.validation';
 // Path to the fixture (copied from Swift test resources)
 const FIXTURE_PATH = resolve(__dirname, '../fixtures/xcode-graph.json');
 
+function findFirstTarget(projects: Graph['projects']) {
+  for (let i = 1; i < projects.length; i += 2) {
+    const project = projects[i];
+    if (typeof project === 'object' && project !== null && 'targets' in project) {
+      const targetNames = Object.keys(project.targets);
+      if (targetNames.length > 0) {
+        const targetName = targetNames[0];
+        if (!targetName) continue;
+        const target = project.targets[targetName];
+        if (target) return { targetName, target };
+      }
+    }
+  }
+  return { targetName: undefined, target: undefined };
+}
+
 describe('xcode-graph.schema.generated types match Swift Codable JSON', () => {
   it('should parse the same graph.json that Swift decodes', () => {
     const json = readFileSync(FIXTURE_PATH, 'utf-8');

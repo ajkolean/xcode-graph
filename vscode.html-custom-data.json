@@ -64,7 +64,18 @@
     {
       "name": "xcode-graph-controls",
       "description": "Zoom controls overlay\n---\n\n\n### **Events:**\n - **zoom-step** - Dispatched when a zoom step button is clicked (detail: number)\n- **zoom-reset** - Dispatched when the fit-to-view button is clicked",
-      "attributes": [{ "name": "zoom", "values": [] }, { "name": "base-zoom", "values": [] }],
+      "attributes": [
+        {
+          "name": "zoom",
+          "description": "Current absolute zoom level",
+          "values": []
+        },
+        {
+          "name": "base-zoom",
+          "description": "Baseline zoom level used for ratio display (fit-to-view = 1x)",
+          "values": []
+        }
+      ],
       "references": []
     },
     {
@@ -772,7 +783,7 @@
     },
     {
       "name": "xcode-graph-file-upload",
-      "description": "\n---\n\n\n### **Events:**\n - **graph-file-loaded**",
+      "description": "File upload button with drag-and-drop support\n---\n\n\n### **Events:**\n - **graph-file-loaded** - Dispatched when a valid JSON file is loaded (detail: { raw: unknown })",
       "attributes": [],
       "references": []
     },
@@ -784,6 +795,11 @@
           "name": "show-upload",
           "description": "Whether to show the file upload overlay for loading graph JSON",
           "values": []
+        },
+        {
+          "name": "color-scheme",
+          "description": "Color scheme preference. Set to `'light'` or `'dark'` to force a mode,\nor `'auto'` (default) to follow the user's system preference.",
+          "values": [{ "name": "ColorScheme" }]
         }
       ],
       "references": []

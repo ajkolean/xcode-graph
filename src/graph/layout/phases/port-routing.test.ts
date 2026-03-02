@@ -61,12 +61,12 @@ describe('port-routing', () => {
         ['D', createClusterPos('D', 2400, 0)],
       ]);
       // Many edges from A going east
-      const clusterEdges: ClusterEdge[] = Array.from({ length: 20 }, (_, i) => ({
-        source: 'A',
-        target: ['B', 'C', 'D'][i % 3]!,
-        weight: 1,
-        tieStrength: 1,
-      }));
+      const targets = ['B', 'C', 'D'];
+      const clusterEdges: ClusterEdge[] = Array.from({ length: 20 }, (_, i) => {
+        const target = targets[i % 3];
+        assert(target, 'target must exist');
+        return { source: 'A', target, weight: 1, tieStrength: 1 };
+      });
 
       const config = { ...DEFAULT_CONFIG, maxPortsPerSide: 3 } as unknown as LayoutConfig;
       const ports = computeClusterPorts(positions, clusterEdges, config);

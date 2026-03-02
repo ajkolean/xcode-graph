@@ -45,20 +45,23 @@ describe('error.actions', () => {
     addError(makeError({ id: 'e2' }));
     removeError('e1');
     expect(errors.get()).toHaveLength(1);
-    expect(errors.get()[0]!.id).toBe('e2');
+    const remaining = errors.get()[0];
+    expect(remaining?.id).toBe('e2');
   });
 
   it('dismissError marks error as dismissed', () => {
     addError(makeError({ id: 'e1', dismissed: false }));
     dismissError('e1');
-    expect(errors.get()[0]!.dismissed).toBe(true);
+    const dismissed = errors.get()[0];
+    expect(dismissed?.dismissed).toBe(true);
   });
 
   it('dismissError leaves non-matching errors unchanged', () => {
     addError(makeError({ id: 'e1', dismissed: false }));
     addError(makeError({ id: 'e2', dismissed: false }));
     dismissError('e1');
-    expect(errors.get()[1]!.dismissed).toBe(false);
+    const second = errors.get()[1];
+    expect(second?.dismissed).toBe(false);
   });
 
   it('clearAllErrors resets to empty', () => {
@@ -72,7 +75,8 @@ describe('error.actions', () => {
     addError(makeError({ id: 'e2', dismissed: false }));
     clearDismissedErrors();
     expect(errors.get()).toHaveLength(1);
-    expect(errors.get()[0]!.id).toBe('e2');
+    const undismissed = errors.get()[0];
+    expect(undismissed?.id).toBe('e2');
   });
 
   it('clearErrorsBySeverity removes matching severity', () => {
@@ -80,7 +84,8 @@ describe('error.actions', () => {
     addError(makeError({ id: 'e2', severity: 'warning' as AppError['severity'] }));
     clearErrorsBySeverity('error' as AppError['severity']);
     expect(errors.get()).toHaveLength(1);
-    expect(errors.get()[0]!.id).toBe('e2');
+    const remainingBySeverity = errors.get()[0];
+    expect(remainingBySeverity?.id).toBe('e2');
   });
 
   it('clearErrorsByCategory removes matching category', () => {
@@ -88,7 +93,8 @@ describe('error.actions', () => {
     addError(makeError({ id: 'e2', category: 'network' as AppError['category'] }));
     clearErrorsByCategory('data' as AppError['category']);
     expect(errors.get()).toHaveLength(1);
-    expect(errors.get()[0]!.id).toBe('e2');
+    const remainingByCategory = errors.get()[0];
+    expect(remainingByCategory?.id).toBe('e2');
   });
 
   it('setMaxVisibleToasts clamps between 1 and 10', () => {

@@ -1,8 +1,21 @@
+import assert from 'node:assert';
 import { describe, expect, it } from 'vitest';
 import { createCluster, createClusterWithNodes } from '@/fixtures';
 import { DEFAULT_CONFIG } from '../config';
 import { computeClusterInterior } from './micro-layout';
 import { applyNodeMassage } from './node-massage';
+
+function assertNoOverlap(positions: Array<{ x: number; y: number }>, minDist: number) {
+  for (let i = 0; i < positions.length; i++) {
+    for (let j = i + 1; j < positions.length; j++) {
+      const a = positions[i];
+      const b = positions[j];
+      assert(a && b, 'positions must exist');
+      const dist = Math.hypot(a.x - b.x, a.y - b.y);
+      expect(dist).toBeGreaterThan(minDist);
+    }
+  }
+}
 
 describe('node-massage', () => {
   describe('applyNodeMassage', () => {
@@ -41,17 +54,7 @@ describe('node-massage', () => {
       const result = applyNodeMassage(micro, DEFAULT_CONFIG);
 
       const positions = Array.from(result.relativePositions.values());
-      for (let i = 0; i < positions.length; i++) {
-        for (let j = i + 1; j < positions.length; j++) {
-          const a = positions[i];
-          const b = positions[j];
-          if (!a) throw new Error('expected position a');
-          if (!b) throw new Error('expected position b');
-          const dist = Math.hypot(a.x - b.x, a.y - b.y);
-          // After massage, nodes should still not overlap
-          expect(dist).toBeGreaterThan(DEFAULT_CONFIG.nodeRadius);
-        }
-      }
+      assertNoOverlap(positions, DEFAULT_CONFIG.nodeRadius);
     });
 
     it('produces finite coordinates', () => {

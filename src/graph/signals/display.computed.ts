@@ -90,6 +90,17 @@ function shouldDimBySearch(node: GraphNode, lowerQuery: string): boolean {
   return lowerQuery !== '' && !node.name.toLowerCase().includes(lowerQuery);
 }
 
+function isNodeInChain(
+  nodeId: string,
+  chain: TransitiveResult,
+  showDirect: boolean,
+  showTransitive: boolean,
+): boolean {
+  if (!chain.nodes.has(nodeId)) return false;
+  const depth = chain.nodeDepths?.get(nodeId) ?? 0;
+  return depth <= 1 ? showDirect : showTransitive;
+}
+
 function shouldDimBySelection(
   node: GraphNode,
   selected: GraphNode,
@@ -102,18 +113,21 @@ function shouldDimBySelection(
 ): boolean {
   if (selected.id === node.id) return false;
 
-  let inActiveChain = false;
-
-  if (transitiveDeps.nodes.has(node.id)) {
-    const depth = transitiveDeps.nodeDepths?.get(node.id) ?? 0;
-    if (depth <= 1 ? showDirectDepsVal : showTransitiveDepsVal) inActiveChain = true;
+  if (isNodeInChain(node.id, transitiveDeps, showDirectDepsVal, showTransitiveDepsVal)) {
+    return false;
   }
-  if (!inActiveChain && transitiveDependents.nodes.has(node.id)) {
-    const depth = transitiveDependents.nodeDepths?.get(node.id) ?? 0;
-    if (depth <= 1 ? showDirectDependentsVal : showTransitiveDependentsVal) inActiveChain = true;
+  if (
+    isNodeInChain(
+      node.id,
+      transitiveDependents,
+      showDirectDependentsVal,
+      showTransitiveDependentsVal,
+    )
+  ) {
+    return false;
   }
 
-  return !inActiveChain;
+  return true;
 }
 
 function shouldDimByPreview(node: GraphNode, preview: { type: string; value: string }): boolean {
@@ -168,16 +182,20 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
       continue;
     }
 
-    if (selected && isChainActive && shouldDimBySelection(
-      node,
-      selected,
-      transitiveDeps,
-      transitiveDependents,
-      showDirectDepsVal,
-      showTransitiveDepsVal,
-      showDirectDependentsVal,
-      showTransitiveDependentsVal,
-    )) {
+    if (
+      selected &&
+      isChainActive &&
+      shouldDimBySelection(
+        node,
+        selected,
+        transitiveDeps,
+        transitiveDependents,
+        showDirectDepsVal,
+        showTransitiveDepsVal,
+        showDirectDependentsVal,
+        showTransitiveDependentsVal,
+      )
+    ) {
       dimmed.add(node.id);
       continue;
     }

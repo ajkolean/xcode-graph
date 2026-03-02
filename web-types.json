@@ -14,9 +14,21 @@
           "events": [{ "name": "node-select", "type": "CustomEvent" }],
           "js": {
             "properties": [
-              { "name": "nodes", "type": "GraphNode[]" },
-              { "name": "edges", "type": "GraphEdge[]" },
-              { "name": "selectedNode", "type": "GraphNode | null" }
+              {
+                "name": "nodes",
+                "description": "All graph nodes to expose for screen reader navigation",
+                "type": "GraphNode[]"
+              },
+              {
+                "name": "edges",
+                "description": "All graph edges to expose as an accessible table",
+                "type": "GraphEdge[]"
+              },
+              {
+                "name": "selectedNode",
+                "description": "Currently selected node for aria-selected state",
+                "type": "GraphNode | null"
+              }
             ],
             "events": [{ "name": "node-select", "type": "CustomEvent" }]
           }
@@ -242,8 +254,16 @@
           "description": "Zoom controls overlay\n---\n\n\n### **Events:**\n - **zoom-step** - Dispatched when a zoom step button is clicked (detail: number)\n- **zoom-reset** - Dispatched when the fit-to-view button is clicked",
           "doc-url": "",
           "attributes": [
-            { "name": "zoom", "value": { "type": "number" } },
-            { "name": "base-zoom", "value": { "type": "number" } }
+            {
+              "name": "zoom",
+              "description": "Current absolute zoom level",
+              "value": { "type": "number" }
+            },
+            {
+              "name": "base-zoom",
+              "description": "Baseline zoom level used for ratio display (fit-to-view = 1x)",
+              "value": { "type": "number" }
+            }
           ],
           "events": [
             {
@@ -259,8 +279,16 @@
           ],
           "js": {
             "properties": [
-              { "name": "zoom", "type": "number" },
-              { "name": "baseZoom", "type": "number" }
+              {
+                "name": "zoom",
+                "description": "Current absolute zoom level",
+                "type": "number"
+              },
+              {
+                "name": "baseZoom",
+                "description": "Baseline zoom level used for ratio display (fit-to-view = 1x)",
+                "type": "number"
+              }
             ],
             "events": [
               {
@@ -2334,13 +2362,25 @@
         },
         {
           "name": "xcode-graph-file-upload",
-          "description": "\n---\n\n\n### **Events:**\n - **graph-file-loaded**",
+          "description": "File upload button with drag-and-drop support\n---\n\n\n### **Events:**\n - **graph-file-loaded** - Dispatched when a valid JSON file is loaded (detail: { raw: unknown })",
           "doc-url": "",
           "attributes": [],
-          "events": [{ "name": "graph-file-loaded", "type": "CustomEvent" }],
+          "events": [
+            {
+              "name": "graph-file-loaded",
+              "type": "CustomEvent",
+              "description": "Dispatched when a valid JSON file is loaded (detail: { raw: unknown })"
+            }
+          ],
           "js": {
             "properties": [],
-            "events": [{ "name": "graph-file-loaded", "type": "CustomEvent" }]
+            "events": [
+              {
+                "name": "graph-file-loaded",
+                "type": "CustomEvent",
+                "description": "Dispatched when a valid JSON file is loaded (detail: { raw: unknown })"
+              }
+            ]
           }
         },
         {
@@ -2352,6 +2392,11 @@
               "name": "show-upload",
               "description": "Whether to show the file upload overlay for loading graph JSON",
               "value": { "type": "boolean" }
+            },
+            {
+              "name": "color-scheme",
+              "description": "Color scheme preference. Set to `'light'` or `'dark'` to force a mode,\nor `'auto'` (default) to follow the user's system preference.",
+              "value": { "type": "ColorScheme" }
             }
           ],
           "events": [],
@@ -2376,6 +2421,11 @@
                 "name": "showUpload",
                 "description": "Whether to show the file upload overlay for loading graph JSON",
                 "type": "boolean"
+              },
+              {
+                "name": "colorScheme",
+                "description": "Color scheme preference. Set to `'light'` or `'dark'` to force a mode,\nor `'auto'` (default) to follow the user's system preference.",
+                "type": "ColorScheme"
               }
             ],
             "events": []

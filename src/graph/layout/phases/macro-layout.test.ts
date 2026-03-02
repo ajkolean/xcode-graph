@@ -94,7 +94,8 @@ describe('macro-layout', () => {
       const positions = await computeMacroLayout(clusterGraph, microLayouts, DEFAULT_CONFIG);
 
       expect(positions.size).toBe(1);
-      const pos = positions.values().next().value!;
+      const pos = positions.values().next().value;
+      assert(pos, 'position must exist');
       expect(Number.isFinite(pos.x)).toBe(true);
       expect(Number.isFinite(pos.y)).toBe(true);
     });
