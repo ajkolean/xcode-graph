@@ -197,7 +197,9 @@ describe('xcode-graph (GraphApp)', () => {
 
   describe('circular dependencies', () => {
     it('should detect circular dependencies and log warning', async () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+        /* suppress output */
+      });
       const cycleNodes = [
         createTestNode('c1', { project: 'P' }),
         createTestNode('c2', { project: 'P' }),
@@ -254,7 +256,9 @@ describe('xcode-graph (GraphApp)', () => {
     });
 
     it('should handle transform that returns warnings', async () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+        /* suppress output */
+      });
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);

@@ -180,6 +180,7 @@ export class GraphBuildSettings extends LitElement {
     );
   }
 
+  /** Renders the code signing settings subsection */
   private renderCodeSignSection(): TemplateResult | typeof nothing {
     if (!this.hasCodeSignSettings) return nothing;
     const settings = this.settings;
@@ -224,6 +225,7 @@ export class GraphBuildSettings extends LitElement {
     `;
   }
 
+  /** Renders the expanded build settings content */
   private renderExpandedContent(): TemplateResult | typeof nothing {
     const settings = this.settings;
     if (!settings) return nothing;
@@ -261,6 +263,7 @@ export class GraphBuildSettings extends LitElement {
     `;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult | typeof nothing {
     if (!this.hasSettings) return nothing;
 

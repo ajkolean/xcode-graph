@@ -59,7 +59,9 @@ describe('KeyboardShortcutController', () => {
     });
 
     it('should handle cleanup errors gracefully', () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        /* suppress output */
+      });
       const removeSpy = vi.spyOn(window, 'removeEventListener').mockImplementation(() => {
         throw new Error('cleanup failed');
       });

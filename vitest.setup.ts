@@ -5,17 +5,17 @@
 import 'vitest-canvas-mock';
 import { expect, vi } from 'vitest';
 import 'vitest-axe/extend-expect';
-import * as vitestAxeMatchers from 'vitest-axe/matchers';
+import { toHaveNoViolations } from 'vitest-axe/matchers';
 
-expect.extend(vitestAxeMatchers);
+expect.extend({ toHaveNoViolations });
 
 // @lit-labs/virtualizer requires ResizeObserver which jsdom doesn't provide
 if (typeof globalThis.ResizeObserver === 'undefined') {
   /** No-op ResizeObserver polyfill for jsdom */
   globalThis.ResizeObserver = class ResizeObserver {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+    observe() { /* no-op: jsdom has no layout engine */ }
+    unobserve() { /* no-op */ }
+    disconnect() { /* no-op */ }
   } as unknown as typeof globalThis.ResizeObserver;
 }
 

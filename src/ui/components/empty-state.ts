@@ -15,6 +15,7 @@
 import { type CSSResultGroup, css, html, LitElement, nothing, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 
+/** Renders the search icon SVG */
 function renderSearchIcon() {
   return svg`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -25,6 +26,7 @@ function renderSearchIcon() {
   `;
 }
 
+/** Renders the clear/trash icon SVG */
 function renderClearIcon() {
   return svg`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -171,6 +173,7 @@ export class GraphEmptyState extends LitElement {
     }
   `;
 
+  /** Handles the clear filters button click */
   private handleClearFilters() {
     this.dispatchEvent(
       new CustomEvent('clear-filters', {
@@ -180,6 +183,7 @@ export class GraphEmptyState extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     return html`
       <div class="icon-container">

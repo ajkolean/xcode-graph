@@ -143,7 +143,9 @@ describe('FocusTrapController', () => {
       host.simulateConnected();
       host.simulateUpdated();
 
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+        /* suppress output */
+      });
       host.simulateUpdated();
 
       expect(warnSpy).not.toHaveBeenCalled();

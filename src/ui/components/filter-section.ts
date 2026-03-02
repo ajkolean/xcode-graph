@@ -294,6 +294,7 @@ export class GraphFilterSection extends LitElement {
     }
   `;
 
+  /** Dispatches section-toggle event when header is clicked */
   private handleToggle() {
     this.dispatchEvent(
       new CustomEvent('section-toggle', {
@@ -303,6 +304,7 @@ export class GraphFilterSection extends LitElement {
     );
   }
 
+  /** Dispatches item-toggle event when a checkbox item is toggled */
   private handleItemToggle(key: string, checked: boolean) {
     this.dispatchEvent(
       new CustomEvent('item-toggle', {
@@ -313,6 +315,7 @@ export class GraphFilterSection extends LitElement {
     );
   }
 
+  /** Dispatches preview-change event on item hover for filter preview */
   private handleItemHover(item: FilterItem | null) {
     this.dispatchEvent(
       new CustomEvent('preview-change', {
@@ -323,6 +326,7 @@ export class GraphFilterSection extends LitElement {
     );
   }
 
+  /** Renders the appropriate icon for a filter item based on filter type */
   private renderItemIcon(item: FilterItem, isSelected: boolean, zoomColor: string) {
     const opacity = isSelected ? 1 : 0.7;
     const dropShadow = `drop-shadow(0 0 6px ${zoomColor}${isSelected ? '80' : '60'})`;
@@ -393,6 +397,7 @@ export class GraphFilterSection extends LitElement {
     }
   }
 
+  /** Renders a single filter item as a toggleable button */
   private renderItem(item: FilterItem) {
     const isSelected = this.selectedItems?.has(item.key) || false;
     const zoomColor = adjustColorForZoom(item.color, this.zoom);
@@ -435,6 +440,7 @@ export class GraphFilterSection extends LitElement {
     `;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     return html`
       <!-- Section Header -->

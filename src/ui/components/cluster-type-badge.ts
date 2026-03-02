@@ -55,6 +55,7 @@ export class GraphClusterTypeBadge extends LitElement {
     return this.clusterType === 'package' ? 'Package' : 'Project';
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     const color = this.clusterColor || '#F59E0B';
 

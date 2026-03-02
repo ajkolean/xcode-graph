@@ -62,6 +62,7 @@ export class GraphInfoRow extends LitElement {
     }
   `;
 
+  /** Renders the component template */
   override render(): TemplateResult {
     return html`
       <span class="label">${this.label}:</span>

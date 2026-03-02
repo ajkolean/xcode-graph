@@ -150,7 +150,9 @@ describe('theme-utils', () => {
     });
 
     it('should return a cleanup function', () => {
-      const cleanup = onColorSchemeChange(() => {});
+      const cleanup = onColorSchemeChange(() => {
+        /* no-op */
+      });
       expect(typeof cleanup).to.equal('function');
       cleanup();
     });

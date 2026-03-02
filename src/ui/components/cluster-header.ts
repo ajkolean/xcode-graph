@@ -145,6 +145,7 @@ export class GraphClusterHeader extends LitElement {
     }
   `;
 
+  /** Determines the source type (Local/Registry/Git) from the cluster path */
   private getSourceType(): SourceType {
     if (!this.clusterPath) return SourceType.Local;
 
@@ -157,6 +158,7 @@ export class GraphClusterHeader extends LitElement {
     return SourceType.Local;
   }
 
+  /** Extracts a shortened display path from the full cluster path */
   private getShortPath(): string {
     if (!this.clusterPath) return '';
 
@@ -172,6 +174,7 @@ export class GraphClusterHeader extends LitElement {
     return segments.slice(-3).join('/');
   }
 
+  /** Copies the full cluster path to the clipboard */
   private async handleCopyPath() {
     if (!this.clusterPath) return;
 
@@ -186,6 +189,7 @@ export class GraphClusterHeader extends LitElement {
     }
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     const isPackage = this.clusterType === 'package';
     const clusterIcon = isPackage ? icons.Package : icons.Folder;

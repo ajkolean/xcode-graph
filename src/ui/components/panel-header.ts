@@ -192,6 +192,7 @@ export class GraphPanelHeader extends LitElement {
     }
   `;
 
+  /** Handles back button click and dispatches back event */
   private handleBack() {
     this.dispatchEvent(
       new CustomEvent('back', {
@@ -201,6 +202,7 @@ export class GraphPanelHeader extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     const color = this.color || '#8B5CF6';
 

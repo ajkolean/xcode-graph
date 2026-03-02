@@ -79,6 +79,7 @@ export class GraphClusterStats extends LitElement {
     this.isExpanded = true;
   }
 
+  /** Syncs the expanded state from the attribute on connect */
   override connectedCallback(): void {
     super.connectedCallback();
     this.isExpanded = this.expanded;
@@ -203,10 +204,12 @@ export class GraphClusterStats extends LitElement {
     }
   `;
 
+  /** Toggles the expanded/collapsed state */
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
 
+  /** Dispatches a toggle event for the given stats card */
   private handleCardToggle(card: string) {
     this.dispatchEvent(
       new CustomEvent(card, {
@@ -216,6 +219,7 @@ export class GraphClusterStats extends LitElement {
     );
   }
 
+  /** Renders the target type breakdown badges */
   private renderTargetBreakdown() {
     if (!this.targetBreakdown || Object.keys(this.targetBreakdown).length === 0) {
       return nothing;
@@ -257,6 +261,7 @@ export class GraphClusterStats extends LitElement {
     `;
   }
 
+  /** Renders the expanded stats content with cards and breakdowns */
   private renderExpandedContent(): TemplateResult {
     const platformCount = this.platforms?.size || 0;
 
@@ -330,6 +335,7 @@ export class GraphClusterStats extends LitElement {
     `;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     return html`
       <button class="header" aria-expanded=${this.isExpanded} @click=${this.toggleExpanded}>

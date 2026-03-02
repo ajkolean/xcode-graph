@@ -51,6 +51,7 @@ export class GraphClusterComposition extends LitElement {
     this.isExpanded = false;
   }
 
+  /** Syncs the expanded state from the attribute on connect */
   override connectedCallback(): void {
     super.connectedCallback();
     this.isExpanded = this.expanded;
@@ -204,6 +205,7 @@ export class GraphClusterComposition extends LitElement {
     }
   `;
 
+  /** Toggles the expanded/collapsed state */
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
@@ -244,6 +246,7 @@ export class GraphClusterComposition extends LitElement {
     return this.totalSources > 0 || this.totalResources > 0;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult | typeof nothing {
     if (!this.hasContent) return nothing;
 

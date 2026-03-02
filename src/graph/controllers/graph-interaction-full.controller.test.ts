@@ -445,7 +445,9 @@ describe('GraphInteractionFullController', () => {
     });
 
     it('should handle cleanup errors gracefully', () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        /* suppress output */
+      });
 
       expect(() => {
         host.disconnectedCallback();

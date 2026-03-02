@@ -125,6 +125,7 @@ export class GraphDeploymentTargets extends LitElement {
     }
   `;
 
+  /** Renders platform minimum OS version badges */
   private renderPlatformTargets() {
     if (!this.deploymentTargets) return nothing;
 
@@ -163,6 +164,7 @@ export class GraphDeploymentTargets extends LitElement {
     `;
   }
 
+  /** Renders destination device type badges */
   private renderDestinations() {
     if (!this.destinations || this.destinations.length === 0) return nothing;
 
@@ -190,6 +192,7 @@ export class GraphDeploymentTargets extends LitElement {
     `;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult | typeof nothing {
     const hasPlatforms =
       this.deploymentTargets &&

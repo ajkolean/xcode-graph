@@ -127,6 +127,7 @@ export class GraphClusterDetailsPanel extends LitElement {
     return breakdown;
   }
 
+  /** Dispatches a bubbling composed custom event */
   private bubbleEvent(eventName: string, detail?: unknown) {
     this.dispatchEvent(
       new CustomEvent(eventName, {

@@ -12,7 +12,7 @@ import type {
   SerializedMicroResult,
 } from '@graph/workers/micro-layout.worker';
 import type { Cluster } from '@shared/schemas';
-import * as Comlink from 'comlink';
+import { type Remote, wrap } from 'comlink';
 import type { LayoutConfig } from './config';
 import { computeClusterInterior, type MicroLayoutResult } from './phases/micro-layout';
 import { applyNodeMassage } from './phases/node-massage';
@@ -101,7 +101,7 @@ export async function computeMicroLayoutsParallel(
   );
 
   const workers: Worker[] = [];
-  const apis: Comlink.Remote<MicroLayoutWorkerAPI>[] = [];
+  const apis: Remote<MicroLayoutWorkerAPI>[] = [];
 
   try {
     for (let i = 0; i < poolSize; i++) {
@@ -109,7 +109,7 @@ export async function computeMicroLayoutsParallel(
         type: 'module',
       });
       workers.push(worker);
-      apis.push(Comlink.wrap<MicroLayoutWorkerAPI>(worker));
+      apis.push(wrap<MicroLayoutWorkerAPI>(worker));
     }
 
     const tasks = clusters.map((cluster, i) => {

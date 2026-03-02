@@ -39,6 +39,7 @@ const DEPENDENCY_KIND_CONFIG: Record<string, { label: string; color: string }> =
   [DependencyKind.XCFramework]: { label: 'XCF', color: 'var(--colors-warning)' },
 };
 
+/** Returns a formatted subtitle string from the node type and origin */
 function getNodeSubtitle(node: GraphNode): string {
   const typeLabel = node.type.charAt(0).toUpperCase() + node.type.slice(1);
   return node.origin === Origin.External ? `External ${typeLabel}` : typeLabel;
@@ -209,10 +210,12 @@ export class GraphNodeList extends NodeListEventsBase {
     }
   `;
 
+  /** Toggles the list expanded/collapsed state */
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
 
+  /** Returns the resolved item list, supporting both items and legacy nodes props */
   private get itemList(): NodeWithEdge[] {
     // Support both new items prop and legacy nodes prop
     if (this.items && this.items.length > 0) {
@@ -228,6 +231,7 @@ export class GraphNodeList extends NodeListEventsBase {
     return [];
   }
 
+  /** Renders a dependency kind badge for the given item */
   private renderKindBadge(item: NodeWithEdge) {
     if (!this.showKind || !item.edge.kind) return nothing;
 
@@ -247,6 +251,7 @@ export class GraphNodeList extends NodeListEventsBase {
     `;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     const items = this.itemList;
     const count = items.length;

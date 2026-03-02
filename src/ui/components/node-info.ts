@@ -207,6 +207,7 @@ export class GraphNodeInfo extends LitElement {
     return this.node.destinations.length > 0;
   }
 
+  /** Renders the foreign build details section if present */
   private renderForeignBuild() {
     const fb = this.node.foreignBuild;
     if (!fb) return nothing;
@@ -235,6 +236,7 @@ export class GraphNodeInfo extends LitElement {
     `;
   }
 
+  /** Renders the expanded node info rows and subsections */
   private renderExpandedContent(): TemplateResult {
     const showProductName = this.node.productName && this.node.productName !== this.node.name;
     const showBundleId = Boolean(this.node.bundleId);
@@ -306,6 +308,7 @@ export class GraphNodeInfo extends LitElement {
     `;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     if (!this.node) return html``;
 

@@ -17,6 +17,7 @@ import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import { type CSSResultGroup, css, html, LitElement, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
+/** Formats a cycle path as an arrow-separated string */
 function formatCycle(cycle: string[]): string {
   return cycle.join(' \u2192 ');
 }
@@ -194,10 +195,12 @@ export class GraphCycleWarning extends LitElement {
     this.isDismissed = false;
   }
 
+  /** Toggles the expanded details view */
   private handleToggleExpand() {
     this.isExpanded = !this.isExpanded;
   }
 
+  /** Handles the dismiss event and hides the warning */
   private handleDismiss() {
     this.isDismissed = true;
     this.dispatchEvent(
@@ -208,6 +211,7 @@ export class GraphCycleWarning extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult | null {
     if (this.isDismissed || !this.cycles || this.cycles.length === 0) {
       return null;

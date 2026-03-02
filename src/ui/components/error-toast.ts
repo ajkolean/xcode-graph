@@ -193,6 +193,7 @@ export class GraphErrorToast extends LitElement {
     }
   `;
 
+  /** Updates severity attribute and triggers slide-in when error changes */
   override updated(changed: PropertyValues): void {
     if (changed.has('error') && this.error) {
       // Set data attribute for severity-based styling
@@ -205,6 +206,7 @@ export class GraphErrorToast extends LitElement {
     }
   }
 
+  /** Handles the dismiss event with slide-out animation */
   private handleDismiss(): void {
     if (!this.error || !this.error.dismissible) {
       return;
@@ -224,6 +226,7 @@ export class GraphErrorToast extends LitElement {
     }, 300);
   }
 
+  /** Handles the action button click */
   private handleAction(): void {
     if (!this.error) {
       return;
@@ -238,6 +241,7 @@ export class GraphErrorToast extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult | typeof nothing {
     if (!this.error) {
       return nothing;

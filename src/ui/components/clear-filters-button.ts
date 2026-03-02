@@ -81,6 +81,7 @@ export class GraphClearFiltersButton extends LitElement {
     }
   `;
 
+  /** Handles the click event and dispatches clear-filters */
   private handleClick() {
     if (!this.isActive) {
       return;
@@ -94,6 +95,7 @@ export class GraphClearFiltersButton extends LitElement {
     );
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     return html`
       <button

@@ -219,6 +219,7 @@ export class GraphIconButton extends LitElement {
     }
   `;
 
+  /** Renders the component template */
   override render(): TemplateResult {
     return html`
       <button

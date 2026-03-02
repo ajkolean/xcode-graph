@@ -1,13 +1,13 @@
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import type * as d3Force2D from 'd3-force';
+import type { SimulationLinkDatum, SimulationNodeDatum } from 'd3-force';
 
 /**
  * D3 simulation node extended with cluster membership
  *
  * @public
  */
-export interface SimNode extends d3Force2D.SimulationNodeDatum {
+export interface SimNode extends SimulationNodeDatum {
   id: string;
   clusterId?: string | undefined;
   x: number;
@@ -21,7 +21,7 @@ export interface SimNode extends d3Force2D.SimulationNodeDatum {
  *
  * @public
  */
-export interface SimLink extends d3Force2D.SimulationLinkDatum<SimNode> {
+export interface SimLink extends SimulationLinkDatum<SimNode> {
   source: string | SimNode;
   target: string | SimNode;
   sameCluster: boolean;

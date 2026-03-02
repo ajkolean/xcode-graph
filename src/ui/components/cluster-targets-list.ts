@@ -81,6 +81,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     this.isExpanded = true;
   }
 
+  /** Syncs the expanded state from the attribute on connect */
   override connectedCallback(): void {
     super.connectedCallback();
     this.isExpanded = this.expanded;
@@ -162,6 +163,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     }
   `;
 
+  /** Toggles the expanded/collapsed state */
   private toggleExpanded() {
     this.isExpanded = !this.isExpanded;
   }
@@ -169,12 +171,14 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
   // Derived state: flat list of headers and nodes for virtualized rendering
   private _flatItems: ClusterListItem[] = [];
 
+  /** Recomputes the flat item list when inputs change */
   override willUpdate(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('nodesByType') || changedProperties.has('edges')) {
       this._flatItems = this.computeFlatItems();
     }
   }
 
+  /** Builds a flat list of headers and nodes for virtualized rendering */
   private computeFlatItems(): ClusterListItem[] {
     if (!this.nodesByType) return [];
 
@@ -205,6 +209,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     return items;
   }
 
+  /** Formats dependency and dependent counts into a subtitle string */
   private formatNodeStatsSubtitle(stats: {
     dependencies: number;
     dependents: number;
@@ -221,6 +226,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
     return parts.length > 0 ? parts.join(' · ') : undefined;
   }
 
+  /** Renders the component template */
   override render(): TemplateResult {
     if (!this.nodesByType) return html``;
 
