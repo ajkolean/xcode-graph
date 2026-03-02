@@ -51,6 +51,7 @@ tsconfig.tsbuildinfo
 custom-elements.json
 etc/
 !etc/xcode-graph.schema.json
+!etc/xcode-graph.api.md
 
 # Playwright MCP
 .playwright-mcp/
