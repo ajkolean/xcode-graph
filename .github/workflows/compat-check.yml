@@ -72,7 +72,8 @@ jobs:
         env:
           XCGRAPH_VERSION: ${{ steps.resolve-version.outputs.version }}
           XCGRAPH_SOURCE: ${{ steps.resolve-version.outputs.source }}
-        run: echo "Testing against XcodeGraph ${XCGRAPH_VERSION} (source: ${XCGRAPH_SOURCE})"
+        run: |
+          echo "Testing against XcodeGraph ${XCGRAPH_VERSION} (source: ${XCGRAPH_SOURCE})"
 
       # Update Package.swift to use the target XcodeGraph version and regenerate types
       - name: Update XcodeGraph dependency

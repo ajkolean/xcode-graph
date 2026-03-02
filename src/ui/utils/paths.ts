@@ -106,6 +106,7 @@ function buildSegment(curr: Point, next: Point, end: Point, isLast: boolean): st
   return `Q ${curr.x},${curr.y} ${target.x},${target.y}`;
 }
 
+/** Generates a smooth SVG path through multiple waypoints using quadratic bezier curves */
 export function generateWaypointPath(start: Point, waypoints: Point[], end: Point): string {
   if (waypoints.length === 0) {
     return generateBezierPath(start.x, start.y, end.x, end.y);

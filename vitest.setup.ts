@@ -11,6 +11,7 @@ expect.extend(vitestAxeMatchers);
 
 // @lit-labs/virtualizer requires ResizeObserver which jsdom doesn't provide
 if (typeof globalThis.ResizeObserver === 'undefined') {
+  /** No-op ResizeObserver polyfill for jsdom */
   globalThis.ResizeObserver = class ResizeObserver {
     observe() {} // skipcq: JS-0105, JS-0321
     unobserve() {} // skipcq: JS-0105, JS-0321

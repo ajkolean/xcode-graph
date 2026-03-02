@@ -159,6 +159,7 @@ export class GraphStatsCard extends LitElement {
     }
   `;
 
+  /** Dispatches card-toggle event when the card is toggleable and clicked */
   private handleClick() {
     if (this.toggleable) {
       this.dispatchEvent(
@@ -170,6 +171,7 @@ export class GraphStatsCard extends LitElement {
     }
   }
 
+  /** Renders the stats card with label, value, and conditional styling */
   override render(): TemplateResult {
     const classes = [
       'container',

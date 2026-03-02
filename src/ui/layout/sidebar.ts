@@ -64,6 +64,7 @@ export class GraphSidebar extends LitElement {
   @property({ type: String, attribute: 'active-tab' })
   declare activeTab: ActiveTabType;
 
+  /** Initializes collapsed state from property or attribute on first connect */
   override connectedCallback(): void {
     super.connectedCallback();
     if (this.defaultCollapsed || this.hasAttribute('collapsed')) {
@@ -334,6 +335,7 @@ export class GraphSidebar extends LitElement {
     ];
   }
 
+  /** Dispatches a tab-change event when a navigation item is clicked */
   private handleTabClick(tab: ActiveTabType) {
     this.dispatchEvent(
       new CustomEvent('tab-change', {
@@ -344,10 +346,12 @@ export class GraphSidebar extends LitElement {
     );
   }
 
+  /** Toggles the sidebar between collapsed and expanded states */
   private toggleCollapse() {
     this.collapsed = !this.collapsed;
   }
 
+  /** Renders the sidebar navigation with collapse button and nav items */
   override render(): TemplateResult {
     return html`
       <aside>

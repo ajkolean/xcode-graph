@@ -21,7 +21,7 @@ import { SignalWatcher } from '@lit-labs/signals';
 import { FocusTrapController } from '@shared/controllers/focus-trap.controller';
 import { createMachineController } from '@shared/controllers/zag.controller';
 import { type SidebarSection, sidebarMachine } from '@shared/machines/sidebar.machine';
-import type { Cluster } from '@shared/schemas';
+import type { Cluster, FilterState } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { getNodeTypeColor } from '@ui/utils/node-colors';
 import { getPlatformColor } from '@ui/utils/platform-icons';
@@ -61,7 +61,6 @@ import {
   setHoveredNode,
   toggleHighlight,
 } from '@graph/signals/index';
-import type { FilterState } from '@shared/schemas';
 import {
   filters,
   type PreviewFilter,
@@ -288,12 +287,14 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
   private _filterData = computeFilters([]);
 
+  /** Recomputes filter data when allNodes changes */
   override willUpdate(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has('allNodes')) {
       this._filterData = computeFilters(this.allNodes ?? []);
     }
   }
 
+  /** Finds an existing cluster or synthesizes one from matching nodes */
   private findClusterById(clusterId: string | null): Cluster | undefined {
     if (!clusterId) return undefined;
 
@@ -355,12 +356,14 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     setSearchQuery(query);
   }
 
+  /** Resets all filters and clears the search query */
   private handleClearFilters() {
     const clearAll = this._filterData.createClearFilters(setFilters);
     clearAll();
     setSearchQuery('');
   }
 
+  /** Toggles a single filter item on or off within its filter category */
   private handleItemToggle(
     // skipcq: JS-0105
     type: 'nodeType' | 'platform' | 'project' | 'package',
@@ -391,14 +394,17 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     setPreviewFilter(preview);
   }
 
+  /** Toggles the sidebar between collapsed and expanded states */
   private handleToggleCollapse() {
     this.sidebar.send({ type: 'TOGGLE' });
   }
 
+  /** Toggles a filter section between expanded and collapsed */
   private handleToggleSection(section: SidebarSection) {
     this.sidebar.send({ type: 'TOGGLE_SECTION', section });
   }
 
+  /** Expands the sidebar, clears selection, and scrolls to the given filter section */
   private handleExpandToSection(section: SidebarSection) {
     if (selectedNode.get()) selectNode(null);
     if (selectedCluster.get()) selectCluster(null);
@@ -411,6 +417,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     }, 100);
   }
 
+  /** Renders the collapsed sidebar icon bar with filter badges */
   private renderCollapsedSidebar(currentFilters: ReturnType<typeof filters.get>) {
     return html`
       <xcode-graph-collapsed-sidebar
@@ -430,6 +437,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
+  /** Renders the node details panel with dependency highlight toggles */
   private renderNodeDetails(
     node: GraphNode,
     currentZoom: number,
@@ -464,6 +472,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
+  /** Renders the cluster details panel with dependency highlight toggles */
   private renderClusterDetails(
     clusterId: string,
     currentZoom: number,
@@ -493,6 +502,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
+  /** Renders the filter view with search bar, stats, and filter sections */
   private renderFilterView(options: FilterViewOptions) {
     const {
       filters: currentFilters,
@@ -550,6 +560,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
+  /** Renders the product types, platforms, projects, and packages filter sections */
   private renderFilterSections(
     currentFilters: FilterState,
     currentZoom: number,
@@ -634,6 +645,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     selectCluster(null);
   }
 
+  /** Renders the toolbar with back-to-filters breadcrumb and collapse button */
   private renderDetailsToolbar() {
     return html`
       <div class="details-toolbar">
@@ -652,6 +664,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
+  /** Renders expanded content: node details, cluster details, or filter view */
   private renderExpandedContent(options: ExpandedContentOptions) {
     const {
       selectedNode,
@@ -698,6 +711,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     );
   }
 
+  /** Renders the sidebar layout with header and collapsed or expanded content */
   override render(): TemplateResult {
     const isCollapsed = this.isCollapsed;
     // Reference focusTrap to ensure controller is not tree-shaken

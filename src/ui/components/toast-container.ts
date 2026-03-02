@@ -81,6 +81,7 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
     errorService.executeAction(error);
   }
 
+  /** Renders the stack of active error toast notifications */
   override render(): TemplateResult | null {
     const toasts = getToastErrors();
 

@@ -37,6 +37,7 @@ export class GraphSidebarCollapseIcon extends LitElement {
     }
   `;
 
+  /** Renders the chevron icon, pointing left when collapsed or right when expanded */
   override render(): TemplateResult {
     return svg`
       <svg

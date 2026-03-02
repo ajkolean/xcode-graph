@@ -164,6 +164,7 @@ export class GraphSearchBar extends LitElement {
     onTrigger: () => this.inputElement?.focus(),
   });
 
+  /** Dispatches search-change with the current input value */
   private handleInput(e: Event) {
     const input = e.target as HTMLInputElement;
     this.dispatchEvent(
@@ -175,6 +176,7 @@ export class GraphSearchBar extends LitElement {
     );
   }
 
+  /** Dispatches search-clear to reset the search input */
   private handleClear() {
     this.dispatchEvent(
       new CustomEvent('search-clear', {
@@ -184,6 +186,7 @@ export class GraphSearchBar extends LitElement {
     );
   }
 
+  /** Clears the search and blurs the input when Escape is pressed */
   private handleKeyDown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
       this.handleClear();
@@ -191,6 +194,7 @@ export class GraphSearchBar extends LitElement {
     }
   }
 
+  /** Renders the search input with icon, keyboard hint, and clear button */
   override render(): TemplateResult {
     return html`
       <div class="container">

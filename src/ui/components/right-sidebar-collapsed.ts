@@ -21,6 +21,7 @@ import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } 
 import { property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
+/** Returns the SVG icon for the product types filter section */
 function renderProductTypesIcon() {
   return svg`
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -31,6 +32,7 @@ function renderProductTypesIcon() {
   `;
 }
 
+/** Returns the SVG icon for the platforms filter section */
 function renderPlatformsIcon() {
   return svg`
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -41,6 +43,7 @@ function renderPlatformsIcon() {
   `;
 }
 
+/** Returns the SVG icon for the projects filter section */
 function renderProjectsIcon() {
   return svg`
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -49,6 +52,7 @@ function renderProjectsIcon() {
   `;
 }
 
+/** Returns the SVG icon for the packages filter section */
 function renderPackagesIcon() {
   return svg`
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -207,6 +211,7 @@ export class GraphCollapsedSidebar extends LitElement {
     }
   `;
 
+  /** Dispatches an event to expand the sidebar to the given filter section */
   private handleExpandToSection(section: string) {
     this.dispatchEvent(
       new CustomEvent('expand-to-section', {
@@ -217,6 +222,7 @@ export class GraphCollapsedSidebar extends LitElement {
     );
   }
 
+  /** Renders the collapsed sidebar with filter section icons and stats */
   override render(): TemplateResult {
     const showProductTypesBadge = this.nodeTypesFilterSize < (this.typeCounts?.size || 0);
     const showPlatformsBadge = this.platformsFilterSize < (this.platformCounts?.size || 0);

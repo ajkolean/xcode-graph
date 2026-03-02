@@ -179,6 +179,7 @@ export class GraphTab extends SignalWatcherLitElement {
     setZoom(e.detail);
   }
 
+  /** Renders the graph canvas, overlays, controls, and right sidebar */
   override render(): TemplateResult {
     return html`
       <div class="container">

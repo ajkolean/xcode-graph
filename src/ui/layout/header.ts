@@ -13,6 +13,7 @@
 import { icons } from '@shared/utils/icon-adapter';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 
+/** Returns the up/down chevron SVG icon for breadcrumb selectors */
 function renderSelectorIcon() {
   return svg`
     <svg
@@ -33,6 +34,7 @@ function renderSelectorIcon() {
   `;
 }
 
+/** Returns the forward slash SVG icon used as breadcrumb separator */
 function renderSlashIcon() {
   return svg`
     <svg
@@ -300,6 +302,7 @@ export class GraphHeader extends LitElement {
     }
   `;
 
+  /** Renders the header with logo, breadcrumbs, and action buttons */
   override render(): TemplateResult {
     return html`
       <header>

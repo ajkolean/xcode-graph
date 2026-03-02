@@ -87,6 +87,7 @@ export class GraphRightSidebarHeader extends LitElement {
     }
   `;
 
+  /** Dispatches the toggle-collapse event when the collapse button is clicked */
   private handleToggle() {
     this.dispatchEvent(
       new CustomEvent('toggle-collapse', {
@@ -96,6 +97,7 @@ export class GraphRightSidebarHeader extends LitElement {
     );
   }
 
+  /** Renders the header with title, active-filters dot, and collapse toggle */
   override render(): TemplateResult {
     return html`
       <div class="container">

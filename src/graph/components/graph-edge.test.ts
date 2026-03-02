@@ -8,7 +8,6 @@
 import { fixture, html } from '@open-wc/testing';
 import { describe, expect, it } from 'vitest';
 import { GraphEdge } from './graph-edge';
-import './graph-edge';
 
 /**
  * Helper to create a GraphEdge element and append it to an SVG fixture.

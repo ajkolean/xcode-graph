@@ -97,6 +97,7 @@ export class GraphTagBadge extends LitElement {
     }
   `;
 
+  /** Splits the tag into prefix and value, returning the associated color */
   private parseTag(): { prefix: string; value: string; color: string } {
     const parts = this.tag.split(':');
     if (parts.length >= 2) {
@@ -108,6 +109,7 @@ export class GraphTagBadge extends LitElement {
     return { prefix: '', value: this.tag, color: DEFAULT_TAG_COLOR };
   }
 
+  /** Renders the color-coded tag badge with prefix and value */
   override render(): TemplateResult {
     if (!this.tag) return html``;
 

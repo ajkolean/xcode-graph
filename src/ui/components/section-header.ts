@@ -73,6 +73,7 @@ export class GraphSectionHeader extends LitElement {
     }
   `;
 
+  /** Renders the section title and count display */
   override render(): TemplateResult {
     const countText = this.suffix ? `${this.count} ${this.suffix}` : `${this.count}`;
 

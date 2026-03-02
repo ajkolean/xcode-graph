@@ -55,6 +55,7 @@ export class GraphPlaceholderTab extends LitElement {
     }
   `;
 
+  /** Renders the placeholder content with title and coming-soon message */
   override render(): TemplateResult {
     return html`
       <div class="container">

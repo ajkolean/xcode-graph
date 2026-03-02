@@ -38,8 +38,7 @@
  */
 
 import { createTypedMachine } from '@shared/utils/zag-helpers';
-import type { Machine } from '@zag-js/core';
-import { type MachineSchema, MachineStatus, type Service } from '@zag-js/core';
+import { type Machine, type MachineSchema, MachineStatus, type Service } from '@zag-js/core';
 import type { VanillaMachine } from '@zag-js/vanilla';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
