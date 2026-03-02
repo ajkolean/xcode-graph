@@ -4,10 +4,11 @@
 
 ```ts
 
-import type * as d3Force2D from 'd3-force';
 import { Machine } from '@zag-js/core';
 import { MachineSchema } from '@zag-js/core';
 import { Signal } from '@lit-labs/signals';
+import type { SimulationLinkDatum } from 'd3-force';
+import type { SimulationNodeDatum } from 'd3-force';
 import { VanillaMachine } from '@zag-js/vanilla';
 
 // @public
@@ -1109,7 +1110,7 @@ export type SidebarSection = 'productTypes' | 'platforms' | 'projects' | 'packag
 export type SidebarTab = 'nodeDetails' | 'clusterDetails' | 'filters';
 
 // @public
-export interface SimLink extends d3Force2D.SimulationLinkDatum<SimNode> {
+export interface SimLink extends SimulationLinkDatum<SimNode> {
     // (undocumented)
     sameCluster: boolean;
     // (undocumented)
@@ -1119,7 +1120,7 @@ export interface SimLink extends d3Force2D.SimulationLinkDatum<SimNode> {
 }
 
 // @public
-export interface SimNode extends d3Force2D.SimulationNodeDatum {
+export interface SimNode extends SimulationNodeDatum {
     // (undocumented)
     clusterId?: string | undefined;
     // (undocumented)

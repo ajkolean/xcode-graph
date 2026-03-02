@@ -56,6 +56,7 @@ export default defineConfig({
             'src/graph/components/*.test.ts',
             'src/graph/components/**/*.test.ts',
             'src/graph/workers/*.test.ts',
+            'src/graph/test-helpers/*.test.ts',
             'src/integration/*.test.ts',
             'src/ui/utils/*.test.ts',
             'src/ui/components/*.test.ts',

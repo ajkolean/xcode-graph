@@ -4,7 +4,6 @@ import {
   assertSvgOpacity,
   assertSvgViewBox,
   countSvgElements,
-  querySvgElements,
 } from './svg-assertions';
 
 /**
