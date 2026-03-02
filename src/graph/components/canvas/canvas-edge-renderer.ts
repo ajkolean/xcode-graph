@@ -166,10 +166,11 @@ function getChainEdgeDepth(edgeKey: string, rc: EdgeRenderContext): number {
   if (rc.transitiveDeps?.edges.has(edgeKey)) {
     depth = Math.min(depth, rc.transitiveDeps.edgeDepths.get(edgeKey) ?? 0);
   }
-  /* v8 ignore next 3 -- transitive dependents depth lookup; tested in edge renderer tests */
+  /* v8 ignore start -- transitive dependents depth lookup; tested in edge renderer tests */
   if (rc.transitiveDependents?.edges.has(edgeKey)) {
     depth = Math.min(depth, rc.transitiveDependents.edgeDepths.get(edgeKey) ?? 0);
   }
+  /* v8 ignore stop */
   return Number.isFinite(depth) ? depth : 0;
 }
 
@@ -272,8 +273,9 @@ function drawDirectEdgePath(
 ) {
   const distance = Math.hypot(x2 - x1, y2 - y1);
   if (distance > 150) {
-    /* v8 ignore next 1 -- bezier path for long edges; tested via canvas mock */
+    /* v8 ignore start -- bezier path for long edges; tested via canvas mock */
     ctx.stroke(new Path2D(generateBezierPath(x1, y1, x2, y2)));
+    /* v8 ignore stop */
   } else {
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -325,8 +327,9 @@ function applyEdgeStyle(
   } else if (isCrossCluster) {
     ctx.setLineDash([10, 5]);
   } else {
-    /* v8 ignore next 1 -- solid line for non-cycle intra-cluster edges; tested in edge renderer */
+    /* v8 ignore start -- solid line for non-cycle intra-cluster edges; tested in edge renderer */
     ctx.setLineDash([]);
+    /* v8 ignore stop */
   }
 
   ctx.lineDashOffset = animateEdge && !prefersReducedMotion.get() ? rc.time / 20 : 0;

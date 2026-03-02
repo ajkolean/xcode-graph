@@ -101,11 +101,12 @@ export class KeyboardShortcutController implements ReactiveController {
       return true;
     }
     const root = active.shadowRoot;
-    /* v8 ignore next 4 -- shadow DOM focus detection; tested via activeElement mock */
+    /* v8 ignore start -- shadow DOM focus detection; tested via activeElement mock */
     if (root?.activeElement) {
       const innerTag = root.activeElement.tagName.toLowerCase();
       return innerTag === 'input' || innerTag === 'textarea';
     }
+    /* v8 ignore stop */
     return false;
   }
 }

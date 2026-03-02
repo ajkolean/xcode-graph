@@ -117,9 +117,10 @@ export function toggleHighlight(card: HighlightCard): void {
     case 'transitive-dependents':
       highlightTransitiveDependents.set(!highlightTransitiveDependents.get());
       break;
-    /* v8 ignore next 2 -- exhaustive HighlightCard switch; default is unreachable */
+    /* v8 ignore start -- exhaustive HighlightCard switch; default is unreachable */
     default:
       break;
+    /* v8 ignore stop */
   }
 }
 

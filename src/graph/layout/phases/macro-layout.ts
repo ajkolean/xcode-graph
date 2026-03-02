@@ -104,8 +104,9 @@ function sortBandNodes(nodes: ElkNodeWithLayoutIds[]): void {
     const posA = a['org.eclipse.elk.layered.crossingMinimization.positionId'];
     const posB = b['org.eclipse.elk.layered.crossingMinimization.positionId'];
     if (typeof posA === 'number' && typeof posB === 'number') {
-      /* v8 ignore next 1 -- ELK positionId sorting; tested via mock positionId injection */
+      /* v8 ignore start -- ELK positionId sorting; tested via mock positionId injection */
       return posA - posB;
+      /* v8 ignore stop */
     }
     return (a.x ?? 0) - (b.x ?? 0);
   });

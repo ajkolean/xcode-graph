@@ -30,8 +30,9 @@ export const edges: Signal.State<GraphEdge[]> = signal<GraphEdge[]>([]);
  *
  * @public
  */
-/* v8 ignore next 4 -- simple reset function; tested in data.signals.test.ts */
+/* v8 ignore start -- simple reset function; tested in data.signals.test.ts */
 export function resetDataSignals(): void {
   nodes.set([]);
   edges.set([]);
 }
+/* v8 ignore stop */

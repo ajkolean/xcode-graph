@@ -117,21 +117,23 @@ export class FocusTrapController implements ReactiveController {
           allowOutsideClick: true,
           tabbableOptions: {
             displayCheck: 'none',
-            /* v8 ignore next 6 -- shadow DOM traversal; tested via focus-trap mock */
+            /* v8 ignore start -- shadow DOM traversal; tested via focus-trap mock */
             getShadowRoot: (node) => {
               if (node instanceof HTMLElement && node.shadowRoot) {
                 return node.shadowRoot;
               }
               return false;
             },
+            /* v8 ignore stop */
           },
         });
       }
       this.trap.activate();
-    /* v8 ignore next 3 -- defensive catch: tested via activate() mock that throws */
+      /* v8 ignore start -- defensive catch: tested via activate() mock that throws */
     } catch (e) {
       console.warn('[FocusTrapController] Error during activation:', e);
     }
+    /* v8 ignore stop */
   }
 
   /** Deactivates the focus trap if it is currently active, returning focus per config. */
@@ -140,9 +142,10 @@ export class FocusTrapController implements ReactiveController {
       if (this.trap?.active) {
         this.trap.deactivate({ returnFocus: this.config.returnFocusOnDeactivate });
       }
-    /* v8 ignore next 3 -- defensive catch: tested via deactivate() mock that throws */
+      /* v8 ignore start -- defensive catch: tested via deactivate() mock that throws */
     } catch (e) {
       console.warn('[FocusTrapController] Error during deactivation:', e);
     }
+    /* v8 ignore stop */
   }
 }
