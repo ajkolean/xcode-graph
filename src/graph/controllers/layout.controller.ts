@@ -23,15 +23,15 @@ export interface LayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
   clusters: Cluster[];
   /** Aggregated edges between clusters */
-  clusterEdges?: { source: string; target: string; weight: number }[] | undefined;
+  clusterEdges?: { source: string; target: string; weight: number }[];
   /** Port-routed edges for cross-cluster connections */
-  routedEdges?: RoutedEdge[] | undefined;
+  routedEdges?: RoutedEdge[];
   /** Nodes that are part of cycles (SCC size > 1) */
-  cycleNodes?: Set<string> | undefined;
+  cycleNodes?: Set<string>;
   /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */
-  nodeSccId?: Map<string, number> | undefined;
+  nodeSccId?: Map<string, number>;
   /** Size of each SCC (size > 1 indicates a cycle) */
-  sccSizes?: Map<number, number> | undefined;
+  sccSizes?: Map<number, number>;
 }
 
 /**
@@ -168,6 +168,7 @@ export class LayoutController implements ReactiveController {
   }
 
   hostConnected(): void {
+    // skipcq: JS-0105
     // Required by ReactiveControllerHost interface - no initialization needed
   }
 

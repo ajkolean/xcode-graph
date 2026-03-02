@@ -32,10 +32,11 @@ describe('KeyboardShortcutController', () => {
 
     it('should not add listener before connect', () => {
       const spy = vi.spyOn(window, 'addEventListener');
-      new KeyboardShortcutController(new MockHost(), {
+      const instance = new KeyboardShortcutController(new MockHost(), {
         key: 'k',
         onTrigger: vi.fn(),
       });
+      expect(instance).toBeDefined();
       expect(spy).not.toHaveBeenCalledWith('keydown', expect.any(Function));
       spy.mockRestore();
     });
@@ -58,7 +59,7 @@ describe('KeyboardShortcutController', () => {
     });
 
     it('should handle cleanup errors gracefully', () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {}); // skipcq: JS-0321
       const removeSpy = vi.spyOn(window, 'removeEventListener').mockImplementation(() => {
         throw new Error('cleanup failed');
       });

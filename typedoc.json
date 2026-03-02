@@ -2,15 +2,15 @@
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["./src/index.ts"],
   "entryPointStrategy": "expand",
-  "out": ".typedoc-out",
+  "out": "./docs/api",
   "name": "XcodeGraph",
   "readme": "none",
   "excludePrivate": true,
   "excludeProtected": false,
   "excludeInternal": true,
-  "includeVersion": true,
   "categorizeByGroup": true,
   "exclude": ["**/*.test.ts", "**/node_modules/**"],
   "skipErrorChecking": true,
-  "tsconfig": "./tsconfig.json"
+  "tsconfig": "./tsconfig.json",
+  "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"]
 }

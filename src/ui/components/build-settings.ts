@@ -165,12 +165,12 @@ export class GraphBuildSettings extends LitElement {
   }
 
   private get hasSettings(): boolean {
-    return !!this.settings && Object.keys(this.settings).length > 0;
+    return Boolean(this.settings) && Object.keys(this.settings).length > 0;
   }
 
   private get hasCodeSignSettings(): boolean {
     if (!this.settings) return false;
-    return !!(
+    return Boolean(
       this.settings.codeSignIdentity ||
       this.settings.developmentTeam ||
       this.settings.provisioningProfile

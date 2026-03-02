@@ -78,11 +78,11 @@ export const displayData: Signal.Computed<DisplayData> = new Signal.Computed<Dis
   const { transitiveDeps, transitiveDependents } = transitiveData.get();
 
   return {
-    filteredNodes: filteredNodes,
-    filteredEdges: filteredEdges,
-    searchResults: searchResults,
-    transitiveDeps: transitiveDeps,
-    transitiveDependents: transitiveDependents,
+    filteredNodes,
+    filteredEdges,
+    searchResults,
+    transitiveDeps,
+    transitiveDependents,
   };
 });
 

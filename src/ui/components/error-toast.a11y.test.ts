@@ -38,7 +38,7 @@ describe('xcode-graph-error-toast a11y', () => {
     `);
 
     const toast = el.shadowRoot?.querySelector('.toast');
-    chaiExpect(toast).toBeDefined();
+    expect(toast).toBeDefined();
     chaiExpect(toast?.getAttribute('role')).to.equal('alert');
   });
 
@@ -48,7 +48,7 @@ describe('xcode-graph-error-toast a11y', () => {
     `);
 
     const toast = el.shadowRoot?.querySelector('.toast');
-    chaiExpect(toast).toBeDefined();
+    expect(toast).toBeDefined();
     chaiExpect(toast?.getAttribute('aria-live')).to.equal('assertive');
   });
 
@@ -58,7 +58,7 @@ describe('xcode-graph-error-toast a11y', () => {
     `);
 
     const closeIcon = el.shadowRoot?.querySelector('.close-icon');
-    chaiExpect(closeIcon).toBeDefined();
+    expect(closeIcon).toBeDefined();
     chaiExpect(closeIcon?.getAttribute('aria-label')).to.equal('Dismiss notification');
   });
 

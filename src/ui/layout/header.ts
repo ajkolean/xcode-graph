@@ -13,6 +13,45 @@
 import { icons } from '@shared/utils/icon-adapter';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 
+function renderSelectorIcon() {
+  return svg`
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M8 9l4 -4l4 4"></path>
+      <path d="M16 15l-4 4l-4 -4"></path>
+    </svg>
+  `;
+}
+
+function renderSlashIcon() {
+  return svg`
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M17 5l-10 14"></path>
+    </svg>
+  `;
+}
+
 /**
  * Top header component with bold identity. Features scan line effect,
  * glowing logo, and monospace typography.
@@ -261,45 +300,6 @@ export class GraphHeader extends LitElement {
     }
   `;
 
-  private renderSelectorIcon() {
-    return svg`
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <path d="M8 9l4 -4l4 4"></path>
-        <path d="M16 15l-4 4l-4 -4"></path>
-      </svg>
-    `;
-  }
-
-  private renderSlashIcon() {
-    return svg`
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <path d="M17 5l-10 14"></path>
-      </svg>
-    `;
-  }
-
   override render(): TemplateResult {
     return html`
       <header>
@@ -318,20 +318,20 @@ export class GraphHeader extends LitElement {
             <button class="breadcrumb-button">
               <div class="avatar">T</div>
               <span>tuist</span>
-              <span class="selector-icon">${this.renderSelectorIcon()}</span>
+              <span class="selector-icon">${renderSelectorIcon()}</span>
             </button>
 
             <!-- Separator -->
-            <div class="separator">${this.renderSlashIcon()}</div>
+            <div class="separator">${renderSlashIcon()}</div>
 
             <!-- Project -->
             <button class="breadcrumb-button">
               <span>tuist</span>
-              <span class="selector-icon">${this.renderSelectorIcon()}</span>
+              <span class="selector-icon">${renderSelectorIcon()}</span>
             </button>
 
             <!-- Separator -->
-            <div class="separator">${this.renderSlashIcon()}</div>
+            <div class="separator">${renderSlashIcon()}</div>
 
             <!-- Status indicator -->
             <div class="status-dot" title="Connected"></div>

@@ -353,8 +353,8 @@ export class GraphCanvas extends LitElement {
       const isClusterSelected = this.selectedCluster === clusterId;
 
       const shouldDim =
-        (!!this.selectedNode && !isSelected && !isConnected) ||
-        (!!this.selectedCluster && !isClusterSelected);
+        (Boolean(this.selectedNode) && !isSelected && !isConnected) ||
+        (Boolean(this.selectedCluster) && !isClusterSelected);
 
       setAnimatedTarget(this.nodeAlphaMap, node.id, shouldDim ? 0.3 : 1.0);
     }
@@ -616,8 +616,8 @@ export class GraphCanvas extends LitElement {
   }
 
   private updateAnimatingState() {
-    const hasSelectedNode = !!this.selectedNode;
-    const hasSelectedCluster = !!this.selectedCluster;
+    const hasSelectedNode = Boolean(this.selectedNode);
+    const hasSelectedCluster = Boolean(this.selectedCluster);
     const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
     const hasFadingNodes = this.fadingOutNodes.size > 0;
 

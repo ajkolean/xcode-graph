@@ -127,7 +127,7 @@ export function buildAdjacency(edges: GraphEdge[]): {
     incoming.get(edge.target)?.push(edge.source);
   }
 
-  return { outgoing: outgoing, incoming: incoming };
+  return { outgoing, incoming };
 }
 
 /**

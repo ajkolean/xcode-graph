@@ -14,7 +14,7 @@ import type { HierarchicalLayoutResult } from '@graph/layout/types';
 import type { Cluster } from '@shared/schemas';
 import type { ClusterNodeMetadata } from '@shared/schemas/cluster.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import * as Comlink from 'comlink';
+import * as Comlink from 'comlink'; // skipcq: JS-C1003
 
 /**
  * Serialized cluster format for worker transfer.
@@ -25,7 +25,7 @@ export interface SerializedCluster {
   name: string;
   type: string;
   origin: string;
-  path?: string | undefined;
+  path?: string;
   nodes: GraphNode[];
   anchors: string[];
   metadata: Array<[string, ClusterNodeMetadata]>;
@@ -45,13 +45,13 @@ export interface SerializedLayoutResult {
     [string, HierarchicalLayoutResult['clusterPositions'] extends Map<string, infer V> ? V : never]
   >;
   clusters: SerializedCluster[];
-  clusterEdges?: HierarchicalLayoutResult['clusterEdges'] | undefined;
-  routedEdges?: HierarchicalLayoutResult['routedEdges'] | undefined;
-  cycleNodes?: string[] | undefined;
-  nodeSccId?: Array<[string, number]> | undefined;
-  sccSizes?: Array<[number, number]> | undefined;
-  maxStratum?: number | undefined;
-  maxClusterStratum?: number | undefined;
+  clusterEdges?: HierarchicalLayoutResult['clusterEdges'];
+  routedEdges?: HierarchicalLayoutResult['routedEdges'];
+  cycleNodes?: string[];
+  nodeSccId?: Array<[string, number]>;
+  sccSizes?: Array<[number, number]>;
+  maxStratum?: number;
+  maxClusterStratum?: number;
 }
 
 /**

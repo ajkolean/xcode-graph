@@ -41,7 +41,7 @@ export interface HierarchicalLayoutResult {
   clusterPositions: Map<string, ClusterPosition>;
   nodePositions: Map<string, NodePosition>;
   clusters: Cluster[];
-  bundledEdges?: Array<Array<{ x: number; y: number }>> | undefined;
+  bundledEdges?: Array<Array<{ x: number; y: number }>>;
   /** Aggregated edges between clusters */
   clusterEdges?: ClusterEdgeResult[];
   /** Nodes that are part of cycles (SCC size > 1) */

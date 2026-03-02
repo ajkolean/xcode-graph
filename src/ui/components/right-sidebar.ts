@@ -326,7 +326,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   }
 
   private get isViewingDetails(): boolean {
-    return !!selectedNode.get() || !!selectedCluster.get();
+    return Boolean(selectedNode.get()) || Boolean(selectedCluster.get());
   }
 
   /** Derive workspace name from the largest local project cluster */
@@ -500,7 +500,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
 
     const nodesFiltered = (this.filteredNodes?.length ?? 0) !== (this.allNodes?.length ?? 0);
     const edgesFiltered = (this.filteredEdges?.length ?? 0) !== (this.allEdges?.length ?? 0);
-    const hasAnyFiltering = nodesFiltered || edgesFiltered || !!currentSearchQuery;
+    const hasAnyFiltering = nodesFiltered || edgesFiltered || Boolean(currentSearchQuery);
 
     return html`
       <div class="filter-content">
@@ -696,7 +696,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
   override render(): TemplateResult {
     const isCollapsed = this.isCollapsed;
     // Reference focusTrap to ensure controller is not tree-shaken
-    void this.focusTrap.active;
+    void this.focusTrap.active; // skipcq: JS-0098
     const expandedSections = this.sidebar.get('expandedSections');
     const filterData = this._filterData;
     const currentFilters = filters.get();

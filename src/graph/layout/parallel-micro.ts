@@ -12,7 +12,7 @@ import type {
   SerializedMicroResult,
 } from '@graph/workers/micro-layout.worker';
 import type { Cluster } from '@shared/schemas';
-import * as Comlink from 'comlink';
+import * as Comlink from 'comlink'; // skipcq: JS-C1003
 import type { LayoutConfig } from './config';
 import { computeClusterInterior, type MicroLayoutResult } from './phases/micro-layout';
 import { applyNodeMassage } from './phases/node-massage';

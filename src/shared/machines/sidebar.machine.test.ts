@@ -12,7 +12,7 @@ import { sidebarMachine } from './sidebar.machine';
 
 describe('sidebarMachine', () => {
   describe('initialization', () => {
-    it('should initialize with expanded state by default', async () => {
+    it('should initialize with expanded state by default', () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
         props: { id: 'test-sidebar' },
@@ -23,7 +23,7 @@ describe('sidebarMachine', () => {
       ctx.cleanup();
     });
 
-    it('should initialize with collapsed state when defaultCollapsed is true', async () => {
+    it('should initialize with collapsed state when defaultCollapsed is true', () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
         props: { id: 'test-sidebar', defaultCollapsed: true },
@@ -34,7 +34,7 @@ describe('sidebarMachine', () => {
       ctx.cleanup();
     });
 
-    it('should initialize with filters tab active', async () => {
+    it('should initialize with filters tab active', () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
         props: { id: 'test-sidebar' },
@@ -45,7 +45,7 @@ describe('sidebarMachine', () => {
       ctx.cleanup();
     });
 
-    it('should initialize with correct default expanded sections', async () => {
+    it('should initialize with correct default expanded sections', () => {
       const ctx = createMachineTestContext({
         machine: sidebarMachine,
         props: { id: 'test-sidebar' },
@@ -222,7 +222,7 @@ describe('sidebarMachine', () => {
   });
 
   describe('callbacks', () => {
-    it('should call onCollapseChange on initialization (expanded)', async () => {
+    it('should call onCollapseChange on initialization (expanded)', () => {
       const onCollapseChange = vi.fn();
 
       const ctx = createMachineTestContext({
@@ -235,7 +235,7 @@ describe('sidebarMachine', () => {
       ctx.cleanup();
     });
 
-    it('should call onCollapseChange on initialization (collapsed)', async () => {
+    it('should call onCollapseChange on initialization (collapsed)', () => {
       const onCollapseChange = vi.fn();
 
       const ctx = createMachineTestContext({

@@ -21,8 +21,8 @@ export function matchesSearch(node: GraphNode, searchQuery: string): boolean {
   const query = searchQuery.toLowerCase();
   return Boolean(
     node.name.toLowerCase().includes(query) ||
-    node.type.toLowerCase().includes(query) ||
-    node.project?.toLowerCase().includes(query),
+      node.type.toLowerCase().includes(query) ||
+      node.project?.toLowerCase().includes(query),
   );
 }
 

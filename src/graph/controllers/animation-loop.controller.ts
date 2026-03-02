@@ -191,6 +191,7 @@ export class AnimationLoopController implements ReactiveController {
   };
 
   hostConnected(): void {
+    // skipcq: JS-0105
     // Controller is passive until requestRender() is called
   }
 

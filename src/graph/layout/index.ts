@@ -27,7 +27,7 @@ export * from './types';
  *
  * NOTE: This is ASYNCHRONOUS as it uses ELK.
  */
-export async function computeHierarchicalLayout(
+export function computeHierarchicalLayout(
   nodes: GraphNode[],
   edges: GraphEdge[],
   clusters: Cluster[],

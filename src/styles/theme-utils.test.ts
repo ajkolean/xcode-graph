@@ -134,7 +134,7 @@ describe('theme-utils', () => {
 
   describe('onColorSchemeChange', () => {
     it('should return a cleanup function', () => {
-      const cleanup = onColorSchemeChange(() => {});
+      const cleanup = onColorSchemeChange(() => {}); // skipcq: JS-0321
       expect(typeof cleanup).to.equal('function');
       cleanup();
     });

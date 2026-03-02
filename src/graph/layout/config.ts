@@ -114,7 +114,7 @@ export enum ElkHierarchyHandling {
  * ELK-specific layout options that can be set per-cluster
  */
 export interface ClusterElkOptions {
-  hierarchyHandling?: ElkHierarchyHandling | undefined;
+  hierarchyHandling?: ElkHierarchyHandling;
 }
 
 /** Type for layout configuration */

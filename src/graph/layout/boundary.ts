@@ -46,7 +46,7 @@ function toAccessor(
   val: ValueOrAccessor<number>,
   defaultVal: number,
 ): (node: BoundaryNode, index: number, nodes: BoundaryNode[]) => number {
-  return typeof val !== 'function' ? constant(val == null ? defaultVal : +val) : val;
+  return typeof val !== 'function' ? constant(val == null ? defaultVal : Number(val)) : val;
 }
 
 function computeDefaultBorder(
@@ -166,13 +166,15 @@ export default function forceBoundary(
     strengthFn: (node: BoundaryNode, index: number, nodes: BoundaryNode[]) => number,
     borderFn: (node: BoundaryNode, index: number, nodes: BoundaryNode[]) => number,
   ): void {
-    const x0Val = +x0Fn(node, i, nodes);
-    const x1Val = +x1Fn(node, i, nodes);
-    const y0Val = +y0Fn(node, i, nodes);
-    const y1Val = +y1Fn(node, i, nodes);
+    const x0Val = Number(x0Fn(node, i, nodes));
+    const x1Val = Number(x1Fn(node, i, nodes));
+    const y0Val = Number(y0Fn(node, i, nodes));
+    const y1Val = Number(y1Fn(node, i, nodes));
 
-    strengthsX[i] = Number.isNaN(x0Val) || Number.isNaN(x1Val) ? 0 : +strengthFn(node, i, nodes);
-    strengthsY[i] = Number.isNaN(y0Val) || Number.isNaN(y1Val) ? 0 : +strengthFn(node, i, nodes);
+    strengthsX[i] =
+      Number.isNaN(x0Val) || Number.isNaN(x1Val) ? 0 : Number(strengthFn(node, i, nodes));
+    strengthsY[i] =
+      Number.isNaN(y0Val) || Number.isNaN(y1Val) ? 0 : Number(strengthFn(node, i, nodes));
 
     x0z[i] = x0Val;
     x1z[i] = x1Val;
@@ -181,7 +183,7 @@ export default function forceBoundary(
 
     halfX[i] = x0Val + (x1Val - x0Val) / 2;
     halfY[i] = y0Val + (y1Val - y0Val) / 2;
-    borderz[i] = +borderFn(node, i, nodes);
+    borderz[i] = Number(borderFn(node, i, nodes));
   }
 
   function initialize() {
@@ -197,8 +199,8 @@ export default function forceBoundary(
     halfX = new Array(n);
     borderz = new Array(n);
 
-    const strengthFn = typeof strength === 'function' ? strength : constant(+strength);
-    const borderFn = typeof border === 'function' ? border : constant(+border);
+    const strengthFn = typeof strength === 'function' ? strength : constant(Number(strength));
+    const borderFn = typeof border === 'function' ? border : constant(Number(border));
 
     for (let i = 0; i < n; ++i) {
       const node = nodes[i];
@@ -213,37 +215,37 @@ export default function forceBoundary(
   };
 
   force.x0 = (_: ValueOrAccessor<number>) => {
-    x0Fn = typeof _ === 'function' ? _ : constant(+_);
+    x0Fn = typeof _ === 'function' ? _ : constant(Number(_));
     initialize();
     return force;
   };
 
   force.x1 = (_: ValueOrAccessor<number>) => {
-    x1Fn = typeof _ === 'function' ? _ : constant(+_);
+    x1Fn = typeof _ === 'function' ? _ : constant(Number(_));
     initialize();
     return force;
   };
 
   force.y0 = (_: ValueOrAccessor<number>) => {
-    y0Fn = typeof _ === 'function' ? _ : constant(+_);
+    y0Fn = typeof _ === 'function' ? _ : constant(Number(_));
     initialize();
     return force;
   };
 
   force.y1 = (_: ValueOrAccessor<number>) => {
-    y1Fn = typeof _ === 'function' ? _ : constant(+_);
+    y1Fn = typeof _ === 'function' ? _ : constant(Number(_));
     initialize();
     return force;
   };
 
   force.strength = (_: ValueOrAccessor<number>) => {
-    strength = typeof _ === 'function' ? _ : constant(+_);
+    strength = typeof _ === 'function' ? _ : constant(Number(_));
     initialize();
     return force;
   };
 
   force.border = (_: ValueOrAccessor<number>) => {
-    border = typeof _ === 'function' ? _ : constant(+_);
+    border = typeof _ === 'function' ? _ : constant(Number(_));
     initialize();
     return force;
   };

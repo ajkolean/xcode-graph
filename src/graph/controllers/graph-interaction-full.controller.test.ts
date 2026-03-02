@@ -445,7 +445,7 @@ describe('GraphInteractionFullController', () => {
     });
 
     it('should handle cleanup errors gracefully', () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {}); // skipcq: JS-0321
 
       expect(() => {
         host.disconnectedCallback();

@@ -1,5 +1,6 @@
 import path from "node:path";
 import { defineConfig } from "vitepress";
+import typedocSidebar from "../api/typedoc-sidebar.json";
 
 const root = path.resolve(__dirname, "../..");
 
@@ -54,7 +55,7 @@ export default defineConfig({
 			{ text: "Demo", link: "/demo" },
 			{ text: "Maintaining", link: "/maintaining/" },
 			{ text: "Reference", link: "/reference/" },
-			{ text: "API", link: "/api/", target: "_self" },
+			{ text: "API", link: "/api/" },
 		],
 
 		sidebar: {
@@ -99,6 +100,7 @@ export default defineConfig({
 					],
 				},
 			],
+			"/api/": typedocSidebar,
 		},
 
 		socialLinks: [

@@ -317,7 +317,7 @@ describe('ErrorService', () => {
         actionType: 'nonexistent-action',
       });
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {}); // skipcq: JS-0321
 
       await service.executeAction(appError);
 
@@ -334,7 +334,7 @@ describe('ErrorService', () => {
         actionType: 'test-action',
       });
 
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {}); // skipcq: JS-0321
 
       await service.executeAction(appError);
 
@@ -360,7 +360,7 @@ describe('ErrorService', () => {
 
   describe('Console Logging', () => {
     it('should log errors to console by default', () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {}); // skipcq: JS-0321
 
       service.handleError(new Error('Test'));
 
@@ -370,7 +370,7 @@ describe('ErrorService', () => {
     });
 
     it('should not log when disabled', () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {}); // skipcq: JS-0321
 
       service.handleError(new Error('Test'), { logToConsole: false });
 
@@ -380,9 +380,9 @@ describe('ErrorService', () => {
     });
 
     it('should use appropriate console methods by severity', () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {}); // skipcq: JS-0321
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {}); // skipcq: JS-0321
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {}); // skipcq: JS-0321
 
       service.handleError(new Error('Error'), { severity: ErrorSeverity.Error });
       service.handleError(new Error('Warning'), { severity: ErrorSeverity.Warning });

@@ -414,7 +414,7 @@ describe('findIsolatedClusters', () => {
 
 describe('printClusterTable', () => {
   it('prints without throwing', () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {}); // skipcq: JS-0321
     const result = makeLayoutResult([
       {
         id: 'TestCluster',
@@ -437,7 +437,7 @@ describe('printClusterTable', () => {
 
 describe('printNodesByCluster', () => {
   it('prints without throwing', () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {}); // skipcq: JS-0321
     const result = makeLayoutResult([
       { id: 'A', pos: makeClusterPosition({ id: 'A' }), nodeIds: ['n1', 'n2'] },
     ]);
@@ -447,7 +447,7 @@ describe('printNodesByCluster', () => {
   });
 
   it('truncates when more nodes than maxNodesPerCluster', () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {}); // skipcq: JS-0321
     const nodeIds = Array.from({ length: 15 }, (_, i) => `n${i}`);
     const result = makeLayoutResult([{ id: 'A', pos: makeClusterPosition({ id: 'A' }), nodeIds }]);
     printNodesByCluster(result, 5);
@@ -459,7 +459,7 @@ describe('printNodesByCluster', () => {
 
 describe('printStrataVisualization', () => {
   it('prints without throwing', () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {}); // skipcq: JS-0321
     const result = makeLayoutResult([
       { id: 'A', pos: makeClusterPosition({ id: 'A', y: 0 }), nodeIds: [] },
       { id: 'B', pos: makeClusterPosition({ id: 'B', y: 800 }), nodeIds: [] },
@@ -472,7 +472,7 @@ describe('printStrataVisualization', () => {
 
 describe('printLayoutSummary', () => {
   it('prints without throwing', () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {}); // skipcq: JS-0321
     const result = makeLayoutResult([
       { id: 'A', pos: makeClusterPosition({ id: 'A' }), nodeIds: ['n1'] },
     ]);

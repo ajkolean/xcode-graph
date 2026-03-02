@@ -10,7 +10,7 @@ import type { ReactiveController, ReactiveControllerHost } from 'lit';
 export class MockHost implements ReactiveControllerHost {
   private readonly controllers: ReactiveController[] = [];
   public updateCount = 0;
-  public updates: Array<{ timestamp: number; reason?: string | undefined }> = [];
+  public updates: Array<{ timestamp: number; reason?: string }> = [];
   public readonly updateComplete: Promise<boolean> = Promise.resolve(true);
 
   addController(controller: ReactiveController): void {
@@ -82,7 +82,7 @@ export function createControllerTestContext<T>(
 /**
  * Wait for a condition to be true
  */
-export async function waitFor(
+export function waitFor(
   condition: () => boolean,
   options: {
     timeout?: number;
@@ -109,7 +109,7 @@ export async function waitFor(
 /**
  * Wait for specific number of updates
  */
-export async function waitForUpdates(host: MockHost, count: number, timeout = 1000): Promise<void> {
+export function waitForUpdates(host: MockHost, count: number, timeout = 1000): Promise<void> {
   const initialCount = host.updateCount;
   return waitFor(() => host.updateCount >= initialCount + count, { timeout });
 }
@@ -117,6 +117,6 @@ export async function waitForUpdates(host: MockHost, count: number, timeout = 10
 /**
  * Wait for next update
  */
-export async function waitForNextUpdate(host: MockHost, timeout = 1000): Promise<void> {
+export function waitForNextUpdate(host: MockHost, timeout = 1000): Promise<void> {
   return waitForUpdates(host, 1, timeout);
 }

@@ -197,13 +197,13 @@ export class GraphNodeInfo extends LitElement {
 
   private get hasDeploymentTargets(): boolean {
     return (
-      !!this.node.deploymentTargets &&
+      Boolean(this.node.deploymentTargets) &&
       Object.values(this.node.deploymentTargets).some((v) => v != null)
     );
   }
 
   private get hasDestinations(): boolean {
-    return !!this.node.destinations && this.node.destinations.length > 0;
+    return Boolean(this.node.destinations) && this.node.destinations.length > 0;
   }
 
   private renderForeignBuild() {
@@ -236,7 +236,7 @@ export class GraphNodeInfo extends LitElement {
 
   private renderExpandedContent(): TemplateResult {
     const showProductName = this.node.productName && this.node.productName !== this.node.name;
-    const showBundleId = !!this.node.bundleId;
+    const showBundleId = Boolean(this.node.bundleId);
     const showDeploymentTargets = this.hasDeploymentTargets || this.hasDestinations;
     const showSourceCount = this.node.sourceCount != null && this.node.sourceCount > 0;
     const showResourceCount = this.node.resourceCount != null && this.node.resourceCount > 0;

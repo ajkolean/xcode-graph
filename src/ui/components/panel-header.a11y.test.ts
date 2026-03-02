@@ -45,7 +45,7 @@ describe('xcode-graph-panel-header a11y', () => {
     `);
 
     const backButton = el.shadowRoot?.querySelector('.back-button');
-    chaiExpect(backButton).toBeDefined();
+    expect(backButton).toBeDefined();
     chaiExpect(backButton?.getAttribute('aria-label')).to.equal('Back to overview');
   });
 });

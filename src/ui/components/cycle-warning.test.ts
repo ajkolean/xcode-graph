@@ -250,10 +250,10 @@ describe('xcode-graph-cycle-warning', () => {
       `);
 
       const expandBtn = el.shadowRoot?.querySelector('.btn-expand') as HTMLButtonElement;
-      expect(expandBtn.textContent).not.toBe("");
+      expect(expandBtn.textContent).not.toBe('');
 
       const dismissBtn = el.shadowRoot?.querySelector('.btn-dismiss') as HTMLButtonElement;
-      expect(dismissBtn.textContent).not.toBe("");
+      expect(dismissBtn.textContent).not.toBe('');
 
       const closeBtn = el.shadowRoot?.querySelector('.close-btn') as HTMLButtonElement;
       expect(closeBtn.getAttribute('title')).to.equal('Dismiss');

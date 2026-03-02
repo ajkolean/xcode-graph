@@ -77,8 +77,8 @@ export function resolveDefaults<T extends Record<string, NonNullable<unknown>>>(
   defaults: T,
 ): T {
   const result = {} as Record<string, unknown>;
-  for (const key in defaults) {
-    result[key] = source[key] ?? defaults[key];
+  for (const key of Object.keys(defaults)) {
+    result[key] = source[key as keyof T] ?? defaults[key as keyof T];
   }
   return result as T;
 }

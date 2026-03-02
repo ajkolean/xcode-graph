@@ -291,11 +291,11 @@ export function computeFilters(allNodes: GraphNode[]): {
   };
 
   return {
-    typeCounts: typeCounts,
-    platformCounts: platformCounts,
-    projectCounts: projectCounts,
-    packageCounts: packageCounts,
-    hasActiveFilters: hasActiveFilters,
-    createClearFilters: createClearFilters,
+    typeCounts,
+    platformCounts,
+    projectCounts,
+    packageCounts,
+    hasActiveFilters,
+    createClearFilters,
   };
 }

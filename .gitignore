@@ -64,7 +64,7 @@ playwright-report/
 # Documentation build output
 docs/.vitepress/dist/
 docs/.vitepress/cache/
-.typedoc-out/
+docs/api/
 /temp
 
 # Graph data (contains local paths)

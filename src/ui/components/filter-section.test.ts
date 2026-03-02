@@ -24,7 +24,7 @@ describe('xcode-graph-filter-section', () => {
       ></xcode-graph-filter-section>
     `);
 
-    expect(el).toBeDefined();
+    expect(el).to.exist;
     expect(el.tagName.toLowerCase()).to.equal('xcode-graph-filter-section');
   });
 
@@ -53,8 +53,8 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const items = el.shadowRoot?.querySelector('.items');
-    expect(items).toBeDefined();
-    expect(items?.classList.contains('collapsed')).toBe(true);
+    expect(items).to.exist;
+    expect(items?.classList.contains('collapsed')).to.equal(true);
   });
 
   it('should show items when expanded', async () => {
@@ -69,7 +69,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const items = el.shadowRoot?.querySelector('.items');
-    expect(items).toBeDefined();
+    expect(items).to.exist;
   });
 
   it('should dispatch section-toggle event on header click', async () => {
@@ -86,7 +86,7 @@ describe('xcode-graph-filter-section', () => {
     setTimeout(() => headerButton.click());
     const event = await oneEvent(el, 'section-toggle');
 
-    expect(event).toBeDefined();
+    expect(event).to.exist;
   });
 
   it('should dispatch item-toggle event on item click', async () => {
@@ -104,7 +104,7 @@ describe('xcode-graph-filter-section', () => {
     setTimeout(() => itemButton.click());
     const event = await oneEvent(el, 'item-toggle');
 
-    expect(event).toBeDefined();
+    expect(event).to.exist;
     expect(event.detail.key).to.equal('framework');
   });
 
@@ -151,8 +151,8 @@ describe('xcode-graph-filter-section', () => {
 
     const itemButtons = el.shadowRoot?.querySelectorAll('.item-button');
     // First item (framework) is selected, others are deselected
-    expect(itemButtons?.[0]?.classList.contains('deselected')).toBe(false);
-    expect(itemButtons?.[1]?.classList.contains('deselected')).toBe(true);
+    expect(itemButtons?.[0]?.classList.contains('deselected')).to.equal(false);
+    expect(itemButtons?.[1]?.classList.contains('deselected')).to.equal(true);
   });
 
   it('should render platform filter type icons', async () => {
@@ -169,7 +169,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const itemButton = el.shadowRoot?.querySelector('.item-button');
-    expect(itemButton).toBeDefined();
+    expect(itemButton).to.exist;
   });
 
   it('should render project filter type with color swatch', async () => {
@@ -186,7 +186,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const itemButton = el.shadowRoot?.querySelector('.item-button');
-    expect(itemButton).toBeDefined();
+    expect(itemButton).to.exist;
   });
 
   it('should render package filter type with package icon', async () => {
@@ -203,7 +203,7 @@ describe('xcode-graph-filter-section', () => {
     `);
 
     const itemButton = el.shadowRoot?.querySelector('.item-button');
-    expect(itemButton).toBeDefined();
+    expect(itemButton).to.exist;
   });
 
   it('should dispatch preview-change with item on hover', async () => {
@@ -239,7 +239,7 @@ describe('xcode-graph-filter-section', () => {
     const itemButton = el.shadowRoot?.querySelector('.item-button') as HTMLButtonElement;
     setTimeout(() => itemButton.dispatchEvent(new MouseEvent('mouseleave')));
     const event = await oneEvent(el, 'preview-change');
-    expect(event.detail).toBeNull();
+    expect(event.detail).to.be.null;
   });
 
   it('should set aria-expanded on header button', async () => {

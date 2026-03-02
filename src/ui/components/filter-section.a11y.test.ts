@@ -4,7 +4,7 @@
  * Uses vitest-axe to verify the filter section meets accessibility standards.
  */
 
-import { expect as chaiExpect, fixture, html } from '@open-wc/testing';
+import { fixture, html } from '@open-wc/testing';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
 import type { FilterItem, GraphFilterSection } from './filter-section';
@@ -59,8 +59,8 @@ describe('xcode-graph-filter-section a11y', () => {
     `);
 
     const button = el.shadowRoot?.querySelector('.header-button');
-    chaiExpect(button).toBeDefined();
-    chaiExpect(button?.hasAttribute('aria-expanded')).toBe(true);
+    expect(button).toBeDefined();
+    expect(button?.hasAttribute('aria-expanded')).toBe(true);
   });
 
   it('should have aria-pressed on item buttons when expanded', async () => {
@@ -80,7 +80,7 @@ describe('xcode-graph-filter-section a11y', () => {
     const itemButtons = el.shadowRoot?.querySelectorAll('.item-button');
     if (itemButtons && itemButtons.length > 0) {
       const firstButton = itemButtons[0];
-      chaiExpect(firstButton?.hasAttribute('aria-pressed')).toBe(true);
+      expect(firstButton?.hasAttribute('aria-pressed')).toBe(true);
     }
   });
 });

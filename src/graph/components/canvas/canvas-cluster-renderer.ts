@@ -248,7 +248,7 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
 
     const clusterColor = generateColor(cluster.name, cluster.type);
     const isActive = hoveredCluster === cluster.id || selectedCluster === cluster.id;
-    const shouldDim = !!(activeClusterId && activeClusterId !== cluster.id);
+    const shouldDim = Boolean(activeClusterId && activeClusterId !== cluster.id);
 
     renderSingleCluster(
       rc,

@@ -1,7 +1,12 @@
 import type { Cluster, NodePosition } from '@shared/schemas';
 import { NodeRole } from '@shared/schemas/cluster.types';
-import type { SimulationNodeDatum } from 'd3-force';
-import * as d3 from 'd3-force';
+import {
+  forceCenter,
+  forceCollide,
+  forceManyBody,
+  forceSimulation,
+  type SimulationNodeDatum,
+} from 'd3-force';
 import type { LayoutConfig } from '../config';
 
 /** Simulation node for micro-layout within a cluster */
@@ -114,12 +119,11 @@ export function computeClusterInterior(cluster: Cluster, config: LayoutConfig): 
   }));
 
   // 4. Create Forces
-  const simulation = d3
-    .forceSimulation<MicroSimNode>(simNodes)
+  const simulation = forceSimulation<MicroSimNode>(simNodes)
     // A. Collision (prevent overlap)
     .force(
       'collide',
-      d3.forceCollide<MicroSimNode>().radius((d) => d.radius + config.nodeCollisionPadding),
+      forceCollide<MicroSimNode>().radius((d) => d.radius + config.nodeCollisionPadding),
     )
     // B. Solar System Orbit (Band-based positioning)
     .force('orbit', (alpha) => {
@@ -152,9 +156,9 @@ export function computeClusterInterior(cluster: Cluster, config: LayoutConfig): 
       }
     })
     // C. Center Gravity (keep things coherent but loose)
-    .force('center', d3.forceCenter(0, 0).strength(0.02))
+    .force('center', forceCenter(0, 0).strength(0.02))
     // D. Many Body (stronger repulsion to use available space)
-    .force('charge', d3.forceManyBody().strength(config.nodeCharge));
+    .force('charge', forceManyBody().strength(config.nodeCharge));
 
   // 5. Run Simulation
   // Micro-layout is small (dozens of nodes), so we can run enough ticks quickly

@@ -48,7 +48,7 @@ describe('xcode-graph-alert-banner a11y', () => {
     `);
 
     const banner = el.shadowRoot?.querySelector('.banner');
-    chaiExpect(banner).toBeDefined();
+    expect(banner).toBeDefined();
     chaiExpect(banner?.getAttribute('role')).to.equal('alert');
   });
 
@@ -63,7 +63,7 @@ describe('xcode-graph-alert-banner a11y', () => {
     `);
 
     const closeBtn = el.shadowRoot?.querySelector('.close-btn');
-    chaiExpect(closeBtn).toBeDefined();
+    expect(closeBtn).toBeDefined();
     chaiExpect(closeBtn?.getAttribute('aria-label')).to.equal('Dismiss');
   });
 
