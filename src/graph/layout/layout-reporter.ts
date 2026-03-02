@@ -153,35 +153,12 @@ export function printClusterTable(result: HierarchicalLayoutResult, strataSpacin
   console.log(`\n┌${'─'.repeat(90)}┐`);
   console.log(`│ CLUSTER POSITIONS${' '.repeat(72)}│`);
   console.log(`├${'─'.repeat(90)}┤`);
-  console.log(
-    '│ ' +
-      'ID'.padEnd(30) +
-      '│ Stratum │' +
-      '    X │' +
-      '    Y │' +
-      ' Width │' +
-      'Height │' +
-      'Nodes │',
-  );
+  console.log(`│ ${'ID'.padEnd(30)}│ Stratum │    X │    Y │ Width │Height │Nodes │`);
   console.log(`├${'─'.repeat(90)}┤`);
 
   for (const c of clusters) {
     console.log(
-      '│ ' +
-        c.id.substring(0, 29).padEnd(30) +
-        '│' +
-        String(c.stratum).padStart(7) +
-        ' │' +
-        c.x.toFixed(0).padStart(5) +
-        ' │' +
-        c.y.toFixed(0).padStart(5) +
-        ' │' +
-        c.width.toFixed(0).padStart(6) +
-        ' │' +
-        c.height.toFixed(0).padStart(6) +
-        ' │' +
-        String(c.nodeCount).padStart(5) +
-        ' │',
+      `│ ${c.id.substring(0, 29).padEnd(30)}│${String(c.stratum).padStart(7)} │${c.x.toFixed(0).padStart(5)} │${c.y.toFixed(0).padStart(5)} │${c.width.toFixed(0).padStart(6)} │${c.height.toFixed(0).padStart(6)} │${String(c.nodeCount).padStart(5)} │`,
     );
   }
 
@@ -211,9 +188,7 @@ export function printNodesByCluster(
         const absX = nodePos.x + (clusterPos?.x ?? 0);
         const absY = nodePos.y + (clusterPos?.y ?? 0);
         console.log(
-          `   └─ ${node.id.substring(0, 40).padEnd(42)} ` +
-            `rel(${nodePos.x.toFixed(0).padStart(4)}, ${nodePos.y.toFixed(0).padStart(4)}) ` +
-            `abs(${absX.toFixed(0).padStart(5)}, ${absY.toFixed(0).padStart(5)})`,
+          `   └─ ${node.id.substring(0, 40).padEnd(42)} rel(${nodePos.x.toFixed(0).padStart(4)}, ${nodePos.y.toFixed(0).padStart(4)}) abs(${absX.toFixed(0).padStart(5)}, ${absY.toFixed(0).padStart(5)})`,
         );
       }
     }

@@ -172,8 +172,8 @@ export class GraphBuildSettings extends LitElement {
     if (!this.settings) return false;
     return Boolean(
       this.settings.codeSignIdentity ||
-      this.settings.developmentTeam ||
-      this.settings.provisioningProfile
+        this.settings.developmentTeam ||
+        this.settings.provisioningProfile,
     );
   }
 
