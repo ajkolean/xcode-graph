@@ -62,6 +62,7 @@ function getOppositeSide(side: PortSide): PortSide {
       return 'WEST';
     case 'WEST':
       return 'EAST';
+    /* v8 ignore next 2 -- exhaustive PortSide union */
     default:
       return 'EAST';
   }
@@ -242,6 +243,7 @@ function computePortPositionsOnSide(
       dx = 0;
       dy = sideLength / (portCount + 1);
       break;
+    /* v8 ignore next 2 -- exhaustive PortSide union */
     default:
       break;
   }
@@ -449,6 +451,7 @@ function computeWaypoints(
     // Vertical exit and entry - route via horizontal midline
     waypoints.push({ x: sourcePort.x, y: midY });
     waypoints.push({ x: targetPort.x, y: midY });
+    /* v8 ignore next 8 -- source/target ports always share orientation axis via getOppositeSide */
   } else {
     // Mixed orientation - single bend point
     if (sourcePort.side === 'EAST' || sourcePort.side === 'WEST') {

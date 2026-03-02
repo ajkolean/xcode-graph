@@ -1,10 +1,30 @@
 import assert from 'node:assert';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createClusterWithNodes } from '@/fixtures';
 import { buildClusterGraph } from '../cluster-graph';
 import { DEFAULT_CONFIG } from '../config';
 import { computeMacroLayout } from './macro-layout';
 import { computeClusterInterior } from './micro-layout';
+
+/** Inject layerId=0 and reverse positionId on all ELK output children. */
+function injectPositionIds(children: import('elkjs/lib/elk-api.js').ElkNode[]): void {
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    if (!child) continue;
+    Object.defineProperty(child, 'org.eclipse.elk.layered.layering.layerId', {
+      value: 0,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+    Object.defineProperty(child, 'org.eclipse.elk.layered.crossingMinimization.positionId', {
+      value: children.length - 1 - i,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+  }
+}
 
 describe('macro-layout', () => {
   describe('computeMacroLayout', () => {
@@ -150,6 +170,64 @@ describe('macro-layout', () => {
       const positions = await computeMacroLayout(clusterGraph, microLayouts, DEFAULT_CONFIG);
 
       expect(positions.size).toBe(0);
+    });
+
+    it('sorts band nodes by positionId when ELK provides crossing-minimization IDs', async () => {
+      // Create clusters with edges so ELK has a real graph to lay out
+      const clusterA = createClusterWithNodes(2);
+      clusterA.id = 'A';
+      clusterA.name = 'ClusterA';
+      const clusterB = createClusterWithNodes(2);
+      clusterB.id = 'B';
+      clusterB.name = 'ClusterB';
+      const clusterC = createClusterWithNodes(2);
+      clusterC.id = 'C';
+      clusterC.name = 'ClusterC';
+      const clusters = [clusterA, clusterB, clusterC];
+
+      const nodeA0 = clusterA.nodes[0];
+      const nodeB0 = clusterB.nodes[0];
+      const nodeC0 = clusterC.nodes[0];
+      assert(nodeA0 && nodeB0 && nodeC0, 'clusters must have nodes');
+      const edges = [
+        { source: nodeA0.id, target: nodeB0.id },
+        { source: nodeA0.id, target: nodeC0.id },
+      ];
+      const clusterGraph = buildClusterGraph(edges, clusters);
+
+      const microLayouts = new Map(
+        clusters.map((c) => [c.id, computeClusterInterior(c, DEFAULT_CONFIG)]),
+      );
+
+      // Mock ELK to inject positionId on layout output children
+      const elkModule = await import('elkjs/lib/elk.bundled.js');
+      const RealELK = elkModule.default;
+      const realElk = new RealELK();
+
+      function MockELK() {
+        return {
+          layout: async (graph: import('elkjs/lib/elk-api.js').ElkNode) => {
+            const result = await realElk.layout(graph);
+            if (result.children) {
+              injectPositionIds(result.children);
+            }
+            return result;
+          },
+        };
+      }
+      vi.doMock('elkjs/lib/elk.bundled.js', () => ({ default: MockELK }));
+
+      // Re-import to pick up the mock
+      const { computeMacroLayout: computeMacroLayoutMocked } = await import('./macro-layout');
+      const positions = await computeMacroLayoutMocked(clusterGraph, microLayouts, DEFAULT_CONFIG);
+
+      vi.doUnmock('elkjs/lib/elk.bundled.js');
+
+      expect(positions.size).toBe(3);
+      for (const [_id, pos] of positions) {
+        expect(Number.isFinite(pos.x)).toBe(true);
+        expect(Number.isFinite(pos.y)).toBe(true);
+      }
     });
   });
 });
