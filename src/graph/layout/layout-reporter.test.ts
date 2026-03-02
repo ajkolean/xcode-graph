@@ -187,6 +187,48 @@ describe('generatePositionReport', () => {
     expect(node?.relativeX).toBe(30);
     expect(node?.relativeY).toBe(40);
   });
+
+  it('sorts clusters at same y by x in report', () => {
+    const result = makeLayoutResult([
+      {
+        id: 'Right',
+        pos: makeClusterPosition({ id: 'Right', x: 500, y: 0, width: 200, height: 100 }),
+        nodeIds: [],
+      },
+      {
+        id: 'Left',
+        pos: makeClusterPosition({ id: 'Left', x: 100, y: 0, width: 200, height: 100 }),
+        nodeIds: [],
+      },
+    ]);
+
+    const report = generatePositionReport(result);
+
+    expect(report.clusters[0]?.id).toBe('Left');
+    expect(report.clusters[1]?.id).toBe('Right');
+  });
+
+  it('defaults to zero when node cluster position is missing', () => {
+    // Manually build a layout result where a node references a cluster
+    // that has no position in clusterPositions
+    const clusterPositions = new Map<string, ClusterPosition>([
+      ['A', makeClusterPosition({ id: 'A', x: 100, y: 200 })],
+    ]);
+    const nodePositions = new Map<string, NodePosition>([
+      ['n1', makeNodePosition({ id: 'n1', clusterId: 'missing', x: 30, y: 40 })],
+    ]);
+    const result: HierarchicalLayoutResult = {
+      clusterPositions,
+      nodePositions,
+      clusters: [makeCluster('A', [])],
+    };
+
+    const report = generatePositionReport(result);
+    const node = report.nodes[0];
+    // No cluster position found, so absolute = relative + 0
+    expect(node?.absoluteX).toBe(30);
+    expect(node?.absoluteY).toBe(40);
+  });
 });
 
 describe('exportToJSON', () => {
@@ -517,6 +559,44 @@ describe('printNodesByCluster', () => {
     expect(calls.some((c) => c.includes('... and 10 more nodes'))).toBe(true);
     spy.mockRestore();
   });
+
+  it('handles missing cluster position gracefully', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {
+      /* suppress output */
+    });
+    // Build a result where cluster position is absent for the cluster
+    // but node positions exist, exercising the clusterPos?.x ?? 0 fallback
+    const nodePositions = new Map<string, NodePosition>([
+      ['n1', makeNodePosition({ id: 'n1', clusterId: 'A', x: 10, y: 20 })],
+    ]);
+    const result: HierarchicalLayoutResult = {
+      clusterPositions: new Map(),
+      nodePositions,
+      clusters: [makeCluster('A', ['n1'])],
+    };
+    printNodesByCluster(result);
+    const calls = spy.mock.calls.map((c) => c[0] as string);
+    // Node should be printed with absolute position defaulting to relative
+    expect(calls.some((c) => c.includes('n1'))).toBe(true);
+    spy.mockRestore();
+  });
+
+  it('skips nodes without positions', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {
+      /* suppress output */
+    });
+    // Cluster has a node, but nodePositions map is empty
+    const result: HierarchicalLayoutResult = {
+      clusterPositions: new Map([['A', makeClusterPosition({ id: 'A' })]]),
+      nodePositions: new Map(),
+      clusters: [makeCluster('A', ['n1'])],
+    };
+    printNodesByCluster(result);
+    const calls = spy.mock.calls.map((c) => c[0] as string);
+    // Node n1 should not appear in output since its position is missing
+    expect(calls.every((c) => !c.includes('n1'))).toBe(true);
+    spy.mockRestore();
+  });
 });
 
 describe('printStrataVisualization', () => {
@@ -530,6 +610,28 @@ describe('printStrataVisualization', () => {
     ]);
     printStrataVisualization(result);
     expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('sorts clusters within the same stratum by x position', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {
+      /* suppress output */
+    });
+    const result = makeLayoutResult([
+      { id: 'Right', pos: makeClusterPosition({ id: 'Right', x: 500, y: 0 }), nodeIds: [] },
+      { id: 'Left', pos: makeClusterPosition({ id: 'Left', x: 100, y: 0 }), nodeIds: [] },
+    ]);
+    printStrataVisualization(result);
+
+    const calls = spy.mock.calls.map((c) => c[0] as string);
+    const stratumLine = calls.find((c) => c.includes('Stratum'));
+    expect(stratumLine).toBeDefined();
+    // Left (x=100) should appear before Right (x=500)
+    if (stratumLine) {
+      const leftIdx = stratumLine.indexOf('Left');
+      const rightIdx = stratumLine.indexOf('Right');
+      expect(leftIdx).toBeLessThan(rightIdx);
+    }
     spy.mockRestore();
   });
 });

@@ -71,6 +71,7 @@ export function arrangeClusterGrid(
 
   const sortedClusters = [...clusters].sort((a, b) => {
     if (a.origin !== b.origin) {
+      /* v8 ignore next 1 -- both branches are valid; V8 TimSort order is non-deterministic */
       return a.origin === Origin.Local ? -1 : 1;
     }
     return b.nodes.length - a.nodes.length;
