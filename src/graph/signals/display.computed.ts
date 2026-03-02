@@ -100,10 +100,19 @@ export const displayData: Signal.Computed<DisplayData> = new Signal.Computed<Dis
   };
 });
 
+/** Checks whether a node should be dimmed because it doesn't match the search query. */
 function shouldDimBySearch(node: GraphNode, lowerQuery: string): boolean {
   return lowerQuery !== '' && !node.name.toLowerCase().includes(lowerQuery);
 }
 
+/**
+ * Checks whether a node belongs to a transitive chain at the appropriate depth.
+ * @param nodeId - Node ID to check
+ * @param chain - Transitive traversal result containing node depths
+ * @param showDirect - Whether direct (depth <= 1) nodes are visible
+ * @param showTransitive - Whether transitive (depth > 1) nodes are visible
+ * @returns `true` if the node is in the chain and its depth matches the visibility flags
+ */
 function isNodeInChain(
   nodeId: string,
   chain: TransitiveResult,
@@ -115,6 +124,12 @@ function isNodeInChain(
   return depth <= 1 ? showDirect : showTransitive;
 }
 
+/**
+ * Determines whether a node should be dimmed based on the current selection
+ * and highlight toggle states. A node is dimmed if it is not the selected node
+ * and does not appear in either the dependency or dependent chain.
+ * @returns `true` if the node should be visually dimmed
+ */
 function shouldDimBySelection(
   node: GraphNode,
   selected: GraphNode,
@@ -137,6 +152,12 @@ function shouldDimBySelection(
   );
 }
 
+/**
+ * Checks whether a node should be dimmed because it doesn't match the active preview filter.
+ * @param node - The graph node to test
+ * @param preview - The active preview filter (type and value)
+ * @returns `true` if the node does not match the preview filter
+ */
 function shouldDimByPreview(node: GraphNode, preview: { type: string; value: string }): boolean {
   switch (preview.type) {
     case 'nodeType':

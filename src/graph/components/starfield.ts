@@ -48,6 +48,7 @@ const DEFAULT_OPTIONS: Required<StarfieldOptions> = {
   spanMultiplier: 2.0,
 };
 
+/** Generates and renders a cached parallax starfield on a canvas. */
 export class Starfield {
   private stars: Star[] = [];
   private width = 0;
@@ -130,6 +131,15 @@ export class Starfield {
     this.stars.sort((a, b) => a.depth - b.depth);
   }
 
+  /**
+   * Creates a single star with randomized position, size, opacity, and color.
+   * @param isBright - Whether the star should use bright star parameters.
+   * @param spanX - Horizontal spawn region width.
+   * @param spanY - Vertical spawn region height.
+   * @param offsetX - Horizontal offset to center the spawn region.
+   * @param offsetY - Vertical offset to center the spawn region.
+   * @returns A new Star object.
+   */
   private createStar(
     isBright: boolean,
     spanX: number,
@@ -190,6 +200,11 @@ export class Starfield {
     }
   }
 
+  /**
+   * Renders all stars with parallax offsets to an OffscreenCanvas cache.
+   * @param panX - Rounded camera X offset in world space.
+   * @param panY - Rounded camera Y offset in world space.
+   */
   private renderToCache(panX: number, panY: number): void {
     const { width, height } = this;
     const { parallaxIntensity, spanMultiplier } = this.options;

@@ -38,6 +38,14 @@ export interface ClusterRenderContext {
   manualClusterPositions: Map<string, { x: number; y: number }>;
 }
 
+/**
+ * Checks whether a circular cluster region intersects the visible viewport.
+ * @param cx - Cluster center X in world coordinates.
+ * @param cy - Cluster center Y in world coordinates.
+ * @param radius - Cluster radius.
+ * @param viewport - Current viewport bounds.
+ * @returns True if the cluster is at least partially visible.
+ */
 function isClusterInViewport(
   cx: number,
   cy: number,
@@ -66,6 +74,7 @@ function getClusterBorderWidth(nodeCount: number, isActive: boolean): number {
   return Math.max(1, Math.log2(nodeCount)) * baseWidth * 1.5;
 }
 
+/** Draws a cluster's radial gradient fill and dashed border with optional selection animation. */
 function drawClusterFillAndBorder(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -116,6 +125,13 @@ function drawClusterFillAndBorder(
   ctx.lineDashOffset = 0;
 }
 
+/**
+ * Truncates text with an ellipsis if it exceeds the maximum pixel width.
+ * @param ctx - Canvas context used for text measurement.
+ * @param text - The text to truncate.
+ * @param maxWidth - Maximum allowed width in pixels.
+ * @returns The original or truncated text.
+ */
 function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
   if (ctx.measureText(text).width <= maxWidth) return text;
   let truncated = text;
@@ -168,6 +184,7 @@ function drawTextAlongArc(
   }
 }
 
+/** Draws a cluster's name label along an arc above the cluster circle. */
 function drawClusterLabels(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -199,6 +216,7 @@ function drawClusterLabels(
   drawTextAlongArc(ctx, displayName, cx, cy, arcRadius);
 }
 
+/** Renders a single cluster's fill, border, and optional selection animation. */
 function renderSingleCluster(
   rc: ClusterRenderContext,
   cx: number,
@@ -231,6 +249,11 @@ function renderSingleCluster(
   );
 }
 
+/**
+ * Renders all visible clusters with fill, border, and arc labels.
+ * @param rc - Cluster rendering context with canvas, layout, theme, and interaction state.
+ * @param viewport - Current viewport bounds for culling off-screen clusters.
+ */
 export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds): void {
   const { ctx, layout, zoom, selectedCluster, hoveredCluster, manualClusterPositions } = rc;
   const activeClusterId = selectedCluster || hoveredCluster;

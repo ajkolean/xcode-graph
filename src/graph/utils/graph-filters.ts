@@ -28,6 +28,12 @@ export function matchesSearch(node: GraphNode, searchQuery: string): boolean {
   );
 }
 
+/**
+ * Tests whether a node passes all active filter criteria (node type, platform, origin, project, package).
+ * @param node - The graph node to test
+ * @param filters - Current filter state
+ * @returns `true` if the node matches all filter criteria
+ */
 function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
   if (!filters.nodeTypes.has(node.type)) return false;
   if (node.deploymentTargets) {

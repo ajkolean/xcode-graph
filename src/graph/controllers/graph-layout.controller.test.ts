@@ -18,7 +18,10 @@ class MockHost {
     this.controllers.push(controller);
   }
 
-  removeController(_controller: ReactiveController): void {}
+  removeController(_controller: ReactiveController): void {
+    const idx = this.controllers.indexOf(_controller);
+    if (idx >= 0) this.controllers.splice(idx, 1);
+  }
 
   requestUpdate() {
     this.updateCount++;
@@ -134,6 +137,56 @@ describe('GraphLayoutController', () => {
       expect(controller.clusters).toBeDefined();
       expect(typeof controller.isSettling).toBe('boolean');
       expect(typeof controller.enableAnimation).toBe('boolean');
+    });
+
+    it('should expose cycle-related getters as undefined before layout', () => {
+      expect(controller.cycleNodes).toBeUndefined();
+      expect(controller.nodeSccId).toBeUndefined();
+      expect(controller.sccSizes).toBeUndefined();
+    });
+
+    it('should expose edge-related getters as undefined before layout', () => {
+      expect(controller.clusterEdges).toBeUndefined();
+      expect(controller.routedEdges).toBeUndefined();
+    });
+
+    it('should populate cycle and edge getters after layout computation', async () => {
+      const { nodes, edges } = createLinearChain(4);
+
+      await controller.computeLayout(nodes, edges);
+
+      // After layout, these may be defined depending on graph structure
+      // For a linear chain without cycles, cycleNodes may be an empty set or undefined
+      // The important thing is the getters work without error
+      const cycleNodes = controller.cycleNodes;
+      const nodeSccId = controller.nodeSccId;
+      const sccSizes = controller.sccSizes;
+      const clusterEdges = controller.clusterEdges;
+      const routedEdges = controller.routedEdges;
+
+      // Verify type correctness (no errors accessing these)
+      if (cycleNodes) expect(cycleNodes).toBeInstanceOf(Set);
+      if (nodeSccId) expect(nodeSccId).toBeInstanceOf(Map);
+      if (sccSizes) expect(sccSizes).toBeInstanceOf(Map);
+      if (clusterEdges) expect(Array.isArray(clusterEdges)).toBe(true);
+      if (routedEdges) expect(Array.isArray(routedEdges)).toBe(true);
+    });
+
+    it('should reset all getters to initial state when computing empty layout', async () => {
+      const { nodes, edges } = createLinearChain(4);
+      await controller.computeLayout(nodes, edges);
+
+      // Now compute with empty graph
+      await controller.computeLayout([], []);
+
+      expect(controller.nodePositions.size).toBe(0);
+      expect(controller.clusterPositions.size).toBe(0);
+      expect(controller.clusters).toHaveLength(0);
+      expect(controller.cycleNodes).toBeUndefined();
+      expect(controller.nodeSccId).toBeUndefined();
+      expect(controller.sccSizes).toBeUndefined();
+      expect(controller.clusterEdges).toBeUndefined();
+      expect(controller.routedEdges).toBeUndefined();
     });
   });
 

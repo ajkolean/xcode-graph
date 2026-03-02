@@ -102,6 +102,7 @@ function initializePortRequirements(
   return portRequirements;
 }
 
+/** Populates port requirements by computing exit/entry sides for each cluster edge. */
 function collectPortRequirements(
   clusterEdges: ClusterEdge[],
   clusterPositions: Map<string, ClusterPosition>,

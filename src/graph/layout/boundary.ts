@@ -38,10 +38,12 @@ export interface BoundaryForce {
   hardBoundary: (_: boolean) => BoundaryForce;
 }
 
+/** Creates an accessor that always returns the given constant value. */
 function constant<T>(x: T): (node: BoundaryNode, index: number, nodes: BoundaryNode[]) => T {
   return () => x;
 }
 
+/** Normalizes a value-or-accessor into a consistent accessor function. */
 function toAccessor(
   val: ValueOrAccessor<number>,
   defaultVal: number,
@@ -49,6 +51,7 @@ function toAccessor(
   return typeof val !== 'function' ? constant(val == null ? defaultVal : Number(val)) : val;
 }
 
+/** Computes a default border width as half the smaller boundary dimension. */
 function computeDefaultBorder(
   x0: ValueOrAccessor<number>,
   y0: ValueOrAccessor<number>,
@@ -98,6 +101,7 @@ export default function forceBoundary(
   let y0Fn = toAccessor(y0, -100);
   let y1Fn = toAccessor(y1, 100);
 
+  /** Returns the resolved boundary values for node at index i. */
   function getBounds(i: number) {
     return {
       x0: x0z[i] ?? 0,
@@ -108,10 +112,12 @@ export default function forceBoundary(
     };
   }
 
+  /** Computes the corrective velocity component pushing a node toward the boundary center. */
   function getVx(halfX: number, x: number, strengthX: number, _border: number, alpha: number) {
     return (halfX - x) * Math.min(2, Math.abs(halfX - x) / halfX) * strengthX * alpha;
   }
 
+  /** Checks whether a node is within the border zone of its boundary. */
   function isNearBorder(node: BoundaryNode, i: number): boolean {
     const nx = node.x ?? 0;
     const ny = node.y ?? 0;
@@ -119,6 +125,7 @@ export default function forceBoundary(
     return nx < x0 + border || nx > x1 - border || ny < y0 + border || ny > y1 - border;
   }
 
+  /** Applies hard clamping on a single axis by adjusting velocity to keep the node within bounds. */
   function clampAxis(
     node: BoundaryNode,
     axis: 'vx' | 'vy',
@@ -130,12 +137,14 @@ export default function forceBoundary(
     if (pos <= min) node[axis] = (node[axis] ?? 0) + (min - pos);
   }
 
+  /** Clamps a node's velocity on both axes to enforce hard boundary limits. */
   function applyHardBoundary(node: BoundaryNode, i: number): void {
     const { x0, x1, y0, y1 } = getBounds(i);
     clampAxis(node, 'vx', node.x ?? 0, x0, x1);
     clampAxis(node, 'vy', node.y ?? 0, y0, y1);
   }
 
+  /** Applies a soft corrective force pushing the node toward the boundary center. */
   function applyBorderForce(node: BoundaryNode, i: number, alpha: number): void {
     node.vx =
       (node.vx ?? 0) +
@@ -145,6 +154,7 @@ export default function forceBoundary(
       getVx(halfY[i] ?? 0, node.y ?? 0, strengthsY[i] ?? 0, borderz[i] ?? 0, alpha);
   }
 
+  /** The force function applied each simulation tick to all nodes. */
   function force(alpha: number) {
     for (let i = 0, n = nodes.length; i < n; ++i) {
       const node = nodes[i];
@@ -160,6 +170,7 @@ export default function forceBoundary(
     }
   }
 
+  /** Precomputes boundary values, strengths, and midpoints for a single node. */
   function initializeNode(
     i: number,
     node: BoundaryNode,
@@ -186,6 +197,7 @@ export default function forceBoundary(
     borderz[i] = Number(borderFn(node, i, nodes));
   }
 
+  /** Initializes all per-node boundary arrays from the current node list and accessors. */
   function initialize() {
     if (!nodes) return;
     const n = nodes.length;

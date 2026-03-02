@@ -18,7 +18,8 @@ export function prefersDarkMode(): boolean {
 
 /**
  * Listen for color scheme changes.
- * @returns Cleanup function to remove the listener.
+ * @param callback - Called with `true` when dark mode is active, `false` otherwise
+ * @returns Cleanup function to remove the listener
  */
 export function onColorSchemeChange(callback: (isDark: boolean) => void): () => void {
   const mql = globalThis.matchMedia?.('(prefers-color-scheme: dark)');

@@ -50,6 +50,7 @@ export class GraphDataService {
     this.buildIndices();
   }
 
+  /** Populates internal lookup indices (by type, project, platform, origin, and edge direction). */
   private buildIndices() {
     for (const node of this.nodes) {
       addToMultiMap(this.nodesByType, node.type, node);

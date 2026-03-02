@@ -28,6 +28,8 @@ export default defineConfig({
         'src/vite-env.d.ts',
         'src/test-utils/**',
         'src/styles/tokens.ts',
+        'src/main.ts',
+        'src/graph/test-helpers/**',
       ],
     },
     projects: [

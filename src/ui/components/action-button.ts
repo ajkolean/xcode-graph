@@ -203,6 +203,7 @@ export class GraphActionButton extends LitElement {
     }
   `;
 
+  /** Renders the button element with an icon slot and a default text slot. */
   override render(): TemplateResult {
     return html`
       <button ?disabled=${this.disabled}>

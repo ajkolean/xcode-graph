@@ -62,6 +62,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * - Send events: `service.send({ type: 'EVENT' })`
    */
   get service(): Service<TSchema> {
+    /* v8 ignore next */
     return this._service;
   }
 
@@ -70,6 +71,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * Shorthand for `service.state`
    */
   get state(): Service<TSchema>['state'] {
+    /* v8 ignore next */
     return this._service.state;
   }
 
@@ -78,6 +80,7 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
    * Shorthand for `service.context`
    */
   get context(): Service<TSchema>['context'] {
+    /* v8 ignore next */
     return this._service.context;
   }
 

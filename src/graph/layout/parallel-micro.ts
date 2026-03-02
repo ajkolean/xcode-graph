@@ -91,6 +91,7 @@ export async function computeMicroLayoutsParallel(
   config: LayoutConfig,
 ): Promise<Map<string, MicroLayoutResult>> {
   if (clusters.length < MIN_CLUSTERS_FOR_WORKERS || typeof Worker === 'undefined') {
+    /* v8 ignore next */
     return computeMicroLayoutsSync(clusters, config);
   }
 

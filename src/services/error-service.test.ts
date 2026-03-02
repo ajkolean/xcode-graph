@@ -441,5 +441,45 @@ describe('ErrorService', () => {
       expect(appError.details).toContain('404');
       expect(appError.details).toContain('Not Found');
     });
+
+    it('should fallback to String() when JSON.stringify fails on circular object', () => {
+      const circular: Record<string, unknown> = { name: 'circular' };
+      circular.self = circular;
+      const appError = service.handleError(circular, { logToConsole: false });
+
+      expect(appError.details).toBe('[object Object]');
+    });
+
+    it('should return undefined details for non-object non-Error values', () => {
+      const appError = service.handleError(42, { logToConsole: false });
+
+      expect(appError.details).toBeUndefined();
+    });
+  });
+
+  describe('logError with unrecognized severity', () => {
+    it('should not call any console method for unknown severity', () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        /* suppress */
+      });
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+        /* suppress */
+      });
+      const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {
+        /* suppress */
+      });
+
+      service.handleError(new Error('test'), {
+        severity: 'unknown-severity' as ErrorSeverity,
+      });
+
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
+      consoleWarnSpy.mockRestore();
+      consoleLogSpy.mockRestore();
+    });
   });
 });

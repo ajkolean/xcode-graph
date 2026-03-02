@@ -86,6 +86,7 @@ export class FocusTrapController implements ReactiveController {
     // Trap is lazily created on first activation in hostUpdated
   }
 
+  /** Syncs the focus trap state with the `isActive()` predicate after each host update. */
   hostUpdated(): void {
     const shouldBeActive = this.config.isActive();
 
@@ -96,11 +97,13 @@ export class FocusTrapController implements ReactiveController {
     }
   }
 
+  /** Deactivates and disposes the focus trap when the host is disconnected from the DOM. */
   hostDisconnected(): void {
     this.deactivate();
     this.trap = null;
   }
 
+  /** Creates the focus trap (if needed) and activates it with shadow DOM support. */
   private activate(): void {
     try {
       if (!this.trap) {
@@ -129,6 +132,7 @@ export class FocusTrapController implements ReactiveController {
     }
   }
 
+  /** Deactivates the focus trap if it is currently active, returning focus per config. */
   private deactivate(): void {
     try {
       if (this.trap?.active) {

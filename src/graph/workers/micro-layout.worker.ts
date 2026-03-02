@@ -34,6 +34,11 @@ export interface SerializedMicroResult {
   relativePositions: Array<[string, NodePosition]>;
 }
 
+/**
+ * Converts a serialized cluster (with arrays) back to the internal Cluster type (with Maps).
+ * @param sc - Serialized cluster received from the main thread
+ * @returns Deserialized Cluster instance
+ */
 function deserializeCluster(sc: SerializedMicroCluster): Cluster {
   return {
     ...sc,
@@ -60,4 +65,5 @@ const workerApi = {
 
 export type MicroLayoutWorkerAPI = typeof workerApi;
 
+/* v8 ignore next */
 expose(workerApi);

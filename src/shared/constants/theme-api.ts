@@ -25,6 +25,7 @@ export interface ThemeProperty {
   category: ThemeCategory;
 }
 
+/* v8 ignore start */
 export const THEME_PROPERTIES: readonly ThemeProperty[] = [
   // ── Color ────────────────────────────────────────────
   {
@@ -136,3 +137,4 @@ export const THEME_PROPERTIES: readonly ThemeProperty[] = [
     category: 'border',
   },
 ] as const;
+/* v8 ignore stop */

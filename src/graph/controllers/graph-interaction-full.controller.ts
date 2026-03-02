@@ -62,14 +62,17 @@ export class GraphInteractionFullController implements ReactiveController {
     host.addController(this);
   }
 
+  /** Sets the SVG element reference used for coordinate calculations during node dragging. */
   setSvgElement(element: SVGSVGElement): void {
     this.svgElement = element;
   }
 
+  /** @returns Whether an SVG element reference has been set. */
   hasSvgElement(): boolean {
     return this.svgElement !== null;
   }
 
+  /** Updates the interaction configuration with new zoom, node positions, or cluster positions. */
   updateConfig(config: Partial<GraphInteractionConfig>): void {
     if (config.zoom !== undefined) this.zoom = config.zoom;
     if (config.finalNodePositions) this.finalNodePositions = config.finalNodePositions;
@@ -134,6 +137,11 @@ export class GraphInteractionFullController implements ReactiveController {
     this.host.requestUpdate();
   };
 
+  /**
+   * Initiates dragging for a specific node.
+   * @param nodeId - The ID of the node being dragged
+   * @param e - The mouse event (propagation is stopped)
+   */
   handleNodeMouseDown(nodeId: string, e: MouseEvent): void {
     e.stopPropagation();
     this.draggedNode = nodeId;
@@ -141,10 +149,12 @@ export class GraphInteractionFullController implements ReactiveController {
     this.host.requestUpdate();
   }
 
+  /** Registers a global mouseup listener for drag release detection. */
   hostConnected(): void {
     window.addEventListener('mouseup', this.handleWindowMouseUp, { capture: true });
   }
 
+  /** Removes the global mouseup listener and resets drag state on disconnect. */
   hostDisconnected(): void {
     try {
       this.isDragging = false;

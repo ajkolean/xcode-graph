@@ -52,6 +52,80 @@ describe('applyGraphFilters', () => {
   });
 });
 
+describe('applyGraphFilters - matchesFilterCriteria edge cases', () => {
+  it('filters nodes with deploymentTargets by platform', () => {
+    const nodeWithDeploymentTargets: GraphNode[] = [
+      {
+        id: 'multi',
+        name: 'MultiPlatform',
+        type: NodeType.App,
+        platform: Platform.iOS,
+        origin: Origin.Local,
+        project: 'Core',
+        deploymentTargets: { iOS: '16.0', macOS: '13.0' },
+      },
+    ];
+    const filters: FilterState = {
+      nodeTypes: new Set([NodeType.App]),
+      platforms: new Set([Platform.macOS]),
+      origins: new Set([Origin.Local]),
+      projects: new Set(['Core']),
+      packages: new Set(),
+    };
+
+    const result = applyGraphFilters(nodeWithDeploymentTargets, [], filters, '');
+    expect(result.filteredNodes).toHaveLength(1);
+    expect(result.filteredNodes[0]?.id).toBe('multi');
+  });
+
+  it('excludes nodes with deploymentTargets when no platform matches', () => {
+    const nodeWithDeploymentTargets: GraphNode[] = [
+      {
+        id: 'multi',
+        name: 'MultiPlatform',
+        type: NodeType.App,
+        platform: Platform.iOS,
+        origin: Origin.Local,
+        project: 'Core',
+        deploymentTargets: { iOS: '16.0', macOS: '13.0' },
+      },
+    ];
+    const filters: FilterState = {
+      nodeTypes: new Set([NodeType.App]),
+      platforms: new Set([Platform.visionOS]),
+      origins: new Set([Origin.Local]),
+      projects: new Set(['Core']),
+      packages: new Set(),
+    };
+
+    const result = applyGraphFilters(nodeWithDeploymentTargets, [], filters, '');
+    expect(result.filteredNodes).toHaveLength(0);
+  });
+
+  it('excludes non-package node when project not in filter', () => {
+    const nodesWithProject: GraphNode[] = [
+      {
+        id: 'fw',
+        name: 'Framework1',
+        type: NodeType.Framework,
+        platform: Platform.iOS,
+        origin: Origin.Local,
+        project: 'FeatureA',
+      },
+    ];
+    const filters: FilterState = {
+      nodeTypes: new Set([NodeType.Framework]),
+      platforms: new Set([Platform.iOS]),
+      origins: new Set([Origin.Local]),
+      projects: new Set(['Core']),
+      packages: new Set(),
+    };
+
+    const result = applyGraphFilters(nodesWithProject, [], filters, '');
+    expect(result.filteredNodes).toHaveLength(0);
+  });
+});
+
 describe('matchesSearch', () => {
   const node = createNode({
     id: '1',

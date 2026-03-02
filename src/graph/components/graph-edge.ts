@@ -85,6 +85,7 @@ export class GraphEdge extends LitElement {
     return resolveDefaults(this, EDGE_DEFAULTS);
   }
 
+  /** Renders the SVG edge path with zoom-adjusted color, opacity, and optional glow highlight. */
   override render(): TemplateResult {
     const { x1, y1, x2, y2, color, zoom, opacity, isDependent, animated, isHighlighted } =
       this.resolveEdgeProps();

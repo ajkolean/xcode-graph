@@ -1,7 +1,12 @@
-import { describe, expect, it } from 'vitest';
-import { createClusterWithNodes } from '@/fixtures';
+import { describe, expect, it, vi } from 'vitest';
+import { createCluster, createClusterWithNodes } from '@/fixtures';
 import { DEFAULT_CONFIG } from './config';
-import { computeMicroLayoutsParallel, computeMicroLayoutsSync } from './parallel-micro';
+import {
+  computeMicroLayoutsParallel,
+  computeMicroLayoutsSync,
+  deserializeResult,
+  serializeCluster,
+} from './parallel-micro';
 
 describe('parallel-micro', () => {
   describe('computeMicroLayoutsParallel', () => {

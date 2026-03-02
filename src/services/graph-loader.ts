@@ -267,6 +267,10 @@ export class GraphLoader {
     });
   }
 
+  /**
+   * Returns a promise that resolves after the given milliseconds, yielding to the UI thread.
+   * @param ms - Delay duration in milliseconds
+   */
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }

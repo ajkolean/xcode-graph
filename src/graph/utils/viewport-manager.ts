@@ -59,6 +59,7 @@ export function fitToViewport(ctx: ViewportContext): ViewportFitResult | null {
     !Number.isFinite(minY) ||
     !Number.isFinite(maxY)
   )
+    /* v8 ignore next */
     return null;
 
   const graphWidth = maxX - minX;

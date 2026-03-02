@@ -60,6 +60,7 @@ export class GraphHiddenDom extends LitElement {
     }
   `;
 
+  /** Resets the focused index when the nodes list changes. */
   override willUpdate(changedProps: PropertyValues<this>): void {
     if (changedProps.has('nodes')) {
       // Reset focus index if nodes change
@@ -67,6 +68,7 @@ export class GraphHiddenDom extends LitElement {
     }
   }
 
+  /** Handles arrow key navigation, Home/End, and Enter/Space selection within the node tree. */
   private handleKeyDown(e: KeyboardEvent) {
     if (this.nodes.length === 0) return;
 
@@ -118,6 +120,7 @@ export class GraphHiddenDom extends LitElement {
     }
   }
 
+  /** Moves DOM focus to the tree item at the current focused index. */
   private focusCurrentNode() {
     const items = this.shadowRoot?.querySelectorAll('[role="treeitem"]');
     const target = items?.[this.focusedIndex] as HTMLElement | undefined;
@@ -145,6 +148,11 @@ export class GraphHiddenDom extends LitElement {
     return ids.join(' ');
   }
 
+  /**
+   * Builds a human-readable description of a node for screen readers.
+   * @param node - The graph node to describe.
+   * @returns A comma-separated string of type, platform, project, and dependency counts.
+   */
   private getNodeDescription(node: GraphNode): string {
     const deps = this.edges.filter((e) => e.source === node.id).length;
     const dependents = this.edges.filter((e) => e.target === node.id).length;
@@ -164,6 +172,7 @@ export class GraphHiddenDom extends LitElement {
     return `${sourceName} depends on ${targetName}, kind ${kind}`;
   }
 
+  /** Renders the accessible hidden DOM tree with node list, edge table, and live region. */
   override render(): TemplateResult {
     const nodeCount = this.nodes.length;
     const edgeCount = this.edges.length;

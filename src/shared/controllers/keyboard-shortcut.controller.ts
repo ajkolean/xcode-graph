@@ -69,10 +69,12 @@ export class KeyboardShortcutController implements ReactiveController {
     host.addController(this);
   }
 
+  /** Registers the global keydown listener when the host connects to the DOM. */
   hostConnected(): void {
     window.addEventListener('keydown', this.handleKeyDown);
   }
 
+  /** Removes the global keydown listener when the host disconnects from the DOM. */
   hostDisconnected(): void {
     try {
       window.removeEventListener('keydown', this.handleKeyDown);

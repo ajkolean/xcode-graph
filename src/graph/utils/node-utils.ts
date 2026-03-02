@@ -279,6 +279,7 @@ export function computeFilters(allNodes: GraphNode[]): {
     }
   });
 
+  /** Returns `true` if any filter category has fewer items selected than available. */
   const hasActiveFilters = (filters: FilterState): boolean => {
     return (
       filters.nodeTypes.size < typeCounts.size ||
@@ -288,6 +289,7 @@ export function computeFilters(allNodes: GraphNode[]): {
     );
   };
 
+  /** Creates a callback that resets all filters to include every available option. */
   const createClearFilters = (onFiltersChange: (filters: FilterState) => void) => {
     return () => {
       onFiltersChange({

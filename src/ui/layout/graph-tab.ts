@@ -134,39 +134,48 @@ export class GraphTab extends SignalWatcherLitElement {
     }
   `;
 
+  /** Selects a node from a canvas click event. */
   private handleNodeSelect(e: CustomEvent) {
     selectNode(e.detail.node);
   }
 
+  /** Selects a cluster from a canvas click event. */
   private handleClusterSelect(e: CustomEvent) {
     selectCluster(e.detail.clusterId);
   }
 
+  /** Updates the hovered node signal from a canvas hover event. */
   private handleNodeHover(e: CustomEvent) {
     setHoveredNode(e.detail.nodeId);
   }
 
+  /** Increments the zoom level by one step. */
   private handleZoomIn() {
     zoomIn();
   }
 
+  /** Decrements the zoom level by one step. */
   private handleZoomOut() {
     zoomOut();
   }
 
+  /** Sets the zoom level to an exact value from a zoom step event. */
   private handleZoomStep(e: CustomEvent<number>) {
     setZoom(e.detail);
   }
 
+  /** Resets zoom by fitting the graph to the viewport. */
   private handleZoomReset() {
     // Fit to viewport instead of resetting to 1.0
     this.canvasElement?.fitToViewport();
   }
 
+  /** Toggles the animation enabled/disabled state. */
   private handleToggleAnimation() {
     toggleAnimation();
   }
 
+  /** Handles continuous zoom changes (e.g. pinch or scroll) from the canvas. */
   private handleZoomChange(e: CustomEvent) {
     setZoom(e.detail);
   }

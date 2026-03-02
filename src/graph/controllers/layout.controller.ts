@@ -152,6 +152,7 @@ export class LayoutController implements ReactiveController {
     return this.cachedResult;
   }
 
+  /** Checks whether the given nodes and edges are the same references and lengths as the cached input. */
   private isSameInput(nodes: GraphNode[], edges: GraphEdge[]): boolean {
     return (
       nodes.length === this.cachedNodes.length &&
@@ -161,6 +162,7 @@ export class LayoutController implements ReactiveController {
     );
   }
 
+  /** Stores the layout result and input references for cache hit comparison. */
   private cacheResult(result: LayoutResult, nodes: GraphNode[], edges: GraphEdge[]): void {
     this.cachedResult = result;
     this.cachedNodes = nodes;
@@ -171,6 +173,7 @@ export class LayoutController implements ReactiveController {
     // Required by ReactiveControllerHost interface - no initialization needed
   }
 
+  /** Clears the layout cache when the host element disconnects. */
   hostDisconnected(): void {
     this.clearCache();
   }

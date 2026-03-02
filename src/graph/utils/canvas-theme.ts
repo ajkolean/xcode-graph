@@ -103,6 +103,7 @@ export interface CanvasTheme {
  */
 export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
   const computedStyles = getComputedStyle(el);
+  /** Reads a CSS custom property value, returning the fallback if unset. */
   const get = (prop: string, fallback: string) =>
     computedStyles.getPropertyValue(prop).trim() || fallback;
 

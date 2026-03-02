@@ -194,6 +194,7 @@ export class AnimationLoopController implements ReactiveController {
     // Controller is passive until requestRender() is called
   }
 
+  /** Stops the animation loop and resets state when the host element disconnects. */
   hostDisconnected(): void {
     this.stop();
     this._dirty = false;

@@ -59,6 +59,7 @@ export const GraphAnalysisService = {
 
     const path: string[] = [];
 
+    /** Recursively traverses the graph via DFS, tracking the current path to detect back-edges (cycles). */
     const dfs = (nodeId: string): void => {
       visited.add(nodeId);
       recStack.add(nodeId);

@@ -69,11 +69,13 @@ export class GraphErrorNotificationContainer extends SignalWatcherLitElement {
     }
   `;
 
+  /** Dismisses an error toast by forwarding the error ID to the error service. */
   private handleDismiss(e: CustomEvent<{ errorId: string }>): void {
     const { errorId } = e.detail;
     errorService.dismiss(errorId);
   }
 
+  /** Executes the action associated with an error toast (e.g. retry). */
   private handleAction(e: CustomEvent<{ error: AppError }>): void {
     const { error } = e.detail;
     errorService.executeAction(error);

@@ -107,6 +107,11 @@ export function generatePositionReport(
   return { clusters, nodes, summary };
 }
 
+/**
+ * Computes the axis-aligned bounding box enclosing all cluster positions.
+ * @param clusters - Array of cluster positions with center coordinates and dimensions
+ * @returns Bounding box with min/max coordinates and total width/height
+ */
 function computeBoundingBox(clusters: ClusterPosition[]) {
   if (clusters.length === 0) {
     return { xMin: 0, xMax: 0, yMin: 0, yMax: 0, width: 0, height: 0 };

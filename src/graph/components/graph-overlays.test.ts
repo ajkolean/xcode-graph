@@ -131,6 +131,40 @@ describe('xcode-graph-controls', () => {
 
     expect(event).toBeDefined();
   });
+
+  it('should stop wheel event propagation on the container', async () => {
+    const el = await fixture<GraphControls>(
+      html`<xcode-graph-controls zoom="1" base-zoom="1"></xcode-graph-controls>`,
+    );
+
+    const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
+    let parentReceived = false;
+    el.addEventListener('wheel', () => {
+      parentReceived = true;
+    });
+
+    const wheelEvent = new WheelEvent('wheel', { bubbles: true, composed: true });
+    container.dispatchEvent(wheelEvent);
+
+    expect(parentReceived).toBe(false);
+  });
+
+  it('should stop mousedown event propagation on the container', async () => {
+    const el = await fixture<GraphControls>(
+      html`<xcode-graph-controls zoom="1" base-zoom="1"></xcode-graph-controls>`,
+    );
+
+    const container = el.shadowRoot?.querySelector('.container') as HTMLElement;
+    let parentReceived = false;
+    el.addEventListener('mousedown', () => {
+      parentReceived = true;
+    });
+
+    const mouseEvent = new MouseEvent('mousedown', { bubbles: true, composed: true });
+    container.dispatchEvent(mouseEvent);
+
+    expect(parentReceived).toBe(false);
+  });
 });
 
 describe('xcode-graph-visualization-empty-state', () => {

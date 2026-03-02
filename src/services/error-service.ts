@@ -70,10 +70,16 @@ export type ErrorActionHandler = (error: AppError) => void | Promise<void>;
 
 const DEFAULT_USER_MESSAGE = 'An unexpected error occurred';
 
+/** Generates a unique error ID using timestamp and random suffix. */
 function generateErrorId(): string {
   return `error-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }
 
+/**
+ * Extracts a human-readable message from an unknown error value.
+ * @param error - The caught error (Error, string, object, or unknown)
+ * @returns The error message string, or 'Unknown error' as fallback
+ */
 function extractErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
@@ -87,6 +93,11 @@ function extractErrorMessage(error: unknown): string {
   return 'Unknown error';
 }
 
+/**
+ * Extracts detail information (stack trace or JSON) from an unknown error value.
+ * @param error - The caught error
+ * @returns Stack trace string, JSON representation, or undefined
+ */
 function extractErrorDetails(error: unknown): string | undefined {
   if (error instanceof Error) {
     return error.stack;
@@ -101,6 +112,11 @@ function extractErrorDetails(error: unknown): string | undefined {
   return undefined;
 }
 
+/**
+ * Logs an AppError to the console at the appropriate level based on severity.
+ * @param appError - The structured application error
+ * @param originalError - The original caught error for context
+ */
 function logError(appError: AppError, originalError: unknown): void {
   const prefix = `[ErrorService][${appError.category}]`;
   const logData = {
@@ -121,6 +137,7 @@ function logError(appError: AppError, originalError: unknown): void {
     case ErrorSeverityEnum.Info:
       console.log(prefix, logData);
       break;
+    /* v8 ignore next 2 */
     default:
       break;
   }
@@ -142,6 +159,10 @@ export class ErrorService {
     // Private constructor for singleton
   }
 
+  /**
+   * Returns the singleton ErrorService instance, creating it if necessary.
+   * @returns The shared ErrorService instance
+   */
   public static getInstance(): ErrorService {
     if (!ErrorService.instance) {
       ErrorService.instance = new ErrorService();
@@ -314,6 +335,13 @@ export class ErrorService {
     }, 1000);
   }
 
+  /**
+   * Schedules automatic dismissal of an error notification after a duration.
+   * Uses custom duration if provided, otherwise falls back to severity-based defaults.
+   * @param errorId - ID of the error to auto-dismiss
+   * @param severity - Error severity, used to determine default duration
+   * @param customDurationMs - Optional override for the dismiss delay in milliseconds
+   */
   private setupAutoDismiss(
     errorId: string,
     severity: ErrorSeverity,

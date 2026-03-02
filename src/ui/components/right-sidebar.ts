@@ -350,6 +350,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     return largest || 'Project Overview';
   }
 
+  /** Updates the global search query signal when the search bar value changes. */
   private handleSearchChange(query: string) {
     setSearchQuery(query);
   }
@@ -386,6 +387,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     setFilters({ ...current, [filterKey]: set });
   }
 
+  /** Updates the global preview filter signal to highlight matching nodes on the canvas. */
   private handlePreviewChange(preview: PreviewFilter) {
     setPreviewFilter(preview);
   }
@@ -635,6 +637,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     `;
   }
 
+  /** Clears both node and cluster selection to return to the filter view. */
   private handleBackToFilters() {
     selectNode(null);
     selectCluster(null);

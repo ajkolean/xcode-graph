@@ -10,6 +10,7 @@ interface ElkNodeWithLayoutIds extends ElkNode {
   'org.eclipse.elk.layered.crossingMinimization.positionId'?: number;
 }
 
+/** Builds ELK child nodes from clusters, using micro-layout dimensions for sizing. */
 function buildElkChildren(
   clusterGraph: ClusterGraph,
   microLayouts: Map<string, MicroLayoutResult>,
@@ -31,6 +32,7 @@ function buildElkChildren(
   });
 }
 
+/** Converts cluster graph edges to ELK edge format with weight-based priority. */
 function buildElkEdges(clusterGraph: ClusterGraph): ElkExtendedEdge[] {
   return clusterGraph.edges.map((e) => ({
     id: `e_${e.source}_${e.target}`,
@@ -44,6 +46,7 @@ function buildElkEdges(clusterGraph: ClusterGraph): ElkExtendedEdge[] {
   }));
 }
 
+/** Builds the ELK root node with layered algorithm configuration. */
 function buildElkRoot(
   children: ElkNode[],
   edges: ElkExtendedEdge[],
@@ -73,6 +76,7 @@ function buildElkRoot(
   };
 }
 
+/** Groups layout children into horizontal bands by ELK layer ID or Y-position. */
 function groupIntoBands(
   layoutChildren: ElkNodeWithLayoutIds[],
   ySnap: number,
@@ -94,6 +98,7 @@ function groupIntoBands(
   return bands;
 }
 
+/** Sorts nodes within a band by ELK crossing-minimization position or X coordinate. */
 function sortBandNodes(nodes: ElkNodeWithLayoutIds[]): void {
   nodes.sort((a, b) => {
     const posA = a['org.eclipse.elk.layered.crossingMinimization.positionId'];
@@ -105,10 +110,12 @@ function sortBandNodes(nodes: ElkNodeWithLayoutIds[]): void {
   });
 }
 
+/** Returns the effective diameter of a node (max dimension plus padding). */
 function getEffectiveDiameter(node: ElkNode): number {
   return Math.max(node.width ?? 100, node.height ?? 100) + 60;
 }
 
+/** Wraps nodes into rows that fit within maxWidth, similar to text line wrapping. */
 function wrapNodesIntoRows(nodes: ElkNode[], spacing: number, maxWidth: number): ElkNode[][] {
   const rows: ElkNode[][] = [[]];
   let currentRowWidth = 0;
@@ -132,6 +139,7 @@ function wrapNodesIntoRows(nodes: ElkNode[], spacing: number, maxWidth: number):
   return rows;
 }
 
+/** Positions nodes in a row centered horizontally at the given Y coordinate. */
 function layoutRow(row: ElkNode[], spacing: number, currentY: number): void {
   const rowItems = row.map((n) => ({
     node: n,
@@ -159,6 +167,7 @@ function layoutRow(row: ElkNode[], spacing: number, currentY: number): void {
   }
 }
 
+/** Compacts layout children by grouping into bands, wrapping rows, and re-positioning. */
 function compactBands(
   layoutChildren: ElkNodeWithLayoutIds[],
   config: LayoutConfig,
@@ -187,6 +196,7 @@ function compactBands(
   }
 }
 
+/** Extracts center-based cluster positions from ELK layout children. */
 function extractPositions(layoutChildren: ElkNode[]): Map<string, ClusterPosition> {
   const positions = new Map<string, ClusterPosition>();
 

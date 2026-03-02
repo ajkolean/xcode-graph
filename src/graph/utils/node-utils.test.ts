@@ -220,6 +220,30 @@ describe('computeClusterStats', () => {
     expect(stats.filteredTargetsCount).toBe(0);
     expect(stats.platforms.size).toBe(0);
   });
+
+  it('should collect platforms from deploymentTargets when available', () => {
+    const clusterNodes = [
+      createNode({
+        id: 'A',
+        name: 'A',
+        platform: Platform.iOS,
+        deploymentTargets: { iOS: '16.0', macOS: '13.0' },
+      }),
+      createNode({
+        id: 'B',
+        name: 'B',
+        platform: Platform.iOS,
+        deploymentTargets: { visionOS: '1.0' },
+      }),
+    ];
+
+    const stats = computeClusterStats(clusterNodes, []);
+
+    expect(stats.platforms.has('iOS')).toBe(true);
+    expect(stats.platforms.has('macOS')).toBe(true);
+    expect(stats.platforms.has('visionOS')).toBe(true);
+    expect(stats.platforms.size).toBe(3);
+  });
 });
 
 describe('computeFilters', () => {
@@ -306,5 +330,30 @@ describe('computeFilters', () => {
     expect(result.platformCounts.size).toBe(0);
     expect(result.projectCounts.size).toBe(0);
     expect(result.packageCounts.size).toBe(0);
+  });
+
+  it('should count platforms from deploymentTargets when available', () => {
+    const nodes = [
+      createNode({
+        id: '1',
+        name: 'MultiApp',
+        type: NodeType.App,
+        platform: Platform.iOS,
+        deploymentTargets: { iOS: '16.0', macOS: '13.0' },
+      }),
+      createNode({
+        id: '2',
+        name: 'SingleApp',
+        type: NodeType.App,
+        platform: Platform.iOS,
+      }),
+    ];
+
+    const result = computeFilters(nodes);
+
+    // MultiApp contributes iOS and macOS from deploymentTargets
+    // SingleApp contributes iOS from platform
+    expect(result.platformCounts.get('iOS')).toBe(2);
+    expect(result.platformCounts.get('macOS')).toBe(1);
   });
 });

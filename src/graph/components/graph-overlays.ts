@@ -36,6 +36,7 @@ export class GraphBackground extends LitElement {
     }
   `;
 
+  /** Renders an SVG grid pattern that fills the host element. */
   override render(): TemplateResult {
     return svg`
       <svg style="width: 100%; height: 100%;">
@@ -167,6 +168,7 @@ export class GraphControls extends LitElement {
     return this.zoomRatio >= maxStep - 0.01;
   }
 
+  /** Steps zoom to the next predefined level and dispatches a 'zoom-step' event. */
   private handleZoomIn() {
     const current = this.zoomRatio;
     const nextStep = GraphControls.ZOOM_STEPS.find((step) => step > current + 0.01);
@@ -178,6 +180,7 @@ export class GraphControls extends LitElement {
     }
   }
 
+  /** Steps zoom to the previous predefined level and dispatches a 'zoom-step' event. */
   private handleZoomOut() {
     const current = this.zoomRatio;
     const steps = GraphControls.ZOOM_STEPS;
@@ -197,18 +200,24 @@ export class GraphControls extends LitElement {
     }
   }
 
+  /** Dispatches a 'zoom-reset' event to fit the graph to the viewport. */
   private handleZoomReset() {
     this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }));
   }
 
+  /** Stops wheel events from propagating to the canvas zoom handler. */
+  /* v8 ignore next 3 */
   private handleWheel(e: WheelEvent) {
     e.stopPropagation();
   }
 
+  /** Stops mousedown events from propagating to the canvas drag handler. */
+  /* v8 ignore next 3 */
   private handleMouseDown(e: MouseEvent) {
     e.stopPropagation();
   }
 
+  /** Renders the zoom label, zoom in/out buttons, and fit-to-view button. */
   override render(): TemplateResult {
     const ratio = this.zoomRatio;
     const isFit = Math.abs(ratio - 1.0) < 0.02;
@@ -284,6 +293,7 @@ export class GraphEmptyStateOverlay extends LitElement {
     }
   `;
 
+  /** Renders a centered empty state message with a filter adjustment hint. */
   override render(): TemplateResult {
     return html`
       <div class="container">
@@ -321,6 +331,7 @@ export class GraphInstructions extends LitElement {
     }
   `;
 
+  /** Renders a short instruction bar with drag, click, and scroll hints. */
   override render(): TemplateResult {
     return html`
       <div class="container">

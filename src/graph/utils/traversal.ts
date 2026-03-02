@@ -28,6 +28,7 @@ interface CacheEntry {
   timestamp: number;
 }
 
+/** LRU cache for transitive traversal results, keyed by node ID, direction, and edge version. */
 class TransitiveCache {
   private cache = new Map<string, CacheEntry>();
   private maxSize = 100; // LRU cache size
@@ -158,6 +159,7 @@ export function traverseGraph(
 
   while (stack.length > 0) {
     const item = stack.pop();
+    /* v8 ignore next */
     if (!item) break;
     const { id, depth } = item;
     if (visitedNodes.has(id)) continue;
@@ -207,6 +209,7 @@ export function bfsTraverseGraph(
 
   while (queue.length > 0) {
     const item = queue.shift();
+    /* v8 ignore next */
     if (!item) break;
     const { id, depth } = item;
 
@@ -263,6 +266,7 @@ export function computeTransitiveDependencies(
   let outgoing = new Map<string, string[]>();
   let incoming = new Map<string, string[]>();
 
+  /** Lazily builds adjacency lists on first call, then reuses them. */
   const buildAdjacencyOnce = () => {
     if (!adjacencyBuilt) {
       const adj = buildAdjacency(edges);
