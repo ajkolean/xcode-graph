@@ -60,7 +60,7 @@ export const DEFAULT_CONFIG = {
   clusterBoundingStrength: 0.5,
   clusterStrataAlignmentStrength: 0.45,
 
-  /** Direction of flow: 'RIGHT' (left->right) or 'DOWN' (top->bottom) */
+  /** Direction of flow: 'RIGHT' (left-\>right) or 'DOWN' (top-\>bottom) */
   elkDirection: 'DOWN',
 
   /** Main algorithm: 'layered' is best for dependencies */

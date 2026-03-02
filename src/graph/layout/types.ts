@@ -44,11 +44,11 @@ export interface HierarchicalLayoutResult {
   bundledEdges?: Array<Array<{ x: number; y: number }>> | undefined;
   /** Aggregated edges between clusters */
   clusterEdges?: ClusterEdgeResult[] | undefined;
-  /** Nodes that are part of cycles (SCC size > 1) */
+  /** Nodes that are part of cycles (SCC size \> 1) */
   cycleNodes?: Set<string> | undefined;
   /** SCC ID for each node (nodes in same SCC share an ID) - for cycle edge detection */
   nodeSccId?: Map<string, number> | undefined;
-  /** Size of each SCC (size > 1 indicates a cycle) */
+  /** Size of each SCC (size \> 1 indicates a cycle) */
   sccSizes?: Map<number, number> | undefined;
   /** Maximum stratum value (for rendering stratum bands) */
   maxStratum?: number | undefined;

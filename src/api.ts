@@ -8,7 +8,7 @@
  * doesn't depend on the DOM.
  *
  * For the full library entry point (includes UI controllers and
- * interaction handling), see {@link ./index.ts | index.ts}.
+ * interaction handling), see `index.ts`.
  *
  * @packageDocumentation
  */

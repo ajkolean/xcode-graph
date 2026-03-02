@@ -12,7 +12,7 @@ import { NODE_PALETTE } from '@/shared/constants/node-palette';
  * Color mapping for different node types
  * Uses the Noora palette with high contrast colors
  *
- * Derived from {@link NODE_PALETTE} (single source of truth).
+ * Derived from `NODE_PALETTE` (single source of truth).
  */
 export const NODE_TYPE_COLORS: Record<string, string> = {
   // Orange (apps, main entry points) — Noora orange-500
@@ -68,7 +68,7 @@ const THEME_KEY_MAP: Record<string, NodeColorKey> = {
  * Use this in Canvas2D rendering to respect CSS custom property overrides.
  *
  * @param type - The node type string
- * @param theme - A resolved {@link CanvasTheme} object
+ * @param theme - A resolved `CanvasTheme` object
  * @returns The themed color string for the given type
  */
 export function getNodeTypeColorFromTheme(type: string, theme: CanvasTheme): string {

@@ -87,7 +87,7 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
 
 /**
  * Identify anchor nodes (entry points) for a cluster.
- * Priority: Apps > CLIs > Frameworks/libs with external dependents > Most-depended-upon node.
+ * Priority: Apps \> CLIs \> Frameworks/libs with external dependents \> Most-depended-upon node.
  *
  * @param nodes - Non-test nodes in the cluster
  * @param dependents - Map of node ID to its internal dependent IDs
