@@ -18,7 +18,7 @@ import { type AnimatedValue, getAnimatedAlpha } from '@graph/utils/canvas-animat
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import { type CanvasTheme, colorWithAlpha, hexToRgba } from '@graph/utils/canvas-theme';
 import type { Cluster, ViewMode } from '@shared/schemas';
-import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
+import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 import { CLUSTER_LABEL_CONFIG, LOD_THRESHOLDS, ZOOM_CONFIG } from '@shared/utils/zoom-config';
@@ -30,7 +30,7 @@ import { getNodeSize } from '@ui/utils/sizing';
 import {
   calculateViewportBounds,
   isCircleInViewport,
-  isLineInViewport,
+  isLineInViewportRaw,
   type ViewportBounds,
 } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
@@ -165,6 +165,10 @@ export class KonvaScene {
   // Per-frame cached viewport bounds (computed once in render(), used by nodes/clusters/edges)
   private cachedViewport: ViewportBounds | null = null;
 
+  // Per-frame adjusted node type colors (7 types, recomputed only when zoom changes)
+  private adjustedNodeColors = new Map<string, string>();
+  private adjustedColorsZoom = -1;
+
   // Current state
   private config: SceneConfig | null = null;
   private callbacks: SceneCallbacks;
@@ -286,6 +290,16 @@ export class KonvaScene {
     // Compute viewport bounds once per frame (used by nodes, clusters, edges)
     this.cachedViewport = this.computeViewportBounds(config);
 
+    // Pre-compute adjusted node type colors (7 types vs N nodes)
+    if (config.zoom !== this.adjustedColorsZoom) {
+      this.adjustedNodeColors.clear();
+      for (const type of Object.values(NodeType)) {
+        const baseColor = getNodeTypeColorFromTheme(type, config.theme);
+        this.adjustedNodeColors.set(type, adjustColorForZoom(baseColor, config.zoom));
+      }
+      this.adjustedColorsZoom = config.zoom;
+    }
+
     // Update cluster positions and visuals
     this.updateClusterVisuals(config);
 
@@ -395,8 +409,12 @@ export class KonvaScene {
     this.arcTextCache.clear();
     this.truncateCache.clear();
     this.bezierPathCache.clear();
+    this.edgeEndpointCache.clear();
     this.cachedNodesRef = null;
     this.cachedClustersRef = null;
+    this.cachedEdgesRef = null;
+    this.cachedManualNodePosSize = -1;
+    this.cachedManualClusterPosSize = -1;
   }
 
   /** Get cursor style based on current interaction state. */
@@ -695,8 +713,9 @@ export class KonvaScene {
       (config.transitiveDependents?.nodes.has(nodeId) ?? false) ||
       isSelected;
 
-    const color = getNodeTypeColorFromTheme(node.type, theme);
-    const adjustedColor = adjustColorForZoom(color, zoom);
+    const adjustedColor =
+      this.adjustedNodeColors.get(node.type) ??
+      adjustColorForZoom(getNodeTypeColorFromTheme(node.type, theme), zoom);
     const alpha = prefersReducedMotion.get()
       ? (config.nodeAlphaMap.get(nodeId)?.target ?? 1.0)
       : getAnimatedAlpha(config.nodeAlphaMap, nodeId);
@@ -1072,13 +1091,7 @@ export class KonvaScene {
 
       const endpoints = this.resolveEdgeEndpointsCached(edge);
       if (!endpoints) continue;
-      if (
-        !isLineInViewport(
-          { x: endpoints.x1, y: endpoints.y1 },
-          { x: endpoints.x2, y: endpoints.y2 },
-          viewport,
-        )
-      )
+      if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
         continue;
 
       ctx.moveTo(endpoints.x1, endpoints.y1);
@@ -1162,11 +1175,15 @@ export class KonvaScene {
     const tClusterLayout = config.layout.clusterPositions.get(targetClusterId);
     if (!sClusterLayout || !tClusterLayout) return null;
 
+    // Resolve cluster positions — capture values immediately since
+    // resolveClusterPosition returns a reusable object
     const sCluster = resolveClusterPosition(
       sourceClusterId,
       sClusterLayout,
       config.manualClusterPositions,
     );
+    const scx = sCluster.x;
+    const scy = sCluster.y;
     const tCluster = resolveClusterPosition(
       targetClusterId,
       tClusterLayout,
@@ -1179,8 +1196,8 @@ export class KonvaScene {
     return {
       sourceNode,
       targetNode,
-      x1: sCluster.x + (sManual?.x ?? sourceLayout.x),
-      y1: sCluster.y + (sManual?.y ?? sourceLayout.y),
+      x1: scx + (sManual?.x ?? sourceLayout.x),
+      y1: scy + (sManual?.y ?? sourceLayout.y),
       x2: tCluster.x + (tManual?.x ?? targetLayout.x),
       y2: tCluster.y + (tManual?.y ?? targetLayout.y),
     };
@@ -1269,13 +1286,7 @@ export class KonvaScene {
 
     const endpoints = this.resolveEdgeEndpointsCached(edge);
     if (!endpoints) return;
-    if (
-      !isLineInViewport(
-        { x: endpoints.x1, y: endpoints.y1 },
-        { x: endpoints.x2, y: endpoints.y2 },
-        viewport,
-      )
-    )
+    if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
       return;
 
     const isEmphasized = isHighlighted || (isChainActive && inChain);

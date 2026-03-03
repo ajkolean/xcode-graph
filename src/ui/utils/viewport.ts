@@ -109,26 +109,41 @@ export function isBoundingBoxInViewport(box: BoundingBox, bounds: ViewportBounds
  * @public
  */
 export function isLineInViewport(start: Point, end: Point, bounds: ViewportBounds): boolean {
+  return isLineInViewportRaw(start.x, start.y, end.x, end.y, bounds);
+}
+
+/**
+ * Check if a line segment intersects with the viewport using raw coordinates.
+ * Avoids allocating temporary Point objects in hot paths.
+ *
+ * @public
+ */
+export function isLineInViewportRaw(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  bounds: ViewportBounds,
+): boolean {
   // Quick check: if either endpoint is in viewport, line is visible
-  if (isPointInViewport(start, bounds) || isPointInViewport(end, bounds)) {
+  if (
+    (x1 >= bounds.minX && x1 <= bounds.maxX && y1 >= bounds.minY && y1 <= bounds.maxY) ||
+    (x2 >= bounds.minX && x2 <= bounds.maxX && y2 >= bounds.minY && y2 <= bounds.maxY)
+  ) {
     return true;
   }
 
-  // Quick reject: if line is entirely outside viewport bounds
-  const lineBounds: BoundingBox = {
-    minX: Math.min(start.x, end.x),
-    maxX: Math.max(start.x, end.x),
-    minY: Math.min(start.y, end.y),
-    maxY: Math.max(start.y, end.y),
-  };
-
-  if (!isBoundingBoxInViewport(lineBounds, bounds)) {
+  // Quick reject: bounding box entirely outside viewport
+  const lMinX = x1 < x2 ? x1 : x2;
+  const lMaxX = x1 > x2 ? x1 : x2;
+  const lMinY = y1 < y2 ? y1 : y2;
+  const lMaxY = y1 > y2 ? y1 : y2;
+  if (lMaxX < bounds.minX || lMinX > bounds.maxX || lMaxY < bounds.minY || lMinY > bounds.maxY) {
     return false;
   }
 
   // Line might intersect viewport even if endpoints are outside
-  // Use Cohen-Sutherland line clipping algorithm
-  return cohenSutherlandIntersect(start, end, bounds);
+  return cohenSutherlandIntersect({ x: x1, y: y1 }, { x: x2, y: y2 }, bounds);
 }
 
 /** @internal Cohen-Sutherland region code: left of viewport */
@@ -236,14 +251,12 @@ function cohenSutherlandIntersect(start: Point, end: Point, bounds: ViewportBoun
  * @public
  */
 export function isCircleInViewport(center: Point, radius: number, bounds: ViewportBounds): boolean {
-  const circleBounds: BoundingBox = {
-    minX: center.x - radius,
-    maxX: center.x + radius,
-    minY: center.y - radius,
-    maxY: center.y + radius,
-  };
-
-  return isBoundingBoxInViewport(circleBounds, bounds);
+  return !(
+    center.x + radius < bounds.minX ||
+    center.x - radius > bounds.maxX ||
+    center.y + radius < bounds.minY ||
+    center.y - radius > bounds.maxY
+  );
 }
 
 /**

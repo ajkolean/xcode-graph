@@ -30,7 +30,9 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
 
   // Count external dependents using pre-indexed edge targets (O(N+E) vs O(N*E))
   const externalDependents = new Map<string, number>();
-  cluster.nodes.forEach((node) => externalDependents.set(node.id, 0));
+  for (const node of cluster.nodes) {
+    externalDependents.set(node.id, 0);
+  }
   for (const edge of allEdges) {
     if (nodeIds.has(edge.target) && !nodeIds.has(edge.source)) {
       externalDependents.set(edge.target, (externalDependents.get(edge.target) ?? 0) + 1);

@@ -10,10 +10,10 @@ import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme'
 import { getConnectedNodes } from '@graph/utils/connections';
 import type { PerfOverlay } from '@graph/utils/dev-perf-overlay';
 import { ErrorCategory, ViewMode } from '@shared/schemas';
-import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
+import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 import {
   type CSSResultGroup,
   css,
@@ -472,15 +472,13 @@ export class GraphCanvas extends LitElement {
     // Selection rings, cycle glow, and cluster dash animations only need
     // continuous rendering when motion is enabled. With reduced motion,
     // these render as static visuals — no per-frame updates needed.
-    const needsMotionAnimation = !prefersReducedMotion.get() &&
+    const needsMotionAnimation =
+      !prefersReducedMotion.get() &&
       (Boolean(this.selectedNode) ||
         Boolean(this.selectedCluster) ||
         (this.layout.cycleNodes?.size ?? 0) > 0);
 
-    this.isAnimating =
-      needsMotionAnimation ||
-      hasFadingNodes ||
-      hasAlphaAnimations;
+    this.isAnimating = needsMotionAnimation || hasFadingNodes || hasAlphaAnimations;
   }
 
   /** Builds the scene config and delegates rendering to the Konva scene graph. */
