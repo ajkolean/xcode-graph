@@ -91,6 +91,23 @@ export interface FadingNode {
   startTime: number;
 }
 
+/** Pre-computed per-edge metadata to avoid redundant calculations per frame. */
+interface EdgeMeta {
+  key: string;
+  isCycle: boolean;
+  isHighlighted: boolean;
+  inChain: boolean;
+  isSpecial: boolean;
+  endpoints: {
+    sourceNode: GraphNode;
+    targetNode: GraphNode;
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+  } | null;
+}
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -165,9 +182,82 @@ export class KonvaScene {
   // Per-frame cached viewport bounds (computed once in render(), used by nodes/clusters/edges)
   private cachedViewport: ViewportBounds | null = null;
 
+  // Per-frame edge metadata map — precomputed once per frame to avoid redundant calculations
+  private edgeMetaMap = new Map<GraphEdge, EdgeMeta>();
+
+  // Dirty layer tracking — skip layer.draw() when nothing changed on that layer
+  private dirtyLayers = { cluster: true, edge: true, node: true, tooltip: true };
+
+  // Previous-frame state for detecting changes that affect specific layers
+  private prevHoveredNode: string | null = null;
+  private prevHoveredCluster: string | null = null;
+  private prevSelectedNode: GraphNode | null = null;
+  private prevSelectedCluster: string | null = null;
+
+  // Node caching — static nodes are rasterized to bitmaps via Konva's cache()
+  private nodeCacheState = new Map<string, string>();
+  private isZoomStable = true;
+  private zoomCacheTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastCachedZoom = -1;
+
   // Per-frame adjusted node type colors (7 types, recomputed only when zoom changes)
   private adjustedNodeColors = new Map<string, string>();
   private adjustedColorsZoom = -1;
+
+  private markAllLayersDirty(): void {
+    this.dirtyLayers.cluster = true;
+    this.dirtyLayers.edge = true;
+    this.dirtyLayers.node = true;
+    this.dirtyLayers.tooltip = true;
+  }
+
+  /** Determine which layers need redrawing based on state changes since last frame. */
+  private detectDirtyLayers(config: SceneConfig, positionsChanged: boolean): void {
+    if (positionsChanged) this.markAllLayersDirty();
+
+    // Selection changes
+    if (config.selectedNode !== this.prevSelectedNode) {
+      this.dirtyLayers.node = true;
+      this.dirtyLayers.edge = true;
+    }
+    if (config.selectedCluster !== this.prevSelectedCluster) {
+      this.dirtyLayers.cluster = true;
+      this.dirtyLayers.edge = true;
+    }
+
+    // Hover changes
+    if (config.hoveredNode !== this.prevHoveredNode) {
+      this.dirtyLayers.node = true;
+      this.dirtyLayers.tooltip = true;
+    }
+    if (config.hoveredCluster !== this.prevHoveredCluster) {
+      this.dirtyLayers.cluster = true;
+      this.dirtyLayers.tooltip = true;
+    }
+
+    // Time-based animations (only when motion is enabled)
+    if (!prefersReducedMotion.get()) {
+      if (config.selectedNode) this.dirtyLayers.node = true;
+      if (config.selectedCluster) this.dirtyLayers.cluster = true;
+      if ((config.layout.cycleNodes?.size ?? 0) > 0) this.dirtyLayers.node = true;
+
+      const isChainActive =
+        config.showDirectDeps ||
+        config.showTransitiveDeps ||
+        config.showDirectDependents ||
+        config.showTransitiveDependents;
+      if (isChainActive) this.dirtyLayers.edge = true;
+    }
+
+    // Fading nodes
+    if (this.fadingOutNodes.size > 0) this.dirtyLayers.node = true;
+
+    // Save current state for next-frame comparison
+    this.prevHoveredNode = config.hoveredNode;
+    this.prevHoveredCluster = config.hoveredCluster;
+    this.prevSelectedNode = config.selectedNode;
+    this.prevSelectedCluster = config.selectedCluster;
+  }
 
   // Current state
   private config: SceneConfig | null = null;
@@ -279,9 +369,13 @@ export class KonvaScene {
       this.cachedManualClusterPosSize = config.manualClusterPositions.size;
     }
 
-    // Sync shapes with current data
+    // Sync shapes with current data — adding/removing shapes dirties the affected layers
+    const prevNodeCount = this.nodeGroups.size;
+    const prevClusterCount = this.clusterGroups.size;
     this.syncClusterShapes(config);
     this.syncNodeShapes(config);
+    if (this.nodeGroups.size !== prevNodeCount) this.dirtyLayers.node = true;
+    if (this.clusterGroups.size !== prevClusterCount) this.dirtyLayers.cluster = true;
 
     // Update stage transform
     this.stage.scale({ x: config.zoom, y: config.zoom });
@@ -300,11 +394,17 @@ export class KonvaScene {
       this.adjustedColorsZoom = config.zoom;
     }
 
+    // Determine which layers need redrawing this frame
+    this.detectDirtyLayers(config, positionsChanged);
+
     // Update cluster positions and visuals
     this.updateClusterVisuals(config);
 
     // Update node positions and visuals
     this.updateNodePositions(config);
+
+    // Cache static nodes as bitmaps for faster redraw
+    this.updateNodeCaching(config);
 
     // Clean up completed fading nodes
     this.updateFadingNodes();
@@ -312,16 +412,12 @@ export class KonvaScene {
     // Update tooltip
     this.updateTooltip(config);
 
-    // Draw each layer synchronously. We must draw individually rather than
-    // using stage.draw() because Konva skips layers whose shapes haven't been
-    // explicitly modified. The edge/cluster sceneFuncs read from this.config
-    // which changes externally — Konva can't detect that.
-    // Using layer.draw() (not batchDraw()) avoids the 1-frame async delay
-    // that caused nodes/edges to flicker.
-    this.clusterLayer.draw();
-    this.edgeLayer.draw();
-    this.nodeLayer.draw();
-    this.tooltipLayer.draw();
+    // Draw only dirty layers — skip layers with no visual changes this frame
+    if (this.dirtyLayers.cluster) this.clusterLayer.draw();
+    if (this.dirtyLayers.edge) this.edgeLayer.draw();
+    if (this.dirtyLayers.node) this.nodeLayer.draw();
+    if (this.dirtyLayers.tooltip) this.tooltipLayer.draw();
+    this.dirtyLayers = { cluster: false, edge: false, node: false, tooltip: false };
   }
 
   /** Synchronous render for zero-latency zoom response. */
@@ -329,6 +425,7 @@ export class KonvaScene {
     if (this.config) {
       this.stage.scale({ x: this._zoom, y: this._zoom });
       this.stage.position({ x: this.pan.x, y: this.pan.y });
+      this.markAllLayersDirty();
       this.clusterLayer.draw();
       this.edgeLayer.draw();
       this.nodeLayer.draw();
@@ -408,6 +505,7 @@ export class KonvaScene {
     this.gradientCache.clear();
     this.arcTextCache.clear();
     this.truncateCache.clear();
+    this.nodeCacheState.clear();
     this.bezierPathCache.clear();
     this.edgeEndpointCache.clear();
     this.cachedNodesRef = null;
@@ -426,6 +524,10 @@ export class KonvaScene {
 
   /** Destroy the scene and release resources. */
   destroy(): void {
+    if (this.zoomCacheTimer !== null) {
+      clearTimeout(this.zoomCacheTimer);
+      this.zoomCacheTimer = null;
+    }
     this.stage.destroy();
     this.pathCache.clear();
     this.bezierPathCache.clear();
@@ -437,6 +539,8 @@ export class KonvaScene {
     this.nodeMap.clear();
     this.clusterMap.clear();
     this.edgeEndpointCache.clear();
+    this.nodeCacheState.clear();
+    this.edgeMetaMap.clear();
   }
 
   // -------------------------------------------------------------------
@@ -682,6 +786,79 @@ export class KonvaScene {
     group.position({ x: cx, y: cy });
   }
 
+  /**
+   * Cache static nodes as bitmaps — Konva blits the cached image instead of
+   * re-executing sceneFunc (6+ canvas ops per node). Nodes that are animated
+   * (selected, hovered, cycle-glowing) are uncached so their sceneFunc runs.
+   */
+  private updateNodeCaching(config: SceneConfig): void {
+    // During continuous zoom, skip caching entirely — it would be invalidated immediately
+    if (!this.isZoomStable) return;
+
+    // Quantize zoom to 2 decimal places to avoid excessive cache invalidation
+    const zoomStep = Math.round(config.zoom * 100);
+
+    // If zoom changed since last cache pass, clear all state to force re-cache
+    if (zoomStep !== this.lastCachedZoom) {
+      this.nodeCacheState.clear();
+      for (const [, group] of this.nodeGroups) {
+        this.clearNodeCache(group);
+      }
+      this.lastCachedZoom = zoomStep;
+    }
+
+    for (const node of config.nodes) {
+      const group = this.nodeGroups.get(node.id);
+      if (!group || !group.visible()) continue;
+      this.cacheNodeIfStatic(node, group, config, zoomStep);
+    }
+  }
+
+  /** Evaluate a single node for caching eligibility and apply/clear cache as needed. */
+  private cacheNodeIfStatic(
+    node: GraphNode,
+    group: Konva.Group,
+    config: SceneConfig,
+    zoomStep: number,
+  ): void {
+    const isSelected = config.selectedNode?.id === node.id;
+    const isHovered = config.hoveredNode === node.id;
+    const isCycleNode = config.layout.cycleNodes?.has(node.id) ?? false;
+    const isAlphaAnimating = (config.nodeAlphaMap.get(node.id)?.progress ?? 1) < 1;
+
+    // Nodes with time-dependent or interaction-dependent visuals must not be cached
+    if (isSelected || isHovered || isCycleNode || isAlphaAnimating) {
+      this.clearNodeCache(group);
+      this.nodeCacheState.delete(node.id);
+      return;
+    }
+
+    const isConnected = Boolean(config.selectedNode && config.connectedNodes.has(node.id));
+    const isDimmed = config.dimmedNodeIds.has(node.id);
+    const isInChain =
+      (config.transitiveDeps?.nodes.has(node.id) ?? false) ||
+      (config.transitiveDependents?.nodes.has(node.id) ?? false);
+
+    // State fingerprint — cache is valid as long as this key matches
+    const stateKey = `${isConnected ? 1 : 0}|${isDimmed ? 1 : 0}|${isInChain ? 1 : 0}|${zoomStep}`;
+    if (this.nodeCacheState.get(node.id) === stateKey) return;
+
+    // State changed — clear old cache and re-cache at current visual state
+    this.clearNodeCache(group);
+    const size = getNodeSize(node);
+    // Padding accounts for label below + selection ring margin
+    const padding = size + NODE_LABEL_FONT_SIZE + NODE_LABEL_PADDING + 4;
+    group.cache({ offset: padding, width: padding * 2, height: padding * 2 + 20 });
+    this.nodeCacheState.set(node.id, stateKey);
+  }
+
+  /** Clear a node group's cache only if it's currently cached. */
+  private clearNodeCache(group: Konva.Group): void {
+    if (group.isCached()) {
+      group.clearCache();
+    }
+  }
+
   /** Toggle group visibility only when the state actually changes. */
   private setGroupVisible(group: Konva.Group, visible: boolean): void {
     if (group.visible() !== visible) {
@@ -835,6 +1012,9 @@ export class KonvaScene {
     isInChain: boolean,
     isHovered: boolean,
   ): void {
+    // Skip text rendering at very low zoom levels — labels are unreadable
+    if ((this.config?.zoom ?? 1) < LOD_THRESHOLDS.NODE_LABELS) return;
+
     const labelText =
       node.name.length > 20 && !isHovered && !isConnected
         ? `${node.name.substring(0, 20)}...`
@@ -968,6 +1148,9 @@ export class KonvaScene {
     isActive: boolean,
     name: string,
   ): void {
+    // Skip arc text at very low zoom — per-character operations are expensive and unreadable
+    if ((this.config?.zoom ?? 1) < LOD_THRESHOLDS.CLUSTER_ARC_LABELS) return;
+
     const fontSize = CLUSTER_LABEL_CONFIG.FONT_SIZE;
     const maxTextWidth = radius * 1.6;
 
@@ -1017,26 +1200,55 @@ export class KonvaScene {
     const totalAngle = measurements.totalWidth / arcRadius;
     let angle = -Math.PI / 2 - totalAngle / 2;
 
+    // Capture the base transform once, then use setTransform per character
+    // instead of save/restore per character (avoids full state stack push/pop)
+    const base = ctx.getTransform();
+
     for (let i = 0; i < text.length; i++) {
       const charWidth = measurements.charWidths[i] ?? 0;
       angle += charWidth / (2 * arcRadius);
 
       const x = arcRadius * Math.cos(angle);
       const y = arcRadius * Math.sin(angle);
+      const rotation = angle + Math.PI / 2;
+      const cos = Math.cos(rotation);
+      const sin = Math.sin(rotation);
 
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(angle + Math.PI / 2);
+      // Compose base transform with translate(x,y) * rotate(rotation)
+      ctx.setTransform(
+        base.a * cos + base.c * sin,
+        base.b * cos + base.d * sin,
+        base.c * cos - base.a * sin,
+        base.d * cos - base.b * sin,
+        base.a * x + base.c * y + base.e,
+        base.b * x + base.d * y + base.f,
+      );
       ctx.fillText(text[i] ?? '', 0, 0);
-      ctx.restore();
 
       angle += charWidth / (2 * arcRadius);
     }
+
+    // Restore the original transform
+    ctx.setTransform(base);
   }
 
   // -------------------------------------------------------------------
   // Edge Drawing (sceneFunc — batched + individual)
   // -------------------------------------------------------------------
+
+  /** Pre-compute edge metadata once per frame to eliminate redundant per-edge calculations. */
+  private precomputeEdgeMeta(edges: GraphEdge[], isChainActive: boolean): void {
+    this.edgeMetaMap.clear();
+    for (const edge of edges) {
+      const key = `${edge.source}->${edge.target}`;
+      const isCycle = this.isCycleEdge(edge);
+      const isHighlighted = this.isEdgeHighlighted(edge);
+      const inChain = isChainActive ? this.isEdgeInActiveChain(key) : false;
+      const isSpecial = isCycle || isHighlighted || inChain;
+      const endpoints = this.resolveEdgeEndpointsCached(edge);
+      this.edgeMetaMap.set(edge, { key, isCycle, isHighlighted, inChain, isSpecial, endpoints });
+    }
+  }
 
   private drawEdges(ctx: CanvasRenderingContext2D): void {
     const config = this.config;
@@ -1054,8 +1266,11 @@ export class KonvaScene {
     const hideNonEmphasized = zoom < EDGE_HIDE_ZOOM_THRESHOLD;
     const batchEdges = !hideNonEmphasized && zoom < LOD_THRESHOLDS.ARROWHEADS;
 
+    // Pre-compute all edge metadata once per frame
+    this.precomputeEdgeMeta(edges, isChainActive);
+
     if (batchEdges) {
-      this.drawBatchedEdges(ctx, edges, viewport, theme, zoom, isChainActive);
+      this.drawBatchedEdges(ctx, edges, viewport, theme, zoom);
     }
 
     const animatedDashOffset = prefersReducedMotion.get() ? 0 : time / 20;
@@ -1063,7 +1278,6 @@ export class KonvaScene {
       ctx,
       edges,
       viewport,
-      isChainActive,
       batchEdges,
       hideNonEmphasized,
       animatedDashOffset,
@@ -1076,7 +1290,6 @@ export class KonvaScene {
     viewport: ViewportBounds,
     theme: CanvasTheme,
     zoom: number,
-    isChainActive: boolean,
   ): void {
     ctx.save();
     ctx.strokeStyle = theme.edgeDefault;
@@ -1086,10 +1299,10 @@ export class KonvaScene {
     ctx.beginPath();
 
     for (const edge of edges) {
-      const edgeKey = `${edge.source}->${edge.target}`;
-      if (this.isSpecialEdge(edge, edgeKey, isChainActive)) continue;
+      const meta = this.edgeMetaMap.get(edge);
+      if (!meta || meta.isSpecial) continue;
 
-      const endpoints = this.resolveEdgeEndpointsCached(edge);
+      const { endpoints } = meta;
       if (!endpoints) continue;
       if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
         continue;
@@ -1105,30 +1318,19 @@ export class KonvaScene {
     ctx: CanvasRenderingContext2D,
     edges: GraphEdge[],
     viewport: ViewportBounds,
-    isChainActive: boolean,
     batchEdges: boolean,
     hideNonEmphasized: boolean,
     animatedDashOffset: number,
   ): void {
     ctx.lineWidth = 1;
     for (const edge of edges) {
-      const edgeKey = `${edge.source}->${edge.target}`;
-      const inChain = isChainActive && this.isEdgeInActiveChain(edgeKey);
-      const isHighlighted = this.isEdgeHighlighted(edge);
+      const meta = this.edgeMetaMap.get(edge);
+      if (!meta) continue;
 
-      if (batchEdges && !this.isSpecialEdge(edge, edgeKey, isChainActive)) continue;
-      if (hideNonEmphasized && !isHighlighted && !inChain) continue;
+      if (batchEdges && !meta.isSpecial) continue;
+      if (hideNonEmphasized && !meta.isHighlighted && !meta.inChain) continue;
 
-      this.renderSingleEdge(
-        ctx,
-        edge,
-        edgeKey,
-        viewport,
-        isHighlighted,
-        isChainActive,
-        inChain,
-        animatedDashOffset,
-      );
+      this.renderSingleEdge(ctx, edge, meta, viewport, animatedDashOffset);
     }
   }
 
@@ -1251,13 +1453,6 @@ export class KonvaScene {
     );
   }
 
-  private isSpecialEdge(edge: GraphEdge, edgeKey: string, isChainActive: boolean): boolean {
-    if (this.isEdgeHighlighted(edge)) return true;
-    if (isChainActive && this.isEdgeInActiveChain(edgeKey)) return true;
-    if (this.isCycleEdge(edge)) return true;
-    return false;
-  }
-
   private getChainEdgeDepth(edgeKey: string): number {
     const config = this.config;
     if (!config) return 0;
@@ -1273,37 +1468,24 @@ export class KonvaScene {
 
   private renderSingleEdge(
     ctx: CanvasRenderingContext2D,
-    edge: GraphEdge,
-    edgeKey: string,
+    _edge: GraphEdge,
+    meta: EdgeMeta,
     viewport: ViewportBounds,
-    isHighlighted: boolean,
-    isChainActive: boolean,
-    inChain: boolean,
     animatedDashOffset: number,
   ): void {
     const config = this.config;
     if (!config) return;
 
-    const endpoints = this.resolveEdgeEndpointsCached(edge);
+    const { endpoints, key: edgeKey, isHighlighted, inChain, isCycle: cycleEdge } = meta;
     if (!endpoints) return;
     if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
       return;
 
-    const isEmphasized = isHighlighted || (isChainActive && inChain);
-    const cycleEdge = this.isCycleEdge(edge);
+    const isEmphasized = isHighlighted || inChain;
     const { zoom } = config;
 
     if (isEmphasized) {
-      this.drawEdgeGlow(
-        ctx,
-        endpoints,
-        cycleEdge,
-        isChainActive,
-        inChain,
-        isHighlighted,
-        edgeKey,
-        zoom,
-      );
+      this.drawEdgeGlow(ctx, endpoints, cycleEdge, inChain, isHighlighted, edgeKey, zoom);
     }
 
     this.applyEdgeStyle(
@@ -1313,7 +1495,6 @@ export class KonvaScene {
       isEmphasized,
       isHighlighted,
       cycleEdge,
-      isChainActive,
       inChain,
       animatedDashOffset,
       zoom,
@@ -1339,7 +1520,6 @@ export class KonvaScene {
       y2: number;
     },
     cycleEdge: boolean,
-    isChainActive: boolean,
     inChain: boolean,
     isHighlighted: boolean,
     edgeKey: string,
@@ -1354,11 +1534,7 @@ export class KonvaScene {
     ctx.save();
     ctx.strokeStyle = glowColor;
     const glowAlpha =
-      isChainActive && inChain && !isHighlighted
-        ? this.getChainEdgeDepth(edgeKey) === 0
-          ? 0.15
-          : 0.08
-        : 0.15;
+      inChain && !isHighlighted ? (this.getChainEdgeDepth(edgeKey) === 0 ? 0.15 : 0.08) : 0.15;
     ctx.globalAlpha = glowAlpha;
     ctx.lineWidth = 6 / zoom;
     ctx.setLineDash([]);
@@ -1370,10 +1546,9 @@ export class KonvaScene {
     edgeKey: string,
     isHighlighted: boolean,
     cycleEdge: boolean,
-    isChainActive: boolean,
     inChain: boolean,
   ): number {
-    if (isChainActive && inChain) {
+    if (inChain) {
       return this.getChainEdgeDepth(edgeKey) === 0 ? 1.0 : 0.5;
     }
     const baseOpacity = isHighlighted ? 1.0 : 0.25;
@@ -1387,7 +1562,6 @@ export class KonvaScene {
     isEmphasized: boolean,
     isHighlighted: boolean,
     cycleEdge: boolean,
-    isChainActive: boolean,
     inChain: boolean,
     animatedDashOffset: number,
     zoom: number,
@@ -1398,13 +1572,7 @@ export class KonvaScene {
       isEmphasized,
       cycleEdge,
     );
-    ctx.globalAlpha = this.resolveEdgeOpacity(
-      edgeKey,
-      isHighlighted,
-      cycleEdge,
-      isChainActive,
-      inChain,
-    );
+    ctx.globalAlpha = this.resolveEdgeOpacity(edgeKey, isHighlighted, cycleEdge, inChain);
     ctx.lineWidth = (isEmphasized ? 2.5 : cycleEdge ? 2 : 1) / zoom;
 
     if (cycleEdge) {
@@ -1520,7 +1688,9 @@ export class KonvaScene {
 
     const { theme, zoom } = config;
     const size = getNodeSize(node);
-    const nodeColor = adjustColorForZoom(getNodeTypeColorFromTheme(node.type, theme), zoom);
+    const nodeColor =
+      this.adjustedNodeColors.get(node.type) ??
+      adjustColorForZoom(getNodeTypeColorFromTheme(node.type, theme), zoom);
 
     this.tooltipGroup.position({ x: worldPos.x, y: worldPos.y - size - 35 / zoom });
     this.tooltipGroup.scale({ x: 1 / zoom, y: 1 / zoom });
@@ -1689,6 +1859,17 @@ export class KonvaScene {
         y: pointer.y - worldY * newZoom,
       };
 
+      // Mark zoom as unstable during continuous scrolling — re-caching at
+      // every intermediate zoom step would be wasteful
+      this.isZoomStable = false;
+      if (this.zoomCacheTimer !== null) clearTimeout(this.zoomCacheTimer);
+      this.zoomCacheTimer = setTimeout(() => {
+        this.isZoomStable = true;
+        this.nodeCacheState.clear();
+        this.zoomCacheTimer = null;
+        this.callbacks.onRenderRequest();
+      }, 200);
+
       // Update stage transform
       stage.scale({ x: newZoom, y: newZoom });
       stage.position(this.pan);
@@ -1696,6 +1877,7 @@ export class KonvaScene {
       this.callbacks.onZoomChange(newZoom);
 
       // Synchronous render for zero-latency zoom — draw each layer individually
+      this.markAllLayersDirty();
       this.clusterLayer.draw();
       this.edgeLayer.draw();
       this.nodeLayer.draw();
@@ -1770,6 +1952,14 @@ export class KonvaScene {
     this.pan = { x: this.pan.x + dx, y: this.pan.y + dy };
     this.lastMousePos = { x: evt.clientX, y: evt.clientY };
     this.stage.position(this.pan);
+
+    // Immediate draw for zero-latency pan response.
+    // Shapes are already positioned in world-space; only the stage
+    // transform changed. A deferred full render updates viewport culling.
+    this.clusterLayer.draw();
+    this.edgeLayer.draw();
+    this.nodeLayer.draw();
+    this.tooltipLayer.draw();
     this.callbacks.onRenderRequest();
   }
 

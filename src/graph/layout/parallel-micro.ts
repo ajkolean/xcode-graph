@@ -46,7 +46,7 @@ function createWorkerChannel<T>(worker: Worker) {
 }
 
 /** Threshold below which we skip worker overhead (serialization + worker creation costs more than sync for small counts) */
-const MIN_CLUSTERS_FOR_WORKERS = 10;
+const MIN_CLUSTERS_FOR_WORKERS = 6;
 
 /** Maximum worker pool size */
 const MAX_WORKERS = 4;

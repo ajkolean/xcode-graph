@@ -45,6 +45,20 @@ import './graph-hidden-dom';
  */
 @customElement('xcode-graph-canvas')
 export class GraphCanvas extends LitElement {
+  /** Properties that affect canvas rendering — other Lit properties (e.g. internal state) don't need a render. */
+  private static readonly CANVAS_PROPS = new Set([
+    'nodes',
+    'edges',
+    'selectedNode',
+    'selectedCluster',
+    'searchQuery',
+    'viewMode',
+    'enableAnimation',
+    'showDirectDeps',
+    'showTransitiveDeps',
+    'showDirectDependents',
+    'showTransitiveDependents',
+  ]);
   /** Graph nodes to render */
   @property({ attribute: false })
   declare nodes: GraphNode[];
@@ -333,10 +347,13 @@ export class GraphCanvas extends LitElement {
       this.updateAnimatingState();
     }
 
-    // Request a canvas render when Lit properties changed, OR when the layout
-    // controller triggers an update after async work completes (changedProps is
-    // empty but positions are now available).
-    if (changedProps.size > 0 || this.layout.nodePositions.size > 0) {
+    // Request a canvas render only when a canvas-relevant property changed,
+    // OR when the layout controller triggers an update after async work
+    // completes (changedProps is empty but positions are now available).
+    const hasCanvasChange = [...changedProps.keys()].some((k) =>
+      GraphCanvas.CANVAS_PROPS.has(k as string),
+    );
+    if (hasCanvasChange || this.layout.nodePositions.size > 0) {
       this.requestRender();
     }
   }
@@ -467,7 +484,16 @@ export class GraphCanvas extends LitElement {
   /** Recalculates whether the animation loop should remain active based on current state. */
   private updateAnimatingState() {
     const hasFadingNodes = this.fadingOutNodes.size > 0;
-    const hasAlphaAnimations = this.nodeAlphaMap.size > 0;
+
+    // Only count entries that are still mid-transition — settled entries
+    // (progress >= 1) are awaiting cleanup and shouldn't keep the loop alive.
+    let hasAlphaAnimations = false;
+    for (const v of this.nodeAlphaMap.values()) {
+      if (v.progress < 1) {
+        hasAlphaAnimations = true;
+        break;
+      }
+    }
 
     // Selection rings, cycle glow, and cluster dash animations only need
     // continuous rendering when motion is enabled. With reduced motion,

@@ -66,6 +66,10 @@ export const CLUSTER_LABEL_CONFIG = {
 export const LOD_THRESHOLDS = {
   /** Skip arrowhead triangles per edge (~9 draw ops each) */
   ARROWHEADS: 0.5,
+  /** Skip per-node text labels (~3 canvas text ops each) */
+  NODE_LABELS: 0.25,
+  /** Skip per-character arc text for cluster labels */
+  CLUSTER_ARC_LABELS: 0.15,
 } as const;
 
 /**
