@@ -2,8 +2,9 @@ import assert from 'node:assert';
 import { describe, expect, it, vi } from 'vitest';
 import { createClusterWithNodes } from '@/fixtures';
 import { buildClusterGraph } from '../cluster-graph';
+import type { LayoutConfig } from '../config';
 import { DEFAULT_CONFIG } from '../config';
-import { computeMacroLayout } from './macro-layout';
+import { computeMacroLayout, layoutWithTimeout, validateElkOptions } from './macro-layout';
 import { computeClusterInterior } from './micro-layout';
 
 /** Inject layerId=0 and reverse positionId on all ELK output children. */
@@ -228,6 +229,208 @@ describe('macro-layout', () => {
         expect(Number.isFinite(pos.x)).toBe(true);
         expect(Number.isFinite(pos.y)).toBe(true);
       }
+    });
+
+    it('applies adaptive thoroughness from config to ELK options', async () => {
+      const cluster = createClusterWithNodes(2);
+      const clusters = [cluster];
+      const clusterGraph = buildClusterGraph([], clusters);
+      const microLayouts = new Map([[cluster.id, computeClusterInterior(cluster, DEFAULT_CONFIG)]]);
+
+      // Use custom thoroughness and greedy switch
+      const config: LayoutConfig = {
+        ...DEFAULT_CONFIG,
+        elkThoroughness: 3,
+        elkGreedySwitchType: 'OFF',
+      };
+
+      // Spy on ELK to capture the graph passed to layout
+      let capturedGraph: import('elkjs/lib/elk-api.js').ElkNode | undefined;
+      const elkModule = await import('elkjs/lib/elk.bundled.js');
+      const RealELK = elkModule.default;
+      const realElk = new RealELK();
+
+      function SpyELK() {
+        return {
+          layout: async (graph: import('elkjs/lib/elk-api.js').ElkNode) => {
+            capturedGraph = graph;
+            return realElk.layout(graph);
+          },
+        };
+      }
+      vi.doMock('elkjs/lib/elk.bundled.js', () => ({ default: SpyELK }));
+
+      const { computeMacroLayout: computeMacroLayoutMocked } = await import('./macro-layout');
+      await computeMacroLayoutMocked(clusterGraph, microLayouts, config);
+
+      vi.doUnmock('elkjs/lib/elk.bundled.js');
+
+      assert(capturedGraph, 'ELK graph must be captured');
+      expect(capturedGraph.layoutOptions?.['elk.layered.thoroughness']).toBe('3');
+      expect(
+        capturedGraph.layoutOptions?.['elk.layered.crossingMinimization.greedySwitch.type'],
+      ).toBe('OFF');
+    });
+
+    it('does not include non-functional validateGraph/validateOptions/debugMode options', async () => {
+      const cluster = createClusterWithNodes(2);
+      const clusters = [cluster];
+      const clusterGraph = buildClusterGraph([], clusters);
+      const microLayouts = new Map([[cluster.id, computeClusterInterior(cluster, DEFAULT_CONFIG)]]);
+
+      let capturedGraph: import('elkjs/lib/elk-api.js').ElkNode | undefined;
+      const elkModule = await import('elkjs/lib/elk.bundled.js');
+      const RealELK = elkModule.default;
+      const realElk = new RealELK();
+
+      function SpyELK() {
+        return {
+          layout: async (graph: import('elkjs/lib/elk-api.js').ElkNode) => {
+            capturedGraph = graph;
+            return realElk.layout(graph);
+          },
+        };
+      }
+      vi.doMock('elkjs/lib/elk.bundled.js', () => ({ default: SpyELK }));
+
+      const { computeMacroLayout: computeMacroLayoutMocked } = await import('./macro-layout');
+      await computeMacroLayoutMocked(clusterGraph, microLayouts, DEFAULT_CONFIG);
+
+      vi.doUnmock('elkjs/lib/elk.bundled.js');
+
+      assert(capturedGraph, 'ELK graph must be captured');
+      const opts = capturedGraph.layoutOptions ?? {};
+      expect(opts['elk.validateGraph']).toBeUndefined();
+      expect(opts['elk.validateOptions']).toBeUndefined();
+      expect(opts['elk.debugMode']).toBeUndefined();
+    });
+  });
+
+  describe('layoutWithTimeout', () => {
+    it('resolves normally when layout completes before timeout', async () => {
+      const result = await layoutWithTimeout(Promise.resolve('done'), 5000);
+      expect(result).toBe('done');
+    });
+
+    it('rejects with timeout error when layout exceeds timeout', async () => {
+      const slowPromise = new Promise<string>((resolve) => setTimeout(() => resolve('late'), 500));
+
+      await expect(layoutWithTimeout(slowPromise, 10)).rejects.toThrow(
+        'ELK layout timed out after 10ms',
+      );
+    });
+
+    it('passes through when timeout is 0 (disabled)', async () => {
+      const result = await layoutWithTimeout(Promise.resolve('done'), 0);
+      expect(result).toBe('done');
+    });
+
+    it('passes through when timeout is negative', async () => {
+      const result = await layoutWithTimeout(Promise.resolve('done'), -1);
+      expect(result).toBe('done');
+    });
+  });
+
+  describe('validateElkOptions', () => {
+    it('returns empty array for valid options', async () => {
+      const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
+      const elk = new ELK();
+
+      const root: import('elkjs/lib/elk-api.js').ElkNode = {
+        id: 'root',
+        children: [],
+        edges: [],
+        layoutOptions: {
+          'elk.algorithm': 'layered',
+          'elk.direction': 'DOWN',
+        },
+      };
+
+      const warnings = await validateElkOptions(elk, root);
+      expect(warnings).toHaveLength(0);
+    });
+
+    it('detects unknown options in root', async () => {
+      const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
+      const elk = new ELK();
+
+      const root: import('elkjs/lib/elk-api.js').ElkNode = {
+        id: 'root',
+        children: [],
+        edges: [],
+        layoutOptions: {
+          'elk.algorithm': 'layered',
+          'elk.totallyFakeOption': 'true',
+        },
+      };
+
+      const warnings = await validateElkOptions(elk, root);
+      expect(warnings.length).toBeGreaterThan(0);
+      expect(warnings[0]).toContain('elk.totallyFakeOption');
+      expect(warnings[0]).toContain('root');
+    });
+
+    it('detects unknown options in child nodes', async () => {
+      const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
+      const elk = new ELK();
+
+      const root: import('elkjs/lib/elk-api.js').ElkNode = {
+        id: 'root',
+        children: [
+          {
+            id: 'child1',
+            layoutOptions: {
+              'elk.bogusOption': 'value',
+            },
+          },
+        ],
+        edges: [],
+        layoutOptions: {},
+      };
+
+      const warnings = await validateElkOptions(elk, root);
+      expect(warnings.some((w) => w.includes('elk.bogusOption'))).toBe(true);
+      expect(warnings.some((w) => w.includes('child1'))).toBe(true);
+    });
+
+    it('detects unknown options in edges', async () => {
+      const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
+      const elk = new ELK();
+
+      const root: import('elkjs/lib/elk-api.js').ElkNode = {
+        id: 'root',
+        children: [{ id: 'a' }, { id: 'b' }],
+        edges: [
+          {
+            id: 'e1',
+            sources: ['a'],
+            targets: ['b'],
+            layoutOptions: {
+              'elk.nonexistentEdgeOption': '5',
+            },
+          },
+        ],
+        layoutOptions: {},
+      };
+
+      const warnings = await validateElkOptions(elk, root);
+      expect(warnings.some((w) => w.includes('elk.nonexistentEdgeOption'))).toBe(true);
+      expect(warnings.some((w) => w.includes('e1'))).toBe(true);
+    });
+
+    it('handles root with no children or edges', async () => {
+      const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
+      const elk = new ELK();
+
+      const root: import('elkjs/lib/elk-api.js').ElkNode = {
+        id: 'root',
+        layoutOptions: {
+          'elk.algorithm': 'layered',
+        },
+      };
+
+      const warnings = await validateElkOptions(elk, root);
+      expect(warnings).toHaveLength(0);
     });
   });
 });

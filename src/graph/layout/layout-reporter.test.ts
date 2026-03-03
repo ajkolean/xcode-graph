@@ -9,12 +9,15 @@ import {
   exportToJSON,
   findHubClusters,
   findIsolatedClusters,
+  formatElkTimingReport,
   generatePositionReport,
   printClusterTable,
+  printElkTimingTable,
   printLayoutSummary,
   printNodesByCluster,
   printStrataVisualization,
 } from './layout-reporter';
+import type { ElkLoggingEntry } from './phases/macro-layout';
 import type { HierarchicalLayoutResult } from './types';
 
 function makeClusterPosition(
@@ -647,6 +650,142 @@ describe('printLayoutSummary', () => {
     const report = generatePositionReport(result);
     printLayoutSummary(report);
     expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+});
+
+describe('formatElkTimingReport', () => {
+  it('formats logging tree into phase reports', () => {
+    const logging: ElkLoggingEntry = {
+      name: 'Root',
+      executionTime: 100,
+      children: [
+        { name: 'Phase A', executionTime: 60 },
+        { name: 'Phase B', executionTime: 40 },
+      ],
+    };
+
+    const phases = formatElkTimingReport(logging);
+
+    expect(phases).toHaveLength(2);
+    expect(phases[0]?.name).toBe('Phase A');
+    expect(phases[0]?.durationMs).toBe(60);
+    expect(phases[0]?.percentage).toBeCloseTo(60);
+    expect(phases[1]?.name).toBe('Phase B');
+    expect(phases[1]?.durationMs).toBe(40);
+    expect(phases[1]?.percentage).toBeCloseTo(40);
+  });
+
+  it('handles nested children', () => {
+    const logging: ElkLoggingEntry = {
+      name: 'Root',
+      executionTime: 200,
+      children: [
+        {
+          name: 'Parent',
+          executionTime: 150,
+          children: [{ name: 'Child', executionTime: 80 }],
+        },
+      ],
+    };
+
+    const phases = formatElkTimingReport(logging);
+
+    expect(phases).toHaveLength(1);
+    expect(phases[0]?.children).toHaveLength(1);
+    expect(phases[0]?.children?.[0]?.name).toBe('Child');
+    expect(phases[0]?.children?.[0]?.durationMs).toBe(80);
+    expect(phases[0]?.children?.[0]?.percentage).toBeCloseTo(40);
+  });
+
+  it('returns empty array when no children', () => {
+    const logging: ElkLoggingEntry = {
+      name: 'Root',
+      executionTime: 50,
+    };
+
+    const phases = formatElkTimingReport(logging);
+    expect(phases).toHaveLength(0);
+  });
+
+  it('handles zero total execution time', () => {
+    const logging: ElkLoggingEntry = {
+      name: 'Root',
+      executionTime: 0,
+      children: [{ name: 'Phase', executionTime: 0 }],
+    };
+
+    const phases = formatElkTimingReport(logging);
+    expect(phases[0]?.percentage).toBe(0);
+  });
+
+  it('handles missing executionTime', () => {
+    const logging: ElkLoggingEntry = {
+      name: 'Root',
+      children: [{ name: 'Phase' }],
+    };
+
+    const phases = formatElkTimingReport(logging);
+    expect(phases[0]?.durationMs).toBe(0);
+    expect(phases[0]?.percentage).toBe(0);
+  });
+});
+
+describe('printElkTimingTable', () => {
+  it('prints without throwing', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {
+      /* suppress output */
+    });
+    const logging: ElkLoggingEntry = {
+      name: 'Root',
+      executionTime: 100,
+      children: [
+        { name: 'Phase A', executionTime: 60 },
+        { name: 'Phase B', executionTime: 40 },
+      ],
+    };
+
+    printElkTimingTable(logging);
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('prints nested phases', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {
+      /* suppress output */
+    });
+    const logging: ElkLoggingEntry = {
+      name: 'Root',
+      executionTime: 200,
+      children: [
+        {
+          name: 'Parent',
+          executionTime: 150,
+          children: [{ name: 'Child', executionTime: 80 }],
+        },
+      ],
+    };
+
+    printElkTimingTable(logging);
+    const calls = spy.mock.calls.map((c) => c[0] as string);
+    expect(calls.some((c) => c.includes('Parent'))).toBe(true);
+    expect(calls.some((c) => c.includes('Child'))).toBe(true);
+    expect(calls.some((c) => c.includes('TOTAL'))).toBe(true);
+    spy.mockRestore();
+  });
+
+  it('prints with no children', () => {
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {
+      /* suppress output */
+    });
+    const logging: ElkLoggingEntry = {
+      name: 'Root',
+      executionTime: 50,
+    };
+
+    printElkTimingTable(logging);
+    const calls = spy.mock.calls.map((c) => c[0] as string);
+    expect(calls.some((c) => c.includes('TOTAL'))).toBe(true);
     spy.mockRestore();
   });
 });

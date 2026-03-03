@@ -104,6 +104,7 @@ export class LayoutController implements ReactiveController {
         sccSizes,
         clusterEdges,
         routedEdges,
+        elkDebug,
       } = await computeHierarchicalLayout(nodes, edges, analyzedClusters, layoutOptions);
 
       // Step 3: Add velocity properties for physics simulation
@@ -116,6 +117,18 @@ export class LayoutController implements ReactiveController {
       initialClusterPos.forEach((pos, id) => {
         clusterPositions.set(id, { ...pos, vx: 0, vy: 0 });
       });
+
+      /* v8 ignore start -- debug logging only in dev mode */
+      if (import.meta.env.DEV && elkDebug) {
+        console.groupCollapsed('[layout] ELK debug');
+        if (elkDebug.elkLogging) console.log('phases:', elkDebug.elkLogging);
+        if (elkDebug.optionWarnings?.length)
+          console.warn('option warnings:', elkDebug.optionWarnings);
+        if (elkDebug.elkDurationMs != null)
+          console.log(`duration: ${elkDebug.elkDurationMs.toFixed(1)}ms`);
+        console.groupEnd();
+      }
+      /* v8 ignore stop */
 
       const result: LayoutResult = {
         nodePositions,

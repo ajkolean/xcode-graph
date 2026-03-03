@@ -51,6 +51,7 @@ export interface SerializedLayoutResult {
   sccSizes?: Array<[number, number]> | undefined;
   maxStratum?: number | undefined;
   maxClusterStratum?: number | undefined;
+  elkDebug?: HierarchicalLayoutResult['elkDebug'] | undefined;
 }
 
 /**
@@ -81,6 +82,7 @@ export function serializeResult(result: HierarchicalLayoutResult): SerializedLay
     sccSizes: result.sccSizes ? Array.from(result.sccSizes.entries()) : undefined,
     maxStratum: result.maxStratum,
     maxClusterStratum: result.maxClusterStratum,
+    elkDebug: result.elkDebug,
   };
 }
 

@@ -1,6 +1,7 @@
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { SimulationLinkDatum, SimulationNodeDatum } from 'd3-force';
+import type { MacroLayoutDebugData } from './phases/macro-layout';
 
 /**
  * D3 simulation node extended with cluster membership
@@ -74,6 +75,8 @@ export interface HierarchicalLayoutResult {
   maxClusterStratum?: number | undefined;
   /** Routed cross-cluster edges with port assignments */
   routedEdges?: RoutedEdge[] | undefined;
+  /** ELK debug data (only populated when elkDebug config is enabled) */
+  elkDebug?: MacroLayoutDebugData | undefined;
 }
 
 /**

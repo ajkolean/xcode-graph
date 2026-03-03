@@ -7,6 +7,7 @@
 
 import type { ClusterPosition } from '@shared/schemas';
 import type { GraphEdge } from '@shared/schemas/graph.types';
+import type { ElkLoggingEntry } from './phases/macro-layout';
 import type { HierarchicalLayoutResult } from './types';
 
 /** Position report entry for a single cluster */
@@ -397,4 +398,72 @@ export function findIsolatedClusters(
   }
 
   return results.sort((a, b) => a.connectionCount - b.connectionCount);
+}
+
+/** ELK phase timing entry for reporting */
+export interface ElkPhaseReport {
+  name: string;
+  durationMs: number;
+  percentage: number;
+  children?: ElkPhaseReport[];
+}
+
+/**
+ * Format ELK logging tree into a flat timing report.
+ *
+ * @param logging - ELK logging entry from elk.layout() with measureExecutionTime enabled
+ * @returns Array of phase reports with duration and percentage of total
+ */
+export function formatElkTimingReport(logging: ElkLoggingEntry): ElkPhaseReport[] {
+  const totalTime = logging.executionTime ?? 0;
+
+  function processEntry(entry: ElkLoggingEntry): ElkPhaseReport {
+    const durationMs = entry.executionTime ?? 0;
+    const percentage = totalTime > 0 ? (durationMs / totalTime) * 100 : 0;
+    return {
+      name: entry.name,
+      durationMs,
+      percentage,
+      children: entry.children?.map(processEntry),
+    };
+  }
+
+  return logging.children?.map(processEntry) ?? [];
+}
+
+/**
+ * Print ELK phase timing table to the console.
+ *
+ * @param logging - ELK logging entry from elk.layout() with measureExecutionTime enabled
+ */
+export function printElkTimingTable(logging: ElkLoggingEntry): void {
+  const phases = formatElkTimingReport(logging);
+  const totalMs = logging.executionTime ?? 0;
+
+  console.log(`\n┌${'─'.repeat(70)}┐`);
+  console.log(`│ ELK PHASE TIMING${' '.repeat(52)}│`);
+  console.log(`├${'─'.repeat(70)}┤`);
+  console.log(`│ ${'Phase'.padEnd(40)}│${'Time (ms)'.padStart(12)} │${'%'.padStart(8)} │`);
+  console.log(`├${'─'.repeat(70)}┤`);
+
+  function printPhase(phase: ElkPhaseReport, indent: number): void {
+    const prefix = '  '.repeat(indent);
+    const name = `${prefix}${phase.name}`.substring(0, 39).padEnd(40);
+    console.log(
+      `│ ${name}│${phase.durationMs.toFixed(1).padStart(12)} │${phase.percentage.toFixed(1).padStart(7)}% │`,
+    );
+    for (const child of phase.children ?? []) {
+      printPhase(child, indent + 1);
+    }
+  }
+
+  for (const phase of phases) {
+    printPhase(phase, 0);
+  }
+
+  console.log(`├${'─'.repeat(70)}┤`);
+  console.log(
+    `│ ${'TOTAL'.padEnd(40)}│${totalMs.toFixed(1).padStart(12)} │${'100.0%'.padStart(8)} │`,
+  );
+  console.log(`└${'─'.repeat(70)}┘`);
 }

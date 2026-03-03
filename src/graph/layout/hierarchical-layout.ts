@@ -4,7 +4,7 @@ import { buildClusterGraph } from './cluster-graph';
 import { DEFAULT_CONFIG, type LayoutOptions } from './config';
 import { computeMicroLayoutsParallel } from './parallel-micro';
 import { applyForceMassage } from './phases/force-massage';
-import { computeMacroLayout } from './phases/macro-layout';
+import { computeMacroLayout, getLastMacroLayoutDebugData } from './phases/macro-layout';
 import { computeClusterPorts, computeRoutedEdges } from './phases/port-routing';
 import type { HierarchicalLayoutResult, RoutedEdge } from './types';
 
@@ -38,9 +38,17 @@ export async function computeHierarchicalLayout(
     };
   }
 
-  const config = opts.configOverrides
+  const baseConfig = opts.configOverrides
     ? { ...DEFAULT_CONFIG, ...opts.configOverrides }
     : DEFAULT_CONFIG;
+
+  // Enable ELK debug instrumentation in dev mode unless explicitly disabled
+  /* v8 ignore start -- dev-only debug enablement */
+  const config =
+    import.meta.env.DEV && opts.configOverrides?.elkDebug !== false
+      ? { ...baseConfig, elkDebug: true }
+      : baseConfig;
+  /* v8 ignore stop */
 
   // Hook: before layout starts
   opts.hooks?.onBeforeLayout?.(nodes, edges);
@@ -113,6 +121,7 @@ export async function computeHierarchicalLayout(
     cycleNodes: new Set(),
     nodeSccId: new Map(),
     sccSizes: new Map(),
+    elkDebug: config.elkDebug ? getLastMacroLayoutDebugData() : undefined,
   };
 
   // Hook: layout complete
