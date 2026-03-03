@@ -332,9 +332,9 @@ export class GraphCanvas extends LitElement {
       this.updateAnimatingState();
     }
 
-    if (changedProps.size > 0) {
-      this.requestRender();
-    }
+    // Always request a canvas render — updates can also be triggered by the
+    // layout controller completing async work (no changed Lit properties).
+    this.requestRender();
   }
 
   /** Performs initial fit-to-viewport once cluster positions are available. */
@@ -344,6 +344,7 @@ export class GraphCanvas extends LitElement {
     if (!this.didInitialFit && this.layout.clusterPositions.size > 0) {
       this.fitToViewport();
       this.didInitialFit = true;
+      this.requestRender();
     }
   }
 
