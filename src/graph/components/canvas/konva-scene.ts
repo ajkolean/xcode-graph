@@ -179,6 +179,7 @@ export class KonvaScene {
   // Fade-out nodes
   fadingOutNodes = new Map<string, FadingNode>();
 
+
   constructor(container: HTMLDivElement, callbacks: SceneCallbacks) {
     this.callbacks = callbacks;
 
