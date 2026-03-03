@@ -103,6 +103,18 @@ export const DEFAULT_CONFIG = {
 
   /** Maximum number of ports per side (prevents overcrowding) */
   maxPortsPerSide: 8,
+
+  /** ELK crossing minimization thoroughness (1-10, default 7). Lower = faster, slightly lower quality */
+  elkThoroughness: 7,
+
+  /** ELK greedy switch type for crossing minimization post-processing */
+  elkGreedySwitchType: 'TWO_SIDED' as 'TWO_SIDED' | 'ONE_SIDED' | 'OFF',
+
+  /** Enable ELK debug instrumentation (logging, timing, option validation) */
+  elkDebug: false,
+
+  /** Timeout in ms for ELK layout call (0 = no timeout) */
+  elkLayoutTimeout: 0,
 } as const;
 
 /**

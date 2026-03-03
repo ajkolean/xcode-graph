@@ -72,6 +72,9 @@ function buildElkRoot(
       'elk.layered.layering.strategy': 'MIN_WIDTH',
       'elk.layered.layering.minWidth.upperBoundOnWidth': String(elkWidthHint),
       'org.eclipse.elk.layered.generatePositionAndLayerIds': 'true',
+      'elk.validateGraph': 'true',
+      'elk.validateOptions': 'true',
+      'elk.debugMode': 'true',
     },
   };
 }
@@ -244,8 +247,20 @@ export async function computeMacroLayout(
   const edges = buildElkEdges(clusterGraph);
   const root = buildElkRoot(children, edges, config, elkWidthHint);
 
-  // 2. Run Layout
-  const layout = await elk.layout(root);
+  // 2. Run Layout (with ELK debug instrumentation)
+  const layout = await elk.layout(root, {
+    logging: true,
+    measureExecutionTime: true,
+  });
+
+  /* v8 ignore start -- debug logging only runs in browser */
+  const elkResult = layout as ElkNode & {
+    logging?: { name?: string; executionTime?: number; children?: unknown[] };
+  };
+  if (elkResult.logging) {
+    console.log('[elk] layout result:', elkResult.logging);
+  }
+  /* v8 ignore stop */
 
   // 3. Post-Compaction & Centering
   if (layout.children) {

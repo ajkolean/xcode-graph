@@ -40,18 +40,13 @@
           "attributes": [
             {
               "name": "search-query",
-              "description": "Active search query for dimming non-matching nodes",
+              "description": "Active search query — attribute-bound from parent via search-query=\"...\"",
               "value": { "type": "string", "default": "''" }
             },
             {
               "name": "view-mode",
-              "description": "Display mode affecting edge visibility",
+              "description": "Display mode — attribute-bound from parent via view-mode=\"...\"",
               "value": { "type": "ViewMode" }
-            },
-            {
-              "name": "zoom",
-              "description": "Current zoom level (affects color saturation and label visibility)",
-              "value": { "type": "number", "default": "1" }
             },
             {
               "name": "enable-animation",
@@ -60,22 +55,22 @@
             },
             {
               "name": "show-direct-deps",
-              "description": "Whether to highlight direct dependency edges",
+              "description": "Whether to highlight direct dependency edges — attribute-bound via ?show-direct-deps",
               "value": { "type": "boolean", "default": "false" }
             },
             {
               "name": "show-transitive-deps",
-              "description": "Whether to highlight transitive dependency edges",
+              "description": "Whether to highlight transitive dependency edges — attribute-bound via ?show-transitive-deps",
               "value": { "type": "boolean", "default": "false" }
             },
             {
               "name": "show-direct-dependents",
-              "description": "Whether to highlight direct dependent edges",
+              "description": "Whether to highlight direct dependent edges — attribute-bound via ?show-direct-dependents",
               "value": { "type": "boolean", "default": "false" }
             },
             {
               "name": "show-transitive-dependents",
-              "description": "Whether to highlight transitive dependent edges",
+              "description": "Whether to highlight transitive dependent edges — attribute-bound via ?show-transitive-dependents",
               "value": { "type": "boolean", "default": "false" }
             }
           ],
@@ -139,24 +134,20 @@
               },
               {
                 "name": "hoveredNode",
-                "description": "Currently hovered node ID (shows tooltip)",
+                "description": "Currently hovered node ID — plain field, only used for canvas rendering.",
                 "type": "string | null"
               },
               {
                 "name": "searchQuery",
-                "description": "Active search query for dimming non-matching nodes",
+                "description": "Active search query — attribute-bound from parent via search-query=\"...\"",
                 "type": "string"
               },
               {
                 "name": "viewMode",
-                "description": "Display mode affecting edge visibility",
+                "description": "Display mode — attribute-bound from parent via view-mode=\"...\"",
                 "type": "ViewMode"
               },
-              {
-                "name": "zoom",
-                "description": "Current zoom level (affects color saturation and label visibility)",
-                "type": "number"
-              },
+              { "name": "zoom", "type": "number" },
               {
                 "name": "enableAnimation",
                 "description": "Whether physics animation is enabled for layout settling",
@@ -164,37 +155,37 @@
               },
               {
                 "name": "transitiveDeps",
-                "description": "Transitive dependency chain for the selected node",
+                "description": "Transitive dependency chain — plain field, only used for canvas rendering.",
                 "type": "TransitiveResult | undefined"
               },
               {
                 "name": "transitiveDependents",
-                "description": "Transitive dependent chain for the selected node",
+                "description": "Transitive dependent chain — plain field, only used for canvas rendering.",
                 "type": "TransitiveResult | undefined"
               },
               {
                 "name": "previewFilter",
-                "description": "Active filter preview (dims non-matching nodes on hover)",
+                "description": "Active filter preview — plain field, only used for canvas rendering.",
                 "type": "PreviewFilter | undefined"
               },
               {
                 "name": "showDirectDeps",
-                "description": "Whether to highlight direct dependency edges",
+                "description": "Whether to highlight direct dependency edges — attribute-bound via ?show-direct-deps",
                 "type": "boolean"
               },
               {
                 "name": "showTransitiveDeps",
-                "description": "Whether to highlight transitive dependency edges",
+                "description": "Whether to highlight transitive dependency edges — attribute-bound via ?show-transitive-deps",
                 "type": "boolean"
               },
               {
                 "name": "showDirectDependents",
-                "description": "Whether to highlight direct dependent edges",
+                "description": "Whether to highlight direct dependent edges — attribute-bound via ?show-direct-dependents",
                 "type": "boolean"
               },
               {
                 "name": "showTransitiveDependents",
-                "description": "Whether to highlight transitive dependent edges",
+                "description": "Whether to highlight transitive dependent edges — attribute-bound via ?show-transitive-dependents",
                 "type": "boolean"
               },
               {

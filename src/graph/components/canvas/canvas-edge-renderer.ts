@@ -416,6 +416,62 @@ function isEdgeInActiveChain(edgeKey: string, rc: EdgeRenderContext): boolean {
 /** Zoom threshold below which non-emphasized edges are hidden to reduce visual noise. */
 const EDGE_HIDE_ZOOM_THRESHOLD = 0.3;
 
+/** Classifies an edge as highlighted based on cluster selection and toggle state. */
+function isEdgeHighlighted(edge: GraphEdge, rc: EdgeRenderContext): boolean {
+  return (
+    rc.selectedCluster != null &&
+    ((rc.showDirectDeps && rc.nodeMap.get(edge.source)?.project === rc.selectedCluster) ||
+      (rc.showDirectDependents && rc.nodeMap.get(edge.target)?.project === rc.selectedCluster))
+  );
+}
+
+/** Returns true when an edge needs special (non-batched) rendering. */
+function isSpecialEdge(
+  edge: GraphEdge,
+  edgeKey: string,
+  isChainActive: boolean,
+  rc: EdgeRenderContext,
+): boolean {
+  if (isEdgeHighlighted(edge, rc)) return true;
+  if (isChainActive && isEdgeInActiveChain(edgeKey, rc)) return true;
+  if (isCycleEdge(edge, rc.layout)) return true;
+  return false;
+}
+
+/**
+ * Batch non-emphasized edges as straight lines in a single stroke() call.
+ * Used in the zoom 0.3–0.5 range where arrowheads are hidden by LOD.
+ * Replaces ~1900 individual stroke() calls with one, eliminating the
+ * jank spike when edges first appear at the hide threshold.
+ */
+function renderBatchedEdges(
+  rc: EdgeRenderContext,
+  viewport: ViewportBounds,
+  isChainActive: boolean,
+): void {
+  const { ctx, edges } = rc;
+
+  ctx.save();
+  ctx.strokeStyle = rc.theme.edgeDefault;
+  ctx.globalAlpha = 0.25;
+  ctx.lineWidth = 1 / rc.zoom;
+  ctx.setLineDash([]);
+  ctx.beginPath();
+
+  for (const edge of edges) {
+    const edgeKey = `${edge.source}->${edge.target}`;
+    if (isSpecialEdge(edge, edgeKey, isChainActive, rc)) continue;
+
+    const endpoints = resolveEdgeEndpoints(edge, rc);
+    if (!endpoints || !isEdgeVisible(endpoints, viewport)) continue;
+
+    ctx.moveTo(endpoints.x1, endpoints.y1);
+    ctx.lineTo(endpoints.x2, endpoints.y2);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
 /** Renders all visible edges onto the canvas, applying highlight and chain logic. */
 export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): void {
   const { ctx, edges } = rc;
@@ -430,19 +486,22 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
   const reducedMotion = prefersReducedMotion.get();
   const animatedDashOffset = reducedMotion ? 0 : rc.time / 20;
   const hideNonEmphasized = rc.zoom < EDGE_HIDE_ZOOM_THRESHOLD;
+  const batchEdges = !hideNonEmphasized && rc.zoom < LOD_THRESHOLDS.ARROWHEADS;
 
+  if (batchEdges) {
+    renderBatchedEdges(rc, viewport, isChainActive);
+  }
+
+  // Individual pass: render emphasized/chain/cycle edges (always),
+  // and all edges at zoom >= 0.5 where full detail is needed.
   ctx.lineWidth = 1;
 
   for (const edge of edges) {
     const edgeKey = `${edge.source}->${edge.target}`;
     const inChain = isChainActive && isEdgeInActiveChain(edgeKey, rc);
+    const isHighlighted = isEdgeHighlighted(edge, rc);
 
-    const isHighlighted =
-      rc.selectedCluster != null &&
-      ((rc.showDirectDeps && rc.nodeMap.get(edge.source)?.project === rc.selectedCluster) ||
-        (rc.showDirectDependents && rc.nodeMap.get(edge.target)?.project === rc.selectedCluster));
-
-    // Skip non-emphasized edges when zoomed out far to reduce visual noise
+    if (batchEdges && !isSpecialEdge(edge, edgeKey, isChainActive, rc)) continue;
     if (hideNonEmphasized && !isHighlighted && !(isChainActive && inChain)) continue;
 
     renderSingleEdge(

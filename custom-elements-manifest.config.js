@@ -1,4 +1,4 @@
-import { expandTypesPlugin, getTsProgram } from 'cem-plugin-expanded-types';
+import { typeParserPlugin, getTsProgram } from '@wc-toolkit/type-parser';
 import { customElementJetBrainsPlugin } from 'custom-element-jet-brains-integration';
 import { customElementVsCodePlugin } from 'custom-element-vs-code-integration';
 
@@ -26,7 +26,7 @@ export default {
   },
 
   plugins: [
-    expandTypesPlugin(),
+    typeParserPlugin(),
     customElementVsCodePlugin({
       outdir: '.',
       htmlFileName: 'vscode.html-custom-data.json',

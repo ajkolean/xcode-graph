@@ -14,18 +14,13 @@
       "attributes": [
         {
           "name": "search-query",
-          "description": "Active search query for dimming non-matching nodes",
+          "description": "Active search query — attribute-bound from parent via search-query=\"...\"",
           "values": []
         },
         {
           "name": "view-mode",
-          "description": "Display mode affecting edge visibility",
+          "description": "Display mode — attribute-bound from parent via view-mode=\"...\"",
           "values": [{ "name": "ViewMode" }]
-        },
-        {
-          "name": "zoom",
-          "description": "Current zoom level (affects color saturation and label visibility)",
-          "values": []
         },
         {
           "name": "enable-animation",
@@ -34,22 +29,22 @@
         },
         {
           "name": "show-direct-deps",
-          "description": "Whether to highlight direct dependency edges",
+          "description": "Whether to highlight direct dependency edges — attribute-bound via ?show-direct-deps",
           "values": []
         },
         {
           "name": "show-transitive-deps",
-          "description": "Whether to highlight transitive dependency edges",
+          "description": "Whether to highlight transitive dependency edges — attribute-bound via ?show-transitive-deps",
           "values": []
         },
         {
           "name": "show-direct-dependents",
-          "description": "Whether to highlight direct dependent edges",
+          "description": "Whether to highlight direct dependent edges — attribute-bound via ?show-direct-dependents",
           "values": []
         },
         {
           "name": "show-transitive-dependents",
-          "description": "Whether to highlight transitive dependent edges",
+          "description": "Whether to highlight transitive dependent edges — attribute-bound via ?show-transitive-dependents",
           "values": []
         }
       ],
