@@ -191,9 +191,9 @@ export class KonvaScene {
 
     // Layers in draw order (bottom to top)
     this.clusterLayer = new Konva.Layer();
-    this.edgeLayer = new Konva.Layer({ listening: false, hitGraphEnabled: false });
+    this.edgeLayer = new Konva.Layer({ listening: false });
     this.nodeLayer = new Konva.Layer();
-    this.tooltipLayer = new Konva.Layer({ listening: false, hitGraphEnabled: false });
+    this.tooltipLayer = new Konva.Layer({ listening: false });
 
     this.stage.add(this.clusterLayer);
     this.stage.add(this.edgeLayer);
