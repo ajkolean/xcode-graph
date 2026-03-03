@@ -296,7 +296,6 @@ src/
 | Color utilities | [colord](https://colord.omgovich.dev/) |
 | Web workers | [Comlink](https://github.com/nicklama/xcode-graph) |
 | Focus management | [focus-trap](https://github.com/focus-trap/focus-trap) |
-| Virtual scrolling | `@lit-labs/virtualizer` |
 
 ### Services
 

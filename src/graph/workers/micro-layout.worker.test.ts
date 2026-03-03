@@ -20,36 +20,27 @@ vi.mock('@graph/layout/phases/node-massage', () => ({
   applyNodeMassage: vi.fn((micro) => micro),
 }));
 
-interface MicroWorkerApi {
-  computeMicro: (
-    cluster: unknown,
-    config: unknown,
-  ) => {
-    clusterId: string;
-    width: number;
-    height: number;
-    relativePositions: Array<[string, unknown]>;
-  };
-}
+// Capture the onmessage handler and mock postMessage
+let onmessageHandler: ((e: MessageEvent) => void) | null = null;
+const mockPostMessage = vi.fn();
 
-let capturedWorkerApi: MicroWorkerApi | null = null;
-vi.mock('comlink', () => ({
-  expose: vi.fn((api: MicroWorkerApi) => {
-    capturedWorkerApi = api;
-  }),
-}));
+vi.stubGlobal('self', {
+  set onmessage(handler: (e: MessageEvent) => void) {
+    onmessageHandler = handler;
+  },
+  get onmessage() {
+    return onmessageHandler;
+  },
+  postMessage: mockPostMessage,
+});
 
 describe('micro-layout.worker', () => {
-  it('exposes workerApi via comlink', async () => {
+  it('registers a self.onmessage handler', async () => {
     await import('./micro-layout.worker');
-    const { expose } = await import('comlink');
-
-    expect(expose).toHaveBeenCalled();
-    expect(capturedWorkerApi).not.toBeNull();
-    expect(typeof capturedWorkerApi?.computeMicro).toBe('function');
+    expect(onmessageHandler).not.toBeNull();
   });
 
-  it('computeMicro deserializes cluster and returns serialized result', async () => {
+  it('computeMicro deserializes cluster and returns serialized result via postMessage', async () => {
     await import('./micro-layout.worker');
 
     const serializedCluster = {
@@ -83,12 +74,19 @@ describe('micro-layout.worker', () => {
       ] as Array<[string, unknown]>,
     };
 
-    const result = capturedWorkerApi?.computeMicro(serializedCluster, DEFAULT_CONFIG);
-    expect(result).toBeDefined();
+    onmessageHandler?.({
+      data: { cluster: serializedCluster, config: DEFAULT_CONFIG },
+    } as MessageEvent);
 
-    expect(result?.clusterId).toBe('test-cluster');
-    expect(result?.width).toBe(200);
-    expect(result?.height).toBe(150);
+    expect(mockPostMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        clusterId: 'test-cluster',
+        width: 200,
+        height: 150,
+      }),
+    );
+
+    const result = mockPostMessage.mock.calls[0]?.[0];
     expect(Array.isArray(result?.relativePositions)).toBe(true);
     expect(result?.relativePositions).toHaveLength(1);
     expect(result?.relativePositions[0]?.[0]).toBe('n1');
@@ -121,7 +119,9 @@ describe('micro-layout.worker', () => {
       ] as Array<[string, unknown]>,
     };
 
-    capturedWorkerApi?.computeMicro(serializedCluster, DEFAULT_CONFIG);
+    onmessageHandler?.({
+      data: { cluster: serializedCluster, config: DEFAULT_CONFIG },
+    } as MessageEvent);
 
     expect(computeClusterInterior).toHaveBeenCalled();
     const calledCluster = vi.mocked(computeClusterInterior).mock.calls.at(-1)?.[0];

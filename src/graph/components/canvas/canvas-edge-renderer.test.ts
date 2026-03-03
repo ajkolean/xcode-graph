@@ -157,6 +157,28 @@ describe('canvas-edge-renderer', () => {
     expect(strokeCalls.length).to.equal(0);
   });
 
+  it('should skip arrowheads at zoom below LOD threshold (0.5)', () => {
+    const rc = createEdgeRenderContext({ zoom: 0.4 });
+
+    renderEdges(rc, largeViewport);
+
+    // At zoom 0.4 (< 0.5 arrowhead LOD threshold), no arrowhead fill calls
+    const drawCalls = getDrawCalls(rc.ctx);
+    const fillCalls = drawCalls.filter((c: unknown) => (c as { type: string }).type === 'fill');
+    expect(fillCalls.length).to.equal(0);
+  });
+
+  it('should draw arrowheads at zoom at or above LOD threshold (0.5)', () => {
+    const rc = createEdgeRenderContext({ zoom: 0.6 });
+
+    renderEdges(rc, largeViewport);
+
+    // At zoom 0.6 (>= 0.5 arrowhead LOD threshold), arrowhead fill calls should exist
+    const drawCalls = getDrawCalls(rc.ctx);
+    const fillCalls = drawCalls.filter((c: unknown) => (c as { type: string }).type === 'fill');
+    expect(fillCalls.length).to.be.greaterThan(0);
+  });
+
   it('should render cycle edges with cycle edge color', () => {
     const nodes: GraphNode[] = [
       createTestNode({ id: 'nodeA', name: 'ModuleA', project: 'ProjectA' }),

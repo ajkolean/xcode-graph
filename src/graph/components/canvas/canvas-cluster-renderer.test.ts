@@ -306,6 +306,30 @@ describe('canvas-cluster-renderer', () => {
     expect(() => renderClusters(rc, viewport)).not.toThrow();
   });
 
+  it('should skip cluster labels at low zoom (LOD threshold)', () => {
+    const rc = createRenderContext({ zoom: 0.2 });
+    const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
+
+    renderClusters(rc, viewport);
+
+    // At zoom 0.2 (< 0.3 LOD threshold), no fillText calls for labels
+    const drawCalls = (rc.ctx as unknown as { __getDrawCalls(): unknown[] }).__getDrawCalls();
+    const textCalls = drawCalls.filter((c: unknown) => (c as { type: string }).type === 'fillText');
+    expect(textCalls.length).to.equal(0);
+  });
+
+  it('should draw cluster labels at normal zoom (above LOD threshold)', () => {
+    const rc = createRenderContext({ zoom: 0.5 });
+    const viewport = { minX: -500, minY: -500, maxX: 500, maxY: 500 };
+
+    renderClusters(rc, viewport);
+
+    // At zoom 0.5 (>= 0.3 LOD threshold), fillText calls should exist for labels
+    const drawCalls = (rc.ctx as unknown as { __getDrawCalls(): unknown[] }).__getDrawCalls();
+    const textCalls = drawCalls.filter((c: unknown) => (c as { type: string }).type === 'fillText');
+    expect(textCalls.length).to.be.greaterThan(0);
+  });
+
   it('should use manual cluster positions when provided', () => {
     const cluster = createTestCluster('manual-cluster', 'ManualCluster');
     const manualPositions = new Map([['manual-cluster', { x: 50, y: 50 }]]);

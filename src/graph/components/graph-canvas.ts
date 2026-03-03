@@ -243,6 +243,12 @@ export class GraphCanvas extends LitElement {
       });
       this.intersectionObserver.observe(this);
 
+      // Attach wheel listener with { passive: false } so preventDefault() works.
+      // Lit's @wheel binding uses a passive listener by default in Chrome,
+      // which ignores preventDefault and lets the browser compete with our zoom.
+      /* v8 ignore next 1 -- native event listener: not triggered in jsdom */
+      this.canvas.addEventListener('wheel', this.handleCanvasWheel, { passive: false });
+
       this.resizeCanvas();
       this.centerGraph();
       this.isAnimating = true;
@@ -256,6 +262,7 @@ export class GraphCanvas extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.animationLoop.stop();
+    this.canvas?.removeEventListener('wheel', this.handleCanvasWheel);
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.intersectionObserver?.disconnect();
@@ -335,7 +342,9 @@ export class GraphCanvas extends LitElement {
       this.updateAnimatingState();
     }
 
-    this.requestRender();
+    if (changedProps.size > 0) {
+      this.requestRender();
+    }
   }
 
   /** Performs initial fit-to-viewport once cluster positions are available. */
@@ -755,7 +764,6 @@ export class GraphCanvas extends LitElement {
         @mousemove=${this.handleCanvasMouseMove}
         @mouseup=${this.handleCanvasMouseUp}
         @mouseleave=${this.handleCanvasMouseUp}
-        @wheel=${this.handleCanvasWheel}
         @keydown=${this.handleCanvasKeyDown}
       ></canvas>
       <xcode-graph-hidden-dom

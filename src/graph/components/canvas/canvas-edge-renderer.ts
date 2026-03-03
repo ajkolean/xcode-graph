@@ -5,6 +5,7 @@ import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
+import { LOD_THRESHOLDS } from '@shared/utils/zoom-config';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { generateBezierPath } from '@ui/utils/paths';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
@@ -370,16 +371,18 @@ function renderSingleEdge(
 
   drawEdgePath(edgeKey, endpoints, rc);
 
-  // Draw arrowhead at target end
-  drawArrowhead(
-    rc.ctx,
-    endpoints.x2,
-    endpoints.y2,
-    endpoints.x1,
-    endpoints.y1,
-    rc.zoom,
-    isEmphasized,
-  );
+  // Draw arrowhead at target end (skip at low zoom — too small to see)
+  if (rc.zoom >= LOD_THRESHOLDS.ARROWHEADS) {
+    drawArrowhead(
+      rc.ctx,
+      endpoints.x2,
+      endpoints.y2,
+      endpoints.x1,
+      endpoints.y1,
+      rc.zoom,
+      isEmphasized,
+    );
+  }
 
   rc.ctx.setLineDash([]);
   rc.ctx.lineDashOffset = 0;

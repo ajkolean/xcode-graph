@@ -60,6 +60,19 @@ export const CLUSTER_LABEL_CONFIG = {
 } as const;
 
 /**
+ * Level-of-detail thresholds — below these zoom levels, expensive rendering
+ * operations are skipped because the elements are too small to see.
+ */
+export const LOD_THRESHOLDS = {
+  /** Skip arrowhead triangles per edge (~9 draw ops each) */
+  ARROWHEADS: 0.5,
+  /** Skip node labels (strokeText + fillText per node) */
+  NODE_LABELS: 0.4,
+  /** Skip per-character arc text rendering for cluster names */
+  CLUSTER_LABELS: 0.3,
+} as const;
+
+/**
  * Normalize a zoom value to the 0-1 range and clamp.
  * 0 = fully zoomed out (MIN_ZOOM), 1 = fully zoomed in (MAX_ZOOM).
  *

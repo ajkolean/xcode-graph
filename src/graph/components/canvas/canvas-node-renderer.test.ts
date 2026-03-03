@@ -9,7 +9,7 @@ import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
-import { type NodeRenderContext, renderNodes } from './canvas-node-renderer';
+import { type NodeRenderContext, renderNodes, shouldShowNodeLabel } from './canvas-node-renderer';
 
 function createTestTheme(): CanvasTheme {
   return {
@@ -463,14 +463,25 @@ describe('canvas-node-renderer', () => {
     });
   });
 
-  describe('shouldShowNodeLabel via zoom and hub check', () => {
-    it('should show labels when zoom >= 0.3', () => {
+  describe('shouldShowNodeLabel via zoom LOD threshold', () => {
+    it('should return true when zoom is at or above the threshold (0.4)', () => {
+      expect(shouldShowNodeLabel(0.4)).toBe(true);
+      expect(shouldShowNodeLabel(0.5)).toBe(true);
+      expect(shouldShowNodeLabel(1.0)).toBe(true);
+    });
+
+    it('should return false when zoom is below the threshold (0.4)', () => {
+      expect(shouldShowNodeLabel(0.39)).toBe(false);
+      expect(shouldShowNodeLabel(0.2)).toBe(false);
+      expect(shouldShowNodeLabel(0.01)).toBe(false);
+    });
+
+    it('should show labels when zoom >= 0.4', () => {
       const rc = createRenderContext({ zoom: 0.5 });
       const viewport = { minX: -5000, minY: -5000, maxX: 5000, maxY: 5000 };
 
       renderNodes(rc, viewport);
 
-      // With zoom 0.5, labels should be shown (zoom >= 0.3)
       const drawCalls = (rc.ctx as unknown as { __getDrawCalls(): unknown[] }).__getDrawCalls();
       const textCalls = drawCalls.filter(
         (c: unknown) => (c as { type: string }).type === 'fillText',
@@ -478,20 +489,17 @@ describe('canvas-node-renderer', () => {
       expect(textCalls.length).to.be.greaterThan(0);
     });
 
-    it('should always show labels regardless of zoom level', () => {
-      const rc = createRenderContext({
-        zoom: 0.2,
-      });
+    it('should skip labels when zoom < 0.4', () => {
+      const rc = createRenderContext({ zoom: 0.2 });
       const viewport = { minX: -5000, minY: -5000, maxX: 5000, maxY: 5000 };
 
       renderNodes(rc, viewport);
 
-      // Labels are always visible, even at very low zoom
       const drawCalls = (rc.ctx as unknown as { __getDrawCalls(): unknown[] }).__getDrawCalls();
       const textCalls = drawCalls.filter(
         (c: unknown) => (c as { type: string }).type === 'fillText',
       );
-      expect(textCalls.length).to.be.greaterThan(0);
+      expect(textCalls.length).to.equal(0);
     });
   });
 

@@ -49,22 +49,19 @@ vi.mock('@graph/layout/hierarchical-layout', () => ({
   })),
 }));
 
-interface WorkerApi {
-  computeLayout: (
-    nodes: unknown,
-    edges: unknown,
-    clusters: unknown,
-    opts?: unknown,
-  ) => Promise<unknown>;
-}
+// Capture the onmessage handler and mock postMessage
+let onmessageHandler: ((e: MessageEvent) => void) | null = null;
+const mockPostMessage = vi.fn();
 
-// Use an object to avoid TDZ issues with vi.mock hoisting
-const captured: { workerApi: WorkerApi | null } = { workerApi: null };
-vi.mock('comlink', () => ({
-  expose: vi.fn((api: WorkerApi) => {
-    captured.workerApi = api;
-  }),
-}));
+vi.stubGlobal('self', {
+  set onmessage(handler: (e: MessageEvent) => void) {
+    onmessageHandler = handler;
+  },
+  get onmessage() {
+    return onmessageHandler;
+  },
+  postMessage: mockPostMessage,
+});
 
 describe('layout.worker', () => {
   describe('deserializeClusters', () => {
@@ -149,17 +146,13 @@ describe('layout.worker', () => {
     });
   });
 
-  describe('workerApi.computeLayout', () => {
-    it('exposes computeLayout via comlink', async () => {
+  describe('workerApi via self.onmessage', () => {
+    it('registers a self.onmessage handler', async () => {
       await import('./layout.worker');
-      const { expose } = await import('comlink');
-
-      expect(expose).toHaveBeenCalled();
-      expect(captured.workerApi).not.toBeNull();
-      expect(typeof captured.workerApi?.computeLayout).toBe('function');
+      expect(onmessageHandler).not.toBeNull();
     });
 
-    it('deserializes clusters, computes layout, and serializes result', async () => {
+    it('deserializes clusters, computes layout, and posts serialized result', async () => {
       await import('./layout.worker');
       type SC = import('./layout.worker').SerializedCluster;
 
@@ -185,11 +178,14 @@ describe('layout.worker', () => {
         },
       ];
 
-      const result = (await captured.workerApi?.computeLayout(
-        nodes,
-        edges,
-        serializedClusters,
-      )) as {
+      onmessageHandler?.({
+        data: { nodes, edges, clusters: serializedClusters },
+      } as MessageEvent);
+
+      // computeLayout is async, wait for postMessage
+      await vi.waitFor(() => expect(mockPostMessage).toHaveBeenCalled());
+
+      const result = mockPostMessage.mock.lastCall?.[0] as {
         nodePositions: Array<[string, unknown]>;
         clusterPositions: Array<[string, unknown]>;
         clusters: unknown[];

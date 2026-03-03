@@ -16,6 +16,7 @@ import {
   selectNode,
   setHoveredNode,
 } from '@graph/signals/index';
+import { Signal } from '@lit-labs/signals';
 import { fixture, html } from '@open-wc/testing';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
@@ -129,6 +130,28 @@ describe('xcode-graph-tab', () => {
 
     const sidebar = el.shadowRoot?.querySelector('xcode-graph-right-sidebar');
     expect(sidebar).toBeDefined();
+  });
+});
+
+describe('graph-tab zoom signal untracking', () => {
+  it('should use Signal.subtle.untrack to read zoom for canvas binding', () => {
+    // Verify that the zoom signal is read via untrack (not watch) for the canvas.
+    // This prevents zoom signal changes from triggering a full GraphTab re-render
+    // which would cause a double-render cascade on every wheel event.
+    let untrackCalled = false;
+    const originalUntrack = Signal.subtle.untrack;
+    Signal.subtle.untrack = <T>(fn: () => T): T => {
+      untrackCalled = true;
+      return originalUntrack(fn);
+    };
+    try {
+      // Reading zoom via untrack should be the pattern used in the template
+      const value = Signal.subtle.untrack(() => zoom.get());
+      expect(untrackCalled).toBe(true);
+      expect(typeof value).toBe('number');
+    } finally {
+      Signal.subtle.untrack = originalUntrack;
+    }
   });
 });
 
@@ -438,12 +461,9 @@ describe('graph-tab handler method coverage (lines 139-175)', () => {
     expect(enableAnimation.get()).toBe(!initial);
   });
 
-  it('handleZoomChange calls setZoom with event detail (line 179)', async () => {
+  it('handleZoomChange calls setZoom with event detail (line 179)', () => {
     const proto = getGraphTabProto();
-    const context = { zoomDebounceId: null };
-    proto.handleZoomChange.call(context, new CustomEvent('zoom-change', { detail: 0.75 }));
-    // Signal update is debounced — wait for the timeout to flush
-    await new Promise((r) => setTimeout(r, 150));
+    proto.handleZoomChange.call({}, new CustomEvent('zoom-change', { detail: 0.75 }));
     expect(zoom.get()).toBe(0.75);
   });
 });

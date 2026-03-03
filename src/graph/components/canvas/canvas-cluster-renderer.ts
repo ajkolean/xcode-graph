@@ -2,7 +2,7 @@ import type { GraphLayoutController } from '@graph/controllers/graph-layout.cont
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { hexToRgba } from '@graph/utils/canvas-theme';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
-import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-config';
+import { CLUSTER_LABEL_CONFIG, LOD_THRESHOLDS } from '@shared/utils/zoom-config';
 
 import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
@@ -312,8 +312,9 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
       cluster.id,
     );
 
-    // Always draw cluster labels at all zoom levels
-    drawClusterLabels(ctx, cx, cy, radius, clusterColor, isActive, cluster.name);
+    if (rc.zoom >= LOD_THRESHOLDS.CLUSTER_LABELS) {
+      drawClusterLabels(ctx, cx, cy, radius, clusterColor, isActive, cluster.name);
+    }
 
     ctx.globalAlpha = 1.0;
   }

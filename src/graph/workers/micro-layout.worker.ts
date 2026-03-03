@@ -12,7 +12,6 @@ import { applyNodeMassage } from '@graph/layout/phases/node-massage';
 import type { Cluster, NodePosition } from '@shared/schemas';
 import type { ClusterNodeMetadata } from '@shared/schemas/cluster.types';
 import type { GraphNode } from '@shared/schemas/graph.types';
-import { expose } from 'comlink';
 
 /** Serialized cluster for worker transfer (Maps → Arrays) */
 export interface SerializedMicroCluster {
@@ -65,5 +64,9 @@ const workerApi = {
 
 export type MicroLayoutWorkerAPI = typeof workerApi;
 
-/* v8 ignore next */
-expose(workerApi);
+/* v8 ignore start */
+self.onmessage = (e: MessageEvent<{ cluster: SerializedMicroCluster; config: LayoutConfig }>) => {
+  const result = workerApi.computeMicro(e.data.cluster, e.data.config);
+  self.postMessage(result);
+};
+/* v8 ignore stop */

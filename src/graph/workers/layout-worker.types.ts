@@ -2,7 +2,6 @@
  * Web Worker API Types
  *
  * Defines the contract between main thread and layout worker.
- * Uses Comlink for type-safe, promise-based worker communication.
  */
 
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
@@ -43,7 +42,6 @@ export interface LayoutProgress {
 
 /**
  * Layout Worker API
- * Exposed to main thread via Comlink
  */
 export interface LayoutWorkerAPI {
   /**

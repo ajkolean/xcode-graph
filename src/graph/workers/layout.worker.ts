@@ -14,7 +14,6 @@ import type { HierarchicalLayoutResult } from '@graph/layout/types';
 import type { Cluster } from '@shared/schemas';
 import type { ClusterNodeMetadata } from '@shared/schemas/cluster.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import { expose } from 'comlink';
 
 /**
  * Serialized cluster format for worker transfer.
@@ -85,15 +84,7 @@ export function serializeResult(result: HierarchicalLayoutResult): SerializedLay
   };
 }
 
-/**
- * Worker API exposed via Comlink.
- */
 const workerApi = {
-  /**
-   * Compute the full hierarchical layout off the main thread.
-   *
-   * Accepts serialized data and returns serialized results.
-   */
   async computeLayout(
     nodes: GraphNode[],
     edges: GraphEdge[],
@@ -108,4 +99,21 @@ const workerApi = {
 
 export type LayoutWorkerRemoteAPI = typeof workerApi;
 
-expose(workerApi);
+/* v8 ignore start */
+self.onmessage = async (
+  e: MessageEvent<{
+    nodes: GraphNode[];
+    edges: GraphEdge[];
+    clusters: SerializedCluster[];
+    opts?: LayoutOptions;
+  }>,
+) => {
+  const result = await workerApi.computeLayout(
+    e.data.nodes,
+    e.data.edges,
+    e.data.clusters,
+    e.data.opts,
+  );
+  self.postMessage(result);
+};
+/* v8 ignore stop */

@@ -7,15 +7,43 @@
  */
 
 import type {
-  MicroLayoutWorkerAPI,
   SerializedMicroCluster,
   SerializedMicroResult,
 } from '@graph/workers/micro-layout.worker';
 import type { Cluster } from '@shared/schemas';
-import { type Remote, wrap } from 'comlink';
 import type { LayoutConfig } from './config';
 import { computeClusterInterior, type MicroLayoutResult } from './phases/micro-layout';
 import { applyNodeMassage } from './phases/node-massage';
+
+/**
+ * Creates a message channel for a worker that supports multiple concurrent tasks.
+ * Each posted message gets a sequential response via the shared onmessage handler.
+ */
+function createWorkerChannel<T>(worker: Worker) {
+  const pending: Array<{
+    resolve: (value: T) => void;
+    reject: (reason: unknown) => void;
+  }> = [];
+
+  worker.onmessage = (e: MessageEvent<T>) => {
+    const next = pending.shift();
+    if (next) next.resolve(e.data);
+  };
+
+  worker.onerror = (e) => {
+    const next = pending.shift();
+    if (next) next.reject(e);
+  };
+
+  return {
+    call(data: unknown): Promise<T> {
+      return new Promise<T>((resolve, reject) => {
+        pending.push({ resolve, reject });
+        worker.postMessage(data);
+      });
+    },
+  };
+}
 
 /** Threshold below which we skip worker overhead (serialization + worker creation costs more than sync for small counts) */
 const MIN_CLUSTERS_FOR_WORKERS = 10;
@@ -103,22 +131,29 @@ export async function computeMicroLayoutsParallel(
   );
 
   const workers: Worker[] = [];
-  const apis: Remote<MicroLayoutWorkerAPI>[] = [];
 
   try {
     for (let i = 0; i < poolSize; i++) {
-      const worker = new Worker(new URL('../workers/micro-layout.worker.ts', import.meta.url), {
-        type: 'module',
-      });
-      workers.push(worker);
-      apis.push(wrap<MicroLayoutWorkerAPI>(worker));
+      workers.push(
+        new Worker(new URL('../workers/micro-layout.worker.ts', import.meta.url), {
+          type: 'module',
+        }),
+      );
     }
 
+    // Create a channel per worker to properly queue multiple messages
+    const channels = workers.map((w) => createWorkerChannel<SerializedMicroResult>(w));
+
     const tasks = clusters.map((cluster, i) => {
-      const api = apis[i % poolSize];
-      if (!api) throw new Error(`Worker API missing for index ${i % poolSize}`);
+      const channel = channels[i % poolSize];
+      if (!channel) throw new Error(`Worker channel missing for index ${i % poolSize}`);
       const serialized = serializeCluster(cluster);
-      return api.computeMicro(serialized, config).then(deserializeResult);
+      return channel
+        .call({
+          cluster: serialized,
+          config,
+        })
+        .then(deserializeResult);
     });
 
     const results = await Promise.all(tasks);
