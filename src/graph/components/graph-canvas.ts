@@ -8,6 +8,7 @@ import {
 } from '@graph/utils/canvas-animation';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
+import type { PerfOverlay } from '@graph/utils/dev-perf-overlay';
 import { ErrorCategory, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
@@ -188,6 +189,9 @@ export class GraphCanvas extends LitElement {
   // Fade-out animation for removed nodes
   private fadingOutNodes = new Map<string, FadingNode>();
 
+  // Dev-only performance overlay (stats.js + Long Tasks)
+  private perfOverlay: PerfOverlay | null = null;
+
   constructor() {
     super();
     this.nodes = [];
@@ -253,6 +257,16 @@ export class GraphCanvas extends LitElement {
       this.centerGraph();
       this.isAnimating = true;
       this.animationLoop.requestRender();
+
+      /* v8 ignore start -- dev-only perf overlay */
+      if (import.meta.env.DEV) {
+        import('@graph/utils/dev-perf-overlay').then(({ createPerfOverlay }) => {
+          createPerfOverlay(this).then((overlay) => {
+            this.perfOverlay = overlay;
+          });
+        });
+      }
+      /* v8 ignore stop */
     } else {
       console.error('Canvas element not found in firstUpdated');
     }
@@ -262,6 +276,8 @@ export class GraphCanvas extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.animationLoop.stop();
+    this.perfOverlay?.destroy();
+    this.perfOverlay = null;
     this.canvas?.removeEventListener('wheel', this.handleCanvasWheel);
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
@@ -292,6 +308,9 @@ export class GraphCanvas extends LitElement {
 
   /** Recomputes layout, caches, and animation state when reactive properties change. */
   override willUpdate(changedProps: PropertyValues<this>): void {
+    /* v8 ignore next 2 */
+    if (import.meta.env.DEV)
+      console.log(`[graph-canvas] willUpdate keys: ${[...changedProps.keys()].join(', ')}`);
     if (changedProps.has('nodes') || changedProps.has('edges')) {
       this.trackRemovedNodesForFadeOut(changedProps);
 
@@ -605,9 +624,18 @@ export class GraphCanvas extends LitElement {
       hasAlphaAnimations;
   }
 
+  /* v8 ignore next -- dev-only frame counter for periodic render profiling */
+  private _renderFrameCount = 0;
+
   /** Clears and redraws the entire canvas including clusters, edges, nodes, and tooltips. */
   private renderCanvas() {
+    this.perfOverlay?.begin();
     if (!this.ctx || !this.canvas || !this.theme) return;
+
+    /* v8 ignore next -- dev render profiling */
+    const _profile = import.meta.env.DEV && ++this._renderFrameCount > 0;
+    /* v8 ignore next */
+    const _t0 = _profile ? performance.now() : 0;
 
     const pan = this.interactionState.pan;
     const width = this.canvas.width / (window.devicePixelRatio || 1);
@@ -625,6 +653,9 @@ export class GraphCanvas extends LitElement {
 
     const viewport = calculateViewportBounds(width, height, pan.x, pan.y, this.zoom);
 
+    /* v8 ignore next */
+    const _t1 = _profile ? performance.now() : 0;
+
     renderClusters(
       {
         ctx: this.ctx,
@@ -638,6 +669,9 @@ export class GraphCanvas extends LitElement {
       },
       viewport,
     );
+
+    /* v8 ignore next */
+    const _t2 = _profile ? performance.now() : 0;
 
     renderEdges(
       {
@@ -665,6 +699,9 @@ export class GraphCanvas extends LitElement {
       },
       viewport,
     );
+
+    /* v8 ignore next */
+    const _t3 = _profile ? performance.now() : 0;
 
     renderNodes(
       {
@@ -698,6 +735,9 @@ export class GraphCanvas extends LitElement {
       viewport,
     );
 
+    /* v8 ignore next */
+    const _t4 = _profile ? performance.now() : 0;
+
     // Render fading-out nodes
     this.renderFadingOutNodes();
 
@@ -718,6 +758,23 @@ export class GraphCanvas extends LitElement {
     };
     renderNodeTooltip(tooltipCtx);
     renderClusterTooltip(tooltipCtx);
+
+    /* v8 ignore start -- dev render profiling */
+    if (_profile) {
+      const _t5 = performance.now();
+      console.log(
+        `[render] frame #${this._renderFrameCount} | ` +
+          `setup: ${(_t1 - _t0).toFixed(1)}ms | ` +
+          `clusters: ${(_t2 - _t1).toFixed(1)}ms | ` +
+          `edges: ${(_t3 - _t2).toFixed(1)}ms | ` +
+          `nodes: ${(_t4 - _t3).toFixed(1)}ms | ` +
+          `tooltip+rest: ${(_t5 - _t4).toFixed(1)}ms | ` +
+          `TOTAL: ${(_t5 - _t0).toFixed(1)}ms`,
+      );
+    }
+    /* v8 ignore stop */
+
+    this.perfOverlay?.end();
   }
 
   /** Renders nodes that are fading out after removal, cleaning up completed animations. */

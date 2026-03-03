@@ -182,6 +182,16 @@ export class GraphTab extends SignalWatcherLitElement {
 
   /** Renders the graph canvas, overlays, controls, and right sidebar */
   override render(): TemplateResult {
+    /* v8 ignore next */
+    if (import.meta.env.DEV) console.time('[graph-tab] render');
+    const result = this._renderTemplate();
+    /* v8 ignore next */
+    if (import.meta.env.DEV) console.timeEnd('[graph-tab] render');
+    return result;
+  }
+
+  /* v8 ignore next */
+  private _renderTemplate(): TemplateResult {
     return html`
       <div class="container">
         <!-- Graph + Sidebar -->

@@ -44,7 +44,6 @@
     "@zag-js/core": "^1.35.3",
     "@zag-js/vanilla": "^1.35.3",
     "colord": "^2.9.3",
-
     "d3-ease": "^3.0.1",
     "d3-force": "^3.0.0",
     "elkjs": "^0.11.0",
@@ -64,6 +63,7 @@
     "@types/d3-ease": "^3.0.2",
     "@types/d3-force": "^3.0.10",
     "@types/node": "^25.3.3",
+    "@types/stats.js": "^0.17.4",
     "@vitest/browser-playwright": "^4.0.18",
     "@vitest/coverage-v8": "^4.0.18",
     "@wc-toolkit/type-parser": "^1.2.0",
@@ -74,6 +74,7 @@
     "rollup-plugin-minify-template-literals": "^1.1.7",
     "rollup-plugin-visualizer": "^7.0.0",
     "size-limit": "^12.0.0",
+    "stats.js": "^0.17.0",
     "ts-lit-plugin": "^2.0.2",
     "typedoc": "^0.28.17",
     "typedoc-plugin-markdown": "^4.10.0",
