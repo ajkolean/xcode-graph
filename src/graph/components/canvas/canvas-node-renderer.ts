@@ -8,7 +8,7 @@ import type { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
-import { LOD_THRESHOLDS } from '@shared/utils/zoom-config';
+
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeSize } from '@ui/utils/sizing';
 import { isCircleInViewport, type ViewportBounds } from '@ui/utils/viewport';
@@ -235,9 +235,9 @@ function drawNodeLabel(
   ctx.fillText(labelText, x, labelY);
 }
 
-/** Node labels are hidden below the LOD zoom threshold to save draw calls. */
-export function shouldShowNodeLabel(zoom: number): boolean {
-  return zoom >= LOD_THRESHOLDS.NODE_LABELS;
+/** Node labels are always shown regardless of zoom level. */
+export function shouldShowNodeLabel(_zoom: number): boolean {
+  return true;
 }
 
 interface NodeVisualState {

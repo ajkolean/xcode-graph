@@ -463,33 +463,15 @@ describe('canvas-node-renderer', () => {
     });
   });
 
-  describe('shouldShowNodeLabel via zoom LOD threshold', () => {
-    it('should return true when zoom is at or above the threshold (0.4)', () => {
-      expect(shouldShowNodeLabel(0.4)).toBe(true);
+  describe('shouldShowNodeLabel always returns true', () => {
+    it('should return true at any zoom level', () => {
+      expect(shouldShowNodeLabel(0.01)).toBe(true);
+      expect(shouldShowNodeLabel(0.2)).toBe(true);
       expect(shouldShowNodeLabel(0.5)).toBe(true);
       expect(shouldShowNodeLabel(1.0)).toBe(true);
     });
 
-    it('should return false when zoom is below the threshold (0.4)', () => {
-      expect(shouldShowNodeLabel(0.39)).toBe(false);
-      expect(shouldShowNodeLabel(0.2)).toBe(false);
-      expect(shouldShowNodeLabel(0.01)).toBe(false);
-    });
-
-    it('should show labels when zoom >= 0.4', () => {
-      const rc = createRenderContext({ zoom: 0.5 });
-      const viewport = { minX: -5000, minY: -5000, maxX: 5000, maxY: 5000 };
-
-      renderNodes(rc, viewport);
-
-      const drawCalls = (rc.ctx as unknown as { __getDrawCalls(): unknown[] }).__getDrawCalls();
-      const textCalls = drawCalls.filter(
-        (c: unknown) => (c as { type: string }).type === 'fillText',
-      );
-      expect(textCalls.length).to.be.greaterThan(0);
-    });
-
-    it('should skip labels when zoom < 0.4', () => {
+    it('should show labels at low zoom', () => {
       const rc = createRenderContext({ zoom: 0.2 });
       const viewport = { minX: -5000, minY: -5000, maxX: 5000, maxY: 5000 };
 
@@ -499,7 +481,7 @@ describe('canvas-node-renderer', () => {
       const textCalls = drawCalls.filter(
         (c: unknown) => (c as { type: string }).type === 'fillText',
       );
-      expect(textCalls.length).to.equal(0);
+      expect(textCalls.length).to.be.greaterThan(0);
     });
   });
 
