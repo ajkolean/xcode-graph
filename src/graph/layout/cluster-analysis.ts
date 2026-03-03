@@ -28,12 +28,14 @@ export function analyzeCluster(cluster: Cluster, allEdges: GraphEdge[]): void {
     }
   });
 
-  // Count external dependents
+  // Count external dependents using pre-indexed edge targets (O(N+E) vs O(N*E))
   const externalDependents = new Map<string, number>();
-  cluster.nodes.forEach((node) => {
-    const count = allEdges.filter((e) => e.target === node.id && !nodeIds.has(e.source)).length;
-    externalDependents.set(node.id, count);
-  });
+  cluster.nodes.forEach((node) => externalDependents.set(node.id, 0));
+  for (const edge of allEdges) {
+    if (nodeIds.has(edge.target) && !nodeIds.has(edge.source)) {
+      externalDependents.set(edge.target, (externalDependents.get(edge.target) ?? 0) + 1);
+    }
+  }
 
   // 1. Identify test nodes and their subjects
   const testNodes = new Set<string>();
@@ -149,26 +151,9 @@ function countInternalDependencies(
   return count;
 }
 
-// Helper: Count internal dependents for a node
-function countInternalDependents(
-  nodeId: string,
-  nodes: GraphNode[],
-  dependencies: Map<string, Set<string>>,
-  testNodes: Set<string>,
-): number {
-  let count = 0;
-  for (const otherNode of nodes) {
-    if (otherNode.id !== nodeId && !testNodes.has(otherNode.id)) {
-      const otherDeps = dependencies.get(otherNode.id) || new Set();
-      if (otherDeps.has(nodeId)) {
-        count++;
-      }
-    }
-  }
-  return count;
-}
-
-// Helper: Calculate internal edge counts for all nodes
+// Helper: Calculate internal edge counts for all nodes.
+// Builds a reverse dependency map in a single pass (O(N+E)) instead of
+// iterating all nodes per node (O(N^2)).
 function calculateInternalEdgeCounts(
   nodes: GraphNode[],
   dependencies: Map<string, Set<string>>,
@@ -177,12 +162,24 @@ function calculateInternalEdgeCounts(
   const internalEdgeCounts = new Map<string, number>();
   const nodeIds = new Set(nodes.map((node) => node.id));
 
+  // Build reverse dependency map: for each node, who depends on it?
+  const reverseDeps = new Map<string, number>();
+  for (const node of nodes) {
+    if (testNodes.has(node.id)) continue;
+    const deps = dependencies.get(node.id) || new Set();
+    for (const depId of deps) {
+      if (nodeIds.has(depId) && !testNodes.has(depId)) {
+        reverseDeps.set(depId, (reverseDeps.get(depId) ?? 0) + 1);
+      }
+    }
+  }
+
   for (const node of nodes) {
     if (testNodes.has(node.id)) continue;
 
     const deps = dependencies.get(node.id) || new Set();
     const depsCount = countInternalDependencies(deps, nodeIds, testNodes);
-    const dependentsCount = countInternalDependents(node.id, nodes, dependencies, testNodes);
+    const dependentsCount = reverseDeps.get(node.id) ?? 0;
     internalEdgeCounts.set(node.id, depsCount + dependentsCount);
   }
 

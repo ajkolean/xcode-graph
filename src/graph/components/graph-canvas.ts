@@ -10,6 +10,7 @@ import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme'
 import { getConnectedNodes } from '@graph/utils/connections';
 import type { PerfOverlay } from '@graph/utils/dev-perf-overlay';
 import { ErrorCategory, ViewMode } from '@shared/schemas';
+import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
@@ -332,9 +333,12 @@ export class GraphCanvas extends LitElement {
       this.updateAnimatingState();
     }
 
-    // Always request a canvas render — updates can also be triggered by the
-    // layout controller completing async work (no changed Lit properties).
-    this.requestRender();
+    // Request a canvas render when Lit properties changed, OR when the layout
+    // controller triggers an update after async work completes (changedProps is
+    // empty but positions are now available).
+    if (changedProps.size > 0 || this.layout.nodePositions.size > 0) {
+      this.requestRender();
+    }
   }
 
   /** Performs initial fit-to-viewport once cluster positions are available. */
@@ -462,16 +466,19 @@ export class GraphCanvas extends LitElement {
 
   /** Recalculates whether the animation loop should remain active based on current state. */
   private updateAnimatingState() {
-    const hasSelectedNode = Boolean(this.selectedNode);
-    const hasSelectedCluster = Boolean(this.selectedCluster);
-    const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
     const hasFadingNodes = this.fadingOutNodes.size > 0;
     const hasAlphaAnimations = this.nodeAlphaMap.size > 0;
 
+    // Selection rings, cycle glow, and cluster dash animations only need
+    // continuous rendering when motion is enabled. With reduced motion,
+    // these render as static visuals — no per-frame updates needed.
+    const needsMotionAnimation = !prefersReducedMotion.get() &&
+      (Boolean(this.selectedNode) ||
+        Boolean(this.selectedCluster) ||
+        (this.layout.cycleNodes?.size ?? 0) > 0);
+
     this.isAnimating =
-      hasSelectedNode ||
-      hasSelectedCluster ||
-      hasCycleNodes ||
+      needsMotionAnimation ||
       hasFadingNodes ||
       hasAlphaAnimations;
   }

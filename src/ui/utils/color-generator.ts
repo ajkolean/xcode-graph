@@ -83,7 +83,13 @@ function adjustColor(rgb: number[], lightnessShift: number, saturationShift: num
  *
  * @public
  */
+const colorCache = new Map<string, string>();
+
 export function generateColor(input: string, category?: string): string {
+  const cacheKey = category ? `${input}|${category}` : input;
+  const cached = colorCache.get(cacheKey);
+  if (cached) return cached;
+
   const hash = hashString(input);
   const baseIndex = hash % baseColors.length;
   const baseColor = baseColors[baseIndex];
@@ -103,7 +109,9 @@ export function generateColor(input: string, category?: string): string {
   lightnessShift += inputVariation * 0.1;
 
   const color = baseColor ?? baseColors[0] ?? { name: 'fallback', rgb: [111, 44, 255] };
-  return adjustColor(color.rgb, lightnessShift, saturationShift);
+  const result = adjustColor(color.rgb, lightnessShift, saturationShift);
+  colorCache.set(cacheKey, result);
+  return result;
 }
 
 /**

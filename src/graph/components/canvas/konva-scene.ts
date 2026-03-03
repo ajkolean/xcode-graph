@@ -149,15 +149,21 @@ export class KonvaScene {
   private clusterMap = new Map<string, Cluster>();
   private cachedClustersRef: Cluster[] | null = null;
 
-  // Per-frame edge endpoint cache (avoids redundant resolution in batched+individual passes)
+  // Edge endpoint cache — only cleared when positions change (layout, drag, data change)
   private edgeEndpointCache = new Map<
     string,
     ReturnType<KonvaScene['resolveEdgeEndpointsInner']>
   >();
+  private cachedEdgesRef: GraphEdge[] | null = null;
+  private cachedManualNodePosSize = -1;
+  private cachedManualClusterPosSize = -1;
 
   // Tooltip text cache to avoid redundant Konva text measurement
   private lastTooltipText = '';
   private lastTooltipSubtext = '';
+
+  // Per-frame cached viewport bounds (computed once in render(), used by nodes/clusters/edges)
+  private cachedViewport: ViewportBounds | null = null;
 
   // Current state
   private config: SceneConfig | null = null;
@@ -179,9 +185,11 @@ export class KonvaScene {
   // Fade-out nodes
   fadingOutNodes = new Map<string, FadingNode>();
 
-
   constructor(container: HTMLDivElement, callbacks: SceneCallbacks) {
     this.callbacks = callbacks;
+
+    // Disable Konva's automatic redraws — we manage draw calls manually
+    Konva.autoDrawEnabled = false;
 
     this.stage = new Konva.Stage({
       container,
@@ -200,9 +208,11 @@ export class KonvaScene {
     this.stage.add(this.nodeLayer);
     this.stage.add(this.tooltipLayer);
 
-    // Edge shape — single shape for all edges
+    // Edge shape — single shape for all edges, with perf flags
     this.edgeShape = new Konva.Shape({
       listening: false,
+      perfectDrawEnabled: false,
+      shadowForStrokeEnabled: false,
       sceneFunc: (context) => this.drawEdges(context._context),
     });
     this.edgeLayer.add(this.edgeShape);
@@ -251,8 +261,19 @@ export class KonvaScene {
       this.cachedClustersRef = config.layout.clusters;
     }
 
-    // Clear per-frame edge endpoint cache
-    this.edgeEndpointCache.clear();
+    // Only clear edge endpoint cache when positions/edges change (not every frame)
+    const positionsChanged =
+      config.edges !== this.cachedEdgesRef ||
+      config.nodes !== this.cachedNodesRef ||
+      config.layout.clusters !== this.cachedClustersRef ||
+      config.manualNodePositions.size !== this.cachedManualNodePosSize ||
+      config.manualClusterPositions.size !== this.cachedManualClusterPosSize;
+    if (positionsChanged) {
+      this.edgeEndpointCache.clear();
+      this.cachedEdgesRef = config.edges;
+      this.cachedManualNodePosSize = config.manualNodePositions.size;
+      this.cachedManualClusterPosSize = config.manualClusterPositions.size;
+    }
 
     // Sync shapes with current data
     this.syncClusterShapes(config);
@@ -261,6 +282,9 @@ export class KonvaScene {
     // Update stage transform
     this.stage.scale({ x: config.zoom, y: config.zoom });
     this.stage.position({ x: this.pan.x, y: this.pan.y });
+
+    // Compute viewport bounds once per frame (used by nodes, clusters, edges)
+    this.cachedViewport = this.computeViewportBounds(config);
 
     // Update cluster positions and visuals
     this.updateClusterVisuals(config);
@@ -444,9 +468,11 @@ export class KonvaScene {
   // -------------------------------------------------------------------
 
   private createNodeGroup(node: GraphNode): Konva.Group {
-    const group = new Konva.Group({ id: node.id });
+    const group = new Konva.Group({ id: node.id, transformsEnabled: 'position' });
 
     const shape = new Konva.Shape({
+      perfectDrawEnabled: false,
+      shadowForStrokeEnabled: false,
       sceneFunc: (context) => {
         if (!this.config) return;
         this.drawNode(context._context, node.id);
@@ -505,9 +531,11 @@ export class KonvaScene {
   // -------------------------------------------------------------------
 
   private createClusterGroup(clusterId: string): Konva.Group {
-    const group = new Konva.Group({ id: clusterId });
+    const group = new Konva.Group({ id: clusterId, transformsEnabled: 'position' });
 
     const shape = new Konva.Shape({
+      perfectDrawEnabled: false,
+      shadowForStrokeEnabled: false,
       sceneFunc: (context) => {
         if (!this.config) return;
         this.drawCluster(context._context, clusterId);
@@ -566,7 +594,7 @@ export class KonvaScene {
   // -------------------------------------------------------------------
 
   private updateNodePositions(config: SceneConfig): void {
-    const viewport = this.getViewportBounds(config);
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
     for (const node of config.nodes) {
       const group = this.nodeGroups.get(node.id);
       if (group) this.positionNodeGroup(group, node, config, viewport);
@@ -603,7 +631,7 @@ export class KonvaScene {
   }
 
   private updateClusterVisuals(config: SceneConfig): void {
-    const viewport = this.getViewportBounds(config);
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
     for (const cluster of config.layout.clusters) {
       const group = this.clusterGroups.get(cluster.id);
       if (group) this.positionClusterGroup(group, cluster.id, config, viewport);
@@ -996,7 +1024,7 @@ export class KonvaScene {
     if (!config) return;
 
     const { edges, zoom, time, theme } = config;
-    const viewport = this.getViewportBounds(config);
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
 
     const isChainActive =
       config.showDirectDeps ||
@@ -1779,7 +1807,7 @@ export class KonvaScene {
   // Viewport Helpers
   // -------------------------------------------------------------------
 
-  private getViewportBounds(config: SceneConfig): ViewportBounds {
+  private computeViewportBounds(config: SceneConfig): ViewportBounds {
     const width = this.stage.width();
     const height = this.stage.height();
     // Scale margin inversely with zoom so nodes don't pop in/out at viewport edges
