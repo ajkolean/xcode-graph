@@ -49,8 +49,6 @@ export interface NodeRenderContext {
   previewFilter: PreviewFilter | undefined;
   /** Pre-computed set of node IDs that should appear dimmed */
   dimmedNodeIds: Set<string>;
-  /** Map of node ID to edge-count weight */
-  nodeWeights: Map<string, number>;
   /** User-dragged node positions (relative to cluster) */
   manualNodePositions: Map<string, { x: number; y: number }>;
   /** User-dragged cluster positions (world coordinates) */
@@ -59,8 +57,6 @@ export interface NodeRenderContext {
   getPathForNode: (node: GraphNode) => Path2D;
   /** Set of node IDs connected to the selected node */
   connectedNodes: Set<string>;
-  /** Minimum weight for a node to be considered a hub */
-  hubWeightThreshold: number;
   /** Animated alpha values per node for fade transitions */
   nodeAlphaMap: Map<string, AnimatedValue>;
   /** Whether direct dependencies are highlighted */
@@ -78,15 +74,9 @@ export interface NodeRenderContext {
  *
  * Search, selection/highlight-toggle, and preview-filter dimming are
  * pre-computed in the `dimmedNodeIds` signal (O(1) Set lookup).
- * Cluster dimming stays per-frame because `hoveredCluster`/`selectedCluster`
- * are local interaction state in GraphCanvas, not signals.
  */
-function isNodeDimmed(
-  node: GraphNode,
-  clusterDim: boolean | '' | null,
-  rc: NodeRenderContext,
-): boolean {
-  return rc.dimmedNodeIds.has(node.id) || Boolean(clusterDim);
+function isNodeDimmed(node: GraphNode, rc: NodeRenderContext): boolean {
+  return rc.dimmedNodeIds.has(node.id);
 }
 
 /** Draws cycle glow and selection ring effects behind a node. */
@@ -120,14 +110,39 @@ function drawNodeEffects(
   /* v8 ignore stop */
 
   if (isSelected) {
-    // Solid selection ring
-    const ringRadius = size + 5;
-    ctx.beginPath();
-    ctx.arc(x, y, ringRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = adjustedColor;
-    ctx.lineWidth = 2;
-    ctx.globalAlpha = alpha * 0.6;
-    ctx.stroke();
+    // Pulsing glow rings that radiate outward from the selected node
+    const ringCount = 3;
+    const cycleDuration = 2400; // ms for a full ring cycle
+    const maxExpand = 24; // max pixels a ring expands beyond the node
+
+    if (prefersReducedMotion.get()) {
+      // Static glow for reduced motion
+      const glowRadius = size + 8;
+      ctx.beginPath();
+      ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = adjustedColor;
+      ctx.lineWidth = 6;
+      ctx.globalAlpha = alpha * 0.4;
+      ctx.stroke();
+    } else {
+      for (let i = 0; i < ringCount; i++) {
+        const phase = (i / ringCount + time / cycleDuration) % 1;
+        const ringRadius = size + 2 + phase * maxExpand;
+        // Fade in briefly then fade out — peak at ~20% of cycle
+        const fadeIn = Math.min(1, phase / 0.2);
+        const fadeOut = 1 - phase;
+        const ringAlpha = fadeIn * fadeOut * 0.7;
+        // Thick glow band that thins as it expands
+        const width = 8 * (1 - phase * 0.6);
+
+        ctx.beginPath();
+        ctx.arc(x, y, ringRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = adjustedColor;
+        ctx.lineWidth = width;
+        ctx.globalAlpha = alpha * ringAlpha;
+        ctx.stroke();
+      }
+    }
     ctx.globalAlpha = alpha;
   }
 }
@@ -170,6 +185,11 @@ const NODE_LABEL_FONT_SIZE = 12;
 /** Fixed gap between node icon and label in graph-space pixels */
 const NODE_LABEL_PADDING = 8;
 
+/** Pre-computed font strings to avoid per-node string allocation */
+const NODE_FONT_SELECTED = `600 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
+const NODE_FONT_CONNECTED = `500 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
+const NODE_FONT_NORMAL = `400 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
+
 /** Draws the text label below a node with a dark halo for readability. */
 function drawNodeLabel(
   ctx: CanvasRenderingContext2D,
@@ -190,23 +210,23 @@ function drawNodeLabel(
       ? `${node.name.substring(0, 20)}...`
       : node.name;
 
-  const fontSize = NODE_LABEL_FONT_SIZE;
-  ctx.font = `${isSelected ? '600' : isConnected || isInChain ? '500' : '400'} ${fontSize}px var(--fonts-body, sans-serif)`;
+  ctx.font = isSelected
+    ? NODE_FONT_SELECTED
+    : isConnected || isInChain
+      ? NODE_FONT_CONNECTED
+      : NODE_FONT_NORMAL;
   ctx.textAlign = 'center';
   ctx.fillStyle = adjustedColor;
 
-  const labelY = y + size + NODE_LABEL_PADDING + fontSize;
+  const labelY = y + size + NODE_LABEL_PADDING + NODE_LABEL_FONT_SIZE;
 
-  // Dark halo pass: draw text in shadow color at small offsets for readability
+  // Dark halo pass: single strokeText for readability (replaces 8-offset fillText)
   ctx.globalAlpha = alpha * 0.7;
-  ctx.fillStyle = theme.shadowColor;
-  const offsets = [-1.5, 0, 1.5];
-  for (const ox of offsets) {
-    for (const oy of offsets) {
-      if (ox === 0 && oy === 0) continue;
-      ctx.fillText(labelText, x + ox, labelY + oy);
-    }
-  }
+  ctx.strokeStyle = theme.shadowColor;
+  ctx.lineWidth = 3;
+  ctx.lineJoin = 'round';
+  ctx.miterLimit = 2;
+  ctx.strokeText(labelText, x, labelY);
 
   // Clean text on top
   ctx.globalAlpha = alpha;
@@ -214,21 +234,9 @@ function drawNodeLabel(
   ctx.fillText(labelText, x, labelY);
 }
 
-/** Returns true if the node's edge weight meets or exceeds the hub threshold. */
-function isHubNode(nodeId: string, rc: NodeRenderContext): boolean {
-  const weight = rc.nodeWeights.get(nodeId) ?? 0;
-  return weight >= rc.hubWeightThreshold && weight > 0;
-}
-
-/** Determines whether a node's label should be visible based on zoom, hover, selection, or hub status. */
-function shouldShowNodeLabel(
-  isHovered: boolean,
-  isSelected: boolean,
-  isConnected: boolean | GraphNode | null,
-  nodeId: string,
-  rc: NodeRenderContext,
-): boolean {
-  return Boolean(rc.zoom >= 0.3 || isHovered || isSelected || isConnected || isHubNode(nodeId, rc));
+/** Node labels are always visible. */
+function shouldShowNodeLabel(): boolean {
+  return true;
 }
 
 interface NodeVisualState {
@@ -257,12 +265,8 @@ function resolveNodeVisualState(
 
   const color = getNodeTypeColorFromTheme(node.type, theme);
   const adjustedColor = adjustColorForZoom(color, zoom);
-  const clusterId = node.project || 'External';
-  const clusterDim =
-    (rc.hoveredCluster && clusterId !== rc.hoveredCluster) ||
-    (rc.selectedCluster && clusterId !== rc.selectedCluster);
 
-  const isDimmed = isNodeDimmed(node, clusterDim, rc);
+  const isDimmed = isNodeDimmed(node, rc);
   const alpha = prefersReducedMotion.get()
     ? (rc.nodeAlphaMap.get(node.id)?.target ?? 1.0)
     : getAnimatedAlpha(rc.nodeAlphaMap, node.id);
@@ -325,7 +329,7 @@ function renderSingleNode(
     theme,
   );
 
-  if (shouldShowNodeLabel(vs.isHovered, vs.isSelected, vs.isConnected, node.id, rc)) {
+  if (shouldShowNodeLabel()) {
     drawNodeLabel(
       ctx,
       node,
@@ -345,7 +349,7 @@ function renderSingleNode(
 
 /** Renders all visible nodes onto the canvas, skipping those outside the viewport. */
 export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): void {
-  const { ctx, nodes, edges, nodeWeights, connectedNodes } = rc;
+  const { ctx, nodes, connectedNodes } = rc;
 
   for (const node of nodes) {
     const pos = resolveNodeWorldPosition(
@@ -358,7 +362,7 @@ export function renderNodes(rc: NodeRenderContext, viewport: ViewportBounds): vo
     if (!pos) continue;
 
     const { x, y } = pos;
-    const size = getNodeSize(node, edges, nodeWeights.get(node.id));
+    const size = getNodeSize(node);
     if (!isCircleInViewport({ x, y }, size, viewport)) continue;
 
     renderSingleNode(node, x, y, size, connectedNodes, rc);

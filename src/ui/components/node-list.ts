@@ -21,11 +21,11 @@
  */
 
 import type { NodeWithEdge } from '@graph/utils/node-utils';
-import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import { DependencyKind, type GraphNode, Origin } from '@shared/schemas/graph.types';
 import { type CSSResultGroup, css, html, nothing, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { when } from 'lit/directives/when.js';
 import './badge.js';
 import './list-item-row.js';
@@ -283,9 +283,10 @@ export class GraphNodeList extends NodeListEventsBase {
                 ? html`<div class="empty">${this.emptyMessage}</div>`
                 : html`
                   <div class="list">
-                    ${virtualize({
+                    ${repeat(
                       items,
-                      renderItem: (item: NodeWithEdge) => html`
+                      (item: NodeWithEdge) => item.node.id,
+                      (item: NodeWithEdge) => html`
                         <div class="item-row">
                           <div class="item-content">
                             <xcode-graph-list-item-row
@@ -300,8 +301,7 @@ export class GraphNodeList extends NodeListEventsBase {
                           ${this.renderKindBadge(item)}
                         </div>
                       `,
-                      keyFunction: (item: NodeWithEdge) => item.node.id,
-                    })}
+                    )}
                   </div>
                 `
             }

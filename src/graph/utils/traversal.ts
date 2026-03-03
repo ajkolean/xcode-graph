@@ -31,7 +31,7 @@ interface CacheEntry {
 /** LRU cache for transitive traversal results, keyed by node ID, direction, and edge version. */
 class TransitiveCache {
   private cache = new Map<string, CacheEntry>();
-  private maxSize = 100; // LRU cache size
+  private maxSize = 500; // LRU cache size (larger to reduce thrashing on big graphs)
   private edgesReference: GraphEdge[] | null = null;
   private version = 0;
 

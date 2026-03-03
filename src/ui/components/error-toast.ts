@@ -198,11 +198,7 @@ export class GraphErrorToast extends LitElement {
     if (changed.has('error') && this.error) {
       // Set data attribute for severity-based styling
       this.setAttribute('data-severity', this.error.severity);
-
-      // Trigger slide-in animation
-      requestAnimationFrame(() => {
-        this.visible = true;
-      });
+      this.visible = true;
     }
   }
 

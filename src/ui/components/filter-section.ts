@@ -21,7 +21,6 @@
  * @fires preview-change - Dispatched on hover (detail: { type, value } or null)
  */
 
-import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import { NodeType, Platform } from '@shared/schemas/graph.types';
 import { icons } from '@shared/utils/icon-adapter';
 import { getNodeIconPath, getNodeTypeLabel } from '@ui/utils/node-icons';
@@ -30,6 +29,7 @@ import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import { type CSSResultGroup, css, html, LitElement, svg, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { when } from 'lit/directives/when.js';
 
@@ -456,11 +456,11 @@ export class GraphFilterSection extends LitElement {
 
       <!-- Section Items -->
       <div class=${classMap({ items: true, collapsed: !this.isExpanded })}>
-        ${virtualize({
-          items: this.items ?? [],
-          renderItem: (item: FilterItem) => this.renderItem(item),
-          keyFunction: (item: FilterItem) => item.key,
-        })}
+        ${repeat(
+          this.items ?? [],
+          (item: FilterItem) => item.key,
+          (item: FilterItem) => this.renderItem(item),
+        )}
       </div>
     `;
   }

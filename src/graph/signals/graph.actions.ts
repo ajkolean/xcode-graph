@@ -65,26 +65,16 @@ export function selectCluster(clusterId: string | null): void {
   }
 }
 
-let pendingHoverUpdate: string | null | undefined;
-let hoverRafId: number | null = null;
-
 /**
- * Set the hovered node for highlighting (throttled via RAF)
+ * Set the hovered node for highlighting.
+ * Synchronous — hover is visual feedback that should be immediate.
  *
  * @param nodeId - The node ID to highlight, or null to clear
  *
  * @public
  */
 export function setHoveredNode(nodeId: string | null): void {
-  pendingHoverUpdate = nodeId;
-
-  if (hoverRafId !== null) return;
-
-  hoverRafId = requestAnimationFrame(() => {
-    hoveredNode.set(pendingHoverUpdate ?? null);
-    hoverRafId = null;
-    pendingHoverUpdate = undefined;
-  });
+  hoveredNode.set(nodeId);
 }
 
 /**

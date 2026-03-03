@@ -28,6 +28,7 @@ function createTestTheme(): CanvasTheme {
     canvasBg: '#161617',
     tooltipBg: 'rgba(24, 24, 28, 0.95)',
     shadowColor: 'rgba(24, 24, 28, 0.9)',
+    edgeDefault: 'rgba(120, 120, 130, 0.45)',
     cycleEdgeColor: 'rgba(239, 68, 68, 0.8)',
     cycleGlowColor: 'rgba(239, 68, 68, 0.6)',
     isDark: true,

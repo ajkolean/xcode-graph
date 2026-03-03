@@ -1,27 +1,19 @@
 import { AnimationLoopController } from '@graph/controllers/animation-loop.controller';
 import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
-import type { RoutedEdge } from '@graph/layout/types';
 import type { TransitiveResult } from '@graph/utils';
 import {
   type AnimatedValue,
   setAnimatedTarget,
   tickAnimationMap,
 } from '@graph/utils/canvas-animation';
-import { resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
-import { IntersectionController } from '@lit-labs/observers/intersection-controller.js';
-import { ResizeController } from '@lit-labs/observers/resize-controller.js';
 import { ErrorCategory, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { setBaseZoom } from '@shared/signals/index';
-import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
-import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
-import { computeNodeWeights, getNodeSize } from '@ui/utils/sizing';
 import { calculateViewportBounds } from '@ui/utils/viewport';
-import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import {
   type CSSResultGroup,
   css,
@@ -34,6 +26,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { ErrorService } from '@/services/error-service';
 import { renderClusters } from './canvas/canvas-cluster-renderer';
 import { renderEdges } from './canvas/canvas-edge-renderer';
+import { type FadingNode, renderFadingNodes } from './canvas/canvas-fade-renderer';
 import {
   type CanvasEventMap,
   handleMouseDown,
@@ -43,8 +36,10 @@ import {
   type InteractionContext,
   type InteractionState,
 } from './canvas/canvas-interaction-handler';
+import { handleKeyDown } from './canvas/canvas-keyboard-handler';
 import { renderNodes } from './canvas/canvas-node-renderer';
 import { renderClusterTooltip, renderNodeTooltip } from './canvas/canvas-tooltip-renderer';
+import { computeFitToViewport, getCanvasMousePos, screenToWorld } from './canvas/canvas-viewport';
 import './graph-hidden-dom';
 
 /**
@@ -79,57 +74,64 @@ export class GraphCanvas extends LitElement {
   @property({ attribute: false })
   declare selectedCluster: string | null;
 
-  /** Currently hovered node ID (shows tooltip) */
-  @property({ attribute: false })
-  declare hoveredNode: string | null;
+  /** Currently hovered node ID — plain field, only used for canvas rendering. */
+  hoveredNode: string | null = null;
 
-  /** Active search query for dimming non-matching nodes */
+  /** Active search query — attribute-bound from parent via search-query="..." */
   @property({ type: String, attribute: 'search-query' })
   declare searchQuery: string;
 
-  /** Display mode affecting edge visibility */
+  /** Display mode — attribute-bound from parent via view-mode="..." */
   @property({ type: String, attribute: 'view-mode' })
   declare viewMode: ViewMode;
 
-  /** Current zoom level (affects color saturation and label visibility) */
-  @property({ type: Number })
-  declare zoom: number;
+  /**
+   * Current zoom level.
+   * Uses a plain field + setter to trigger canvas re-render without a full
+   * Lit update cycle, which was causing lag during wheel-zoom.
+   */
+  private _zoom = 1;
+  get zoom(): number {
+    return this._zoom;
+  }
+  set zoom(value: number) {
+    if (value !== this._zoom) {
+      this._zoom = value;
+      this.requestRender();
+    }
+  }
 
   /** Whether physics animation is enabled for layout settling */
   @property({ type: Boolean, attribute: 'enable-animation' })
   declare enableAnimation: boolean;
 
-  /** Transitive dependency chain for the selected node */
-  @property({ attribute: false })
-  declare transitiveDeps: TransitiveResult | undefined;
+  /** Transitive dependency chain — plain field, only used for canvas rendering. */
+  transitiveDeps: TransitiveResult | undefined;
 
-  /** Transitive dependent chain for the selected node */
-  @property({ attribute: false })
-  declare transitiveDependents: TransitiveResult | undefined;
+  /** Transitive dependent chain — plain field, only used for canvas rendering. */
+  transitiveDependents: TransitiveResult | undefined;
 
-  /** Active filter preview (dims non-matching nodes on hover) */
-  @property({ attribute: false })
-  declare previewFilter: PreviewFilter | undefined;
+  /** Active filter preview — plain field, only used for canvas rendering. */
+  previewFilter: PreviewFilter | undefined;
 
-  /** Whether to highlight direct dependency edges */
+  /** Whether to highlight direct dependency edges — attribute-bound via ?show-direct-deps */
   @property({ type: Boolean, attribute: 'show-direct-deps' })
   declare showDirectDeps: boolean;
 
-  /** Whether to highlight transitive dependency edges */
+  /** Whether to highlight transitive dependency edges — attribute-bound via ?show-transitive-deps */
   @property({ type: Boolean, attribute: 'show-transitive-deps' })
   declare showTransitiveDeps: boolean;
 
-  /** Whether to highlight direct dependent edges */
+  /** Whether to highlight direct dependent edges — attribute-bound via ?show-direct-dependents */
   @property({ type: Boolean, attribute: 'show-direct-dependents' })
   declare showDirectDependents: boolean;
 
-  /** Whether to highlight transitive dependent edges */
+  /** Whether to highlight transitive dependent edges — attribute-bound via ?show-transitive-dependents */
   @property({ type: Boolean, attribute: 'show-transitive-dependents' })
   declare showTransitiveDependents: boolean;
 
   /** Set of node IDs that should be visually dimmed */
-  @property({ attribute: false })
-  declare dimmedNodeIds: Set<string>;
+  dimmedNodeIds: Set<string> = new Set();
 
   @query('canvas')
   private declare canvas: HTMLCanvasElement;
@@ -140,15 +142,11 @@ export class GraphCanvas extends LitElement {
     animationTicks: 30,
   });
 
-  private readonly _resize = new ResizeController(this, {
-    /* v8 ignore next 1 -- ResizeObserver callback: not triggered in jsdom */
-    callback: () => this.resizeCanvas(),
-  });
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeRafId: number | null = null;
 
-  private readonly _visibility = new IntersectionController(this, {
-    /* v8 ignore next 1 -- IntersectionObserver callback: not triggered in jsdom */
-    callback: (entries) => entries.some((e) => e.isIntersecting),
-  });
+  private intersectionObserver: IntersectionObserver | null = null;
+  private _isVisible = true;
 
   // Interaction state (shared with interaction handler)
   private interactionState: InteractionState = {
@@ -168,18 +166,17 @@ export class GraphCanvas extends LitElement {
   private manualClusterPositions = new Map<string, { x: number; y: number }>();
   private pathCache = new Map<string, Path2D>();
   private edgePathCache = new Map<string, Path2D>();
-  private nodeWeights = new Map<string, number>();
   private nodeMap = new Map<string, GraphNode>();
   private connectedNodesCache: { nodeId: string; result: Set<string> } | null = null;
-  private routedEdgeMapCache: Map<string, RoutedEdge> | null = null;
-  private lastRoutedEdgesRef: RoutedEdge[] | undefined = undefined;
   private theme: CanvasTheme | undefined;
+  /** Cached canvas bounding rect — updated on resize to avoid per-event forced reflow */
+  private cachedCanvasRect: DOMRect | null = null;
 
   // Animation & Render State
   private readonly animationLoop = new AnimationLoopController(this, {
     onRender: (timestamp, dt) => this.onFrame(timestamp, dt),
     shouldAnimate: () => this.isAnimating,
-    isVisible: () => this._visibility.value !== false && this._resize !== undefined,
+    isVisible: () => this._isVisible,
   });
   private time = 0;
   private didInitialFit = false;
@@ -189,8 +186,7 @@ export class GraphCanvas extends LitElement {
   private nodeAlphaMap = new Map<string, AnimatedValue>();
 
   // Fade-out animation for removed nodes
-  private fadingOutNodes = new Map<string, { node: GraphNode; startTime: number }>();
-  private static readonly FADE_OUT_DURATION = 250;
+  private fadingOutNodes = new Map<string, FadingNode>();
 
   constructor() {
     super();
@@ -198,16 +194,13 @@ export class GraphCanvas extends LitElement {
     this.edges = [];
     this.selectedNode = null;
     this.selectedCluster = null;
-    this.hoveredNode = null;
     this.searchQuery = '';
     this.viewMode = ViewMode.Full;
-    this.zoom = 1;
     this.enableAnimation = false;
     this.showDirectDeps = false;
     this.showTransitiveDeps = false;
     this.showDirectDependents = false;
     this.showTransitiveDependents = false;
-    this.dimmedNodeIds = new Set();
   }
 
   static override styles: CSSResultGroup = css`
@@ -225,6 +218,7 @@ export class GraphCanvas extends LitElement {
       height: 100%;
       outline: none;
       cursor: grab;
+      touch-action: none;
     }
 
     canvas:active {
@@ -236,7 +230,19 @@ export class GraphCanvas extends LitElement {
   override firstUpdated(): void {
     this.theme = resolveCanvasTheme(this);
     if (this.canvas) {
-      this.ctx = this.canvas.getContext('2d', { alpha: true }) ?? undefined;
+      this.ctx = this.canvas.getContext('2d', { alpha: false }) ?? undefined;
+      this.cachedCanvasRect = this.canvas.getBoundingClientRect();
+
+      /* v8 ignore next 3 -- native observer: not triggered in jsdom */
+      this.resizeObserver = new ResizeObserver(() => this.scheduleResize());
+      this.resizeObserver.observe(this);
+
+      /* v8 ignore next 6 -- native observer: not triggered in jsdom */
+      this.intersectionObserver = new IntersectionObserver((entries) => {
+        this._isVisible = entries.some((e) => e.isIntersecting);
+      });
+      this.intersectionObserver.observe(this);
+
       this.resizeCanvas();
       this.centerGraph();
       this.isAnimating = true;
@@ -246,10 +252,18 @@ export class GraphCanvas extends LitElement {
     }
   }
 
-  /** Stops the animation loop when the component is removed from the DOM. */
+  /** Stops the animation loop and observers when the component is removed from the DOM. */
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.animationLoop.stop();
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+    this.intersectionObserver?.disconnect();
+    this.intersectionObserver = null;
+    if (this.resizeRafId !== null) {
+      cancelAnimationFrame(this.resizeRafId);
+      this.resizeRafId = null;
+    }
   }
 
   /** Detects nodes removed between updates and queues them for fade-out animation. */
@@ -292,10 +306,8 @@ export class GraphCanvas extends LitElement {
         this.didInitialFit = false;
       }
 
-      this.nodeWeights = computeNodeWeights(this.nodes, this.edges);
       this.rebuildNodeMap();
       this.connectedNodesCache = null;
-      this.routedEdgeMapCache = null;
     }
 
     if (changedProps.has('selectedNode') || changedProps.has('selectedCluster')) {
@@ -352,20 +364,8 @@ export class GraphCanvas extends LitElement {
 
   /** Updates opacity animation targets based on current selection and cluster state. */
   private updateNodeAlphaTargets() {
-    const connected = this.selectedNode
-      ? getConnectedNodes(this.selectedNode.id, this.edges)
-      : null;
     for (const node of this.nodes) {
-      const isSelected = this.selectedNode?.id === node.id;
-      const isConnected = connected?.has(node.id) ?? false;
-      const clusterId = node.project || 'External';
-      const isClusterSelected = this.selectedCluster === clusterId;
-
-      const shouldDim =
-        (Boolean(this.selectedNode) && !isSelected && !isConnected) ||
-        (Boolean(this.selectedCluster) && !isClusterSelected);
-
-      setAnimatedTarget(this.nodeAlphaMap, node.id, shouldDim ? 0.3 : 1.0);
+      setAnimatedTarget(this.nodeAlphaMap, node.id, 1.0);
     }
     // Ensure animation loop runs to process the transitions
     if (this.nodeAlphaMap.size > 0) {
@@ -385,24 +385,6 @@ export class GraphCanvas extends LitElement {
     return result;
   }
 
-  /** Returns a cached map of routed edges keyed by "source->target" for fast lookup. */
-  private getRoutedEdgeMap(): Map<string, RoutedEdge> {
-    const currentRouted = this.layout.routedEdges;
-    if (this.routedEdgeMapCache && this.lastRoutedEdgesRef === currentRouted) {
-      return this.routedEdgeMapCache;
-    }
-    const map = new Map<string, RoutedEdge>();
-    /* v8 ignore next 5 -- requires ELK layout worker output: not available in jsdom */
-    if (currentRouted) {
-      for (const re of currentRouted) {
-        map.set(`${re.sourceNodeId}->${re.targetNodeId}`, re);
-      }
-    }
-    this.routedEdgeMapCache = map;
-    this.lastRoutedEdgesRef = currentRouted;
-    return map;
-  }
-
   private getPathForNode = (node: GraphNode): Path2D => {
     const key = `${node.type}-${node.platform}`;
     if (!this.pathCache.has(key)) {
@@ -420,51 +402,35 @@ export class GraphCanvas extends LitElement {
 
   /** Adjusts zoom and pan so that all clusters fit within the visible viewport. */
   fitToViewport(): void {
-    if (!this.layout.clusterPositions.size) return;
     const rect = this.getBoundingClientRect();
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minY = Infinity;
-    let maxY = -Infinity;
+    const fit = computeFitToViewport(this.layout.clusterPositions, rect.width, rect.height);
+    if (!fit) return;
 
-    this.layout.clusterPositions.forEach((pos) => {
-      const halfW = pos.width / 2;
-      const halfH = pos.height / 2;
-      minX = Math.min(minX, pos.x - halfW);
-      maxX = Math.max(maxX, pos.x + halfW);
-      minY = Math.min(minY, pos.y - halfH);
-      maxY = Math.max(maxY, pos.y + halfH);
-    });
-
-    if (
-      !Number.isFinite(minX) ||
-      !Number.isFinite(maxX) ||
-      !Number.isFinite(minY) ||
-      !Number.isFinite(maxY)
-    )
-      return;
-
-    const graphWidth = maxX - minX;
-    const graphHeight = maxY - minY;
-    const padding = 40;
-    const scaleX = (rect.width - padding * 2) / graphWidth;
-    const scaleY = (rect.height - padding * 2) / graphHeight;
-    const fitZoom = Math.max(ZOOM_CONFIG.MIN_ZOOM, Math.min(1.5, Math.min(scaleX, scaleY)));
-
-    this.zoom = fitZoom;
-    this.interactionState.zoom = fitZoom;
-    setBaseZoom(fitZoom);
-    const centerX = (minX + maxX) / 2;
-    const centerY = (minY + maxY) / 2;
-    this.interactionState.pan = {
-      x: rect.width / 2 - centerX * fitZoom,
-      y: rect.height / 2 - centerY * fitZoom,
-    };
+    this.zoom = fit.zoom;
+    this.interactionState.zoom = fit.zoom;
+    setBaseZoom(fit.zoom);
+    this.interactionState.pan = fit.pan;
 
     this.dispatchEvent(
       new CustomEvent('zoom-change', { detail: this.zoom, bubbles: true, composed: true }),
     );
   }
+
+  /** Stable callback for zoom changes from non-wheel interactions */
+  private handleZoomChange = (zoom: number) => {
+    if (zoom !== this._zoom) {
+      this._zoom = zoom;
+      this.dispatchEvent(
+        new CustomEvent('zoom-change', { detail: zoom, bubbles: true, composed: true }),
+      );
+      this.requestRender();
+    }
+  };
+
+  /** Stable callback for edge path cache invalidation — avoids closure allocation per event */
+  private handleInvalidateEdgePathCache = () => {
+    this.edgePathCache.clear();
+  };
 
   /** Builds the interaction context object used by canvas mouse/wheel event handlers. */
   private getInteractionContext(): InteractionContext {
@@ -474,19 +440,27 @@ export class GraphCanvas extends LitElement {
       nodes: this.nodes,
       edges: this.edges,
       selectedNode: this.selectedNode,
-      nodeWeights: this.nodeWeights,
       manualNodePositions: this.manualNodePositions,
       manualClusterPositions: this.manualClusterPositions,
       getMousePos: this.getMousePos,
       screenToWorld: this.screenToWorld,
       dispatchCanvasEvent: this.dispatchCanvasEvent,
-      dispatchZoomChange: (zoom: number) => {
-        this.zoom = zoom;
-        this.dispatchEvent(
-          new CustomEvent('zoom-change', { detail: zoom, bubbles: true, composed: true }),
-        );
-      },
+      dispatchZoomChange: this.handleZoomChange,
+      invalidateEdgePathCache: this.handleInvalidateEdgePathCache,
     };
+  }
+
+  /**
+   * Debounces resize via rAF so the canvas buffer clear and re-render happen
+   * in the same frame, preventing visible flashes during CSS transitions.
+   */
+  /* v8 ignore next 7 -- rAF scheduling: not triggered in jsdom */
+  private scheduleResize() {
+    if (this.resizeRafId !== null) return;
+    this.resizeRafId = requestAnimationFrame(() => {
+      this.resizeRafId = null;
+      this.resizeCanvas();
+    });
   }
 
   /** Resizes the canvas buffer to match the element dimensions and device pixel ratio. */
@@ -494,6 +468,9 @@ export class GraphCanvas extends LitElement {
     if (!this.canvas || !this.ctx) return;
     const dpr = window.devicePixelRatio || 1;
     const rect = this.getBoundingClientRect();
+
+    // Cache rect for use in wheel/mouse handlers (avoids forced reflow per event)
+    this.cachedCanvasRect = this.canvas.getBoundingClientRect();
 
     this.canvas.width = rect.width * dpr;
     this.canvas.height = rect.height * dpr;
@@ -503,7 +480,7 @@ export class GraphCanvas extends LitElement {
     this.canvas.style.width = `${rect.width}px`;
     this.canvas.style.height = `${rect.height}px`;
 
-    this.requestRender();
+    this.renderCanvas();
   }
 
   private dispatchCanvasEvent = <K extends keyof CanvasEventMap>(
@@ -544,66 +521,37 @@ export class GraphCanvas extends LitElement {
   };
 
   private handleCanvasWheel = (e: WheelEvent) => {
-    this.interactionState.zoom = this.zoom;
-    handleWheel(e, this.getInteractionContext());
-    this.zoom = this.interactionState.zoom;
-    this.requestRender();
+    const prevZoom = this._zoom;
+    this.interactionState.zoom = prevZoom;
+    const ctx = this.getInteractionContext();
+    // Bypass the zoom setter (which schedules a redundant rAF render)
+    // so we can render synchronously below for zero-latency zoom.
+    ctx.dispatchZoomChange = (z: number) => {
+      this._zoom = z;
+    };
+    handleWheel(e, ctx);
+    if (this._zoom !== prevZoom) {
+      // Dispatch immediately — no debounce — for real-time zoom display updates
+      this.dispatchEvent(
+        new CustomEvent('zoom-change', { detail: this._zoom, bubbles: true, composed: true }),
+      );
+      // Render synchronously for zero-latency response
+      this.time = performance.now();
+      this.renderCanvas();
+    }
   };
 
   private handleCanvasKeyDown = (e: KeyboardEvent) => {
-    const PAN_STEP = 50;
-    const ctx = this.getInteractionContext();
-
-    switch (e.key) {
-      case 'ArrowUp':
-        e.preventDefault();
-        this.interactionState.pan.y += PAN_STEP;
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        this.interactionState.pan.y -= PAN_STEP;
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        this.interactionState.pan.x += PAN_STEP;
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        this.interactionState.pan.x -= PAN_STEP;
-        break;
-      case '+':
-      case '=':
-        e.preventDefault();
-        this.dispatchEvent(new CustomEvent('zoom-in', { bubbles: true, composed: true }));
-        return;
-      case '-':
-        e.preventDefault();
-        this.dispatchEvent(new CustomEvent('zoom-out', { bubbles: true, composed: true }));
-        return;
-      case '0':
-        e.preventDefault();
-        this.dispatchEvent(new CustomEvent('zoom-reset', { bubbles: true, composed: true }));
-        return;
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        if (this.interactionState.hoveredNode) {
-          const node = this.nodes.find((node) => node.id === this.interactionState.hoveredNode);
-          if (node) {
-            const newSelection = this.selectedNode?.id === node.id ? null : node;
-            ctx.dispatchCanvasEvent('node-select', { node: newSelection });
-          }
-        }
-        return;
-      case 'Escape':
-        e.preventDefault();
-        ctx.dispatchCanvasEvent('node-select', { node: null });
-        ctx.dispatchCanvasEvent('cluster-select', { clusterId: null });
-        return;
-      default:
-        return;
+    const needsRender = handleKeyDown(e, {
+      state: this.interactionState,
+      nodes: this.nodes,
+      selectedNode: this.selectedNode,
+      dispatchCanvasEvent: this.dispatchCanvasEvent,
+      dispatchEvent: (event) => this.dispatchEvent(event),
+    });
+    if (needsRender) {
+      this.requestRender();
     }
-    this.requestRender();
   };
 
   /** Schedules a canvas render on the next animation frame. */
@@ -638,7 +586,6 @@ export class GraphCanvas extends LitElement {
     const hasSelectedCluster = Boolean(this.selectedCluster);
     const hasCycleNodes = (this.layout.cycleNodes?.size ?? 0) > 0;
     const hasFadingNodes = this.fadingOutNodes.size > 0;
-
     const hasAlphaAnimations = this.nodeAlphaMap.size > 0;
 
     this.isAnimating =
@@ -701,7 +648,6 @@ export class GraphCanvas extends LitElement {
         manualNodePositions: this.manualNodePositions,
         manualClusterPositions: this.manualClusterPositions,
         nodeMap: this.nodeMap,
-        routedEdgeMap: this.getRoutedEdgeMap(),
         edgePathCache: this.edgePathCache,
         showDirectDeps: this.showDirectDeps,
         showTransitiveDeps: this.showTransitiveDeps,
@@ -710,9 +656,6 @@ export class GraphCanvas extends LitElement {
       },
       viewport,
     );
-
-    const weights = Array.from(this.nodeWeights.values()).sort((a, b) => a - b);
-    const hubWeightThreshold = weights[Math.floor(weights.length * 0.9)] ?? 0;
 
     renderNodes(
       {
@@ -733,12 +676,10 @@ export class GraphCanvas extends LitElement {
         transitiveDependents: this.transitiveDependents,
         previewFilter: this.previewFilter,
         dimmedNodeIds: this.dimmedNodeIds,
-        nodeWeights: this.nodeWeights,
         manualNodePositions: this.manualNodePositions,
         manualClusterPositions: this.manualClusterPositions,
         getPathForNode: this.getPathForNode,
         connectedNodes: this.getConnectedNodesSet(),
-        hubWeightThreshold,
         nodeAlphaMap: this.nodeAlphaMap,
         showDirectDeps: this.showDirectDeps,
         showTransitiveDeps: this.showTransitiveDeps,
@@ -749,7 +690,7 @@ export class GraphCanvas extends LitElement {
     );
 
     // Render fading-out nodes
-    this.renderFadingNodes();
+    this.renderFadingOutNodes();
 
     this.ctx.restore();
 
@@ -762,7 +703,6 @@ export class GraphCanvas extends LitElement {
       theme: this.theme,
       hoveredNode: this.hoveredNode,
       pan: this.interactionState.pan,
-      nodeWeights: this.nodeWeights,
       manualNodePositions: this.manualNodePositions,
       manualClusterPositions: this.manualClusterPositions,
       hoveredCluster: this.interactionState.hoveredCluster,
@@ -772,78 +712,35 @@ export class GraphCanvas extends LitElement {
   }
 
   /** Renders nodes that are fading out after removal, cleaning up completed animations. */
-  private renderFadingNodes() {
-    if (this.fadingOutNodes.size === 0) return;
-    if (!this.ctx || !this.theme) return;
+  private renderFadingOutNodes() {
+    if (this.fadingOutNodes.size === 0 || !this.ctx || !this.theme) return;
 
-    const now = performance.now();
-    const toRemove: string[] = [];
+    const sizeBefore = this.fadingOutNodes.size;
+    renderFadingNodes(
+      {
+        ctx: this.ctx,
+        theme: this.theme,
+        layout: this.layout,
+        zoom: this.zoom,
+        manualNodePositions: this.manualNodePositions,
+        manualClusterPositions: this.manualClusterPositions,
+        getPathForNode: this.getPathForNode,
+      },
+      this.fadingOutNodes,
+    );
 
-    for (const [nodeId, { node, startTime }] of this.fadingOutNodes) {
-      const elapsed = now - startTime;
-      if (elapsed >= GraphCanvas.FADE_OUT_DURATION) {
-        toRemove.push(nodeId);
-        continue;
-      }
-
-      const alpha = 1 - elapsed / GraphCanvas.FADE_OUT_DURATION;
-      const clusterId = node.project || 'External';
-      const pos = resolveNodeWorldPosition(
-        nodeId,
-        clusterId,
-        this.layout,
-        this.manualNodePositions,
-        this.manualClusterPositions,
-      );
-      if (!pos) {
-        toRemove.push(nodeId);
-        continue;
-      }
-
-      const { x, y } = pos;
-      const size = getNodeSize(node, this.edges, this.nodeWeights.get(nodeId));
-
-      // Draw fading node icon
-      this.ctx.globalAlpha = alpha * 0.5;
-      const color = adjustColorForZoom(getNodeTypeColorFromTheme(node.type, this.theme), this.zoom);
-      const scale = (size / 12) * 1.0;
-      this.ctx.save();
-      this.ctx.translate(x, y);
-      this.ctx.scale(scale, scale);
-      const path = this.getPathForNode(node);
-      this.ctx.fillStyle = this.theme.tooltipBg;
-      this.ctx.fill(path);
-      this.ctx.strokeStyle = color;
-      this.ctx.lineWidth = 2 / scale;
-      this.ctx.stroke(path);
-      this.ctx.restore();
-    }
-
-    for (const id of toRemove) {
-      this.fadingOutNodes.delete(id);
-    }
-
-    if (this.fadingOutNodes.size === 0) {
+    if (this.fadingOutNodes.size === 0 && sizeBefore > 0) {
       this.updateAnimatingState();
     }
-
-    this.ctx.globalAlpha = 1.0;
   }
 
   private getMousePos = (e: MouseEvent) => {
-    const rect = this.canvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
+    const rect = this.cachedCanvasRect ?? this.canvas.getBoundingClientRect();
+    return getCanvasMousePos(e, rect);
   };
 
   private screenToWorld = (screenX: number, screenY: number) => {
-    const pan = this.interactionState.pan;
-    return {
-      x: (screenX - pan.x) / this.zoom,
-      y: (screenY - pan.y) / this.zoom,
-    };
+    return screenToWorld(screenX, screenY, this.interactionState.pan, this.zoom);
   };
 
   /** Renders the canvas element and hidden DOM accessibility tree. */

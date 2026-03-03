@@ -26,6 +26,7 @@ function createTestTheme(): CanvasTheme {
     canvasBg: '#161617',
     tooltipBg: 'rgba(24, 24, 28, 0.95)',
     shadowColor: 'rgba(24, 24, 28, 0.9)',
+    edgeDefault: 'rgba(120, 120, 130, 0.45)',
     cycleEdgeColor: 'rgba(239, 68, 68, 0.8)',
     cycleGlowColor: 'rgba(239, 68, 68, 0.6)',
     isDark: true,
@@ -78,7 +79,6 @@ function createTooltipContext(overrides: Partial<TooltipContext> = {}): TooltipC
     theme: createTestTheme(),
     hoveredNode: null,
     pan: { x: 0, y: 0 },
-    nodeWeights: new Map(),
     manualNodePositions: new Map(),
     manualClusterPositions: new Map(),
     hoveredCluster: null,
@@ -100,28 +100,13 @@ describe('renderNodeTooltip', () => {
     expect(true).toBe(true);
   });
 
-  it('should not render tooltip for short-named node at high zoom', () => {
+  it('should render tooltip for short-named node', () => {
     const tc = createTooltipContext({
       hoveredNode: 'node1',
       zoom: 0.8,
     });
-    // "AppModule" is 9 chars, <= 20, and zoom >= 0.5 so tooltip should skip
-    renderNodeTooltip(tc);
-    expect(true).toBe(true);
-  });
-
-  it('should render tooltip for node at low zoom', () => {
-    const tc = createTooltipContext({
-      hoveredNode: 'node1',
-      zoom: 0.3,
-    });
-    const saveSpy = vi.spyOn(tc.ctx, 'save');
-    const restoreSpy = vi.spyOn(tc.ctx, 'restore');
     const fillTextSpy = vi.spyOn(tc.ctx, 'fillText');
-    // Low zoom (< 0.5) should always show tooltip
     renderNodeTooltip(tc);
-    expect(saveSpy).toHaveBeenCalled();
-    expect(restoreSpy).toHaveBeenCalled();
     expect(fillTextSpy).toHaveBeenCalledWith('AppModule', expect.any(Number), expect.any(Number));
   });
 

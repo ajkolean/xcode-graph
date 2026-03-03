@@ -17,8 +17,8 @@ import type { LayoutConfig } from './config';
 import { computeClusterInterior, type MicroLayoutResult } from './phases/micro-layout';
 import { applyNodeMassage } from './phases/node-massage';
 
-/** Threshold below which we skip worker overhead */
-const MIN_CLUSTERS_FOR_WORKERS = 3;
+/** Threshold below which we skip worker overhead (serialization + worker creation costs more than sync for small counts) */
+const MIN_CLUSTERS_FOR_WORKERS = 10;
 
 /** Maximum worker pool size */
 const MAX_WORKERS = 4;

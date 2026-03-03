@@ -23,6 +23,7 @@ function createTestTheme(): CanvasTheme {
     canvasBg: '#161617',
     tooltipBg: 'rgba(24, 24, 28, 0.95)',
     shadowColor: 'rgba(24, 24, 28, 0.9)',
+    edgeDefault: 'rgba(120, 120, 130, 0.45)',
     cycleEdgeColor: 'rgba(239, 68, 68, 0.8)',
     cycleGlowColor: 'rgba(239, 68, 68, 0.6)',
     isDark: true,
@@ -116,7 +117,6 @@ function createEdgeRenderContext(overrides: Partial<EdgeRenderContext> = {}): Ed
     manualNodePositions: new Map(),
     manualClusterPositions: new Map(),
     nodeMap,
-    routedEdgeMap: new Map(),
     edgePathCache: new Map(),
     showDirectDeps: false,
     showTransitiveDeps: false,
@@ -146,12 +146,12 @@ describe('canvas-edge-renderer', () => {
     expect(events.length).to.be.greaterThan(0);
   });
 
-  it('should skip non-emphasized edges at zoom < 0.3', () => {
+  it('should hide non-emphasized edges at zoom < 0.3', () => {
     const rc = createEdgeRenderContext({ zoom: 0.2 });
 
     renderEdges(rc, largeViewport);
 
-    // At low zoom, non-emphasized edges should not produce stroke calls
+    // At low zoom, non-emphasized edges are hidden to reduce visual noise
     const drawCalls = getDrawCalls(rc.ctx);
     const strokeCalls = drawCalls.filter((c: unknown) => (c as { type: string }).type === 'stroke');
     expect(strokeCalls.length).to.equal(0);
@@ -279,8 +279,8 @@ describe('canvas-edge-renderer', () => {
     expect(alphaValues).to.include(0.5);
   });
 
-  it('should hide intra-cluster edges at zoom < 0.6 when cluster is not hovered', () => {
-    // Both nodes in same cluster, intra-cluster edge
+  it('should render intra-cluster edges at low zoom', () => {
+    // Both nodes in same cluster, intra-cluster edge — always visible regardless of zoom
     const nodes: GraphNode[] = [
       createTestNode({ id: 'n1', name: 'Node1', project: 'Cluster1' }),
       createTestNode({ id: 'n2', name: 'Node2', project: 'Cluster1' }),
@@ -311,10 +311,10 @@ describe('canvas-edge-renderer', () => {
 
     renderEdges(rc, largeViewport);
 
-    // Intra-cluster edge at zoom 0.4 with no hovered cluster should not produce strokes
+    // Intra-cluster edge should be rendered even at low zoom
     const drawCalls = getDrawCalls(rc.ctx);
     const strokeCalls = drawCalls.filter((c: unknown) => (c as { type: string }).type === 'stroke');
-    expect(strokeCalls.length).to.equal(0);
+    expect(strokeCalls.length).to.be.greaterThan(0);
   });
 
   it('should respect showDirectDeps/showTransitiveDeps toggle filters', () => {
@@ -388,39 +388,16 @@ describe('canvas-edge-renderer', () => {
     expect(alphaEvents.length).to.be.greaterThan(0);
   });
 
-  it('should use routed paths for cross-cluster edges when available', () => {
+  it('should render cross-cluster edges as direct lines', () => {
+    // Default context has nodes in different clusters (ProjectA, ProjectB)
     const rc = createEdgeRenderContext();
-
-    // Add a routed edge for the cross-cluster edge
-    rc.routedEdgeMap.set('node1->node2', {
-      sourceNodeId: 'node1',
-      targetNodeId: 'node2',
-      sourceClusterId: 'ProjectA',
-      targetClusterId: 'ProjectB',
-      sourcePort: {
-        id: 'port1',
-        clusterId: 'ProjectA',
-        side: 'EAST' as const,
-        x: 100,
-        y: 50,
-        index: 0,
-      },
-      targetPort: {
-        id: 'port2',
-        clusterId: 'ProjectB',
-        side: 'WEST' as const,
-        x: 200,
-        y: 50,
-        index: 0,
-      },
-      waypoints: [],
-      weight: 1,
-    });
 
     renderEdges(rc, largeViewport);
 
-    const events = getEvents(rc.ctx);
-    expect(events.length).to.be.greaterThan(0);
+    // Cross-cluster edge should produce stroke calls (rendered as direct line)
+    const drawCalls = getDrawCalls(rc.ctx);
+    const strokeCalls = drawCalls.filter((c: unknown) => (c as { type: string }).type === 'stroke');
+    expect(strokeCalls.length).to.be.greaterThan(0);
   });
 
   it('should use transitiveDependents edge depths for chain opacity', () => {

@@ -176,8 +176,19 @@ export class GraphTab extends SignalWatcherLitElement {
   }
 
   /** Handles continuous zoom changes (e.g. pinch or scroll) from the canvas. */
+  private zoomDebounceId: ReturnType<typeof setTimeout> | null = null;
+  /* v8 ignore next 11 -- wheel-zoom debounce: tested visually */
   private handleZoomChange(e: CustomEvent) {
-    setZoom(e.detail);
+    // Debounce signal update to prevent Lit re-render cascade on every wheel event.
+    // The canvas already rendered at the new zoom — the signal only needs updating
+    // for the controls display, which can lag by a few frames without issue.
+    if (this.zoomDebounceId !== null) {
+      clearTimeout(this.zoomDebounceId);
+    }
+    this.zoomDebounceId = setTimeout(() => {
+      this.zoomDebounceId = null;
+      setZoom(e.detail);
+    }, 100);
   }
 
   /** Renders the graph canvas, overlays, controls, and right sidebar */
@@ -212,8 +223,8 @@ export class GraphTab extends SignalWatcherLitElement {
               ?enable-animation=${watch(enableAnimation)}
               .transitiveDeps=${this.transitiveDeps}
               .transitiveDependents=${this.transitiveDependents}
-              .previewFilter=${watch(previewFilter)}
-              .dimmedNodeIds=${watch(dimmedNodeIds)}
+              .previewFilter=${Signal.subtle.untrack(() => previewFilter.get())}
+              .dimmedNodeIds=${Signal.subtle.untrack(() => dimmedNodeIds.get())}
               ?show-direct-deps=${watch(highlightDirectDeps)}
               ?show-transitive-deps=${watch(highlightTransitiveDeps)}
               ?show-direct-dependents=${watch(highlightDirectDependents)}

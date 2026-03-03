@@ -18,12 +18,12 @@
  * @fires node-hover - Dispatched on hover (detail: { nodeId })
  */
 
-import { virtualize } from '@lit-labs/virtualizer/virtualize.js';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { getNodeTypeLabel } from '@ui/utils/node-icons';
 import { type CSSResultGroup, css, html, type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { when } from 'lit/directives/when.js';
 import { NodeListEventsBase } from './node-list-base';
 import './list-item-row';
@@ -251,9 +251,11 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
         () => html`
           <div class="content">
             <div class="target-list">
-              ${virtualize({
-                items: this._flatItems,
-                renderItem: (item: ClusterListItem) =>
+              ${repeat(
+                this._flatItems,
+                (item: ClusterListItem) =>
+                  item.kind === 'header' ? `header-${item.nodeType}` : item.node.id,
+                (item: ClusterListItem) =>
                   item.kind === 'header'
                     ? html`<div class="type-header">${getNodeTypeLabel(item.nodeType)} (${item.count})</div>`
                     : html`
@@ -266,9 +268,7 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
                           @row-hover-end=${this.handleHoverEnd}
                         ></xcode-graph-list-item-row>
                       `,
-                keyFunction: (item: ClusterListItem) =>
-                  item.kind === 'header' ? `header-${item.nodeType}` : item.node.id,
-              })}
+              )}
             </div>
           </div>
         `,

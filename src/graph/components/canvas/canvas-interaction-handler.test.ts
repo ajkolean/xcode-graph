@@ -81,13 +81,13 @@ function createMockContext(overrides: Partial<InteractionContext> = {}): Interac
     nodes: [node],
     edges: [] as GraphEdge[],
     selectedNode: null,
-    nodeWeights: new Map(),
     manualNodePositions: new Map(),
     manualClusterPositions: new Map(),
     getMousePos: vi.fn().mockReturnValue({ x: 100, y: 100 }),
     screenToWorld: vi.fn().mockReturnValue({ x: 100, y: 100 }),
     dispatchCanvasEvent: vi.fn(),
     dispatchZoomChange: vi.fn(),
+    invalidateEdgePathCache: vi.fn(),
     ...overrides,
   };
 }

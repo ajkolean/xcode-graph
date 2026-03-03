@@ -54,10 +54,9 @@ interface GraphCanvasInternals {
   fadingOutNodes: Map<string, { node: GraphNode; startTime: number }>;
   manualNodePositions: Map<string, { x: number; y: number }>;
   manualClusterPositions: Map<string, { x: number; y: number }>;
-  nodeWeights: Map<string, number>;
   didInitialFit: boolean;
   onFrame: (timestamp: number, dt: number) => void;
-  renderFadingNodes: () => void;
+  renderFadingOutNodes: () => void;
   renderCanvas: () => void;
   updateNodeAlphaTargets: () => void;
   resizeCanvas: () => void;
@@ -600,8 +599,8 @@ describe('xcode-graph-canvas', () => {
     });
   });
 
-  describe('updateNodeAlphaTargets animation trigger (lines 370-371)', () => {
-    it('should set isAnimating and request render when alpha targets are set', async () => {
+  describe('updateNodeAlphaTargets (emphasis-only, no dimming)', () => {
+    it('should set isAnimating when node is selected', async () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
 
@@ -617,22 +616,17 @@ describe('xcode-graph-canvas', () => {
       el.edges = [{ source: 'a1', target: 'a2' }];
       await el.updateComplete;
 
-      // Selecting a node should trigger updateNodeAlphaTargets which populates nodeAlphaMap
-      // and sets isAnimating = true (lines 370-371)
       el.selectedNode = node1;
       await el.updateComplete;
 
       const internal = el as unknown as GraphCanvasInternals;
-      // node2 should be dimmed (not connected and not selected) => nodeAlphaMap gets an entry
-      // isAnimating should be true
       expect(internal.isAnimating).to.equal(true);
     });
 
-    it('should call updateNodeAlphaTargets directly and trigger animation', async () => {
+    it('should not dim unconnected nodes on selection', async () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
 
-      // Use three nodes where b3 is NOT connected to b1 (no edge between them)
       const node1 = createTestNode({ id: 'b1', name: 'Beta1', project: 'ProjA' });
       const node2 = createTestNode({
         id: 'b2',
@@ -648,22 +642,15 @@ describe('xcode-graph-canvas', () => {
       });
 
       el.nodes = [node1, node2, node3];
-      // Only b1->b2 edge; b3 is unconnected
       el.edges = [{ source: 'b1', target: 'b2' }];
       el.selectedNode = node1;
       await el.updateComplete;
 
       const internal = el as unknown as GraphCanvasInternals;
-      // Reset animation state to verify the method re-enables it
-      internal.isAnimating = false;
 
-      // Call updateNodeAlphaTargets directly — b3 is not selected and not connected,
-      // so it gets target 0.3 which creates an entry in nodeAlphaMap
-      // and sets isAnimating = true (lines 370-371)
+      // All nodes should have target 1.0 (no dimming) — unconnected b3 is not dimmed
       internal.updateNodeAlphaTargets();
-
-      expect(internal.nodeAlphaMap.size).to.be.greaterThan(0);
-      expect(internal.isAnimating).to.equal(true);
+      expect(internal.nodeAlphaMap.size).to.equal(0);
     });
   });
 
@@ -782,7 +769,7 @@ describe('xcode-graph-canvas', () => {
     });
   });
 
-  describe('renderFadingNodes (lines 800-816)', () => {
+  describe('renderFadingOutNodes (lines 800-816)', () => {
     it('should render fading nodes with decreasing opacity', async () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
@@ -807,11 +794,11 @@ describe('xcode-graph-canvas', () => {
 
       // Ensure ctx and theme are present
       if (internal.ctx && internal.theme) {
-        // Call renderFadingNodes directly to cover lines 800-816
+        // Call renderFadingOutNodes directly to cover lines 800-816
         const saveSpy = vi.spyOn(internal.ctx, 'save');
         const restoreSpy = vi.spyOn(internal.ctx, 'restore');
 
-        internal.renderFadingNodes();
+        internal.renderFadingOutNodes();
 
         // The fading node should have been drawn (save/restore called)
         expect(saveSpy).toHaveBeenCalled();
@@ -845,7 +832,7 @@ describe('xcode-graph-canvas', () => {
       });
 
       if (internal.ctx && internal.theme) {
-        internal.renderFadingNodes();
+        internal.renderFadingOutNodes();
 
         // The fading node should have been removed (elapsed >= 250ms)
         expect(internal.fadingOutNodes.size).to.equal(0);
@@ -871,7 +858,7 @@ describe('xcode-graph-canvas', () => {
       });
 
       if (internal.ctx && internal.theme) {
-        internal.renderFadingNodes();
+        internal.renderFadingOutNodes();
 
         // Node with no position should be removed
         expect(internal.fadingOutNodes.size).to.equal(0);
@@ -886,7 +873,9 @@ describe('xcode-graph-canvas', () => {
 
       if (internal.ctx) {
         const globalAlphaSpy = vi.spyOn(internal.ctx, 'save');
-        internal.renderFadingNodes();
+        // Clear any calls from prior resize/render cycles
+        globalAlphaSpy.mockClear();
+        internal.renderFadingOutNodes();
         // save should not be called when fadingOutNodes is empty
         expect(globalAlphaSpy).not.toHaveBeenCalled();
         globalAlphaSpy.mockRestore();
@@ -929,8 +918,8 @@ describe('xcode-graph-canvas', () => {
         createClusterPosition('TestProj', 50, 50, 100, 100),
       );
 
-      // Trigger an update to invoke updated()
-      el.zoom = 0.8;
+      // Trigger a Lit update to invoke updated()
+      el.requestUpdate();
       await el.updateComplete;
 
       // After updated(), didInitialFit should be true

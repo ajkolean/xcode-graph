@@ -20,12 +20,6 @@ importers:
 
   .:
     dependencies:
-      '@lit-labs/observers':
-        specifier: ^2.1.0
-        version: 2.1.0
-      '@lit-labs/virtualizer':
-        specifier: ^2.1.1
-        version: 2.1.1
       '@zag-js/core':
         specifier: ^1.35.2
         version: 1.35.2
@@ -633,17 +627,11 @@ packages:
     resolution: {integrity: sha512-wVC7UB6cuyiQYJ+LznrJl12+4kSXe36um0Nx5gZIWJ8Vose7fZCcfP4+eSN/gGMSkZ/IXBVp/hDqfqp0r8v+Qg==}
     engines: {node: '>=14.17'}
 
-  '@lit-labs/observers@2.1.0':
-    resolution: {integrity: sha512-oeQ2tvi/ygq7S+VgnXIInMKHHFPFqvIV9j2zBzpCwl33cWviT2ltuxNpbd11etwtUVsM8woKQzfVnrc80PKhKA==}
-
   '@lit-labs/signals@0.2.0':
     resolution: {integrity: sha512-68plyIbciumbwKaiilhLNyhz4Vg6/+nJwDufG2xxWA9r/fUw58jxLHCAlKs+q1CE5Lmh3cZ3ShyYKnOCebEpVA==}
 
   '@lit-labs/ssr-dom-shim@1.4.0':
     resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==}
-
-  '@lit-labs/virtualizer@2.1.1':
-    resolution: {integrity: sha512-JWxMwnlouLdwpw8spLTuax53WMnSP3xt0dCyxAS7GJr5Otda9MGgR/ghAdfwhSY75TmjbE1T2TqChwoGCw3ggw==}
 
   '@lit/reactive-element@2.1.1':
     resolution: {integrity: sha512-N+dm5PAYdQ8e6UlywyyrgI2t++wFGXfHx+dSJ1oBrg6FAxUj40jId++EaRm80MKX5JnlH1sBsyZ5h0bcZKemCg==}
@@ -4015,21 +4003,12 @@ snapshots:
       parse5: 7.3.0
       typescript: 5.9.3
 
-  '@lit-labs/observers@2.1.0':
-    dependencies:
-      '@lit/reactive-element': 2.1.1
-
   '@lit-labs/signals@0.2.0':
     dependencies:
       lit: 3.3.2
       signal-polyfill: 0.2.2
 
   '@lit-labs/ssr-dom-shim@1.4.0': {}
-
-  '@lit-labs/virtualizer@2.1.1':
-    dependencies:
-      lit: 3.3.2
-      tslib: 2.8.1
 
   '@lit/reactive-element@2.1.1':
     dependencies:

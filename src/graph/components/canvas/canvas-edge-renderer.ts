@@ -1,5 +1,4 @@
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
-import type { RoutedEdge } from '@graph/layout/types';
 import type { TransitiveResult } from '@graph/utils';
 import { resolveClusterPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
@@ -7,9 +6,8 @@ import type { NodePosition, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
-import { generateBezierPath, generatePortRoutedPath } from '@ui/utils/paths';
+import { generateBezierPath } from '@ui/utils/paths';
 import { isLineInViewport, type ViewportBounds } from '@ui/utils/viewport';
-import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 
 /** Context passed to edge rendering functions each frame. */
 export interface EdgeRenderContext {
@@ -45,8 +43,6 @@ export interface EdgeRenderContext {
   manualClusterPositions: Map<string, { x: number; y: number }>;
   /** Fast lookup map from node ID to GraphNode */
   nodeMap: Map<string, GraphNode>;
-  /** ELK-routed edge paths for cross-cluster edges */
-  routedEdgeMap: Map<string, RoutedEdge>;
   /** Cached Path2D objects keyed by edge key */
   edgePathCache: Map<string, Path2D>;
   /** Whether direct dependencies are highlighted */
@@ -137,27 +133,22 @@ function isCycleEdge(edge: GraphEdge, layout: GraphLayoutController): boolean {
   );
 }
 
-/** Determines the stroke color for an edge based on cycle state, emphasis, and zoom level. */
+/** Determines the stroke color for an edge based on cycle state, emphasis, and selection. */
 function resolveEdgeColor(
   sourceNode: GraphNode,
   targetNode: GraphNode,
   isEmphasized: boolean,
   isCycle: boolean,
   selectedNode: GraphNode | null,
-  zoom: number,
   theme: CanvasTheme,
 ): string {
   if (isCycle) return theme.cycleEdgeColor;
 
-  const colorNode =
-    isEmphasized && selectedNode
-      ? sourceNode.id === selectedNode.id
-        ? targetNode
-        : sourceNode
-      : targetNode;
-  const color = getNodeTypeColorFromTheme(colorNode.type, theme);
+  // Non-emphasized edges use a neutral gray so they don't dominate the canvas
+  if (!isEmphasized) return theme.edgeDefault;
 
-  return isEmphasized ? color : adjustColorForZoom(color, zoom);
+  const colorNode = selectedNode && sourceNode.id === selectedNode.id ? targetNode : sourceNode;
+  return getNodeTypeColorFromTheme(colorNode.type, theme);
 }
 
 /** Get the minimum edge depth across active chains (deps/dependents) */
@@ -174,15 +165,7 @@ function getChainEdgeDepth(edgeKey: string, rc: EdgeRenderContext): number {
   return Number.isFinite(depth) ? depth : 0;
 }
 
-/** Progressive edge disclosure: fade edges at low zoom levels */
-function getZoomOpacityFactor(zoom: number, isEmphasized: boolean): number {
-  if (isEmphasized) return 1.0;
-  if (zoom < 0.3) return 0;
-  if (zoom < 0.6) return (zoom - 0.3) / 0.3;
-  return 1.0;
-}
-
-/** Computes the final opacity for an edge considering highlight, chain depth, cycle, and zoom. */
+/** Computes the final opacity for an edge considering highlight, chain depth, and cycle state. */
 function computeEdgeOpacity(
   edgeKey: string,
   isHighlighted: boolean,
@@ -191,51 +174,14 @@ function computeEdgeOpacity(
   isCycle: boolean,
   rc: EdgeRenderContext,
 ): number {
-  const isEmphasized = isHighlighted || (isChainActive && inChain);
-  const zoomFactor = getZoomOpacityFactor(rc.zoom, isEmphasized);
-  if (zoomFactor === 0) return 0;
-
   // Chain edges: direct (depth 0) = full opacity, transitive (depth >= 1) = 50%
   if (isChainActive && inChain) {
     const depth = getChainEdgeDepth(edgeKey, rc);
-    const chainAlpha = depth === 0 ? 1.0 : 0.5;
-    return Math.min(1, chainAlpha * zoomFactor);
+    return depth === 0 ? 1.0 : 0.5;
   }
 
   const baseOpacity = isHighlighted ? 1.0 : 0.25;
-  const cycleOpacity = isCycle ? Math.max(baseOpacity, 0.8) : baseOpacity;
-
-  return Math.min(1, cycleOpacity * zoomFactor);
-}
-
-/** Draws an ELK-routed edge path for cross-cluster edges, using a cached Path2D when available. */
-function drawRoutedEdgePath(
-  ctx: CanvasRenderingContext2D,
-  routedEdge: RoutedEdge,
-  sourceLayout: { x: number; y: number },
-  targetLayout: { x: number; y: number },
-  sClusterX: number,
-  sClusterY: number,
-  tClusterX: number,
-  tClusterY: number,
-  edgeKey: string,
-  edgePathCache: Map<string, Path2D>,
-) {
-  let path = edgePathCache.get(edgeKey);
-  if (!path) {
-    const pathString = generatePortRoutedPath(
-      { x: sourceLayout.x, y: sourceLayout.y },
-      { x: routedEdge.sourcePort.x, y: routedEdge.sourcePort.y },
-      { x: routedEdge.targetPort.x, y: routedEdge.targetPort.y },
-      { x: targetLayout.x, y: targetLayout.y },
-      routedEdge.waypoints,
-      { x: sClusterX, y: sClusterY },
-      { x: tClusterX, y: tClusterY },
-    );
-    path = new Path2D(pathString);
-    edgePathCache.set(edgeKey, path);
-  }
-  ctx.stroke(path);
+  return isCycle ? Math.max(baseOpacity, 0.8) : baseOpacity;
 }
 
 /** Draws a triangular arrowhead at the target end of an edge. */
@@ -270,11 +216,18 @@ function drawDirectEdgePath(
   y1: number,
   x2: number,
   y2: number,
+  edgeKey: string,
+  edgePathCache: Map<string, Path2D>,
 ) {
   const distance = Math.hypot(x2 - x1, y2 - y1);
   if (distance > 150) {
     /* v8 ignore start -- bezier path for long edges; tested via canvas mock */
-    ctx.stroke(new Path2D(generateBezierPath(x1, y1, x2, y2)));
+    let path = edgePathCache.get(edgeKey);
+    if (!path) {
+      path = new Path2D(generateBezierPath(x1, y1, x2, y2));
+      edgePathCache.set(edgeKey, path);
+    }
+    ctx.stroke(path);
     /* v8 ignore stop */
   } else {
     ctx.beginPath();
@@ -294,7 +247,7 @@ function applyEdgeStyle(
   isChainActive: boolean,
   inChain: boolean,
   cycleEdge: boolean,
-  isCrossCluster: boolean,
+  animatedDashOffset: number,
   rc: EdgeRenderContext,
 ) {
   const isEmphasized = isHighlighted || (isChainActive && inChain);
@@ -304,7 +257,6 @@ function applyEdgeStyle(
     isEmphasized,
     cycleEdge,
     rc.selectedNode,
-    rc.zoom,
     rc.theme,
   );
   ctx.globalAlpha = computeEdgeOpacity(
@@ -318,77 +270,44 @@ function applyEdgeStyle(
   ctx.lineWidth = (isEmphasized ? 2.5 : cycleEdge ? 2 : 1) / rc.zoom;
   const animateEdge = isEmphasized;
 
-  // Highlighted/chain edges always get marching-ants dashes for directional flow;
-  // non-highlighted: cross-cluster dashed, intra-cluster solid, cycle always dashed
   if (cycleEdge) {
     ctx.setLineDash([4, 4]);
   } else if (animateEdge) {
     ctx.setLineDash([6, 3]);
-  } else if (isCrossCluster) {
-    ctx.setLineDash([10, 5]);
   } else {
-    /* v8 ignore start -- solid line for non-cycle intra-cluster edges; tested in edge renderer */
     ctx.setLineDash([]);
-    /* v8 ignore stop */
   }
 
-  ctx.lineDashOffset = animateEdge && !prefersReducedMotion.get() ? rc.time / 20 : 0;
+  ctx.lineDashOffset = animateEdge ? animatedDashOffset : 0;
 }
 
-/** Returns true if an intra-cluster edge should be hidden at low zoom when its cluster is not hovered. */
-function shouldHideIntraClusterEdge(
-  sourceClusterId: string,
-  isHighlighted: boolean,
-  zoom: number,
-  hoveredCluster: string | null,
-): boolean {
-  return zoom < 0.6 && hoveredCluster !== sourceClusterId && !isHighlighted;
-}
-
-/** Checks whether an edge is within the viewport and not hidden by intra-cluster rules. */
+/** Checks whether an edge is within the viewport. */
 function isEdgeVisible(
   endpoints: NonNullable<ReturnType<typeof resolveEdgeEndpoints>>,
   viewport: ViewportBounds,
-  isHighlighted: boolean,
-  rc: EdgeRenderContext,
 ): boolean {
-  const { sourceClusterId, x1, y1, x2, y2 } = endpoints;
-  const isIntraCluster = sourceClusterId === endpoints.targetClusterId;
-  if (
-    isIntraCluster &&
-    shouldHideIntraClusterEdge(sourceClusterId, isHighlighted, rc.zoom, rc.hoveredCluster)
-  ) {
-    return false;
-  }
-  return isLineInViewport({ x: x1, y: y1 }, { x: x2, y: y2 }, viewport);
+  return isLineInViewport(
+    { x: endpoints.x1, y: endpoints.y1 },
+    { x: endpoints.x2, y: endpoints.y2 },
+    viewport,
+  );
 }
 
-/** Draws an edge path, choosing routed or direct rendering based on cross-cluster status. */
+/** Draws an edge path as a direct bezier curve or straight line. */
 function drawEdgePath(
   edgeKey: string,
   endpoints: NonNullable<ReturnType<typeof resolveEdgeEndpoints>>,
-  isCrossCluster: boolean,
   rc: EdgeRenderContext,
 ) {
-  if (isCrossCluster) {
-    const routedEdge = rc.routedEdgeMap.get(edgeKey);
-    if (routedEdge) {
-      drawRoutedEdgePath(
-        rc.ctx,
-        routedEdge,
-        endpoints.sourceLayout,
-        endpoints.targetLayout,
-        endpoints.sClusterX,
-        endpoints.sClusterY,
-        endpoints.tClusterX,
-        endpoints.tClusterY,
-        edgeKey,
-        rc.edgePathCache,
-      );
-    }
-  } else {
-    drawDirectEdgePath(rc.ctx, endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2);
-  }
+  drawDirectEdgePath(
+    rc.ctx,
+    endpoints.x1,
+    endpoints.y1,
+    endpoints.x2,
+    endpoints.y2,
+    edgeKey,
+    rc.edgePathCache,
+  );
 }
 
 /** Renders a single edge with glow, style, path, and arrowhead passes. */
@@ -399,18 +318,15 @@ function renderSingleEdge(
   isHighlighted: boolean,
   isChainActive: boolean,
   inChain: boolean,
+  animatedDashOffset: number,
   rc: EdgeRenderContext,
 ) {
   const isEmphasized = isHighlighted || (isChainActive && inChain);
 
-  // Skip non-emphasized edges entirely at very low zoom
-  if (!isEmphasized && rc.zoom < 0.3) return;
-
   const endpoints = resolveEdgeEndpoints(edge, rc);
   if (!endpoints) return;
-  if (!isEdgeVisible(endpoints, viewport, isEmphasized, rc)) return;
+  if (!isEdgeVisible(endpoints, viewport)) return;
 
-  const isCrossCluster = endpoints.sourceClusterId !== endpoints.targetClusterId;
   const cycleEdge = isCycleEdge(edge, rc.layout);
 
   // Glow pass behind emphasized edges (highlighted or chain)
@@ -421,7 +337,6 @@ function renderSingleEdge(
       true,
       cycleEdge,
       rc.selectedNode,
-      rc.zoom,
       rc.theme,
     );
     rc.ctx.save();
@@ -436,7 +351,7 @@ function renderSingleEdge(
     rc.ctx.globalAlpha = glowAlpha;
     rc.ctx.lineWidth = 6 / rc.zoom;
     rc.ctx.setLineDash([]);
-    drawEdgePath(edgeKey, endpoints, isCrossCluster, rc);
+    drawEdgePath(edgeKey, endpoints, rc);
     rc.ctx.restore();
   }
 
@@ -449,18 +364,22 @@ function renderSingleEdge(
     isChainActive,
     inChain,
     cycleEdge,
-    isCrossCluster,
+    animatedDashOffset,
     rc,
   );
 
-  drawEdgePath(edgeKey, endpoints, isCrossCluster, rc);
+  drawEdgePath(edgeKey, endpoints, rc);
 
-  // Draw arrowhead at target end for emphasized edges
-  if (isEmphasized) {
-    drawArrowhead(rc.ctx, endpoints.x2, endpoints.y2, endpoints.x1, endpoints.y1, rc.zoom);
-  } else if (rc.zoom > 0.5) {
-    drawArrowhead(rc.ctx, endpoints.x2, endpoints.y2, endpoints.x1, endpoints.y1, rc.zoom, false);
-  }
+  // Draw arrowhead at target end
+  drawArrowhead(
+    rc.ctx,
+    endpoints.x2,
+    endpoints.y2,
+    endpoints.x1,
+    endpoints.y1,
+    rc.zoom,
+    isEmphasized,
+  );
 
   rc.ctx.setLineDash([]);
   rc.ctx.lineDashOffset = 0;
@@ -491,6 +410,9 @@ function isEdgeInActiveChain(edgeKey: string, rc: EdgeRenderContext): boolean {
   );
 }
 
+/** Zoom threshold below which non-emphasized edges are hidden to reduce visual noise. */
+const EDGE_HIDE_ZOOM_THRESHOLD = 0.3;
+
 /** Renders all visible edges onto the canvas, applying highlight and chain logic. */
 export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): void {
   const { ctx, edges } = rc;
@@ -500,6 +422,11 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
     rc.showTransitiveDeps ||
     rc.showDirectDependents ||
     rc.showTransitiveDependents;
+
+  // Cache per-frame values to avoid recomputing per-edge
+  const reducedMotion = prefersReducedMotion.get();
+  const animatedDashOffset = reducedMotion ? 0 : rc.time / 20;
+  const hideNonEmphasized = rc.zoom < EDGE_HIDE_ZOOM_THRESHOLD;
 
   ctx.lineWidth = 1;
 
@@ -512,6 +439,18 @@ export function renderEdges(rc: EdgeRenderContext, viewport: ViewportBounds): vo
       ((rc.showDirectDeps && rc.nodeMap.get(edge.source)?.project === rc.selectedCluster) ||
         (rc.showDirectDependents && rc.nodeMap.get(edge.target)?.project === rc.selectedCluster));
 
-    renderSingleEdge(edge, edgeKey, viewport, isHighlighted, isChainActive, inChain, rc);
+    // Skip non-emphasized edges when zoomed out far to reduce visual noise
+    if (hideNonEmphasized && !isHighlighted && !(isChainActive && inChain)) continue;
+
+    renderSingleEdge(
+      edge,
+      edgeKey,
+      viewport,
+      isHighlighted,
+      isChainActive,
+      inChain,
+      animatedDashOffset,
+      rc,
+    );
   }
 }

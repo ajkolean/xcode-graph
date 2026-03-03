@@ -40,6 +40,36 @@ function getLightnessAdjustment(zoom: number): number {
   return ZOOM_LIGHTNESS_ADJUSTMENT.AT_MIN_ZOOM * (1 - normalizeZoom(zoom));
 }
 
+// Two-bucket LRU cache: keeps the current and previous zoom bucket to avoid
+// thrashing during smooth zoom (scrolling back and forth between two buckets).
+let currentBucket = -1;
+let previousBucket = -1;
+let currentCache = new Map<string, string>();
+let previousCache = new Map<string, string>();
+
+function bucketZoom(zoom: number): number {
+  // 0.25 increments — wide buckets minimize cache misses during smooth zoom
+  return Math.round(zoom * 4) / 4;
+}
+
+/** Rotates the two-bucket cache so `currentCache` always holds the active bucket. */
+function rotateBucket(bucket: number): void {
+  if (bucket === previousBucket) {
+    // Swap references — O(1) instead of O(N) map copy
+    const tmp = currentCache;
+    currentCache = previousCache;
+    previousCache = tmp;
+  } else {
+    // New bucket: demote current to previous, start fresh
+    const tmp = previousCache;
+    previousCache = currentCache;
+    currentCache = tmp;
+    currentCache.clear();
+  }
+  previousBucket = currentBucket;
+  currentBucket = bucket;
+}
+
 /**
  * Adjust color based on zoom level
  * Zoomed out = pastel/muted colors
@@ -51,17 +81,30 @@ function getLightnessAdjustment(zoom: number): number {
  *
  * @public
  */
+/** Pre-compiled regex for parsing rgba/rgb color strings */
+const RGBA_ZOOM_RE = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/;
+
 export function adjustColorForZoom(color: string, zoom: number): string {
   // Safety check for undefined or invalid colors
   if (!color || typeof color !== 'string') {
     return '#6F2CFF'; // Default purple color
   }
 
+  const bucket = bucketZoom(zoom);
+  if (bucket !== currentBucket) {
+    rotateBucket(bucket);
+  }
+
+  const cached = currentCache.get(color);
+  if (cached) return cached;
+
   const saturationMultiplier = getSaturationMultiplier(zoom);
   const lightnessAdjustment = getLightnessAdjustment(zoom);
 
+  let result: string;
+
   if (color.startsWith('rgba') || color.startsWith('rgb')) {
-    const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/);
+    const match = color.match(RGBA_ZOOM_RE);
     if (!match) return color;
 
     const r = Number(match[1]) / 255;
@@ -74,14 +117,16 @@ export function adjustColorForZoom(color: string, zoom: number): string {
     const adjL = Math.min(0.95, hsl.l + lightnessAdjustment / 100);
     const rgb = hslToRgb(hsl.h, adjS, adjL);
 
-    return `rgba(${Math.round(rgb.r * 255)}, ${Math.round(rgb.g * 255)}, ${Math.round(rgb.b * 255)}, ${a})`;
+    result = `rgba(${Math.round(rgb.r * 255)}, ${Math.round(rgb.g * 255)}, ${Math.round(rgb.b * 255)}, ${a})`;
+  } else {
+    const hsl = hexToHSL(color);
+    const adjustedSaturation = hsl.s * saturationMultiplier;
+    const adjustedLightness = Math.min(95, hsl.l + lightnessAdjustment);
+    result = hslToHex(hsl.h, adjustedSaturation, adjustedLightness);
   }
 
-  const hsl = hexToHSL(color);
-  const adjustedSaturation = hsl.s * saturationMultiplier;
-  const adjustedLightness = Math.min(95, hsl.l + lightnessAdjustment);
-
-  return hslToHex(hsl.h, adjustedSaturation, adjustedLightness);
+  currentCache.set(color, result);
+  return result;
 }
 
 /**

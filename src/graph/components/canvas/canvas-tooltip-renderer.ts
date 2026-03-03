@@ -25,8 +25,6 @@ export interface TooltipContext {
   hoveredNode: string | null;
   /** Current pan offset in screen pixels */
   pan: { x: number; y: number };
-  /** Map of node ID to edge-count weight */
-  nodeWeights: Map<string, number>;
   /** User-dragged node positions (relative to cluster) */
   manualNodePositions: Map<string, { x: number; y: number }>;
   /** User-dragged cluster positions (world coordinates) */
@@ -42,9 +40,6 @@ export function renderNodeTooltip(tc: TooltipContext): void {
   if (!tc.hoveredNode) return;
   const node = tc.nodes.find((graphNode) => graphNode.id === tc.hoveredNode);
   if (!node) return;
-  // At low zoom, always show tooltip (labels are likely hidden).
-  // At higher zoom, only show if label would be truncated.
-  if (tc.zoom >= 0.5 && node.name.length <= 20) return;
 
   const worldPos = resolveNodeWorldPosition(
     node.id,
@@ -55,7 +50,7 @@ export function renderNodeTooltip(tc: TooltipContext): void {
   );
   if (!worldPos) return;
 
-  const size = getNodeSize(node, tc.edges, tc.nodeWeights.get(node.id));
+  const size = getNodeSize(node);
 
   const screenX = worldPos.x * tc.zoom + tc.pan.x;
   const screenY = worldPos.y * tc.zoom + tc.pan.y;

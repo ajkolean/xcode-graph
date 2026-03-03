@@ -22,6 +22,7 @@ function createTestTheme(): CanvasTheme {
     canvasBg: '#161617',
     tooltipBg: 'rgba(24, 24, 28, 0.95)',
     shadowColor: 'rgba(24, 24, 28, 0.9)',
+    edgeDefault: 'rgba(120, 120, 130, 0.45)',
     cycleEdgeColor: 'rgba(239, 68, 68, 0.8)',
     cycleGlowColor: 'rgba(239, 68, 68, 0.6)',
     isDark: true,
@@ -81,12 +82,10 @@ function createRenderContext(overrides: Partial<NodeRenderContext> = {}): NodeRe
     transitiveDependents: undefined,
     previewFilter: undefined,
     dimmedNodeIds: new Set<string>(),
-    nodeWeights: new Map(),
     manualNodePositions: new Map(),
     manualClusterPositions: new Map(),
     getPathForNode: () => new Path2D(),
     connectedNodes: new Set<string>(),
-    hubWeightThreshold: 5,
     nodeAlphaMap: new Map(),
     showDirectDeps: false,
     showTransitiveDeps: false,
@@ -479,36 +478,15 @@ describe('canvas-node-renderer', () => {
       expect(textCalls.length).to.be.greaterThan(0);
     });
 
-    it('should hide labels at low zoom when node is not a hub', () => {
+    it('should always show labels regardless of zoom level', () => {
       const rc = createRenderContext({
         zoom: 0.2,
-        nodeWeights: new Map([['node1', 1]]),
-        hubWeightThreshold: 10,
       });
       const viewport = { minX: -5000, minY: -5000, maxX: 5000, maxY: 5000 };
 
       renderNodes(rc, viewport);
 
-      // zoom < 0.3, not hovered/selected/connected, weight(1) < threshold(10)
-      // Label should NOT be drawn
-      const drawCalls = (rc.ctx as unknown as { __getDrawCalls(): unknown[] }).__getDrawCalls();
-      const textCalls = drawCalls.filter(
-        (c: unknown) => (c as { type: string }).type === 'fillText',
-      );
-      expect(textCalls.length).to.equal(0);
-    });
-
-    it('should show labels at low zoom for hub nodes', () => {
-      const rc = createRenderContext({
-        zoom: 0.2,
-        nodeWeights: new Map([['node1', 15]]),
-        hubWeightThreshold: 10,
-      });
-      const viewport = { minX: -5000, minY: -5000, maxX: 5000, maxY: 5000 };
-
-      renderNodes(rc, viewport);
-
-      // zoom < 0.3, but weight(15) >= threshold(10) → hub → show label
+      // Labels are always visible, even at very low zoom
       const drawCalls = (rc.ctx as unknown as { __getDrawCalls(): unknown[] }).__getDrawCalls();
       const textCalls = drawCalls.filter(
         (c: unknown) => (c as { type: string }).type === 'fillText',

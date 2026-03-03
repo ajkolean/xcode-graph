@@ -4,18 +4,23 @@ import { hexToRgba } from '@graph/utils/canvas-theme';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 import { CLUSTER_LABEL_CONFIG } from '@shared/utils/zoom-config';
 
-/** Minimum screen-pixel size for cluster labels before they are hidden */
-const MIN_LABEL_SCREEN_PX = 6;
-
 import { generateColor } from '@ui/utils/color-generator';
 import type { ViewportBounds } from '@ui/utils/viewport';
 import { adjustOpacityForZoom } from '@ui/utils/zoom-colors';
 
 const gradientCache = new Map<string, CanvasGradient>();
 
-/** Clear the radial gradient cache (e.g. on theme change or layout reset). */
+/** Cached character widths for arc text — avoids measureText() per character per frame. */
+const arcTextMeasureCache = new Map<string, { charWidths: number[]; totalWidth: number }>();
+
+/** Cached truncation results — avoids iterative measureText() calls per frame. */
+const truncateResultCache = new Map<string, string>();
+
+/** Clear all cluster rendering caches (e.g. on theme change or layout reset). */
 export function clearGradientCache(): void {
   gradientCache.clear();
+  arcTextMeasureCache.clear();
+  truncateResultCache.clear();
 }
 
 /** Context passed to cluster rendering functions each frame. */
@@ -87,19 +92,17 @@ function drawClusterFillAndBorder(
   clusterColor: string,
   isActive: boolean,
   isSelected: boolean,
-  shouldDim: boolean,
   clusterType: string,
   zoom: number,
   time: number,
   nodeCount: number,
   clusterId: string,
 ) {
-  const dimFactor = shouldDim ? 0.3 : 1.0;
   const borderOpacity = adjustOpacityForZoom(0.7, zoom);
   const fillOpacity = getClusterFillOpacity(nodeCount, isActive);
 
-  // Cache radial gradient by cluster id, rounded radius, and zoom
-  const cacheKey = `${clusterId}-${Math.round(radius)}-${Math.round(zoom * 10)}`;
+  // Cache radial gradient by cluster id, position, and radius (zoom excluded — canvas transform handles scaling)
+  const cacheKey = `${clusterId}-${Math.round(cx)}-${Math.round(cy)}-${Math.round(radius)}`;
   let grad = gradientCache.get(cacheKey);
   if (!grad) {
     grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
@@ -112,12 +115,12 @@ function drawClusterFillAndBorder(
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.fillStyle = grad;
-  ctx.globalAlpha = dimFactor;
+  ctx.globalAlpha = 1.0;
   ctx.fill();
 
   ctx.lineWidth = getClusterBorderWidth(nodeCount, isActive);
   ctx.strokeStyle = clusterColor;
-  ctx.globalAlpha = (isActive ? 1.0 : borderOpacity) * dimFactor;
+  ctx.globalAlpha = isActive ? 1.0 : borderOpacity;
   ctx.setLineDash(clusterType === 'project' ? [8, 8] : [3, 8]);
 
   if (isSelected && !prefersReducedMotion.get()) {
@@ -137,25 +140,33 @@ function drawClusterFillAndBorder(
  * @param maxWidth - Maximum allowed width in pixels.
  * @returns The original or truncated text.
  */
-/* v8 ignore next 8 */
+/* v8 ignore next 12 */
 function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
-  if (ctx.measureText(text).width <= maxWidth) return text;
-  let truncated = text;
-  while (truncated.length > 1 && ctx.measureText(`${truncated}…`).width > maxWidth) {
-    truncated = truncated.slice(0, -1);
+  const cacheKey = `${ctx.font}-${text}-${Math.round(maxWidth)}`;
+  const cached = truncateResultCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+
+  let result = text;
+  if (ctx.measureText(text).width > maxWidth) {
+    while (result.length > 1 && ctx.measureText(`${result}…`).width > maxWidth) {
+      result = result.slice(0, -1);
+    }
+    result = `${result}…`;
   }
-  return `${truncated}…`;
+  truncateResultCache.set(cacheKey, result);
+  return result;
 }
 
+/** Returns cached character widths for arc text, measuring only on cache miss. */
 /* v8 ignore start -- requires Canvas2D rendering context */
-function drawTextAlongArc(
+function getArcTextMeasurements(
   ctx: CanvasRenderingContext2D,
   text: string,
-  cx: number,
-  cy: number,
-  arcRadius: number,
-) {
-  // Measure each character width
+): { charWidths: number[]; totalWidth: number } {
+  const cacheKey = `${ctx.font}-${text}`;
+  const cached = arcTextMeasureCache.get(cacheKey);
+  if (cached) return cached;
+
   const charWidths: number[] = [];
   let totalWidth = 0;
   for (const ch of text) {
@@ -163,6 +174,19 @@ function drawTextAlongArc(
     charWidths.push(w);
     totalWidth += w;
   }
+  const entry = { charWidths, totalWidth };
+  arcTextMeasureCache.set(cacheKey, entry);
+  return entry;
+}
+
+function drawTextAlongArc(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  cx: number,
+  cy: number,
+  arcRadius: number,
+) {
+  const { charWidths, totalWidth } = getArcTextMeasurements(ctx, text);
 
   // Calculate angular span of the full text
   const totalAngle = totalWidth / arcRadius;
@@ -201,16 +225,9 @@ function drawClusterLabels(
   radius: number,
   clusterColor: string,
   isActive: boolean,
-  shouldDim: boolean,
   name: string,
-  zoom: number,
 ) {
   const nameFontSize = CLUSTER_LABEL_CONFIG.FONT_SIZE;
-
-  // Hide labels when they'd be too small to read on screen
-  if (nameFontSize * zoom < MIN_LABEL_SCREEN_PX) return;
-
-  const dimFactor = shouldDim ? 0.3 : 1.0;
   const maxTextWidth = radius * 1.6;
 
   ctx.fillStyle = clusterColor;
@@ -218,7 +235,7 @@ function drawClusterLabels(
   ctx.textBaseline = 'middle';
   ctx.font = `${isActive ? 600 : 500} ${nameFontSize}px var(--fonts-body, sans-serif)`;
   const displayName = truncateText(ctx, name, maxTextWidth);
-  ctx.globalAlpha = (isActive ? 1 : 0.85) * dimFactor;
+  ctx.globalAlpha = isActive ? 1 : 0.85;
 
   const arcRadius = radius + CLUSTER_LABEL_CONFIG.LABEL_PADDING;
 
@@ -236,7 +253,6 @@ function renderSingleCluster(
   clusterColor: string,
   isActive: boolean,
   isSelected: boolean,
-  shouldDim: boolean,
   clusterType: string,
   nodeCount: number,
   clusterId: string,
@@ -251,7 +267,6 @@ function renderSingleCluster(
     clusterColor,
     isActive,
     isSelected,
-    shouldDim,
     clusterType,
     zoom,
     time,
@@ -268,8 +283,7 @@ function renderSingleCluster(
  */
 /* v8 ignore start -- requires Canvas2D rendering context */
 export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBounds): void {
-  const { ctx, layout, zoom, selectedCluster, hoveredCluster, manualClusterPositions } = rc;
-  const activeClusterId = selectedCluster || hoveredCluster;
+  const { ctx, layout, selectedCluster, hoveredCluster, manualClusterPositions } = rc;
 
   for (const cluster of layout.clusters) {
     const layoutPos = layout.clusterPositions.get(cluster.id);
@@ -284,7 +298,6 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
 
     const clusterColor = generateColor(cluster.name, cluster.type);
     const isActive = hoveredCluster === cluster.id || selectedCluster === cluster.id;
-    const shouldDim = Boolean(activeClusterId && activeClusterId !== cluster.id);
 
     renderSingleCluster(
       rc,
@@ -294,14 +307,13 @@ export function renderClusters(rc: ClusterRenderContext, viewport: ViewportBound
       clusterColor,
       isActive,
       selectedCluster === cluster.id,
-      shouldDim,
       cluster.type,
       cluster.nodes.length,
       cluster.id,
     );
 
     // Always draw cluster labels at all zoom levels
-    drawClusterLabels(ctx, cx, cy, radius, clusterColor, isActive, shouldDim, cluster.name, zoom);
+    drawClusterLabels(ctx, cx, cy, radius, clusterColor, isActive, cluster.name);
 
     ctx.globalAlpha = 1.0;
   }

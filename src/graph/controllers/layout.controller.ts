@@ -45,8 +45,8 @@ export class LayoutController implements ReactiveController {
 
   // Cached layout result
   private cachedResult: LayoutResult | null = null;
-  private cachedNodes: GraphNode[] = [];
-  private cachedEdges: GraphEdge[] = [];
+  private cachedNodeIds: Set<string> = new Set();
+  private cachedEdgeKeys: Set<string> = new Set();
 
   // Loading state
   public isComputing = false;
@@ -141,8 +141,8 @@ export class LayoutController implements ReactiveController {
    */
   clearCache(): void {
     this.cachedResult = null;
-    this.cachedNodes = [];
-    this.cachedEdges = [];
+    this.cachedNodeIds = new Set();
+    this.cachedEdgeKeys = new Set();
   }
 
   /**
@@ -152,21 +152,25 @@ export class LayoutController implements ReactiveController {
     return this.cachedResult;
   }
 
-  /** Checks whether the given nodes and edges are the same references and lengths as the cached input. */
+  /** Checks whether the given nodes and edges have the same content as the cached input. */
   private isSameInput(nodes: GraphNode[], edges: GraphEdge[]): boolean {
-    return (
-      nodes.length === this.cachedNodes.length &&
-      edges.length === this.cachedEdges.length &&
-      nodes === this.cachedNodes &&
-      edges === this.cachedEdges
-    );
+    if (nodes.length !== this.cachedNodeIds.size || edges.length !== this.cachedEdgeKeys.size) {
+      return false;
+    }
+    for (const node of nodes) {
+      if (!this.cachedNodeIds.has(node.id)) return false;
+    }
+    for (const edge of edges) {
+      if (!this.cachedEdgeKeys.has(`${edge.source}->${edge.target}`)) return false;
+    }
+    return true;
   }
 
-  /** Stores the layout result and input references for cache hit comparison. */
+  /** Stores the layout result and input content fingerprint for cache hit comparison. */
   private cacheResult(result: LayoutResult, nodes: GraphNode[], edges: GraphEdge[]): void {
     this.cachedResult = result;
-    this.cachedNodes = nodes;
-    this.cachedEdges = edges;
+    this.cachedNodeIds = new Set(nodes.map((n) => n.id));
+    this.cachedEdgeKeys = new Set(edges.map((e) => `${e.source}->${e.target}`));
   }
 
   hostConnected(): void {

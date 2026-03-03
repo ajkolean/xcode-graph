@@ -22,6 +22,7 @@ describe('canvas-theme', () => {
     expect(theme.canvasBg).toBe('#161617');
     expect(theme.tooltipBg).toBe('rgba(24, 24, 28, 0.95)');
     expect(theme.shadowColor).toBe('rgba(24, 24, 28, 0.9)');
+    expect(theme.edgeDefault).toBe('rgba(120, 120, 130, 0.45)');
     expect(theme.cycleEdgeColor).toBe('rgba(239, 68, 68, 0.8)');
     expect(theme.cycleGlowColor).toBe('rgba(239, 68, 68, 0.6)');
 

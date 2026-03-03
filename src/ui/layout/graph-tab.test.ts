@@ -438,9 +438,12 @@ describe('graph-tab handler method coverage (lines 139-175)', () => {
     expect(enableAnimation.get()).toBe(!initial);
   });
 
-  it('handleZoomChange calls setZoom with event detail (line 179)', () => {
+  it('handleZoomChange calls setZoom with event detail (line 179)', async () => {
     const proto = getGraphTabProto();
-    proto.handleZoomChange.call({}, new CustomEvent('zoom-change', { detail: 0.75 }));
+    const context = { zoomDebounceId: null };
+    proto.handleZoomChange.call(context, new CustomEvent('zoom-change', { detail: 0.75 }));
+    // Signal update is debounced — wait for the timeout to flush
+    await new Promise((r) => setTimeout(r, 150));
     expect(zoom.get()).toBe(0.75);
   });
 });

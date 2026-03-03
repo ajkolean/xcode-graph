@@ -52,8 +52,6 @@ export interface InteractionContext {
   edges: GraphEdge[];
   /** Currently selected node, or null */
   selectedNode: GraphNode | null;
-  /** Map of node ID to edge-count weight */
-  nodeWeights: Map<string, number>;
   /** User-dragged node positions (relative to cluster) */
   manualNodePositions: Map<string, { x: number; y: number }>;
   /** User-dragged cluster positions (world coordinates) */
@@ -66,6 +64,8 @@ export interface InteractionContext {
   dispatchCanvasEvent: <K extends keyof CanvasEventMap>(name: K, detail: CanvasEventMap[K]) => void;
   /** Notifies the host of a zoom level change */
   dispatchZoomChange: (zoom: number) => void;
+  /** Clears cached edge Path2D objects so they are recomputed on next render */
+  invalidateEdgePathCache: () => void;
 }
 
 /** Returns the ID of the cluster under the given world position, or null if none. */
@@ -110,7 +110,7 @@ function hitTestNode(
     );
     if (!pos) continue;
 
-    const size = getNodeSize(node, ctx.edges, ctx.nodeWeights.get(node.id));
+    const size = getNodeSize(node);
     const hitRadius = size * 2 * hitScale;
 
     const dx = worldPos.x - pos.x;
@@ -182,6 +182,7 @@ function handleDragNode(worldPos: { x: number; y: number }, ctx: InteractionCont
     x: worldPos.x - clusterPos.x,
     y: worldPos.y - clusterPos.y,
   });
+  ctx.invalidateEdgePathCache();
 }
 
 /** Detects node and cluster hover state changes and dispatches the corresponding events. */
@@ -215,6 +216,7 @@ export function handleMouseMove(e: MouseEvent, ctx: InteractionContext): void {
       x: worldPos.x,
       y: worldPos.y,
     });
+    ctx.invalidateEdgePathCache();
   } else if (state.draggedNodeId) {
     handleDragNode(worldPos, ctx);
   } else if (state.isDragging) {
@@ -257,15 +259,29 @@ export function handleMouseUp(e: MouseEvent | undefined, ctx: InteractionContext
   }
 }
 
+/**
+ * Normalizes wheel delta across input devices and deltaMode values.
+ * Based on D3-zoom's battle-tested approach:
+ * - deltaMode 0 (pixels): standard scroll, factor 0.002
+ * - deltaMode 1 (lines): Firefox line-based scroll, factor 0.05
+ * - deltaMode 2 (pages): rare page-based scroll, factor 1
+ * - ctrlKey: macOS trackpad pinch fires wheel events with ctrlKey=true
+ *   and very small deltaY — the 10x multiplier compensates.
+ */
+function normalizeWheelDelta(e: WheelEvent): number {
+  const modeFactor = e.deltaMode === 1 ? 0.05 : e.deltaMode ? 1 : 0.002;
+  const pinchFactor = e.ctrlKey ? 10 : 1;
+  return -e.deltaY * modeFactor * pinchFactor;
+}
+
 /** Handles wheel events for zooming, adjusting pan to keep the cursor position stable. */
 export function handleWheel(e: WheelEvent, ctx: InteractionContext): void {
   e.preventDefault();
   const { state } = ctx;
 
-  const zoomSensitivity = 0.001;
-  const delta = -e.deltaY * zoomSensitivity;
+  const delta = normalizeWheelDelta(e);
   const newZoom = Math.min(
-    Math.max(ZOOM_CONFIG.MIN_ZOOM, state.zoom + delta),
+    Math.max(ZOOM_CONFIG.MIN_ZOOM, state.zoom * 2 ** delta),
     ZOOM_CONFIG.MAX_ZOOM,
   );
 

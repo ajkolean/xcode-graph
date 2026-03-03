@@ -31,6 +31,14 @@ export function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
+/** Pre-compiled regexes for color parsing (avoid re-creation per call) */
+const RGBA_ALPHA_RE = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*[\d.]+\s*)?\)$/;
+const HEX_ALPHA_RE = /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/;
+
+/** Result cache to avoid repeated regex parsing and string construction */
+const colorAlphaCache = new Map<string, string>();
+const COLOR_ALPHA_CACHE_LIMIT = 200;
+
 /**
  * Parse an rgba/rgb/hex color string and return it with a new alpha value.
  * Returns the original string unchanged if parsing fails.
@@ -40,20 +48,33 @@ export function hexToRgba(hex: string, alpha: number): string {
  * @returns CSS rgba() color string with the new alpha
  */
 export function colorWithAlpha(color: string, newAlpha: number): string {
-  const rgbaMatch = color.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*[\d.]+\s*)?\)$/);
+  const key = `${color}|${newAlpha}`;
+  const cached = colorAlphaCache.get(key);
+  if (cached) return cached;
+
+  let result: string;
+  const rgbaMatch = color.match(RGBA_ALPHA_RE);
   if (rgbaMatch) {
-    return `rgba(${rgbaMatch[1]},${rgbaMatch[2]},${rgbaMatch[3]},${newAlpha})`;
+    result = `rgba(${rgbaMatch[1]},${rgbaMatch[2]},${rgbaMatch[3]},${newAlpha})`;
+  } else {
+    const hexMatch = color.match(HEX_ALPHA_RE);
+    if (hexMatch) {
+      const [, rHex, gHex, bHex] = hexMatch;
+      if (!rHex || !gHex || !bHex) return color;
+      const r = Number.parseInt(rHex, 16);
+      const g = Number.parseInt(gHex, 16);
+      const b = Number.parseInt(bHex, 16);
+      result = `rgba(${r},${g},${b},${newAlpha})`;
+    } else {
+      return color;
+    }
   }
-  const hexMatch = color.match(/^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/);
-  if (hexMatch) {
-    const [, rHex, gHex, bHex] = hexMatch;
-    if (!rHex || !gHex || !bHex) return color;
-    const r = Number.parseInt(rHex, 16);
-    const g = Number.parseInt(gHex, 16);
-    const b = Number.parseInt(bHex, 16);
-    return `rgba(${r},${g},${b},${newAlpha})`;
+
+  if (colorAlphaCache.size >= COLOR_ALPHA_CACHE_LIMIT) {
+    colorAlphaCache.clear();
   }
-  return color;
+  colorAlphaCache.set(key, result);
+  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -85,6 +106,8 @@ export interface CanvasTheme {
   tooltipBg: string;
   /** Shadow/drop-shadow color */
   shadowColor: string;
+  /** Default edge stroke color for non-emphasized edges */
+  edgeDefault: string;
   /** Cycle edge stroke color */
   cycleEdgeColor: string;
   /** Cycle edge glow color */
@@ -126,6 +149,10 @@ export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
     shadowColor: get(
       '--colors-canvas-shadow',
       isDark ? 'rgba(24, 24, 28, 0.9)' : 'rgba(0, 0, 0, 0.1)',
+    ),
+    edgeDefault: get(
+      '--colors-canvas-edge-default',
+      isDark ? 'rgba(120, 120, 130, 0.45)' : 'rgba(140, 140, 150, 0.5)',
     ),
     cycleEdgeColor: get(
       '--colors-canvas-cycle-edge',
