@@ -12,6 +12,7 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType } from '@shared/schemas/graph.types';
 import { filters, searchQuery } from '@shared/signals/filter.signals';
 import { previewFilter } from '@shared/signals/ui.signals';
+import { getFuzzyMatchIds } from '../utils/fuzzy-search';
 import { applyGraphFilters } from '../utils/graph-filters';
 import { computeTransitiveDependencies, type TransitiveResult } from '../utils/traversal';
 import { edges, nodes } from './data.signals';
@@ -100,9 +101,9 @@ export const displayData: Signal.Computed<DisplayData> = new Signal.Computed<Dis
   };
 });
 
-/** Checks whether a node should be dimmed because it doesn't match the search query. */
-function shouldDimBySearch(node: GraphNode, lowerQuery: string): boolean {
-  return lowerQuery !== '' && !node.name.toLowerCase().includes(lowerQuery);
+/** Checks whether a node should be dimmed because it doesn't match the fuzzy search. */
+function shouldDimBySearch(node: GraphNode, fuzzyMatchSet: Set<string> | null): boolean {
+  return fuzzyMatchSet !== null && !fuzzyMatchSet.has(node.id);
 }
 
 /**
@@ -205,10 +206,11 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
     showTransitiveDependentsVal;
 
   const dimmed = new Set<string>();
-  const lowerQuery = query ? query.toLowerCase() : '';
+  const allNodes = nodes.get();
+  const fuzzyMatchSet = query ? getFuzzyMatchIds(allNodes, query) : null;
 
   for (const node of filteredNodes) {
-    if (shouldDimBySearch(node, lowerQuery)) {
+    if (shouldDimBySearch(node, fuzzyMatchSet)) {
       dimmed.add(node.id);
       continue;
     }

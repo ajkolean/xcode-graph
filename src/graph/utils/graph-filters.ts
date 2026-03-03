@@ -10,22 +10,19 @@ import {
   NodeType,
   type Platform,
 } from '@shared/schemas/graph.types';
+import { getFuzzyMatchIds } from './fuzzy-search';
 
 /**
- * Check if a node matches the search query.
- * Searches node name, type, and project fields (case-insensitive).
+ * Check if a node matches the search query using fuzzy matching.
+ * Searches node name, type, and project fields via Fuse.js.
  *
  * @public
  */
 export function matchesSearch(node: GraphNode, searchQuery: string): boolean {
   if (!searchQuery) return true;
 
-  const query = searchQuery.toLowerCase();
-  return Boolean(
-    node.name.toLowerCase().includes(query) ||
-      node.type.toLowerCase().includes(query) ||
-      node.project?.toLowerCase().includes(query),
-  );
+  const matchSet = getFuzzyMatchIds([node], searchQuery);
+  return matchSet !== null && matchSet.has(node.id);
 }
 
 /**
@@ -57,11 +54,12 @@ function matchesFilterCriteria(node: GraphNode, filters: FilterState): boolean {
  *
  * Nodes are tested against node type, platform, origin, project, and package filters.
  * Edges are kept only when both endpoints survive filtering.
+ * Search uses Fuse.js fuzzy matching across name, project, and type fields.
  *
  * @param nodes - All graph nodes
  * @param edges - All graph edges
  * @param filters - Active filter state (node types, platforms, origins, projects, packages)
- * @param searchQuery - Free-text search string (case-insensitive, matched against node name)
+ * @param searchQuery - Free-text search string (fuzzy-matched against node name, project, type)
  * @returns Filtered nodes, filtered edges, and a search result count (`null` when no query is active)
  *
  * @example
@@ -82,11 +80,18 @@ export function applyGraphFilters(
   filters: FilterState,
   searchQuery: string,
 ): { filteredNodes: GraphNode[]; filteredEdges: GraphEdge[]; searchResults: number | null } {
-  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const normalizedQuery = searchQuery.trim();
 
-  const filteredNodes = nodes.filter(
-    (node) => matchesFilterCriteria(node, filters) && matchesSearch(node, normalizedQuery),
-  );
+  // Compute fuzzy match set once for all nodes
+  const fuzzyMatchSet = getFuzzyMatchIds(nodes, normalizedQuery);
+
+  const filteredNodes = nodes.filter((node) => {
+    if (!matchesFilterCriteria(node, filters)) return false;
+    // If no search query, include all filter-passing nodes
+    if (fuzzyMatchSet === null) return true;
+    // Otherwise, node must also match fuzzy search
+    return fuzzyMatchSet.has(node.id);
+  });
 
   const filteredNodeIds = new Set(filteredNodes.map((n) => n.id));
 

@@ -1,12 +1,15 @@
 /**
  * Graph Data Service - centralized data access layer
  * Provides single source of truth for all graph data operations
+ *
+ * Internally backed by a graphology DirectedGraph for efficient
+ * adjacency queries, replacing hand-rolled edge index maps.
  */
 
-import { bfsTraverseGraph, type TransitiveResult } from '@graph/utils/traversal';
 import { type Cluster, ClusterType } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
 import { addToMultiMap } from '@shared/utils/collections';
+import { type AppGraph, buildGraph } from './graph-instance';
 
 /**
  * Centralized data access layer providing indexed lookups over graph nodes and edges.
@@ -22,14 +25,14 @@ export class GraphDataService {
   private readonly nodeMap: Map<string, GraphNode>;
   private readonly edgeMap: Map<string, GraphEdge>;
 
+  /** graphology instance for adjacency queries */
+  readonly graph: AppGraph;
+
   // Indices for O(1) lookups
   private readonly nodesByType: Map<string, GraphNode[]> = new Map();
   private readonly nodesByProject: Map<string, GraphNode[]> = new Map();
   private readonly nodesByPlatform: Map<string, GraphNode[]> = new Map();
   private readonly nodesByOrigin: Map<string, GraphNode[]> = new Map();
-
-  private readonly outgoingEdges: Map<string, GraphEdge[]> = new Map();
-  private readonly incomingEdges: Map<string, GraphEdge[]> = new Map();
 
   // Cached Sets
   private readonly projects: Set<string> = new Set();
@@ -47,10 +50,13 @@ export class GraphDataService {
     this.nodeMap = new Map(nodes.map((n) => [n.id, n]));
     this.edgeMap = new Map(edges.map((e) => [`${e.source}->${e.target}`, e]));
 
+    // Build graphology instance (replaces manual outgoing/incoming maps)
+    this.graph = buildGraph(nodes, edges);
+
     this.buildIndices();
   }
 
-  /** Populates internal lookup indices (by type, project, platform, origin, and edge direction). */
+  /** Populates internal lookup indices (by type, project, platform, origin). */
   private buildIndices() {
     for (const node of this.nodes) {
       addToMultiMap(this.nodesByType, node.type, node);
@@ -71,11 +77,6 @@ export class GraphDataService {
       if (node.type === NodeType.Package) {
         this.packages.add(node.name);
       }
-    }
-
-    for (const edge of this.edges) {
-      addToMultiMap(this.outgoingEdges, edge.source, edge);
-      addToMultiMap(this.incomingEdges, edge.target, edge);
     }
   }
 
@@ -154,12 +155,26 @@ export class GraphDataService {
 
   /** Get outgoing edges from a node (dependencies) */
   getOutgoingEdges(nodeId: string): GraphEdge[] {
-    return this.outgoingEdges.get(nodeId) || [];
+    if (!this.graph.hasNode(nodeId)) return [];
+    return this.graph
+      .outEdges(nodeId)
+      .map((edgeKey) => {
+        const target = this.graph.target(edgeKey);
+        return this.edgeMap.get(`${nodeId}->${target}`) as GraphEdge;
+      })
+      .filter(Boolean);
   }
 
   /** Get incoming edges to a node (dependents) */
   getIncomingEdges(nodeId: string): GraphEdge[] {
-    return this.incomingEdges.get(nodeId) || [];
+    if (!this.graph.hasNode(nodeId)) return [];
+    return this.graph
+      .inEdges(nodeId)
+      .map((edgeKey) => {
+        const source = this.graph.source(edgeKey);
+        return this.edgeMap.get(`${source}->${nodeId}`) as GraphEdge;
+      })
+      .filter(Boolean);
   }
 
   /**
@@ -181,9 +196,11 @@ export class GraphDataService {
    * @returns Nodes referenced by outgoing edges
    */
   getDirectDependencies(nodeId: string): GraphNode[] {
-    const outgoing = this.getOutgoingEdges(nodeId);
-    const depIds = outgoing.map((e) => e.target);
-    return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
+    if (!this.graph.hasNode(nodeId)) return [];
+    return this.graph
+      .outNeighbors(nodeId)
+      .map((id) => this.nodeMap.get(id))
+      .filter((n): n is GraphNode => n !== undefined);
   }
 
   /**
@@ -193,9 +210,11 @@ export class GraphDataService {
    * @returns Nodes referencing this node via incoming edges
    */
   getDirectDependents(nodeId: string): GraphNode[] {
-    const incoming = this.getIncomingEdges(nodeId);
-    const depIds = incoming.map((e) => e.source);
-    return depIds.map((id) => this.nodeMap.get(id)).filter((n): n is GraphNode => n !== undefined);
+    if (!this.graph.hasNode(nodeId)) return [];
+    return this.graph
+      .inNeighbors(nodeId)
+      .map((id) => this.nodeMap.get(id))
+      .filter((n): n is GraphNode => n !== undefined);
   }
 
   /**
@@ -204,12 +223,8 @@ export class GraphDataService {
    * @param nodeId - Starting node identifier
    * @returns Traversal result with visited nodes, edges, and depth information
    */
-  getTransitiveDependencies(nodeId: string): TransitiveResult {
-    return bfsTraverseGraph(
-      nodeId,
-      (id) => this.getOutgoingEdges(id).map((e) => e.target),
-      (current, neighbor) => `${current}->${neighbor}`,
-    );
+  getTransitiveDependencies(nodeId: string): import('@graph/utils/traversal').TransitiveResult {
+    return this.bfsTraverse(nodeId, 'out');
   }
 
   /**
@@ -218,12 +233,53 @@ export class GraphDataService {
    * @param nodeId - Starting node identifier
    * @returns Traversal result with visited nodes, edges, and depth information
    */
-  getTransitiveDependents(nodeId: string): TransitiveResult {
-    return bfsTraverseGraph(
-      nodeId,
-      (id) => this.getIncomingEdges(id).map((e) => e.source),
-      (current, neighbor) => `${neighbor}->${current}`,
-    );
+  getTransitiveDependents(nodeId: string): import('@graph/utils/traversal').TransitiveResult {
+    return this.bfsTraverse(nodeId, 'in');
+  }
+
+  /** Internal BFS using graphology neighbors */
+  private bfsTraverse(
+    startId: string,
+    direction: 'out' | 'in',
+  ): import('@graph/utils/traversal').TransitiveResult {
+    const visitedNodes = new Set<string>([startId]);
+    const visitedEdges = new Set<string>();
+    const edgeDepths = new Map<string, number>();
+    const nodeDepths = new Map<string, number>();
+    nodeDepths.set(startId, 0);
+    let maxDepth = 0;
+
+    const queue: Array<{ id: string; depth: number }> = [{ id: startId, depth: 0 }];
+
+    while (queue.length > 0) {
+      const item = queue.shift();
+      if (!item) break;
+      const { id, depth } = item;
+
+      const neighbors = this.graph.hasNode(id)
+        ? direction === 'out'
+          ? this.graph.outNeighbors(id)
+          : this.graph.inNeighbors(id)
+        : [];
+
+      for (const neighbor of neighbors) {
+        const edgeKey = direction === 'out' ? `${id}->${neighbor}` : `${neighbor}->${id}`;
+        if (!visitedEdges.has(edgeKey)) {
+          visitedEdges.add(edgeKey);
+          edgeDepths.set(edgeKey, depth);
+        }
+
+        if (!visitedNodes.has(neighbor)) {
+          visitedNodes.add(neighbor);
+          const neighborDepth = depth + 1;
+          nodeDepths.set(neighbor, neighborDepth);
+          maxDepth = Math.max(maxDepth, neighborDepth);
+          queue.push({ id: neighbor, depth: neighborDepth });
+        }
+      }
+    }
+
+    return { nodes: visitedNodes, edges: visitedEdges, edgeDepths, nodeDepths, maxDepth };
   }
 
   /**

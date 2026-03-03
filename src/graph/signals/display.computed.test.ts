@@ -325,32 +325,28 @@ describe('display.computed', () => {
   });
 
   describe('dimmedNodeIds', () => {
-    it('should dim nodes that do not match the search query by name', () => {
-      // Node b has name "UIModule" but is in project "CoreProject".
-      // matchesSearch matches by name, type, or project. So searching "Core"
-      // will match b via project "CoreProject", keeping it in filteredNodes.
-      // But shouldDimBySearch only checks name, so "UIModule" doesn't match
-      // "core" and will be dimmed.
+    it('should not dim nodes that match the fuzzy search', () => {
+      // With consistent fuzzy search, dimming uses the same match set as filtering.
+      // Nodes in filteredNodes already passed fuzzy search, so they are NOT dimmed by search.
+      // Non-matching nodes are filtered out entirely rather than dimmed.
       const testNodes = [
-        createTestNode('a', { name: 'CoreModule', project: 'CoreProject' }),
-        createTestNode('b', { name: 'UIModule', project: 'CoreProject' }),
+        createTestNode('a', { name: 'CoreModule', project: 'MainProject' }),
+        createTestNode('b', { name: 'CoreService', project: 'MainProject' }),
       ];
 
       nodes.set(testNodes);
       edges.set([]);
 
       const allFilters = createAllInclusiveFilters();
-      allFilters.projects.add('CoreProject');
+      allFilters.projects.add('MainProject');
       filters.set(allFilters);
       searchQuery.set('Core');
 
       const dimmed = dimmedNodeIds.get();
 
-      // UIModule passes the filter (project matches "Core") but its name
-      // doesn't contain "core", so shouldDimBySearch dims it
-      expect(dimmed.has('b')).toBe(true);
-      // CoreModule matches by name, so it's NOT dimmed
+      // Both nodes match "Core" via fuzzy search, so neither is dimmed
       expect(dimmed.has('a')).toBe(false);
+      expect(dimmed.has('b')).toBe(false);
     });
 
     it('should dim nodes outside the selection chain when highlight toggles are active', () => {
@@ -633,27 +629,33 @@ describe('display.computed', () => {
       expect(dimmed.size).toBe(0);
     });
 
-    it('should prioritize search dimming over selection dimming', () => {
-      const nodeA = createTestNode('a', { name: 'CoreModule', project: 'Core' });
-      const nodeB = createTestNode('b', { name: 'UIModule', project: 'Core' });
+    it('should apply selection dimming when search and selection are both active', () => {
+      // a -> b, c is disconnected. All match "Module" search.
+      // With selection on A + direct deps, c should be dimmed by selection chain.
+      const nodeA = createTestNode('a', { name: 'CoreModule', project: 'MainProject' });
+      const nodeB = createTestNode('b', { name: 'UIModule', project: 'MainProject' });
+      const nodeC = createTestNode('c', { name: 'DataModule', project: 'MainProject' });
       const testEdges = [createTestEdge('a', 'b')];
 
-      nodes.set([nodeA, nodeB]);
+      nodes.set([nodeA, nodeB, nodeC]);
       edges.set(testEdges);
 
       const allFilters = createAllInclusiveFilters();
-      allFilters.projects.add('Core');
+      allFilters.projects.add('MainProject');
       filters.set(allFilters);
 
-      // Set search query AND selection with highlights
-      searchQuery.set('Core');
+      // All nodes match "Module" search, so none are dimmed by search
+      searchQuery.set('Module');
       selectedNode.set(nodeA);
       highlightDirectDeps.set(true);
 
       const dimmed = dimmedNodeIds.get();
 
-      // UIModule doesn't match 'Core' search, so it's dimmed by search (continue skips selection check)
-      expect(dimmed.has('b')).toBe(true);
+      // nodeC is not in A's dependency chain, so it's dimmed by selection
+      expect(dimmed.has('c')).toBe(true);
+      // nodeA (selected) and nodeB (direct dep) should NOT be dimmed
+      expect(dimmed.has('a')).toBe(false);
+      expect(dimmed.has('b')).toBe(false);
     });
   });
 });

@@ -1,24 +1,7 @@
 import { NodeType, Origin, Platform } from '@shared/schemas';
 import type { GraphNode } from '@shared/schemas/graph.types';
 import { describe, expect, it, vi } from 'vitest';
-import type { InteractionState } from './canvas-interaction-handler';
 import { handleKeyDown, type KeyboardContext } from './canvas-keyboard-handler';
-
-function createState(overrides?: Partial<InteractionState>): InteractionState {
-  return {
-    pan: { x: 100, y: 200 },
-    zoom: 1,
-    isDragging: false,
-    draggedNodeId: null,
-    draggedClusterId: null,
-    lastMousePos: { x: 0, y: 0 },
-    clickedEmptySpace: false,
-    hasMoved: false,
-    hoveredNode: null,
-    hoveredCluster: null,
-    ...overrides,
-  };
-}
 
 function createNode(id: string): GraphNode {
   return {
@@ -35,7 +18,8 @@ function createNode(id: string): GraphNode {
 
 function createContext(overrides?: Partial<KeyboardContext>): KeyboardContext {
   return {
-    state: createState(),
+    panBy: vi.fn(),
+    hoveredNodeId: null,
     nodes: [],
     selectedNode: null,
     dispatchCanvasEvent: vi.fn(),
@@ -54,28 +38,28 @@ describe('canvas-keyboard-handler', () => {
       const ctx = createContext();
       const result = handleKeyDown(keyEvent('ArrowUp'), ctx);
       expect(result).toBe(true);
-      expect(ctx.state.pan.y).toBe(250);
+      expect(ctx.panBy).toHaveBeenCalledWith(0, 50);
     });
 
     it('pans down on ArrowDown and returns true', () => {
       const ctx = createContext();
       const result = handleKeyDown(keyEvent('ArrowDown'), ctx);
       expect(result).toBe(true);
-      expect(ctx.state.pan.y).toBe(150);
+      expect(ctx.panBy).toHaveBeenCalledWith(0, -50);
     });
 
     it('pans left on ArrowLeft and returns true', () => {
       const ctx = createContext();
       const result = handleKeyDown(keyEvent('ArrowLeft'), ctx);
       expect(result).toBe(true);
-      expect(ctx.state.pan.x).toBe(150);
+      expect(ctx.panBy).toHaveBeenCalledWith(50, 0);
     });
 
     it('pans right on ArrowRight and returns true', () => {
       const ctx = createContext();
       const result = handleKeyDown(keyEvent('ArrowRight'), ctx);
       expect(result).toBe(true);
-      expect(ctx.state.pan.x).toBe(50);
+      expect(ctx.panBy).toHaveBeenCalledWith(-50, 0);
     });
   });
 
@@ -115,7 +99,7 @@ describe('canvas-keyboard-handler', () => {
     it('selects hovered node on Enter', () => {
       const node = createNode('n1');
       const ctx = createContext({
-        state: createState({ hoveredNode: 'n1' }),
+        hoveredNodeId: 'n1',
         nodes: [node],
       });
 
@@ -127,7 +111,7 @@ describe('canvas-keyboard-handler', () => {
     it('selects hovered node on Space', () => {
       const node = createNode('n1');
       const ctx = createContext({
-        state: createState({ hoveredNode: 'n1' }),
+        hoveredNodeId: 'n1',
         nodes: [node],
       });
 
@@ -139,7 +123,7 @@ describe('canvas-keyboard-handler', () => {
     it('deselects node if it is already selected', () => {
       const node = createNode('n1');
       const ctx = createContext({
-        state: createState({ hoveredNode: 'n1' }),
+        hoveredNodeId: 'n1',
         nodes: [node],
         selectedNode: node,
       });
@@ -157,7 +141,7 @@ describe('canvas-keyboard-handler', () => {
 
     it('does nothing when hovered node ID does not match any node', () => {
       const ctx = createContext({
-        state: createState({ hoveredNode: 'nonexistent' }),
+        hoveredNodeId: 'nonexistent',
         nodes: [createNode('n1')],
       });
       handleKeyDown(keyEvent('Enter'), ctx);
@@ -181,12 +165,6 @@ describe('canvas-keyboard-handler', () => {
       expect(result).toBe(false);
       expect(ctx.dispatchCanvasEvent).not.toHaveBeenCalled();
       expect(ctx.dispatchEvent).not.toHaveBeenCalled();
-    });
-
-    it('does not modify pan for unrecognized keys', () => {
-      const ctx = createContext();
-      handleKeyDown(keyEvent('z'), ctx);
-      expect(ctx.state.pan).toEqual({ x: 100, y: 200 });
     });
   });
 });

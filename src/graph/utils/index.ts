@@ -17,13 +17,14 @@ export {
   getDependentCount,
 } from './connections';
 export { generateColorMap } from './filter-colors';
+export { getFuzzyMatchIds } from './fuzzy-search';
 export { applyGraphFilters, matchesSearch } from './graph-filters';
-
 export {
   computeClusterStats,
   computeFilters,
   computeNodeDependencies,
 } from './node-utils';
+export { buildNodeQuadtree, findNodeAt, type IndexedNode } from './spatial-index';
 export {
   bfsTraverseGraph,
   buildAdjacency,

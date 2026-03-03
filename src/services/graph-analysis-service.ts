@@ -3,6 +3,8 @@
  *
  * Provides algorithms for analyzing graph structure, such as finding paths and cycles.
  * Stateless service that operates on GraphDataService.
+ *
+ * Backed by graphology for efficient graph traversal.
  */
 
 import type { GraphDataService } from './graph-data-service';
@@ -15,7 +17,8 @@ import type { GraphDataService } from './graph-data-service';
  */
 export const GraphAnalysisService = {
   /**
-   * Check if there is a directed path from one node to another via BFS.
+   * Check if there is a directed path from one node to another via BFS
+   * using graphology's outNeighbors for adjacency.
    *
    * @param service - Graph data service to query
    * @param fromId - Starting node ID
@@ -23,6 +26,9 @@ export const GraphAnalysisService = {
    * @returns `true` if a path exists from `fromId` to `toId`
    */
   hasPath(service: GraphDataService, fromId: string, toId: string): boolean {
+    const { graph } = service;
+    if (!graph.hasNode(fromId)) return false;
+
     const visited = new Set<string>();
     const queue = [fromId];
 
@@ -34,11 +40,9 @@ export const GraphAnalysisService = {
       if (visited.has(currentId)) continue;
       visited.add(currentId);
 
-      const deps = service.getDirectDependencies(currentId);
-
-      for (const dep of deps) {
-        if (!visited.has(dep.id)) {
-          queue.push(dep.id);
+      for (const neighbor of graph.outNeighbors(currentId)) {
+        if (!visited.has(neighbor)) {
+          queue.push(neighbor);
         }
       }
     }
@@ -48,11 +52,13 @@ export const GraphAnalysisService = {
 
   /**
    * Detect circular dependencies in the graph using DFS with a recursion stack.
+   * Uses graphology's outNeighbors for adjacency traversal.
    *
    * @param service - Graph data service to query
    * @returns Array of cycles, where each cycle is a list of node IDs forming the loop
    */
   findCircularDependencies(service: GraphDataService): string[][] {
+    const { graph } = service;
     const cycles: string[][] = [];
     const visited = new Set<string>();
     const recStack = new Set<string>();
@@ -65,16 +71,14 @@ export const GraphAnalysisService = {
       recStack.add(nodeId);
       path.push(nodeId);
 
-      const deps = service.getDirectDependencies(nodeId);
-
-      for (const dep of deps) {
-        if (!visited.has(dep.id)) {
-          dfs(dep.id);
-        } else if (recStack.has(dep.id)) {
+      for (const neighbor of graph.outNeighbors(nodeId)) {
+        if (!visited.has(neighbor)) {
+          dfs(neighbor);
+        } else if (recStack.has(neighbor)) {
           // Found a cycle
-          const cycleStart = path.indexOf(dep.id);
+          const cycleStart = path.indexOf(neighbor);
           const cycle = path.slice(cycleStart);
-          cycles.push([...cycle, dep.id]);
+          cycles.push([...cycle, neighbor]);
         }
       }
 
@@ -82,9 +86,9 @@ export const GraphAnalysisService = {
       recStack.delete(nodeId);
     };
 
-    service.getAllNodes().forEach((node) => {
-      if (!visited.has(node.id)) {
-        dfs(node.id);
+    graph.forEachNode((nodeId) => {
+      if (!visited.has(nodeId)) {
+        dfs(nodeId);
       }
     });
 

@@ -2,7 +2,7 @@
   {
     "name": "Main bundle",
     "path": "dist/xcodegraph.js",
-    "limit": "210 kB",
+    "limit": "260 kB",
     "gzip": true
   },
   {

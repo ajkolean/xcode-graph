@@ -1,13 +1,16 @@
 /**
  * Graph traversal utilities with memoization
- * Converted from useTransitiveDependencies hook
  *
  * Performance optimization: Caches transitive dependency computations
- * to avoid repeated DFS traversals on the same graph structure.
+ * to avoid repeated traversals on the same graph structure.
+ *
+ * Uses graphology for adjacency when available, with standalone BFS/DFS
+ * functions as fallback for contexts without a full graph instance.
  */
 
 import type { ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
+import { DirectedGraph } from 'graphology';
 
 /** @public */
 export interface TransitiveResult {
@@ -243,9 +246,75 @@ const EMPTY_RESULT: TransitiveResult = {
 };
 
 /**
+ * BFS traversal over a graphology DirectedGraph instance.
+ * Used internally by computeTransitiveDependencies for efficient cached traversal.
+ */
+function bfsGraphology(
+  graph: DirectedGraph,
+  startId: string,
+  direction: 'out' | 'in',
+): TransitiveResult {
+  const visitedNodes = new Set<string>([startId]);
+  const visitedEdges = new Set<string>();
+  const edgeDepths = new Map<string, number>();
+  const nodeDepths = new Map<string, number>();
+  nodeDepths.set(startId, 0);
+  let maxDepth = 0;
+
+  const queue: Array<{ id: string; depth: number }> = [{ id: startId, depth: 0 }];
+
+  while (queue.length > 0) {
+    const item = queue.shift();
+    if (!item) break;
+    const { id, depth } = item;
+
+    const neighbors = direction === 'out' ? graph.outNeighbors(id) : graph.inNeighbors(id);
+
+    for (const neighbor of neighbors) {
+      const edgeKey = direction === 'out' ? `${id}->${neighbor}` : `${neighbor}->${id}`;
+      if (!visitedEdges.has(edgeKey)) {
+        visitedEdges.add(edgeKey);
+        edgeDepths.set(edgeKey, depth);
+      }
+
+      if (!visitedNodes.has(neighbor)) {
+        visitedNodes.add(neighbor);
+        const neighborDepth = depth + 1;
+        nodeDepths.set(neighbor, neighborDepth);
+        maxDepth = Math.max(maxDepth, neighborDepth);
+        queue.push({ id: neighbor, depth: neighborDepth });
+      }
+    }
+  }
+
+  return { nodes: visitedNodes, edges: visitedEdges, edgeDepths, nodeDepths, maxDepth };
+}
+
+/** Cached graphology instance for computeTransitiveDependencies */
+let cachedGraph: DirectedGraph | null = null;
+let cachedEdgesRef: GraphEdge[] | null = null;
+
+/** Build or reuse a graphology instance from edges */
+function getGraphForEdges(edges: GraphEdge[]): DirectedGraph {
+  if (cachedEdgesRef === edges && cachedGraph) return cachedGraph;
+
+  const graph = new DirectedGraph();
+  // Collect unique node IDs from edges
+  for (const edge of edges) {
+    if (!graph.hasNode(edge.source)) graph.addNode(edge.source);
+    if (!graph.hasNode(edge.target)) graph.addNode(edge.target);
+    graph.addEdge(edge.source, edge.target);
+  }
+  cachedGraph = graph;
+  cachedEdgesRef = edges;
+  return graph;
+}
+
+/**
  * Compute transitive dependencies and/or dependents for a selected node.
  *
  * Results are memoized via an internal LRU cache keyed by edge identity.
+ * Uses graphology for efficient adjacency traversal.
  *
  * @param viewMode - Which direction to traverse (`'focused'` for deps, `'dependents'`, or `'both'`)
  * @param selectedNode - The node to start traversal from (or `null` for empty result)
@@ -262,21 +331,6 @@ export function computeTransitiveDependencies(
   // Invalidate cache if edges changed
   transitiveCache.invalidateIfEdgesChanged(edges);
 
-  let adjacencyBuilt = false;
-  let outgoing = new Map<string, string[]>();
-  let incoming = new Map<string, string[]>();
-
-  /** Lazily builds adjacency lists on first call, then reuses them. */
-  const buildAdjacencyOnce = () => {
-    if (!adjacencyBuilt) {
-      const adj = buildAdjacency(edges);
-      outgoing = adj.outgoing;
-      incoming = adj.incoming;
-      adjacencyBuilt = true;
-    }
-    return { outgoing, incoming };
-  };
-
   // Dependencies (outgoing edges) - with caching
   let transitiveDeps: TransitiveResult = EMPTY_RESULT;
   if ((viewMode === 'focused' || viewMode === 'both') && selectedNode) {
@@ -284,12 +338,10 @@ export function computeTransitiveDependencies(
     if (cached) {
       transitiveDeps = cached;
     } else {
-      const { outgoing: out } = buildAdjacencyOnce();
-      transitiveDeps = traverseGraph(
-        selectedNode.id,
-        (id) => out.get(id) ?? [],
-        (current, neighbor) => `${current}->${neighbor}`,
-      );
+      const graph = getGraphForEdges(edges);
+      if (graph.hasNode(selectedNode.id)) {
+        transitiveDeps = bfsGraphology(graph, selectedNode.id, 'out');
+      }
       transitiveCache.set(selectedNode.id, 'dependencies', transitiveDeps);
     }
   }
@@ -301,12 +353,10 @@ export function computeTransitiveDependencies(
     if (cached) {
       transitiveDependents = cached;
     } else {
-      const { incoming: inc } = buildAdjacencyOnce();
-      transitiveDependents = traverseGraph(
-        selectedNode.id,
-        (id) => inc.get(id) ?? [],
-        (current, neighbor) => `${neighbor}->${current}`,
-      );
+      const graph = getGraphForEdges(edges);
+      if (graph.hasNode(selectedNode.id)) {
+        transitiveDependents = bfsGraphology(graph, selectedNode.id, 'in');
+      }
       transitiveCache.set(selectedNode.id, 'dependents', transitiveDependents);
     }
   }

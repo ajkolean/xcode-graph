@@ -1,10 +1,23 @@
 import type { GraphNode } from '@shared/schemas/graph.types';
-import type { CanvasEventMap, InteractionState } from './canvas-interaction-handler';
+
+/** Map of canvas custom event names to their detail payloads. */
+export interface CanvasEventMap {
+  /** Fired when a node is selected or deselected */
+  'node-select': { node: GraphNode | null };
+  /** Fired when a cluster is selected or deselected */
+  'cluster-select': { clusterId: string | null };
+  /** Fired when a node is hovered or unhovered */
+  'node-hover': { nodeId: string | null };
+  /** Fired when a cluster is hovered or unhovered */
+  'cluster-hover': { clusterId: string | null };
+}
 
 /** Dependencies required by the canvas keyboard handler. */
 export interface KeyboardContext {
-  /** Mutable interaction state for pan offset and hover tracking */
-  state: InteractionState;
+  /** Pan the viewport by a delta in screen pixels */
+  panBy: (dx: number, dy: number) => void;
+  /** ID of the currently hovered node, or null */
+  hoveredNodeId: string | null;
   /** Current visible nodes */
   nodes: GraphNode[];
   /** Currently selected node, or null */
@@ -24,24 +37,22 @@ const PAN_STEP = 50;
  * @returns true if a pan occurred and the caller should request a render
  */
 export function handleKeyDown(e: KeyboardEvent, ctx: KeyboardContext): boolean {
-  const { state } = ctx;
-
   switch (e.key) {
     case 'ArrowUp':
       e.preventDefault();
-      state.pan.y += PAN_STEP;
+      ctx.panBy(0, PAN_STEP);
       return true;
     case 'ArrowDown':
       e.preventDefault();
-      state.pan.y -= PAN_STEP;
+      ctx.panBy(0, -PAN_STEP);
       return true;
     case 'ArrowLeft':
       e.preventDefault();
-      state.pan.x += PAN_STEP;
+      ctx.panBy(PAN_STEP, 0);
       return true;
     case 'ArrowRight':
       e.preventDefault();
-      state.pan.x -= PAN_STEP;
+      ctx.panBy(-PAN_STEP, 0);
       return true;
     case '+':
     case '=':
@@ -59,8 +70,8 @@ export function handleKeyDown(e: KeyboardEvent, ctx: KeyboardContext): boolean {
     case 'Enter':
     case ' ':
       e.preventDefault();
-      if (state.hoveredNode) {
-        const node = ctx.nodes.find((n) => n.id === state.hoveredNode);
+      if (ctx.hoveredNodeId) {
+        const node = ctx.nodes.find((n) => n.id === ctx.hoveredNodeId);
         if (node) {
           const newSelection = ctx.selectedNode?.id === node.id ? null : node;
           ctx.dispatchCanvasEvent('node-select', { node: newSelection });
