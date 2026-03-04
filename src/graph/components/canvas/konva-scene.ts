@@ -29,7 +29,6 @@ import { generateBezierPath } from '@ui/utils/paths';
 import { getNodeSize } from '@ui/utils/sizing';
 import {
   calculateViewportBounds,
-  isCircleInViewport,
   isLineInViewportRaw,
   type ViewportBounds,
 } from '@ui/utils/viewport';
@@ -158,6 +157,12 @@ export class KonvaScene {
   private arcTextCache = new Map<string, { charWidths: number[]; totalWidth: number }>();
   private truncateCache = new Map<string, string>();
 
+  // Offscreen bitmap cache for arc labels — avoids per-character setTransform + fillText each frame
+  private arcLabelBitmapCache = new Map<
+    string,
+    { canvas: OffscreenCanvas; width: number; height: number; arcRadius: number }
+  >();
+
   // Node map for quick lookup — only rebuilt when nodes array reference changes
   private nodeMap = new Map<string, GraphNode>();
   private cachedNodesRef: GraphNode[] | null = null;
@@ -185,79 +190,9 @@ export class KonvaScene {
   // Per-frame edge metadata map — precomputed once per frame to avoid redundant calculations
   private edgeMetaMap = new Map<GraphEdge, EdgeMeta>();
 
-  // Dirty layer tracking — skip layer.draw() when nothing changed on that layer
-  private dirtyLayers = { cluster: true, edge: true, node: true, tooltip: true };
-
-  // Previous-frame state for detecting changes that affect specific layers
-  private prevHoveredNode: string | null = null;
-  private prevHoveredCluster: string | null = null;
-  private prevSelectedNode: GraphNode | null = null;
-  private prevSelectedCluster: string | null = null;
-
-  // Node caching — static nodes are rasterized to bitmaps via Konva's cache()
-  private nodeCacheState = new Map<string, string>();
-  private isZoomStable = true;
-  private zoomCacheTimer: ReturnType<typeof setTimeout> | null = null;
-  private lastCachedZoom = -1;
-
   // Per-frame adjusted node type colors (7 types, recomputed only when zoom changes)
   private adjustedNodeColors = new Map<string, string>();
   private adjustedColorsZoom = -1;
-
-  private markAllLayersDirty(): void {
-    this.dirtyLayers.cluster = true;
-    this.dirtyLayers.edge = true;
-    this.dirtyLayers.node = true;
-    this.dirtyLayers.tooltip = true;
-  }
-
-  /** Determine which layers need redrawing based on state changes since last frame. */
-  private detectDirtyLayers(config: SceneConfig, positionsChanged: boolean): void {
-    if (positionsChanged) this.markAllLayersDirty();
-
-    // Selection changes
-    if (config.selectedNode !== this.prevSelectedNode) {
-      this.dirtyLayers.node = true;
-      this.dirtyLayers.edge = true;
-    }
-    if (config.selectedCluster !== this.prevSelectedCluster) {
-      this.dirtyLayers.cluster = true;
-      this.dirtyLayers.edge = true;
-    }
-
-    // Hover changes
-    if (config.hoveredNode !== this.prevHoveredNode) {
-      this.dirtyLayers.node = true;
-      this.dirtyLayers.tooltip = true;
-    }
-    if (config.hoveredCluster !== this.prevHoveredCluster) {
-      this.dirtyLayers.cluster = true;
-      this.dirtyLayers.tooltip = true;
-    }
-
-    // Time-based animations (only when motion is enabled)
-    if (!prefersReducedMotion.get()) {
-      if (config.selectedNode) this.dirtyLayers.node = true;
-      if (config.selectedCluster) this.dirtyLayers.cluster = true;
-      if ((config.layout.cycleNodes?.size ?? 0) > 0) this.dirtyLayers.node = true;
-
-      const isChainActive =
-        config.showDirectDeps ||
-        config.showTransitiveDeps ||
-        config.showDirectDependents ||
-        config.showTransitiveDependents;
-      if (isChainActive) this.dirtyLayers.edge = true;
-    }
-
-    // Fading nodes
-    if (this.fadingOutNodes.size > 0) this.dirtyLayers.node = true;
-
-    // Save current state for next-frame comparison
-    this.prevHoveredNode = config.hoveredNode;
-    this.prevHoveredCluster = config.hoveredCluster;
-    this.prevSelectedNode = config.selectedNode;
-    this.prevSelectedCluster = config.selectedCluster;
-  }
 
   // Current state
   private config: SceneConfig | null = null;
@@ -369,13 +304,9 @@ export class KonvaScene {
       this.cachedManualClusterPosSize = config.manualClusterPositions.size;
     }
 
-    // Sync shapes with current data — adding/removing shapes dirties the affected layers
-    const prevNodeCount = this.nodeGroups.size;
-    const prevClusterCount = this.clusterGroups.size;
+    // Sync shapes with current data
     this.syncClusterShapes(config);
     this.syncNodeShapes(config);
-    if (this.nodeGroups.size !== prevNodeCount) this.dirtyLayers.node = true;
-    if (this.clusterGroups.size !== prevClusterCount) this.dirtyLayers.cluster = true;
 
     // Update stage transform
     this.stage.scale({ x: config.zoom, y: config.zoom });
@@ -394,17 +325,11 @@ export class KonvaScene {
       this.adjustedColorsZoom = config.zoom;
     }
 
-    // Determine which layers need redrawing this frame
-    this.detectDirtyLayers(config, positionsChanged);
-
     // Update cluster positions and visuals
     this.updateClusterVisuals(config);
 
     // Update node positions and visuals
     this.updateNodePositions(config);
-
-    // Cache static nodes as bitmaps for faster redraw
-    this.updateNodeCaching(config);
 
     // Clean up completed fading nodes
     this.updateFadingNodes();
@@ -412,12 +337,11 @@ export class KonvaScene {
     // Update tooltip
     this.updateTooltip(config);
 
-    // Draw only dirty layers — skip layers with no visual changes this frame
-    if (this.dirtyLayers.cluster) this.clusterLayer.draw();
-    if (this.dirtyLayers.edge) this.edgeLayer.draw();
-    if (this.dirtyLayers.node) this.nodeLayer.draw();
-    if (this.dirtyLayers.tooltip) this.tooltipLayer.draw();
-    this.dirtyLayers = { cluster: false, edge: false, node: false, tooltip: false };
+    // Draw all layers
+    this.clusterLayer.draw();
+    this.edgeLayer.draw();
+    this.nodeLayer.draw();
+    this.tooltipLayer.draw();
   }
 
   /** Synchronous render for zero-latency zoom response. */
@@ -425,7 +349,6 @@ export class KonvaScene {
     if (this.config) {
       this.stage.scale({ x: this._zoom, y: this._zoom });
       this.stage.position({ x: this.pan.x, y: this.pan.y });
-      this.markAllLayersDirty();
       this.clusterLayer.draw();
       this.edgeLayer.draw();
       this.nodeLayer.draw();
@@ -505,7 +428,7 @@ export class KonvaScene {
     this.gradientCache.clear();
     this.arcTextCache.clear();
     this.truncateCache.clear();
-    this.nodeCacheState.clear();
+    this.arcLabelBitmapCache.clear();
     this.bezierPathCache.clear();
     this.edgeEndpointCache.clear();
     this.cachedNodesRef = null;
@@ -524,22 +447,18 @@ export class KonvaScene {
 
   /** Destroy the scene and release resources. */
   destroy(): void {
-    if (this.zoomCacheTimer !== null) {
-      clearTimeout(this.zoomCacheTimer);
-      this.zoomCacheTimer = null;
-    }
     this.stage.destroy();
     this.pathCache.clear();
     this.bezierPathCache.clear();
     this.gradientCache.clear();
     this.arcTextCache.clear();
     this.truncateCache.clear();
+    this.arcLabelBitmapCache.clear();
     this.nodeGroups.clear();
     this.clusterGroups.clear();
     this.nodeMap.clear();
     this.clusterMap.clear();
     this.edgeEndpointCache.clear();
-    this.nodeCacheState.clear();
     this.edgeMetaMap.clear();
   }
 
@@ -716,153 +635,36 @@ export class KonvaScene {
   // -------------------------------------------------------------------
 
   private updateNodePositions(config: SceneConfig): void {
-    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
     for (const node of config.nodes) {
       const group = this.nodeGroups.get(node.id);
-      if (group) this.positionNodeGroup(group, node, config, viewport);
+      if (!group) continue;
+
+      const pos = resolveNodeWorldPosition(
+        node.id,
+        node.project || 'External',
+        config.layout,
+        config.manualNodePositions,
+        config.manualClusterPositions,
+      );
+
+      if (pos) {
+        group.position({ x: pos.x, y: pos.y });
+      }
     }
-  }
-
-  private positionNodeGroup(
-    group: Konva.Group,
-    node: GraphNode,
-    config: SceneConfig,
-    viewport: ViewportBounds,
-  ): void {
-    const pos = resolveNodeWorldPosition(
-      node.id,
-      node.project || 'External',
-      config.layout,
-      config.manualNodePositions,
-      config.manualClusterPositions,
-    );
-
-    if (!pos) {
-      this.setGroupVisible(group, false);
-      return;
-    }
-
-    const size = getNodeSize(node);
-    if (!isCircleInViewport(pos, size + NODE_LABEL_FONT_SIZE + NODE_LABEL_PADDING, viewport)) {
-      this.setGroupVisible(group, false);
-      return;
-    }
-
-    this.setGroupVisible(group, true);
-    group.position(pos);
   }
 
   private updateClusterVisuals(config: SceneConfig): void {
-    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
     for (const cluster of config.layout.clusters) {
       const group = this.clusterGroups.get(cluster.id);
-      if (group) this.positionClusterGroup(group, cluster.id, config, viewport);
-    }
-  }
+      if (!group) continue;
 
-  private positionClusterGroup(
-    group: Konva.Group,
-    clusterId: string,
-    config: SceneConfig,
-    viewport: ViewportBounds,
-  ): void {
-    const layoutPos = config.layout.clusterPositions.get(clusterId);
-    if (!layoutPos) {
-      this.setGroupVisible(group, false);
-      return;
-    }
+      const layoutPos = config.layout.clusterPositions.get(cluster.id);
+      if (!layoutPos) continue;
 
-    const manualPos = config.manualClusterPositions.get(clusterId);
-    const cx = manualPos?.x ?? layoutPos.x;
-    const cy = manualPos?.y ?? layoutPos.y;
-    const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
-
-    if (!isCircleInViewport({ x: cx, y: cy }, radius, viewport)) {
-      this.setGroupVisible(group, false);
-      return;
-    }
-
-    this.setGroupVisible(group, true);
-    group.position({ x: cx, y: cy });
-  }
-
-  /**
-   * Cache static nodes as bitmaps — Konva blits the cached image instead of
-   * re-executing sceneFunc (6+ canvas ops per node). Nodes that are animated
-   * (selected, hovered, cycle-glowing) are uncached so their sceneFunc runs.
-   */
-  private updateNodeCaching(config: SceneConfig): void {
-    // During continuous zoom, skip caching entirely — it would be invalidated immediately
-    if (!this.isZoomStable) return;
-
-    // Quantize zoom to 2 decimal places to avoid excessive cache invalidation
-    const zoomStep = Math.round(config.zoom * 100);
-
-    // If zoom changed since last cache pass, clear all state to force re-cache
-    if (zoomStep !== this.lastCachedZoom) {
-      this.nodeCacheState.clear();
-      for (const [, group] of this.nodeGroups) {
-        this.clearNodeCache(group);
-      }
-      this.lastCachedZoom = zoomStep;
-    }
-
-    for (const node of config.nodes) {
-      const group = this.nodeGroups.get(node.id);
-      if (!group || !group.visible()) continue;
-      this.cacheNodeIfStatic(node, group, config, zoomStep);
-    }
-  }
-
-  /** Evaluate a single node for caching eligibility and apply/clear cache as needed. */
-  private cacheNodeIfStatic(
-    node: GraphNode,
-    group: Konva.Group,
-    config: SceneConfig,
-    zoomStep: number,
-  ): void {
-    const isSelected = config.selectedNode?.id === node.id;
-    const isHovered = config.hoveredNode === node.id;
-    const isCycleNode = config.layout.cycleNodes?.has(node.id) ?? false;
-    const isAlphaAnimating = (config.nodeAlphaMap.get(node.id)?.progress ?? 1) < 1;
-
-    // Nodes with time-dependent or interaction-dependent visuals must not be cached
-    if (isSelected || isHovered || isCycleNode || isAlphaAnimating) {
-      this.clearNodeCache(group);
-      this.nodeCacheState.delete(node.id);
-      return;
-    }
-
-    const isConnected = Boolean(config.selectedNode && config.connectedNodes.has(node.id));
-    const isDimmed = config.dimmedNodeIds.has(node.id);
-    const isInChain =
-      (config.transitiveDeps?.nodes.has(node.id) ?? false) ||
-      (config.transitiveDependents?.nodes.has(node.id) ?? false);
-
-    // State fingerprint — cache is valid as long as this key matches
-    const stateKey = `${isConnected ? 1 : 0}|${isDimmed ? 1 : 0}|${isInChain ? 1 : 0}|${zoomStep}`;
-    if (this.nodeCacheState.get(node.id) === stateKey) return;
-
-    // State changed — clear old cache and re-cache at current visual state
-    this.clearNodeCache(group);
-    const size = getNodeSize(node);
-    // Padding accounts for label below + selection ring margin
-    const padding = size + NODE_LABEL_FONT_SIZE + NODE_LABEL_PADDING + 4;
-    group.cache({ offset: padding, width: padding * 2, height: padding * 2 + 20 });
-    this.nodeCacheState.set(node.id, stateKey);
-  }
-
-  /** Clear a node group's cache only if it's currently cached. */
-  private clearNodeCache(group: Konva.Group): void {
-    if (group.isCached()) {
-      group.clearCache();
-    }
-  }
-
-  /** Toggle group visibility only when the state actually changes. */
-  private setGroupVisible(group: Konva.Group, visible: boolean): void {
-    if (group.visible() !== visible) {
-      group.visible(visible);
+      const manualPos = config.manualClusterPositions.get(cluster.id);
+      const cx = manualPos?.x ?? layoutPos.x;
+      const cy = manualPos?.y ?? layoutPos.y;
+      group.position({ x: cx, y: cy });
     }
   }
 
@@ -1153,17 +955,26 @@ export class KonvaScene {
 
     const fontSize = CLUSTER_LABEL_CONFIG.FONT_SIZE;
     const maxTextWidth = radius * 1.6;
+    const fontWeight = isActive ? 600 : 500;
+    const font = `${fontWeight} ${fontSize}px var(--fonts-body, sans-serif)`;
 
-    ctx.fillStyle = color;
+    ctx.font = font;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `${isActive ? 600 : 500} ${fontSize}px var(--fonts-body, sans-serif)`;
 
     const displayName = this.truncateText(ctx, name, maxTextWidth);
-    ctx.globalAlpha = isActive ? 1 : 0.85;
-
     const arcRadius = radius + CLUSTER_LABEL_CONFIG.LABEL_PADDING;
-    this.drawTextAlongArc(ctx, displayName, arcRadius);
+
+    // Use cached offscreen bitmap to avoid per-character setTransform + fillText every frame
+    const bitmapKey = `${font}-${displayName}-${Math.round(arcRadius)}-${color}`;
+    let cached = this.arcLabelBitmapCache.get(bitmapKey);
+    if (!cached) {
+      cached = this.renderArcLabelBitmap(ctx, displayName, arcRadius, font, color);
+      this.arcLabelBitmapCache.set(bitmapKey, cached);
+    }
+
+    ctx.globalAlpha = isActive ? 1 : 0.85;
+    ctx.drawImage(cached.canvas, -cached.width / 2, -cached.height / 2);
   }
 
   private truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
@@ -1182,10 +993,22 @@ export class KonvaScene {
     return result;
   }
 
-  private drawTextAlongArc(ctx: CanvasRenderingContext2D, text: string, arcRadius: number): void {
-    const cacheKey = `${ctx.font}-${text}`;
+  /**
+   * Render arc label text to an offscreen canvas bitmap.
+   * Called once per unique label, then the bitmap is reused via drawImage each frame.
+   */
+  private renderArcLabelBitmap(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    arcRadius: number,
+    font: string,
+    color: string,
+  ): { canvas: OffscreenCanvas; width: number; height: number; arcRadius: number } {
+    // Measure character widths using the main ctx (inherits font metrics)
+    const cacheKey = `${font}-${text}`;
     let measurements = this.arcTextCache.get(cacheKey);
     if (!measurements) {
+      ctx.font = font;
       const charWidths: number[] = [];
       let totalWidth = 0;
       for (const ch of text) {
@@ -1197,39 +1020,42 @@ export class KonvaScene {
       this.arcTextCache.set(cacheKey, measurements);
     }
 
+    // Size the bitmap to cover the arc label area
+    const padding = 4;
+    const bitmapSize = (arcRadius + padding) * 2;
+    const canvas = new OffscreenCanvas(bitmapSize, bitmapSize);
+    const offCtx = canvas.getContext('2d');
+    if (!offCtx) return { canvas, width: bitmapSize, height: bitmapSize, arcRadius };
+
+    // Draw arc text centered in the bitmap
+    const cx = bitmapSize / 2;
+    const cy = bitmapSize / 2;
+    offCtx.font = font;
+    offCtx.textAlign = 'center';
+    offCtx.textBaseline = 'middle';
+    offCtx.fillStyle = color;
+
     const totalAngle = measurements.totalWidth / arcRadius;
     let angle = -Math.PI / 2 - totalAngle / 2;
-
-    // Capture the base transform once, then use setTransform per character
-    // instead of save/restore per character (avoids full state stack push/pop)
-    const base = ctx.getTransform();
 
     for (let i = 0; i < text.length; i++) {
       const charWidth = measurements.charWidths[i] ?? 0;
       angle += charWidth / (2 * arcRadius);
 
-      const x = arcRadius * Math.cos(angle);
-      const y = arcRadius * Math.sin(angle);
+      const x = cx + arcRadius * Math.cos(angle);
+      const y = cy + arcRadius * Math.sin(angle);
       const rotation = angle + Math.PI / 2;
-      const cos = Math.cos(rotation);
-      const sin = Math.sin(rotation);
 
-      // Compose base transform with translate(x,y) * rotate(rotation)
-      ctx.setTransform(
-        base.a * cos + base.c * sin,
-        base.b * cos + base.d * sin,
-        base.c * cos - base.a * sin,
-        base.d * cos - base.b * sin,
-        base.a * x + base.c * y + base.e,
-        base.b * x + base.d * y + base.f,
-      );
-      ctx.fillText(text[i] ?? '', 0, 0);
+      offCtx.save();
+      offCtx.translate(x, y);
+      offCtx.rotate(rotation);
+      offCtx.fillText(text[i] ?? '', 0, 0);
+      offCtx.restore();
 
       angle += charWidth / (2 * arcRadius);
     }
 
-    // Restore the original transform
-    ctx.setTransform(base);
+    return { canvas, width: bitmapSize, height: bitmapSize, arcRadius };
   }
 
   // -------------------------------------------------------------------
@@ -1859,17 +1685,6 @@ export class KonvaScene {
         y: pointer.y - worldY * newZoom,
       };
 
-      // Mark zoom as unstable during continuous scrolling — re-caching at
-      // every intermediate zoom step would be wasteful
-      this.isZoomStable = false;
-      if (this.zoomCacheTimer !== null) clearTimeout(this.zoomCacheTimer);
-      this.zoomCacheTimer = setTimeout(() => {
-        this.isZoomStable = true;
-        this.nodeCacheState.clear();
-        this.zoomCacheTimer = null;
-        this.callbacks.onRenderRequest();
-      }, 200);
-
       // Update stage transform
       stage.scale({ x: newZoom, y: newZoom });
       stage.position(this.pan);
@@ -1877,7 +1692,6 @@ export class KonvaScene {
       this.callbacks.onZoomChange(newZoom);
 
       // Synchronous render for zero-latency zoom — draw each layer individually
-      this.markAllLayersDirty();
       this.clusterLayer.draw();
       this.edgeLayer.draw();
       this.nodeLayer.draw();
