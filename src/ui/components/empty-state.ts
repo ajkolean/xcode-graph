@@ -1,8 +1,7 @@
 /**
- * EmptyState Lit Component - Mission Control Theme
+ * EmptyState Lit Component
  *
  * Displays an empty state message when no nodes match the current filters.
- * Features amber glow effects, monospace typography, and animated icon.
  *
  * @example
  * ```html
@@ -81,26 +80,12 @@ export class GraphEmptyState extends LitElement {
       border-radius: var(--radii-lg);
       background: rgba(var(--colors-primary-rgb), var(--opacity-10));
       border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-20));
-      animation: iconPulse 3s ease-in-out infinite;
-    }
-
-    @keyframes iconPulse {
-      0%, 100% {
-        box-shadow: 0 0 0 0 rgba(var(--colors-primary-rgb), var(--opacity-10));
-      }
-      50% {
-        box-shadow: 0 0 20px 4px rgba(var(--colors-primary-rgb), var(--opacity-20));
-      }
     }
 
     @media (prefers-reduced-motion: reduce) {
       :host {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
-      }
-
-      .icon-container {
-        animation: none;
       }
 
       .clear-button {
@@ -141,25 +126,22 @@ export class GraphEmptyState extends LitElement {
       transition: all var(--durations-normal) var(--easings-default);
       background: rgba(var(--colors-primary-rgb), var(--opacity-10));
       border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-25));
-      font-family: var(--fonts-mono);
+      font-family: var(--fonts-body);
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-semibold);
       color: var(--colors-primary-text);
       letter-spacing: var(--letter-spacing-wide);
-      text-transform: uppercase;
+      text-transform: none;
       cursor: pointer;
     }
 
     .clear-button:hover {
       background: rgba(var(--colors-primary-rgb), var(--opacity-20));
       border-color: rgba(var(--colors-primary-rgb), var(--opacity-40));
-      box-shadow: 0 0 20px rgba(var(--colors-primary-rgb), var(--opacity-20));
-      transform: translateY(-1px);
     }
 
     .clear-button:active {
-      transform: translateY(0);
-      box-shadow: 0 0 10px rgba(var(--colors-primary-rgb), var(--opacity-20));
+      background: rgba(var(--colors-primary-rgb), var(--opacity-25));
     }
 
     .clear-button:focus-visible {

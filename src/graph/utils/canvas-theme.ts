@@ -131,7 +131,7 @@ export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
     computedStyles.getPropertyValue(prop).trim() || fallback;
 
   // Detect if we're in dark mode by checking background luminance
-  const bgColor = get('--colors-background', '#161617');
+  const bgColor = get('--colors-background', '#0f0f11');
   const isDark = isDarkColor(bgColor);
 
   return {
@@ -141,7 +141,7 @@ export function resolveCanvasTheme(el: HTMLElement): CanvasTheme {
     nodeTest: get('--colors-node-test', NODE_PALETTE['test-unit']),
     nodeCli: get('--colors-node-cli', NODE_PALETTE.cli),
     nodePackage: get('--colors-node-package', NODE_PALETTE.package),
-    canvasBg: get('--colors-canvas-bg', isDark ? '#161617' : '#f5f5f7'),
+    canvasBg: get('--colors-canvas-bg', isDark ? '#0f0f11' : '#f5f5f7'),
     tooltipBg: get(
       '--colors-canvas-tooltip-bg',
       isDark ? 'rgba(24, 24, 28, 0.95)' : 'rgba(255, 255, 255, 0.95)',

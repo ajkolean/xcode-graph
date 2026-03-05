@@ -19,7 +19,7 @@ describe('canvas-theme', () => {
     expect(theme.nodeTest).toBe(NODE_PALETTE['test-unit']);
     expect(theme.nodeCli).toBe(NODE_PALETTE.cli);
     expect(theme.nodePackage).toBe(NODE_PALETTE.package);
-    expect(theme.canvasBg).toBe('#161617');
+    expect(theme.canvasBg).toBe('#0f0f11');
     expect(theme.tooltipBg).toBe('rgba(24, 24, 28, 0.95)');
     expect(theme.shadowColor).toBe('rgba(24, 24, 28, 0.9)');
     expect(theme.edgeDefault).toBe('rgba(120, 120, 130, 0.45)');

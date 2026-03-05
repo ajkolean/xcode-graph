@@ -98,7 +98,6 @@ describe('xcode-graph-cluster-type-badge', () => {
     expect(badge.variant).to.equal('accent');
     expect(badge.size).to.equal('sm');
     expect(badge.interactive).toBe(true);
-    expect(badge.glow).toBe(true);
   });
 
   it('should handle different color formats', async () => {

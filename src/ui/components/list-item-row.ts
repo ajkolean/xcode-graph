@@ -1,8 +1,7 @@
 /**
- * ListItemRow Lit Component - Mission Control Theme
+ * ListItemRow Lit Component
  *
  * Reusable row component for displaying nodes in lists.
- * Features sharp edges, accent borders, and monospace typography.
  *
  * @example
  * ```html
@@ -32,7 +31,6 @@ import { when } from 'lit/directives/when.js';
 
 /**
  * Reusable row component for displaying nodes in lists.
- * Features sharp edges, accent borders, and monospace typography.
  *
  * @summary Node list row with icon, name, and chevron
  * @fires row-select - Dispatched when the row is clicked (detail: { node })
@@ -79,7 +77,6 @@ export class GraphListItemRow extends LitElement {
       text-align: left;
       background: transparent;
       border: var(--border-widths-thin) solid transparent;
-      border-left: var(--border-widths-medium) solid transparent;
       cursor: pointer;
       transition:
         background-color var(--durations-fast) var(--easings-out),
@@ -89,7 +86,6 @@ export class GraphListItemRow extends LitElement {
 
     button.selected {
       background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
-      border-left-color: var(--node-color, var(--colors-primary));
       border-color: var(--colors-border);
     }
 

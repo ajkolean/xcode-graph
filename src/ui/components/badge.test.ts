@@ -86,7 +86,7 @@ describe('xcode-graph-badge', () => {
   });
 
   // ========================================
-  // Interactive & Glow Tests
+  // Interactive Tests
   // ========================================
 
   it('should apply interactive class when interactive is true', async () => {
@@ -96,15 +96,6 @@ describe('xcode-graph-badge', () => {
 
     const badge = el.shadowRoot?.querySelector('.badge');
     expect(badge?.classList.contains('interactive')).toBe(true);
-  });
-
-  it('should apply glow class when glow is true', async () => {
-    const el = await fixture<GraphBadge>(html`
-      <xcode-graph-badge label="Test" glow></xcode-graph-badge>
-    `);
-
-    const badge = el.shadowRoot?.querySelector('.badge');
-    expect(badge?.classList.contains('glow')).toBe(true);
   });
 
   // ========================================
@@ -163,7 +154,6 @@ describe('xcode-graph-badge', () => {
         variant="accent"
         size="sm"
         interactive
-        glow
       ></xcode-graph-badge>
     `);
 
@@ -172,7 +162,6 @@ describe('xcode-graph-badge', () => {
     expect(badge?.classList.contains('variant-accent')).toBe(true);
     expect(badge?.classList.contains('size-sm')).toBe(true);
     expect(badge?.classList.contains('interactive')).toBe(true);
-    expect(badge?.classList.contains('glow')).toBe(true);
   });
 
   // ========================================

@@ -51,7 +51,7 @@ export class GraphPanelHeader extends LitElement {
   declare subtitle: string;
 
   /**
-   * Theme color for the icon box glow
+   * Theme color for the icon box
    */
   @property({ type: String })
   declare color: string;
@@ -219,7 +219,6 @@ export class GraphPanelHeader extends LitElement {
             class="icon-box"
             style="
               background-color: ${color}15;
-              box-shadow: 0 0 12px ${color}20;
             "
           >
             <slot name="icon"></slot>

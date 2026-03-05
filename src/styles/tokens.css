@@ -13,19 +13,19 @@
      ======================================== */
 
   /* Core colors */
-  --colors-background: var(--graph-bg, #161617);
-  --colors-background-rgb: 22, 22, 23;
+  --colors-background: var(--graph-bg, #0f0f11);
+  --colors-background-rgb: 15, 15, 17;
   --colors-foreground: var(--graph-text, rgba(225, 228, 232, 1));
   --colors-foreground-rgb: 225, 228, 232;
 
   /* Card colors */
-  --colors-card: var(--graph-bg-secondary, #1c1c1e);
-  --colors-card-rgb: 28, 28, 30;
+  --colors-card: var(--graph-bg-secondary, #18181b);
+  --colors-card-rgb: 24, 24, 27;
   --colors-card-foreground: var(--graph-text, rgba(225, 228, 232, 1));
 
   /* Popover colors */
-  --colors-popover: var(--graph-bg-secondary, #1c1c1e);
-  --colors-popover-rgb: 28, 28, 30;
+  --colors-popover: var(--graph-bg-secondary, #18181b);
+  --colors-popover-rgb: 24, 24, 27;
   --colors-popover-foreground: var(--graph-text, rgba(225, 228, 232, 1));
 
   /* Primary: interactive elements, brand identity, hover states */
@@ -71,7 +71,7 @@
   --colors-info-foreground: rgba(253, 253, 253, 1);
 
   /* Border and input */
-  --colors-border: var(--graph-border, rgba(255, 255, 255, 0.08));
+  --colors-border: var(--graph-border, rgba(255, 255, 255, 0.06));
   --colors-border-accent: rgba(124, 58, 237, 0.3);
   --colors-input: rgba(255, 255, 255, 0.04);
   --colors-input-background: rgba(255, 255, 255, 0.03);
@@ -114,14 +114,14 @@
   --colors-platform-default: var(--graph-platform-default, #6F2CFF);
 
   /* Sidebar colors */
-  --colors-sidebar: var(--graph-bg-secondary, #1c1c1e);
-  --colors-sidebar-rgb: 28, 28, 30;
+  --colors-sidebar: var(--graph-bg-secondary, #18181b);
+  --colors-sidebar-rgb: 24, 24, 27;
   --colors-sidebar-foreground: var(--graph-text, rgba(225, 228, 232, 1));
   --colors-sidebar-primary: var(--graph-accent, rgba(124, 58, 237, 1));
   --colors-sidebar-primary-foreground: rgba(253, 253, 253, 1);
   --colors-sidebar-accent: rgba(124, 58, 237, 0.12);
   --colors-sidebar-accent-foreground: var(--graph-text, rgba(225, 228, 232, 1));
-  --colors-sidebar-border: var(--graph-border, rgba(255, 255, 255, 0.08));
+  --colors-sidebar-border: var(--graph-border, rgba(255, 255, 255, 0.06));
   --colors-sidebar-ring: var(--graph-accent, rgba(124, 58, 237, 1));
 
   /* Semantic colors */
@@ -135,10 +135,10 @@
   --radii-none: 0;
   --radii-xs: 0.125rem;
   --radii-sm: 0.25rem;
-  --radii-md: var(--graph-radius, 0.375rem);
-  --radii-lg: 0.5rem;
-  --radii-xl: 0.75rem;
-  --radii-2xl: 1rem;
+  --radii-md: var(--graph-radius, 0.5rem);
+  --radii-lg: 0.75rem;
+  --radii-xl: 1rem;
+  --radii-2xl: 1.25rem;
   --radii-full: 1000px;
 
   /* ========================================
@@ -172,8 +172,8 @@
   --font-weights-bold: 700;
 
   /* Font families — inherit from host or use system defaults */
-  --fonts-heading: var(--graph-font, system-ui, -apple-system, sans-serif);
-  --fonts-body: var(--graph-font, system-ui, -apple-system, sans-serif);
+  --fonts-heading: var(--graph-font, 'Inter', system-ui, -apple-system, sans-serif);
+  --fonts-body: var(--graph-font, 'Inter', system-ui, -apple-system, sans-serif);
   --fonts-mono: var(--graph-font-mono, ui-monospace, monospace);
 
   /* Line heights */
@@ -421,17 +421,17 @@
 
 :host([data-theme='dark']),
 [data-theme='dark'] {
-  --colors-background: var(--graph-bg, #161617);
-  --colors-background-rgb: 22, 22, 23;
+  --colors-background: var(--graph-bg, #0f0f11);
+  --colors-background-rgb: 15, 15, 17;
   --colors-foreground: var(--graph-text, rgba(225, 228, 232, 1));
   --colors-foreground-rgb: 225, 228, 232;
 
-  --colors-card: var(--graph-bg-secondary, #1c1c1e);
-  --colors-card-rgb: 28, 28, 30;
+  --colors-card: var(--graph-bg-secondary, #18181b);
+  --colors-card-rgb: 24, 24, 27;
   --colors-card-foreground: var(--graph-text, rgba(225, 228, 232, 1));
 
-  --colors-popover: var(--graph-bg-secondary, #1c1c1e);
-  --colors-popover-rgb: 28, 28, 30;
+  --colors-popover: var(--graph-bg-secondary, #18181b);
+  --colors-popover-rgb: 24, 24, 27;
   --colors-popover-foreground: var(--graph-text, rgba(225, 228, 232, 1));
 
   --colors-primary: var(--graph-accent, rgba(124, 58, 237, 1));
@@ -466,7 +466,7 @@
   --colors-info: rgba(14, 165, 233, 1);
   --colors-info-rgb: 14, 165, 233;
 
-  --colors-border: var(--graph-border, rgba(255, 255, 255, 0.08));
+  --colors-border: var(--graph-border, rgba(255, 255, 255, 0.06));
   --colors-border-accent: rgba(124, 58, 237, 0.3);
   --colors-input: rgba(255, 255, 255, 0.04);
   --colors-input-background: rgba(255, 255, 255, 0.03);
@@ -495,14 +495,14 @@
   --colors-platform-visionos: var(--graph-platform-visionos, #7D7AFF);
   --colors-platform-default: var(--graph-platform-default, #6F2CFF);
 
-  --colors-sidebar: var(--graph-bg-secondary, #1c1c1e);
-  --colors-sidebar-rgb: 28, 28, 30;
+  --colors-sidebar: var(--graph-bg-secondary, #18181b);
+  --colors-sidebar-rgb: 24, 24, 27;
   --colors-sidebar-foreground: var(--graph-text, rgba(225, 228, 232, 1));
   --colors-sidebar-primary: var(--graph-accent, rgba(124, 58, 237, 1));
   --colors-sidebar-primary-foreground: rgba(253, 253, 253, 1);
   --colors-sidebar-accent: rgba(124, 58, 237, 0.12);
   --colors-sidebar-accent-foreground: var(--graph-text, rgba(225, 228, 232, 1));
-  --colors-sidebar-border: var(--graph-border, rgba(255, 255, 255, 0.08));
+  --colors-sidebar-border: var(--graph-border, rgba(255, 255, 255, 0.06));
 
   --shadows-sm:
     0px 1px 1px 0px rgba(0, 0, 0, 0.15),

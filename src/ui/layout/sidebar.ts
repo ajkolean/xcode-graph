@@ -1,8 +1,7 @@
 /**
- * Sidebar Lit Component - Mission Control Theme
+ * Sidebar Lit Component
  *
- * Left sidebar navigation with staggered entrance animations.
- * Features noise texture, accent borders, and monospace typography.
+ * Left sidebar navigation with tab items.
  *
  * @example
  * ```html
@@ -43,8 +42,7 @@ interface NavItem {
 }
 
 /**
- * Left sidebar navigation with staggered entrance animations.
- * Features noise texture, accent borders, and monospace typography.
+ * Left sidebar navigation with tab items.
  *
  * @summary Left sidebar navigation component
  * @fires tab-change - Dispatched when a tab is clicked (detail: { tab: string })

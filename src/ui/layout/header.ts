@@ -1,8 +1,7 @@
 /**
- * Header Lit Component - Mission Control Theme
+ * Header Lit Component
  *
- * Top header component with bold identity.
- * Features scan line effect, glowing logo, and monospace typography.
+ * Top header component with logo and breadcrumb navigation.
  *
  * @example
  * ```html
@@ -55,10 +54,9 @@ function renderSlashIcon() {
 }
 
 /**
- * Top header component with bold identity. Features scan line effect,
- * glowing logo, and monospace typography.
+ * Top header component with logo and breadcrumb navigation.
  *
- * @summary Mission control themed header bar
+ * @summary Application header bar
  */
 export class GraphHeader extends LitElement {
   static override readonly styles: CSSResultGroup = css`

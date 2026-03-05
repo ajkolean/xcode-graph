@@ -281,8 +281,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       background-color: var(--colors-primary);
       margin-left: var(--spacing-2);
       vertical-align: middle;
-      box-shadow: 0 0 6px rgba(var(--colors-primary-rgb), var(--opacity-50));
-    }
+}
   `;
 
   private _filterData = computeFilters([]);

@@ -1,8 +1,7 @@
 /**
- * StatsCard Lit Component - Mission Control Theme
+ * StatsCard Lit Component
  *
  * Reusable stats card component for displaying metrics.
- * Features bold left accent border, noise texture, and monospace typography.
  * Can be toggleable for interactive highlight controls.
  *
  * @example
@@ -17,7 +16,6 @@ import { property } from 'lit/decorators.js';
 
 /**
  * Reusable stats card component for displaying metrics.
- * Features bold left accent border and monospace typography.
  * Can be toggleable for interactive highlight controls.
  *
  * @summary Stats metric card with optional toggle behavior
@@ -69,10 +67,9 @@ export class GraphStatsCard extends LitElement {
     .container {
       position: relative;
       padding: var(--spacing-3) var(--spacing-md);
-      border-radius: var(--radii-sm);
+      border-radius: var(--radii-lg);
       background: var(--colors-card);
       border: var(--border-widths-thin) solid var(--colors-border);
-      border-left: 4px solid var(--colors-primary);
       cursor: default;
       transition:
         border-color var(--durations-normal) var(--easings-out);
@@ -80,7 +77,7 @@ export class GraphStatsCard extends LitElement {
     }
 
     .container.highlighted {
-      border-left-color: var(--colors-accent);
+      border-color: var(--colors-accent);
     }
 
     /* Toggleable styles */
@@ -91,21 +88,21 @@ export class GraphStatsCard extends LitElement {
 
     /* Toggleable inactive: gray/muted appearance */
     .container.toggleable:not(.active) {
-      border-left-color: rgba(var(--colors-muted-foreground-rgb, 148, 163, 184), 0.3);
+      border-color: rgba(var(--colors-muted-foreground-rgb, 148, 163, 184), 0.3);
     }
 
     /* Toggleable active: primary styling */
     .container.toggleable.active {
-      border-left-color: var(--colors-primary);
+      border-color: var(--colors-primary);
     }
 
     .label {
       position: relative;
-      font-family: var(--fonts-mono);
+      font-family: var(--fonts-body);
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-medium);
       letter-spacing: var(--letter-spacing-wider);
-      text-transform: uppercase;
+      text-transform: none;
       color: var(--colors-primary-text);
       opacity: var(--opacity-100);
       margin-bottom: var(--spacing-1);

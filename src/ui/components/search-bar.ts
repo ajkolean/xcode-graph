@@ -1,8 +1,7 @@
 /**
- * SearchBar Lit Component - Mission Control Theme
+ * SearchBar Lit Component
  *
  * Input field for filtering nodes by name/text search.
- * Features sharp edges, dramatic focus glow, and animated icon.
  *
  * @example
  * ```html
@@ -23,7 +22,6 @@ import './icon-button.js';
 
 /**
  * Input field for filtering nodes by name/text search.
- * Features sharp edges, dramatic focus glow, and animated icon.
  *
  * @summary Search input for filtering nodes
  * @fires search-change - Dispatched when the search query changes (detail: { query: string })
@@ -73,10 +71,9 @@ export class GraphSearchBar extends LitElement {
       stroke: currentColor;
     }
 
-    /* Animate icon on focus */
+    /* Highlight icon on focus */
     :host(:focus-within) .search-icon {
       color: var(--colors-primary-text);
-      transform: translateY(-50%) scale(1.1);
     }
 
     input {

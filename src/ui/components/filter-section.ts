@@ -129,7 +129,7 @@ export class GraphFilterSection extends LitElement {
     }
 
     .header-title {
-      font-family: var(--fonts-mono);
+      font-family: var(--fonts-body);
       font-size: var(--font-sizes-label);
       color: var(--colors-muted-foreground);
       font-weight: var(--font-weights-semibold);
@@ -417,7 +417,7 @@ export class GraphFilterSection extends LitElement {
                 class="item-accent"
                 style=${styleMap({
                   'background-color': zoomColor,
-                  'box-shadow': `0 0 4px ${zoomColor}60`,
+                  'box-shadow': 'none',
                 })}
               ></div>
             `,

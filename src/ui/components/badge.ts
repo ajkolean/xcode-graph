@@ -21,12 +21,11 @@
  *   size="sm"
  * ></xcode-graph-badge>
  *
- * <!-- Interactive badge with glow -->
+ * <!-- Interactive badge -->
  * <xcode-graph-badge
  *   label="iOS"
  *   color="#3B82F6"
  *   interactive
- *   glow
  * ></xcode-graph-badge>
  * ```
  */
@@ -49,7 +48,6 @@ export type BadgeSize = 'sm' | 'md';
  * @cssproperty --badge-color - Text color of the badge (computed from color prop)
  * @cssproperty --badge-bg-hover - Background color on hover (computed from color prop)
  * @cssproperty --badge-border-hover - Border color on hover (computed from color prop)
- * @cssproperty --badge-glow - Glow color on hover (computed from color prop)
  */
 export class GraphBadge extends LitElement {
   /**
@@ -87,18 +85,11 @@ export class GraphBadge extends LitElement {
   @property({ type: Boolean })
   declare interactive: boolean;
 
-  /**
-   * Whether to show glow effect on hover
-   */
-  @property({ type: Boolean })
-  declare glow: boolean;
-
   constructor() {
     super();
     this.variant = 'pill';
     this.size = 'md';
     this.interactive = false;
-    this.glow = false;
   }
 
   static override readonly styles: CSSResultGroup = css`
@@ -176,11 +167,7 @@ export class GraphBadge extends LitElement {
       border-left-color: var(--badge-color);
     }
 
-    /* Subtle glow effect on hover */
-    .badge.glow:hover {
-      box-shadow: 0 0 6px var(--badge-glow);
-    }
-  `;
+`;
 
   /** Renders the component template */
   override render(): TemplateResult {
@@ -191,7 +178,6 @@ export class GraphBadge extends LitElement {
       `variant-${this.variant}`,
       `size-${this.size}`,
       this.interactive ? 'interactive' : '',
-      this.glow ? 'glow' : '',
     ]
       .filter(Boolean)
       .join(' ');
@@ -205,7 +191,6 @@ export class GraphBadge extends LitElement {
           --badge-border: ${color}40;
           --badge-bg-hover: ${color}25;
           --badge-border-hover: ${color}50;
-          --badge-glow: ${color}30;
         "
       >
         ${this.label}

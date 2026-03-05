@@ -534,12 +534,12 @@ export class CanvasScene {
     time: number,
   ): void {
     const pulse = prefersReducedMotion.get() ? 0.5 : (Math.sin(time / 300) + 1) / 2;
-    const glowRadius = size + 6 + pulse * 3;
+    const glowRadius = size + 4 + pulse * 2;
     ctx.beginPath();
     ctx.arc(0, 0, glowRadius, 0, Math.PI * 2);
     ctx.strokeStyle = theme.cycleGlowColor;
     ctx.lineWidth = 2;
-    ctx.globalAlpha = 0.4 + pulse * 0.3;
+    ctx.globalAlpha = 0.3 + pulse * 0.2;
     ctx.stroke();
     ctx.globalAlpha = alpha;
   }

@@ -74,8 +74,7 @@ export class GraphRightSidebarHeader extends LitElement {
       border-radius: 50%;
       background-color: var(--colors-primary);
       flex-shrink: 0;
-      box-shadow: 0 0 6px rgba(var(--colors-primary-rgb), 0.5);
-    }
+}
 
     xcode-graph-icon-button {
       margin-left: auto;

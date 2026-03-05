@@ -1,7 +1,7 @@
 /**
- * ClusterTypeBadge Lit Component - Mission Control Theme
+ * ClusterTypeBadge Lit Component
  *
- * Displays package/project badge with sharp styling and monospace typography.
+ * Displays package/project badge with accent styling and monospace typography.
  * Wrapper around graph-badge with container styling.
  *
  * @example
@@ -18,7 +18,7 @@ import { property } from 'lit/decorators.js';
 import './badge.js';
 
 /**
- * Displays package/project badge with sharp styling and monospace typography.
+ * Displays package/project badge with accent styling and monospace typography.
  * Wrapper around graph-badge with container styling.
  *
  * @summary Cluster type badge showing package or project
@@ -67,7 +67,6 @@ export class GraphClusterTypeBadge extends LitElement {
           variant="accent"
           size="sm"
           interactive
-          glow
         ></xcode-graph-badge>
       </div>
     `;
