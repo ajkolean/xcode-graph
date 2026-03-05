@@ -57,7 +57,7 @@ describe('xcode-graph-canvas', () => {
     const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const container = el.shadowRoot?.querySelector('#konva-container');
+    const container = el.shadowRoot?.querySelector('#canvas-container');
     expect(container).toBeDefined();
   });
 
@@ -83,7 +83,7 @@ describe('xcode-graph-canvas', () => {
     const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const container = el.shadowRoot?.querySelector('#konva-container');
+    const container = el.shadowRoot?.querySelector('#canvas-container');
     expect(container?.getAttribute('tabindex')).to.equal('-1');
   });
 
@@ -91,7 +91,7 @@ describe('xcode-graph-canvas', () => {
     const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+    const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
     setTimeout(() =>
       container.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true })),
     );
@@ -103,7 +103,7 @@ describe('xcode-graph-canvas', () => {
     const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+    const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
     setTimeout(() =>
       container.dispatchEvent(new KeyboardEvent('keydown', { key: '-', bubbles: true })),
     );
@@ -115,7 +115,7 @@ describe('xcode-graph-canvas', () => {
     const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+    const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
     setTimeout(() =>
       container.dispatchEvent(new KeyboardEvent('keydown', { key: '0', bubbles: true })),
     );
@@ -127,7 +127,7 @@ describe('xcode-graph-canvas', () => {
     const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
     await el.updateComplete;
 
-    const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+    const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
     setTimeout(() =>
       container.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })),
     );
@@ -141,7 +141,7 @@ describe('xcode-graph-canvas', () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
 
-      const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+      const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
       container.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
       expect(el).toBeDefined();
     });
@@ -150,7 +150,7 @@ describe('xcode-graph-canvas', () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
 
-      const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+      const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
       container.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
       expect(el).toBeDefined();
     });
@@ -159,7 +159,7 @@ describe('xcode-graph-canvas', () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
 
-      const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+      const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
       container.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
       expect(el).toBeDefined();
     });
@@ -168,7 +168,7 @@ describe('xcode-graph-canvas', () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
 
-      const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+      const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
       container.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
       expect(el).toBeDefined();
     });
@@ -177,7 +177,7 @@ describe('xcode-graph-canvas', () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
 
-      const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+      const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
       container.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
       expect(el).toBeDefined();
     });
@@ -188,7 +188,7 @@ describe('xcode-graph-canvas', () => {
       const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
       await el.updateComplete;
 
-      const container = el.shadowRoot?.querySelector('#konva-container') as HTMLDivElement;
+      const container = el.shadowRoot?.querySelector('#canvas-container') as HTMLDivElement;
       setTimeout(() =>
         container.dispatchEvent(new KeyboardEvent('keydown', { key: '=', bubbles: true })),
       );
@@ -332,7 +332,7 @@ describe('xcode-graph-canvas', () => {
         /* suppress console output */
       });
       el.firstUpdated();
-      expect(errorSpy).toHaveBeenCalledWith('Konva container element not found in firstUpdated');
+      expect(errorSpy).toHaveBeenCalledWith('Canvas container element not found in firstUpdated');
       errorSpy.mockRestore();
     });
   });

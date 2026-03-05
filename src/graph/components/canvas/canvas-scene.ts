@@ -1,15 +1,19 @@
 /**
- * Konva Scene Graph Manager
+ * Raw Canvas2D Scene Renderer
  *
- * Replaces the manual Canvas2D rendering pipeline with a Konva.js scene graph.
- * Each node and cluster is a Konva.Group with custom sceneFunc for drawing,
- * edges use a single batched Shape, and interactions are handled natively by Konva.
+ * Replaces the Konva.js scene graph with a single raw Canvas2D rendering pass.
+ * All drawing code is ported verbatim from konva-scene.ts — the draw methods
+ * were already raw `ctx` calls wrapped in Konva sceneFunc callbacks.
  *
- * Layers (bottom to top):
- *   1. Cluster layer – gradient fills, dashed borders, arc labels
- *   2. Edge layer – batched non-special + individual special edges
- *   3. Node layer – icon paths, labels, selection/cycle effects
- *   4. Tooltip layer – hover tooltips (counter-scaled for constant screen size)
+ * Single-pass render order:
+ *   1. Clear canvas + background fill
+ *   2. Transform: translate(pan) + scale(zoom)
+ *   3. Draw clusters (fill, border, arc label)
+ *   4. Draw edges (batched + individual)
+ *   5. Draw nodes (icon, label, selection/cycle effects)
+ *   6. Draw fading-out nodes
+ *   7. Restore transform
+ *   8. Draw tooltips (screen space, constant size)
  */
 
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
@@ -29,12 +33,12 @@ import { generateBezierPath } from '@ui/utils/paths';
 import { getNodeSize } from '@ui/utils/sizing';
 import {
   calculateViewportBounds,
+  isCircleInViewport,
   isLineInViewportRaw,
   type ViewportBounds,
 } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
-import Konva from 'konva';
-import { computeFitToViewport, getCanvasMousePos, screenToWorld } from './canvas-viewport';
+import { computeFitToViewport, screenToWorld } from './canvas-viewport';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -117,31 +121,21 @@ const NODE_FONT_SELECTED = `600 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans
 const NODE_FONT_CONNECTED = `500 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
 const NODE_FONT_NORMAL = `400 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
 const FADE_OUT_DURATION = 250;
-const EDGE_HIDE_ZOOM_THRESHOLD = 0.3;
+const NODE_HIT_RADIUS_MULTIPLIER = 2;
+const TOOLTIP_FONT = '12px var(--fonts-body, sans-serif)';
+const TOOLTIP_TITLE_FONT = '600 13px var(--fonts-body, sans-serif)';
+const TOOLTIP_SUBTITLE_FONT = '11px var(--fonts-body, sans-serif)';
 
 // ---------------------------------------------------------------------------
-// KonvaScene
+// CanvasScene
 // ---------------------------------------------------------------------------
 
-export class KonvaScene {
-  private stage: Konva.Stage;
-  private clusterLayer: Konva.Layer;
-  private edgeLayer: Konva.Layer;
-  private nodeLayer: Konva.Layer;
-  private tooltipLayer: Konva.Layer;
-
-  // Shape registries
-  private nodeGroups = new Map<string, Konva.Group>();
-  private clusterGroups = new Map<string, Konva.Group>();
-
-  // Single shape for all edges (batched + special in one sceneFunc)
-  private edgeShape: Konva.Shape;
-
-  // Tooltip shapes (persistent, show/hide)
-  private tooltipGroup: Konva.Group;
-  private tooltipBg: Konva.Rect;
-  private tooltipText: Konva.Text;
-  private tooltipSubtext: Konva.Text;
+export class CanvasScene {
+  private canvas: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
+  private width = 800;
+  private height = 600;
+  private dpr = 1;
 
   // Path2D cache for node icons
   private pathCache = new Map<string, Path2D>();
@@ -157,7 +151,7 @@ export class KonvaScene {
   private arcTextCache = new Map<string, { charWidths: number[]; totalWidth: number }>();
   private truncateCache = new Map<string, string>();
 
-  // Offscreen bitmap cache for arc labels — avoids per-character setTransform + fillText each frame
+  // Offscreen bitmap cache for arc labels
   private arcLabelBitmapCache = new Map<
     string,
     { canvas: OffscreenCanvas; width: number; height: number; arcRadius: number }
@@ -171,23 +165,19 @@ export class KonvaScene {
   private clusterMap = new Map<string, Cluster>();
   private cachedClustersRef: Cluster[] | null = null;
 
-  // Edge endpoint cache — only cleared when positions change (layout, drag, data change)
+  // Edge endpoint cache — only cleared when positions change
   private edgeEndpointCache = new Map<
     string,
-    ReturnType<KonvaScene['resolveEdgeEndpointsInner']>
+    ReturnType<CanvasScene['resolveEdgeEndpointsInner']>
   >();
   private cachedEdgesRef: GraphEdge[] | null = null;
   private cachedManualNodePosSize = -1;
   private cachedManualClusterPosSize = -1;
 
-  // Tooltip text cache to avoid redundant Konva text measurement
-  private lastTooltipText = '';
-  private lastTooltipSubtext = '';
-
-  // Per-frame cached viewport bounds (computed once in render(), used by nodes/clusters/edges)
+  // Per-frame cached viewport bounds
   private cachedViewport: ViewportBounds | null = null;
 
-  // Per-frame edge metadata map — precomputed once per frame to avoid redundant calculations
+  // Per-frame edge metadata map
   private edgeMetaMap = new Map<GraphEdge, EdgeMeta>();
 
   // Per-frame adjusted node type colors (7 types, recomputed only when zoom changes)
@@ -217,51 +207,22 @@ export class KonvaScene {
   constructor(container: HTMLDivElement, callbacks: SceneCallbacks) {
     this.callbacks = callbacks;
 
-    // Disable Konva's automatic redraws — we manage draw calls manually
-    Konva.autoDrawEnabled = false;
+    this.canvas = document.createElement('canvas');
+    this.canvas.style.display = 'block';
+    this.canvas.style.width = '100%';
+    this.canvas.style.height = '100%';
+    container.appendChild(this.canvas);
 
-    this.stage = new Konva.Stage({
-      container,
-      width: container.clientWidth || 800,
-      height: container.clientHeight || 600,
-    });
+    const ctx = this.canvas.getContext('2d');
+    if (!ctx) throw new Error('Failed to get 2d context');
+    this.ctx = ctx;
 
-    // Layers in draw order (bottom to top)
-    this.clusterLayer = new Konva.Layer();
-    this.edgeLayer = new Konva.Layer({ listening: false });
-    this.nodeLayer = new Konva.Layer();
-    this.tooltipLayer = new Konva.Layer({ listening: false });
-
-    this.stage.add(this.clusterLayer);
-    this.stage.add(this.edgeLayer);
-    this.stage.add(this.nodeLayer);
-    this.stage.add(this.tooltipLayer);
-
-    // Edge shape — single shape for all edges, with perf flags
-    this.edgeShape = new Konva.Shape({
-      listening: false,
-      perfectDrawEnabled: false,
-      shadowForStrokeEnabled: false,
-      sceneFunc: (context) => this.drawEdges(context._context),
-    });
-    this.edgeLayer.add(this.edgeShape);
-
-    // Tooltip shapes
-    this.tooltipGroup = new Konva.Group({ visible: false, listening: false });
-    this.tooltipBg = new Konva.Rect({ cornerRadius: 4 });
-    this.tooltipText = new Konva.Text({ fontSize: 12, align: 'center' });
-    this.tooltipSubtext = new Konva.Text({ fontSize: 11, align: 'center', opacity: 0.7 });
-    this.tooltipGroup.add(this.tooltipBg);
-    this.tooltipGroup.add(this.tooltipText);
-    this.tooltipGroup.add(this.tooltipSubtext);
-    this.tooltipLayer.add(this.tooltipGroup);
-
-    // Event handlers
-    this.stage.on('wheel', (e) => this.handleWheel(e));
-    this.stage.on('mousedown', (e) => this.handleMouseDown(e));
-    this.stage.on('mousemove', (e) => this.handleMouseMove(e));
-    this.stage.on('mouseup', () => this.handleMouseUp());
-    this.stage.on('mouseleave', () => this.handleMouseLeave());
+    // Event handlers on the canvas element
+    this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
+    this.canvas.addEventListener('mousedown', this.handleMouseDown);
+    this.canvas.addEventListener('mousemove', this.handleMouseMove);
+    this.canvas.addEventListener('mouseup', this.handleMouseUp);
+    this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
   }
 
   // -------------------------------------------------------------------
@@ -271,9 +232,45 @@ export class KonvaScene {
   /** Main render method — called each frame by the animation loop. */
   render(config: SceneConfig): void {
     this.config = config;
+    this.updateCaches(config);
 
-    // Rebuild node map only when the nodes array reference changes
-    if (config.nodes !== this.cachedNodesRef) {
+    // Compute viewport bounds once per frame
+    this.cachedViewport = this.computeViewportBounds(config);
+
+    const ctx = this.ctx;
+
+    // 1. Clear + background
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    ctx.clearRect(0, 0, this.width, this.height);
+    ctx.fillStyle = config.theme.canvasBg;
+    ctx.fillRect(0, 0, this.width, this.height);
+
+    // 2. Apply world transform: translate(pan) + scale(zoom)
+    ctx.save();
+    ctx.translate(this.pan.x, this.pan.y);
+    ctx.scale(config.zoom, config.zoom);
+
+    // 3–6. Draw world-space content
+    this.drawClusters(ctx, config);
+    this.drawEdges(ctx);
+    this.drawNodes(ctx, config);
+    this.drawFadingNodes(ctx, config);
+
+    // 7. Restore world transform
+    ctx.restore();
+
+    // 8. Draw tooltip (screen space)
+    this.drawTooltip(ctx, config);
+  }
+
+  /** Rebuild lookup maps and caches when data references change. */
+  private updateCaches(config: SceneConfig): void {
+    // Detect ref changes BEFORE updating cached refs so positionsChanged
+    // correctly triggers edge endpoint cache invalidation when layout completes.
+    const nodesChanged = config.nodes !== this.cachedNodesRef;
+    const clustersChanged = config.layout.clusters !== this.cachedClustersRef;
+
+    if (nodesChanged) {
       this.nodeMap.clear();
       for (const node of config.nodes) {
         this.nodeMap.set(node.id, node);
@@ -281,8 +278,7 @@ export class KonvaScene {
       this.cachedNodesRef = config.nodes;
     }
 
-    // Rebuild cluster map only when the clusters array reference changes
-    if (config.layout.clusters !== this.cachedClustersRef) {
+    if (clustersChanged) {
       this.clusterMap.clear();
       for (const cluster of config.layout.clusters) {
         this.clusterMap.set(cluster.id, cluster);
@@ -290,11 +286,10 @@ export class KonvaScene {
       this.cachedClustersRef = config.layout.clusters;
     }
 
-    // Only clear edge endpoint cache when positions/edges change (not every frame)
     const positionsChanged =
       config.edges !== this.cachedEdgesRef ||
-      config.nodes !== this.cachedNodesRef ||
-      config.layout.clusters !== this.cachedClustersRef ||
+      nodesChanged ||
+      clustersChanged ||
       config.manualNodePositions.size !== this.cachedManualNodePosSize ||
       config.manualClusterPositions.size !== this.cachedManualClusterPosSize;
     if (positionsChanged) {
@@ -304,18 +299,6 @@ export class KonvaScene {
       this.cachedManualClusterPosSize = config.manualClusterPositions.size;
     }
 
-    // Sync shapes with current data
-    this.syncClusterShapes(config);
-    this.syncNodeShapes(config);
-
-    // Update stage transform
-    this.stage.scale({ x: config.zoom, y: config.zoom });
-    this.stage.position({ x: this.pan.x, y: this.pan.y });
-
-    // Compute viewport bounds once per frame (used by nodes, clusters, edges)
-    this.cachedViewport = this.computeViewportBounds(config);
-
-    // Pre-compute adjusted node type colors (7 types vs N nodes)
     if (config.zoom !== this.adjustedColorsZoom) {
       this.adjustedNodeColors.clear();
       for (const type of Object.values(NodeType)) {
@@ -324,35 +307,57 @@ export class KonvaScene {
       }
       this.adjustedColorsZoom = config.zoom;
     }
+  }
 
-    // Update cluster positions and visuals
-    this.updateClusterVisuals(config);
+  /** Draw all visible clusters with viewport culling. */
+  private drawClusters(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
+    for (const cluster of config.layout.clusters) {
+      const layoutPos = config.layout.clusterPositions.get(cluster.id);
+      if (!layoutPos) continue;
 
-    // Update node positions and visuals
-    this.updateNodePositions(config);
+      const manualPos = config.manualClusterPositions.get(cluster.id);
+      const cx = manualPos?.x ?? layoutPos.x;
+      const cy = manualPos?.y ?? layoutPos.y;
+      const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
 
-    // Clean up completed fading nodes
-    this.updateFadingNodes();
+      if (!isCircleInViewport({ x: cx, y: cy }, radius, viewport)) continue;
 
-    // Update tooltip
-    this.updateTooltip(config);
+      ctx.save();
+      ctx.translate(cx, cy);
+      this.drawCluster(ctx, cluster.id);
+      ctx.restore();
+    }
+  }
 
-    // Draw all layers
-    this.clusterLayer.draw();
-    this.edgeLayer.draw();
-    this.nodeLayer.draw();
-    this.tooltipLayer.draw();
+  /** Draw all visible nodes with viewport culling. */
+  private drawNodes(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
+    for (const node of config.nodes) {
+      const pos = resolveNodeWorldPosition(
+        node.id,
+        node.project || 'External',
+        config.layout,
+        config.manualNodePositions,
+        config.manualClusterPositions,
+      );
+      if (!pos) continue;
+
+      const size = getNodeSize(node);
+      if (!isCircleInViewport({ x: pos.x, y: pos.y }, size * 3, viewport)) continue;
+
+      ctx.save();
+      ctx.translate(pos.x, pos.y);
+      this.drawNode(ctx, node.id);
+      ctx.restore();
+    }
   }
 
   /** Synchronous render for zero-latency zoom response. */
   renderImmediate(): void {
     if (this.config) {
-      this.stage.scale({ x: this._zoom, y: this._zoom });
-      this.stage.position({ x: this.pan.x, y: this.pan.y });
-      this.clusterLayer.draw();
-      this.edgeLayer.draw();
-      this.nodeLayer.draw();
-      this.tooltipLayer.draw();
+      this.config.zoom = this._zoom;
+      this.render(this.config);
     }
   }
 
@@ -380,8 +385,6 @@ export class KonvaScene {
   setViewport(pan: { x: number; y: number }, zoom: number): void {
     this.pan = { ...pan };
     this._zoom = zoom;
-    this.stage.scale({ x: zoom, y: zoom });
-    this.stage.position(pan);
   }
 
   /** Center the pan offset to the middle of the container. */
@@ -412,15 +415,15 @@ export class KonvaScene {
     return screenToWorld(screenX, screenY, this.pan, this._zoom);
   }
 
-  /** Get canvas-relative mouse position. */
-  getMousePosition(e: MouseEvent, canvasRect: DOMRect): { x: number; y: number } {
-    return getCanvasMousePos(e, canvasRect);
-  }
-
-  /** Resize the stage to match container dimensions. */
+  /** Resize the canvas to match container dimensions. */
   resize(width: number, height: number): void {
-    this.stage.width(width);
-    this.stage.height(height);
+    this.width = width;
+    this.height = height;
+    this.dpr = window.devicePixelRatio || 1;
+    this.canvas.width = Math.round(width * this.dpr);
+    this.canvas.height = Math.round(height * this.dpr);
+    // Invalidate gradient cache since contexts change on resize
+    this.gradientCache.clear();
   }
 
   /** Clear caches when layout changes. */
@@ -447,15 +450,18 @@ export class KonvaScene {
 
   /** Destroy the scene and release resources. */
   destroy(): void {
-    this.stage.destroy();
+    this.canvas.removeEventListener('wheel', this.handleWheel);
+    this.canvas.removeEventListener('mousedown', this.handleMouseDown);
+    this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+    this.canvas.removeEventListener('mouseup', this.handleMouseUp);
+    this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
+    this.canvas.remove();
     this.pathCache.clear();
     this.bezierPathCache.clear();
     this.gradientCache.clear();
     this.arcTextCache.clear();
     this.truncateCache.clear();
     this.arcLabelBitmapCache.clear();
-    this.nodeGroups.clear();
-    this.clusterGroups.clear();
     this.nodeMap.clear();
     this.clusterMap.clear();
     this.edgeEndpointCache.clear();
@@ -463,213 +469,7 @@ export class KonvaScene {
   }
 
   // -------------------------------------------------------------------
-  // Shape Sync — add/remove Konva groups to match current data
-  // -------------------------------------------------------------------
-
-  private syncNodeShapes(config: SceneConfig): void {
-    // Use the already-built nodeMap for O(1) lookups instead of creating a new Set
-    // Remove shapes for nodes no longer present (unless they're fading out)
-    for (const [id, group] of this.nodeGroups) {
-      if (!this.nodeMap.has(id) && !this.fadingOutNodes.has(id)) {
-        group.destroy();
-        this.nodeGroups.delete(id);
-      }
-    }
-
-    // Add shapes for new nodes
-    for (const node of config.nodes) {
-      if (!this.nodeGroups.has(node.id)) {
-        const group = this.createNodeGroup(node);
-        this.nodeLayer.add(group);
-        this.nodeGroups.set(node.id, group);
-      }
-    }
-  }
-
-  private syncClusterShapes(config: SceneConfig): void {
-    // Use the already-built clusterMap for O(1) lookups instead of creating a new Set
-    for (const [id, group] of this.clusterGroups) {
-      if (!this.clusterMap.has(id)) {
-        group.destroy();
-        this.clusterGroups.delete(id);
-      }
-    }
-
-    for (const cluster of config.layout.clusters) {
-      if (!this.clusterGroups.has(cluster.id)) {
-        const group = this.createClusterGroup(cluster.id);
-        this.clusterLayer.add(group);
-        this.clusterGroups.set(cluster.id, group);
-      }
-    }
-  }
-
-  // -------------------------------------------------------------------
-  // Node Group Creation
-  // -------------------------------------------------------------------
-
-  private createNodeGroup(node: GraphNode): Konva.Group {
-    const group = new Konva.Group({ id: node.id, transformsEnabled: 'position' });
-
-    const shape = new Konva.Shape({
-      perfectDrawEnabled: false,
-      shadowForStrokeEnabled: false,
-      sceneFunc: (context) => {
-        if (!this.config) return;
-        this.drawNode(context._context, node.id);
-      },
-      hitFunc: (context, shape) => {
-        const size = getNodeSize(node);
-        const hitRadius = size * 2;
-        context.beginPath();
-        context.arc(0, 0, hitRadius, 0, Math.PI * 2);
-        context.closePath();
-        context.fillStrokeShape(shape);
-      },
-    });
-
-    group.add(shape);
-
-    // Events
-    group.on('mouseenter', () => {
-      if (this.isDragging) return;
-      this.currentHoveredNode = node.id;
-      this.currentHoveredCluster = node.project || 'External';
-      this.callbacks.onNodeHover(node.id);
-      this.callbacks.onClusterHover(this.currentHoveredCluster);
-      this.callbacks.onRenderRequest();
-    });
-
-    group.on('mouseleave', () => {
-      if (this.isDragging) return;
-      if (this.currentHoveredNode === node.id) {
-        this.currentHoveredNode = null;
-        this.callbacks.onNodeHover(null);
-      }
-      // Don't clear cluster hover here — let the stage handle it
-      this.callbacks.onRenderRequest();
-    });
-
-    group.on('mousedown', (e) => {
-      e.cancelBubble = true;
-      this.draggedNodeId = node.id;
-      this.isDragging = true;
-      this.hasMoved = false;
-
-      const currentNode = this.nodeMap.get(node.id);
-      if (currentNode) {
-        const selected = this.config?.selectedNode;
-        const newSelection = selected?.id === currentNode.id ? null : currentNode;
-        this.callbacks.onNodeSelect(newSelection);
-      }
-    });
-
-    return group;
-  }
-
-  // -------------------------------------------------------------------
-  // Cluster Group Creation
-  // -------------------------------------------------------------------
-
-  private createClusterGroup(clusterId: string): Konva.Group {
-    const group = new Konva.Group({ id: clusterId, transformsEnabled: 'position' });
-
-    const shape = new Konva.Shape({
-      perfectDrawEnabled: false,
-      shadowForStrokeEnabled: false,
-      sceneFunc: (context) => {
-        if (!this.config) return;
-        this.drawCluster(context._context, clusterId);
-      },
-      hitFunc: (context, shape) => {
-        if (!this.config) return;
-        const layoutPos = this.config.layout.clusterPositions.get(clusterId);
-        if (!layoutPos) return;
-        const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
-        context.beginPath();
-        context.arc(0, 0, radius, 0, Math.PI * 2);
-        context.closePath();
-        context.fillStrokeShape(shape);
-      },
-    });
-
-    group.add(shape);
-
-    group.on('mouseenter', () => {
-      if (this.isDragging) return;
-      if (!this.currentHoveredNode) {
-        this.currentHoveredCluster = clusterId;
-        this.callbacks.onClusterHover(clusterId);
-        this.callbacks.onRenderRequest();
-      }
-    });
-
-    group.on('mouseleave', () => {
-      if (this.isDragging) return;
-      if (this.currentHoveredCluster === clusterId && !this.currentHoveredNode) {
-        this.currentHoveredCluster = null;
-        this.callbacks.onClusterHover(null);
-        this.callbacks.onRenderRequest();
-      }
-    });
-
-    group.on('mousedown', (e) => {
-      const evt = e.evt;
-      if (evt.shiftKey || evt.metaKey) {
-        e.cancelBubble = true;
-        this.draggedClusterId = clusterId;
-        this.isDragging = true;
-        this.hasMoved = false;
-        this.callbacks.onClusterSelect(clusterId);
-      } else {
-        e.cancelBubble = true;
-        this.callbacks.onClusterSelect(clusterId);
-      }
-    });
-
-    return group;
-  }
-
-  // -------------------------------------------------------------------
-  // Position & Visual Updates
-  // -------------------------------------------------------------------
-
-  private updateNodePositions(config: SceneConfig): void {
-    for (const node of config.nodes) {
-      const group = this.nodeGroups.get(node.id);
-      if (!group) continue;
-
-      const pos = resolveNodeWorldPosition(
-        node.id,
-        node.project || 'External',
-        config.layout,
-        config.manualNodePositions,
-        config.manualClusterPositions,
-      );
-
-      if (pos) {
-        group.position({ x: pos.x, y: pos.y });
-      }
-    }
-  }
-
-  private updateClusterVisuals(config: SceneConfig): void {
-    for (const cluster of config.layout.clusters) {
-      const group = this.clusterGroups.get(cluster.id);
-      if (!group) continue;
-
-      const layoutPos = config.layout.clusterPositions.get(cluster.id);
-      if (!layoutPos) continue;
-
-      const manualPos = config.manualClusterPositions.get(cluster.id);
-      const cx = manualPos?.x ?? layoutPos.x;
-      const cy = manualPos?.y ?? layoutPos.y;
-      group.position({ x: cx, y: cy });
-    }
-  }
-
-  // -------------------------------------------------------------------
-  // Node Drawing (sceneFunc)
+  // Node Drawing
   // -------------------------------------------------------------------
 
   private drawNode(ctx: CanvasRenderingContext2D, nodeId: string): void {
@@ -814,7 +614,6 @@ export class KonvaScene {
     isInChain: boolean,
     isHovered: boolean,
   ): void {
-    // Skip text rendering at very low zoom levels — labels are unreadable
     if ((this.config?.zoom ?? 1) < LOD_THRESHOLDS.NODE_LABELS) return;
 
     const labelText =
@@ -853,7 +652,7 @@ export class KonvaScene {
   }
 
   // -------------------------------------------------------------------
-  // Cluster Drawing (sceneFunc)
+  // Cluster Drawing
   // -------------------------------------------------------------------
 
   private drawCluster(ctx: CanvasRenderingContext2D, clusterId: string): void {
@@ -950,7 +749,6 @@ export class KonvaScene {
     isActive: boolean,
     name: string,
   ): void {
-    // Skip arc text at very low zoom — per-character operations are expensive and unreadable
     if ((this.config?.zoom ?? 1) < LOD_THRESHOLDS.CLUSTER_ARC_LABELS) return;
 
     const fontSize = CLUSTER_LABEL_CONFIG.FONT_SIZE;
@@ -965,7 +763,6 @@ export class KonvaScene {
     const displayName = this.truncateText(ctx, name, maxTextWidth);
     const arcRadius = radius + CLUSTER_LABEL_CONFIG.LABEL_PADDING;
 
-    // Use cached offscreen bitmap to avoid per-character setTransform + fillText every frame
     const bitmapKey = `${font}-${displayName}-${Math.round(arcRadius)}-${color}`;
     let cached = this.arcLabelBitmapCache.get(bitmapKey);
     if (!cached) {
@@ -993,10 +790,6 @@ export class KonvaScene {
     return result;
   }
 
-  /**
-   * Render arc label text to an offscreen canvas bitmap.
-   * Called once per unique label, then the bitmap is reused via drawImage each frame.
-   */
   private renderArcLabelBitmap(
     ctx: CanvasRenderingContext2D,
     text: string,
@@ -1004,7 +797,6 @@ export class KonvaScene {
     font: string,
     color: string,
   ): { canvas: OffscreenCanvas; width: number; height: number; arcRadius: number } {
-    // Measure character widths using the main ctx (inherits font metrics)
     const cacheKey = `${font}-${text}`;
     let measurements = this.arcTextCache.get(cacheKey);
     if (!measurements) {
@@ -1020,14 +812,12 @@ export class KonvaScene {
       this.arcTextCache.set(cacheKey, measurements);
     }
 
-    // Size the bitmap to cover the arc label area
     const padding = 4;
     const bitmapSize = (arcRadius + padding) * 2;
     const canvas = new OffscreenCanvas(bitmapSize, bitmapSize);
     const offCtx = canvas.getContext('2d');
     if (!offCtx) return { canvas, width: bitmapSize, height: bitmapSize, arcRadius };
 
-    // Draw arc text centered in the bitmap
     const cx = bitmapSize / 2;
     const cy = bitmapSize / 2;
     offCtx.font = font;
@@ -1059,10 +849,9 @@ export class KonvaScene {
   }
 
   // -------------------------------------------------------------------
-  // Edge Drawing (sceneFunc — batched + individual)
+  // Edge Drawing
   // -------------------------------------------------------------------
 
-  /** Pre-compute edge metadata once per frame to eliminate redundant per-edge calculations. */
   private precomputeEdgeMeta(edges: GraphEdge[], isChainActive: boolean): void {
     this.edgeMetaMap.clear();
     for (const edge of edges) {
@@ -1080,72 +869,79 @@ export class KonvaScene {
     const config = this.config;
     if (!config) return;
 
-    const { edges, zoom, time, theme } = config;
-    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
+    const { edges, zoom, time } = config;
 
+    // Two-tier LOD: cluster arteries at low zoom, individual edges at high zoom
+    if (zoom < LOD_THRESHOLDS.ARROWHEADS) {
+      this.drawClusterArteries(ctx);
+      return;
+    }
+
+    // High zoom: individual edges with arrowheads
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
     const isChainActive =
       config.showDirectDeps ||
       config.showTransitiveDeps ||
       config.showDirectDependents ||
       config.showTransitiveDependents;
 
-    const hideNonEmphasized = zoom < EDGE_HIDE_ZOOM_THRESHOLD;
-    const batchEdges = !hideNonEmphasized && zoom < LOD_THRESHOLDS.ARROWHEADS;
-
-    // Pre-compute all edge metadata once per frame
     this.precomputeEdgeMeta(edges, isChainActive);
 
-    if (batchEdges) {
-      this.drawBatchedEdges(ctx, edges, viewport, theme, zoom);
-    }
-
     const animatedDashOffset = prefersReducedMotion.get() ? 0 : time / 20;
-    this.drawIndividualEdges(
-      ctx,
-      edges,
-      viewport,
-      batchEdges,
-      hideNonEmphasized,
-      animatedDashOffset,
-    );
+    this.drawIndividualEdges(ctx, edges, viewport, animatedDashOffset);
   }
 
-  private drawBatchedEdges(
-    ctx: CanvasRenderingContext2D,
-    edges: GraphEdge[],
-    viewport: ViewportBounds,
-    theme: CanvasTheme,
-    zoom: number,
-  ): void {
-    ctx.save();
-    ctx.strokeStyle = theme.edgeDefault;
-    ctx.globalAlpha = 0.25;
-    ctx.lineWidth = 1 / zoom;
-    ctx.setLineDash([]);
-    ctx.beginPath();
+  private drawClusterArteries(ctx: CanvasRenderingContext2D): void {
+    const config = this.config;
+    if (!config) return;
+    const clusterEdges = config.layout.clusterEdges;
+    if (!clusterEdges || clusterEdges.length === 0) return;
 
-    for (const edge of edges) {
-      const meta = this.edgeMetaMap.get(edge);
-      if (!meta || meta.isSpecial) continue;
+    const { zoom, theme } = config;
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
 
-      const { endpoints } = meta;
-      if (!endpoints) continue;
-      if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
-        continue;
+    for (const edge of clusterEdges) {
+      const sLayout = config.layout.clusterPositions.get(edge.source);
+      const tLayout = config.layout.clusterPositions.get(edge.target);
+      if (!sLayout || !tLayout) continue;
 
-      ctx.moveTo(endpoints.x1, endpoints.y1);
-      ctx.lineTo(endpoints.x2, endpoints.y2);
+      const sPos = resolveClusterPosition(edge.source, sLayout, config.manualClusterPositions);
+      const tPos = resolveClusterPosition(edge.target, tLayout, config.manualClusterPositions);
+
+      if (!isLineInViewportRaw(sPos.x, sPos.y, tPos.x, tPos.y, viewport)) continue;
+
+      // Line thickness: 1-6px based on weight, scaled by zoom
+      const thickness = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
+
+      ctx.save();
+      ctx.strokeStyle = theme.edgeDefault;
+      ctx.globalAlpha = 0.5;
+      ctx.lineWidth = thickness;
+      ctx.setLineDash([]);
+
+      this.drawEdgePath(ctx, sPos.x, sPos.y, tPos.x, tPos.y);
+
+      // Arrowhead
+      const arrowSize = 8 / zoom;
+      const angle = Math.atan2(tPos.y - sPos.y, tPos.x - sPos.x);
+      ctx.translate(tPos.x, tPos.y);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-arrowSize, arrowSize * 0.5);
+      ctx.lineTo(-arrowSize, -arrowSize * 0.5);
+      ctx.closePath();
+      ctx.fillStyle = theme.edgeDefault;
+      ctx.globalAlpha = 0.5;
+      ctx.fill();
+      ctx.restore();
     }
-    ctx.stroke();
-    ctx.restore();
   }
 
   private drawIndividualEdges(
     ctx: CanvasRenderingContext2D,
     edges: GraphEdge[],
     viewport: ViewportBounds,
-    batchEdges: boolean,
-    hideNonEmphasized: boolean,
     animatedDashOffset: number,
   ): void {
     ctx.lineWidth = 1;
@@ -1153,14 +949,10 @@ export class KonvaScene {
       const meta = this.edgeMetaMap.get(edge);
       if (!meta) continue;
 
-      if (batchEdges && !meta.isSpecial) continue;
-      if (hideNonEmphasized && !meta.isHighlighted && !meta.inChain) continue;
-
-      this.renderSingleEdge(ctx, edge, meta, viewport, animatedDashOffset);
+      this.renderSingleEdge(ctx, meta, viewport, animatedDashOffset);
     }
   }
 
-  /** Resolves edge endpoints with per-frame caching to avoid redundant lookups. */
   private resolveEdgeEndpointsCached(edge: GraphEdge): {
     sourceNode: GraphNode;
     targetNode: GraphNode;
@@ -1203,8 +995,6 @@ export class KonvaScene {
     const tClusterLayout = config.layout.clusterPositions.get(targetClusterId);
     if (!sClusterLayout || !tClusterLayout) return null;
 
-    // Resolve cluster positions — capture values immediately since
-    // resolveClusterPosition returns a reusable object
     const sCluster = resolveClusterPosition(
       sourceClusterId,
       sClusterLayout,
@@ -1294,7 +1084,6 @@ export class KonvaScene {
 
   private renderSingleEdge(
     ctx: CanvasRenderingContext2D,
-    _edge: GraphEdge,
     meta: EdgeMeta,
     viewport: ViewportBounds,
     animatedDashOffset: number,
@@ -1457,12 +1246,10 @@ export class KonvaScene {
     const distance = Math.hypot(x2 - x1, y2 - y1);
     if (distance > 150) {
       const pathStr = generateBezierPath(x1, y1, x2, y2);
-      // Cache Path2D objects keyed by the (already rounded) path string
       let path = this.bezierPathCache.get(pathStr);
       if (!path) {
         path = new Path2D(pathStr);
-        // FIFO eviction
-        if (this.bezierPathCache.size >= KonvaScene.MAX_BEZIER_CACHE_SIZE) {
+        if (this.bezierPathCache.size >= CanvasScene.MAX_BEZIER_CACHE_SIZE) {
           const firstKey = this.bezierPathCache.keys().next().value;
           if (firstKey) this.bezierPathCache.delete(firstKey);
         }
@@ -1478,27 +1265,26 @@ export class KonvaScene {
   }
 
   // -------------------------------------------------------------------
-  // Tooltip
+  // Tooltip (screen space)
   // -------------------------------------------------------------------
 
-  private updateTooltip(config: SceneConfig): void {
+  private drawTooltip(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
     const { hoveredNode, hoveredCluster } = config;
 
     if (hoveredNode) {
-      this.showNodeTooltip(config, hoveredNode);
+      this.drawNodeTooltip(ctx, config, hoveredNode);
     } else if (hoveredCluster) {
-      this.showClusterTooltip(config, hoveredCluster);
-    } else {
-      this.hideTooltip();
+      this.drawClusterTooltip(ctx, config, hoveredCluster);
     }
   }
 
-  private showNodeTooltip(config: SceneConfig, hoveredNode: string): void {
-    const node = this.nodeMap.get(hoveredNode);
-    if (!node) {
-      this.hideTooltip();
-      return;
-    }
+  private drawNodeTooltip(
+    ctx: CanvasRenderingContext2D,
+    config: SceneConfig,
+    hoveredNodeId: string,
+  ): void {
+    const node = this.nodeMap.get(hoveredNodeId);
+    if (!node) return;
 
     const worldPos = resolveNodeWorldPosition(
       node.id,
@@ -1507,10 +1293,7 @@ export class KonvaScene {
       config.manualNodePositions,
       config.manualClusterPositions,
     );
-    if (!worldPos) {
-      this.hideTooltip();
-      return;
-    }
+    if (!worldPos) return;
 
     const { theme, zoom } = config;
     const size = getNodeSize(node);
@@ -1518,147 +1301,231 @@ export class KonvaScene {
       this.adjustedNodeColors.get(node.type) ??
       adjustColorForZoom(getNodeTypeColorFromTheme(node.type, theme), zoom);
 
-    this.tooltipGroup.position({ x: worldPos.x, y: worldPos.y - size - 35 / zoom });
-    this.tooltipGroup.scale({ x: 1 / zoom, y: 1 / zoom });
+    // Convert world position to screen space
+    const screenX = worldPos.x * zoom + this.pan.x;
+    const screenY = (worldPos.y - size) * zoom + this.pan.y - 35;
 
-    if (this.lastTooltipText !== node.name) {
-      this.tooltipText.text(node.name);
-      this.tooltipText.fontFamily('var(--fonts-body, sans-serif)');
-      this.lastTooltipText = node.name;
+    ctx.save();
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
-      const textWidth = this.tooltipText.width();
-      const padding = 8;
-      const tooltipWidth = textWidth + padding * 2;
+    ctx.font = TOOLTIP_FONT;
+    ctx.textAlign = 'center';
+    const textWidth = ctx.measureText(node.name).width;
+    const padding = 8;
+    const tooltipWidth = textWidth + padding * 2;
+    const tooltipHeight = 24;
 
-      this.tooltipBg.width(tooltipWidth);
-      this.tooltipBg.height(24);
-      this.tooltipBg.x(-tooltipWidth / 2);
-      this.tooltipBg.y(-12);
-      this.tooltipText.x(-textWidth / 2);
-      this.tooltipText.y(-6);
-    }
+    // Background
+    ctx.fillStyle = theme.tooltipBg;
+    ctx.strokeStyle = nodeColor;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    this.roundRect(
+      ctx,
+      screenX - tooltipWidth / 2,
+      screenY - tooltipHeight / 2,
+      tooltipWidth,
+      tooltipHeight,
+      4,
+    );
+    ctx.fill();
+    ctx.stroke();
 
-    this.tooltipText.fill(nodeColor);
-    this.tooltipBg.fill(theme.tooltipBg);
-    this.tooltipBg.stroke(nodeColor);
-    this.tooltipBg.strokeWidth(1);
-    this.tooltipSubtext.visible(false);
-    this.lastTooltipSubtext = '';
-    this.tooltipGroup.visible(true);
+    // Text
+    ctx.fillStyle = nodeColor;
+    ctx.fillText(node.name, screenX, screenY + 4);
+
+    ctx.restore();
   }
 
-  private showClusterTooltip(config: SceneConfig, hoveredCluster: string): void {
-    const cluster = this.clusterMap.get(hoveredCluster);
-    if (!cluster) {
-      this.hideTooltip();
-      return;
-    }
+  private drawClusterTooltip(
+    ctx: CanvasRenderingContext2D,
+    config: SceneConfig,
+    hoveredClusterId: string,
+  ): void {
+    const cluster = this.clusterMap.get(hoveredClusterId);
+    if (!cluster) return;
 
-    const layoutPos = config.layout.clusterPositions.get(hoveredCluster);
-    if (!layoutPos) {
-      this.hideTooltip();
-      return;
-    }
+    const layoutPos = config.layout.clusterPositions.get(hoveredClusterId);
+    if (!layoutPos) return;
 
     const { theme, zoom } = config;
     const clusterPos = resolveClusterPosition(
-      hoveredCluster,
+      hoveredClusterId,
       layoutPos,
       config.manualClusterPositions,
     );
     const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
     const clusterColor = adjustColorForZoom(generateColor(cluster.name, cluster.type), zoom);
 
-    this.tooltipGroup.position({
-      x: clusterPos.x,
-      y: clusterPos.y - radius - 60 / zoom,
-    });
-    this.tooltipGroup.scale({ x: 1 / zoom, y: 1 / zoom });
+    // Convert to screen space
+    const screenX = clusterPos.x * zoom + this.pan.x;
+    const screenY = (clusterPos.y - radius) * zoom + this.pan.y - 60;
 
     const subtitleText = `${cluster.nodes.length} targets`;
 
-    if (this.lastTooltipText !== cluster.name || this.lastTooltipSubtext !== subtitleText) {
-      this.tooltipText.text(cluster.name);
-      this.tooltipText.fontSize(13);
-      this.tooltipText.fontStyle('600');
-      this.tooltipText.fontFamily('var(--fonts-body, sans-serif)');
-      this.lastTooltipText = cluster.name;
+    ctx.save();
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
-      this.tooltipSubtext.text(subtitleText);
-      this.tooltipSubtext.fontSize(11);
-      this.tooltipSubtext.fontFamily('var(--fonts-body, sans-serif)');
-      this.lastTooltipSubtext = subtitleText;
+    // Measure text
+    ctx.font = TOOLTIP_TITLE_FONT;
+    const nameWidth = ctx.measureText(cluster.name).width;
+    ctx.font = TOOLTIP_SUBTITLE_FONT;
+    const subtitleWidth = ctx.measureText(subtitleText).width;
+    const maxWidth = Math.max(nameWidth, subtitleWidth);
+    const padding = 10;
+    const tooltipWidth = maxWidth + padding * 2;
+    const tooltipHeight = 40;
 
-      const nameWidth = this.tooltipText.width();
-      const subtitleWidth = this.tooltipSubtext.width();
-      const maxWidth = Math.max(nameWidth, subtitleWidth);
-      const padding = 10;
-      const tooltipWidth = maxWidth + padding * 2;
+    // Background
+    ctx.fillStyle = theme.tooltipBg;
+    ctx.strokeStyle = clusterColor;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    this.roundRect(
+      ctx,
+      screenX - tooltipWidth / 2,
+      screenY - tooltipHeight / 2,
+      tooltipWidth,
+      tooltipHeight,
+      4,
+    );
+    ctx.fill();
+    ctx.stroke();
 
-      this.tooltipBg.width(tooltipWidth);
-      this.tooltipBg.height(40);
-      this.tooltipBg.x(-tooltipWidth / 2);
-      this.tooltipBg.y(-20);
-      this.tooltipText.x(-nameWidth / 2);
-      this.tooltipText.y(-14);
-      this.tooltipSubtext.x(-subtitleWidth / 2);
-      this.tooltipSubtext.y(2);
-    }
+    // Title
+    ctx.font = TOOLTIP_TITLE_FONT;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = clusterColor;
+    ctx.fillText(cluster.name, screenX, screenY - 4);
 
-    this.tooltipText.fill(clusterColor);
-    this.tooltipSubtext.fill(clusterColor);
-    this.tooltipSubtext.visible(true);
-    this.tooltipBg.fill(theme.tooltipBg);
-    this.tooltipBg.stroke(clusterColor);
-    this.tooltipBg.strokeWidth(1);
-    this.tooltipGroup.visible(true);
+    // Subtitle
+    ctx.font = TOOLTIP_SUBTITLE_FONT;
+    ctx.globalAlpha = 0.7;
+    ctx.fillText(subtitleText, screenX, screenY + 12);
+    ctx.globalAlpha = 1.0;
+
+    ctx.restore();
   }
 
-  private hideTooltip(): void {
-    if (this.tooltipGroup.visible()) {
-      this.tooltipGroup.visible(false);
-      this.lastTooltipText = '';
-      this.lastTooltipSubtext = '';
-    }
+  private roundRect(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    r: number,
+  ): void {
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
   }
 
   // -------------------------------------------------------------------
   // Fading Nodes
   // -------------------------------------------------------------------
 
-  private updateFadingNodes(): void {
-    if (this.fadingOutNodes.size === 0 || !this.config) return;
+  private drawFadingNodes(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
+    if (this.fadingOutNodes.size === 0) return;
 
     const now = performance.now();
 
-    for (const [nodeId, { startTime }] of this.fadingOutNodes) {
+    for (const [nodeId, { node, startTime }] of this.fadingOutNodes) {
       const elapsed = now - startTime;
-      const group = this.nodeGroups.get(nodeId);
 
       if (elapsed >= FADE_OUT_DURATION) {
-        // Animation complete — remove the shape and tracking entry
-        if (group) {
-          group.destroy();
-          this.nodeGroups.delete(nodeId);
-        }
         this.fadingOutNodes.delete(nodeId);
         continue;
       }
 
-      // Still fading — update opacity on the Konva group
-      if (group) {
-        const opacity = 1 - elapsed / FADE_OUT_DURATION;
-        group.opacity(opacity);
+      const opacity = 1 - elapsed / FADE_OUT_DURATION;
+      const pos = resolveNodeWorldPosition(
+        node.id,
+        node.project || 'External',
+        config.layout,
+        config.manualNodePositions,
+        config.manualClusterPositions,
+      );
+      if (!pos) continue;
+
+      ctx.save();
+      ctx.globalAlpha = opacity;
+      ctx.translate(pos.x, pos.y);
+      this.drawNode(ctx, node.id);
+      ctx.restore();
+    }
+  }
+
+  // -------------------------------------------------------------------
+  // Hit Testing (on mouse events, not per-frame)
+  // -------------------------------------------------------------------
+
+  private hitTestNode(worldX: number, worldY: number): GraphNode | null {
+    const config = this.config;
+    if (!config) return null;
+
+    let closestNode: GraphNode | null = null;
+    let closestDist = Number.POSITIVE_INFINITY;
+
+    for (const node of config.nodes) {
+      const pos = resolveNodeWorldPosition(
+        node.id,
+        node.project || 'External',
+        config.layout,
+        config.manualNodePositions,
+        config.manualClusterPositions,
+      );
+      if (!pos) continue;
+
+      const dx = worldX - pos.x;
+      const dy = worldY - pos.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const hitRadius = getNodeSize(node) * NODE_HIT_RADIUS_MULTIPLIER;
+
+      if (dist < hitRadius && dist < closestDist) {
+        closestDist = dist;
+        closestNode = node;
       }
     }
+
+    return closestNode;
+  }
+
+  private hitTestCluster(worldX: number, worldY: number): string | null {
+    const config = this.config;
+    if (!config) return null;
+
+    for (const cluster of config.layout.clusters) {
+      const layoutPos = config.layout.clusterPositions.get(cluster.id);
+      if (!layoutPos) continue;
+
+      const manualPos = config.manualClusterPositions.get(cluster.id);
+      const cx = manualPos?.x ?? layoutPos.x;
+      const cy = manualPos?.y ?? layoutPos.y;
+      const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
+
+      const dx = worldX - cx;
+      const dy = worldY - cy;
+      if (dx * dx + dy * dy <= radius * radius) {
+        return cluster.id;
+      }
+    }
+
+    return null;
   }
 
   // -------------------------------------------------------------------
   // Interaction Handlers
   // -------------------------------------------------------------------
 
-  private handleWheel(e: Konva.KonvaEventObject<WheelEvent>): void {
-    const evt = e.evt;
+  private handleWheel = (evt: WheelEvent): void => {
     evt.preventDefault();
 
     const modeFactor = evt.deltaMode === 1 ? 0.05 : evt.deltaMode ? 1 : 0.002;
@@ -1671,73 +1538,96 @@ export class KonvaScene {
     );
 
     if (newZoom !== this._zoom) {
-      const stage = this.stage;
-      const pointer = stage.getPointerPosition();
-      if (!pointer) return;
+      const rect = this.canvas.getBoundingClientRect();
+      const pointerX = evt.clientX - rect.left;
+      const pointerY = evt.clientY - rect.top;
 
-      // Convert pointer to world position at current zoom
-      const worldX = (pointer.x - this.pan.x) / this._zoom;
-      const worldY = (pointer.y - this.pan.y) / this._zoom;
+      const worldX = (pointerX - this.pan.x) / this._zoom;
+      const worldY = (pointerY - this.pan.y) / this._zoom;
 
       this._zoom = newZoom;
       this.pan = {
-        x: pointer.x - worldX * newZoom,
-        y: pointer.y - worldY * newZoom,
+        x: pointerX - worldX * newZoom,
+        y: pointerY - worldY * newZoom,
       };
-
-      // Update stage transform
-      stage.scale({ x: newZoom, y: newZoom });
-      stage.position(this.pan);
 
       this.callbacks.onZoomChange(newZoom);
 
-      // Synchronous render for zero-latency zoom — draw each layer individually
-      this.clusterLayer.draw();
-      this.edgeLayer.draw();
-      this.nodeLayer.draw();
-      this.tooltipLayer.draw();
+      // Synchronous render for zero-latency zoom
+      this.renderImmediate();
     }
-  }
+  };
 
-  private handleMouseDown(e: Konva.KonvaEventObject<MouseEvent>): void {
-    // Only handle clicks on empty stage space (not on shapes)
-    if (e.target !== this.stage) return;
+  private handleMouseDown = (evt: MouseEvent): void => {
+    const rect = this.canvas.getBoundingClientRect();
+    const screenX = evt.clientX - rect.left;
+    const screenY = evt.clientY - rect.top;
+    const worldPos = this.screenToWorldPos(screenX, screenY);
 
-    this.isPanning = true;
+    this.lastMousePos = { x: evt.clientX, y: evt.clientY };
     this.hasMoved = false;
-    this.clickedEmptySpace = true;
-    this.lastMousePos = { x: e.evt.clientX, y: e.evt.clientY };
-  }
 
-  private handleMouseMove(e: Konva.KonvaEventObject<MouseEvent>): void {
-    if (this.draggedClusterId && this.config) {
-      this.handleDragCluster();
-    } else if (this.draggedNodeId && this.config) {
-      this.handleDragNode();
-    } else if (this.isPanning) {
-      this.handlePan(e.evt);
-    } else if (e.target === this.stage) {
-      this.clearHoverStates();
+    // Check if clicking a node
+    const hitNode = this.hitTestNode(worldPos.x, worldPos.y);
+    if (hitNode) {
+      this.draggedNodeId = hitNode.id;
+      this.isDragging = true;
+      this.clickedEmptySpace = false;
+
+      const selected = this.config?.selectedNode;
+      const newSelection = selected?.id === hitNode.id ? null : hitNode;
+      this.callbacks.onNodeSelect(newSelection);
+      return;
     }
-  }
 
-  private handleDragCluster(): void {
+    // Check if clicking a cluster (shift/meta for drag)
+    const hitCluster = this.hitTestCluster(worldPos.x, worldPos.y);
+    if (hitCluster) {
+      this.clickedEmptySpace = false;
+      if (evt.shiftKey || evt.metaKey) {
+        this.draggedClusterId = hitCluster;
+        this.isDragging = true;
+      }
+      this.callbacks.onClusterSelect(hitCluster);
+      return;
+    }
+
+    // Clicked empty space — start panning
+    this.isPanning = true;
+    this.clickedEmptySpace = true;
+  };
+
+  private handleMouseMove = (evt: MouseEvent): void => {
+    if (this.draggedClusterId && this.config) {
+      this.handleDragCluster(evt);
+    } else if (this.draggedNodeId && this.config) {
+      this.handleDragNode(evt);
+    } else if (this.isPanning) {
+      this.handlePan(evt);
+    } else {
+      this.handleHover(evt);
+    }
+  };
+
+  private handleDragCluster(evt: MouseEvent): void {
     if (!this.config || !this.draggedClusterId) return;
     this.hasMoved = true;
-    const pointer = this.stage.getPointerPosition();
-    if (!pointer) return;
-    const worldPos = this.screenToWorldPos(pointer.x, pointer.y);
+    const rect = this.canvas.getBoundingClientRect();
+    const screenX = evt.clientX - rect.left;
+    const screenY = evt.clientY - rect.top;
+    const worldPos = this.screenToWorldPos(screenX, screenY);
     this.config.manualClusterPositions.set(this.draggedClusterId, worldPos);
     this.callbacks.onInvalidateEdgePathCache();
     this.callbacks.onRenderRequest();
   }
 
-  private handleDragNode(): void {
+  private handleDragNode(evt: MouseEvent): void {
     if (!this.config || !this.draggedNodeId) return;
     this.hasMoved = true;
-    const pointer = this.stage.getPointerPosition();
-    if (!pointer) return;
-    const worldPos = this.screenToWorldPos(pointer.x, pointer.y);
+    const rect = this.canvas.getBoundingClientRect();
+    const screenX = evt.clientX - rect.left;
+    const screenY = evt.clientY - rect.top;
+    const worldPos = this.screenToWorldPos(screenX, screenY);
 
     const dragNode = this.nodeMap.get(this.draggedNodeId);
     if (!dragNode) return;
@@ -1765,32 +1655,43 @@ export class KonvaScene {
     const dy = evt.clientY - this.lastMousePos.y;
     this.pan = { x: this.pan.x + dx, y: this.pan.y + dy };
     this.lastMousePos = { x: evt.clientX, y: evt.clientY };
-    this.stage.position(this.pan);
 
-    // Immediate draw for zero-latency pan response.
-    // Shapes are already positioned in world-space; only the stage
-    // transform changed. A deferred full render updates viewport culling.
-    this.clusterLayer.draw();
-    this.edgeLayer.draw();
-    this.nodeLayer.draw();
-    this.tooltipLayer.draw();
+    // Immediate render for zero-latency pan
+    this.renderImmediate();
     this.callbacks.onRenderRequest();
   }
 
-  private clearHoverStates(): void {
-    if (this.currentHoveredNode) {
-      this.currentHoveredNode = null;
-      this.callbacks.onNodeHover(null);
+  private handleHover(evt: MouseEvent): void {
+    const rect = this.canvas.getBoundingClientRect();
+    const screenX = evt.clientX - rect.left;
+    const screenY = evt.clientY - rect.top;
+    const worldPos = this.screenToWorldPos(screenX, screenY);
+
+    const hitNode = this.hitTestNode(worldPos.x, worldPos.y);
+    const newHoveredNode = hitNode?.id ?? null;
+
+    if (newHoveredNode !== this.currentHoveredNode) {
+      this.currentHoveredNode = newHoveredNode;
+      this.callbacks.onNodeHover(newHoveredNode);
+
+      if (hitNode) {
+        this.currentHoveredCluster = hitNode.project || 'External';
+        this.callbacks.onClusterHover(this.currentHoveredCluster);
+      }
       this.callbacks.onRenderRequest();
     }
-    if (this.currentHoveredCluster) {
-      this.currentHoveredCluster = null;
-      this.callbacks.onClusterHover(null);
-      this.callbacks.onRenderRequest();
+
+    if (!hitNode) {
+      const hitCluster = this.hitTestCluster(worldPos.x, worldPos.y);
+      if (hitCluster !== this.currentHoveredCluster) {
+        this.currentHoveredCluster = hitCluster;
+        this.callbacks.onClusterHover(hitCluster);
+        this.callbacks.onRenderRequest();
+      }
     }
   }
 
-  private handleMouseUp(): void {
+  private handleMouseUp = (): void => {
     if (this.clickedEmptySpace && !this.hasMoved) {
       this.callbacks.onNodeSelect(null);
       this.callbacks.onClusterSelect(null);
@@ -1804,9 +1705,9 @@ export class KonvaScene {
     setTimeout(() => {
       this.hasMoved = false;
     }, 0);
-  }
+  };
 
-  private handleMouseLeave(): void {
+  private handleMouseLeave = (): void => {
     this.handleMouseUp();
     if (this.currentHoveredNode) {
       this.currentHoveredNode = null;
@@ -1816,18 +1717,21 @@ export class KonvaScene {
       this.currentHoveredCluster = null;
       this.callbacks.onClusterHover(null);
     }
-  }
+  };
 
   // -------------------------------------------------------------------
   // Viewport Helpers
   // -------------------------------------------------------------------
 
   private computeViewportBounds(config: SceneConfig): ViewportBounds {
-    const width = this.stage.width();
-    const height = this.stage.height();
-    // Scale margin inversely with zoom so nodes don't pop in/out at viewport edges
-    // when zoomed out. At zoom=1 the margin is 200; at zoom=0.1 it's 2000.
     const margin = Math.max(200, 200 / config.zoom);
-    return calculateViewportBounds(width, height, this.pan.x, this.pan.y, config.zoom, margin);
+    return calculateViewportBounds(
+      this.width,
+      this.height,
+      this.pan.x,
+      this.pan.y,
+      config.zoom,
+      margin,
+    );
   }
 }

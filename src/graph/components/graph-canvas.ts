@@ -26,14 +26,14 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { ErrorService } from '@/services/error-service';
 import type { CanvasEventMap } from './canvas/canvas-keyboard-handler';
 import { handleKeyDown } from './canvas/canvas-keyboard-handler';
-import { type FadingNode, KonvaScene, type SceneConfig } from './canvas/konva-scene';
+import { CanvasScene, type FadingNode, type SceneConfig } from './canvas/canvas-scene';
 import './graph-hidden-dom';
 
 /**
- * Konva-based graph visualization component. Renders nodes, edges, and clusters
- * using a Konva.js scene graph with pan, zoom, and interactive selection support.
+ * Canvas2D graph visualization component. Renders nodes, edges, and clusters
+ * using raw Canvas2D with pan, zoom, and interactive selection support.
  *
- * @summary Konva-based interactive graph visualization
+ * @summary Canvas2D interactive graph visualization
  * @fires node-select - Dispatched when a node is selected or deselected (detail: { node })
  * @fires node-hover - Dispatched when a node is hovered (detail: { nodeId })
  * @fires cluster-select - Dispatched when a cluster is selected or deselected (detail: { clusterId })
@@ -134,10 +134,10 @@ export class GraphCanvas extends LitElement {
   /** Set of node IDs that should be visually dimmed */
   dimmedNodeIds: Set<string> = new Set();
 
-  @query('#konva-container')
+  @query('#canvas-container')
   private declare containerEl: HTMLDivElement;
 
-  private scene: KonvaScene | null = null;
+  private scene: CanvasScene | null = null;
 
   private readonly layout = new GraphLayoutController(this, {
     enableAnimation: false,
@@ -198,7 +198,7 @@ export class GraphCanvas extends LitElement {
       overflow: hidden;
     }
 
-    #konva-container {
+    #canvas-container {
       display: block;
       width: 100%;
       height: 100%;
@@ -208,11 +208,11 @@ export class GraphCanvas extends LitElement {
     }
   `;
 
-  /** Initializes the Konva scene, resolves the theme, and starts the render loop. */
+  /** Initializes the canvas scene, resolves the theme, and starts the render loop. */
   override firstUpdated(): void {
     this.theme = resolveCanvasTheme(this);
     if (this.containerEl) {
-      this.scene = new KonvaScene(this.containerEl, {
+      this.scene = new CanvasScene(this.containerEl, {
         onNodeSelect: (node) => this.dispatchCanvasEvent('node-select', { node }),
         onClusterSelect: (clusterId) => this.dispatchCanvasEvent('cluster-select', { clusterId }),
         onNodeHover: (nodeId) => {
@@ -228,7 +228,7 @@ export class GraphCanvas extends LitElement {
         },
         onRenderRequest: () => this.requestRender(),
         onInvalidateEdgePathCache: () => {
-          // Edge path cache is now internal to KonvaScene — no-op
+          // Edge path cache is now internal to CanvasScene — no-op
         },
       });
 
@@ -257,7 +257,7 @@ export class GraphCanvas extends LitElement {
       }
       /* v8 ignore stop */
     } else {
-      console.error('Konva container element not found in firstUpdated');
+      console.error('Canvas container element not found in firstUpdated');
     }
   }
 
@@ -425,7 +425,7 @@ export class GraphCanvas extends LitElement {
     });
   }
 
-  /** Resizes the Konva stage to match the element dimensions. */
+  /** Resizes the canvas to match the element dimensions. */
   private resizeScene() {
     if (!this.scene) return;
     const rect = this.getBoundingClientRect();
@@ -507,7 +507,7 @@ export class GraphCanvas extends LitElement {
     this.isAnimating = needsMotionAnimation || hasFadingNodes || hasAlphaAnimations;
   }
 
-  /** Builds the scene config and delegates rendering to the Konva scene graph. */
+  /** Builds the scene config and delegates rendering to the canvas scene. */
   private renderScene() {
     this.perfOverlay?.begin();
     if (!this.scene || !this.theme) return;
@@ -561,7 +561,7 @@ export class GraphCanvas extends LitElement {
   override render(): TemplateResult {
     return html`
       <div
-        id="konva-container"
+        id="canvas-container"
         tabindex="-1"
         role="img"
         aria-hidden="true"
