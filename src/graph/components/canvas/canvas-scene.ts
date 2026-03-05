@@ -931,20 +931,6 @@ export class CanvasScene {
       ctx.setLineDash([]);
 
       this.drawEdgePath(ctx, sPos.x, sPos.y, tPos.x, tPos.y);
-
-      // Arrowhead
-      const arrowSize = 8 / zoom;
-      const angle = Math.atan2(tPos.y - sPos.y, tPos.x - sPos.x);
-      ctx.translate(tPos.x, tPos.y);
-      ctx.rotate(angle);
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(-arrowSize, arrowSize * 0.5);
-      ctx.lineTo(-arrowSize, -arrowSize * 0.5);
-      ctx.closePath();
-      ctx.fillStyle = theme.edgeDefault;
-      ctx.globalAlpha = 0.5;
-      ctx.fill();
       ctx.restore();
     }
   }
