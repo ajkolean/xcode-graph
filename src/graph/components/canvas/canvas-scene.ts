@@ -871,19 +871,30 @@ export class CanvasScene {
 
     const { edges, zoom, time } = config;
 
-    // Two-tier LOD: cluster arteries at low zoom, individual edges at high zoom
-    if (zoom < LOD_THRESHOLDS.ARROWHEADS) {
-      this.drawClusterArteries(ctx);
-      return;
-    }
-
-    // High zoom: individual edges with arrowheads
-    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
     const isChainActive =
       config.showDirectDeps ||
       config.showTransitiveDeps ||
       config.showDirectDependents ||
       config.showTransitiveDependents;
+
+    // Two-tier LOD: cluster arteries at low zoom, individual edges at high zoom
+    if (zoom < LOD_THRESHOLDS.ARROWHEADS) {
+      this.drawClusterArteries(ctx);
+
+      // Still draw highlighted/chain edges so selections are visible at low zoom
+      this.precomputeEdgeMeta(edges, isChainActive);
+      const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
+      const animatedDashOffset = prefersReducedMotion.get() ? 0 : time / 20;
+      for (const edge of edges) {
+        const meta = this.edgeMetaMap.get(edge);
+        if (!meta || !meta.isSpecial) continue;
+        this.renderSingleEdge(ctx, meta, viewport, animatedDashOffset);
+      }
+      return;
+    }
+
+    // High zoom: individual edges with arrowheads
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
 
     this.precomputeEdgeMeta(edges, isChainActive);
 
