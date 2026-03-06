@@ -72,7 +72,7 @@ export const DEFAULT_CONFIG = {
   elkEdgeRouting: 'ORTHOGONAL',
 
   /** Spacing between nodes in the same layer */
-  elkNodeSpacing: 200,
+  elkNodeSpacing: 280,
 
   /** Spacing between layers (ranks) */
   elkLayerSpacing: 300,

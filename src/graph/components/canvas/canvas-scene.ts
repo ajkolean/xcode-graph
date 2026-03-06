@@ -802,6 +802,10 @@ export class CanvasScene {
     );
     this.drawClusterLabel(ctx, radius, clusterColor, isActive, cluster.name);
 
+    if (config.zoom < LOD_THRESHOLDS.CLUSTER_ARC_LABELS) {
+      this.drawScreenSpaceClusterLabel(ctx, config.zoom, clusterColor, isActive, cluster.name);
+    }
+
     ctx.globalAlpha = 1.0;
   }
 
@@ -892,6 +896,48 @@ export class CanvasScene {
 
     ctx.globalAlpha = isActive ? 1 : 0.85;
     ctx.drawImage(cached.canvas, -cached.width / 2, -cached.height / 2);
+  }
+
+  private drawScreenSpaceClusterLabel(
+    ctx: CanvasRenderingContext2D,
+    zoom: number,
+    color: string,
+    isActive: boolean,
+    name: string,
+  ): void {
+    // Counter-scale so the label stays ~14px on screen regardless of zoom
+    const screenFontSize = 14;
+    const fontSize = screenFontSize / zoom;
+    const fontWeight = isActive ? 600 : 500;
+    const font = `${fontWeight} ${fontSize}px var(--fonts-body, sans-serif)`;
+
+    ctx.save();
+    ctx.font = font;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const maxTextWidth = 180 / zoom;
+    const displayName = this.truncateText(ctx, name, maxTextWidth);
+    const textMetrics = ctx.measureText(displayName);
+    const textWidth = textMetrics.width;
+    const paddingH = 6 / zoom;
+    const paddingV = 3 / zoom;
+    const pillWidth = textWidth + paddingH * 2;
+    const pillHeight = fontSize + paddingV * 2;
+    const cornerRadius = 4 / zoom;
+
+    // Background pill
+    ctx.globalAlpha = isActive ? 0.85 : 0.7;
+    ctx.fillStyle = 'rgb(22, 22, 23)';
+    ctx.beginPath();
+    ctx.roundRect(-pillWidth / 2, -pillHeight / 2, pillWidth, pillHeight, cornerRadius);
+    ctx.fill();
+
+    // Text
+    ctx.globalAlpha = isActive ? 1 : 0.9;
+    ctx.fillStyle = color;
+    ctx.fillText(displayName, 0, 0);
+    ctx.restore();
   }
 
   private truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {

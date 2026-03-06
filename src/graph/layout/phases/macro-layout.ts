@@ -315,7 +315,8 @@ export async function computeMacroLayout(
   config: LayoutConfig,
 ): Promise<Map<string, ClusterPosition>> {
   const elk = await createElk();
-  const elkWidthHint = 10000;
+  const clusterCount = clusterGraph.nodes.length;
+  const elkWidthHint = Math.max(4000, clusterCount * 600);
 
   // Reset debug data
   lastDebugData = undefined;
