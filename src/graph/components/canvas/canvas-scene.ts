@@ -20,6 +20,8 @@ import type { GraphLayoutController } from '@graph/controllers/graph-layout.cont
 import type { TransitiveResult } from '@graph/utils';
 import { type AnimatedValue, getAnimatedAlpha } from '@graph/utils/canvas-animation';
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
+import { type IndexedNode, buildNodeQuadtree, findNodeAt } from '@graph/utils/spatial-index';
+import type { Quadtree } from 'd3-quadtree';
 import { type CanvasTheme, colorWithAlpha, hexToRgba } from '@graph/utils/canvas-theme';
 import type { Cluster, ViewMode } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
@@ -167,6 +169,9 @@ export class CanvasScene {
   private clusterMap = new Map<string, Cluster>();
   private cachedClustersRef: Cluster[] | null = null;
 
+  // Quadtree spatial index for O(log n) hit testing
+  private nodeQuadtree: Quadtree<IndexedNode> | null = null;
+
   // Edge endpoint cache — only cleared when positions change
   private edgeEndpointCache = new Map<
     string,
@@ -306,6 +311,7 @@ export class CanvasScene {
       config.manualClusterPositions.size !== this.cachedManualClusterPosSize;
     if (positionsChanged) {
       this.edgeEndpointCache.clear();
+      this.nodeQuadtree = null;
       this.cachedEdgesRef = config.edges;
       this.cachedManualNodePosSize = config.manualNodePositions.size;
       this.cachedManualClusterPosSize = config.manualClusterPositions.size;
@@ -471,6 +477,7 @@ export class CanvasScene {
     this.arcLabelBitmapCache.clear();
     this.bezierPathCache.clear();
     this.edgeEndpointCache.clear();
+    this.nodeQuadtree = null;
     this.cachedNodesRef = null;
     this.cachedClustersRef = null;
     this.cachedEdgesRef = null;
@@ -503,6 +510,7 @@ export class CanvasScene {
     this.nodeMap.clear();
     this.clusterMap.clear();
     this.edgeEndpointCache.clear();
+    this.nodeQuadtree = null;
     this.edgeMetaMap.clear();
   }
 
@@ -1522,13 +1530,12 @@ export class CanvasScene {
   // Hit Testing (on mouse events, not per-frame)
   // -------------------------------------------------------------------
 
-  private hitTestNode(worldX: number, worldY: number): GraphNode | null {
+  private ensureQuadtree(): Quadtree<IndexedNode> | null {
+    if (this.nodeQuadtree) return this.nodeQuadtree;
     const config = this.config;
     if (!config) return null;
 
-    let closestNode: GraphNode | null = null;
-    let closestDist = Number.POSITIVE_INFINITY;
-
+    const items: IndexedNode[] = [];
     for (const node of config.nodes) {
       const pos = resolveNodeWorldPosition(
         node.id,
@@ -1538,19 +1545,23 @@ export class CanvasScene {
         config.manualClusterPositions,
       );
       if (!pos) continue;
-
-      const dx = worldX - pos.x;
-      const dy = worldY - pos.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const hitRadius = getNodeSize(node) * NODE_HIT_RADIUS_MULTIPLIER;
-
-      if (dist < hitRadius && dist < closestDist) {
-        closestDist = dist;
-        closestNode = node;
-      }
+      items.push({
+        x: pos.x,
+        y: pos.y,
+        node,
+        hitRadius: getNodeSize(node) * NODE_HIT_RADIUS_MULTIPLIER,
+      });
     }
 
-    return closestNode;
+    this.nodeQuadtree = buildNodeQuadtree(items);
+    return this.nodeQuadtree;
+  }
+
+  private hitTestNode(worldX: number, worldY: number): GraphNode | null {
+    const tree = this.ensureQuadtree();
+    if (!tree) return null;
+    const maxSearchRadius = 50;
+    return findNodeAt(tree, worldX, worldY, maxSearchRadius);
   }
 
   private hitTestCluster(worldX: number, worldY: number): string | null {
