@@ -1002,7 +1002,7 @@ export class CanvasScene {
       config.showTransitiveDependents;
 
     // Two-tier LOD: cluster arteries at low zoom, individual edges at high zoom
-    if (zoom < LOD_THRESHOLDS.ARROWHEADS) {
+    if (zoom < LOD_THRESHOLDS.CLUSTER_ARTERIES) {
       this.drawClusterArteries(ctx);
 
       // Still draw highlighted/chain edges so selections are visible at low zoom

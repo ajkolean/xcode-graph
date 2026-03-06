@@ -8,7 +8,6 @@ import {
 } from '@graph/utils/canvas-animation';
 import { type CanvasTheme, resolveCanvasTheme } from '@graph/utils/canvas-theme';
 import { getConnectedNodes } from '@graph/utils/connections';
-import type { PerfOverlay } from '@graph/utils/dev-perf-overlay';
 import { ErrorCategory, ViewMode } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
@@ -171,9 +170,6 @@ export class GraphCanvas extends LitElement {
   // Fade-out animation for removed nodes
   private fadingOutNodes = new Map<string, FadingNode>();
 
-  // Dev-only performance overlay (stats.js + Long Tasks)
-  private perfOverlay: PerfOverlay | null = null;
-
   constructor() {
     super();
     this.nodes = [];
@@ -246,16 +242,6 @@ export class GraphCanvas extends LitElement {
       this.centerGraph();
       this.isAnimating = true;
       this.animationLoop.requestRender();
-
-      /* v8 ignore start -- dev-only perf overlay */
-      if (import.meta.env.DEV) {
-        import('@graph/utils/dev-perf-overlay').then(({ createPerfOverlay }) => {
-          createPerfOverlay(this).then((overlay) => {
-            this.perfOverlay = overlay;
-          });
-        });
-      }
-      /* v8 ignore stop */
     } else {
       console.error('Canvas container element not found in firstUpdated');
     }
@@ -265,8 +251,6 @@ export class GraphCanvas extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.animationLoop.stop();
-    this.perfOverlay?.destroy();
-    this.perfOverlay = null;
     this.scene?.destroy();
     this.scene = null;
     this.resizeObserver?.disconnect();
@@ -524,7 +508,6 @@ export class GraphCanvas extends LitElement {
 
   /** Builds the scene config and delegates rendering to the canvas scene. */
   private renderScene() {
-    this.perfOverlay?.begin();
     if (!this.scene || !this.theme) return;
 
     // Sync fading nodes into the scene
@@ -568,8 +551,6 @@ export class GraphCanvas extends LitElement {
     if (this.fadingOutNodes.size === 0 && this.isAnimating) {
       this.updateAnimatingState();
     }
-
-    this.perfOverlay?.end();
   }
 
   /** Renders the container div and hidden DOM accessibility tree. */
