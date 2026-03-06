@@ -1276,15 +1276,22 @@ export class CanvasScene {
   ): void {
     const distance = Math.hypot(x2 - x1, y2 - y1);
     if (distance > 150) {
-      const pathStr = generateBezierPath(x1, y1, x2, y2);
-      let path = this.bezierPathCache.get(pathStr);
+      // Use rounded integer coords as cache key to avoid generating full path string on hit
+      const rx1 = Math.round(x1);
+      const ry1 = Math.round(y1);
+      const rx2 = Math.round(x2);
+      const ry2 = Math.round(y2);
+      const numericKey = `${rx1},${ry1},${rx2},${ry2}`;
+
+      let path = this.bezierPathCache.get(numericKey);
       if (!path) {
+        const pathStr = generateBezierPath(x1, y1, x2, y2);
         path = new Path2D(pathStr);
         if (this.bezierPathCache.size >= CanvasScene.MAX_BEZIER_CACHE_SIZE) {
           const firstKey = this.bezierPathCache.keys().next().value;
           if (firstKey) this.bezierPathCache.delete(firstKey);
         }
-        this.bezierPathCache.set(pathStr, path);
+        this.bezierPathCache.set(numericKey, path);
       }
       ctx.stroke(path);
     } else {
