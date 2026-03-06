@@ -53,6 +53,9 @@ etc/*
 !etc/xcode-graph.schema.json
 !etc/xcode-graph.api.md
 
+# Worktrees
+.worktrees/
+
 # Playwright MCP
 .playwright-mcp/
 
