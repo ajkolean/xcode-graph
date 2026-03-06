@@ -383,6 +383,7 @@ export class CanvasScene {
     }
   }
 
+  /** Draw screen-space cluster labels on top of edges at low zoom. */
   /** Draw all visible nodes with viewport culling. */
   private drawNodes(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
     const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
@@ -802,10 +803,6 @@ export class CanvasScene {
     );
     this.drawClusterLabel(ctx, radius, clusterColor, isActive, cluster.name);
 
-    if (config.zoom < LOD_THRESHOLDS.CLUSTER_ARC_LABELS) {
-      this.drawScreenSpaceClusterLabel(ctx, config.zoom, clusterColor, isActive, cluster.name);
-    }
-
     ctx.globalAlpha = 1.0;
   }
 
@@ -896,48 +893,6 @@ export class CanvasScene {
 
     ctx.globalAlpha = isActive ? 1 : 0.85;
     ctx.drawImage(cached.canvas, -cached.width / 2, -cached.height / 2);
-  }
-
-  private drawScreenSpaceClusterLabel(
-    ctx: CanvasRenderingContext2D,
-    zoom: number,
-    color: string,
-    isActive: boolean,
-    name: string,
-  ): void {
-    // Counter-scale so the label stays ~14px on screen regardless of zoom
-    const screenFontSize = 14;
-    const fontSize = screenFontSize / zoom;
-    const fontWeight = isActive ? 600 : 500;
-    const font = `${fontWeight} ${fontSize}px var(--fonts-body, sans-serif)`;
-
-    ctx.save();
-    ctx.font = font;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    const maxTextWidth = 180 / zoom;
-    const displayName = this.truncateText(ctx, name, maxTextWidth);
-    const textMetrics = ctx.measureText(displayName);
-    const textWidth = textMetrics.width;
-    const paddingH = 6 / zoom;
-    const paddingV = 3 / zoom;
-    const pillWidth = textWidth + paddingH * 2;
-    const pillHeight = fontSize + paddingV * 2;
-    const cornerRadius = 4 / zoom;
-
-    // Background pill
-    ctx.globalAlpha = isActive ? 0.9 : 0.8;
-    ctx.fillStyle = 'rgb(40, 40, 44)';
-    ctx.beginPath();
-    ctx.roundRect(-pillWidth / 2, -pillHeight / 2, pillWidth, pillHeight, cornerRadius);
-    ctx.fill();
-
-    // Text
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = 'rgb(240, 240, 245)';
-    ctx.fillText(displayName, 0, 0);
-    ctx.restore();
   }
 
   private truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
@@ -1079,10 +1034,10 @@ export class CanvasScene {
     const { zoom } = config;
     const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
 
-    // Batch context state for all arteries — straight lines between cluster centers
+    // Batch context state for all arteries — match regular edge color/opacity
     ctx.save();
-    ctx.strokeStyle = 'rgb(140, 140, 150)';
-    ctx.globalAlpha = 0.55;
+    ctx.strokeStyle = config.theme.edgeDefault;
+    ctx.globalAlpha = 0.2;
     ctx.setLineDash([]);
 
     for (const edge of clusterEdges) {
