@@ -20,9 +20,8 @@ import type { GraphLayoutController } from '@graph/controllers/graph-layout.cont
 import type { TransitiveResult } from '@graph/utils';
 import { type AnimatedValue, getAnimatedAlpha } from '@graph/utils/canvas-animation';
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
-import { type IndexedNode, buildNodeQuadtree, findNodeAt } from '@graph/utils/spatial-index';
-import type { Quadtree } from 'd3-quadtree';
 import { type CanvasTheme, colorWithAlpha, hexToRgba } from '@graph/utils/canvas-theme';
+import { buildNodeQuadtree, findNodeAt, type IndexedNode } from '@graph/utils/spatial-index';
 import type { Cluster, ViewMode } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
@@ -40,6 +39,7 @@ import {
   type ViewportBounds,
 } from '@ui/utils/viewport';
 import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
+import type { Quadtree } from 'd3-quadtree';
 import { computeFitToViewport, screenToWorld } from './canvas-viewport';
 
 // ---------------------------------------------------------------------------
