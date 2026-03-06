@@ -1032,31 +1032,41 @@ export class CanvasScene {
     const clusterEdges = config.layout.clusterEdges;
     if (!clusterEdges || clusterEdges.length === 0) return;
 
-    const { zoom, theme } = config;
+    const { zoom } = config;
     const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
+
+    // Batch context state for all arteries — straight lines between cluster centers
+    ctx.save();
+    ctx.strokeStyle = 'rgb(140, 140, 150)';
+    ctx.globalAlpha = 0.55;
+    ctx.setLineDash([]);
 
     for (const edge of clusterEdges) {
       const sLayout = config.layout.clusterPositions.get(edge.source);
       const tLayout = config.layout.clusterPositions.get(edge.target);
       if (!sLayout || !tLayout) continue;
 
+      // resolveClusterPosition returns a shared mutable object — copy source coords
+      // before resolving target to avoid overwriting
       const sPos = resolveClusterPosition(edge.source, sLayout, config.manualClusterPositions);
+      const sx = sPos.x;
+      const sy = sPos.y;
       const tPos = resolveClusterPosition(edge.target, tLayout, config.manualClusterPositions);
+      const tx = tPos.x;
+      const ty = tPos.y;
 
-      if (!isLineInViewportRaw(sPos.x, sPos.y, tPos.x, tPos.y, viewport)) continue;
+      if (!isLineInViewportRaw(sx, sy, tx, ty, viewport)) continue;
 
       // Line thickness: 1-6px based on weight, scaled by zoom
-      const thickness = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
+      ctx.lineWidth = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
 
-      ctx.save();
-      ctx.strokeStyle = theme.edgeDefault;
-      ctx.globalAlpha = 0.65;
-      ctx.lineWidth = thickness;
-      ctx.setLineDash([]);
-
-      this.drawEdgePath(ctx, sPos.x, sPos.y, tPos.x, tPos.y);
-      ctx.restore();
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(tx, ty);
+      ctx.stroke();
     }
+
+    ctx.restore();
   }
 
   private drawIndividualEdges(
