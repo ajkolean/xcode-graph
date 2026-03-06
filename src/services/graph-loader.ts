@@ -3,6 +3,12 @@
 import type { Cluster } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 
+/** Node count below which loading is considered instant (no progressive needed) */
+const INSTANT_LOAD_THRESHOLD = 100;
+
+/** Node count below which loading is fast (single chunk, minimal delay) */
+const FAST_LOAD_THRESHOLD = 500;
+
 /**
  * Progress update during graph loading
  *
@@ -234,9 +240,9 @@ export class GraphLoader {
     const estimatedMs = chunks * this.config.delayBetweenChunks;
 
     let recommendation: 'instant' | 'fast' | 'progressive';
-    if (nodeCount < 100) {
+    if (nodeCount < INSTANT_LOAD_THRESHOLD) {
       recommendation = 'instant';
-    } else if (nodeCount < 500) {
+    } else if (nodeCount < FAST_LOAD_THRESHOLD) {
       recommendation = 'fast';
     } else {
       recommendation = 'progressive';

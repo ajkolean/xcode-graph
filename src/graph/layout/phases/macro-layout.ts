@@ -4,6 +4,9 @@ import type { ClusterPosition } from '@shared/schemas';
 import type { ElkExtendedEdge, ElkNode, ELK as ElkType } from 'elkjs/lib/elk-api.js';
 import type { MicroLayoutResult } from './micro-layout';
 
+/** Gap between rows during band compaction (pixels) */
+const LAYOUT_ROW_GAP = 100;
+
 /** Structured ELK logging entry returned when logging/measureExecutionTime enabled */
 export interface ElkLoggingEntry {
   name: string;
@@ -267,13 +270,12 @@ function compactBands(
 
     for (const row of rows) {
       const maxRowH = row.reduce((max, n) => Math.max(max, n.height ?? 100), 0);
-      const rowGap = 100;
 
       layoutRow(row, config.elkNodeSpacing, currentY);
-      currentY += maxRowH + rowGap;
+      currentY += maxRowH + LAYOUT_ROW_GAP;
     }
 
-    yCursor = currentY + (config.elkLayerSpacing - 100);
+    yCursor = currentY + (config.elkLayerSpacing - LAYOUT_ROW_GAP);
   }
 }
 

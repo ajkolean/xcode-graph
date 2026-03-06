@@ -41,6 +41,9 @@ import {
 } from '@shared/schemas/error.types';
 import { addError, dismissError, removeError } from '@shared/signals/error.actions';
 
+/** Delay before removing a dismissed error from state, allowing exit animation (ms) */
+const ERROR_REMOVAL_DELAY_MS = 1000;
+
 /**
  * Options for handling an error
  */
@@ -329,10 +332,10 @@ export class ErrorService {
 
     dismissError(errorId);
 
-    // Remove after animation (1 second)
+    // Remove after animation
     setTimeout(() => {
       removeError(errorId);
-    }, 1000);
+    }, ERROR_REMOVAL_DELAY_MS);
   }
 
   /**

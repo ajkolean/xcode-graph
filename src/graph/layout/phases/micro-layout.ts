@@ -9,6 +9,15 @@ import {
   type SimulationNodeDatum,
 } from 'd3-force';
 
+/** Node count above which extra congestion padding is applied */
+const CONGESTION_THRESHOLD = 15;
+
+/** Per-node padding multiplier for clusters exceeding CONGESTION_THRESHOLD */
+const CONGESTION_FACTOR = 2.0;
+
+/** Base padding added to every cluster radius (pixels) */
+const BASE_MICRO_PADDING = 50;
+
 /** Simulation node for micro-layout within a cluster */
 interface MicroSimNode extends SimulationNodeDatum {
   id: string;
@@ -101,8 +110,8 @@ export function computeClusterInterior(cluster: Cluster, config: LayoutConfig): 
   const baseR = n ** 0.6 * nodeSpace * spacingFactor;
 
   // Add extra padding for large clusters
-  const congestionPadding = Math.max(0, n - 15) * 2.0;
-  const padding = 50 + congestionPadding;
+  const congestionPadding = Math.max(0, n - CONGESTION_THRESHOLD) * CONGESTION_FACTOR;
+  const padding = BASE_MICRO_PADDING + congestionPadding;
 
   const radius = Math.max(config.minClusterSize / 2, baseR + padding);
   const size = radius * 2;

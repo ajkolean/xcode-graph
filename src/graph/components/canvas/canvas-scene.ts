@@ -48,6 +48,22 @@ import type { Quadtree } from 'd3-quadtree';
 import { computeFitToViewport, screenToWorld } from './canvas-viewport';
 
 // ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+/** Horizontal/vertical padding inside cluster tooltips (pixels) */
+const TOOLTIP_PADDING = 10;
+
+/** Fixed height of cluster tooltip background (pixels) */
+const TOOLTIP_HEIGHT = 40;
+
+/** Maximum search radius for node hit-testing (world-space pixels) */
+const HIT_TEST_RADIUS = 50;
+
+/** Padding around cluster bounds when fitting a cluster into the viewport */
+const CLUSTER_VIEWPORT_PADDING = 50;
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
@@ -1512,9 +1528,8 @@ export class CanvasScene {
     ctx.font = TOOLTIP_SUBTITLE_FONT;
     const subtitleWidth = ctx.measureText(subtitleText).width;
     const maxWidth = Math.max(nameWidth, subtitleWidth);
-    const padding = 10;
-    const tooltipWidth = maxWidth + padding * 2;
-    const tooltipHeight = 40;
+    const tooltipWidth = maxWidth + TOOLTIP_PADDING * 2;
+    const tooltipHeight = TOOLTIP_HEIGHT;
 
     // Background
     ctx.fillStyle = theme.tooltipBg;
@@ -1636,8 +1651,7 @@ export class CanvasScene {
   private hitTestNode(worldX: number, worldY: number): GraphNode | null {
     const tree = this.ensureQuadtree();
     if (!tree) return null;
-    const maxSearchRadius = 50;
-    return findNodeAt(tree, worldX, worldY, maxSearchRadius);
+    return findNodeAt(tree, worldX, worldY, HIT_TEST_RADIUS);
   }
 
   private hitTestCluster(worldX: number, worldY: number): string | null {
@@ -1909,12 +1923,11 @@ export class CanvasScene {
     const cx = manualPos?.x ?? clusterPos.x;
     const cy = manualPos?.y ?? clusterPos.y;
 
-    const padding = 50;
     const clusterRadius = Math.max(clusterPos.width, clusterPos.height) / 2;
 
     const fitZoom = Math.min(
-      this.width / ((clusterRadius + padding) * 2),
-      this.height / ((clusterRadius + padding) * 2),
+      this.width / ((clusterRadius + CLUSTER_VIEWPORT_PADDING) * 2),
+      this.height / ((clusterRadius + CLUSTER_VIEWPORT_PADDING) * 2),
       ZOOM_CONFIG.MAX_ZOOM,
     );
 
