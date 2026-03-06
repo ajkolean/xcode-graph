@@ -179,6 +179,15 @@ export class CanvasScene {
 
   // Per-frame edge metadata map
   private edgeMetaMap = new Map<GraphEdge, EdgeMeta>();
+  private edgeMetaDirty = true;
+  private cachedSelectedNode: GraphNode | null = null;
+  private cachedSelectedCluster: string | null = null;
+  private cachedShowDirectDeps = false;
+  private cachedShowTransitiveDeps = false;
+  private cachedShowDirectDependents = false;
+  private cachedShowTransitiveDependents = false;
+  private cachedTransitiveDepsRef: TransitiveResult | undefined = undefined;
+  private cachedTransitiveDependentsRef: TransitiveResult | undefined = undefined;
 
   // Per-frame adjusted node type colors (7 types, recomputed only when zoom changes)
   private adjustedNodeColors = new Map<string, string>();
@@ -306,6 +315,29 @@ export class CanvasScene {
         this.adjustedNodeColors.set(type, adjustColorForZoom(baseColor, config.zoom));
       }
       this.adjustedColorsZoom = config.zoom;
+    }
+
+    const edgeInputsChanged =
+      positionsChanged ||
+      config.selectedNode !== this.cachedSelectedNode ||
+      config.selectedCluster !== this.cachedSelectedCluster ||
+      config.showDirectDeps !== this.cachedShowDirectDeps ||
+      config.showTransitiveDeps !== this.cachedShowTransitiveDeps ||
+      config.showDirectDependents !== this.cachedShowDirectDependents ||
+      config.showTransitiveDependents !== this.cachedShowTransitiveDependents ||
+      config.transitiveDeps !== this.cachedTransitiveDepsRef ||
+      config.transitiveDependents !== this.cachedTransitiveDependentsRef;
+
+    if (edgeInputsChanged) {
+      this.edgeMetaDirty = true;
+      this.cachedSelectedNode = config.selectedNode;
+      this.cachedSelectedCluster = config.selectedCluster;
+      this.cachedShowDirectDeps = config.showDirectDeps;
+      this.cachedShowTransitiveDeps = config.showTransitiveDeps;
+      this.cachedShowDirectDependents = config.showDirectDependents;
+      this.cachedShowTransitiveDependents = config.showTransitiveDependents;
+      this.cachedTransitiveDepsRef = config.transitiveDeps;
+      this.cachedTransitiveDependentsRef = config.transitiveDependents;
     }
   }
 
@@ -853,6 +885,8 @@ export class CanvasScene {
   // -------------------------------------------------------------------
 
   private precomputeEdgeMeta(edges: GraphEdge[], isChainActive: boolean): void {
+    if (!this.edgeMetaDirty) return;
+    this.edgeMetaDirty = false;
     this.edgeMetaMap.clear();
     for (const edge of edges) {
       const key = `${edge.source}->${edge.target}`;
