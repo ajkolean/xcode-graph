@@ -867,8 +867,6 @@ export class CanvasScene {
     isActive: boolean,
     name: string,
   ): void {
-    if ((this.config?.zoom ?? 1) < LOD_THRESHOLDS.CLUSTER_ARC_LABELS) return;
-
     const fontSize = CLUSTER_LABEL_CONFIG.FONT_SIZE;
     const maxTextWidth = radius * 1.6;
     const fontWeight = isActive ? 600 : 500;
@@ -1079,7 +1077,6 @@ export class CanvasScene {
     for (const edge of edges) {
       const meta = this.edgeMetaMap.get(edge);
       if (!meta) continue;
-
       this.renderSingleEdge(ctx, meta, viewport, animatedDashOffset);
     }
   }
@@ -1297,7 +1294,7 @@ export class CanvasScene {
     if (inChain) {
       return this.getChainEdgeDepth(edgeKey) === 0 ? 1.0 : 0.5;
     }
-    const baseOpacity = isHighlighted ? 1.0 : 0.4;
+    const baseOpacity = isHighlighted ? 1.0 : 0.2;
     return cycleEdge ? Math.max(baseOpacity, 0.8) : baseOpacity;
   }
 
