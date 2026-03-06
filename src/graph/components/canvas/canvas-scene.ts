@@ -927,15 +927,15 @@ export class CanvasScene {
     const cornerRadius = 4 / zoom;
 
     // Background pill
-    ctx.globalAlpha = isActive ? 0.85 : 0.7;
-    ctx.fillStyle = 'rgb(22, 22, 23)';
+    ctx.globalAlpha = isActive ? 0.9 : 0.8;
+    ctx.fillStyle = 'rgb(40, 40, 44)';
     ctx.beginPath();
     ctx.roundRect(-pillWidth / 2, -pillHeight / 2, pillWidth, pillHeight, cornerRadius);
     ctx.fill();
 
     // Text
-    ctx.globalAlpha = isActive ? 1 : 0.9;
-    ctx.fillStyle = color;
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgb(240, 240, 245)';
     ctx.fillText(displayName, 0, 0);
     ctx.restore();
   }
