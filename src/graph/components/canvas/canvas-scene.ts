@@ -150,6 +150,7 @@ export class CanvasScene {
   // Arc text measurement cache
   private arcTextCache = new Map<string, { charWidths: number[]; totalWidth: number }>();
   private truncateCache = new Map<string, string>();
+  private truncatedLabelCache = new Map<string, string>();
 
   // Offscreen bitmap cache for arc labels
   private arcLabelBitmapCache = new Map<
@@ -281,6 +282,7 @@ export class CanvasScene {
 
     if (nodesChanged) {
       this.nodeMap.clear();
+      this.truncatedLabelCache.clear();
       for (const node of config.nodes) {
         this.nodeMap.set(node.id, node);
       }
@@ -365,6 +367,7 @@ export class CanvasScene {
   /** Draw all visible nodes with viewport culling. */
   private drawNodes(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
     const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
+    const drawLabels = config.zoom >= LOD_THRESHOLDS.NODE_LABELS;
     for (const node of config.nodes) {
       const pos = resolveNodeWorldPosition(
         node.id,
@@ -380,7 +383,7 @@ export class CanvasScene {
 
       ctx.save();
       ctx.translate(pos.x, pos.y);
-      this.drawNode(ctx, node.id);
+      this.drawNode(ctx, node.id, drawLabels);
       ctx.restore();
     }
   }
@@ -463,6 +466,7 @@ export class CanvasScene {
     this.gradientCache.clear();
     this.arcTextCache.clear();
     this.truncateCache.clear();
+    this.truncatedLabelCache.clear();
     this.arcLabelBitmapCache.clear();
     this.bezierPathCache.clear();
     this.edgeEndpointCache.clear();
@@ -493,6 +497,7 @@ export class CanvasScene {
     this.gradientCache.clear();
     this.arcTextCache.clear();
     this.truncateCache.clear();
+    this.truncatedLabelCache.clear();
     this.arcLabelBitmapCache.clear();
     this.nodeMap.clear();
     this.clusterMap.clear();
@@ -504,7 +509,7 @@ export class CanvasScene {
   // Node Drawing
   // -------------------------------------------------------------------
 
-  private drawNode(ctx: CanvasRenderingContext2D, nodeId: string): void {
+  private drawNode(ctx: CanvasRenderingContext2D, nodeId: string, drawLabels = true): void {
     const config = this.config;
     if (!config) return;
 
@@ -542,18 +547,20 @@ export class CanvasScene {
     }
 
     this.drawNodeIcon(ctx, node, size, adjustedColor, theme, isHovered || isSelected);
-    this.drawNodeLabel(
-      ctx,
-      node,
-      size,
-      adjustedColor,
-      theme,
-      alpha,
-      isSelected,
-      isConnected,
-      isInChain,
-      isHovered,
-    );
+    if (drawLabels) {
+      this.drawNodeLabel(
+        ctx,
+        node,
+        size,
+        adjustedColor,
+        theme,
+        alpha,
+        isSelected,
+        isConnected,
+        isInChain,
+        isHovered,
+      );
+    }
 
     ctx.globalAlpha = 1.0;
   }
@@ -646,12 +653,17 @@ export class CanvasScene {
     isInChain: boolean,
     isHovered: boolean,
   ): void {
-    if ((this.config?.zoom ?? 1) < LOD_THRESHOLDS.NODE_LABELS) return;
-
-    const labelText =
-      node.name.length > 20 && !isHovered && !isConnected
-        ? `${node.name.substring(0, 20)}...`
-        : node.name;
+    let labelText: string;
+    if (node.name.length > 20 && !isHovered && !isConnected) {
+      let cached = this.truncatedLabelCache.get(node.id);
+      if (!cached) {
+        cached = `${node.name.substring(0, 20)}...`;
+        this.truncatedLabelCache.set(node.id, cached);
+      }
+      labelText = cached;
+    } else {
+      labelText = node.name;
+    }
 
     ctx.font = isSelected
       ? NODE_FONT_SELECTED
