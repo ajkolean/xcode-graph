@@ -143,6 +143,7 @@ export class CanvasScene {
   // Path2D cache for bezier edge paths (avoids per-frame allocation)
   private bezierPathCache = new Map<string, Path2D>();
   private static readonly MAX_BEZIER_CACHE_SIZE = 1000;
+  private static readonly MAX_ARC_LABEL_CACHE_SIZE = 200;
 
   // Gradient cache for cluster fills
   private gradientCache = new Map<string, CanvasGradient>();
@@ -811,6 +812,10 @@ export class CanvasScene {
     let cached = this.arcLabelBitmapCache.get(bitmapKey);
     if (!cached) {
       cached = this.renderArcLabelBitmap(ctx, displayName, arcRadius, font, color);
+      if (this.arcLabelBitmapCache.size >= CanvasScene.MAX_ARC_LABEL_CACHE_SIZE) {
+        const firstKey = this.arcLabelBitmapCache.keys().next().value;
+        if (firstKey) this.arcLabelBitmapCache.delete(firstKey);
+      }
       this.arcLabelBitmapCache.set(bitmapKey, cached);
     }
 
