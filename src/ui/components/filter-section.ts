@@ -162,19 +162,11 @@ export class GraphFilterSection extends LitElement {
 
     .items {
       display: block;
-      max-height: 240px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      transition: max-height var(--durations-normal) var(--easings-default),
-                  opacity var(--durations-normal) var(--easings-default);
       opacity: 1;
     }
 
     .items.collapsed {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      pointer-events: none;
+      display: none;
     }
 
     .item-button {

@@ -228,7 +228,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-md);
-      padding: var(--spacing-lg) var(--spacing-md);
+      padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
       position: relative;
       z-index: 1;
     }
