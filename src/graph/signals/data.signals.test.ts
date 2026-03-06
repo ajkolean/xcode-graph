@@ -7,8 +7,8 @@
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { SignalSnapshot } from '../../test-utils/signal-helpers';
-import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
+import type { SignalSnapshot } from '@/test-utils/signal-helpers';
+import { createSignalSnapshot, restoreSignalSnapshot } from '@/test-utils/signal-helpers';
 import { edges, nodes, resetDataSignals } from './data.signals';
 
 describe('data.signals', () => {

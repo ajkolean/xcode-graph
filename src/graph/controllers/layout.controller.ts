@@ -7,13 +7,13 @@
  * @module controllers/layout
  */
 
+import { computeHierarchicalLayout } from '@graph/layout';
 import { groupIntoClusters } from '@graph/layout/cluster-grouping';
 import type { LayoutOptions } from '@graph/layout/config';
 import type { RoutedEdge } from '@graph/layout/types';
 import type { Cluster, ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
-import { computeHierarchicalLayout } from '@/graph/layout';
 
 /**
  * Result of layout computation

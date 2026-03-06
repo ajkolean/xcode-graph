@@ -10,7 +10,7 @@
  * @module shared/constants/node-palette
  */
 
-import { NodeType } from '@/shared/schemas/graph.types';
+import { NodeType } from '@shared/schemas/graph.types';
 
 /**
  * Canonical node type color palette.

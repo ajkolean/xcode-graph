@@ -11,9 +11,9 @@ import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { allPackages, allProjects, filters, searchQuery } from '@shared/signals/filter.signals';
 import { previewFilter } from '@shared/signals/ui.signals';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createAllInclusiveFilters, createNodeTypeFilter } from '../../fixtures';
-import type { SignalSnapshot } from '../../test-utils/signal-helpers';
-import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
+import { createAllInclusiveFilters, createNodeTypeFilter } from '@/fixtures';
+import type { SignalSnapshot } from '@/test-utils/signal-helpers';
+import { createSignalSnapshot, restoreSignalSnapshot } from '@/test-utils/signal-helpers';
 import { edges, nodes } from './data.signals';
 import { dimmedNodeIds, displayData, filteredData, transitiveData } from './display.computed';
 import {

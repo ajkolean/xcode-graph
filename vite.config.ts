@@ -18,7 +18,6 @@ export default defineConfig({
     extensions: ['.js', '.ts', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
       '@graph': path.resolve(__dirname, './src/graph'),
       '@ui': path.resolve(__dirname, './src/ui'),
       '@shared': path.resolve(__dirname, './src/shared'),

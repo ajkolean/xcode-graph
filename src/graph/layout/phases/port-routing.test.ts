@@ -1,8 +1,8 @@
 import assert from 'node:assert';
+import type { ClusterEdge } from '@graph/layout/cluster-graph';
+import { DEFAULT_CONFIG, type LayoutConfig } from '@graph/layout/config';
 import type { ClusterPosition, NodePosition } from '@shared/schemas';
 import { describe, expect, it } from 'vitest';
-import type { ClusterEdge } from '../cluster-graph';
-import { DEFAULT_CONFIG, type LayoutConfig } from '../config';
 import { computeClusterPorts, computePortSide, computeRoutedEdges } from './port-routing';
 
 describe('port-routing', () => {

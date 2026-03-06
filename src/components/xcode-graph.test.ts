@@ -13,8 +13,8 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { resetFilterSignals } from '@shared/signals/filter.signals';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SignalSnapshot } from '../test-utils/signal-helpers';
-import { createSignalSnapshot, restoreSignalSnapshot } from '../test-utils/signal-helpers';
+import type { SignalSnapshot } from '@/test-utils/signal-helpers';
+import { createSignalSnapshot, restoreSignalSnapshot } from '@/test-utils/signal-helpers';
 import type { GraphApp } from './xcode-graph';
 import './xcode-graph';
 

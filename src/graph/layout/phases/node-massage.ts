@@ -1,3 +1,4 @@
+import type { LayoutConfig } from '@graph/layout/config';
 import type { NodePosition } from '@shared/schemas';
 import {
   forceCollide,
@@ -7,7 +8,6 @@ import {
   forceY,
   type SimulationNodeDatum,
 } from 'd3-force';
-import type { LayoutConfig } from '../config';
 import type { MicroLayoutResult } from './micro-layout';
 
 /** Simulation node for node massage pass */

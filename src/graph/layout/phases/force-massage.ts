@@ -1,3 +1,5 @@
+import type { ClusterGraph } from '@graph/layout/cluster-graph';
+import type { LayoutConfig } from '@graph/layout/config';
 import type { ClusterPosition } from '@shared/schemas';
 import {
   forceCollide,
@@ -8,8 +10,6 @@ import {
   type SimulationLinkDatum,
   type SimulationNodeDatum,
 } from 'd3-force';
-import type { ClusterGraph } from '../cluster-graph';
-import type { LayoutConfig } from '../config';
 
 /** Simulation node for cluster force-massage */
 interface ClusterSimNode extends SimulationNodeDatum {

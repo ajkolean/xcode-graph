@@ -1,7 +1,7 @@
 import { ClusterType, DEFAULT_CLUSTER_CONFIG } from '@shared/schemas';
 import { Origin } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
-import { createNode, createProjectGraph } from '../../fixtures';
+import { createNode, createProjectGraph } from '@/fixtures';
 import { arrangeClusterGrid, groupIntoClusters } from './cluster-grouping';
 
 describe('groupIntoClusters', () => {

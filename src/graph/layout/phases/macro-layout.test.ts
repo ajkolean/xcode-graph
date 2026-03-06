@@ -1,9 +1,9 @@
 import assert from 'node:assert';
+import { buildClusterGraph } from '@graph/layout/cluster-graph';
+import type { LayoutConfig } from '@graph/layout/config';
+import { DEFAULT_CONFIG } from '@graph/layout/config';
 import { describe, expect, it, vi } from 'vitest';
 import { createClusterWithNodes } from '@/fixtures';
-import { buildClusterGraph } from '../cluster-graph';
-import type { LayoutConfig } from '../config';
-import { DEFAULT_CONFIG } from '../config';
 import { computeMacroLayout, layoutWithTimeout, validateElkOptions } from './macro-layout';
 import { computeClusterInterior } from './micro-layout';
 

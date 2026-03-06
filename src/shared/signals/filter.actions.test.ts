@@ -8,8 +8,8 @@
 import type { FilterState } from '@shared/schemas/app.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SignalSnapshot } from '../../test-utils/signal-helpers';
-import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
+import type { SignalSnapshot } from '@/test-utils/signal-helpers';
+import { createSignalSnapshot, restoreSignalSnapshot } from '@/test-utils/signal-helpers';
 import {
   clearFilters,
   initializeFromData,

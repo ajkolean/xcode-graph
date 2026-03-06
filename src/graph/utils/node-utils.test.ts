@@ -8,7 +8,7 @@ import {
   createNode,
   createNodesForFilterTesting,
   createProjectGraph,
-} from '../../fixtures';
+} from '@/fixtures';
 import { computeClusterStats, computeFilters, computeNodeDependencies } from './node-utils';
 
 describe('computeNodeDependencies', () => {

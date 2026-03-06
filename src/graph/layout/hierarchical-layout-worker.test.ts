@@ -17,7 +17,7 @@ import {
   createLayeredGraph,
   createMultiClusterGraph,
   createProjectGraph,
-} from '../../fixtures';
+} from '@/fixtures';
 import { computeHierarchicalLayout } from './hierarchical-layout';
 
 /**

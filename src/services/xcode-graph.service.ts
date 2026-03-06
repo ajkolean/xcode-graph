@@ -16,8 +16,8 @@ import type {
   GraphData,
   GraphEdge,
   GraphNode,
-} from '@/shared/schemas/graph.types';
-import { DependencyKind, NodeType, Origin, Platform } from '@/shared/schemas/graph.types';
+} from '@shared/schemas/graph.types';
+import { DependencyKind, NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import type {
   Graph,
   GraphDependency,

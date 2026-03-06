@@ -2,7 +2,7 @@
  * Platform icon utilities for consistent platform representation
  */
 
-import type { Platform } from '@/shared/schemas/graph.types';
+import type { Platform } from '@shared/schemas/graph.types';
 
 /**
  * Per-platform colors for visual distinction.

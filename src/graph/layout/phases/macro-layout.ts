@@ -1,7 +1,7 @@
+import type { ClusterGraph } from '@graph/layout/cluster-graph';
+import type { LayoutConfig } from '@graph/layout/config';
 import type { ClusterPosition } from '@shared/schemas';
 import type { ElkExtendedEdge, ElkNode, ELK as ElkType } from 'elkjs/lib/elk-api.js';
-import type { ClusterGraph } from '../cluster-graph';
-import type { LayoutConfig } from '../config';
 import type { MicroLayoutResult } from './micro-layout';
 
 /** Structured ELK logging entry returned when logging/measureExecutionTime enabled */

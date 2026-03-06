@@ -5,9 +5,9 @@
  * used for testing and development. Matches the fixture used in Swift tests.
  */
 
+import type { GraphData } from '@shared/schemas/graph.types';
 import type { Graph } from '@/services/xcode-graph.schema.generated';
 import { transformXcodeGraph } from '@/services/xcode-graph.service';
-import type { GraphData } from '@/shared/schemas/graph.types';
 import graphJson from './xcode-graph.json';
 
 /** Raw XcodeGraph JSON (real data) */

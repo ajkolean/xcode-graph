@@ -5,11 +5,11 @@
  * Creates a "highway" effect where edges going to similar directions share ports.
  */
 
+import type { ClusterEdge } from '@graph/layout/cluster-graph';
+import type { LayoutConfig } from '@graph/layout/config';
+import type { ClusterPort, PortSide, RoutedEdge } from '@graph/layout/types';
 import type { ClusterPosition, NodePosition } from '@shared/schemas';
 import type { GraphEdge } from '@shared/schemas/graph.types';
-import type { ClusterEdge } from '../cluster-graph';
-import type { LayoutConfig } from '../config';
-import type { ClusterPort, PortSide, RoutedEdge } from '../types';
 
 /**
  * Determine which side of a cluster a port should be on based on direction to target.

@@ -6,8 +6,8 @@
  */
 
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
-import { NODE_PALETTE } from '@/shared/constants/node-palette';
-import type { NodeType } from '@/shared/schemas/graph.types';
+import { NODE_PALETTE } from '@shared/constants/node-palette';
+import type { NodeType } from '@shared/schemas/graph.types';
 
 /**
  * Color mapping for different node types

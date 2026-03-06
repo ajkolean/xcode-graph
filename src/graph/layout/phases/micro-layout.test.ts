@@ -1,7 +1,7 @@
 import assert from 'node:assert';
+import { DEFAULT_CONFIG } from '@graph/layout/config';
 import { describe, expect, it } from 'vitest';
 import { createCluster, createClusterWithNodes } from '@/fixtures';
-import { DEFAULT_CONFIG } from '../config';
 import { computeClusterInterior } from './micro-layout';
 
 describe('micro-layout', () => {

@@ -7,14 +7,14 @@
  * @module signals/display.computed
  */
 
+import { getFuzzyMatchIds } from '@graph/utils/fuzzy-search';
+import { applyGraphFilters } from '@graph/utils/graph-filters';
+import { computeTransitiveDependencies, type TransitiveResult } from '@graph/utils/traversal';
 import { Signal } from '@lit-labs/signals';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType } from '@shared/schemas/graph.types';
 import { filters, searchQuery } from '@shared/signals/filter.signals';
 import { previewFilter } from '@shared/signals/ui.signals';
-import { getFuzzyMatchIds } from '../utils/fuzzy-search';
-import { applyGraphFilters } from '../utils/graph-filters';
-import { computeTransitiveDependencies, type TransitiveResult } from '../utils/traversal';
 import { edges, nodes } from './data.signals';
 import {
   highlightDirectDependents,

@@ -7,8 +7,8 @@
 
 import { ActiveTab } from '@shared/schemas';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { SignalSnapshot } from '../../test-utils/signal-helpers';
-import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
+import type { SignalSnapshot } from '@/test-utils/signal-helpers';
+import { createSignalSnapshot, restoreSignalSnapshot } from '@/test-utils/signal-helpers';
 import {
   resetZoom,
   setActiveTab,

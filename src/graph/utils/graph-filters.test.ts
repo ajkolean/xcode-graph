@@ -2,7 +2,7 @@ import type { FilterState } from '@shared/schemas/app.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
-import { createNode } from '../../fixtures';
+import { createNode } from '@/fixtures';
 import { applyGraphFilters, matchesSearch } from './graph-filters';
 
 const defaultFilters: FilterState = {

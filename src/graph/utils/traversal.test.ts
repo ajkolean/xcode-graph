@@ -1,12 +1,7 @@
 import { ViewMode } from '@shared/schemas';
 import type { GraphEdge } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
-import {
-  createDiamondGraph,
-  createEmptyGraph,
-  createLinearChain,
-  createNode,
-} from '../../fixtures';
+import { createDiamondGraph, createEmptyGraph, createLinearChain, createNode } from '@/fixtures';
 import {
   bfsTraverseGraph,
   buildAdjacency,

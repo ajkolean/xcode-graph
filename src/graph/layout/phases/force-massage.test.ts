@@ -1,9 +1,9 @@
 import assert from 'node:assert';
+import { buildClusterGraph } from '@graph/layout/cluster-graph';
+import { DEFAULT_CONFIG } from '@graph/layout/config';
 import type { ClusterPosition } from '@shared/schemas';
 import { describe, expect, it } from 'vitest';
 import { createClusterWithNodes } from '@/fixtures';
-import { buildClusterGraph } from '../cluster-graph';
-import { DEFAULT_CONFIG } from '../config';
 import { applyForceMassage } from './force-massage';
 
 function createClusterPosition(id: string, x: number, y: number, size = 200): ClusterPosition {

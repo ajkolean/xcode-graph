@@ -5,8 +5,8 @@
  * and loading/parsing functions in xcode-graph.service.ts.
  */
 
+import { DependencyKind, NodeType, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it, vi } from 'vitest';
-import { DependencyKind, NodeType, Platform } from '@/shared/schemas/graph.types';
 import { loadXcodeGraph, parseXcodeGraph, transformXcodeGraph } from './xcode-graph.service';
 
 /** Helper to create a minimal valid raw graph with one project and target */

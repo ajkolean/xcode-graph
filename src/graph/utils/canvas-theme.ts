@@ -11,7 +11,7 @@
  * src/shared/constants/node-palette.ts.
  */
 
-import { NODE_PALETTE } from '@/shared/constants/node-palette';
+import { NODE_PALETTE } from '@shared/constants/node-palette';
 
 // ---------------------------------------------------------------------------
 // Color manipulation helpers (merged from canvas-colors.ts)

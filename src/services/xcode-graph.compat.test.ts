@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { NodeType, Platform } from '@shared/schemas/graph.types';
 import { describe, expect, it } from 'vitest';
-import { NodeType, Platform } from '@/shared/schemas/graph.types';
 import { transformXcodeGraph } from './xcode-graph.service';
 import { safeParseGraph } from './xcode-graph.validation';
 

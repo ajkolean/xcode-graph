@@ -4,8 +4,8 @@
  */
 
 import { aTimeout } from '@open-wc/testing';
+import type { ClusterPosition, NodePosition } from '@shared/schemas';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ClusterPosition, NodePosition } from '@/shared/schemas';
 import { MockHost } from '@/test-utils';
 import { GraphInteractionFullController } from './graph-interaction-full.controller';
 

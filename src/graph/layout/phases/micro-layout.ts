@@ -1,3 +1,4 @@
+import type { LayoutConfig } from '@graph/layout/config';
 import type { Cluster, NodePosition } from '@shared/schemas';
 import { NodeRole } from '@shared/schemas/cluster.types';
 import {
@@ -7,7 +8,6 @@ import {
   forceSimulation,
   type SimulationNodeDatum,
 } from 'd3-force';
-import type { LayoutConfig } from '../config';
 
 /** Simulation node for micro-layout within a cluster */
 interface MicroSimNode extends SimulationNodeDatum {
