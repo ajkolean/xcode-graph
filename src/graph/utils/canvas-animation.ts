@@ -94,3 +94,39 @@ export function setAnimatedTarget(
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// Viewport Transitions
+// ---------------------------------------------------------------------------
+
+/** Describes an in-flight animated viewport change (pan + zoom). */
+export interface ViewportTransition {
+  startZoom: number;
+  targetZoom: number;
+  startPan: { x: number; y: number };
+  targetPan: { x: number; y: number };
+  duration: number;
+  startTime: number;
+}
+
+/**
+ * Advance a viewport transition and return the interpolated state.
+ * Uses the same easeQuadInOut curve as opacity animations.
+ */
+export function tickViewportTransition(
+  transition: ViewportTransition,
+  now: number,
+): { zoom: number; pan: { x: number; y: number }; done: boolean } {
+  const elapsed = now - transition.startTime;
+  const rawProgress = Math.min(elapsed / transition.duration, 1);
+  const t = easeQuadInOut(rawProgress);
+
+  return {
+    zoom: transition.startZoom + (transition.targetZoom - transition.startZoom) * t,
+    pan: {
+      x: transition.startPan.x + (transition.targetPan.x - transition.startPan.x) * t,
+      y: transition.startPan.y + (transition.targetPan.y - transition.startPan.y) * t,
+    },
+    done: rawProgress >= 1,
+  };
+}

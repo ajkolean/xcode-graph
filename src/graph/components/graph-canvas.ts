@@ -404,12 +404,19 @@ export class GraphCanvas extends LitElement {
     const fit = this.scene.fitToViewport(this.layout.clusterPositions, rect.width, rect.height);
     if (!fit) return;
 
-    this._zoom = fit.zoom;
-    setBaseZoom(fit.zoom);
-
-    this.dispatchEvent(
-      new CustomEvent('zoom-change', { detail: this.zoom, bubbles: true, composed: true }),
-    );
+    // Use animated transition if scene is already rendered (not initial fit)
+    if (this.didInitialFit) {
+      this.scene.animateToViewport(fit.pan, fit.zoom, 400);
+      setBaseZoom(fit.zoom);
+      this.isAnimating = true;
+      this.animationLoop.requestRender();
+    } else {
+      this._zoom = fit.zoom;
+      setBaseZoom(fit.zoom);
+      this.dispatchEvent(
+        new CustomEvent('zoom-change', { detail: this.zoom, bubbles: true, composed: true }),
+      );
+    }
   }
 
   /**
@@ -467,6 +474,11 @@ export class GraphCanvas extends LitElement {
   private onFrame(timestamp: number, dt: number): void {
     this.time = timestamp;
 
+    // Tick viewport transition animation (smooth zoom/pan)
+    if (this.scene?.tickViewportAnimation(performance.now())) {
+      this._zoom = this.scene.zoom;
+    }
+
     // Tick opacity transition animations
     const alphaAnimating = tickAnimationMap(this.nodeAlphaMap, dt);
     if (alphaAnimating && !this.isAnimating) {
@@ -504,7 +516,10 @@ export class GraphCanvas extends LitElement {
         Boolean(this.selectedCluster) ||
         (this.layout.cycleNodes?.size ?? 0) > 0);
 
-    this.isAnimating = needsMotionAnimation || hasFadingNodes || hasAlphaAnimations;
+    const hasViewportTransition = this.scene?.hasActiveViewportTransition() ?? false;
+
+    this.isAnimating =
+      needsMotionAnimation || hasFadingNodes || hasAlphaAnimations || hasViewportTransition;
   }
 
   /** Builds the scene config and delegates rendering to the canvas scene. */

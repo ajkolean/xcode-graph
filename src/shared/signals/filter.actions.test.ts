@@ -7,7 +7,7 @@
 
 import type { FilterState } from '@shared/schemas/app.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SignalSnapshot } from '../../test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '../../test-utils/signal-helpers';
 import {
@@ -68,8 +68,17 @@ describe('filter.actions', () => {
   });
 
   describe('setSearchQuery', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it('should set search query', () => {
       setSearchQuery('test query');
+      vi.advanceTimersByTime(150);
 
       expect(searchQuery.get()).toBe('test query');
     });
@@ -77,13 +86,16 @@ describe('filter.actions', () => {
     it('should replace existing search query', () => {
       setSearchQuery('first query');
       setSearchQuery('second query');
+      vi.advanceTimersByTime(150);
 
       expect(searchQuery.get()).toBe('second query');
     });
 
     it('should allow empty string', () => {
       setSearchQuery('query');
+      vi.advanceTimersByTime(150);
       setSearchQuery('');
+      vi.advanceTimersByTime(150);
 
       expect(searchQuery.get()).toBe('');
     });
@@ -359,6 +371,8 @@ describe('filter.actions', () => {
     });
 
     it('should handle complex filtering scenario', () => {
+      vi.useFakeTimers();
+
       // Initialize with data
       initializeFromData(new Set(['Core', 'UI', 'Network']), new Set(['Alamofire', 'SDWebImage']));
 
@@ -369,6 +383,7 @@ describe('filter.actions', () => {
       togglePlatform(Platform.watchOS);
       toggleProject('Network');
       setSearchQuery('Button');
+      vi.advanceTimersByTime(150);
 
       const current = filters.get();
       expect(current.nodeTypes.has(NodeType.TestUnit)).toBe(false);
@@ -378,6 +393,8 @@ describe('filter.actions', () => {
       expect(current.projects.has('Core')).toBe(true);
       expect(current.projects.has('Network')).toBe(false);
       expect(searchQuery.get()).toBe('Button');
+
+      vi.useRealTimers();
     });
   });
 });

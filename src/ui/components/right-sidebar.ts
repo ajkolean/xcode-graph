@@ -195,7 +195,8 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       min-height: 0;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
+      scrollbar-color: rgba(124, 58, 237, 0.2) transparent;
+      scrollbar-color: rgba(var(--colors-primary-rgb, 124, 58, 237), 0.2) transparent;
     }
 
     .filter-scroll::-webkit-scrollbar {
@@ -281,7 +282,30 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       background-color: var(--colors-primary);
       margin-left: var(--spacing-2);
       vertical-align: middle;
-}
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .filter-content,
+    .details-toolbar {
+      animation: fadeSlideIn 200ms var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .filter-content,
+      .details-toolbar {
+        animation: none;
+      }
+    }
   `;
 
   private _filterData = computeFilters([]);

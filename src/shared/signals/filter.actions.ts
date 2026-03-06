@@ -38,6 +38,8 @@ export function setFilters(newFilters: FilterState): void {
   filters.set(newFilters);
 }
 
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
 /**
  * Update search query
  *
@@ -46,7 +48,10 @@ export function setFilters(newFilters: FilterState): void {
  * @public
  */
 export function setSearchQuery(query: string): void {
-  searchQuery.set(query);
+  if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => {
+    searchQuery.set(query);
+  }, 150);
 }
 
 /**

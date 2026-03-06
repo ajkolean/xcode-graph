@@ -206,8 +206,7 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
     showTransitiveDependentsVal;
 
   const dimmed = new Set<string>();
-  const allNodes = nodes.get();
-  const fuzzyMatchSet = query ? getFuzzyMatchIds(allNodes, query) : null;
+  const fuzzyMatchSet = query ? getFuzzyMatchIds(filteredNodes, query) : null;
 
   for (const node of filteredNodes) {
     if (shouldDimBySearch(node, fuzzyMatchSet)) {

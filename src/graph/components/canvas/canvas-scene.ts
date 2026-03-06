@@ -18,7 +18,12 @@
 
 import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
 import type { TransitiveResult } from '@graph/utils';
-import { type AnimatedValue, getAnimatedAlpha } from '@graph/utils/canvas-animation';
+import {
+  type AnimatedValue,
+  getAnimatedAlpha,
+  tickViewportTransition,
+  type ViewportTransition,
+} from '@graph/utils/canvas-animation';
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import { type CanvasTheme, colorWithAlpha, hexToRgba } from '@graph/utils/canvas-theme';
 import { buildNodeQuadtree, findNodeAt, type IndexedNode } from '@graph/utils/spatial-index';
@@ -144,7 +149,7 @@ export class CanvasScene {
 
   // Path2D cache for bezier edge paths (avoids per-frame allocation)
   private bezierPathCache = new Map<string, Path2D>();
-  private static readonly MAX_BEZIER_CACHE_SIZE = 1000;
+  private static readonly MAX_BEZIER_CACHE_SIZE = 2500;
   private static readonly MAX_ARC_LABEL_CACHE_SIZE = 200;
 
   // Gradient cache for cluster fills
@@ -217,6 +222,12 @@ export class CanvasScene {
   private currentHoveredNode: string | null = null;
   private currentHoveredCluster: string | null = null;
 
+  // Viewport transition animation
+  private viewportTransition: ViewportTransition | null = null;
+
+  // Tooltip hover delay
+  private tooltipShowTime = 0;
+
   // Fade-out nodes
   fadingOutNodes = new Map<string, FadingNode>();
 
@@ -239,6 +250,7 @@ export class CanvasScene {
     this.canvas.addEventListener('mousemove', this.handleMouseMove);
     this.canvas.addEventListener('mouseup', this.handleMouseUp);
     this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
+    this.canvas.addEventListener('dblclick', this.handleDoubleClick);
   }
 
   // -------------------------------------------------------------------
@@ -457,6 +469,43 @@ export class CanvasScene {
     return screenToWorld(screenX, screenY, this.pan, this._zoom);
   }
 
+  /** Start an animated viewport transition to the target pan and zoom. */
+  animateToViewport(targetPan: { x: number; y: number }, targetZoom: number, duration = 300): void {
+    this.viewportTransition = {
+      startZoom: this._zoom,
+      targetZoom: targetZoom,
+      startPan: { ...this.pan },
+      targetPan: { ...targetPan },
+      duration,
+      startTime: performance.now(),
+    };
+    this.callbacks.onRenderRequest();
+  }
+
+  /**
+   * Advance the active viewport transition.
+   * @returns true if a transition is active (caller should keep rendering).
+   */
+  tickViewportAnimation(now: number): boolean {
+    if (!this.viewportTransition) return false;
+
+    const result = tickViewportTransition(this.viewportTransition, now);
+    this._zoom = result.zoom;
+    this.pan = { ...result.pan };
+    this.callbacks.onZoomChange(result.zoom);
+
+    if (result.done) {
+      this.viewportTransition = null;
+    }
+
+    return true;
+  }
+
+  /** Whether a viewport transition animation is currently in flight. */
+  hasActiveViewportTransition(): boolean {
+    return this.viewportTransition !== null;
+  }
+
   /** Resize the canvas to match container dimensions. */
   resize(width: number, height: number): void {
     this.width = width;
@@ -499,6 +548,7 @@ export class CanvasScene {
     this.canvas.removeEventListener('mousemove', this.handleMouseMove);
     this.canvas.removeEventListener('mouseup', this.handleMouseUp);
     this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
+    this.canvas.removeEventListener('dblclick', this.handleDoubleClick);
     this.canvas.remove();
     this.pathCache.clear();
     this.bezierPathCache.clear();
@@ -547,6 +597,10 @@ export class CanvasScene {
 
     ctx.globalAlpha = alpha;
 
+    if (isDimmed) {
+      ctx.globalAlpha = alpha * 0.35;
+    }
+
     if (isCycleNode && !isDimmed) {
       this.drawCycleGlow(ctx, size, theme, alpha, config.time);
     }
@@ -556,6 +610,17 @@ export class CanvasScene {
     }
 
     this.drawNodeIcon(ctx, node, size, adjustedColor, theme, isHovered || isSelected);
+
+    if (isHovered && !isSelected && !isDimmed) {
+      ctx.beginPath();
+      ctx.arc(0, 0, size + 3, 0, Math.PI * 2);
+      ctx.strokeStyle = adjustedColor;
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.stroke();
+      ctx.globalAlpha = alpha;
+    }
+
     if (drawLabels) {
       this.drawNodeLabel(
         ctx,
@@ -777,12 +842,12 @@ export class CanvasScene {
     zoom: number,
     time: number,
   ): void {
-    const borderOpacity = adjustOpacityForZoom(0.7, zoom);
+    const borderOpacity = adjustOpacityForZoom(0.85, zoom);
     const baseWidth = isActive ? 2.5 : 2;
     ctx.lineWidth = Math.max(1, Math.log2(nodeCount)) * baseWidth * 1.5;
     ctx.strokeStyle = clusterColor;
     ctx.globalAlpha = isActive ? 1.0 : borderOpacity;
-    ctx.setLineDash(clusterType === 'project' ? [8, 8] : [3, 8]);
+    ctx.setLineDash(clusterType === 'project' ? [10, 6] : [5, 6]);
 
     if (isSelected && !prefersReducedMotion.get()) {
       ctx.lineDashOffset = -time / 50;
@@ -985,7 +1050,7 @@ export class CanvasScene {
 
       ctx.save();
       ctx.strokeStyle = theme.edgeDefault;
-      ctx.globalAlpha = 0.5;
+      ctx.globalAlpha = 0.65;
       ctx.lineWidth = thickness;
       ctx.setLineDash([]);
 
@@ -1222,7 +1287,7 @@ export class CanvasScene {
     if (inChain) {
       return this.getChainEdgeDepth(edgeKey) === 0 ? 1.0 : 0.5;
     }
-    const baseOpacity = isHighlighted ? 1.0 : 0.25;
+    const baseOpacity = isHighlighted ? 1.0 : 0.4;
     return cycleEdge ? Math.max(baseOpacity, 0.8) : baseOpacity;
   }
 
@@ -1244,7 +1309,7 @@ export class CanvasScene {
       cycleEdge,
     );
     ctx.globalAlpha = this.resolveEdgeOpacity(edgeKey, isHighlighted, cycleEdge, inChain);
-    ctx.lineWidth = (isEmphasized ? 2.5 : cycleEdge ? 2 : 1) / zoom;
+    ctx.lineWidth = (isEmphasized ? 2.5 : cycleEdge ? 2 : 1.2) / zoom;
 
     if (cycleEdge) {
       ctx.setLineDash([4, 4]);
@@ -1332,6 +1397,9 @@ export class CanvasScene {
   // -------------------------------------------------------------------
 
   private drawTooltip(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
+    // Suppress tooltip during hover delay
+    if (performance.now() < this.tooltipShowTime) return;
+
     const { hoveredNode, hoveredCluster } = config;
 
     if (hoveredNode) {
@@ -1740,6 +1808,12 @@ export class CanvasScene {
       this.currentHoveredNode = newHoveredNode;
       this.callbacks.onNodeHover(newHoveredNode);
 
+      // Apply tooltip delay when hovering a new entity
+      if (newHoveredNode) {
+        this.tooltipShowTime = performance.now() + 150;
+        setTimeout(() => this.callbacks.onRenderRequest(), 160);
+      }
+
       if (hitNode) {
         this.currentHoveredCluster = hitNode.project || 'External';
         this.callbacks.onClusterHover(this.currentHoveredCluster);
@@ -1752,6 +1826,13 @@ export class CanvasScene {
       if (hitCluster !== this.currentHoveredCluster) {
         this.currentHoveredCluster = hitCluster;
         this.callbacks.onClusterHover(hitCluster);
+
+        // Apply tooltip delay for cluster hover changes
+        if (hitCluster) {
+          this.tooltipShowTime = performance.now() + 150;
+          setTimeout(() => this.callbacks.onRenderRequest(), 160);
+        }
+
         this.callbacks.onRenderRequest();
       }
     }
@@ -1784,6 +1865,58 @@ export class CanvasScene {
       this.callbacks.onClusterHover(null);
     }
   };
+
+  private handleDoubleClick = (evt: MouseEvent): void => {
+    evt.preventDefault();
+    const rect = this.canvas.getBoundingClientRect();
+    const screenX = evt.clientX - rect.left;
+    const screenY = evt.clientY - rect.top;
+    const worldPos = this.screenToWorldPos(screenX, screenY);
+
+    // Don't zoom if double-clicking a node — node interactions are handled elsewhere
+    const hitNode = this.hitTestNode(worldPos.x, worldPos.y);
+    if (hitNode) return;
+
+    // Double-click on a cluster — zoom to fit that cluster
+    const hitCluster = this.hitTestCluster(worldPos.x, worldPos.y);
+    if (hitCluster) {
+      this.animateToCluster(hitCluster);
+      return;
+    }
+
+    // Empty space — zoom in 2x centered on click point
+    const newZoom = Math.min(this._zoom * 2, ZOOM_CONFIG.MAX_ZOOM);
+    const newPan = {
+      x: screenX - worldPos.x * newZoom,
+      y: screenY - worldPos.y * newZoom,
+    };
+    this.animateToViewport(newPan, newZoom, 300);
+  };
+
+  private animateToCluster(clusterId: string): void {
+    const clusterPos = this.config?.layout?.clusterPositions?.get(clusterId);
+    if (!clusterPos) return;
+
+    const manualPos = this.config?.manualClusterPositions?.get(clusterId);
+    const cx = manualPos?.x ?? clusterPos.x;
+    const cy = manualPos?.y ?? clusterPos.y;
+
+    const padding = 50;
+    const clusterRadius = Math.max(clusterPos.width, clusterPos.height) / 2;
+
+    const fitZoom = Math.min(
+      this.width / ((clusterRadius + padding) * 2),
+      this.height / ((clusterRadius + padding) * 2),
+      ZOOM_CONFIG.MAX_ZOOM,
+    );
+
+    const targetPan = {
+      x: this.width / 2 - cx * fitZoom,
+      y: this.height / 2 - cy * fitZoom,
+    };
+
+    this.animateToViewport(targetPan, fitZoom, 400);
+  }
 
   // -------------------------------------------------------------------
   // Viewport Helpers

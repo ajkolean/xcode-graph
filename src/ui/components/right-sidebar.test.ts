@@ -10,7 +10,7 @@ import type { Cluster } from '@shared/schemas';
 import { ClusterType } from '@shared/schemas/cluster.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GraphRightSidebar } from './right-sidebar';
 import './right-sidebar';
 
@@ -469,13 +469,16 @@ describe('xcode-graph-right-sidebar - Event Handlers', () => {
       ></xcode-graph-right-sidebar>
     `);
 
+    vi.useFakeTimers();
     const searchBar = el.shadowRoot?.querySelector('xcode-graph-search-bar');
     searchBar?.dispatchEvent(
       new CustomEvent('search-change', { detail: { query: 'test' }, bubbles: true }),
     );
+    vi.advanceTimersByTime(150);
     await el.updateComplete;
 
     expect(searchQuery.get()).toBe('test');
+    vi.useRealTimers();
   });
 
   it('should handle clear-filters event', async () => {
