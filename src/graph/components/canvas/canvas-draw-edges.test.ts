@@ -1,16 +1,16 @@
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { NodeType, Origin, Platform } from '@shared/schemas';
 import type { GraphNode } from '@shared/schemas/graph.types';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  applyEdgeStyle,
+  drawArrowhead,
+  drawEdgeGlow,
+  drawEdgePath,
+  type EdgeMeta,
+  MAX_BEZIER_CACHE_SIZE,
   resolveEdgeColor,
   resolveEdgeOpacity,
-  drawArrowhead,
-  drawEdgePath,
-  applyEdgeStyle,
-  drawEdgeGlow,
-  MAX_BEZIER_CACHE_SIZE,
-  type EdgeMeta,
 } from './canvas-draw-edges';
 
 function createTheme(overrides?: Partial<CanvasTheme>): CanvasTheme {
@@ -52,7 +52,7 @@ describe('canvas-draw-edges', () => {
     const canvas = document.createElement('canvas');
     canvas.width = 800;
     canvas.height = 600;
-    ctx = canvas.getContext('2d')!;
+    ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   });
 
   describe('resolveEdgeColor', () => {
@@ -239,7 +239,7 @@ describe('canvas-draw-edges', () => {
         'a->b',
         false, // isEmphasized
         false, // isHighlighted
-        true,  // cycleEdge
+        true, // cycleEdge
         false, // inChain
         0,
         1,
@@ -261,8 +261,8 @@ describe('canvas-draw-edges', () => {
         ctx,
         { sourceNode: source, targetNode: target },
         'a->b',
-        true,  // isEmphasized
-        true,  // isHighlighted
+        true, // isEmphasized
+        true, // isHighlighted
         false, // cycleEdge
         false, // inChain
         0,
@@ -309,8 +309,8 @@ describe('canvas-draw-edges', () => {
         ctx,
         { sourceNode: source, targetNode: target },
         'a->b',
-        true,  // isEmphasized
-        true,  // isHighlighted
+        true, // isEmphasized
+        true, // isHighlighted
         false,
         false,
         42, // animatedDashOffset
@@ -333,7 +333,7 @@ describe('canvas-draw-edges', () => {
         ctx,
         { sourceNode: source, targetNode: target },
         'a->b',
-        true,  // isEmphasized
+        true, // isEmphasized
         true,
         false,
         false,
@@ -405,12 +405,16 @@ describe('canvas-draw-edges', () => {
       const source = createNode('a');
       const target = createNode('b');
       const endpoints = { sourceNode: source, targetNode: target, x1: 0, y1: 0, x2: 100, y2: 100 };
-      const drawPath = vi.fn();
+      let capturedLineWidth = 0;
+      const drawPath = vi.fn().mockImplementation((c: CanvasRenderingContext2D) => {
+        capturedLineWidth = c.lineWidth;
+      });
       const getDepth = vi.fn().mockReturnValue(0);
 
       drawEdgeGlow(ctx, endpoints, false, false, true, 'a->b', 2, theme, null, getDepth, drawPath);
 
-      expect(ctx.lineWidth).toBe(3); // 6 / 2
+      expect(drawPath).toHaveBeenCalled();
+      expect(capturedLineWidth).toBe(3); // 6 / zoom(2)
     });
 
     it('uses lower alpha for chain edges that are not highlighted', () => {
@@ -418,13 +422,17 @@ describe('canvas-draw-edges', () => {
       const source = createNode('a');
       const target = createNode('b');
       const endpoints = { sourceNode: source, targetNode: target, x1: 0, y1: 0, x2: 100, y2: 100 };
-      const drawPath = vi.fn();
+      let capturedAlpha = 0;
+      const drawPath = vi.fn().mockImplementation((c: CanvasRenderingContext2D) => {
+        capturedAlpha = c.globalAlpha;
+      });
       const getDepth = vi.fn().mockReturnValue(0);
 
       drawEdgeGlow(ctx, endpoints, false, true, false, 'a->b', 1, theme, null, getDepth, drawPath);
 
+      expect(drawPath).toHaveBeenCalled();
       // inChain=true, isHighlighted=false, depth=0 => glowAlpha = 0.15
-      expect(ctx.globalAlpha).toBe(0.15);
+      expect(capturedAlpha).toBeCloseTo(0.15);
     });
   });
 });

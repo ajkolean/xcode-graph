@@ -220,14 +220,18 @@ describe('xcode-graph (GraphApp)', () => {
 
   describe('loadRawGraph with transform', () => {
     it('should load valid raw graph data successfully', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);
 
       // Provide a minimal valid Tuist graph format
       const rawGraph = {
-        projects: {
-          TestProject: {
+        name: 'TestWorkspace',
+        path: '/tmp/TestWorkspace',
+        projects: [
+          '/tmp/TestProject',
+          {
             targets: {
               App: {
                 product: 'app',
@@ -237,15 +241,18 @@ describe('xcode-graph (GraphApp)', () => {
               },
             },
           },
-        },
+        ],
+        dependencies: [],
       };
 
       await el.loadRawGraph(rawGraph);
       // If it processed successfully (or with warnings), no throw
       expect(el).toBeDefined();
+      warnSpy.mockRestore();
     });
 
     it('should handle completely invalid data gracefully', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);
@@ -253,6 +260,7 @@ describe('xcode-graph (GraphApp)', () => {
       await el.loadRawGraph(42);
       // Should not throw, ErrorService handles it
       expect(el).toBeDefined();
+      warnSpy.mockRestore();
     });
 
     it('should handle transform that returns warnings', async () => {
@@ -290,36 +298,46 @@ describe('xcode-graph (GraphApp)', () => {
     });
 
     it('should handle transform result with empty nodes', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);
 
-      // An empty projects object produces no nodes
+      // An empty projects array produces no nodes
       const rawGraph = {
-        projects: {},
-        dependencies: {},
+        name: 'EmptyWorkspace',
+        path: '/tmp/EmptyWorkspace',
+        projects: [],
+        dependencies: [],
       };
 
       await el.loadRawGraph(rawGraph);
       // The component should handle empty result gracefully via ErrorService
       expect(el).toBeDefined();
+      warnSpy.mockRestore();
     });
 
     it('should set nodes and edges from successful transform', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);
 
-      // A valid graph with a target and a dependency
+      // A valid graph with a target and a dependency (flat alternating pairs format)
       const rawGraph = {
-        projects: {
-          MyProject: {
+        name: 'MyWorkspace',
+        path: '/tmp/MyWorkspace',
+        projects: [
+          '/tmp/MyProject',
+          {
             targets: {
               MyApp: {
                 product: 'app',
                 platform: 'iOS',
                 sources: [],
-                dependencies: [{ target: 'MyLib' }],
+                dependencies: [
+                  { target: { name: 'MyLib', path: '/tmp/MyProject', status: 'required' } },
+                ],
               },
               MyLib: {
                 product: 'framework',
@@ -329,10 +347,8 @@ describe('xcode-graph (GraphApp)', () => {
               },
             },
           },
-        },
-        dependencies: {
-          MyProject: {},
-        },
+        ],
+        dependencies: [],
       };
 
       await el.loadRawGraph(rawGraph);
@@ -345,6 +361,7 @@ describe('xcode-graph (GraphApp)', () => {
         // If parsing fails (schema format differences), the component should still be defined
         expect(el).toBeDefined();
       }
+      warnSpy.mockRestore();
     });
   });
 

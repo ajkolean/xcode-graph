@@ -1,10 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import {
-  drawClusterFill,
-  drawClusterBorder,
-  truncateText,
-} from './canvas-draw-clusters';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { drawClusterBorder, drawClusterFill, truncateText } from './canvas-draw-clusters';
 
 describe('canvas-draw-clusters', () => {
   let ctx: CanvasRenderingContext2D;
@@ -13,7 +9,7 @@ describe('canvas-draw-clusters', () => {
     const canvas = document.createElement('canvas');
     canvas.width = 800;
     canvas.height = 600;
-    ctx = canvas.getContext('2d')!;
+    ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     prefersReducedMotion.set(false);
   });
 

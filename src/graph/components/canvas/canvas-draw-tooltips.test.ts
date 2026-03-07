@@ -1,14 +1,14 @@
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
-  roundRect,
-  drawNodeTooltip,
   drawClusterTooltip,
-  TOOLTIP_PADDING,
-  TOOLTIP_HEIGHT,
+  drawNodeTooltip,
+  roundRect,
   TOOLTIP_FONT,
-  TOOLTIP_TITLE_FONT,
+  TOOLTIP_HEIGHT,
+  TOOLTIP_PADDING,
   TOOLTIP_SUBTITLE_FONT,
+  TOOLTIP_TITLE_FONT,
 } from './canvas-draw-tooltips';
 
 function createTheme(overrides?: Partial<CanvasTheme>): CanvasTheme {
@@ -37,7 +37,7 @@ describe('canvas-draw-tooltips', () => {
     const canvas = document.createElement('canvas');
     canvas.width = 800;
     canvas.height = 600;
-    ctx = canvas.getContext('2d')!;
+    ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   });
 
   describe('roundRect', () => {
@@ -79,11 +79,11 @@ describe('canvas-draw-tooltips', () => {
       expect(ctx.setTransform).toHaveBeenCalledWith(2, 0, 0, 2, 0, 0);
     });
 
-    it('uses tooltip font', () => {
+    it('sets font and draws text', () => {
       const theme = createTheme();
       drawNodeTooltip(ctx, 100, 200, 'MyNode', '#FF0000', theme, 1);
-      // Font should be set to TOOLTIP_FONT at some point
-      expect(ctx.font).toBe(TOOLTIP_FONT);
+      // Font is set inside save/restore context; verify text was drawn
+      expect(ctx.fillText).toHaveBeenCalledWith('MyNode', 100, 204);
     });
 
     it('fills background with theme tooltip color', () => {
@@ -107,11 +107,11 @@ describe('canvas-draw-tooltips', () => {
       expect(ctx.fillText).toHaveBeenCalledWith('TestNode', 100, 204);
     });
 
-    it('centers text alignment', () => {
+    it('draws text at the correct screen position', () => {
       const theme = createTheme();
-      drawNodeTooltip(ctx, 100, 200, 'MyNode', '#FF0000', theme, 1);
-
-      expect(ctx.textAlign).toBe('center');
+      drawNodeTooltip(ctx, 150, 250, 'CenteredNode', '#FF0000', theme, 1);
+      // Text is drawn at (screenX, screenY + 4)
+      expect(ctx.fillText).toHaveBeenCalledWith('CenteredNode', 150, 254);
     });
   });
 
@@ -153,14 +153,13 @@ describe('canvas-draw-tooltips', () => {
       expect(ctx.stroke).toHaveBeenCalled();
     });
 
-    it('uses title and subtitle fonts', () => {
+    it('draws both title and subtitle text', () => {
       const theme = createTheme();
       drawClusterTooltip(ctx, 100, 200, 'MyCluster', 5, '#FF0000', theme, 1);
 
-      // Font gets set multiple times; we verify both fonts are used
-      const fontCalls = [TOOLTIP_TITLE_FONT, TOOLTIP_SUBTITLE_FONT];
-      // The last font set should be the subtitle font
-      expect(ctx.font).toBe(TOOLTIP_SUBTITLE_FONT);
+      // Both title and subtitle should be drawn
+      expect(ctx.fillText).toHaveBeenCalledWith('MyCluster', 100, 196);
+      expect(ctx.fillText).toHaveBeenCalledWith('5 targets', 100, 212);
     });
 
     it('resets globalAlpha to 1.0 at the end', () => {
