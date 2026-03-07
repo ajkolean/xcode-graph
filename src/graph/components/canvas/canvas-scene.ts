@@ -25,37 +25,51 @@ import {
   type ViewportTransition,
 } from '@graph/utils/canvas-animation';
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
-import { type CanvasTheme, colorWithAlpha, hexToRgba } from '@graph/utils/canvas-theme';
+import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { buildNodeQuadtree, findNodeAt, type IndexedNode } from '@graph/utils/spatial-index';
 import type { Cluster, ViewMode } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
-import { CLUSTER_LABEL_CONFIG, LOD_THRESHOLDS, ZOOM_CONFIG } from '@shared/utils/zoom-config';
+import { LOD_THRESHOLDS, ZOOM_CONFIG } from '@shared/utils/zoom-config';
 import { generateColor } from '@ui/utils/color-generator';
 import { getNodeTypeColorFromTheme } from '@ui/utils/node-colors';
 import { getNodeIconPath } from '@ui/utils/node-icons';
-import { generateBezierPath } from '@ui/utils/paths';
 import { getNodeSize } from '@ui/utils/sizing';
 import {
   calculateViewportBounds,
   isCircleInViewport,
-  isLineInViewportRaw,
   type ViewportBounds,
 } from '@ui/utils/viewport';
-import { adjustColorForZoom, adjustOpacityForZoom } from '@ui/utils/zoom-colors';
+import { adjustColorForZoom } from '@ui/utils/zoom-colors';
 import type { Quadtree } from 'd3-quadtree';
+import {
+  drawClusterBorder,
+  drawClusterFill,
+  drawClusterLabel,
+  renderArcLabelBitmap as renderArcLabelBitmapFn,
+  truncateText as truncateTextFn,
+} from './canvas-draw-clusters';
+import {
+  drawClusterArteries,
+  drawEdgePath as drawEdgePathFn,
+  type EdgeMeta,
+  renderSingleEdge,
+} from './canvas-draw-edges';
+import {
+  drawCycleGlow,
+  drawNodeIcon,
+  drawNodeLabel,
+  drawSelectionRings,
+  FADE_OUT_DURATION,
+  NODE_HIT_RADIUS_MULTIPLIER,
+} from './canvas-draw-nodes';
+import { drawClusterTooltip, drawNodeTooltip } from './canvas-draw-tooltips';
 import { computeFitToViewport, screenToWorld } from './canvas-viewport';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-
-/** Horizontal/vertical padding inside cluster tooltips (pixels) */
-const TOOLTIP_PADDING = 10;
-
-/** Fixed height of cluster tooltip background (pixels) */
-const TOOLTIP_HEIGHT = 40;
 
 /** Maximum search radius for node hit-testing (world-space pixels) */
 const HIT_TEST_RADIUS = 50;
@@ -117,38 +131,6 @@ export interface FadingNode {
   startTime: number;
 }
 
-/** Pre-computed per-edge metadata to avoid redundant calculations per frame. */
-interface EdgeMeta {
-  key: string;
-  isCycle: boolean;
-  isHighlighted: boolean;
-  inChain: boolean;
-  isSpecial: boolean;
-  endpoints: {
-    sourceNode: GraphNode;
-    targetNode: GraphNode;
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-  } | null;
-}
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-const NODE_LABEL_FONT_SIZE = 12;
-const NODE_LABEL_PADDING = 8;
-const NODE_FONT_SELECTED = `600 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
-const NODE_FONT_CONNECTED = `500 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
-const NODE_FONT_NORMAL = `400 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
-const FADE_OUT_DURATION = 250;
-const NODE_HIT_RADIUS_MULTIPLIER = 2;
-const TOOLTIP_FONT = '12px var(--fonts-body, sans-serif)';
-const TOOLTIP_TITLE_FONT = '600 13px var(--fonts-body, sans-serif)';
-const TOOLTIP_SUBTITLE_FONT = '11px var(--fonts-body, sans-serif)';
-
 // ---------------------------------------------------------------------------
 // CanvasScene
 // ---------------------------------------------------------------------------
@@ -165,7 +147,6 @@ export class CanvasScene {
 
   // Path2D cache for bezier edge paths (avoids per-frame allocation)
   private bezierPathCache = new Map<string, Path2D>();
-  private static readonly MAX_BEZIER_CACHE_SIZE = 2500;
   private static readonly MAX_ARC_LABEL_CACHE_SIZE = 200;
 
   // Gradient cache for cluster fills
@@ -585,7 +566,7 @@ export class CanvasScene {
   // Node Drawing
   // -------------------------------------------------------------------
 
-  private drawNode(ctx: CanvasRenderingContext2D, nodeId: string, drawLabels = true): void {
+  private drawNode(ctx: CanvasRenderingContext2D, nodeId: string, shouldDrawLabels = true): void {
     const config = this.config;
     if (!config) return;
 
@@ -619,14 +600,21 @@ export class CanvasScene {
     }
 
     if (isCycleNode && !isDimmed) {
-      this.drawCycleGlow(ctx, size, theme, alpha, config.time);
+      drawCycleGlow(ctx, size, theme, alpha, config.time);
     }
 
     if (isSelected) {
-      this.drawSelectionRings(ctx, size, adjustedColor, alpha, config.time);
+      drawSelectionRings(ctx, size, adjustedColor, alpha, config.time);
     }
 
-    this.drawNodeIcon(ctx, node, size, adjustedColor, theme, isHovered || isSelected);
+    drawNodeIcon(
+      ctx,
+      this.getPathForNode(node),
+      size,
+      adjustedColor,
+      theme,
+      isHovered || isSelected,
+    );
 
     if (isHovered && !isSelected && !isDimmed) {
       ctx.beginPath();
@@ -638,10 +626,22 @@ export class CanvasScene {
       ctx.globalAlpha = alpha;
     }
 
-    if (drawLabels) {
-      this.drawNodeLabel(
+    if (shouldDrawLabels) {
+      let labelText: string;
+      if (node.name.length > 20 && !isHovered && !isConnected) {
+        let cached = this.truncatedLabelCache.get(node.id);
+        if (!cached) {
+          cached = `${node.name.substring(0, 20)}...`;
+          this.truncatedLabelCache.set(node.id, cached);
+        }
+        labelText = cached;
+      } else {
+        labelText = node.name;
+      }
+
+      drawNodeLabel(
         ctx,
-        node,
+        labelText,
         size,
         adjustedColor,
         theme,
@@ -649,131 +649,10 @@ export class CanvasScene {
         isSelected,
         isConnected,
         isInChain,
-        isHovered,
       );
     }
 
     ctx.globalAlpha = 1.0;
-  }
-
-  private drawCycleGlow(
-    ctx: CanvasRenderingContext2D,
-    size: number,
-    theme: CanvasTheme,
-    alpha: number,
-    time: number,
-  ): void {
-    const pulse = prefersReducedMotion.get() ? 0.5 : (Math.sin(time / 300) + 1) / 2;
-    const glowRadius = size + 4 + pulse * 2;
-    ctx.beginPath();
-    ctx.arc(0, 0, glowRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = theme.cycleGlowColor;
-    ctx.lineWidth = 2;
-    ctx.globalAlpha = 0.3 + pulse * 0.2;
-    ctx.stroke();
-    ctx.globalAlpha = alpha;
-  }
-
-  private drawSelectionRings(
-    ctx: CanvasRenderingContext2D,
-    size: number,
-    color: string,
-    alpha: number,
-    time: number,
-  ): void {
-    if (prefersReducedMotion.get()) {
-      ctx.beginPath();
-      ctx.arc(0, 0, size + 8, 0, Math.PI * 2);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 6;
-      ctx.globalAlpha = alpha * 0.4;
-      ctx.stroke();
-    } else {
-      const ringCount = 3;
-      const cycleDuration = 2400;
-      const maxExpand = 24;
-      for (let i = 0; i < ringCount; i++) {
-        const phase = (i / ringCount + time / cycleDuration) % 1;
-        const ringRadius = size + 2 + phase * maxExpand;
-        const fadeIn = Math.min(1, phase / 0.2);
-        const fadeOut = 1 - phase;
-        ctx.beginPath();
-        ctx.arc(0, 0, ringRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 8 * (1 - phase * 0.6);
-        ctx.globalAlpha = alpha * fadeIn * fadeOut * 0.7;
-        ctx.stroke();
-      }
-    }
-    ctx.globalAlpha = alpha;
-  }
-
-  private drawNodeIcon(
-    ctx: CanvasRenderingContext2D,
-    node: GraphNode,
-    size: number,
-    adjustedColor: string,
-    theme: CanvasTheme,
-    isEmphasized: boolean,
-  ): void {
-    const scale = (size / 12) * (isEmphasized ? 1.08 : 1.0);
-    ctx.save();
-    ctx.scale(scale, scale);
-
-    const path = this.getPathForNode(node);
-    ctx.fillStyle = theme.tooltipBg;
-    ctx.fill(path);
-    ctx.fillStyle = colorWithAlpha(adjustedColor, 0.12);
-    ctx.fill(path);
-    ctx.strokeStyle = adjustedColor;
-    ctx.lineWidth = (isEmphasized ? 2.5 : 2) / scale;
-    ctx.stroke(path);
-
-    ctx.restore();
-  }
-
-  private drawNodeLabel(
-    ctx: CanvasRenderingContext2D,
-    node: GraphNode,
-    size: number,
-    adjustedColor: string,
-    theme: CanvasTheme,
-    alpha: number,
-    isSelected: boolean,
-    isConnected: boolean,
-    isInChain: boolean,
-    isHovered: boolean,
-  ): void {
-    let labelText: string;
-    if (node.name.length > 20 && !isHovered && !isConnected) {
-      let cached = this.truncatedLabelCache.get(node.id);
-      if (!cached) {
-        cached = `${node.name.substring(0, 20)}...`;
-        this.truncatedLabelCache.set(node.id, cached);
-      }
-      labelText = cached;
-    } else {
-      labelText = node.name;
-    }
-
-    ctx.font = isSelected
-      ? NODE_FONT_SELECTED
-      : isConnected || isInChain
-        ? NODE_FONT_CONNECTED
-        : NODE_FONT_NORMAL;
-    ctx.textAlign = 'center';
-    const labelY = size + NODE_LABEL_PADDING + NODE_LABEL_FONT_SIZE;
-
-    ctx.globalAlpha = alpha * 0.7;
-    ctx.strokeStyle = theme.shadowColor;
-    ctx.lineWidth = 3;
-    ctx.lineJoin = 'round';
-    ctx.miterLimit = 2;
-    ctx.strokeText(labelText, 0, labelY);
-
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = adjustedColor;
-    ctx.fillText(labelText, 0, labelY);
   }
 
   private getPathForNode(node: GraphNode): Path2D {
@@ -805,8 +684,16 @@ export class CanvasScene {
     const isSelected = config.selectedCluster === clusterId;
     const clusterColor = generateColor(cluster.name, cluster.type);
 
-    this.drawClusterFill(ctx, clusterId, radius, clusterColor, isActive, cluster.nodes.length);
-    this.drawClusterBorder(
+    drawClusterFill(
+      ctx,
+      radius,
+      clusterColor,
+      isActive,
+      cluster.nodes.length,
+      this.gradientCache,
+      clusterId,
+    );
+    drawClusterBorder(
       ctx,
       radius,
       clusterColor,
@@ -817,172 +704,20 @@ export class CanvasScene {
       config.zoom,
       config.time,
     );
-    this.drawClusterLabel(ctx, radius, clusterColor, isActive, cluster.name);
+    drawClusterLabel(
+      ctx,
+      radius,
+      clusterColor,
+      isActive,
+      cluster.name,
+      this.arcLabelBitmapCache,
+      CanvasScene.MAX_ARC_LABEL_CACHE_SIZE,
+      (c, text, maxWidth) => truncateTextFn(c, text, maxWidth, this.truncateCache),
+      (c, text, arcRadius, font, color) =>
+        renderArcLabelBitmapFn(c, text, arcRadius, font, color, this.arcTextCache),
+    );
 
     ctx.globalAlpha = 1.0;
-  }
-
-  private drawClusterFill(
-    ctx: CanvasRenderingContext2D,
-    clusterId: string,
-    radius: number,
-    clusterColor: string,
-    isActive: boolean,
-    nodeCount: number,
-  ): void {
-    const fillOpacity = isActive ? 0.08 : nodeCount <= 5 ? 0.06 : nodeCount <= 20 ? 0.08 : 0.1;
-    const cacheKey = `${clusterId}-${Math.round(radius)}-${fillOpacity}`;
-    let grad = this.gradientCache.get(cacheKey);
-    if (!grad) {
-      grad = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-      grad.addColorStop(0, hexToRgba(clusterColor, fillOpacity * 1.8));
-      grad.addColorStop(0.6, hexToRgba(clusterColor, fillOpacity));
-      grad.addColorStop(1, hexToRgba(clusterColor, fillOpacity * 0.3));
-      this.gradientCache.set(cacheKey, grad);
-    }
-
-    ctx.beginPath();
-    ctx.arc(0, 0, radius, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.globalAlpha = 1.0;
-    ctx.fill();
-  }
-
-  private drawClusterBorder(
-    ctx: CanvasRenderingContext2D,
-    radius: number,
-    clusterColor: string,
-    isActive: boolean,
-    isSelected: boolean,
-    nodeCount: number,
-    clusterType: string,
-    zoom: number,
-    time: number,
-  ): void {
-    const borderOpacity = adjustOpacityForZoom(0.85, zoom);
-    const baseWidth = isActive ? 2.5 : 2;
-    ctx.lineWidth = Math.max(1, Math.log2(nodeCount)) * baseWidth * 1.5;
-    ctx.strokeStyle = clusterColor;
-    ctx.globalAlpha = isActive ? 1.0 : borderOpacity;
-    ctx.setLineDash(clusterType === 'project' ? [10, 6] : [5, 6]);
-
-    if (isSelected && !prefersReducedMotion.get()) {
-      ctx.lineDashOffset = -time / 50;
-    }
-
-    ctx.beginPath();
-    ctx.arc(0, 0, radius, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.lineDashOffset = 0;
-  }
-
-  private drawClusterLabel(
-    ctx: CanvasRenderingContext2D,
-    radius: number,
-    color: string,
-    isActive: boolean,
-    name: string,
-  ): void {
-    const fontSize = CLUSTER_LABEL_CONFIG.FONT_SIZE;
-    const maxTextWidth = radius * 1.6;
-    const fontWeight = isActive ? 600 : 500;
-    const font = `${fontWeight} ${fontSize}px var(--fonts-body, sans-serif)`;
-
-    ctx.font = font;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    const displayName = this.truncateText(ctx, name, maxTextWidth);
-    const arcRadius = radius + CLUSTER_LABEL_CONFIG.LABEL_PADDING;
-
-    const bitmapKey = `${font}-${displayName}-${Math.round(arcRadius)}-${color}`;
-    let cached = this.arcLabelBitmapCache.get(bitmapKey);
-    if (!cached) {
-      cached = this.renderArcLabelBitmap(ctx, displayName, arcRadius, font, color);
-      if (this.arcLabelBitmapCache.size >= CanvasScene.MAX_ARC_LABEL_CACHE_SIZE) {
-        const firstKey = this.arcLabelBitmapCache.keys().next().value;
-        if (firstKey) this.arcLabelBitmapCache.delete(firstKey);
-      }
-      this.arcLabelBitmapCache.set(bitmapKey, cached);
-    }
-
-    ctx.globalAlpha = isActive ? 1 : 0.85;
-    ctx.drawImage(cached.canvas, -cached.width / 2, -cached.height / 2);
-  }
-
-  private truncateText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
-    const cacheKey = `${ctx.font}-${text}-${Math.round(maxWidth)}`;
-    const cached = this.truncateCache.get(cacheKey);
-    if (cached !== undefined) return cached;
-
-    let result = text;
-    if (ctx.measureText(text).width > maxWidth) {
-      while (result.length > 1 && ctx.measureText(`${result}…`).width > maxWidth) {
-        result = result.slice(0, -1);
-      }
-      result = `${result}…`;
-    }
-    this.truncateCache.set(cacheKey, result);
-    return result;
-  }
-
-  private renderArcLabelBitmap(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    arcRadius: number,
-    font: string,
-    color: string,
-  ): { canvas: OffscreenCanvas; width: number; height: number; arcRadius: number } {
-    const cacheKey = `${font}-${text}`;
-    let measurements = this.arcTextCache.get(cacheKey);
-    if (!measurements) {
-      ctx.font = font;
-      const charWidths: number[] = [];
-      let totalWidth = 0;
-      for (const ch of text) {
-        const w = ctx.measureText(ch).width;
-        charWidths.push(w);
-        totalWidth += w;
-      }
-      measurements = { charWidths, totalWidth };
-      this.arcTextCache.set(cacheKey, measurements);
-    }
-
-    const padding = 4;
-    const bitmapSize = (arcRadius + padding) * 2;
-    const canvas = new OffscreenCanvas(bitmapSize, bitmapSize);
-    const offCtx = canvas.getContext('2d');
-    if (!offCtx) return { canvas, width: bitmapSize, height: bitmapSize, arcRadius };
-
-    const cx = bitmapSize / 2;
-    const cy = bitmapSize / 2;
-    offCtx.font = font;
-    offCtx.textAlign = 'center';
-    offCtx.textBaseline = 'middle';
-    offCtx.fillStyle = color;
-
-    const totalAngle = measurements.totalWidth / arcRadius;
-    let angle = -Math.PI / 2 - totalAngle / 2;
-
-    for (let i = 0; i < text.length; i++) {
-      const charWidth = measurements.charWidths[i] ?? 0;
-      angle += charWidth / (2 * arcRadius);
-
-      const x = cx + arcRadius * Math.cos(angle);
-      const y = cy + arcRadius * Math.sin(angle);
-      const rotation = angle + Math.PI / 2;
-
-      offCtx.save();
-      offCtx.translate(x, y);
-      offCtx.rotate(rotation);
-      offCtx.fillText(text[i] ?? '', 0, 0);
-      offCtx.restore();
-
-      angle += charWidth / (2 * arcRadius);
-    }
-
-    return { canvas, width: bitmapSize, height: bitmapSize, arcRadius };
   }
 
   // -------------------------------------------------------------------
@@ -1018,16 +753,16 @@ export class CanvasScene {
 
     // Two-tier LOD: cluster arteries at low zoom, individual edges at high zoom
     if (zoom < LOD_THRESHOLDS.CLUSTER_ARTERIES) {
-      this.drawClusterArteries(ctx);
+      const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
+      drawClusterArteries(ctx, config, viewport);
 
       // Still draw highlighted/chain edges so selections are visible at low zoom
       this.precomputeEdgeMeta(edges, isChainActive);
-      const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
       const animatedDashOffset = prefersReducedMotion.get() ? 0 : time / 20;
       for (const edge of edges) {
         const meta = this.edgeMetaMap.get(edge);
         if (!meta || !meta.isSpecial) continue;
-        this.renderSingleEdge(ctx, meta, viewport, animatedDashOffset);
+        this.renderSingleEdgeDelegate(ctx, meta, viewport, animatedDashOffset);
       }
       return;
     }
@@ -1038,63 +773,11 @@ export class CanvasScene {
     this.precomputeEdgeMeta(edges, isChainActive);
 
     const animatedDashOffset = prefersReducedMotion.get() ? 0 : time / 20;
-    this.drawIndividualEdges(ctx, edges, viewport, animatedDashOffset);
-  }
-
-  private drawClusterArteries(ctx: CanvasRenderingContext2D): void {
-    const config = this.config;
-    if (!config) return;
-    const clusterEdges = config.layout.clusterEdges;
-    if (!clusterEdges || clusterEdges.length === 0) return;
-
-    const { zoom } = config;
-    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
-
-    // Batch context state for all arteries — match regular edge color/opacity
-    ctx.save();
-    ctx.strokeStyle = config.theme.edgeDefault;
-    ctx.globalAlpha = 0.2;
-    ctx.setLineDash([]);
-
-    for (const edge of clusterEdges) {
-      const sLayout = config.layout.clusterPositions.get(edge.source);
-      const tLayout = config.layout.clusterPositions.get(edge.target);
-      if (!sLayout || !tLayout) continue;
-
-      // resolveClusterPosition returns a shared mutable object — copy source coords
-      // before resolving target to avoid overwriting
-      const sPos = resolveClusterPosition(edge.source, sLayout, config.manualClusterPositions);
-      const sx = sPos.x;
-      const sy = sPos.y;
-      const tPos = resolveClusterPosition(edge.target, tLayout, config.manualClusterPositions);
-      const tx = tPos.x;
-      const ty = tPos.y;
-
-      if (!isLineInViewportRaw(sx, sy, tx, ty, viewport)) continue;
-
-      // Line thickness: 1-6px based on weight, scaled by zoom
-      ctx.lineWidth = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
-
-      ctx.beginPath();
-      ctx.moveTo(sx, sy);
-      ctx.lineTo(tx, ty);
-      ctx.stroke();
-    }
-
-    ctx.restore();
-  }
-
-  private drawIndividualEdges(
-    ctx: CanvasRenderingContext2D,
-    edges: GraphEdge[],
-    viewport: ViewportBounds,
-    animatedDashOffset: number,
-  ): void {
     ctx.lineWidth = 1;
     for (const edge of edges) {
       const meta = this.edgeMetaMap.get(edge);
       if (!meta) continue;
-      this.renderSingleEdge(ctx, meta, viewport, animatedDashOffset);
+      this.renderSingleEdgeDelegate(ctx, meta, viewport, animatedDashOffset);
     }
   }
 
@@ -1227,7 +910,8 @@ export class CanvasScene {
     return Number.isFinite(depth) ? depth : 0;
   }
 
-  private renderSingleEdge(
+  /** Delegate to the extracted renderSingleEdge, passing class-bound helpers. */
+  private renderSingleEdgeDelegate(
     ctx: CanvasRenderingContext2D,
     meta: EdgeMeta,
     viewport: ViewportBounds,
@@ -1236,184 +920,17 @@ export class CanvasScene {
     const config = this.config;
     if (!config) return;
 
-    const { endpoints, key: edgeKey, isHighlighted, inChain, isCycle: cycleEdge } = meta;
-    if (!endpoints) return;
-    if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
-      return;
-
-    const isEmphasized = isHighlighted || inChain;
-    const { zoom } = config;
-
-    if (isEmphasized) {
-      this.drawEdgeGlow(ctx, endpoints, cycleEdge, inChain, isHighlighted, edgeKey, zoom);
-    }
-
-    this.applyEdgeStyle(
+    renderSingleEdge(
       ctx,
-      endpoints,
-      edgeKey,
-      isEmphasized,
-      isHighlighted,
-      cycleEdge,
-      inChain,
+      meta,
+      viewport,
       animatedDashOffset,
-      zoom,
+      config.zoom,
+      config.theme,
+      config.selectedNode,
+      (key) => this.getChainEdgeDepth(key),
+      (c, x1, y1, x2, y2) => drawEdgePathFn(c, x1, y1, x2, y2, this.bezierPathCache),
     );
-    this.drawEdgePath(ctx, endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2);
-
-    if (zoom >= LOD_THRESHOLDS.ARROWHEADS) {
-      this.drawArrowhead(ctx, endpoints, isEmphasized, zoom);
-    }
-
-    ctx.setLineDash([]);
-    ctx.lineDashOffset = 0;
-  }
-
-  private drawEdgeGlow(
-    ctx: CanvasRenderingContext2D,
-    endpoints: {
-      sourceNode: GraphNode;
-      targetNode: GraphNode;
-      x1: number;
-      y1: number;
-      x2: number;
-      y2: number;
-    },
-    cycleEdge: boolean,
-    inChain: boolean,
-    isHighlighted: boolean,
-    edgeKey: string,
-    zoom: number,
-  ): void {
-    const glowColor = this.resolveEdgeColor(
-      endpoints.sourceNode,
-      endpoints.targetNode,
-      true,
-      cycleEdge,
-    );
-    ctx.save();
-    ctx.strokeStyle = glowColor;
-    const glowAlpha =
-      inChain && !isHighlighted ? (this.getChainEdgeDepth(edgeKey) === 0 ? 0.15 : 0.08) : 0.15;
-    ctx.globalAlpha = glowAlpha;
-    ctx.lineWidth = 6 / zoom;
-    ctx.setLineDash([]);
-    this.drawEdgePath(ctx, endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2);
-    ctx.restore();
-  }
-
-  private resolveEdgeOpacity(
-    edgeKey: string,
-    isHighlighted: boolean,
-    cycleEdge: boolean,
-    inChain: boolean,
-  ): number {
-    if (inChain) {
-      return this.getChainEdgeDepth(edgeKey) === 0 ? 1.0 : 0.5;
-    }
-    const baseOpacity = isHighlighted ? 1.0 : 0.2;
-    return cycleEdge ? Math.max(baseOpacity, 0.8) : baseOpacity;
-  }
-
-  private applyEdgeStyle(
-    ctx: CanvasRenderingContext2D,
-    endpoints: { sourceNode: GraphNode; targetNode: GraphNode },
-    edgeKey: string,
-    isEmphasized: boolean,
-    isHighlighted: boolean,
-    cycleEdge: boolean,
-    inChain: boolean,
-    animatedDashOffset: number,
-    zoom: number,
-  ): void {
-    ctx.strokeStyle = this.resolveEdgeColor(
-      endpoints.sourceNode,
-      endpoints.targetNode,
-      isEmphasized,
-      cycleEdge,
-    );
-    ctx.globalAlpha = this.resolveEdgeOpacity(edgeKey, isHighlighted, cycleEdge, inChain);
-    ctx.lineWidth = (isEmphasized ? 2.5 : cycleEdge ? 2 : 1.2) / zoom;
-
-    if (cycleEdge) {
-      ctx.setLineDash([4, 4]);
-    } else if (isEmphasized) {
-      ctx.setLineDash([6, 3]);
-    } else {
-      ctx.setLineDash([]);
-    }
-    ctx.lineDashOffset = isEmphasized ? animatedDashOffset : 0;
-  }
-
-  private drawArrowhead(
-    ctx: CanvasRenderingContext2D,
-    endpoints: { x1: number; y1: number; x2: number; y2: number },
-    isEmphasized: boolean,
-    zoom: number,
-  ): void {
-    const arrowSize = (isEmphasized ? 7 : 5) / zoom;
-    const angle = Math.atan2(endpoints.y2 - endpoints.y1, endpoints.x2 - endpoints.x1);
-    ctx.save();
-    ctx.translate(endpoints.x2, endpoints.y2);
-    ctx.rotate(angle);
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(-arrowSize, arrowSize * 0.5);
-    ctx.lineTo(-arrowSize, -arrowSize * 0.5);
-    ctx.closePath();
-    ctx.fillStyle = ctx.strokeStyle;
-    ctx.fill();
-    ctx.restore();
-  }
-
-  private resolveEdgeColor(
-    sourceNode: GraphNode,
-    targetNode: GraphNode,
-    isEmphasized: boolean,
-    isCycle: boolean,
-  ): string {
-    const config = this.config;
-    if (!config) return 'gray';
-    if (isCycle) return config.theme.cycleEdgeColor;
-    if (!isEmphasized) return config.theme.edgeDefault;
-    const colorNode =
-      config.selectedNode && sourceNode.id === config.selectedNode.id ? targetNode : sourceNode;
-    return getNodeTypeColorFromTheme(colorNode.type, config.theme);
-  }
-
-  private drawEdgePath(
-    ctx: CanvasRenderingContext2D,
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-  ): void {
-    const distance = Math.hypot(x2 - x1, y2 - y1);
-    if (distance > 150) {
-      // Use rounded integer coords as cache key to avoid generating full path string on hit
-      const rx1 = Math.round(x1);
-      const ry1 = Math.round(y1);
-      const rx2 = Math.round(x2);
-      const ry2 = Math.round(y2);
-      const numericKey = `${rx1},${ry1},${rx2},${ry2}`;
-
-      let path = this.bezierPathCache.get(numericKey);
-      if (!path) {
-        const pathStr = generateBezierPath(x1, y1, x2, y2);
-        path = new Path2D(pathStr);
-        if (this.bezierPathCache.size >= CanvasScene.MAX_BEZIER_CACHE_SIZE) {
-          const firstKey = this.bezierPathCache.keys().next().value;
-          if (firstKey) this.bezierPathCache.delete(firstKey);
-        }
-        this.bezierPathCache.set(numericKey, path);
-      }
-      ctx.stroke(path);
-    } else {
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
-    }
   }
 
   // -------------------------------------------------------------------
@@ -1427,13 +944,13 @@ export class CanvasScene {
     const { hoveredNode, hoveredCluster } = config;
 
     if (hoveredNode) {
-      this.drawNodeTooltip(ctx, config, hoveredNode);
+      this.drawNodeTooltipDelegate(ctx, config, hoveredNode);
     } else if (hoveredCluster) {
-      this.drawClusterTooltip(ctx, config, hoveredCluster);
+      this.drawClusterTooltipDelegate(ctx, config, hoveredCluster);
     }
   }
 
-  private drawNodeTooltip(
+  private drawNodeTooltipDelegate(
     ctx: CanvasRenderingContext2D,
     config: SceneConfig,
     hoveredNodeId: string,
@@ -1456,44 +973,13 @@ export class CanvasScene {
       this.adjustedNodeColors.get(node.type) ??
       adjustColorForZoom(getNodeTypeColorFromTheme(node.type, theme), zoom);
 
-    // Convert world position to screen space
     const screenX = worldPos.x * zoom + this.pan.x;
     const screenY = (worldPos.y - size) * zoom + this.pan.y - 35;
 
-    ctx.save();
-    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-
-    ctx.font = TOOLTIP_FONT;
-    ctx.textAlign = 'center';
-    const textWidth = ctx.measureText(node.name).width;
-    const padding = 8;
-    const tooltipWidth = textWidth + padding * 2;
-    const tooltipHeight = 24;
-
-    // Background
-    ctx.fillStyle = theme.tooltipBg;
-    ctx.strokeStyle = nodeColor;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    this.roundRect(
-      ctx,
-      screenX - tooltipWidth / 2,
-      screenY - tooltipHeight / 2,
-      tooltipWidth,
-      tooltipHeight,
-      4,
-    );
-    ctx.fill();
-    ctx.stroke();
-
-    // Text
-    ctx.fillStyle = nodeColor;
-    ctx.fillText(node.name, screenX, screenY + 4);
-
-    ctx.restore();
+    drawNodeTooltip(ctx, screenX, screenY, node.name, nodeColor, theme, this.dpr);
   }
 
-  private drawClusterTooltip(
+  private drawClusterTooltipDelegate(
     ctx: CanvasRenderingContext2D,
     config: SceneConfig,
     hoveredClusterId: string,
@@ -1513,73 +999,19 @@ export class CanvasScene {
     const radius = Math.max(layoutPos.width, layoutPos.height) / 2;
     const clusterColor = adjustColorForZoom(generateColor(cluster.name, cluster.type), zoom);
 
-    // Convert to screen space
     const screenX = clusterPos.x * zoom + this.pan.x;
     const screenY = (clusterPos.y - radius) * zoom + this.pan.y - 60;
 
-    const subtitleText = `${cluster.nodes.length} targets`;
-
-    ctx.save();
-    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-
-    // Measure text
-    ctx.font = TOOLTIP_TITLE_FONT;
-    const nameWidth = ctx.measureText(cluster.name).width;
-    ctx.font = TOOLTIP_SUBTITLE_FONT;
-    const subtitleWidth = ctx.measureText(subtitleText).width;
-    const maxWidth = Math.max(nameWidth, subtitleWidth);
-    const tooltipWidth = maxWidth + TOOLTIP_PADDING * 2;
-    const tooltipHeight = TOOLTIP_HEIGHT;
-
-    // Background
-    ctx.fillStyle = theme.tooltipBg;
-    ctx.strokeStyle = clusterColor;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    this.roundRect(
+    drawClusterTooltip(
       ctx,
-      screenX - tooltipWidth / 2,
-      screenY - tooltipHeight / 2,
-      tooltipWidth,
-      tooltipHeight,
-      4,
+      screenX,
+      screenY,
+      cluster.name,
+      cluster.nodes.length,
+      clusterColor,
+      theme,
+      this.dpr,
     );
-    ctx.fill();
-    ctx.stroke();
-
-    // Title
-    ctx.font = TOOLTIP_TITLE_FONT;
-    ctx.textAlign = 'center';
-    ctx.fillStyle = clusterColor;
-    ctx.fillText(cluster.name, screenX, screenY - 4);
-
-    // Subtitle
-    ctx.font = TOOLTIP_SUBTITLE_FONT;
-    ctx.globalAlpha = 0.7;
-    ctx.fillText(subtitleText, screenX, screenY + 12);
-    ctx.globalAlpha = 1.0;
-
-    ctx.restore();
-  }
-
-  private roundRect(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    r: number,
-  ): void {
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.arcTo(x + w, y, x + w, y + r, r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-    ctx.lineTo(x + r, y + h);
-    ctx.arcTo(x, y + h, x, y + h - r, r);
-    ctx.lineTo(x, y + r);
-    ctx.arcTo(x, y, x + r, y, r);
-    ctx.closePath();
   }
 
   // -------------------------------------------------------------------

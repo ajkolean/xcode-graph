@@ -15,7 +15,6 @@
  * ```
  */
 
-import { generateColorMap } from '@graph/utils/filter-colors';
 import { computeFilters } from '@graph/utils/node-utils';
 import { SignalWatcher } from '@lit-labs/signals';
 import { FocusTrapController } from '@shared/controllers/focus-trap.controller';
@@ -23,8 +22,7 @@ import { createMachineController } from '@shared/controllers/zag.controller';
 import { type SidebarSection, sidebarMachine } from '@shared/machines/sidebar.machine';
 import type { Cluster, FilterState } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType, Origin } from '@shared/schemas/graph.types';
-import { getNodeTypeColor } from '@ui/utils/node-colors';
-import { getPlatformColor } from '@ui/utils/platform-icons';
+import { buildFilterItems, type FilterItemsGroup } from '@ui/utils/filter-computation';
 import {
   type CSSResultGroup,
   css,
@@ -44,7 +42,6 @@ import './node-details-panel';
 import './cluster-details-panel';
 import './clear-filters-button';
 import './search-bar';
-import type { FilterItem } from './filter-section';
 import './filter-section';
 import './empty-state';
 import './stats-card';
@@ -70,14 +67,6 @@ import {
   setSearchQuery,
   zoom,
 } from '@shared/signals/index';
-
-/** Grouped filter items for all filter sections */
-interface FilterItemsGroup {
-  nodeTypeItems: FilterItem[];
-  platformItems: FilterItem[];
-  projectItems: FilterItem[];
-  packageItems: FilterItem[];
-}
 
 /** Expanded sections state */
 interface ExpandedSectionsState {
@@ -756,33 +745,8 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     const currentZoom = zoom.get();
     const isFiltersActive = filterData.hasActiveFilters(currentFilters);
 
-    const nodeTypeItems = Array.from(filterData.typeCounts.entries()).map(([type, count]) => ({
-      key: type,
-      count,
-      color: getNodeTypeColor(type),
-    }));
-
-    const ALL_PLATFORMS = ['iOS', 'macOS', 'tvOS', 'watchOS', 'visionOS'];
-    const platformItems = ALL_PLATFORMS.map((platform) => ({
-      key: platform,
-      count: filterData.platformCounts.get(platform) || 0,
-      color: getPlatformColor(platform),
-    }));
-
-    const projectColors = generateColorMap(filterData.projectCounts.keys(), 'project');
-    const packageColors = generateColorMap(filterData.packageCounts.keys(), 'package');
-
-    const projectItems = Array.from(filterData.projectCounts.entries()).map(([project, count]) => ({
-      key: project,
-      count,
-      color: projectColors.get(project) || '#6F2CFF',
-    }));
-
-    const packageItems = Array.from(filterData.packageCounts.entries()).map(([pkg, count]) => ({
-      key: pkg,
-      count,
-      color: packageColors.get(pkg) || '#FF9800',
-    }));
+    const { nodeTypeItems, platformItems, projectItems, packageItems } =
+      buildFilterItems(filterData);
 
     if (isCollapsed) {
       this.setAttribute('collapsed', '');
