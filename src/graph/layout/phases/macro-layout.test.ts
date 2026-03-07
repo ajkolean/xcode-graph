@@ -215,13 +215,13 @@ describe('macro-layout', () => {
           },
         };
       }
-      vi.doMock('elkjs/lib/elk.bundled.js', () => ({ default: MockELK }));
+      vi.doMock('elkjs/lib/elk-api.js', () => ({ default: MockELK }));
 
       // Re-import to pick up the mock
       const { computeMacroLayout: computeMacroLayoutMocked } = await import('./macro-layout');
       const positions = await computeMacroLayoutMocked(clusterGraph, microLayouts, DEFAULT_CONFIG);
 
-      vi.doUnmock('elkjs/lib/elk.bundled.js');
+      vi.doUnmock('elkjs/lib/elk-api.js');
 
       expect(positions.size).toBe(3);
       for (const [_id, pos] of positions) {
@@ -257,12 +257,12 @@ describe('macro-layout', () => {
           },
         };
       }
-      vi.doMock('elkjs/lib/elk.bundled.js', () => ({ default: SpyELK }));
+      vi.doMock('elkjs/lib/elk-api.js', () => ({ default: SpyELK }));
 
       const { computeMacroLayout: computeMacroLayoutMocked } = await import('./macro-layout');
       await computeMacroLayoutMocked(clusterGraph, microLayouts, config);
 
-      vi.doUnmock('elkjs/lib/elk.bundled.js');
+      vi.doUnmock('elkjs/lib/elk-api.js');
 
       assert(capturedGraph, 'ELK graph must be captured');
       expect(capturedGraph.layoutOptions?.['elk.layered.thoroughness']).toBe('3');
@@ -290,12 +290,12 @@ describe('macro-layout', () => {
           },
         };
       }
-      vi.doMock('elkjs/lib/elk.bundled.js', () => ({ default: SpyELK }));
+      vi.doMock('elkjs/lib/elk-api.js', () => ({ default: SpyELK }));
 
       const { computeMacroLayout: computeMacroLayoutMocked } = await import('./macro-layout');
       await computeMacroLayoutMocked(clusterGraph, microLayouts, DEFAULT_CONFIG);
 
-      vi.doUnmock('elkjs/lib/elk.bundled.js');
+      vi.doUnmock('elkjs/lib/elk-api.js');
 
       assert(capturedGraph, 'ELK graph must be captured');
       const opts = capturedGraph.layoutOptions ?? {};

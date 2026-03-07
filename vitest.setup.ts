@@ -9,6 +9,27 @@ import { toHaveNoViolations } from 'vitest-axe/matchers';
 
 expect.extend({ toHaveNoViolations });
 
+// Mock elkjs/lib/elk-api.js to return bundled ELK — allows createElk() to work
+// in jsdom (no real workers needed). The wrapper ignores workerFactory.
+vi.mock('elkjs/lib/elk-api.js', async () => {
+  const { default: ELKBundled } = await vi.importActual<typeof import('elkjs/lib/elk.bundled.js')>(
+    'elkjs/lib/elk.bundled.js',
+  );
+  class MockELK {
+    private elk: InstanceType<typeof ELKBundled>;
+    constructor() {
+      this.elk = new ELKBundled();
+    }
+    layout(...args: Parameters<InstanceType<typeof ELKBundled>['layout']>) {
+      return this.elk.layout(...args);
+    }
+    knownLayoutOptions() {
+      return this.elk.knownLayoutOptions();
+    }
+  }
+  return { default: MockELK };
+});
+
 // jsdom doesn't provide ResizeObserver or IntersectionObserver
 if (typeof globalThis.ResizeObserver === 'undefined') {
   /** No-op ResizeObserver polyfill for jsdom */
