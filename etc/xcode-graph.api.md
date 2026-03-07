@@ -43,7 +43,7 @@ export enum ActiveTab {
 // @public
 export const activeTab: Signal.State<ActiveTab_2>;
 
-// @public
+// @public (undocumented)
 export function adjustColorForZoom(color: string, zoom: number): string;
 
 // @public
@@ -554,7 +554,7 @@ export interface ForceStrength {
 // @public
 export function generateBezierPath(x1: number, y1: number, x2: number, y2: number): string;
 
-// @public
+// @public (undocumented)
 export function generateColor(input: string, category?: string): string;
 
 // @public

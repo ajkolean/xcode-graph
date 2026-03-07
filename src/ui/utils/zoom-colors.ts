@@ -8,7 +8,6 @@
  * Similar patterns are found in Figma, VS Code minimap, GitHub dependency
  * graph, and JetBrains tools.
  *
- * @module ui/utils/zoom-colors
  */
 
 import {
@@ -79,11 +78,11 @@ function rotateBucket(bucket: number): void {
  * @param zoom - Current zoom level (0.5 to 2.0)
  * @returns Adjusted hex color string
  *
- * @public
  */
 /** Pre-compiled regex for parsing rgba/rgb color strings */
 const RGBA_ZOOM_RE = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/;
 
+/** @public */
 export function adjustColorForZoom(color: string, zoom: number): string {
   // Safety check for undefined or invalid colors
   if (!color || typeof color !== 'string') {

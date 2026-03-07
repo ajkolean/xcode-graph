@@ -1,6 +1,4 @@
 /**
- * @module ui/utils/color-generator
- *
  * Deterministic color generation based on the design-system palette.
  * Maps any string to a consistent hex color using hashing and HSL adjustments.
  */
@@ -81,10 +79,10 @@ function adjustColor(rgb: number[], lightnessShift: number, saturationShift: num
  * // => "#7a38ff"
  * ```
  *
- * @public
  */
 const colorCache = new Map<string, string>();
 
+/** @public */
 export function generateColor(input: string, category?: string): string {
   const cacheKey = category ? `${input}|${category}` : input;
   const cached = colorCache.get(cacheKey);
