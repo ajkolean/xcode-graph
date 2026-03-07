@@ -41,6 +41,9 @@
         "logLevel": "warning"
       },
       "ae-missing-release-tag": {
+        "logLevel": "none"
+      },
+      "ae-forgotten-export": {
         "logLevel": "warning"
       },
       "ae-wrong-input-file-type": {
@@ -50,6 +53,9 @@
     "tsdocMessageReporting": {
       "default": {
         "logLevel": "warning"
+      },
+      "tsdoc-undefined-tag": {
+        "logLevel": "none"
       }
     }
   }
