@@ -302,14 +302,18 @@ export class ErrorService {
 
     const handler = this.actionHandlers.get(error.actionType);
     if (!handler) {
-      console.warn(`[ErrorService] No handler registered for action type: ${error.actionType}`);
+      if (import.meta.env.DEV) {
+        console.warn(`[ErrorService] No handler registered for action type: ${error.actionType}`);
+      }
       return;
     }
 
     try {
       await handler(error);
     } catch (actionError) {
-      console.error('[ErrorService] Error executing action:', actionError);
+      if (import.meta.env.DEV) {
+        console.error('[ErrorService] Error executing action:', actionError);
+      }
       this.handleError(actionError, {
         category: ErrorCategoryEnum.Unknown,
         userMessage: 'Failed to execute error action',

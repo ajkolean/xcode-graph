@@ -242,7 +242,7 @@ export class GraphCanvas extends LitElement {
       this.centerGraph();
       this.isAnimating = true;
       this.animationLoop.requestRender();
-    } else {
+    } else if (import.meta.env.DEV) {
       console.error('Canvas container element not found in firstUpdated');
     }
   }

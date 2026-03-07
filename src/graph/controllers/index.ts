@@ -17,10 +17,10 @@ export {
   type GraphInteractionConfig,
   GraphInteractionFullController,
 } from './graph-interaction-full.controller';
-// Backwards-compatible re-export shim (Phase 4)
-export { GraphLayoutController } from './graph-layout.controller';
+
 export {
   type GraphLayoutConfig,
+  LayoutController as GraphLayoutController,
   LayoutController,
   type LayoutResult,
 } from './layout.controller';

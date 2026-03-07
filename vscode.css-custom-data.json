@@ -26,11 +26,6 @@
       "name": "--badge-border-hover",
       "description": "Border color on hover (computed from color prop)",
       "values": []
-    },
-    {
-      "name": "--badge-glow",
-      "description": "Glow color on hover (computed from color prop)",
-      "values": []
     }
   ],
   "pseudoElements": []

@@ -164,7 +164,9 @@ export class GraphInteractionFullController implements ReactiveController {
       window.removeEventListener('mouseup', this.handleWindowMouseUp, { capture: true });
       /* v8 ignore start -- defensive catch: tested via removeEventListener mock */
     } catch (error) {
-      console.error('[GraphInteractionFullController] Error during cleanup:', error);
+      if (import.meta.env.DEV) {
+        console.error('[GraphInteractionFullController] Error during cleanup:', error);
+      }
       // Ensure state is reset even if error occurs
       this.isDragging = false;
       this.draggedNode = null;

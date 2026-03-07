@@ -23,11 +23,12 @@
   "packageManager": "pnpm@10.30.3",
   "type": "module",
   "module": "dist/xcodegraph.js",
+  "types": "dist/types/src/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/types/src/index.d.ts",
       "import": "./dist/xcodegraph.js"
-    },
-    "./dist/xcodegraph.js": "./dist/xcodegraph.js"
+    }
   },
   "files": [
     "dist/**/*.js",

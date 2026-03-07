@@ -10,7 +10,7 @@
     },
     {
       "name": "xcode-graph-canvas",
-      "description": "Konva-based interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard\n\n### **Methods:**\n - **fitToViewport(): _void_** - Adjusts zoom and pan so that all clusters fit within the visible viewport.",
+      "description": "Canvas2D interactive graph visualization\n---\n\n\n### **Events:**\n - **zoom-change** - Dispatched when the zoom level changes (detail: number)\n- **node-select** - Dispatched when a node is selected or deselected (detail: { node })\n- **node-hover** - Dispatched when a node is hovered (detail: { nodeId })\n- **cluster-select** - Dispatched when a cluster is selected or deselected (detail: { clusterId })\n- **cluster-hover** - Dispatched when a cluster is hovered (detail: { clusterId })\n- **zoom-in** - Dispatched when zoom in is requested via keyboard\n- **zoom-out** - Dispatched when zoom out is requested via keyboard\n- **zoom-reset** - Dispatched when zoom reset is requested via keyboard\n\n### **Methods:**\n - **fitToViewport(): _void_** - Adjusts zoom and pan so that all clusters fit within the visible viewport.",
       "attributes": [
         {
           "name": "search-query",
@@ -314,7 +314,7 @@
     },
     {
       "name": "xcode-graph-badge",
-      "description": "Color-themed badge with pill, rounded, and accent variants\n---\n\n\n### **CSS Properties:**\n - **--badge-bg** - Background color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-border** - Border color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-color** - Text color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-bg-hover** - Background color on hover (computed from color prop) _(default: undefined)_\n- **--badge-border-hover** - Border color on hover (computed from color prop) _(default: undefined)_\n- **--badge-glow** - Glow color on hover (computed from color prop) _(default: undefined)_",
+      "description": "Color-themed badge with pill, rounded, and accent variants\n---\n\n\n### **CSS Properties:**\n - **--badge-bg** - Background color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-border** - Border color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-color** - Text color of the badge (computed from color prop) _(default: undefined)_\n- **--badge-bg-hover** - Background color on hover (computed from color prop) _(default: undefined)_\n- **--badge-border-hover** - Border color on hover (computed from color prop) _(default: undefined)_",
       "attributes": [
         {
           "name": "label",
@@ -340,11 +340,6 @@
           "name": "interactive",
           "description": "Whether the badge has interactive hover states",
           "values": []
-        },
-        {
-          "name": "glow",
-          "description": "Whether to show glow effect on hover",
-          "values": []
         }
       ],
       "references": []
@@ -365,7 +360,7 @@
         },
         {
           "name": "color",
-          "description": "Theme color for the icon box glow",
+          "description": "Theme color for the icon box",
           "values": []
         },
         {
@@ -904,7 +899,7 @@
     },
     {
       "name": "xcode-graph-header",
-      "description": "Mission control themed header bar\n---\n",
+      "description": "Application header bar\n---\n",
       "attributes": [],
       "references": []
     },

@@ -131,7 +131,9 @@ export class FocusTrapController implements ReactiveController {
       this.trap.activate();
       /* v8 ignore start -- defensive catch: tested via activate() mock that throws */
     } catch (e) {
-      console.warn('[FocusTrapController] Error during activation:', e);
+      if (import.meta.env.DEV) {
+        console.warn('[FocusTrapController] Error during activation:', e);
+      }
     }
     /* v8 ignore stop */
   }
@@ -144,7 +146,9 @@ export class FocusTrapController implements ReactiveController {
       }
       /* v8 ignore start -- defensive catch: tested via deactivate() mock that throws */
     } catch (e) {
-      console.warn('[FocusTrapController] Error during deactivation:', e);
+      if (import.meta.env.DEV) {
+        console.warn('[FocusTrapController] Error during deactivation:', e);
+      }
     }
     /* v8 ignore stop */
   }

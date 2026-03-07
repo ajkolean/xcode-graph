@@ -118,7 +118,9 @@ export class ZagController<TSchema extends MachineSchema> implements ReactiveCon
       this.instance.stop();
       /* v8 ignore start -- defensive catch: tested via instance.stop() mock that throws */
     } catch (e) {
-      console.warn('[ZagController] Error during cleanup:', e);
+      if (import.meta.env.DEV) {
+        console.warn('[ZagController] Error during cleanup:', e);
+      }
     } finally {
       /* v8 ignore stop */
       this.unsubscribe = undefined;

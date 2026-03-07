@@ -79,7 +79,9 @@ export class KeyboardShortcutController implements ReactiveController {
     try {
       window.removeEventListener('keydown', this.handleKeyDown);
     } catch (error) {
-      console.error('[KeyboardShortcutController] Error during cleanup:', error);
+      if (import.meta.env.DEV) {
+        console.error('[KeyboardShortcutController] Error during cleanup:', error);
+      }
     }
   }
 
