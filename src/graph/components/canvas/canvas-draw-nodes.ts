@@ -15,8 +15,11 @@ import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
 
 export const NODE_LABEL_FONT_SIZE = 12;
 export const NODE_LABEL_PADDING = 8;
+// skipcq: JS-0331 — explicit `: string` required by --isolatedDeclarations
 export const NODE_FONT_SELECTED: string = `600 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
+// skipcq: JS-0331
 export const NODE_FONT_CONNECTED: string = `500 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
+// skipcq: JS-0331
 export const NODE_FONT_NORMAL: string = `400 ${NODE_LABEL_FONT_SIZE}px var(--fonts-body, sans-serif)`;
 export const FADE_OUT_DURATION = 250;
 export const NODE_HIT_RADIUS_MULTIPLIER = 2;
