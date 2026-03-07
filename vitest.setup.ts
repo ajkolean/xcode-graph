@@ -27,3 +27,35 @@ if (typeof globalThis.IntersectionObserver === 'undefined') {
     disconnect() { /* no-op */ }
   } as unknown as typeof globalThis.IntersectionObserver;
 }
+
+if (typeof globalThis.OffscreenCanvas === 'undefined') {
+  /** Minimal OffscreenCanvas stub for jsdom — used by starfield and cluster label rendering */
+  // biome-ignore lint/complexity/useLiteralKeys: bracket notation required for Record index signature
+  (globalThis as Record<string, unknown>)['OffscreenCanvas'] = class {
+    width: number;
+    height: number;
+    constructor(width: number, height: number) {
+      this.width = width;
+      this.height = height;
+    }
+    getContext() {
+      return {
+        clearRect: () => {},
+        beginPath: () => {},
+        arc: () => {},
+        fill: () => {},
+        fillText: () => {},
+        measureText: () => ({ width: 0 }),
+        save: () => {},
+        restore: () => {},
+        translate: () => {},
+        rotate: () => {},
+        globalAlpha: 1,
+        fillStyle: '',
+        font: '',
+        textAlign: '',
+        textBaseline: '',
+      };
+    }
+  };
+}
