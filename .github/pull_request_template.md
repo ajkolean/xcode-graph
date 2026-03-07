@@ -1,9 +1,18 @@
-## Summary
+## Description
 
-<!-- What does this PR do? -->
+<!-- Brief description of the changes -->
 
-## Test plan
+## Type of Change
 
-- [ ] `pnpm check` passes
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation update
+- [ ] Refactoring
+- [ ] Other (describe):
+
+## Checklist
+
+- [ ] `pnpm check` passes (Biome lint + format)
 - [ ] `pnpm test:run` passes
-- [ ] `pnpm build:lib` succeeds
+- [ ] Documentation updated (if applicable)
+- [ ] No breaking changes (or documented in description)

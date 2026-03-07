@@ -416,7 +416,10 @@ Test coverage includes services, schemas, signals, controllers, utilities, layou
 Full docs at **[ajkolean.github.io/xcode-graph](https://ajkolean.github.io/xcode-graph/)**
 
 - [Getting Started](https://ajkolean.github.io/xcode-graph/guide/) — Installation, usage, data shape, theming, and color scheme
+- [Examples](https://ajkolean.github.io/xcode-graph/guide/examples) — Common usage patterns (embedded, file upload, CDN, theming)
 - [Swift Integration](https://ajkolean.github.io/xcode-graph/guide/swift-integration) — Embedding in a Swift server with SwiftNIO
+- [Architecture](https://ajkolean.github.io/xcode-graph/guide/architecture) — Component tree, data flow, layout pipeline
+- [Troubleshooting](https://ajkolean.github.io/xcode-graph/guide/troubleshooting) — FAQ and common issues
 - [Component API](https://ajkolean.github.io/xcode-graph/reference/component-api) — Properties, methods, events, CSS custom properties
 - [Data Types](https://ajkolean.github.io/xcode-graph/reference/data-types) — GraphNode, GraphEdge, enums, and all type definitions
 - [Layout Configuration](https://ajkolean.github.io/xcode-graph/reference/layout-configuration) — ELK & D3-force parameters and lifecycle hooks
