@@ -37,7 +37,7 @@ function createNode(id: string, type: NodeType = NodeType.Framework): GraphNode 
     name: `Node-${id}`,
     type,
     platform: Platform.iOS,
-    origin: Origin.Internal,
+    origin: Origin.Local,
     project: 'TestProject',
     deploymentTargets: {},
     buildSettings: {},

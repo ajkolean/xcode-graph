@@ -6,6 +6,8 @@ title: Getting Started
 
 XcodeGraph is a Lit web component for visualizing Xcode project dependency graphs. It renders an interactive, zoomable canvas with filtering, search, transitive dependency highlighting, and cluster-based layouts.
 
+<video src="/demo.mp4" autoplay loop muted playsinline style="width: 100%; border-radius: 8px; margin: 1rem 0;"></video>
+
 ## Installation
 
 ```bash

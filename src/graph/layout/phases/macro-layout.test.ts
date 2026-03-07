@@ -1,6 +1,5 @@
 import assert from 'node:assert';
 import { buildClusterGraph } from '@graph/layout/cluster-graph';
-import type { LayoutConfig } from '@graph/layout/config';
 import { DEFAULT_CONFIG } from '@graph/layout/config';
 import { describe, expect, it, vi } from 'vitest';
 import { createClusterWithNodes } from '@/fixtures';
@@ -238,10 +237,10 @@ describe('macro-layout', () => {
       const microLayouts = new Map([[cluster.id, computeClusterInterior(cluster, DEFAULT_CONFIG)]]);
 
       // Use custom thoroughness and greedy switch
-      const config: LayoutConfig = {
+      const config = {
         ...DEFAULT_CONFIG,
-        elkThoroughness: 3,
-        elkGreedySwitchType: 'OFF',
+        elkThoroughness: 3 as typeof DEFAULT_CONFIG.elkThoroughness,
+        elkGreedySwitchType: 'OFF' as const,
       };
 
       // Spy on ELK to capture the graph passed to layout
