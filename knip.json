@@ -1,16 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": [
-    "src/index.ts",
-    "src/components/xcode-graph.ts",
-    "custom-elements-manifest.config.js"
-  ],
+  "entry": ["src/index.ts", "src/components/xcode-graph.ts", "custom-elements-manifest.config.js"],
   "project": ["src/**/*.ts"],
-  "ignore": [
-    "src/services/xcode-graph.schema.generated.ts"
-  ],
-  "ignoreDependencies": [
-    "lit-html",
-    "ts-lit-plugin"
-  ]
+  "ignore": ["src/services/xcode-graph.schema.generated.ts"],
+  "ignoreDependencies": ["lit-html", "ts-lit-plugin"]
 }

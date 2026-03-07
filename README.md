@@ -225,6 +225,19 @@ The component adapts to `prefers-color-scheme` automatically. Both dark and ligh
 
 See the [Component API reference](https://ajkolean.github.io/xcode-graph/reference/component-api) for all available properties with dark and light mode defaults.
 
+## Browser Support
+
+xcode-graph supports modern browsers with ES2020+ module support:
+
+| Browser | Minimum Version |
+|---|---|
+| Chrome | 80+ |
+| Firefox | 80+ |
+| Safari | 14+ |
+| Edge | 80+ |
+
+The component uses ES modules, SVG rendering, and CSS custom properties. No polyfills are required for supported browsers.
+
 ## Layout Engine
 
 The graph uses a two-phase layout pipeline:
