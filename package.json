@@ -131,7 +131,7 @@
       "@swc/core",
       "@vaadin/vaadin-usage-statistics",
       "esbuild",
-      "maplibre-gl",
+      "rs-module-lexer",
       "unrs-resolver"
     ]
   },

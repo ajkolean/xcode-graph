@@ -70,24 +70,24 @@ export function getPlatformColor(platform: string, el?: HTMLElement): string {
  */
 export function getPlatformIconPath(platform: string): string {
   const pathMap: Record<string, string> = {
-    // Smartphone icon (iOS)
-    iOS: 'M17 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-5 18h0',
+    // Smartphone icon (iOS) — Lucide smartphone: rounded rect + home indicator dot
+    iOS: 'M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z M12 18h.01',
 
-    // Monitor icon (macOS)
+    // Laptop icon (macOS) — Lucide laptop: MacBook silhouette with keyboard base
     macOS:
-      'M20 3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM8 21h8M12 17v4',
+      'M18 5a2 2 0 0 1 2 2v8.5a2 2 0 0 0 .2.9l1.1 2.1a1 1 0 0 1-.9 1.5H3.6a1 1 0 0 1-.9-1.5l1.1-2.1a2 2 0 0 0 .2-.9V7a2 2 0 0 1 2-2z M20 16H4',
 
-    // Glasses icon (visionOS)
+    // Glasses icon (visionOS) — Lucide glasses: two lens circles + temple arms + bridge
     visionOS:
-      'M6 15a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm12 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm-6-2h0M2 13c0-2 1-3 3-3h14c2 0 3 1 3 3',
+      'M10 15a4 4 0 1 1-8 0 4 4 0 0 1 8 0z M22 15a4 4 0 1 1-8 0 4 4 0 0 1 8 0z M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2 M2.5 13L5 7c.7-1.3 1.4-2 3-2 M21.5 13L19 7c-.7-1.3-1.5-2-3-2',
 
-    // TV icon (tvOS)
-    tvOS: 'M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM17 2l-5 5-5-5',
+    // TV icon (tvOS) — modern flat screen + stand bar (no antenna)
+    tvOS: 'M4 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z M8 22h8 M12 20v2',
 
-    // Watch icon (watchOS)
+    // Watch icon (watchOS) — Lucide watch: round face + band straps + clock hands
     watchOS:
-      'M9 18V5l3-3 3 3v13M9 5h6M9 18h6M6 9h12a3 3 0 0 1 3 3 3 3 0 0 1-3 3H6a3 3 0 0 1-3-3 3 3 0 0 1 3-3z',
+      'M18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0z M12 10v2.2l1.6 1 M16.13 7.66l-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05 M7.88 16.36l.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.81-4.05',
   };
 
-  return pathMap[platform] || 'M12 2v20m10-10H2'; // Default to generic store icon
+  return pathMap[platform] || 'M12 2v20m10-10H2';
 }

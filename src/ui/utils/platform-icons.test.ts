@@ -40,7 +40,7 @@ describe('getPlatformColor', () => {
 describe('getPlatformIconPath', () => {
   it('returns SVG path for known platform', () => {
     const path = getPlatformIconPath('macOS');
-    expect(path).to.include('M20 3H4');
+    expect(path).to.include('M18 5a2 2 0 0 1 2 2');
   });
 
   it('returns fallback path for unknown platform', () => {

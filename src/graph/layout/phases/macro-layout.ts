@@ -104,18 +104,18 @@ function buildElkRoot(
   };
 }
 
-/** Creates an ELK instance, using the non-minified bundle in dev mode for better stack traces. */
+/** Creates an ELK instance, using a web worker to keep layout off the main thread. */
 async function createElk(): Promise<ElkType> {
-  /* v8 ignore start -- bundle selection depends on build environment */
-  if (import.meta.env.DEV && typeof globalThis.Worker === 'function') {
+  if (typeof globalThis.Worker === 'function') {
     const ELK = (await import('elkjs/lib/elk-api.js')).default;
     return new ELK({
       workerFactory: () => new Worker(new URL('elkjs/lib/elk-worker.js', import.meta.url)),
     });
   }
-  /* v8 ignore stop */
+  /* v8 ignore start -- fallback for environments without Worker (e.g. tests in jsdom) */
   const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
   return new ELK();
+  /* v8 ignore stop */
 }
 
 /**

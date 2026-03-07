@@ -12,24 +12,24 @@ describe('getAppIconPath', () => {
     expect(path).toContain('M-8,-16');
   });
 
-  it('returns monitor icon for macOS', () => {
+  it('returns laptop icon for macOS', () => {
     const path = getAppIconPath(Platform.macOS);
-    expect(path).toContain('M-14,-10');
+    expect(path).toContain('M-12,-12');
   });
 
   it('returns glasses icon for visionOS', () => {
     const path = getAppIconPath(Platform.visionOS);
-    expect(path).toContain('M-6,-2');
+    expect(path).toContain('M-2,3');
   });
 
   it('returns TV icon for tvOS', () => {
     const path = getAppIconPath(Platform.tvOS);
-    expect(path).toContain('M-14,-2');
+    expect(path).toContain('M-14,-10');
   });
 
   it('returns watch icon for watchOS', () => {
     const path = getAppIconPath(Platform.watchOS);
-    expect(path).toContain('M-6,-16');
+    expect(path).toContain('M6,0');
   });
 
   it('returns default smartphone icon for unknown platform', () => {
@@ -41,7 +41,7 @@ describe('getAppIconPath', () => {
 describe('getNodeIconPath', () => {
   it('returns app icon with platform when type is App and platform given', () => {
     const path = getNodeIconPath(NodeType.App, Platform.macOS);
-    expect(path).toContain('M-14,-10');
+    expect(path).toContain('M-12,-12');
   });
 
   it('returns default iOS app icon when type is App and no platform', () => {

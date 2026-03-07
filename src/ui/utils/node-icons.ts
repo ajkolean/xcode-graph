@@ -33,7 +33,49 @@ export function getAppIconPath(platform: Platform | string): string {
       return SMARTPHONE_ICON_PATH;
 
     case Platform.macOS:
-      // Monitor icon (macOS)
+      // Laptop icon (macOS) — MacBook silhouette with screen + keyboard base
+      return `
+        M-12,-12
+        L12,-12
+        A2,2 0 0,1 14,-10
+        L14,4
+        A2,2 0 0,0 14.2,4.9
+        L16,8
+        A1,1 0 0,1 15,9.5
+        L-15,9.5
+        A1,1 0 0,1 -16,8
+        L-14.2,4.9
+        A2,2 0 0,0 -14,4
+        L-14,-10
+        A2,2 0 0,1 -12,-12
+        Z
+        M-14,5
+        L14,5
+      `;
+
+    case Platform.visionOS:
+      // Glasses icon (visionOS) — Lucide glasses: two lens circles + bridge + temple arms
+      return `
+        M-2,3
+        A4,4 0 1,1 -10,3
+        A4,4 0 1,1 -2,3
+        Z
+        M10,3
+        A4,4 0 1,1 2,3
+        A4,4 0 1,1 10,3
+        Z
+        M2,3
+        A2,2 0 0,0 -2,3
+        M-9.5,1
+        L-7,-5
+        C-6.3,-6.3 -5.6,-7 -4,-7
+        M9.5,1
+        L7,-5
+        C6.3,-6.3 5.5,-7 4,-7
+      `;
+
+    case Platform.tvOS:
+      // TV icon (tvOS) — modern flat screen + stand bar (no antenna)
       return `
         M-14,-10
         L14,-10
@@ -51,63 +93,28 @@ export function getAppIconPath(platform: Platform | string): string {
         L0,12
       `;
 
-    case Platform.visionOS:
-      // Glasses icon (visionOS)
-      return `
-        M-6,-2
-        A4,4 0 1,0 -6,6
-        A4,4 0 1,0 -6,-2
-        M6,-2
-        A4,4 0 1,0 6,6
-        A4,4 0 1,0 6,-2
-        M-2,2
-        L2,2
-        M-14,-6
-        A8,8 0 0,1 -6,-10
-        M14,-6
-        A8,8 0 0,1 6,-10
-      `;
-
-    case Platform.tvOS:
-      // TV icon (tvOS)
-      return `
-        M-14,-2
-        L14,-2
-        A2,2 0 0,1 16,0
-        L16,12
-        A2,2 0 0,1 14,14
-        L-14,14
-        A2,2 0 0,1 -16,12
-        L-16,0
-        A2,2 0 0,1 -14,-2
-        Z
-        M-8,-14
-        L0,-6
-        L8,-14
-      `;
-
     case Platform.watchOS:
-      // Watch icon (watchOS)
+      // Watch icon (watchOS) — Lucide watch: round face + band straps + clock hands
       return `
-        M-6,-16
-        L6,-16
-        L8,-12
-        L8,12
-        L6,16
-        L-6,16
-        L-8,12
-        L-8,-12
+        M6,0
+        A6,6 0 1,1 -6,0
+        A6,6 0 1,1 6,0
         Z
-        M-10,-4
-        L-16,-4
-        A2,2 0 0,0 -18,-2
-        A2,2 0 0,0 -16,0
-        L-10,0
-        M10,-4
-        L16,-4
-        A2,2 0 0,1 18,-2
-        A2,2 0 0,1 16,0
-        L10,0
+        M0,-2
+        L0,0.2
+        L1.6,1
+        M4.13,-4.34
+        L3.32,-8.39
+        A2,2 0 0,0 1.32,-10
+        L-1.36,-10
+        A2,2 0 0,0 -3.36,-8.39
+        L-4.14,-4.34
+        M-4.12,4.36
+        L-3.32,8.36
+        A2,2 0 0,0 -1.32,10
+        L1.4,10
+        A2,2 0 0,0 3.4,8.39
+        L4.21,4.31
       `;
 
     default:
