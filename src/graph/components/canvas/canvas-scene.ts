@@ -576,22 +576,13 @@ export class CanvasScene {
     const { theme, zoom } = config;
     const size = getNodeSize(node);
 
-    const isHovered = config.hoveredNode === nodeId;
-    const isSelected = config.selectedNode?.id === nodeId;
-    const isConnected = Boolean(config.selectedNode && config.connectedNodes.has(nodeId));
-    const isDimmed = config.dimmedNodeIds.has(nodeId);
-    const isCycleNode = config.layout.cycleNodes?.has(nodeId) ?? false;
-    const isInChain =
-      (config.transitiveDeps?.nodes.has(nodeId) ?? false) ||
-      (config.transitiveDependents?.nodes.has(nodeId) ?? false) ||
-      isSelected;
+    const state = this.getNodeState(config, nodeId);
+    const { isHovered, isSelected, isConnected, isDimmed, isCycleNode, isInChain } = state;
 
     const adjustedColor =
       this.adjustedNodeColors.get(node.type) ??
       adjustColorForZoom(getNodeTypeColorFromTheme(node.type, theme), zoom);
-    const alpha = prefersReducedMotion.get()
-      ? (config.nodeAlphaMap.get(nodeId)?.target ?? 1.0)
-      : getAnimatedAlpha(config.nodeAlphaMap, nodeId);
+    const alpha = this.getNodeAlpha(config, nodeId);
 
     ctx.globalAlpha = alpha;
 
@@ -617,28 +608,11 @@ export class CanvasScene {
     );
 
     if (isHovered && !isSelected && !isDimmed) {
-      ctx.beginPath();
-      ctx.arc(0, 0, size + 3, 0, Math.PI * 2);
-      ctx.strokeStyle = adjustedColor;
-      ctx.lineWidth = 1.5;
-      ctx.globalAlpha = alpha * 0.5;
-      ctx.stroke();
-      ctx.globalAlpha = alpha;
+      this.drawHoverRing(ctx, size, adjustedColor, alpha);
     }
 
     if (shouldDrawLabels) {
-      let labelText: string;
-      if (node.name.length > 20 && !isHovered && !isConnected) {
-        let cached = this.truncatedLabelCache.get(node.id);
-        if (!cached) {
-          cached = `${node.name.substring(0, 20)}...`;
-          this.truncatedLabelCache.set(node.id, cached);
-        }
-        labelText = cached;
-      } else {
-        labelText = node.name;
-      }
-
+      const labelText = this.resolveLabelText(node, isHovered, isConnected);
       drawNodeLabel(
         ctx,
         labelText,
@@ -653,6 +627,55 @@ export class CanvasScene {
     }
 
     ctx.globalAlpha = 1.0;
+  }
+
+  private getNodeState(config: NonNullable<typeof this.config>, nodeId: string) {
+    const isSelected = config.selectedNode?.id === nodeId;
+    return {
+      isHovered: config.hoveredNode === nodeId,
+      isSelected,
+      isConnected: Boolean(config.selectedNode && config.connectedNodes.has(nodeId)),
+      isDimmed: config.dimmedNodeIds.has(nodeId),
+      isCycleNode: config.layout.cycleNodes?.has(nodeId) ?? false,
+      isInChain:
+        (config.transitiveDeps?.nodes.has(nodeId) ?? false) ||
+        (config.transitiveDependents?.nodes.has(nodeId) ?? false) ||
+        isSelected,
+    };
+  }
+
+  private getNodeAlpha(config: NonNullable<typeof this.config>, nodeId: string): number {
+    if (prefersReducedMotion.get()) {
+      return config.nodeAlphaMap.get(nodeId)?.target ?? 1.0;
+    }
+    return getAnimatedAlpha(config.nodeAlphaMap, nodeId);
+  }
+
+  private drawHoverRing(
+    ctx: CanvasRenderingContext2D,
+    size: number,
+    color: string,
+    alpha: number,
+  ): void {
+    ctx.beginPath();
+    ctx.arc(0, 0, size + 3, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = alpha * 0.5;
+    ctx.stroke();
+    ctx.globalAlpha = alpha;
+  }
+
+  private resolveLabelText(node: GraphNode, isHovered: boolean, isConnected: boolean): string {
+    if (node.name.length <= 20 || isHovered || isConnected) {
+      return node.name;
+    }
+    let cached = this.truncatedLabelCache.get(node.id);
+    if (!cached) {
+      cached = `${node.name.substring(0, 20)}...`;
+      this.truncatedLabelCache.set(node.id, cached);
+    }
+    return cached;
   }
 
   private getPathForNode(node: GraphNode): Path2D {
@@ -739,44 +762,49 @@ export class CanvasScene {
     }
   }
 
+  private isChainActive(): boolean {
+    const config = this.config;
+    if (!config) return false;
+    return (
+      config.showDirectDeps ||
+      config.showTransitiveDeps ||
+      config.showDirectDependents ||
+      config.showTransitiveDependents
+    );
+  }
+
   private drawEdges(ctx: CanvasRenderingContext2D): void {
     const config = this.config;
     if (!config) return;
 
     const { edges, zoom, time } = config;
+    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
 
-    const isChainActive =
-      config.showDirectDeps ||
-      config.showTransitiveDeps ||
-      config.showDirectDependents ||
-      config.showTransitiveDependents;
+    this.precomputeEdgeMeta(edges, this.isChainActive());
+    const animatedDashOffset = prefersReducedMotion.get() ? 0 : time / 20;
 
     // Two-tier LOD: cluster arteries at low zoom, individual edges at high zoom
     if (zoom < LOD_THRESHOLDS.CLUSTER_ARTERIES) {
-      const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
       drawClusterArteries(ctx, config, viewport);
-
-      // Still draw highlighted/chain edges so selections are visible at low zoom
-      this.precomputeEdgeMeta(edges, isChainActive);
-      const animatedDashOffset = prefersReducedMotion.get() ? 0 : time / 20;
-      for (const edge of edges) {
-        const meta = this.edgeMetaMap.get(edge);
-        if (!meta || !meta.isSpecial) continue;
-        this.renderSingleEdgeDelegate(ctx, meta, viewport, animatedDashOffset);
-      }
+      this.renderEdges(ctx, edges, viewport, animatedDashOffset, true);
       return;
     }
 
-    // High zoom: individual edges with arrowheads
-    const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
-
-    this.precomputeEdgeMeta(edges, isChainActive);
-
-    const animatedDashOffset = prefersReducedMotion.get() ? 0 : time / 20;
     ctx.lineWidth = 1;
+    this.renderEdges(ctx, edges, viewport, animatedDashOffset, false);
+  }
+
+  private renderEdges(
+    ctx: CanvasRenderingContext2D,
+    edges: GraphEdge[],
+    viewport: ViewportBounds,
+    animatedDashOffset: number,
+    specialOnly: boolean,
+  ): void {
     for (const edge of edges) {
       const meta = this.edgeMetaMap.get(edge);
       if (!meta) continue;
+      if (specialOnly && !meta.isSpecial) continue;
       this.renderSingleEdgeDelegate(ctx, meta, viewport, animatedDashOffset);
     }
   }

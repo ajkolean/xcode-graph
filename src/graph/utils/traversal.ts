@@ -245,6 +245,16 @@ const EMPTY_RESULT: TransitiveResult = {
   maxDepth: 0,
 };
 
+/** Format an edge key based on traversal direction. */
+function formatEdgeKey(direction: 'out' | 'in', id: string, neighbor: string): string {
+  return direction === 'out' ? `${id}->${neighbor}` : `${neighbor}->${id}`;
+}
+
+/** Get neighbors based on traversal direction. */
+function getDirectedNeighbors(graph: DirectedGraph, id: string, direction: 'out' | 'in'): string[] {
+  return direction === 'out' ? graph.outNeighbors(id) : graph.inNeighbors(id);
+}
+
 /**
  * BFS traversal over a graphology DirectedGraph instance.
  * Used internally by computeTransitiveDependencies for efficient cached traversal.
@@ -268,10 +278,8 @@ function bfsGraphology(
     if (!item) break;
     const { id, depth } = item;
 
-    const neighbors = direction === 'out' ? graph.outNeighbors(id) : graph.inNeighbors(id);
-
-    for (const neighbor of neighbors) {
-      const edgeKey = direction === 'out' ? `${id}->${neighbor}` : `${neighbor}->${id}`;
+    for (const neighbor of getDirectedNeighbors(graph, id, direction)) {
+      const edgeKey = formatEdgeKey(direction, id, neighbor);
       if (!visitedEdges.has(edgeKey)) {
         visitedEdges.add(edgeKey);
         edgeDepths.set(edgeKey, depth);
@@ -323,43 +331,42 @@ function getGraphForEdges(edges: GraphEdge[]): DirectedGraph {
  *
  * @public
  */
+/** Resolve a traversal result from cache or compute via BFS. */
+function resolveTraversal(
+  nodeId: string,
+  edges: GraphEdge[],
+  cacheKey: 'dependencies' | 'dependents',
+  direction: 'out' | 'in',
+): TransitiveResult {
+  const cached = transitiveCache.get(nodeId, cacheKey);
+  if (cached) return cached;
+
+  let result: TransitiveResult = EMPTY_RESULT;
+  const graph = getGraphForEdges(edges);
+  if (graph.hasNode(nodeId)) {
+    result = bfsGraphology(graph, nodeId, direction);
+  }
+  transitiveCache.set(nodeId, cacheKey, result);
+  return result;
+}
+
 export function computeTransitiveDependencies(
   viewMode: ViewMode,
   selectedNode: GraphNode | null,
   edges: GraphEdge[],
 ): { transitiveDeps: TransitiveResult; transitiveDependents: TransitiveResult } {
-  // Invalidate cache if edges changed
   transitiveCache.invalidateIfEdgesChanged(edges);
 
-  // Dependencies (outgoing edges) - with caching
-  let transitiveDeps: TransitiveResult = EMPTY_RESULT;
-  if ((viewMode === 'focused' || viewMode === 'both') && selectedNode) {
-    const cached = transitiveCache.get(selectedNode.id, 'dependencies');
-    if (cached) {
-      transitiveDeps = cached;
-    } else {
-      const graph = getGraphForEdges(edges);
-      if (graph.hasNode(selectedNode.id)) {
-        transitiveDeps = bfsGraphology(graph, selectedNode.id, 'out');
-      }
-      transitiveCache.set(selectedNode.id, 'dependencies', transitiveDeps);
-    }
-  }
+  const wantDeps = (viewMode === 'focused' || viewMode === 'both') && selectedNode;
+  const wantDependents = (viewMode === 'dependents' || viewMode === 'both') && selectedNode;
 
-  // Dependents (incoming edges) - with caching
-  let transitiveDependents: TransitiveResult = EMPTY_RESULT;
-  if (['dependents', 'both'].includes(viewMode) && selectedNode) {
-    const cached = transitiveCache.get(selectedNode.id, 'dependents');
-    if (cached) {
-      transitiveDependents = cached;
-    } else {
-      const graph = getGraphForEdges(edges);
-      if (graph.hasNode(selectedNode.id)) {
-        transitiveDependents = bfsGraphology(graph, selectedNode.id, 'in');
-      }
-      transitiveCache.set(selectedNode.id, 'dependents', transitiveDependents);
-    }
-  }
+  const transitiveDeps = wantDeps
+    ? resolveTraversal(selectedNode.id, edges, 'dependencies', 'out')
+    : EMPTY_RESULT;
+
+  const transitiveDependents = wantDependents
+    ? resolveTraversal(selectedNode.id, edges, 'dependents', 'in')
+    : EMPTY_RESULT;
 
   return { transitiveDeps, transitiveDependents };
 }

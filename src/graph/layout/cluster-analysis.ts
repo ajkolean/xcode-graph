@@ -153,18 +153,13 @@ function countInternalDependencies(
   return count;
 }
 
-// Helper: Calculate internal edge counts for all nodes.
-// Builds a reverse dependency map in a single pass (O(N+E)) instead of
-// iterating all nodes per node (O(N^2)).
-function calculateInternalEdgeCounts(
+// Helper: Build reverse dependency counts in a single pass (O(N+E)).
+function buildReverseDependencyCounts(
   nodes: GraphNode[],
   dependencies: Map<string, Set<string>>,
+  nodeIds: Set<string>,
   testNodes: Set<string>,
 ): Map<string, number> {
-  const internalEdgeCounts = new Map<string, number>();
-  const nodeIds = new Set(nodes.map((node) => node.id));
-
-  // Build reverse dependency map: for each node, who depends on it?
   const reverseDeps = new Map<string, number>();
   for (const node of nodes) {
     if (testNodes.has(node.id)) continue;
@@ -175,6 +170,20 @@ function calculateInternalEdgeCounts(
       }
     }
   }
+  return reverseDeps;
+}
+
+// Helper: Calculate internal edge counts for all nodes.
+// Builds a reverse dependency map in a single pass (O(N+E)) instead of
+// iterating all nodes per node (O(N^2)).
+function calculateInternalEdgeCounts(
+  nodes: GraphNode[],
+  dependencies: Map<string, Set<string>>,
+  testNodes: Set<string>,
+): Map<string, number> {
+  const internalEdgeCounts = new Map<string, number>();
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const reverseDeps = buildReverseDependencyCounts(nodes, dependencies, nodeIds, testNodes);
 
   for (const node of nodes) {
     if (testNodes.has(node.id)) continue;
