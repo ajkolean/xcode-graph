@@ -149,6 +149,8 @@ function computeBoundingBox(clusters: ClusterPosition[]) {
  * @param strataSpacing - Vertical spacing between strata
  */
 export function printClusterTable(result: HierarchicalLayoutResult, strataSpacing = 800): void {
+  if (!import.meta.env.DEV) return;
+
   const clusters = Array.from(result.clusterPositions.entries())
     .map(([_id, pos]) => ({
       ...pos,
@@ -183,6 +185,8 @@ export function printNodesByCluster(
   result: HierarchicalLayoutResult,
   maxNodesPerCluster = 10,
 ): void {
+  if (!import.meta.env.DEV) return;
+
   console.log('\n═══ NODES BY CLUSTER ═══\n');
 
   for (const cluster of result.clusters) {
@@ -219,6 +223,8 @@ export function printStrataVisualization(
   result: HierarchicalLayoutResult,
   strataSpacing = 800,
 ): void {
+  if (!import.meta.env.DEV) return;
+
   // Group clusters by stratum
   const strata = new Map<number, Array<{ id: string; x: number; width: number }>>();
 
@@ -247,6 +253,8 @@ export function printStrataVisualization(
  * @param report - Position report containing the summary data
  */
 export function printLayoutSummary(report: PositionReport): void {
+  if (!import.meta.env.DEV) return;
+
   const { summary } = report;
 
   console.log('\n═══ LAYOUT SUMMARY ═══\n');
@@ -437,6 +445,8 @@ export function formatElkTimingReport(logging: ElkLoggingEntry): ElkPhaseReport[
  * @param logging - ELK logging entry from elk.layout() with measureExecutionTime enabled
  */
 export function printElkTimingTable(logging: ElkLoggingEntry): void {
+  if (!import.meta.env.DEV) return;
+
   const phases = formatElkTimingReport(logging);
   const totalMs = logging.executionTime ?? 0;
 
