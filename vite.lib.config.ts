@@ -40,9 +40,9 @@ export default defineConfig({
       brotliSize: true,
     }),
   ],
-  // Disable esbuild — TypeScript compilation is handled by @rollup/plugin-typescript
+  // Disable oxc — TypeScript compilation is handled by @rollup/plugin-typescript
   // with @lit-labs/compiler for pre-compiled Lit templates
-  esbuild: false,
+  oxc: false,
   resolve: {
     extensions: ['.js', '.ts', '.json'],
     alias: {
@@ -61,7 +61,7 @@ export default defineConfig({
       formats: ['es'],
       fileName: () => 'xcodegraph.js',
     },
-    rollupOptions: {
+    rolldownOptions: {
       // Bundle everything — no externals for CDN usage
       external: [],
       output: {
@@ -74,7 +74,7 @@ export default defineConfig({
   },
   worker: {
     format: 'es',
-    rollupOptions: {
+    rolldownOptions: {
       output: {
         // Emit worker as a separate file with a stable name
         entryFileNames: '[name].js',

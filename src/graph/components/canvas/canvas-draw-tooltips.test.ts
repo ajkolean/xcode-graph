@@ -4,11 +4,8 @@ import {
   drawClusterTooltip,
   drawNodeTooltip,
   roundRect,
-  TOOLTIP_FONT,
   TOOLTIP_HEIGHT,
   TOOLTIP_PADDING,
-  TOOLTIP_SUBTITLE_FONT,
-  TOOLTIP_TITLE_FONT,
 } from './canvas-draw-tooltips';
 
 function createTheme(overrides?: Partial<CanvasTheme>): CanvasTheme {

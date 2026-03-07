@@ -7,7 +7,6 @@ import {
   drawArrowhead,
   drawEdgeGlow,
   drawEdgePath,
-  type EdgeMeta,
   MAX_BEZIER_CACHE_SIZE,
   resolveEdgeColor,
   resolveEdgeOpacity,

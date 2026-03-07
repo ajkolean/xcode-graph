@@ -6,14 +6,8 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [],
-  esbuild: {
+  oxc: {
     target: 'esnext',
-    tsconfigRaw: {
-      compilerOptions: {
-        experimentalDecorators: true,
-        useDefineForClassFields: true,
-      },
-    },
   },
   test: {
     globals: true,

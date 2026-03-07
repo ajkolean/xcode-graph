@@ -22,7 +22,7 @@ export function matchesSearch(node: GraphNode, searchQuery: string): boolean {
   if (!searchQuery) return true;
 
   const matchSet = getFuzzyMatchIds([node], searchQuery);
-  return matchSet !== null && matchSet.has(node.id);
+  return matchSet?.has(node.id) ?? false;
 }
 
 /**

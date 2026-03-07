@@ -3,15 +3,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [],
-  esbuild: {
-    // Enable decorators for Lit components
+  oxc: {
     target: 'esnext',
-    tsconfigRaw: {
-      compilerOptions: {
-        experimentalDecorators: true,
-        useDefineForClassFields: true,
-      },
-    },
   },
   resolve: {
     conditions: ['development'],
