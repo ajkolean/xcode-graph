@@ -1,7 +1,7 @@
 import type { Cluster, NodePosition } from '@shared/schemas';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { buildClusterGraph } from './cluster-graph';
-import { DEFAULT_CONFIG, type LayoutOptions } from './config';
+import { DEFAULT_CONFIG, type LayoutConfig, type LayoutOptions } from './config';
 import { computeMicroLayoutsParallel } from './parallel-micro';
 import { applyForceMassage } from './phases/force-massage';
 import { computeMacroLayout, getLastMacroLayoutDebugData } from './phases/macro-layout';
@@ -46,7 +46,7 @@ export async function computeHierarchicalLayout(
   /* v8 ignore start -- dev-only debug enablement */
   const config =
     import.meta.env.DEV && opts.configOverrides?.elkDebug !== false
-      ? { ...baseConfig, elkDebug: true }
+      ? ({ ...baseConfig, elkDebug: true } as LayoutConfig)
       : baseConfig;
   /* v8 ignore stop */
 

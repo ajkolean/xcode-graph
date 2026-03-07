@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { compileLitTemplates } from '@lit-labs/compiler';
 import typescript from '@rollup/plugin-typescript';
-import { minifyTemplateLiterals } from 'rollup-plugin-minify-template-literals';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
@@ -27,13 +26,14 @@ export default defineConfig({
         composite: false,
         declaration: false,
         declarationMap: false,
+        isolatedDeclarations: false,
+        verbatimModuleSyntax: false,
         importHelpers: false,
       },
       transformers: {
         before: [compileLitTemplates()],
       },
     }),
-    minifyTemplateLiterals(),
     visualizer({
       filename: 'dist/bundle-stats.html',
       gzipSize: true,
@@ -87,6 +87,8 @@ export default defineConfig({
           composite: false,
           declaration: false,
           declarationMap: false,
+          isolatedDeclarations: false,
+          verbatimModuleSyntax: false,
           importHelpers: false,
         },
       }),

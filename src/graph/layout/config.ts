@@ -142,7 +142,7 @@ export interface ClusterElkOptions {
  *
  * @public
  */
-export type LayoutConfig = typeof DEFAULT_CONFIG;
+export type LayoutConfig = Omit<typeof DEFAULT_CONFIG, 'elkDebug'> & { readonly elkDebug: boolean };
 
 /**
  * Options passed to the main layout computation function.

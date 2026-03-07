@@ -1,4 +1,3 @@
-import type { ClusterPosition } from '@shared/schemas/simulation.types';
 import { ZOOM_CONFIG } from '@shared/utils/zoom-config';
 
 /** Result of a fit-to-viewport calculation. */
@@ -14,7 +13,7 @@ export interface FitResult {
  * @returns The computed zoom and pan, or null if no clusters are available
  */
 export function computeFitToViewport(
-  clusterPositions: ReadonlyMap<string, ClusterPosition>,
+  clusterPositions: ReadonlyMap<string, { x: number; y: number; width: number; height: number }>,
   viewportWidth: number,
   viewportHeight: number,
 ): FitResult | null {

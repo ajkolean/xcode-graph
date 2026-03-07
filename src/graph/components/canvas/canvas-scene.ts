@@ -27,7 +27,7 @@ import {
 import { resolveClusterPosition, resolveNodeWorldPosition } from '@graph/utils/canvas-positions';
 import type { CanvasTheme } from '@graph/utils/canvas-theme';
 import { buildNodeQuadtree, findNodeAt, type IndexedNode } from '@graph/utils/spatial-index';
-import type { Cluster, ViewMode } from '@shared/schemas';
+import type { Cluster, ClusterPosition, ViewMode } from '@shared/schemas';
 import { type GraphEdge, type GraphNode, NodeType } from '@shared/schemas/graph.types';
 import type { PreviewFilter } from '@shared/signals';
 import { prefersReducedMotion } from '@shared/signals/reduced-motion.signals';
@@ -451,7 +451,7 @@ export class CanvasScene {
 
   /** Fit all clusters into the viewport. */
   fitToViewport(
-    clusterPositions: ReadonlyMap<string, { x: number; y: number; width: number; height: number }>,
+    clusterPositions: ReadonlyMap<string, ClusterPosition>,
     viewportWidth: number,
     viewportHeight: number,
   ): { zoom: number; pan: { x: number; y: number } } | null {

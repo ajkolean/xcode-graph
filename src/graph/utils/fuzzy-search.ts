@@ -6,9 +6,9 @@
  */
 
 import type { GraphNode } from '@shared/schemas/graph.types';
-import Fuse from 'fuse.js';
+import Fuse, { type IFuseOptions } from 'fuse.js';
 
-const FUSE_OPTIONS: Fuse.IFuseOptions<GraphNode> = {
+const FUSE_OPTIONS: IFuseOptions<GraphNode> = {
   keys: [
     { name: 'name', weight: 3 },
     { name: 'project', weight: 1 },

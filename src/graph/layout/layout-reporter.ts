@@ -413,7 +413,7 @@ export interface ElkPhaseReport {
   name: string;
   durationMs: number;
   percentage: number;
-  children?: ElkPhaseReport[];
+  children?: ElkPhaseReport[] | undefined;
 }
 
 /**
@@ -428,11 +428,12 @@ export function formatElkTimingReport(logging: ElkLoggingEntry): ElkPhaseReport[
   function processEntry(entry: ElkLoggingEntry): ElkPhaseReport {
     const durationMs = entry.executionTime ?? 0;
     const percentage = totalTime > 0 ? (durationMs / totalTime) * 100 : 0;
+    const children = entry.children?.map(processEntry);
     return {
       name: entry.name,
       durationMs,
       percentage,
-      children: entry.children?.map(processEntry),
+      ...(children !== undefined && { children }),
     };
   }
 
