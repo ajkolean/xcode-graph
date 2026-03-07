@@ -112,9 +112,8 @@ async function createElk(): Promise<ElkType> {
       workerFactory: () => new Worker(new URL('elkjs/lib/elk-worker.js', import.meta.url)),
     });
   }
-  /* v8 ignore start -- fallback for environments without Worker (e.g. tests in jsdom) */
-  const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
-  return new ELK();
+  /* v8 ignore start -- production always has Worker; tests mock elkjs/lib/elk-api.js */
+  throw new Error('ELK layout requires Worker support');
   /* v8 ignore stop */
 }
 
