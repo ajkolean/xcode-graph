@@ -120,7 +120,8 @@
   "customElements": "custom-elements.json",
   "pnpm": {
     "overrides": {
-      "vite": "8.0.0-beta.16"
+      "vite": "8.0.0-beta.16",
+      "minimatch": ">=10.2.3"
     },
     "onlyBuiltDependencies": [
       "rs-module-lexer"

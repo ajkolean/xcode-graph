@@ -27,6 +27,10 @@
   <a href="https://ajkolean.github.io/xcode-graph/api/">API Reference</a>
 </p>
 
+<p align="center">
+  <video src="https://github.com/ajkolean/xcode-graph/raw/main/docs/public/demo.mp4" autoplay loop muted playsinline width="800"></video>
+</p>
+
 ---
 
 ## Features
