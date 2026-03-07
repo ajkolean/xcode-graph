@@ -1,6 +1,6 @@
 /** Shared position resolution utilities for canvas renderers */
 
-import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
+import type { LayoutController as GraphLayoutController } from '@graph/controllers/layout.controller';
 
 // Reusable point objects to avoid per-call allocations in hot paths.
 // Safe because callers consume the values immediately within the same frame.

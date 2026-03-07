@@ -16,7 +16,7 @@
  *   8. Draw tooltips (screen space, constant size)
  */
 
-import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
+import type { LayoutController as GraphLayoutController } from '@graph/controllers/layout.controller';
 import type { TransitiveResult } from '@graph/utils';
 import {
   type AnimatedValue,

@@ -15,10 +15,8 @@
 
 export type { ColorScheme } from './components/xcode-graph';
 export { GraphInteractionFullController } from './graph/controllers/graph-interaction-full.controller';
-export {
-  type GraphLayoutConfig,
-  GraphLayoutController,
-} from './graph/controllers/graph-layout.controller';
+export type { GraphLayoutConfig } from './graph/controllers/layout.controller';
+export { LayoutController as GraphLayoutController } from './graph/controllers/layout.controller';
 export type { LayoutOptions } from './graph/layout/config';
 export type { LayoutHooks } from './graph/layout/types';
 export * from './graph/signals';

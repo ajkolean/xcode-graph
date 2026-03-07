@@ -1,4 +1,4 @@
-import type { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
+import type { LayoutController as GraphLayoutController } from '@graph/controllers/layout.controller';
 import type { AnimatedValue } from '@graph/utils/canvas-animation';
 import { fixture, html, oneEvent } from '@open-wc/testing';
 import { ViewMode } from '@shared/schemas';

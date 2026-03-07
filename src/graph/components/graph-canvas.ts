@@ -1,5 +1,5 @@
 import { AnimationLoopController } from '@graph/controllers/animation-loop.controller';
-import { GraphLayoutController } from '@graph/controllers/graph-layout.controller';
+import { LayoutController as GraphLayoutController } from '@graph/controllers/layout.controller';
 import type { TransitiveResult } from '@graph/utils';
 import {
   type AnimatedValue,

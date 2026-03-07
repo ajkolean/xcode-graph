@@ -16,6 +16,16 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import type { ReactiveController, ReactiveControllerHost } from 'lit';
 
 /**
+ * Configuration for graph layout with optional animation
+ */
+export interface GraphLayoutConfig {
+  enableAnimation?: boolean;
+  animationTicks?: number;
+  nodeCollisionStrength?: number;
+  clusterCollisionStrength?: number;
+}
+
+/**
  * Result of layout computation
  */
 export interface LayoutResult {
@@ -51,8 +61,69 @@ export class LayoutController implements ReactiveController {
   // Loading state
   public isComputing = false;
 
-  constructor(host: ReactiveControllerHost) {
+  // Configuration (kept for backwards compatibility but ignored)
+  enableAnimation: boolean;
+
+  // --- Public state (previously exposed by GraphLayoutController) ---
+
+  private _nodePositions = new Map<string, NodePosition>();
+  private _clusterPositions = new Map<string, ClusterPosition>();
+  private _clusters: Cluster[] = [];
+  private _cycleNodes: Set<string> | undefined;
+  private _nodeSccId: Map<string, number> | undefined;
+  private _sccSizes: Map<number, number> | undefined;
+  private _clusterEdges: { source: string; target: string; weight: number }[] | undefined;
+  private _routedEdges: RoutedEdge[] | undefined;
+
+  get nodePositions(): Map<string, NodePosition> {
+    return this._nodePositions;
+  }
+
+  get clusterPositions(): Map<string, ClusterPosition> {
+    return this._clusterPositions;
+  }
+
+  get clusters(): Cluster[] {
+    return this._clusters;
+  }
+
+  get isSettling(): boolean {
+    return this.isComputing;
+  }
+
+  /** Nodes that are part of cycles (SCC size > 1) */
+  get cycleNodes(): Set<string> | undefined {
+    /* v8 ignore next */
+    return this._cycleNodes;
+  }
+
+  /** SCC ID for each node - nodes in same SCC share an ID */
+  get nodeSccId(): Map<string, number> | undefined {
+    /* v8 ignore next */
+    return this._nodeSccId;
+  }
+
+  /** Size of each SCC (size > 1 indicates a cycle) */
+  get sccSizes(): Map<number, number> | undefined {
+    /* v8 ignore next */
+    return this._sccSizes;
+  }
+
+  /** Aggregated edges between clusters (Arteries) */
+  get clusterEdges(): { source: string; target: string; weight: number }[] | undefined {
+    /* v8 ignore next */
+    return this._clusterEdges;
+  }
+
+  /** Port-routed edges for cross-cluster connections */
+  get routedEdges(): RoutedEdge[] | undefined {
+    /* v8 ignore next */
+    return this._routedEdges;
+  }
+
+  constructor(host: ReactiveControllerHost, config: GraphLayoutConfig = {}) {
     this.host = host;
+    this.enableAnimation = config.enableAnimation ?? true;
     host.addController(this);
   }
 
@@ -72,19 +143,27 @@ export class LayoutController implements ReactiveController {
     layoutOptions?: LayoutOptions,
     forceRecompute = false,
   ): Promise<LayoutResult> {
-    if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
-      return this.cachedResult;
-    }
-
-    // Empty graph
+    // Empty graph - clear state and return early
     if (nodes.length === 0) {
       const emptyResult: LayoutResult = {
         nodePositions: new Map(),
         clusterPositions: new Map(),
         clusters: [],
       };
+      this._nodePositions = new Map();
+      this._clusterPositions = new Map();
+      this._clusters = [];
+      this._cycleNodes = undefined;
+      this._nodeSccId = undefined;
+      this._sccSizes = undefined;
+      this._clusterEdges = undefined;
+      this._routedEdges = undefined;
       this.cacheResult(emptyResult, nodes, edges);
       return emptyResult;
+    }
+
+    if (!forceRecompute && this.cachedResult && this.isSameInput(nodes, edges)) {
+      return this.cachedResult;
     }
 
     this.isComputing = true;
@@ -141,6 +220,16 @@ export class LayoutController implements ReactiveController {
         routedEdges,
       };
 
+      // Update public state
+      this._clusters = result.clusters;
+      this._nodePositions = result.nodePositions;
+      this._clusterPositions = result.clusterPositions;
+      this._cycleNodes = result.cycleNodes;
+      this._nodeSccId = result.nodeSccId;
+      this._sccSizes = result.sccSizes;
+      this._clusterEdges = result.clusterEdges;
+      this._routedEdges = result.routedEdges;
+
       this.cacheResult(result, nodes, edges);
       return result;
     } finally {
@@ -163,6 +252,11 @@ export class LayoutController implements ReactiveController {
    */
   getCachedResult(): LayoutResult | null {
     return this.cachedResult;
+  }
+
+  /** Sets whether layout animation is enabled. */
+  setEnableAnimation(enabled: boolean): void {
+    this.enableAnimation = enabled;
   }
 
   /** Checks whether the given nodes and edges have the same content as the cached input. */
