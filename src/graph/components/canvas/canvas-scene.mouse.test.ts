@@ -84,6 +84,7 @@ describe('canvas-scene mouse interactions', () => {
   let container: HTMLDivElement;
   let scene: CanvasScene;
   let callbacks: SceneCallbacks;
+  // skipcq: JS-0323 — test-only access to private members
   // biome-ignore lint/suspicious/noExplicitAny: test access to private members
   let sceneAny: any;
 
