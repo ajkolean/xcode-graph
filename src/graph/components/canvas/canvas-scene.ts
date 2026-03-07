@@ -1321,10 +1321,8 @@ export class CanvasScene {
   }
 
   private handleMouseUp = (): void => {
-    if (this.clickedEmptySpace && !this.hasMoved) {
-      this.callbacks.onNodeSelect(null);
-      this.callbacks.onClusterSelect(null);
-    }
+    // Selection is preserved when clicking empty canvas space.
+    // Use Escape or click another node/cluster to change selection.
 
     this.isPanning = false;
     this.isDragging = false;
