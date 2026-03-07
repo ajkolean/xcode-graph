@@ -37,13 +37,12 @@ jobs:
             exit 1
           fi
 
-          # Verify major.minor aligns with the xcodegraph field
+          # Verify base version (before -suffix) matches the xcodegraph field
           XCGRAPH_VERSION=$(node -p "require('./package.json').xcodegraph")
-          PKG_MAJOR_MINOR=$(echo "${PKG_VERSION}" | cut -d. -f1-2)
-          XCG_MAJOR_MINOR=$(echo "${XCGRAPH_VERSION}" | cut -d. -f1-2)
+          BASE_VERSION="${PKG_VERSION%%-*}"
 
-          if [[ "${PKG_MAJOR_MINOR}" != "${XCG_MAJOR_MINOR}" ]]; then
-            echo "::error::Package major.minor (${PKG_MAJOR_MINOR}) does not match xcodegraph major.minor (${XCG_MAJOR_MINOR}). Run: pnpm version:sync <xcodegraph-version>"
+          if [[ "${BASE_VERSION}" != "${XCGRAPH_VERSION}" ]]; then
+            echo "::error::Package base version (${BASE_VERSION}) does not match xcodegraph version (${XCGRAPH_VERSION}). Package version must be ${XCGRAPH_VERSION} or ${XCGRAPH_VERSION}-<suffix>"
             exit 1
           fi
 
@@ -53,7 +52,7 @@ jobs:
 
       - run: pnpm build:lib
 
-      - run: npm publish
+      - run: npm publish --tag latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
