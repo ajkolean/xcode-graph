@@ -237,6 +237,12 @@ export class GraphDataService {
     return this.bfsTraverse(nodeId, 'in');
   }
 
+  /** Returns neighbors in the given direction, or empty array if node doesn't exist. */
+  private getNeighbors(id: string, direction: 'out' | 'in'): string[] {
+    if (!this.graph.hasNode(id)) return [];
+    return direction === 'out' ? this.graph.outNeighbors(id) : this.graph.inNeighbors(id);
+  }
+
   /** Internal BFS using graphology neighbors */
   private bfsTraverse(
     startId: string,
@@ -249,6 +255,11 @@ export class GraphDataService {
     nodeDepths.set(startId, 0);
     let maxDepth = 0;
 
+    const makeEdgeKey =
+      direction === 'out'
+        ? (from: string, to: string) => `${from}->${to}`
+        : (from: string, to: string) => `${to}->${from}`;
+
     const queue: Array<{ id: string; depth: number }> = [{ id: startId, depth: 0 }];
 
     while (queue.length > 0) {
@@ -256,14 +267,8 @@ export class GraphDataService {
       if (!item) break;
       const { id, depth } = item;
 
-      const neighbors = this.graph.hasNode(id)
-        ? direction === 'out'
-          ? this.graph.outNeighbors(id)
-          : this.graph.inNeighbors(id)
-        : [];
-
-      for (const neighbor of neighbors) {
-        const edgeKey = direction === 'out' ? `${id}->${neighbor}` : `${neighbor}->${id}`;
+      for (const neighbor of this.getNeighbors(id, direction)) {
+        const edgeKey = makeEdgeKey(id, neighbor);
         if (!visitedEdges.has(edgeKey)) {
           visitedEdges.add(edgeKey);
           edgeDepths.set(edgeKey, depth);

@@ -147,7 +147,7 @@ export class GraphErrorToast extends LitElement {
 
     .action-button:hover,
     .dismiss-button:hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      background-color: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
       border-color: var(--colors-border);
     }
 

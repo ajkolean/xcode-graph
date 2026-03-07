@@ -146,6 +146,7 @@ export class GraphCanvas extends LitElement {
   private resizeObserver: ResizeObserver | null = null;
   private resizeRafId: number | null = null;
 
+  private themeObserver: MutationObserver | null = null;
   private intersectionObserver: IntersectionObserver | null = null;
   private _isVisible = true;
 
@@ -207,6 +208,12 @@ export class GraphCanvas extends LitElement {
   /** Initializes the canvas scene, resolves the theme, and starts the render loop. */
   override firstUpdated(): void {
     this.theme = resolveCanvasTheme(this);
+    this.themeObserver = new MutationObserver(() => {
+      this.theme = resolveCanvasTheme(this);
+      this.requestRender();
+    });
+    const themeHost = this.closest('[data-theme]') ?? this;
+    this.themeObserver.observe(themeHost, { attributes: true, attributeFilter: ['data-theme'] });
     if (this.containerEl) {
       this.scene = new CanvasScene(this.containerEl, {
         onNodeSelect: (node) => this.dispatchCanvasEvent('node-select', { node }),
@@ -255,6 +262,8 @@ export class GraphCanvas extends LitElement {
     this.scene = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.themeObserver?.disconnect();
+    this.themeObserver = null;
     this.intersectionObserver?.disconnect();
     this.intersectionObserver = null;
     if (this.resizeRafId !== null) {

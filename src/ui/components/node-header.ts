@@ -142,7 +142,7 @@ export class GraphNodeHeader extends LitElement {
           ${svg`
             <path
               d="${iconPath}"
-              fill="rgba(var(--colors-background-rgb), var(--opacity-95))"
+              style="fill: color-mix(in srgb, var(--colors-background) 95%, transparent)"
               stroke="${nodeDisplayColor}"
               stroke-width="2"
               stroke-linecap="round"

@@ -86,7 +86,7 @@ check_pattern \
 check_pattern \
   "rgba?\s*\(\s*[0-9]" \
   "Hardcoded rgba/rgb colors found" \
-  "Use var(--colors-*) tokens or var(--colors-*-rgb) with rgba()" \
+  "Use var(--colors-*) tokens or color-mix(in srgb, var(--colors-*) N%, transparent)" \
   "error"
 
 # Check for pixel values in common properties

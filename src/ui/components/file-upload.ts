@@ -44,7 +44,7 @@ export class GraphFileUpload extends LitElement {
       align-items: center;
       gap: var(--spacing-2);
       padding: var(--spacing-2) var(--spacing-3);
-      background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
+      background-color: color-mix(in srgb, var(--colors-card) 95%, transparent);
       border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 30%, transparent);
       border-radius: var(--radii-md);
       font-family: var(--fonts-body);
@@ -57,12 +57,12 @@ export class GraphFileUpload extends LitElement {
     }
 
     .container:hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      background-color: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
     }
 
     .container.drag-over {
       border-color: var(--colors-primary);
-      background-color: rgba(var(--colors-primary-rgb), var(--opacity-10));
+      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
       color: var(--colors-primary-text);
     }
 

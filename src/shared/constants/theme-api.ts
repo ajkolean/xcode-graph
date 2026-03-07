@@ -76,6 +76,36 @@ export const THEME_PROPERTIES: readonly ThemeProperty[] = [
     defaultValue: 'var(--colors-background)',
     category: 'color',
   },
+  {
+    name: '--graph-canvas-tooltip-bg',
+    description: 'Background color for canvas tooltips',
+    defaultValue: 'rgba(24, 24, 28, 0.95)',
+    category: 'color',
+  },
+  {
+    name: '--graph-canvas-shadow',
+    description: 'Shadow color for canvas elements',
+    defaultValue: 'rgba(24, 24, 28, 0.9)',
+    category: 'color',
+  },
+  {
+    name: '--graph-canvas-cycle-edge',
+    description: 'Color for cycle dependency edges on the canvas',
+    defaultValue: 'rgba(239, 68, 68, 0.8)',
+    category: 'color',
+  },
+  {
+    name: '--graph-canvas-cycle-glow',
+    description: 'Glow color for cycle dependency edges on the canvas',
+    defaultValue: 'rgba(239, 68, 68, 0.6)',
+    category: 'color',
+  },
+  {
+    name: '--graph-filter-icon',
+    description: 'Color for filter icons in the UI',
+    defaultValue: 'rgba(160, 140, 255, 0.7)',
+    category: 'color',
+  },
 
   // ── Node ─────────────────────────────────────────────
   {

@@ -129,13 +129,13 @@ export class GraphCycleWarning extends LitElement {
     }
 
     .btn-dismiss:hover {
-      background: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      background: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
     }
 
     .cycle-list {
       margin-top: var(--spacing-2);
       padding: var(--spacing-3);
-      background: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      background: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
       border-radius: var(--radii-sm);
       max-height: 200px;
       overflow-y: auto;
@@ -183,7 +183,7 @@ export class GraphCycleWarning extends LitElement {
     }
 
     .close-btn:hover {
-      background: rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      background: color-mix(in srgb, var(--colors-foreground) 10%, transparent);
     }
   `;
 

@@ -82,7 +82,7 @@ export class GraphControls extends LitElement {
       align-items: center;
       gap: var(--spacing-3);
       padding: var(--spacing-2) var(--spacing-3);
-      background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
+      background-color: color-mix(in srgb, var(--colors-card) 95%, transparent);
       border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 30%, transparent);
       border-radius: var(--radii-md);
       font-family: var(--fonts-body);
@@ -122,7 +122,7 @@ export class GraphControls extends LitElement {
     }
 
     .zoom-button:hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      background-color: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
     }
 
     .zoom-button:focus-visible {
@@ -322,7 +322,7 @@ export class GraphInstructions extends LitElement {
 
     .container {
       padding: var(--spacing-2) var(--spacing-3);
-      background-color: rgba(var(--colors-card-rgb), var(--opacity-95));
+      background-color: color-mix(in srgb, var(--colors-card) 95%, transparent);
       border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
       border-radius: var(--radii-md);
       font-family: var(--fonts-body);

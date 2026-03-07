@@ -78,8 +78,8 @@ export class GraphEmptyState extends LitElement {
       align-items: center;
       justify-content: center;
       border-radius: var(--radii-lg);
-      background: rgba(var(--colors-primary-rgb), var(--opacity-10));
-      border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-20));
+      background: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 20%, transparent);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -124,8 +124,8 @@ export class GraphEmptyState extends LitElement {
       padding: var(--spacing-2) var(--spacing-4);
       border-radius: var(--radii-md);
       transition: all var(--durations-normal) var(--easings-default);
-      background: rgba(var(--colors-primary-rgb), var(--opacity-10));
-      border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-25));
+      background: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 25%, transparent);
       font-family: var(--fonts-body);
       font-size: var(--font-sizes-xs);
       font-weight: var(--font-weights-semibold);
@@ -136,12 +136,12 @@ export class GraphEmptyState extends LitElement {
     }
 
     .clear-button:hover {
-      background: rgba(var(--colors-primary-rgb), var(--opacity-20));
-      border-color: rgba(var(--colors-primary-rgb), var(--opacity-40));
+      background: color-mix(in srgb, var(--colors-primary) 20%, transparent);
+      border-color: color-mix(in srgb, var(--colors-primary) 40%, transparent);
     }
 
     .clear-button:active {
-      background: rgba(var(--colors-primary-rgb), var(--opacity-25));
+      background: color-mix(in srgb, var(--colors-primary) 25%, transparent);
     }
 
     .clear-button:focus-visible {

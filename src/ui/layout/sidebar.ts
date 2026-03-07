@@ -176,7 +176,7 @@ export class GraphSidebar extends LitElement {
     }
 
     .nav-button:not(.active):hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-2));
+      background-color: color-mix(in srgb, var(--colors-foreground) 2%, transparent);
       border-color: var(--colors-border);
       color: var(--colors-foreground);
     }

@@ -9,7 +9,10 @@ import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { DirectedGraph } from 'graphology';
 
 export type GraphNodeAttrs = Omit<GraphNode, 'id'>;
-export type GraphEdgeAttrs = { kind?: string | undefined; platformConditions?: string[] | undefined };
+export type GraphEdgeAttrs = {
+  kind?: string | undefined;
+  platformConditions?: string[] | undefined;
+};
 export type AppGraph = DirectedGraph<GraphNodeAttrs, GraphEdgeAttrs>;
 
 export function buildGraph(nodes: GraphNode[], edges: GraphEdge[]): AppGraph {

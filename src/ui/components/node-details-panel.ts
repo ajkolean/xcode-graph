@@ -99,7 +99,7 @@ export class GraphNodeDetailsPanel extends LitElement {
       overflow-y: auto;
       padding-bottom: var(--spacing-lg);
       scrollbar-width: thin;
-      scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
+      scrollbar-color: color-mix(in srgb, var(--colors-primary) 20%, transparent) transparent;
       animation: panelSlideIn var(--durations-slow) var(--easings-default);
     }
 
@@ -123,12 +123,12 @@ export class GraphNodeDetailsPanel extends LitElement {
     }
 
     :host::-webkit-scrollbar-thumb {
-      background: rgba(var(--colors-accent-rgb), var(--opacity-20));
+      background: color-mix(in srgb, var(--colors-accent) 20%, transparent);
       border-radius: var(--radii-md);
     }
 
     :host::-webkit-scrollbar-thumb:hover {
-      background: rgba(var(--colors-accent-rgb), 0.35);
+      background: color-mix(in srgb, var(--colors-accent) 35%, transparent);
     }
 
     @media (prefers-reduced-motion: reduce) {

@@ -136,7 +136,7 @@ export class GraphHeader extends LitElement {
     }
 
     .breadcrumb-button:hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
+      background-color: color-mix(in srgb, var(--colors-foreground) 4%, transparent);
       border-color: var(--colors-border);
     }
 
@@ -156,7 +156,7 @@ export class GraphHeader extends LitElement {
     }
 
     .separator {
-      color: rgba(var(--colors-foreground-rgb), var(--opacity-20));
+      color: color-mix(in srgb, var(--colors-foreground) 20%, transparent);
       display: flex;
       align-items: center;
     }
@@ -202,13 +202,13 @@ export class GraphHeader extends LitElement {
         color var(--durations-fast) var(--easings-out);
       color: var(--colors-muted-foreground);
       border: var(--border-widths-thin) solid var(--colors-border);
-      background: rgba(var(--colors-foreground-rgb), var(--opacity-2));
+      background: color-mix(in srgb, var(--colors-foreground) 2%, transparent);
       cursor: pointer;
     }
 
     .action-button:hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
-      border-color: rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      background-color: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
+      border-color: color-mix(in srgb, var(--colors-foreground) 10%, transparent);
       color: var(--colors-foreground);
     }
 
@@ -228,7 +228,7 @@ export class GraphHeader extends LitElement {
       transition:
         transform var(--durations-fast) var(--easings-out),
         box-shadow var(--durations-fast) var(--easings-out);
-      background: linear-gradient(135deg, var(--colors-accent) 0%, rgba(var(--colors-accent-rgb), var(--opacity-70)) 100%);
+      background: linear-gradient(135deg, var(--colors-accent) 0%, color-mix(in srgb, var(--colors-accent) 70%, transparent) 100%);
       border: none;
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-label);
@@ -239,7 +239,7 @@ export class GraphHeader extends LitElement {
 
     .user-avatar:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(var(--colors-accent-rgb), var(--opacity-40));
+      box-shadow: 0 0 20px color-mix(in srgb, var(--colors-accent) 40%, transparent);
     }
 
     .icon {
@@ -257,18 +257,18 @@ export class GraphHeader extends LitElement {
       height: var(--spacing-1);
       border-radius: var(--radii-full);
       background: var(--colors-success);
-      box-shadow: 0 0 8px rgba(var(--colors-success-rgb), var(--opacity-60));
+      box-shadow: 0 0 8px color-mix(in srgb, var(--colors-success) 60%, transparent);
       animation: statusPulse 2s ease-in-out infinite;
     }
 
     @keyframes statusPulse {
       0%, 100% {
         opacity: var(--opacity-100);
-        box-shadow: 0 0 8px rgba(var(--colors-success-rgb), var(--opacity-60));
+        box-shadow: 0 0 8px color-mix(in srgb, var(--colors-success) 60%, transparent);
       }
       50% {
         opacity: var(--opacity-70);
-        box-shadow: 0 0 12px rgba(var(--colors-success-rgb), var(--opacity-80));
+        box-shadow: 0 0 12px color-mix(in srgb, var(--colors-success) 80%, transparent);
       }
     }
 

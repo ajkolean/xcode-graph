@@ -100,7 +100,7 @@ export class GraphClusterDetailsPanel extends LitElement {
       overflow-y: auto;
       padding-bottom: var(--spacing-lg);
       scrollbar-width: thin;
-      scrollbar-color: rgba(var(--colors-primary-rgb), var(--opacity-20)) transparent;
+      scrollbar-color: color-mix(in srgb, var(--colors-primary) 20%, transparent) transparent;
     }
 
     @media (prefers-reduced-motion: reduce) {

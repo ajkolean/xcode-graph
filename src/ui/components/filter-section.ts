@@ -191,8 +191,8 @@ export class GraphFilterSection extends LitElement {
 
     .item-button:hover {
       opacity: var(--opacity-100);
-      background-color: rgba(var(--colors-primary-rgb), var(--opacity-5));
-      box-shadow: inset 0 0 0 1px rgba(var(--colors-primary-rgb), var(--opacity-10));
+      background-color: color-mix(in srgb, var(--colors-primary) 5%, transparent);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--colors-primary) 10%, transparent);
     }
 
     .item-accent {
@@ -333,7 +333,7 @@ export class GraphFilterSection extends LitElement {
           <svg width="16" height="16" viewBox="-18 -18 36 36" style="filter: ${dropShadow}; opacity: ${opacity}">
             <path
               d="${iconPath}"
-              fill="rgba(var(--colors-background-rgb), var(--opacity-95))"
+              style="fill: color-mix(in srgb, var(--colors-background) 95%, transparent)"
               stroke="${zoomColor}"
               stroke-width="2"
               stroke-linecap="round"

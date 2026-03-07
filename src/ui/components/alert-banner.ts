@@ -102,8 +102,8 @@ export class GraphAlertBanner extends LitElement {
 
     /* Variant: Warning */
     :host([variant="warning"]) .banner {
-      background: rgba(var(--colors-warning-rgb), var(--opacity-10));
-      border-color: rgba(var(--colors-warning-rgb), var(--opacity-30));
+      background: color-mix(in srgb, var(--colors-warning) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-warning) 30%, transparent);
     }
 
     :host([variant="warning"]) .title,
@@ -117,8 +117,8 @@ export class GraphAlertBanner extends LitElement {
 
     /* Variant: Error */
     :host([variant="error"]) .banner {
-      background: rgba(var(--colors-destructive-rgb), var(--opacity-10));
-      border-color: rgba(var(--colors-destructive-rgb), var(--opacity-30));
+      background: color-mix(in srgb, var(--colors-destructive) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-destructive) 30%, transparent);
     }
 
     :host([variant="error"]) .title,
@@ -132,8 +132,8 @@ export class GraphAlertBanner extends LitElement {
 
     /* Variant: Info (default) */
     .banner {
-      background: rgba(var(--colors-primary-rgb), var(--opacity-10));
-      border-color: rgba(var(--colors-primary-rgb), var(--opacity-25));
+      background: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-primary) 25%, transparent);
     }
 
     .title {
@@ -146,8 +146,8 @@ export class GraphAlertBanner extends LitElement {
 
     /* Variant: Success */
     :host([variant="success"]) .banner {
-      background: rgba(var(--colors-success-rgb), var(--opacity-10));
-      border-color: rgba(var(--colors-success-rgb), var(--opacity-30));
+      background: color-mix(in srgb, var(--colors-success) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-success) 30%, transparent);
     }
 
     :host([variant="success"]) .title,
@@ -212,7 +212,7 @@ export class GraphAlertBanner extends LitElement {
     }
 
     .close-btn:hover {
-      background: rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      background: color-mix(in srgb, var(--colors-foreground) 10%, transparent);
     }
   `;
 

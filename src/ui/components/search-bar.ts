@@ -86,8 +86,8 @@ export class GraphSearchBar extends LitElement {
         background-color var(--durations-normal) var(--easings-out);
       background: linear-gradient(
         90deg,
-        rgba(var(--colors-foreground-rgb), var(--opacity-2)) 0%,
-        rgba(var(--colors-foreground-rgb), var(--opacity-4)) 100%
+        color-mix(in srgb, var(--colors-foreground) 2%, transparent) 0%,
+        color-mix(in srgb, var(--colors-foreground) 4%, transparent) 100%
       );
       border: var(--border-widths-thin) solid transparent;
       color: var(--colors-foreground);
@@ -100,8 +100,8 @@ export class GraphSearchBar extends LitElement {
       border-color: var(--colors-border);
       background: linear-gradient(
         90deg,
-        rgba(var(--colors-foreground-rgb), var(--opacity-4)) 0%,
-        rgba(var(--colors-foreground-rgb), var(--opacity-5)) 100%
+        color-mix(in srgb, var(--colors-foreground) 4%, transparent) 0%,
+        color-mix(in srgb, var(--colors-foreground) 5%, transparent) 100%
       );
     }
 
@@ -110,8 +110,8 @@ export class GraphSearchBar extends LitElement {
       box-shadow: 0 0 0 1px var(--colors-primary);
       background: linear-gradient(
         90deg,
-        rgba(var(--colors-primary-rgb), var(--opacity-4)) 0%,
-        rgba(var(--colors-primary-rgb), var(--opacity-5)) 100%
+        color-mix(in srgb, var(--colors-primary) 4%, transparent) 0%,
+        color-mix(in srgb, var(--colors-primary) 5%, transparent) 100%
       );
     }
 
@@ -139,12 +139,12 @@ export class GraphSearchBar extends LitElement {
       border-radius: var(--radii-sm);
       background: linear-gradient(
         180deg,
-        rgba(var(--colors-foreground-rgb), var(--opacity-10)) 0%,
-        rgba(var(--colors-foreground-rgb), var(--opacity-4)) 100%
+        color-mix(in srgb, var(--colors-foreground) 10%, transparent) 0%,
+        color-mix(in srgb, var(--colors-foreground) 4%, transparent) 100%
       );
-      border: var(--border-widths-thin) solid rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-foreground) 10%, transparent);
       box-shadow:
-        0 1px 0 rgba(var(--colors-foreground-rgb), var(--opacity-10)),
+        0 1px 0 color-mix(in srgb, var(--colors-foreground) 10%, transparent),
         inset 0 -1px 0 rgba(0, 0, 0, 0.2);
       font-family: var(--fonts-mono);
       font-size: var(--font-sizes-xs);

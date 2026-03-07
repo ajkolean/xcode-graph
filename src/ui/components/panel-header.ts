@@ -106,7 +106,7 @@ export class GraphPanelHeader extends LitElement {
     }
 
     .back-button:hover {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      background-color: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
     }
 
     .back-button:focus-visible {

@@ -149,38 +149,38 @@ export class GraphIconButton extends LitElement {
 
     /* Ghost + Primary */
     :host([variant="ghost"][color="primary"]) button:hover:not(:disabled) {
-      background-color: rgba(var(--colors-primary-rgb), var(--opacity-10));
+      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
       color: var(--colors-primary-text);
     }
 
     /* Ghost + Destructive */
     :host([variant="ghost"][color="destructive"]) button:hover:not(:disabled) {
-      background-color: rgba(var(--colors-destructive-rgb), var(--opacity-10));
+      background-color: color-mix(in srgb, var(--colors-destructive) 10%, transparent);
       color: var(--colors-destructive);
     }
 
     /* Variant: subtle */
     :host([variant="subtle"]) button {
-      background: rgba(var(--colors-foreground-rgb), var(--opacity-5));
-      border-color: rgba(var(--colors-foreground-rgb), var(--opacity-10));
+      background: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
+      border-color: color-mix(in srgb, var(--colors-foreground) 10%, transparent);
       color: var(--colors-muted-foreground);
     }
 
     :host([variant="subtle"][color="neutral"]) button:hover:not(:disabled) {
-      background: rgba(var(--colors-foreground-rgb), var(--opacity-10));
-      border-color: rgba(var(--colors-foreground-rgb), var(--opacity-15));
+      background: color-mix(in srgb, var(--colors-foreground) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-foreground) 15%, transparent);
       color: var(--colors-foreground);
     }
 
     :host([variant="subtle"][color="primary"]) button:hover:not(:disabled) {
-      background: rgba(var(--colors-primary-rgb), var(--opacity-10));
-      border-color: rgba(var(--colors-primary-rgb), var(--opacity-20));
+      background: color-mix(in srgb, var(--colors-primary) 10%, transparent);
+      border-color: color-mix(in srgb, var(--colors-primary) 20%, transparent);
       color: var(--colors-primary-text);
     }
 
     :host([variant="subtle"][color="destructive"]) button:hover:not(:disabled) {
-      background-color: rgba(var(--colors-destructive-rgb), var(--opacity-15));
-      border-color: rgba(var(--colors-destructive-rgb), var(--opacity-30));
+      background-color: color-mix(in srgb, var(--colors-destructive) 15%, transparent);
+      border-color: color-mix(in srgb, var(--colors-destructive) 30%, transparent);
       color: var(--colors-destructive);
       transform: scale(1.05);
     }

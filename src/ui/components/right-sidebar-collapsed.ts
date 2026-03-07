@@ -137,7 +137,7 @@ export class GraphCollapsedSidebar extends LitElement {
     }
 
     .icon-button:hover {
-      background-color: rgba(var(--colors-primary-rgb), var(--opacity-10));
+      background-color: color-mix(in srgb, var(--colors-primary) 10%, transparent);
     }
 
     .icon-button:focus-visible {
@@ -161,8 +161,8 @@ export class GraphCollapsedSidebar extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: rgba(var(--colors-primary-rgb), var(--opacity-30));
-      border: var(--border-widths-thin) solid rgba(var(--colors-primary-rgb), var(--opacity-50));
+      background-color: color-mix(in srgb, var(--colors-primary) 30%, transparent);
+      border: var(--border-widths-thin) solid color-mix(in srgb, var(--colors-primary) 50%, transparent);
       font-size: var(--font-sizes-xs);
       font-family: var(--fonts-body);
       font-weight: var(--font-weights-semibold);

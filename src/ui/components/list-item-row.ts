@@ -85,17 +85,17 @@ export class GraphListItemRow extends LitElement {
     }
 
     button.selected {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-5));
+      background-color: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
       border-color: var(--colors-border);
     }
 
     button.hovered:not(.selected) {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-4));
+      background-color: color-mix(in srgb, var(--colors-foreground) 4%, transparent);
       border-color: var(--colors-border);
     }
 
     button:not(.selected):not(.hovered) {
-      background-color: rgba(var(--colors-foreground-rgb), var(--opacity-2));
+      background-color: color-mix(in srgb, var(--colors-foreground) 2%, transparent);
     }
 
     button:active {
@@ -236,7 +236,7 @@ export class GraphListItemRow extends LitElement {
             >
               <path
                 d="${iconPath}"
-                fill="rgba(var(--colors-background-rgb), var(--opacity-95))"
+                style="fill: color-mix(in srgb, var(--colors-background) 95%, transparent)"
                 stroke="${nodeColor}"
                 stroke-width="1.8"
                 stroke-linecap="round"

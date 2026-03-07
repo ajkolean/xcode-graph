@@ -88,7 +88,7 @@ export class GraphStatsCard extends LitElement {
 
     /* Toggleable inactive: gray/muted appearance */
     .container.toggleable:not(.active) {
-      border-color: rgba(var(--colors-muted-foreground-rgb, 148, 163, 184), 0.3);
+      border-color: color-mix(in srgb, var(--colors-muted-foreground) 30%, transparent);
     }
 
     /* Toggleable active: primary styling */

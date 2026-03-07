@@ -184,8 +184,7 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
       min-height: 0;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(124, 58, 237, 0.2) transparent;
-      scrollbar-color: rgba(var(--colors-primary-rgb, 124, 58, 237), 0.2) transparent;
+      scrollbar-color: color-mix(in srgb, var(--colors-primary) 20%, transparent) transparent;
     }
 
     .filter-scroll::-webkit-scrollbar {
@@ -197,12 +196,12 @@ export class GraphRightSidebar extends SignalWatcherLitElement {
     }
 
     .filter-scroll::-webkit-scrollbar-thumb {
-      background: rgba(var(--colors-primary-rgb), var(--opacity-20));
+      background: color-mix(in srgb, var(--colors-primary) 20%, transparent);
       border-radius: var(--radii-sm);
     }
 
     .filter-scroll::-webkit-scrollbar-thumb:hover {
-      background: rgba(var(--colors-primary-rgb), var(--opacity-40));
+      background: color-mix(in srgb, var(--colors-primary) 40%, transparent);
     }
 
     .stats-row {
