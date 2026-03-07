@@ -1,6 +1,6 @@
 {
   "name": "xcode-graph",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "xcodegraph": "1.34.5",
   "description": "Interactive dependency graph visualization web component for Xcode projects",
   "license": "MIT",
