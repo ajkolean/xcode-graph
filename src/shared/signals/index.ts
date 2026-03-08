@@ -8,6 +8,14 @@
  */
 
 export {
+  errors,
+  getErrorById,
+  getToastErrors,
+  getVisibleErrors,
+  maxVisibleToasts,
+  resetErrorSignals,
+} from './error.signals';
+export {
   clearFilters,
   initializeFromData,
   setFilters,
@@ -27,6 +35,8 @@ export {
   resetFilterSignals,
   searchQuery,
 } from './filter.signals';
+
+export { prefersReducedMotion } from './reduced-motion.signals';
 
 export {
   resetZoom,

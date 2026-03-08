@@ -11,16 +11,23 @@ import { type Signal, signal } from '@lit-labs/signals';
 import type { AppError } from '@shared/schemas/error.types';
 import { DEFAULT_MAX_VISIBLE_TOASTS } from '@shared/schemas/error.types';
 
-/** Active error notifications */
+/**
+ * Active error notifications
+ * @internal
+ */
 export const errors: Signal.State<AppError[]> = signal<AppError[]>([]);
 
-/** Maximum number of visible toasts at once */
+/**
+ * Maximum number of visible toasts at once
+ * @internal
+ */
 export const maxVisibleToasts: Signal.State<number> = signal<number>(DEFAULT_MAX_VISIBLE_TOASTS);
 
 /**
  * Get visible (non-dismissed) errors.
  *
  * @returns Array of errors that have not been dismissed
+ * @internal
  */
 export function getVisibleErrors(): AppError[] {
   return errors.get().filter((error) => !error.dismissed);
@@ -30,6 +37,7 @@ export function getVisibleErrors(): AppError[] {
  * Get errors to display in toast notifications (up to `maxVisibleToasts`).
  *
  * @returns Array of non-dismissed errors, limited to the configured maximum
+ * @internal
  */
 export function getToastErrors(): AppError[] {
   const visible = getVisibleErrors();
@@ -42,6 +50,7 @@ export function getToastErrors(): AppError[] {
  *
  * @param id - The error ID to look up
  * @returns The matching error, or `undefined` if not found
+ * @internal
  */
 export function getErrorById(id: string): AppError | undefined {
   return errors.get().find((error) => error.id === id);
@@ -50,6 +59,7 @@ export function getErrorById(id: string): AppError | undefined {
 /**
  * Reset all error signals to their initial state.
  * Useful for testing and cleanup.
+ * @internal
  */
 export function resetErrorSignals(): void {
   errors.set([]);
