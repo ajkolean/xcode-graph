@@ -30,7 +30,8 @@ name = "javascript"
   skip_doc_coverage = [
     "class-expression",
     "method-definition",
-    "function-expression"
+    "function-expression",
+    "function-declaration"
   ]
 
 [[analyzers]]
