@@ -1,6 +1,7 @@
 import type { ClusterGraph } from '@graph/layout/cluster-graph';
 import type { LayoutConfig } from '@graph/layout/config';
 import type { ClusterPosition } from '@shared/schemas';
+import { createWorkerFromUrl } from '@shared/utils/cross-origin-worker';
 import type { ElkExtendedEdge, ElkNode, ELK as ElkType } from 'elkjs/lib/elk-api.js';
 import type { MicroLayoutResult } from './micro-layout';
 
@@ -108,7 +109,7 @@ function buildElkRoot(
 async function createElk(): Promise<ElkType> {
   const ELK = (await import('elkjs/lib/elk-api.js')).default;
   return new ELK({
-    workerFactory: () => new Worker(new URL('elkjs/lib/elk-worker.js', import.meta.url)),
+    workerFactory: () => createWorkerFromUrl(new URL('elkjs/lib/elk-worker.js', import.meta.url)),
   });
 }
 
