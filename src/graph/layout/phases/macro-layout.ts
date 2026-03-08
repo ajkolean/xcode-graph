@@ -1,7 +1,6 @@
 import type { ClusterGraph } from '@graph/layout/cluster-graph';
 import type { LayoutConfig } from '@graph/layout/config';
 import type { ClusterPosition } from '@shared/schemas';
-import { createWorkerFromUrl } from '@shared/utils/cross-origin-worker';
 import type { ElkExtendedEdge, ElkNode, ELK as ElkType } from 'elkjs/lib/elk-api.js';
 import type { MicroLayoutResult } from './micro-layout';
 
@@ -109,7 +108,21 @@ function buildElkRoot(
 async function createElk(): Promise<ElkType> {
   const ELK = (await import('elkjs/lib/elk-api.js')).default;
   return new ELK({
-    workerFactory: () => createWorkerFromUrl(new URL('elkjs/lib/elk-worker.js', import.meta.url)),
+    workerFactory: () => {
+      // Vite resolves this URL at build time to the emitted worker asset path
+      const workerUrl = new URL('elkjs/lib/elk-worker.js', import.meta.url);
+      try {
+        return new Worker(workerUrl);
+      } catch {
+        // Cross-origin fallback: when the script is loaded from a CDN but the page
+        // is on a different origin, `new Worker(cdnUrl)` throws SecurityError.
+        // A same-origin blob with importScripts bypasses this restriction.
+        const blob = new Blob([`importScripts(${JSON.stringify(workerUrl.href)})`], {
+          type: 'text/javascript',
+        });
+        return new Worker(URL.createObjectURL(blob));
+      }
+    },
   });
 }
 

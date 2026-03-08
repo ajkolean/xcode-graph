@@ -11,7 +11,6 @@ import type {
   SerializedMicroResult,
 } from '@graph/workers/micro-layout.worker';
 import type { Cluster } from '@shared/schemas';
-import { createWorkerFromUrl } from '@shared/utils/cross-origin-worker';
 import type { LayoutConfig } from './config';
 import { computeClusterInterior, type MicroLayoutResult } from './phases/micro-layout';
 import { applyNodeMassage } from './phases/node-massage';
@@ -136,7 +135,7 @@ export async function computeMicroLayoutsParallel(
   try {
     for (let i = 0; i < poolSize; i++) {
       workers.push(
-        createWorkerFromUrl(new URL('../workers/micro-layout.worker.ts', import.meta.url), {
+        new Worker(new URL('../workers/micro-layout.worker.ts', import.meta.url), {
           type: 'module',
         }),
       );
