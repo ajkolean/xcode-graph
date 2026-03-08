@@ -481,6 +481,12 @@ export interface ErrorNotificationState {
     maxVisible: number;
 }
 
+// Warning: (ae-forgotten-export) The symbol "AppError_2" needs to be exported by the entry point api.d.ts
+// Warning: (ae-internal-missing-underscore) The name "errors" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export const errors: Signal.State<AppError_2[]>;
+
 // @public
 export enum ErrorSeverity {
     // (undocumented)
@@ -581,6 +587,11 @@ export function getDependencyCount(nodeId: string, edges: GraphEdge_2[]): number
 // @public
 export function getDependentCount(nodeId: string, edges: GraphEdge_2[]): number;
 
+// Warning: (ae-internal-missing-underscore) The name "getErrorById" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export function getErrorById(id: string): AppError_2 | undefined;
+
 // @public
 export function getFuzzyMatchIds(nodes: GraphNode_2[], query: string): Set<string> | null;
 
@@ -609,6 +620,16 @@ export function getPlatformColor(platform: string, el?: HTMLElement): string;
 
 // @public
 export function getPlatformIconPath(platform: string): string;
+
+// Warning: (ae-internal-missing-underscore) The name "getToastErrors" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export function getToastErrors(): AppError_2[];
+
+// Warning: (ae-internal-missing-underscore) The name "getVisibleErrors" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export function getVisibleErrors(): AppError_2[];
 
 // @public
 export const GraphAnalysisService: {
@@ -855,6 +876,11 @@ export interface LoadProgress {
 // @public
 export function matchesSearch(node: GraphNode_2, searchQuery: string): boolean;
 
+// Warning: (ae-internal-missing-underscore) The name "maxVisibleToasts" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export const maxVisibleToasts: Signal.State<number>;
+
 // @public
 export const NODE_ROLE_VALUES: NodeRole[];
 
@@ -989,6 +1015,11 @@ export interface PositionedNode {
     y: number;
 }
 
+// Warning: (ae-internal-missing-underscore) The name "prefersReducedMotion" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export const prefersReducedMotion: Signal.State<boolean>;
+
 // @public
 export type PreviewFilter = {
     type: 'nodeType' | 'platform' | 'origin' | 'project' | 'package' | 'cluster';
@@ -1007,6 +1038,11 @@ export interface ProgressiveLoadConfig {
 
 // @public
 export function resetDataSignals(): void;
+
+// Warning: (ae-internal-missing-underscore) The name "resetErrorSignals" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal
+export function resetErrorSignals(): void;
 
 // @public
 export function resetFilterSignals(): void;
