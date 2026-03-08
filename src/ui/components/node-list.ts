@@ -188,9 +188,6 @@ export class GraphNodeList extends NodeListEventsBase {
 
     .list {
       display: block;
-      max-height: 300px;
-      overflow-y: auto;
-      scrollbar-width: thin;
     }
 
     .item-row {

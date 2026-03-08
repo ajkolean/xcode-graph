@@ -220,7 +220,7 @@ describe('xcode-graph (GraphApp)', () => {
 
   describe('loadRawGraph with transform', () => {
     it('should load valid raw graph data successfully', async () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {}); // skipcq: JS-0321;
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);
@@ -252,7 +252,7 @@ describe('xcode-graph (GraphApp)', () => {
     });
 
     it('should handle completely invalid data gracefully', async () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {}); // skipcq: JS-0321;
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);
@@ -298,7 +298,7 @@ describe('xcode-graph (GraphApp)', () => {
     });
 
     it('should handle transform result with empty nodes', async () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {}); // skipcq: JS-0321;
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);
@@ -318,7 +318,7 @@ describe('xcode-graph (GraphApp)', () => {
     });
 
     it('should set nodes and edges from successful transform', async () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {}); // skipcq: JS-0321;
       const el = await fixture<GraphApp>(html`
         <xcode-graph></xcode-graph>
       `);

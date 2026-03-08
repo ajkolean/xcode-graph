@@ -137,8 +137,6 @@ export class GraphCycleWarning extends LitElement {
       padding: var(--spacing-3);
       background: color-mix(in srgb, var(--colors-foreground) 5%, transparent);
       border-radius: var(--radii-sm);
-      max-height: 200px;
-      overflow-y: auto;
     }
 
     .cycle-item {

@@ -28,8 +28,10 @@ import {
   LitElement,
   type PropertyValues,
   type TemplateResult,
+  unsafeCSS,
 } from 'lit';
 import { property } from 'lit/decorators.js';
+import tokenStyles from '@/styles/tokens.css?inline';
 
 export type ColorScheme = 'light' | 'dark' | 'auto';
 
@@ -117,23 +119,26 @@ export class GraphApp extends SignalWatcherLitElement {
     }
   }
 
-  static override readonly styles: CSSResultGroup = css`
-    :host {
-      display: flex;
-      position: relative;
-      height: 100%;
-      font-family: var(--fonts-body);
-      overflow: hidden;
-    }
+  static override readonly styles: CSSResultGroup = [
+    unsafeCSS(tokenStyles),
+    css`
+      :host {
+        display: flex;
+        position: relative;
+        height: 100%;
+        font-family: var(--fonts-body);
+        overflow: hidden;
+      }
 
-    :host([data-theme='light']) {
-      color-scheme: light;
-    }
+      :host([data-theme='light']) {
+        color-scheme: light;
+      }
 
-    :host([data-theme='dark']) {
-      color-scheme: dark;
-    }
-  `;
+      :host([data-theme='dark']) {
+        color-scheme: dark;
+      }
+    `,
+  ];
 
   /** Initializes color scheme and seeds graph data when the element is added to the DOM. */
   override connectedCallback(): void {

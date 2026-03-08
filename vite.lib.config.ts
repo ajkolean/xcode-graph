@@ -90,6 +90,9 @@ export default defineConfig({
       '@shared': path.resolve(__dirname, './src/shared'),
     },
   },
+  define: {
+    'process.env.NODE_ENV': '"production"',
+  },
   build: {
     target: 'esnext',
     outDir: 'dist',
