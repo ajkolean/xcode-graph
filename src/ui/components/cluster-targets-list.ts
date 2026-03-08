@@ -138,9 +138,6 @@ export class GraphClusterTargetsList extends NodeListEventsBase {
 
     .target-list {
       display: block;
-      max-height: 400px;
-      overflow-y: auto;
-      scrollbar-width: thin;
     }
 
     .type-header {

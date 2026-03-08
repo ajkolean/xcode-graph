@@ -1,5 +1,4 @@
 import './components/xcode-graph';
-import './styles/tokens.css';
 import type { GraphApp } from './components/xcode-graph';
 
 // Render full Lit app with demo fixture data
