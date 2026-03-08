@@ -44,6 +44,6 @@ export function getFuzzyMatchIds(nodes: GraphNode[], query: string): Set<string>
   }
 
   // biome-ignore lint/style/noNonNullAssertion: fuseInstance is always set when cachedNodes matches
-  const results = fuseInstance!.search(query);
+  const results = fuseInstance!.search(query); // skipcq: JS-0339
   return new Set(results.map((r) => r.item.id));
 }

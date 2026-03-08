@@ -61,16 +61,16 @@ if (typeof globalThis.OffscreenCanvas === 'undefined') {
     }
     getContext() {
       return {
-        clearRect: () => {},
-        beginPath: () => {},
-        arc: () => {},
-        fill: () => {},
-        fillText: () => {},
+        clearRect: () => {}, // skipcq: JS-0321
+        beginPath: () => {}, // skipcq: JS-0321
+        arc: () => {}, // skipcq: JS-0321
+        fill: () => {}, // skipcq: JS-0321
+        fillText: () => {}, // skipcq: JS-0321
         measureText: () => ({ width: 0 }),
-        save: () => {},
-        restore: () => {},
-        translate: () => {},
-        rotate: () => {},
+        save: () => {}, // skipcq: JS-0321
+        restore: () => {}, // skipcq: JS-0321
+        translate: () => {}, // skipcq: JS-0321
+        rotate: () => {}, // skipcq: JS-0321
         globalAlpha: 1,
         fillStyle: '',
         font: '',
