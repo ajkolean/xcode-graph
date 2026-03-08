@@ -13,7 +13,9 @@ exclude_patterns = [
   "src/main.ts",
   "src/graph/test-helpers/**",
   "src/graph/workers/layout.worker.ts",
-  "src/graph/workers/micro-layout.worker.ts"
+  "src/graph/workers/micro-layout.worker.ts",
+  "vite.config.ts",
+  "vite.lib.config.ts"
 ]
 
 [[analyzers]]
