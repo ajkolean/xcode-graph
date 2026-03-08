@@ -28,7 +28,7 @@
 </p>
 
 <p align="center">
-  <video src="https://github.com/ajkolean/xcode-graph/raw/main/docs/public/demo.mp4" autoplay loop muted playsinline width="800"></video>
+  <img src="https://github.com/ajkolean/xcode-graph/raw/main/docs/public/demo.gif" alt="xcode-graph demo" width="600" />
 </p>
 
 ---
