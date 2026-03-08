@@ -20,7 +20,7 @@
     "lit",
     "visualization"
   ],
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@10.31.0",
   "type": "module",
   "main": "dist/xcodegraph.js",
   "module": "dist/xcodegraph.js",
@@ -78,6 +78,7 @@
     "custom-element-vs-code-integration": "^1.5.0",
     "jsdom": "^28.1.0",
     "knip": "^5.86.0",
+    "oxc-minify": "^0.116.0",
     "rollup-plugin-visualizer": "^7.0.1",
     "size-limit": "^12.0.1",
     "ts-lit-plugin": "^2.0.2",
@@ -86,7 +87,7 @@
     "typedoc-plugin-markdown": "^4.10.0",
     "typedoc-vitepress-theme": "^1.1.2",
     "vite": "8.0.0-beta.16",
-    "vitepress": "^1.6.4",
+    "vitepress": "2.0.0-alpha.16",
     "vitest": "^4.0.18",
     "vitest-axe": "^0.1.0",
     "vitest-canvas-mock": "^1.1.3"
@@ -125,7 +126,11 @@
       "minimatch": ">=10.2.3"
     },
     "onlyBuiltDependencies": [
-      "rs-module-lexer"
+      "@swc/core",
+      "@vaadin/vaadin-usage-statistics",
+      "esbuild",
+      "rs-module-lexer",
+      "unrs-resolver"
     ]
   },
   "engines": {
