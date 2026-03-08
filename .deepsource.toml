@@ -27,6 +27,11 @@ name = "javascript"
     "browser",
     "nodejs"
   ]
+  skip_doc_coverage = [
+    "class-expression",
+    "method-definition",
+    "function-expression"
+  ]
 
 [[analyzers]]
 name = "test-coverage"

@@ -251,7 +251,7 @@ describe('macro-layout', () => {
 
       function SpyELK() {
         return {
-          layout: async (graph: import('elkjs/lib/elk-api.js').ElkNode) => {
+          layout: (graph: import('elkjs/lib/elk-api.js').ElkNode) => {
             capturedGraph = graph;
             return realElk.layout(graph);
           },
@@ -284,7 +284,7 @@ describe('macro-layout', () => {
 
       function SpyELK() {
         return {
-          layout: async (graph: import('elkjs/lib/elk-api.js').ElkNode) => {
+          layout: (graph: import('elkjs/lib/elk-api.js').ElkNode) => {
             capturedGraph = graph;
             return realElk.layout(graph);
           },

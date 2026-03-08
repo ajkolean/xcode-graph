@@ -108,7 +108,9 @@ function buildElkRoot(
 async function createElk(): Promise<ElkType> {
   const ELK = (await import('elkjs/lib/elk-api.js')).default;
   return new ELK({
-    workerFactory: () => new Worker(new URL('elkjs/lib/elk-worker.js', import.meta.url), { type: 'module' }),
+    /* v8 ignore next */
+    workerFactory: () =>
+      new Worker(new URL('elkjs/lib/elk-worker.js', import.meta.url), { type: 'module' }),
   });
 }
 

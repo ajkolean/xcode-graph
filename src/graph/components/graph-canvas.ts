@@ -208,6 +208,7 @@ export class GraphCanvas extends LitElement {
   /** Initializes the canvas scene, resolves the theme, and starts the render loop. */
   override firstUpdated(): void {
     this.theme = resolveCanvasTheme(this);
+    /* v8 ignore next 4 -- native observer: not triggered in jsdom */
     this.themeObserver = new MutationObserver(() => {
       this.theme = resolveCanvasTheme(this);
       this.requestRender();

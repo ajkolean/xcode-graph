@@ -17,7 +17,6 @@
  * ```
  */
 
-import tokenStyles from '@/styles/tokens.css?inline';
 import type { LayoutOptions } from '@graph/layout/config';
 import { SignalWatcher } from '@lit-labs/signals';
 import { ErrorCategory, ErrorSeverity } from '@shared/schemas/error.types';
@@ -32,6 +31,7 @@ import {
   unsafeCSS,
 } from 'lit';
 import { property } from 'lit/decorators.js';
+import tokenStyles from '@/styles/tokens.css?inline';
 
 export type ColorScheme = 'light' | 'dark' | 'auto';
 
