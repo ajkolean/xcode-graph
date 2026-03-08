@@ -99,8 +99,9 @@ describe('canvas-viewport', () => {
 
       expect(result).not.toBeNull();
       // Graph center is (200, 200). Pan should position center in viewport center.
-      const expectedPanX = 800 / 2 - 200 * result?.zoom;
-      const expectedPanY = 600 / 2 - 200 * result?.zoom;
+      const zoom = result?.zoom ?? 1;
+      const expectedPanX = 800 / 2 - 200 * zoom;
+      const expectedPanY = 600 / 2 - 200 * zoom;
       expect(result?.pan.x).toBeCloseTo(expectedPanX, 2);
       expect(result?.pan.y).toBeCloseTo(expectedPanY, 2);
     });

@@ -62,9 +62,6 @@ export default defineConfig({
       fileName: () => 'xcodegraph.js',
     },
     rolldownOptions: {
-      // Externalize elk.bundled.js — production uses the worker approach instead.
-      // The bundled fallback only exists for test environments (jsdom) without Worker.
-      external: ['elkjs/lib/elk.bundled.js'],
       output: {
         chunkFileNames: '[name].js',
       },

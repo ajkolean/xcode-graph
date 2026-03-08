@@ -350,6 +350,7 @@ function resolveTraversal(
   return result;
 }
 
+/** @public */
 export function computeTransitiveDependencies(
   viewMode: ViewMode,
   selectedNode: GraphNode | null,

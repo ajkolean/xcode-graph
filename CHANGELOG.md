@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- SVG-based renderer replacing Canvas2D for improved quality and accessibility
+- VitePress documentation site with TypeDoc API reference
+- Custom Elements Manifest (CEM) and IDE metadata files (VS Code, WebStorm)
+- Lit Signals for reactive state management
+- Zod 4 schema validation with lazy-loaded validation layer
+- GitHub Actions CI/CD (build, publish, docs, audit, size-limit, compat-check)
+- File upload with drag-and-drop support
+- Demo video showcasing component features
+- Community files (CONTRIBUTING.md, CODE_OF_CONDUCT.md, PR template)
+- Light and dark mode with `prefers-color-scheme` support
+- 30+ CSS custom properties for theming
+- Keyboard navigation and accessibility (ARIA labels, focus traps)
+- Documentation pages for examples, architecture, and troubleshooting
+
+### Changed
+
+- Migrated from Zod 3 to Zod 4
+- Upgraded to Lit 3.x with Lit Signals
+- Layout engine improvements (ELK.js + D3-force two-phase pipeline)
+- Bundle optimized with code-split Zod validation
+
+### Fixed
+
+- OffscreenCanvas stub for jsdom test environments
+- Various dependency updates and security patches
+
 ## [0.2.0] - 2025-05-01
 
 ### Added

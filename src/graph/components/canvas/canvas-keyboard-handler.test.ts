@@ -9,7 +9,7 @@ function createNode(id: string): GraphNode {
     name: `Node-${id}`,
     type: NodeType.Framework,
     platform: Platform.iOS,
-    origin: Origin.Internal,
+    origin: Origin.Local,
     project: 'TestProject',
     deploymentTargets: {},
     buildSettings: {},
@@ -69,28 +69,32 @@ describe('canvas-keyboard-handler', () => {
       const result = handleKeyDown(keyEvent('+'), ctx);
       expect(result).toBe(false);
       expect(ctx.dispatchEvent).toHaveBeenCalledOnce();
-      const event = (ctx.dispatchEvent as ReturnType<typeof vi.fn>).mock.calls[0][0] as CustomEvent;
+      const event = (ctx.dispatchEvent as ReturnType<typeof vi.fn>).mock
+        .calls[0]?.[0] as CustomEvent;
       expect(event.type).toBe('zoom-in');
     });
 
     it('dispatches zoom-in on = key', () => {
       const ctx = createContext();
       handleKeyDown(keyEvent('='), ctx);
-      const event = (ctx.dispatchEvent as ReturnType<typeof vi.fn>).mock.calls[0][0] as CustomEvent;
+      const event = (ctx.dispatchEvent as ReturnType<typeof vi.fn>).mock
+        .calls[0]?.[0] as CustomEvent;
       expect(event.type).toBe('zoom-in');
     });
 
     it('dispatches zoom-out on - key', () => {
       const ctx = createContext();
       handleKeyDown(keyEvent('-'), ctx);
-      const event = (ctx.dispatchEvent as ReturnType<typeof vi.fn>).mock.calls[0][0] as CustomEvent;
+      const event = (ctx.dispatchEvent as ReturnType<typeof vi.fn>).mock
+        .calls[0]?.[0] as CustomEvent;
       expect(event.type).toBe('zoom-out');
     });
 
     it('dispatches zoom-reset on 0 key', () => {
       const ctx = createContext();
       handleKeyDown(keyEvent('0'), ctx);
-      const event = (ctx.dispatchEvent as ReturnType<typeof vi.fn>).mock.calls[0][0] as CustomEvent;
+      const event = (ctx.dispatchEvent as ReturnType<typeof vi.fn>).mock
+        .calls[0]?.[0] as CustomEvent;
       expect(event.type).toBe('zoom-reset');
     });
   });

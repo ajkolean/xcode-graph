@@ -8,6 +8,7 @@
 import type { GraphNode } from '@shared/schemas/graph.types';
 import { type Quadtree, quadtree } from 'd3-quadtree';
 
+/** @public */
 export interface IndexedNode {
   x: number;
   y: number;

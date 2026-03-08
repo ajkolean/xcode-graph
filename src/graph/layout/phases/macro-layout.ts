@@ -106,16 +106,10 @@ function buildElkRoot(
 
 /** Creates an ELK instance, using a web worker to keep layout off the main thread. */
 async function createElk(): Promise<ElkType> {
-  if (typeof globalThis.Worker === 'function') {
-    const ELK = (await import('elkjs/lib/elk-api.js')).default;
-    return new ELK({
-      workerFactory: () => new Worker(new URL('elkjs/lib/elk-worker.js', import.meta.url)),
-    });
-  }
-  /* v8 ignore start -- fallback for environments without Worker (e.g. tests in jsdom) */
-  const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
-  return new ELK();
-  /* v8 ignore stop */
+  const ELK = (await import('elkjs/lib/elk-api.js')).default;
+  return new ELK({
+    workerFactory: () => new Worker(new URL('elkjs/lib/elk-worker.js', import.meta.url)),
+  });
 }
 
 /**

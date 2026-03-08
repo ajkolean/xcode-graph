@@ -27,6 +27,10 @@
   <a href="https://ajkolean.github.io/xcode-graph/api/">API Reference</a>
 </p>
 
+<p align="center">
+  <video src="https://github.com/ajkolean/xcode-graph/raw/main/docs/public/demo.mp4" autoplay loop muted playsinline width="800"></video>
+</p>
+
 ---
 
 ## Features
@@ -221,6 +225,19 @@ The component adapts to `prefers-color-scheme` automatically. Both dark and ligh
 
 See the [Component API reference](https://ajkolean.github.io/xcode-graph/reference/component-api) for all available properties with dark and light mode defaults.
 
+## Browser Support
+
+xcode-graph supports modern browsers with ES2020+ module support:
+
+| Browser | Minimum Version |
+|---|---|
+| Chrome | 80+ |
+| Firefox | 80+ |
+| Safari | 14+ |
+| Edge | 80+ |
+
+The component uses ES modules, SVG rendering, and CSS custom properties. No polyfills are required for supported browsers.
+
 ## Layout Engine
 
 The graph uses a two-phase layout pipeline:
@@ -399,7 +416,10 @@ Test coverage includes services, schemas, signals, controllers, utilities, layou
 Full docs at **[ajkolean.github.io/xcode-graph](https://ajkolean.github.io/xcode-graph/)**
 
 - [Getting Started](https://ajkolean.github.io/xcode-graph/guide/) — Installation, usage, data shape, theming, and color scheme
+- [Examples](https://ajkolean.github.io/xcode-graph/guide/examples) — Common usage patterns (embedded, file upload, CDN, theming)
 - [Swift Integration](https://ajkolean.github.io/xcode-graph/guide/swift-integration) — Embedding in a Swift server with SwiftNIO
+- [Architecture](https://ajkolean.github.io/xcode-graph/guide/architecture) — Component tree, data flow, layout pipeline
+- [Troubleshooting](https://ajkolean.github.io/xcode-graph/guide/troubleshooting) — FAQ and common issues
 - [Component API](https://ajkolean.github.io/xcode-graph/reference/component-api) — Properties, methods, events, CSS custom properties
 - [Data Types](https://ajkolean.github.io/xcode-graph/reference/data-types) — GraphNode, GraphEdge, enums, and all type definitions
 - [Layout Configuration](https://ajkolean.github.io/xcode-graph/reference/layout-configuration) — ELK & D3-force parameters and lifecycle hooks

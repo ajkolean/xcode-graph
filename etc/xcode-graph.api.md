@@ -4,8 +4,10 @@
 
 ```ts
 
+import { DirectedGraph } from 'graphology';
 import { Machine } from '@zag-js/core';
 import { MachineSchema } from '@zag-js/core';
+import { Quadtree } from 'd3-quadtree';
 import { Signal } from '@lit-labs/signals';
 import type { SimulationLinkDatum } from 'd3-force';
 import type { SimulationNodeDatum } from 'd3-force';
@@ -41,7 +43,7 @@ export enum ActiveTab {
 // @public
 export const activeTab: Signal.State<ActiveTab_2>;
 
-// @public
+// @public (undocumented)
 export function adjustColorForZoom(color: string, zoom: number): string;
 
 // @public
@@ -112,6 +114,9 @@ export function buildAdjacency(edges: GraphEdge_2[]): {
     outgoing: Map<string, string[]>;
     incoming: Map<string, string[]>;
 };
+
+// @public
+export function buildNodeQuadtree(items: IndexedNode[]): Quadtree<IndexedNode>;
 
 // @public
 export function calculateViewportBounds(svgWidth: number, svgHeight: number, panX: number, panY: number, zoom: number, margin?: number): ViewportBounds;
@@ -336,7 +341,7 @@ export function computeNodeDependencies(node: GraphNode_2 | null, allNodes: Grap
 
 // Warning: (ae-forgotten-export) The symbol "ViewMode_2" needs to be exported by the entry point api.d.ts
 //
-// @public
+// @public (undocumented)
 export function computeTransitiveDependencies(viewMode: ViewMode_2, selectedNode: GraphNode_2 | null, edges: GraphEdge_2[]): {
     transitiveDeps: TransitiveResult;
     transitiveDependents: TransitiveResult;
@@ -390,7 +395,7 @@ export const DEFAULT_CONFIG: {
     readonly elkDirection: "DOWN";
     readonly elkAlgorithm: "layered";
     readonly elkEdgeRouting: "ORTHOGONAL";
-    readonly elkNodeSpacing: 200;
+    readonly elkNodeSpacing: 280;
     readonly elkLayerSpacing: 300;
     readonly elkPadding: 100;
     readonly elkMergeEdges: true;
@@ -401,6 +406,10 @@ export const DEFAULT_CONFIG: {
     readonly portSpacing: 20;
     readonly portMargin: 30;
     readonly maxPortsPerSide: 8;
+    readonly elkThoroughness: 7;
+    readonly elkGreedySwitchType: "TWO_SIDED" | "ONE_SIDED" | "OFF";
+    readonly elkDebug: false;
+    readonly elkLayoutTimeout: 0;
 };
 
 // @public
@@ -422,8 +431,9 @@ export const dimmedNodeIds: Signal.Computed<Set<string>>;
 
 // @public
 export interface DisplayData extends FilteredData {
-    transitiveDependents: TransitiveResult;
-    transitiveDeps: TransitiveResult;
+    transitiveDependents: TransitiveResult_2;
+    // Warning: (ae-forgotten-export) The symbol "TransitiveResult_2" needs to be exported by the entry point api.d.ts
+    transitiveDeps: TransitiveResult_2;
 }
 
 // @public
@@ -525,6 +535,9 @@ export interface FilterStateInput {
 }
 
 // @public
+export function findNodeAt(tree: Quadtree<IndexedNode>, worldX: number, worldY: number, maxRadius: number): GraphNode_2 | null;
+
+// @public
 export interface ForceStrength {
     // (undocumented)
     anchor: number;
@@ -541,7 +554,7 @@ export interface ForceStrength {
 // @public
 export function generateBezierPath(x1: number, y1: number, x2: number, y2: number): string;
 
-// @public
+// @public (undocumented)
 export function generateColor(input: string, category?: string): string;
 
 // @public
@@ -568,6 +581,9 @@ export function getDependencyCount(nodeId: string, edges: GraphEdge_2[]): number
 // @public
 export function getDependentCount(nodeId: string, edges: GraphEdge_2[]): number;
 
+// @public
+export function getFuzzyMatchIds(nodes: GraphNode_2[], query: string): Set<string> | null;
+
 // Warning: (ae-forgotten-export) The symbol "NodeType_2" needs to be exported by the entry point api.d.ts
 // Warning: (ae-forgotten-export) The symbol "Platform_2" needs to be exported by the entry point api.d.ts
 //
@@ -575,7 +591,7 @@ export function getDependentCount(nodeId: string, edges: GraphEdge_2[]): number;
 export function getNodeIconPath(type: NodeType_2 | string, platform?: Platform_2 | string): string;
 
 // @public
-export function getNodeSize(node: GraphNode_2, edges: GraphEdge_2[], weight?: number): number;
+export function getNodeSize(node: GraphNode_2): number;
 
 // @public
 export function getNodeTypeColor(type: string): string;
@@ -636,9 +652,10 @@ export class GraphDataService {
     // (undocumented)
     getNodesByType(type: string): GraphNode_2[];
     getOutgoingEdges(nodeId: string): GraphEdge_2[];
-    // Warning: (ae-forgotten-export) The symbol "TransitiveResult_2" needs to be exported by the entry point api.d.ts
     getTransitiveDependencies(nodeId: string): TransitiveResult_2;
     getTransitiveDependents(nodeId: string): TransitiveResult_2;
+    // Warning: (ae-forgotten-export) The symbol "AppGraph" needs to be exported by the entry point api.d.ts
+    readonly graph: AppGraph;
     searchNodes(query: string): GraphNode_2[];
 }
 
@@ -742,6 +759,8 @@ export interface HierarchicalLayoutResult {
     // (undocumented)
     clusters: Cluster_2[];
     cycleNodes?: Set<string> | undefined;
+    // Warning: (ae-forgotten-export) The symbol "MacroLayoutDebugData" needs to be exported by the entry point api.d.ts
+    elkDebug?: MacroLayoutDebugData | undefined;
     maxClusterStratum?: number | undefined;
     maxStratum?: number | undefined;
     // Warning: (ae-forgotten-export) The symbol "NodePosition_2" needs to be exported by the entry point api.d.ts
@@ -774,6 +793,18 @@ export const hoveredNode: Signal.State<string | null>;
 // @public
 export function identifyAnchors(nodes: GraphNode_2[], dependents: Map<string, Set<string>>, externalDependents: Map<string, number>): GraphNode_2[];
 
+// @public (undocumented)
+export interface IndexedNode {
+    // (undocumented)
+    hitRadius: number;
+    // (undocumented)
+    node: GraphNode_2;
+    // (undocumented)
+    x: number;
+    // (undocumented)
+    y: number;
+}
+
 // @public
 export function initializeFromData(projects: Set<string>, packages: Set<string>): void;
 
@@ -786,7 +817,9 @@ export function isCircleInViewport(center: Point, radius: number, bounds: Viewpo
 export function isLineInViewport(start: Point, end: Point, bounds: ViewportBounds): boolean;
 
 // @public
-export type LayoutConfig = typeof DEFAULT_CONFIG;
+export type LayoutConfig = Omit<typeof DEFAULT_CONFIG, 'elkDebug'> & {
+    readonly elkDebug: boolean;
+};
 
 // @public
 export interface LayoutHooks {
@@ -1158,8 +1191,8 @@ export function toggleProject(project: string): void;
 
 // @public
 export const transitiveData: Signal.Computed<{
-    transitiveDeps: TransitiveResult;
-    transitiveDependents: TransitiveResult;
+    transitiveDeps: TransitiveResult_2;
+    transitiveDependents: TransitiveResult_2;
 }>;
 
 // @public (undocumented)

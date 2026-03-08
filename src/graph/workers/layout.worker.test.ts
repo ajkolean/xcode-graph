@@ -54,7 +54,7 @@ let onmessageHandler: ((e: MessageEvent) => void) | null = null;
 const mockPostMessage = vi.fn();
 
 vi.stubGlobal('self', {
-  set onmessage(handler: (e: MessageEvent) => void) {
+  set onmessage(handler: ((e: MessageEvent) => void) | null) {
     onmessageHandler = handler;
   },
   get onmessage() {

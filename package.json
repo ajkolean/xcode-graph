@@ -22,6 +22,7 @@
   ],
   "packageManager": "pnpm@10.30.3",
   "type": "module",
+  "main": "dist/xcodegraph.js",
   "module": "dist/xcodegraph.js",
   "types": "dist/types/src/index.d.ts",
   "exports": {
@@ -120,7 +121,8 @@
   "customElements": "custom-elements.json",
   "pnpm": {
     "overrides": {
-      "vite": "8.0.0-beta.16"
+      "vite": "8.0.0-beta.16",
+      "minimatch": ">=10.2.3"
     },
     "onlyBuiltDependencies": [
       "rs-module-lexer"

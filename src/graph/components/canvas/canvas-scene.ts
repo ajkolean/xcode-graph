@@ -212,8 +212,6 @@ export class CanvasScene {
   private isDragging = false;
   private isPanning = false;
   private lastMousePos = { x: 0, y: 0 };
-  private clickedEmptySpace = false;
-  private hasMoved = false;
   private draggedNodeId: string | null = null;
   private draggedClusterId: string | null = null;
   private currentHoveredNode: string | null = null;
@@ -226,7 +224,7 @@ export class CanvasScene {
   private tooltipShowTime = 0;
 
   // Fade-out nodes
-  fadingOutNodes = new Map<string, FadingNode>();
+  fadingOutNodes: Map<string, FadingNode> = new Map<string, FadingNode>();
 
   constructor(container: HTMLDivElement, callbacks: SceneCallbacks) {
     this.callbacks = callbacks;
@@ -1181,14 +1179,12 @@ export class CanvasScene {
     const worldPos = this.screenToWorldPos(screenX, screenY);
 
     this.lastMousePos = { x: evt.clientX, y: evt.clientY };
-    this.hasMoved = false;
 
     // Check if clicking a node
     const hitNode = this.hitTestNode(worldPos.x, worldPos.y);
     if (hitNode) {
       this.draggedNodeId = hitNode.id;
       this.isDragging = true;
-      this.clickedEmptySpace = false;
 
       const selected = this.config?.selectedNode;
       const newSelection = selected?.id === hitNode.id ? null : hitNode;
@@ -1199,7 +1195,6 @@ export class CanvasScene {
     // Check if clicking a cluster (shift/meta for drag)
     const hitCluster = this.hitTestCluster(worldPos.x, worldPos.y);
     if (hitCluster) {
-      this.clickedEmptySpace = false;
       if (evt.shiftKey || evt.metaKey) {
         this.draggedClusterId = hitCluster;
         this.isDragging = true;
@@ -1210,7 +1205,6 @@ export class CanvasScene {
 
     // Clicked empty space — start panning
     this.isPanning = true;
-    this.clickedEmptySpace = true;
   };
 
   private handleMouseMove = (evt: MouseEvent): void => {
@@ -1227,7 +1221,6 @@ export class CanvasScene {
 
   private handleDragCluster(evt: MouseEvent): void {
     if (!this.config || !this.draggedClusterId) return;
-    this.hasMoved = true;
     const rect = this.canvas.getBoundingClientRect();
     const screenX = evt.clientX - rect.left;
     const screenY = evt.clientY - rect.top;
@@ -1239,7 +1232,6 @@ export class CanvasScene {
 
   private handleDragNode(evt: MouseEvent): void {
     if (!this.config || !this.draggedNodeId) return;
-    this.hasMoved = true;
     const rect = this.canvas.getBoundingClientRect();
     const screenX = evt.clientX - rect.left;
     const screenY = evt.clientY - rect.top;
@@ -1266,7 +1258,6 @@ export class CanvasScene {
   }
 
   private handlePan(evt: MouseEvent): void {
-    this.hasMoved = true;
     const dx = evt.clientX - this.lastMousePos.x;
     const dy = evt.clientY - this.lastMousePos.y;
     this.pan = { x: this.pan.x + dx, y: this.pan.y + dy };
@@ -1326,12 +1317,8 @@ export class CanvasScene {
 
     this.isPanning = false;
     this.isDragging = false;
-    this.clickedEmptySpace = false;
     this.draggedNodeId = null;
     this.draggedClusterId = null;
-    setTimeout(() => {
-      this.hasMoved = false;
-    }, 0);
   };
 
   private handleMouseLeave = (): void => {
