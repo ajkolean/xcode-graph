@@ -2,7 +2,43 @@ import path from 'node:path';
 import { compileLitTemplates } from '@lit-labs/compiler';
 import typescript from '@rollup/plugin-typescript';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
+
+/**
+ * Vite plugin that wraps `new Worker(url)` calls with a cross-origin fallback.
+ *
+ * When the library JS is loaded from a CDN but the page is on a different origin
+ * (e.g., localhost), `new Worker(cdnUrl)` throws a SecurityError. This plugin
+ * post-processes the built output to catch that error and retry with a same-origin
+ * blob URL using `importScripts` (classic) or `import` (module workers).
+ *
+ * Must run AFTER Vite's worker plugin so workers are still emitted as separate files.
+ */
+function crossOriginWorkerPlugin(): Plugin {
+  return {
+    name: 'cross-origin-worker',
+    enforce: 'post',
+    renderChunk(code) {
+      if (!code.includes('new Worker(')) return null;
+
+      // Inject the helper function once at the top of the chunk
+      const helper = `\
+function __createWorker(url, opts) {
+  try { return new Worker(url, opts); }
+  catch (e) {
+    if (!(url instanceof URL) || !(e instanceof DOMException) || e.name !== "SecurityError") throw e;
+    var s = opts?.type === "module"
+      ? 'import ' + JSON.stringify(url.href)
+      : 'importScripts(' + JSON.stringify(url.href) + ')';
+    return new Worker(URL.createObjectURL(new Blob([s], {type: "text/javascript"})), opts);
+  }
+}\n`;
+
+      // Replace `new Worker(` with `__createWorker(` globally
+      return helper + code.replaceAll('new Worker(', '__createWorker(');
+    },
+  };
+}
 
 /**
  * Library build config — produces a single self-registering JS bundle.
@@ -20,6 +56,7 @@ export default defineConfig({
   // Use relative paths so worker URLs resolve correctly when consumed as an npm package
   base: './',
   plugins: [
+    crossOriginWorkerPlugin(),
     typescript({
       exclude: ['**/*.test.ts', '**/*.spec.ts'],
       compilerOptions: {
