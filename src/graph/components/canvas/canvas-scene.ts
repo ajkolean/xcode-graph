@@ -361,6 +361,7 @@ export class CanvasScene {
   /** Draw all visible clusters with viewport culling. */
   private drawClusters(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
     const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
+    const hasDimmed = config.dimmedNodeIds.size > 0;
     for (const cluster of config.layout.clusters) {
       const layoutPos = config.layout.clusterPositions.get(cluster.id);
       if (!layoutPos) continue;
@@ -375,7 +376,14 @@ export class CanvasScene {
 
       if (!isCircleInViewport({ x: cx, y: cy }, radius, viewport)) continue;
 
+      // Dim cluster when all its nodes are dimmed
+      const allNodesDimmed =
+        hasDimmed &&
+        cluster.nodes.length > 0 &&
+        cluster.nodes.every((n) => config.dimmedNodeIds.has(n.id));
+
       ctx.save();
+      if (allNodesDimmed) ctx.globalAlpha = 0.15;
       ctx.translate(cx, cy);
       this.drawCluster(ctx, cluster.id);
       ctx.restore();
