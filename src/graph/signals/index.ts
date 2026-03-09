@@ -12,6 +12,7 @@ export {
   type DisplayData,
   dimmedNodeIds,
   displayData,
+  displayEdges,
   type FilteredData,
   filteredData,
   transitiveData,
