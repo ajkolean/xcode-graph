@@ -46,7 +46,6 @@ import {
   edges as allEdges,
   nodes as allNodes,
   displayData,
-  displayEdges,
   filteredData,
   setCircularDependencies,
   setGraphData,
@@ -266,7 +265,7 @@ export class GraphApp extends SignalWatcherLitElement {
     return html`
       <xcode-graph-tab
         .displayNodes=${allNodes.get()}
-        .displayEdges=${displayEdges.get()}
+        .displayEdges=${allEdges.get()}
         .filteredNodes=${filtered.filteredNodes}
         .filteredEdges=${filtered.filteredEdges}
         .allNodes=${allNodes.get()}
