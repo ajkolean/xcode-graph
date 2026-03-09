@@ -57,7 +57,6 @@ import {
   drawNodeIcon,
   drawNodeLabel,
   drawSelectionRings,
-  FADE_OUT_DURATION,
   NODE_HIT_RADIUS_MULTIPLIER,
 } from './canvas-draw-nodes';
 import { drawClusterTooltip, drawNodeTooltip } from './canvas-draw-tooltips';
@@ -121,11 +120,6 @@ export interface SceneCallbacks {
   onInvalidateEdgePathCache: () => void;
 }
 
-/** Fade-out entry for removed nodes. */
-export interface FadingNode {
-  node: GraphNode;
-  startTime: number;
-}
 
 // ---------------------------------------------------------------------------
 // CanvasScene
@@ -223,7 +217,7 @@ export class CanvasScene {
   private tooltipShowTime = 0;
 
   // Fade-out nodes
-  fadingOutNodes: Map<string, FadingNode> = new Map<string, FadingNode>();
+
 
   constructor(container: HTMLDivElement, callbacks: SceneCallbacks) {
     this.callbacks = callbacks;
@@ -276,8 +270,6 @@ export class CanvasScene {
     this.drawClusters(ctx, config);
     this.drawEdges(ctx);
     this.drawNodes(ctx, config);
-    this.drawFadingNodes(ctx, config);
-
     // 7. Restore world transform
     ctx.restore();
 
@@ -1071,42 +1063,6 @@ export class CanvasScene {
       theme,
       this.dpr,
     );
-  }
-
-  // -------------------------------------------------------------------
-  // Fading Nodes
-  // -------------------------------------------------------------------
-
-  /** Draw nodes that are fading out after being filtered, with decreasing opacity. */
-  private drawFadingNodes(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
-    if (this.fadingOutNodes.size === 0) return;
-
-    const now = performance.now();
-
-    for (const [nodeId, { node, startTime }] of this.fadingOutNodes) {
-      const elapsed = now - startTime;
-
-      if (elapsed >= FADE_OUT_DURATION) {
-        this.fadingOutNodes.delete(nodeId);
-        continue;
-      }
-
-      const opacity = 1 - elapsed / FADE_OUT_DURATION;
-      const pos = resolveNodeWorldPosition(
-        node.id,
-        node.project || 'External',
-        config.layout,
-        config.manualNodePositions,
-        config.manualClusterPositions,
-      );
-      if (!pos) continue;
-
-      ctx.save();
-      ctx.globalAlpha = opacity;
-      ctx.translate(pos.x, pos.y);
-      this.drawNode(ctx, node.id);
-      ctx.restore();
-    }
   }
 
   // -------------------------------------------------------------------
