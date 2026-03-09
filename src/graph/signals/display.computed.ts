@@ -12,7 +12,9 @@ import { applyGraphFilters } from '@graph/utils/graph-filters';
 import { computeTransitiveDependencies, type TransitiveResult } from '@graph/utils/traversal';
 import { Signal } from '@lit-labs/signals';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
+import { NodeType } from '@shared/schemas/graph.types';
 import { filters, searchQuery } from '@shared/signals/filter.signals';
+import { previewFilter } from '@shared/signals/ui.signals';
 import { edges, nodes } from './data.signals';
 import {
   highlightDirectDependents,
@@ -169,6 +171,29 @@ function shouldDimBySelection(
 }
 
 /**
+ * Checks whether a node should be dimmed because it doesn't match the active preview filter.
+ * @param node - The graph node to test
+ * @param preview - The active preview filter (type and value)
+ * @returns `true` if the node does not match the preview filter
+ */
+function shouldDimByPreview(node: GraphNode, preview: { type: string; value: string }): boolean {
+  switch (preview.type) {
+    case 'nodeType':
+      return node.type !== preview.value;
+    case 'platform':
+      return node.platform !== preview.value;
+    case 'origin':
+      return node.origin !== preview.value;
+    case 'project':
+      return node.project !== preview.value;
+    case 'package':
+      return !(node.type === NodeType.Package && node.name === preview.value);
+    default:
+      return false;
+  }
+}
+
+/**
  * Pre-computed set of dimmed node IDs.
  *
  * Combines filter, search, selection/highlight-toggle, and preview-filter dimming
@@ -190,6 +215,7 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
   const { filteredNodes } = filteredData.get();
   const query = searchQuery.get();
   const selected = selectedNode.get();
+  const preview = previewFilter.get();
   const { transitiveDeps, transitiveDependents } = transitiveData.get();
 
   const showDirectDepsVal = highlightDirectDeps.get();
@@ -235,11 +261,13 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
       )
     ) {
       dimmed.add(node.id);
+      continue;
     }
 
-    // 4. Preview dimming — intentionally excluded from dimmedNodeIds.
-    //    Preview hover only affects node rendering opacity (via previewFilter
-    //    on SceneConfig), not edge visibility, to avoid jarring edge changes.
+    // 4. Preview dimming
+    if (preview && shouldDimByPreview(node, preview)) {
+      dimmed.add(node.id);
+    }
   }
 
   return dimmed;

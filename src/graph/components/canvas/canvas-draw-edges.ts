@@ -241,19 +241,6 @@ export function drawEdgePath(
 // Cluster arteries (low-zoom aggregated edges)
 // ---------------------------------------------------------------------------
 
-/** Build a set of cluster IDs where all member nodes are dimmed. */
-function buildDimmedClusterSet(config: SceneConfig): Set<string> | null {
-  if (config.dimmedNodeIds.size === 0 || !config.layout.clusters) return null;
-  const dimmedClusters = new Set<string>();
-  for (const cluster of config.layout.clusters) {
-    if (cluster.nodes.length === 0) continue;
-    if (cluster.nodes.every((n) => config.dimmedNodeIds.has(n.id))) {
-      dimmedClusters.add(cluster.id);
-    }
-  }
-  return dimmedClusters.size > 0 ? dimmedClusters : null;
-}
-
 /** Draw aggregated cluster-to-cluster artery lines at low zoom. */
 export function drawClusterArteries(
   ctx: CanvasRenderingContext2D,
@@ -264,31 +251,50 @@ export function drawClusterArteries(
   if (!clusterEdges || clusterEdges.length === 0) return;
 
   const { zoom } = config;
-  const dimmedClusters = buildDimmedClusterSet(config);
+  const hasDimmed = config.dimmedNodeIds.size > 0;
+
+  // Pre-compute the ratio of visible (non-dimmed) nodes per cluster
+  let clusterVisibleRatio: Map<string, number> | null = null;
+  if (hasDimmed && config.layout.clusters) {
+    clusterVisibleRatio = new Map();
+    for (const cluster of config.layout.clusters) {
+      if (cluster.nodes.length === 0) continue;
+      const visibleCount = cluster.nodes.filter((n) => !config.dimmedNodeIds.has(n.id)).length;
+      clusterVisibleRatio.set(cluster.id, visibleCount / cluster.nodes.length);
+    }
+  }
 
   ctx.save();
   ctx.strokeStyle = config.theme.edgeDefault;
   ctx.setLineDash([]);
 
   for (const edge of clusterEdges) {
-    // Hide artery if either endpoint cluster is fully dimmed
-    if (dimmedClusters?.has(edge.source) || dimmedClusters?.has(edge.target)) continue;
-
     const sLayout = config.layout.clusterPositions.get(edge.source);
     const tLayout = config.layout.clusterPositions.get(edge.target);
     if (!sLayout || !tLayout) continue;
 
     const sPos = resolveClusterPosition(edge.source, sLayout, config.manualClusterPositions);
+    const sx = sPos.x;
+    const sy = sPos.y;
     const tPos = resolveClusterPosition(edge.target, tLayout, config.manualClusterPositions);
+    const tx = tPos.x;
+    const ty = tPos.y;
 
-    if (!isLineInViewportRaw(sPos.x, sPos.y, tPos.x, tPos.y, viewport)) continue;
+    if (!isLineInViewportRaw(sx, sy, tx, ty, viewport)) continue;
 
+    // Hide artery if either endpoint cluster has no visible nodes
+    if (clusterVisibleRatio) {
+      const sRatio = clusterVisibleRatio.get(edge.source) ?? 1;
+      const tRatio = clusterVisibleRatio.get(edge.target) ?? 1;
+      if (sRatio === 0 || tRatio === 0) continue;
+    }
     ctx.globalAlpha = 0.2;
+
     ctx.lineWidth = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
 
     ctx.beginPath();
-    ctx.moveTo(sPos.x, sPos.y);
-    ctx.lineTo(tPos.x, tPos.y);
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(tx, ty);
     ctx.stroke();
   }
 

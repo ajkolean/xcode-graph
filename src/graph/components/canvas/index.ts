@@ -10,7 +10,6 @@
 
 export {
   CanvasScene,
-  type FadingNode,
   type SceneCallbacks,
   type SceneConfig,
 } from './canvas-scene';

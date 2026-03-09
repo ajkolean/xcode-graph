@@ -764,10 +764,13 @@ export class CanvasScene {
   // -------------------------------------------------------------------
 
   /** Build per-edge metadata cache (cycle, highlight, chain, endpoints). */
+  private hasNullEndpoints = false;
+
   private precomputeEdgeMeta(edges: GraphEdge[], isChainActive: boolean): void {
-    if (!this.edgeMetaDirty) return;
+    if (!this.edgeMetaDirty && !this.hasNullEndpoints) return;
     this.edgeMetaDirty = false;
     this.edgeMetaMap.clear();
+    let hasNull = false;
     const dimmed = this.config?.dimmedNodeIds;
     const hasDimmed = dimmed != null && dimmed.size > 0;
     for (const edge of edges) {
@@ -791,7 +794,9 @@ export class CanvasScene {
         isHidden,
         endpoints,
       });
+      if (!endpoints) hasNull = true;
     }
+    this.hasNullEndpoints = hasNull;
   }
 
   /** Whether any dependency chain toggle (direct/transitive) is active. */
@@ -859,7 +864,11 @@ export class CanvasScene {
     if (cached !== undefined) return cached;
 
     const result = this.resolveEdgeEndpointsInner(edge);
-    this.edgeEndpointCache.set(edgeKey, result);
+    // Only cache non-null results — null means layout positions aren't ready
+    // yet, and we need to retry on the next frame.
+    if (result) {
+      this.edgeEndpointCache.set(edgeKey, result);
+    }
     return result;
   }
 
