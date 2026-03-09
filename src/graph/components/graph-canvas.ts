@@ -138,6 +138,7 @@ export class GraphCanvas extends LitElement {
   set dimmedNodeIds(value: Set<string>) {
     if (value !== this._dimmedNodeIds) {
       this._dimmedNodeIds = value;
+      this.scene?.invalidateEdgeMeta();
       this.requestRender();
     }
   }

@@ -244,6 +244,11 @@ export class CanvasScene {
   // Public API
   // -------------------------------------------------------------------
 
+  /** Force edge metadata recomputation on the next render. */
+  invalidateEdgeMeta(): void {
+    this.edgeMetaDirty = true;
+  }
+
   /** Main render method — called each frame by the animation loop. */
   render(config: SceneConfig): void {
     this.config = config;
