@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- SVG-based renderer replacing Canvas2D for improved quality and accessibility
 - VitePress documentation site with TypeDoc API reference
 - Custom Elements Manifest (CEM) and IDE metadata files (VS Code, WebStorm)
 - Lit Signals for reactive state management

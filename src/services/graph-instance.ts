@@ -15,6 +15,7 @@ export type GraphEdgeAttrs = {
 };
 export type AppGraph = DirectedGraph<GraphNodeAttrs, GraphEdgeAttrs>;
 
+/** Build a typed graphology DirectedGraph from node and edge arrays. */
 export function buildGraph(nodes: GraphNode[], edges: GraphEdge[]): AppGraph {
   const graph = new DirectedGraph<GraphNodeAttrs, GraphEdgeAttrs>();
   for (const node of nodes) {
