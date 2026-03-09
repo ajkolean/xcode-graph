@@ -180,8 +180,14 @@ function shouldDimByPreview(node: GraphNode, preview: { type: string; value: str
 /**
  * Pre-computed set of dimmed node IDs.
  *
- * Combines search, selection/highlight-toggle, and preview-filter dimming
+ * Combines filter, search, selection/highlight-toggle, and preview-filter dimming
  * into a single Set that the renderer can check with O(1) `Set.has()`.
+ *
+ * Dimming cascade (first match dims):
+ * 1. Filter dimming — node doesn't match active checkbox filters
+ * 2. Search dimming — node doesn't match fuzzy query
+ * 3. Selection/highlight dimming — node not in transitive chain
+ * 4. Preview dimming — node doesn't match sidebar hover preview
  *
  * Cluster dimming is intentionally excluded because `hoveredCluster` and
  * `selectedCluster` are local interaction state in GraphCanvas, not signals.
@@ -189,6 +195,7 @@ function shouldDimByPreview(node: GraphNode, preview: { type: string; value: str
  * @public
  */
 export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed(() => {
+  const allNodes = nodes.get();
   const { filteredNodes } = filteredData.get();
   const query = searchQuery.get();
   const selected = selectedNode.get();
@@ -206,14 +213,23 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
     showTransitiveDependentsVal;
 
   const dimmed = new Set<string>();
-  const fuzzyMatchSet = query ? getFuzzyMatchIds(filteredNodes, query) : null;
+  const matchingNodeIds = new Set(filteredNodes.map((n) => n.id));
+  const fuzzyMatchSet = query ? getFuzzyMatchIds(allNodes, query) : null;
 
-  for (const node of filteredNodes) {
+  for (const node of allNodes) {
+    // 1. Filter dimming — node doesn't match active checkbox filters
+    if (!matchingNodeIds.has(node.id)) {
+      dimmed.add(node.id);
+      continue;
+    }
+
+    // 2. Search dimming — node doesn't match fuzzy query
     if (shouldDimBySearch(node, fuzzyMatchSet)) {
       dimmed.add(node.id);
       continue;
     }
 
+    // 3. Selection/highlight dimming
     if (
       selected &&
       isChainActive &&
@@ -232,6 +248,7 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
       continue;
     }
 
+    // 4. Preview dimming
     if (preview && shouldDimByPreview(node, preview)) {
       dimmed.add(node.id);
     }

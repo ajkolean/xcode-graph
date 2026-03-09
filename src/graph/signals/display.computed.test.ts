@@ -629,6 +629,22 @@ describe('display.computed', () => {
       expect(dimmed.size).toBe(0);
     });
 
+    it('should dim nodes that fail filter criteria', () => {
+      const nodeA = createTestNode('a', { type: NodeType.Framework, project: 'Core' });
+      const nodeB = createTestNode('b', { type: NodeType.App, project: 'Core' });
+      nodes.set([nodeA, nodeB]);
+      edges.set([]);
+
+      const filterState = createNodeTypeFilter([NodeType.Framework]);
+      filterState.projects.add('Core');
+      filters.set(filterState);
+      searchQuery.set('');
+
+      const dimmed = dimmedNodeIds.get();
+      expect(dimmed.has('b')).toBe(true);
+      expect(dimmed.has('a')).toBe(false);
+    });
+
     it('should apply selection dimming when search and selection are both active', () => {
       // a -> b, c is disconnected. All match "Module" search.
       // With selection on A + direct deps, c should be dimmed by selection chain.
