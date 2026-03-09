@@ -25,10 +25,6 @@ export interface EdgeMeta {
   isHighlighted: boolean;
   inChain: boolean;
   isSpecial: boolean;
-  /** True when exactly one endpoint is dimmed — render at reduced alpha. */
-  isDimmed: boolean;
-  /** True when both endpoints are dimmed — skip rendering entirely. */
-  isHidden: boolean;
   endpoints: {
     sourceNode: GraphNode;
     targetNode: GraphNode;
@@ -241,19 +237,6 @@ export function drawEdgePath(
 // Cluster arteries (low-zoom aggregated edges)
 // ---------------------------------------------------------------------------
 
-/** Build a set of cluster IDs where all member nodes are dimmed. */
-function buildDimmedClusterSet(config: SceneConfig): Set<string> | null {
-  if (config.dimmedNodeIds.size === 0 || !config.layout.clusters) return null;
-  const dimmedClusters = new Set<string>();
-  for (const cluster of config.layout.clusters) {
-    if (cluster.nodes.length === 0) continue;
-    if (cluster.nodes.every((n) => config.dimmedNodeIds.has(n.id))) {
-      dimmedClusters.add(cluster.id);
-    }
-  }
-  return dimmedClusters.size > 0 ? dimmedClusters : null;
-}
-
 /** Draw aggregated cluster-to-cluster artery lines at low zoom. */
 export function drawClusterArteries(
   ctx: CanvasRenderingContext2D,
@@ -264,31 +247,31 @@ export function drawClusterArteries(
   if (!clusterEdges || clusterEdges.length === 0) return;
 
   const { zoom } = config;
-  const dimmedClusters = buildDimmedClusterSet(config);
 
   ctx.save();
   ctx.strokeStyle = config.theme.edgeDefault;
+  ctx.globalAlpha = 0.2;
   ctx.setLineDash([]);
 
   for (const edge of clusterEdges) {
-    // Hide artery if either endpoint cluster is fully dimmed
-    if (dimmedClusters?.has(edge.source) || dimmedClusters?.has(edge.target)) continue;
-
     const sLayout = config.layout.clusterPositions.get(edge.source);
     const tLayout = config.layout.clusterPositions.get(edge.target);
     if (!sLayout || !tLayout) continue;
 
     const sPos = resolveClusterPosition(edge.source, sLayout, config.manualClusterPositions);
+    const sx = sPos.x;
+    const sy = sPos.y;
     const tPos = resolveClusterPosition(edge.target, tLayout, config.manualClusterPositions);
+    const tx = tPos.x;
+    const ty = tPos.y;
 
-    if (!isLineInViewportRaw(sPos.x, sPos.y, tPos.x, tPos.y, viewport)) continue;
+    if (!isLineInViewportRaw(sx, sy, tx, ty, viewport)) continue;
 
-    ctx.globalAlpha = 0.2;
     ctx.lineWidth = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
 
     ctx.beginPath();
-    ctx.moveTo(sPos.x, sPos.y);
-    ctx.lineTo(tPos.x, tPos.y);
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(tx, ty);
     ctx.stroke();
   }
 
@@ -317,7 +300,7 @@ export function renderSingleEdge(
     y2: number,
   ) => void,
 ): void {
-  const { endpoints, key: edgeKey, isHighlighted, inChain, isCycle: cycleEdge, isDimmed } = meta;
+  const { endpoints, key: edgeKey, isHighlighted, inChain, isCycle: cycleEdge } = meta;
   if (!endpoints) return;
   if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
     return;
@@ -354,11 +337,6 @@ export function renderSingleEdge(
     selectedNode,
     getChainEdgeDepthFn,
   );
-
-  if (isDimmed) {
-    ctx.globalAlpha *= 0.35;
-  }
-
   drawEdgePathFn(ctx, endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2);
 
   if (zoom >= LOD_THRESHOLDS.ARROWHEADS) {

@@ -57,6 +57,7 @@ import {
   drawNodeIcon,
   drawNodeLabel,
   drawSelectionRings,
+  FADE_OUT_DURATION,
   NODE_HIT_RADIUS_MULTIPLIER,
 } from './canvas-draw-nodes';
 import { drawClusterTooltip, drawNodeTooltip } from './canvas-draw-tooltips';
@@ -118,6 +119,12 @@ export interface SceneCallbacks {
   onZoomChange: (zoom: number) => void;
   onRenderRequest: () => void;
   onInvalidateEdgePathCache: () => void;
+}
+
+/** Fade-out entry for removed nodes. */
+export interface FadingNode {
+  node: GraphNode;
+  startTime: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -217,6 +224,7 @@ export class CanvasScene {
   private tooltipShowTime = 0;
 
   // Fade-out nodes
+  fadingOutNodes: Map<string, FadingNode> = new Map<string, FadingNode>();
 
   constructor(container: HTMLDivElement, callbacks: SceneCallbacks) {
     this.callbacks = callbacks;
@@ -244,11 +252,6 @@ export class CanvasScene {
   // Public API
   // -------------------------------------------------------------------
 
-  /** Force edge metadata recomputation on the next render. */
-  invalidateEdgeMeta(): void {
-    this.edgeMetaDirty = true;
-  }
-
   /** Main render method — called each frame by the animation loop. */
   render(config: SceneConfig): void {
     this.config = config;
@@ -274,6 +277,8 @@ export class CanvasScene {
     this.drawClusters(ctx, config);
     this.drawEdges(ctx);
     this.drawNodes(ctx, config);
+    this.drawFadingNodes(ctx, config);
+
     // 7. Restore world transform
     ctx.restore();
 
@@ -359,7 +364,6 @@ export class CanvasScene {
   /** Draw all visible clusters with viewport culling. */
   private drawClusters(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
     const viewport = this.cachedViewport ?? this.computeViewportBounds(config);
-    const hasDimmed = config.dimmedNodeIds.size > 0;
     for (const cluster of config.layout.clusters) {
       const layoutPos = config.layout.clusterPositions.get(cluster.id);
       if (!layoutPos) continue;
@@ -374,14 +378,7 @@ export class CanvasScene {
 
       if (!isCircleInViewport({ x: cx, y: cy }, radius, viewport)) continue;
 
-      // Dim cluster when all its nodes are dimmed
-      const allNodesDimmed =
-        hasDimmed &&
-        cluster.nodes.length > 0 &&
-        cluster.nodes.every((n) => config.dimmedNodeIds.has(n.id));
-
       ctx.save();
-      if (allNodesDimmed) ctx.globalAlpha = 0.15;
       ctx.translate(cx, cy);
       this.drawCluster(ctx, cluster.id);
       ctx.restore();
@@ -768,29 +765,14 @@ export class CanvasScene {
     if (!this.edgeMetaDirty) return;
     this.edgeMetaDirty = false;
     this.edgeMetaMap.clear();
-    const dimmed = this.config?.dimmedNodeIds;
-    const hasDimmed = dimmed != null && dimmed.size > 0;
     for (const edge of edges) {
       const key = `${edge.source}->${edge.target}`;
       const isCycle = this.isCycleEdge(edge);
       const isHighlighted = this.isEdgeHighlighted(edge);
       const inChain = isChainActive ? this.isEdgeInActiveChain(key) : false;
       const isSpecial = isCycle || isHighlighted || inChain;
-      const sourceDimmed = hasDimmed && dimmed.has(edge.source);
-      const targetDimmed = hasDimmed && dimmed.has(edge.target);
-      const isHidden = sourceDimmed && targetDimmed;
-      const isDimmed = !isHidden && (sourceDimmed || targetDimmed);
       const endpoints = this.resolveEdgeEndpointsCached(edge);
-      this.edgeMetaMap.set(edge, {
-        key,
-        isCycle,
-        isHighlighted,
-        inChain,
-        isSpecial,
-        isDimmed,
-        isHidden,
-        endpoints,
-      });
+      this.edgeMetaMap.set(edge, { key, isCycle, isHighlighted, inChain, isSpecial, endpoints });
     }
   }
 
@@ -839,7 +821,6 @@ export class CanvasScene {
     for (const edge of edges) {
       const meta = this.edgeMetaMap.get(edge);
       if (!meta) continue;
-      if (meta.isHidden) continue;
       if (specialOnly && !meta.isSpecial) continue;
       this.renderSingleEdgeDelegate(ctx, meta, viewport, animatedDashOffset);
     }
@@ -1085,6 +1066,42 @@ export class CanvasScene {
       theme,
       this.dpr,
     );
+  }
+
+  // -------------------------------------------------------------------
+  // Fading Nodes
+  // -------------------------------------------------------------------
+
+  /** Draw nodes that are fading out after being filtered, with decreasing opacity. */
+  private drawFadingNodes(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
+    if (this.fadingOutNodes.size === 0) return;
+
+    const now = performance.now();
+
+    for (const [nodeId, { node, startTime }] of this.fadingOutNodes) {
+      const elapsed = now - startTime;
+
+      if (elapsed >= FADE_OUT_DURATION) {
+        this.fadingOutNodes.delete(nodeId);
+        continue;
+      }
+
+      const opacity = 1 - elapsed / FADE_OUT_DURATION;
+      const pos = resolveNodeWorldPosition(
+        node.id,
+        node.project || 'External',
+        config.layout,
+        config.manualNodePositions,
+        config.manualClusterPositions,
+      );
+      if (!pos) continue;
+
+      ctx.save();
+      ctx.globalAlpha = opacity;
+      ctx.translate(pos.x, pos.y);
+      this.drawNode(ctx, node.id);
+      ctx.restore();
+    }
   }
 
   // -------------------------------------------------------------------
