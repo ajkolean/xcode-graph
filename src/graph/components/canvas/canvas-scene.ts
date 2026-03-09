@@ -120,7 +120,6 @@ export interface SceneCallbacks {
   onInvalidateEdgePathCache: () => void;
 }
 
-
 // ---------------------------------------------------------------------------
 // CanvasScene
 // ---------------------------------------------------------------------------
@@ -217,7 +216,6 @@ export class CanvasScene {
   private tooltipShowTime = 0;
 
   // Fade-out nodes
-
 
   constructor(container: HTMLDivElement, callbacks: SceneCallbacks) {
     this.callbacks = callbacks;
@@ -762,14 +760,25 @@ export class CanvasScene {
     if (!this.edgeMetaDirty) return;
     this.edgeMetaDirty = false;
     this.edgeMetaMap.clear();
+    const dimmed = this.config?.dimmedNodeIds;
+    const hasDimmed = dimmed != null && dimmed.size > 0;
     for (const edge of edges) {
       const key = `${edge.source}->${edge.target}`;
       const isCycle = this.isCycleEdge(edge);
       const isHighlighted = this.isEdgeHighlighted(edge);
       const inChain = isChainActive ? this.isEdgeInActiveChain(key) : false;
       const isSpecial = isCycle || isHighlighted || inChain;
+      const isDimmed = hasDimmed ? dimmed.has(edge.source) || dimmed.has(edge.target) : false;
       const endpoints = this.resolveEdgeEndpointsCached(edge);
-      this.edgeMetaMap.set(edge, { key, isCycle, isHighlighted, inChain, isSpecial, endpoints });
+      this.edgeMetaMap.set(edge, {
+        key,
+        isCycle,
+        isHighlighted,
+        inChain,
+        isSpecial,
+        isDimmed,
+        endpoints,
+      });
     }
   }
 

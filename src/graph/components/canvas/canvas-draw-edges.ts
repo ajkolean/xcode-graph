@@ -25,6 +25,7 @@ export interface EdgeMeta {
   isHighlighted: boolean;
   inChain: boolean;
   isSpecial: boolean;
+  isDimmed: boolean;
   endpoints: {
     sourceNode: GraphNode;
     targetNode: GraphNode;
@@ -300,7 +301,7 @@ export function renderSingleEdge(
     y2: number,
   ) => void,
 ): void {
-  const { endpoints, key: edgeKey, isHighlighted, inChain, isCycle: cycleEdge } = meta;
+  const { endpoints, key: edgeKey, isHighlighted, inChain, isCycle: cycleEdge, isDimmed } = meta;
   if (!endpoints) return;
   if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
     return;
@@ -337,6 +338,11 @@ export function renderSingleEdge(
     selectedNode,
     getChainEdgeDepthFn,
   );
+
+  if (isDimmed) {
+    ctx.globalAlpha *= 0.35;
+  }
+
   drawEdgePathFn(ctx, endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2);
 
   if (zoom >= LOD_THRESHOLDS.ARROWHEADS) {
