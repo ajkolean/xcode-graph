@@ -771,7 +771,10 @@ export class CanvasScene {
       const isHighlighted = this.isEdgeHighlighted(edge);
       const inChain = isChainActive ? this.isEdgeInActiveChain(key) : false;
       const isSpecial = isCycle || isHighlighted || inChain;
-      const isDimmed = hasDimmed ? dimmed.has(edge.source) || dimmed.has(edge.target) : false;
+      const sourceDimmed = hasDimmed && dimmed.has(edge.source);
+      const targetDimmed = hasDimmed && dimmed.has(edge.target);
+      const isHidden = sourceDimmed && targetDimmed;
+      const isDimmed = !isHidden && (sourceDimmed || targetDimmed);
       const endpoints = this.resolveEdgeEndpointsCached(edge);
       this.edgeMetaMap.set(edge, {
         key,
@@ -780,6 +783,7 @@ export class CanvasScene {
         inChain,
         isSpecial,
         isDimmed,
+        isHidden,
         endpoints,
       });
     }
@@ -830,6 +834,7 @@ export class CanvasScene {
     for (const edge of edges) {
       const meta = this.edgeMetaMap.get(edge);
       if (!meta) continue;
+      if (meta.isHidden) continue;
       if (specialOnly && !meta.isSpecial) continue;
       this.renderSingleEdgeDelegate(ctx, meta, viewport, animatedDashOffset);
     }

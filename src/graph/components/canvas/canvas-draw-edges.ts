@@ -25,7 +25,10 @@ export interface EdgeMeta {
   isHighlighted: boolean;
   inChain: boolean;
   isSpecial: boolean;
+  /** True when exactly one endpoint is dimmed — render at reduced alpha. */
   isDimmed: boolean;
+  /** True when both endpoints are dimmed — skip rendering entirely. */
+  isHidden: boolean;
   endpoints: {
     sourceNode: GraphNode;
     targetNode: GraphNode;
