@@ -35,7 +35,7 @@
 
 ## Features
 
-- **Interactive Canvas** — Zoom, pan, and click through dependency graphs with hardware-accelerated SVG rendering
+- **Interactive Canvas** — Zoom, pan, and click through dependency graphs with hardware-accelerated Canvas2D rendering
 - **Cluster Layouts** — Nodes grouped by project into visual clusters using a two-phase hierarchical layout (ELK + D3-force)
 - **Search & Filter** — Filter by node type, origin, platform, or project; instant search with highlighting
 - **Transitive Dependencies** — Highlight the full dependency chain (direct, transitive, dependents, or both) for any node
@@ -236,7 +236,7 @@ xcode-graph supports modern browsers with ES2020+ module support:
 | Safari | 14+ |
 | Edge | 80+ |
 
-The component uses ES modules, SVG rendering, and CSS custom properties. No polyfills are required for supported browsers.
+The component uses ES modules, Canvas2D rendering, and CSS custom properties. No polyfills are required for supported browsers.
 
 ## Layout Engine
 
@@ -272,7 +272,7 @@ See the [Layout Configuration reference](https://ajkolean.github.io/xcode-graph/
 src/
 ├── components/          Root <xcode-graph> web component
 ├── graph/
-│   ├── components/      Canvas rendering (SVG, nodes, edges, tooltips)
+│   ├── components/      Canvas rendering (Canvas2D, nodes, edges, tooltips)
 │   ├── controllers/     Layout orchestration, interaction handling, animation loop
 │   ├── layout/          ELK hierarchical + D3-force physics pipeline
 │   ├── signals/         Graph state (selection, highlights, view mode)
@@ -305,13 +305,12 @@ src/
 | Concern | Technology |
 |---|---|
 | Web components | [Lit](https://lit.dev) 3.x |
-| State management | [Lit Signals](https://github.com/nicklama/xcode-graph) (`@lit-labs/signals`) |
+| State management | [Lit Signals](https://lit.dev/docs/data/signals/) (`@lit-labs/signals`) |
 | UI state machines | [Zag-js](https://zagjs.com) |
 | Hierarchical layout | [ELK.js](https://github.com/kieler/elkjs) |
 | Physics simulation | [D3-force](https://d3js.org/d3-force) |
 | Schema validation | [Zod](https://zod.dev) 4.x |
 | Color utilities | [colord](https://colord.omgovich.dev/) |
-| Web workers | [Comlink](https://github.com/nicklama/xcode-graph) |
 | Focus management | [focus-trap](https://github.com/focus-trap/focus-trap) |
 
 ### Services
@@ -383,7 +382,7 @@ pnpm docs:api             # Generate TypeDoc API reference
 pnpm analyze              # Regenerate Custom Elements Manifest
 pnpm size                 # Check bundle size limits
 pnpm size:why             # Analyze bundle composition
-pnpm depcheck             # Check for unused dependencies
+pnpm knip                 # Check for unused dependencies and exports
 ```
 
 ### CI/CD

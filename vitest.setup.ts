@@ -15,6 +15,7 @@ vi.mock('elkjs/lib/elk-api.js', async () => {
   const { default: ELKBundled } = await vi.importActual<typeof import('elkjs/lib/elk.bundled.js')>(
     'elkjs/lib/elk.bundled.js',
   );
+  /** ELK mock that delegates to the bundled version, bypassing worker factory. */
   class MockELK {
     private elk: InstanceType<typeof ELKBundled>;
     constructor() {

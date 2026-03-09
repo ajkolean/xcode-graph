@@ -1,7 +1,7 @@
 /**
  * Serialization round-trip tests for worker communication
  *
- * Tests that Map↔Array serialization used by Comlink workers
+ * Tests that Map↔Array serialization used by native postMessage API
  * preserves data integrity across the boundary.
  */
 

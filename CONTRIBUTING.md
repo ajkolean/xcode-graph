@@ -23,13 +23,22 @@ pnpm dev
 
 ## Available Commands
 
-| Command          | Description                        |
-| ---------------- | ---------------------------------- |
-| `pnpm dev`       | Start the Vite dev server          |
-| `pnpm build`     | Build the production bundle        |
-| `pnpm test:run`  | Run unit tests (Vitest)            |
-| `pnpm check`     | Run Biome check (lint + format)    |
-| `pnpm lint`      | Run Biome lint                     |
+| Command              | Description                              |
+| -------------------- | ---------------------------------------- |
+| `pnpm dev`           | Start the Vite dev server                |
+| `pnpm build`         | Build the production bundle              |
+| `pnpm build:lib`     | Build the library bundle for publishing  |
+| `pnpm test:run`      | Run unit tests (Vitest)                  |
+| `pnpm test:coverage` | Run tests with V8 coverage               |
+| `pnpm check`         | Run Biome check (lint + format)          |
+| `pnpm lint`          | Run Biome lint                           |
+| `pnpm format`        | Run Biome format                         |
+| `pnpm analyze`       | Regenerate Custom Elements Manifest      |
+| `pnpm docs:dev`      | Start docs dev server (port 5174)        |
+| `pnpm docs:api`      | Generate TypeDoc API reference           |
+| `pnpm size`          | Check bundle size limits                 |
+| `pnpm size:why`      | Analyze bundle composition               |
+| `pnpm knip`          | Check for unused dependencies and exports|
 
 ## Submitting a Pull Request
 

@@ -1,8 +1,8 @@
 /**
  * Layout Web Worker
  *
- * Runs the full hierarchical layout computation off the main thread.
- * Uses Comlink to expose a type-safe API to the main thread.
+ * Runs the full hierarchical layout computation off the main thread
+ * using the native postMessage API.
  *
  * The worker accepts serialized data (no Maps) and returns serialized results,
  * since structured clone does not transfer Map objects across worker boundaries.

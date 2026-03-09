@@ -425,6 +425,7 @@ export interface ElkPhaseReport {
 export function formatElkTimingReport(logging: ElkLoggingEntry): ElkPhaseReport[] {
   const totalTime = logging.executionTime ?? 0;
 
+  /** Recursively convert an ELK logging entry into a phase report with timing percentages. */
   function processEntry(entry: ElkLoggingEntry): ElkPhaseReport {
     const durationMs = entry.executionTime ?? 0;
     const percentage = totalTime > 0 ? (durationMs / totalTime) * 100 : 0;
@@ -457,6 +458,7 @@ export function printElkTimingTable(logging: ElkLoggingEntry): void {
   console.log(`│ ${'Phase'.padEnd(40)}│${'Time (ms)'.padStart(12)} │${'%'.padStart(8)} │`);
   console.log(`├${'─'.repeat(70)}┤`);
 
+  /** Recursively print a phase row with indentation for child phases. */
   function printPhase(phase: ElkPhaseReport, indent: number): void {
     const prefix = '  '.repeat(indent);
     const name = `${prefix}${phase.name}`.substring(0, 39).padEnd(40);

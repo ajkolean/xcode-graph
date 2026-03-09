@@ -140,6 +140,7 @@ export function computeNodeDependencies(
     graph.addEdge(e.source, e.target);
   }
 
+  /** BFS traversal to count all transitive nodes in the given direction. */
   const countTransitive = (startId: string, direction: 'out' | 'in'): number => {
     const visited = new Set<string>([startId]);
     const queue = [startId];

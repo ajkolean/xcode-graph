@@ -3,7 +3,7 @@
  *
  * Tests the layout computation functions that would normally run in a web worker.
  * Imports the computation functions directly and tests them as regular functions,
- * avoiding Comlink/worker protocol complexity.
+ * avoiding worker protocol complexity.
  */
 
 import type { Cluster } from '@shared/schemas';

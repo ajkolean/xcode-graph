@@ -1,10 +1,6 @@
 /**
  * Raw Canvas2D Scene Renderer
  *
- * Replaces the Konva.js scene graph with a single raw Canvas2D rendering pass.
- * All drawing code is ported verbatim from konva-scene.ts — the draw methods
- * were already raw `ctx` calls wrapped in Konva sceneFunc callbacks.
- *
  * Single-pass render order:
  *   1. Clear canvas + background fill
  *   2. Transform: translate(pan) + scale(zoom)
@@ -171,6 +167,9 @@ export class CanvasScene {
   private clusterMap = new Map<string, Cluster>();
   private cachedClustersRef: Cluster[] | null = null;
 
+  // Visible node IDs for cluster visibility — rebuilt when nodes array changes
+  private visibleNodeIds = new Set<string>();
+
   // Quadtree spatial index for O(log n) hit testing
   private nodeQuadtree: Quadtree<IndexedNode> | null = null;
 
@@ -295,9 +294,11 @@ export class CanvasScene {
 
     if (nodesChanged) {
       this.nodeMap.clear();
+      this.visibleNodeIds.clear();
       this.truncatedLabelCache.clear();
       for (const node of config.nodes) {
         this.nodeMap.set(node.id, node);
+        this.visibleNodeIds.add(node.id);
       }
       this.cachedNodesRef = config.nodes;
     }
@@ -363,6 +364,9 @@ export class CanvasScene {
     for (const cluster of config.layout.clusters) {
       const layoutPos = config.layout.clusterPositions.get(cluster.id);
       if (!layoutPos) continue;
+
+      // Skip clusters with no visible nodes
+      if (!cluster.nodes.some((n) => this.visibleNodeIds.has(n.id))) continue;
 
       const manualPos = config.manualClusterPositions.get(cluster.id);
       const cx = manualPos?.x ?? layoutPos.x;
@@ -469,7 +473,7 @@ export class CanvasScene {
   animateToViewport(targetPan: { x: number; y: number }, targetZoom: number, duration = 300): void {
     this.viewportTransition = {
       startZoom: this._zoom,
-      targetZoom: targetZoom,
+      targetZoom,
       startPan: { ...this.pan },
       targetPan: { ...targetPan },
       duration,
@@ -554,6 +558,7 @@ export class CanvasScene {
     this.truncatedLabelCache.clear();
     this.arcLabelBitmapCache.clear();
     this.nodeMap.clear();
+    this.visibleNodeIds.clear();
     this.clusterMap.clear();
     this.edgeEndpointCache.clear();
     this.nodeQuadtree = null;
@@ -564,6 +569,7 @@ export class CanvasScene {
   // Node Drawing
   // -------------------------------------------------------------------
 
+  /** Draw a single node with icon, label, and selection/cycle effects. */
   private drawNode(ctx: CanvasRenderingContext2D, nodeId: string, shouldDrawLabels = true): void {
     const config = this.config;
     if (!config) return;
@@ -627,6 +633,7 @@ export class CanvasScene {
     ctx.globalAlpha = 1.0;
   }
 
+  /** Compute selection, hover, dim, and cycle state flags for a node. */
   private getNodeState(config: NonNullable<typeof this.config>, nodeId: string) {
     const isSelected = config.selectedNode?.id === nodeId;
     return {
@@ -642,6 +649,7 @@ export class CanvasScene {
     };
   }
 
+  /** Resolve the current opacity for a node, respecting reduced-motion preference. */
   private getNodeAlpha(config: NonNullable<typeof this.config>, nodeId: string): number {
     if (prefersReducedMotion.get()) {
       return config.nodeAlphaMap.get(nodeId)?.target ?? 1.0;
@@ -649,6 +657,7 @@ export class CanvasScene {
     return getAnimatedAlpha(config.nodeAlphaMap, nodeId);
   }
 
+  /** Draw a subtle ring around a hovered node. */
   private drawHoverRing(
     ctx: CanvasRenderingContext2D,
     size: number,
@@ -664,6 +673,7 @@ export class CanvasScene {
     ctx.globalAlpha = alpha;
   }
 
+  /** Return full or truncated label text depending on hover/connection state. */
   private resolveLabelText(node: GraphNode, isHovered: boolean, isConnected: boolean): string {
     if (node.name.length <= 20 || isHovered || isConnected) {
       return node.name;
@@ -676,6 +686,7 @@ export class CanvasScene {
     return cached;
   }
 
+  /** Get or create a cached Path2D icon for the given node type and platform. */
   private getPathForNode(node: GraphNode): Path2D {
     const key = `${node.type}-${node.platform}`;
     let path = this.pathCache.get(key);
@@ -690,6 +701,7 @@ export class CanvasScene {
   // Cluster Drawing
   // -------------------------------------------------------------------
 
+  /** Draw a single cluster with fill, border, and arc label. */
   private drawCluster(ctx: CanvasRenderingContext2D, clusterId: string): void {
     const config = this.config;
     if (!config) return;
@@ -745,6 +757,7 @@ export class CanvasScene {
   // Edge Drawing
   // -------------------------------------------------------------------
 
+  /** Build per-edge metadata cache (cycle, highlight, chain, endpoints). */
   private precomputeEdgeMeta(edges: GraphEdge[], isChainActive: boolean): void {
     if (!this.edgeMetaDirty) return;
     this.edgeMetaDirty = false;
@@ -760,6 +773,7 @@ export class CanvasScene {
     }
   }
 
+  /** Whether any dependency chain toggle (direct/transitive) is active. */
   private isChainActive(): boolean {
     const config = this.config;
     if (!config) return false;
@@ -771,6 +785,7 @@ export class CanvasScene {
     );
   }
 
+  /** Draw all edges with LOD: cluster arteries at low zoom, individual edges at high zoom. */
   private drawEdges(ctx: CanvasRenderingContext2D): void {
     const config = this.config;
     if (!config) return;
@@ -792,6 +807,7 @@ export class CanvasScene {
     this.renderEdges(ctx, edges, viewport, animatedDashOffset, false);
   }
 
+  /** Iterate edges and delegate to single-edge renderer, optionally filtering to special-only. */
   private renderEdges(
     ctx: CanvasRenderingContext2D,
     edges: GraphEdge[],
@@ -807,6 +823,7 @@ export class CanvasScene {
     }
   }
 
+  /** Resolve edge source/target world positions with caching. */
   private resolveEdgeEndpointsCached(edge: GraphEdge): {
     sourceNode: GraphNode;
     targetNode: GraphNode;
@@ -824,6 +841,7 @@ export class CanvasScene {
     return result;
   }
 
+  /** Compute edge endpoint world coordinates from layout and manual positions. */
   private resolveEdgeEndpointsInner(edge: GraphEdge): {
     sourceNode: GraphNode;
     targetNode: GraphNode;
@@ -875,6 +893,7 @@ export class CanvasScene {
     };
   }
 
+  /** Check if an edge connects two nodes in the same strongly-connected component. */
   private isCycleEdge(edge: GraphEdge): boolean {
     const layout = this.config?.layout;
     if (!layout) return false;
@@ -888,6 +907,7 @@ export class CanvasScene {
     );
   }
 
+  /** Check if an edge is highlighted by the selected cluster. */
   private isEdgeHighlighted(edge: GraphEdge): boolean {
     const config = this.config;
     if (!config || config.selectedCluster == null) return false;
@@ -899,6 +919,7 @@ export class CanvasScene {
     );
   }
 
+  /** Check if an edge is part of the active dependency/dependent chain. */
   private isEdgeInActiveChain(edgeKey: string): boolean {
     const config = this.config;
     if (!config) return false;
@@ -923,6 +944,7 @@ export class CanvasScene {
     );
   }
 
+  /** Get the minimum depth of an edge across all active chains. */
   private getChainEdgeDepth(edgeKey: string): number {
     const config = this.config;
     if (!config) return 0;
@@ -963,6 +985,7 @@ export class CanvasScene {
   // Tooltip (screen space)
   // -------------------------------------------------------------------
 
+  /** Draw hover tooltip for the currently hovered node or cluster. */
   private drawTooltip(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
     // Suppress tooltip during hover delay
     if (performance.now() < this.tooltipShowTime) return;
@@ -976,6 +999,7 @@ export class CanvasScene {
     }
   }
 
+  /** Resolve node world position and draw its tooltip in screen space. */
   private drawNodeTooltipDelegate(
     ctx: CanvasRenderingContext2D,
     config: SceneConfig,
@@ -1005,6 +1029,7 @@ export class CanvasScene {
     drawNodeTooltip(ctx, screenX, screenY, node.name, nodeColor, theme, this.dpr);
   }
 
+  /** Resolve cluster position and draw its tooltip in screen space. */
   private drawClusterTooltipDelegate(
     ctx: CanvasRenderingContext2D,
     config: SceneConfig,
@@ -1044,6 +1069,7 @@ export class CanvasScene {
   // Fading Nodes
   // -------------------------------------------------------------------
 
+  /** Draw nodes that are fading out after being filtered, with decreasing opacity. */
   private drawFadingNodes(ctx: CanvasRenderingContext2D, config: SceneConfig): void {
     if (this.fadingOutNodes.size === 0) return;
 
@@ -1079,6 +1105,7 @@ export class CanvasScene {
   // Hit Testing (on mouse events, not per-frame)
   // -------------------------------------------------------------------
 
+  /** Lazily build and cache a quadtree for O(log n) node hit testing. */
   private ensureQuadtree(): Quadtree<IndexedNode> | null {
     if (this.nodeQuadtree) return this.nodeQuadtree;
     const config = this.config;
@@ -1106,17 +1133,22 @@ export class CanvasScene {
     return this.nodeQuadtree;
   }
 
+  /** Find the node at the given world coordinates using quadtree lookup. */
   private hitTestNode(worldX: number, worldY: number): GraphNode | null {
     const tree = this.ensureQuadtree();
     if (!tree) return null;
     return findNodeAt(tree, worldX, worldY, HIT_TEST_RADIUS);
   }
 
+  /** Find the cluster at the given world coordinates using radius check. */
   private hitTestCluster(worldX: number, worldY: number): string | null {
     const config = this.config;
     if (!config) return null;
 
     for (const cluster of config.layout.clusters) {
+      // Skip clusters with no visible nodes
+      if (!cluster.nodes.some((n) => this.visibleNodeIds.has(n.id))) continue;
+
       const layoutPos = config.layout.clusterPositions.get(cluster.id);
       if (!layoutPos) continue;
 
@@ -1219,6 +1251,7 @@ export class CanvasScene {
     }
   };
 
+  /** Update manual cluster position during drag interaction. */
   private handleDragCluster(evt: MouseEvent): void {
     if (!this.config || !this.draggedClusterId) return;
     const rect = this.canvas.getBoundingClientRect();
@@ -1230,6 +1263,7 @@ export class CanvasScene {
     this.callbacks.onRenderRequest();
   }
 
+  /** Update manual node position (relative to cluster) during drag interaction. */
   private handleDragNode(evt: MouseEvent): void {
     if (!this.config || !this.draggedNodeId) return;
     const rect = this.canvas.getBoundingClientRect();
@@ -1257,6 +1291,7 @@ export class CanvasScene {
     this.callbacks.onRenderRequest();
   }
 
+  /** Apply pan delta from mouse movement with immediate render. */
   private handlePan(evt: MouseEvent): void {
     const dx = evt.clientX - this.lastMousePos.x;
     const dy = evt.clientY - this.lastMousePos.y;
@@ -1268,6 +1303,7 @@ export class CanvasScene {
     this.callbacks.onRenderRequest();
   }
 
+  /** Update hovered node/cluster state and trigger tooltip delay. */
   private handleHover(evt: MouseEvent): void {
     const rect = this.canvas.getBoundingClientRect();
     const screenX = evt.clientX - rect.left;
@@ -1360,6 +1396,7 @@ export class CanvasScene {
     this.animateToViewport(newPan, newZoom, 300);
   };
 
+  /** Animate viewport to center and fit a specific cluster. */
   private animateToCluster(clusterId: string): void {
     const clusterPos = this.config?.layout?.clusterPositions?.get(clusterId);
     if (!clusterPos) return;
@@ -1388,6 +1425,7 @@ export class CanvasScene {
   // Viewport Helpers
   // -------------------------------------------------------------------
 
+  /** Compute the visible world-space bounds with a margin for culling. */
   private computeViewportBounds(config: SceneConfig): ViewportBounds {
     const margin = Math.max(200, 200 / config.zoom);
     return calculateViewportBounds(

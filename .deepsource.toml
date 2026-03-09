@@ -14,6 +14,10 @@ exclude_patterns = [
   "src/graph/test-helpers/**",
   "src/graph/workers/layout.worker.ts",
   "src/graph/workers/micro-layout.worker.ts",
+  "src/graph/components/canvas/canvas-draw-*.ts",
+  "src/graph/components/canvas/canvas-scene.ts",
+  "src/graph/components/canvas/canvas-scene.mouse.ts",
+  "src/graph/components/graph-canvas.ts",
   "vite.config.ts",
   "vite.lib.config.ts"
 ]
