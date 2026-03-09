@@ -15,7 +15,13 @@ import { createAllInclusiveFilters, createNodeTypeFilter } from '@/fixtures';
 import type { SignalSnapshot } from '@/test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '@/test-utils/signal-helpers';
 import { edges, nodes } from './data.signals';
-import { dimmedNodeIds, displayData, filteredData, transitiveData } from './display.computed';
+import {
+  dimmedNodeIds,
+  displayData,
+  displayEdges,
+  filteredData,
+  transitiveData,
+} from './display.computed';
 import {
   highlightDirectDependents,
   highlightDirectDeps,
@@ -672,6 +678,44 @@ describe('display.computed', () => {
       // nodeA (selected) and nodeB (direct dep) should NOT be dimmed
       expect(dimmed.has('a')).toBe(false);
       expect(dimmed.has('b')).toBe(false);
+    });
+  });
+
+  describe('displayEdges', () => {
+    it('should exclude edges where both endpoints are dimmed by filters', () => {
+      const nodeA = createTestNode('a', { type: NodeType.Framework, project: 'Core' });
+      const nodeB = createTestNode('b', { type: NodeType.App, project: 'Core' });
+      const nodeC = createTestNode('c', { type: NodeType.App, project: 'Core' });
+      nodes.set([nodeA, nodeB, nodeC]);
+      edges.set([
+        createTestEdge('a', 'b'), // one dimmed endpoint → include
+        createTestEdge('b', 'c'), // both dimmed → exclude
+        createTestEdge('a', 'c'), // one dimmed endpoint → include
+      ]);
+
+      const filterState = createNodeTypeFilter([NodeType.Framework]);
+      filterState.projects.add('Core');
+      filters.set(filterState);
+      searchQuery.set('');
+
+      const result = displayEdges.get();
+      expect(result.length).to.equal(2);
+      expect(result.some((e) => e.source === 'b' && e.target === 'c')).to.equal(false);
+    });
+
+    it('should include all edges when no filters active', () => {
+      const nodeA = createTestNode('a', { project: 'Main' });
+      const nodeB = createTestNode('b', { project: 'Main' });
+      nodes.set([nodeA, nodeB]);
+      edges.set([createTestEdge('a', 'b')]);
+
+      const allFilters = createAllInclusiveFilters();
+      allFilters.projects.add('Main');
+      filters.set(allFilters);
+      searchQuery.set('');
+
+      const result = displayEdges.get();
+      expect(result.length).to.equal(1);
     });
   });
 });

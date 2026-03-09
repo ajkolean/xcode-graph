@@ -101,6 +101,22 @@ export const displayData: Signal.Computed<DisplayData> = new Signal.Computed<Dis
   };
 });
 
+/**
+ * Computed signal for edges to display on the canvas.
+ * Includes edges where at least one endpoint is non-dimmed.
+ * Excludes edges where both source and target are dimmed.
+ *
+ * @public
+ */
+export const displayEdges: Signal.Computed<GraphEdge[]> = new Signal.Computed(() => {
+  const allEdges = edges.get();
+  const dimmed = dimmedNodeIds.get();
+
+  if (dimmed.size === 0) return allEdges;
+
+  return allEdges.filter((edge) => !dimmed.has(edge.source) || !dimmed.has(edge.target));
+});
+
 /** Checks whether a node should be dimmed because it doesn't match the fuzzy search. */
 function shouldDimBySearch(node: GraphNode, fuzzyMatchSet: Set<string> | null): boolean {
   return fuzzyMatchSet !== null && !fuzzyMatchSet.has(node.id);
