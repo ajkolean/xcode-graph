@@ -248,10 +248,21 @@ export function drawClusterArteries(
   if (!clusterEdges || clusterEdges.length === 0) return;
 
   const { zoom } = config;
+  const hasDimmed = config.dimmedNodeIds.size > 0;
+
+  // Pre-compute the ratio of visible (non-dimmed) nodes per cluster
+  let clusterVisibleRatio: Map<string, number> | null = null;
+  if (hasDimmed && config.layout.clusters) {
+    clusterVisibleRatio = new Map();
+    for (const cluster of config.layout.clusters) {
+      if (cluster.nodes.length === 0) continue;
+      const visibleCount = cluster.nodes.filter((n) => !config.dimmedNodeIds.has(n.id)).length;
+      clusterVisibleRatio.set(cluster.id, visibleCount / cluster.nodes.length);
+    }
+  }
 
   ctx.save();
   ctx.strokeStyle = config.theme.edgeDefault;
-  ctx.globalAlpha = 0.2;
   ctx.setLineDash([]);
 
   for (const edge of clusterEdges) {
@@ -267,6 +278,14 @@ export function drawClusterArteries(
     const ty = tPos.y;
 
     if (!isLineInViewportRaw(sx, sy, tx, ty, viewport)) continue;
+
+    // Hide artery if either endpoint cluster has no visible nodes
+    if (clusterVisibleRatio) {
+      const sRatio = clusterVisibleRatio.get(edge.source) ?? 1;
+      const tRatio = clusterVisibleRatio.get(edge.target) ?? 1;
+      if (sRatio === 0 || tRatio === 0) continue;
+    }
+    ctx.globalAlpha = 0.2;
 
     ctx.lineWidth = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
 
