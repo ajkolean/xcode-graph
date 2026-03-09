@@ -131,7 +131,16 @@ export class GraphCanvas extends LitElement {
   declare showTransitiveDependents: boolean;
 
   /** Set of node IDs that should be visually dimmed */
-  dimmedNodeIds: Set<string> = new Set();
+  private _dimmedNodeIds: Set<string> = new Set();
+  get dimmedNodeIds(): Set<string> {
+    return this._dimmedNodeIds;
+  }
+  set dimmedNodeIds(value: Set<string>) {
+    if (value !== this._dimmedNodeIds) {
+      this._dimmedNodeIds = value;
+      this.requestRender();
+    }
+  }
 
   @query('#canvas-container')
   private declare containerEl: HTMLDivElement;

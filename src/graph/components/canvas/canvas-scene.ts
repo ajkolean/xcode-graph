@@ -189,6 +189,7 @@ export class CanvasScene {
   private cachedShowTransitiveDependents = false;
   private cachedTransitiveDepsRef: TransitiveResult | undefined = undefined;
   private cachedTransitiveDependentsRef: TransitiveResult | undefined = undefined;
+  private cachedDimmedNodeIds: Set<string> | null = null;
 
   // Per-frame adjusted node type colors (7 types, recomputed only when zoom changes)
   private adjustedNodeColors = new Map<string, string>();
@@ -333,7 +334,8 @@ export class CanvasScene {
       config.showDirectDependents !== this.cachedShowDirectDependents ||
       config.showTransitiveDependents !== this.cachedShowTransitiveDependents ||
       config.transitiveDeps !== this.cachedTransitiveDepsRef ||
-      config.transitiveDependents !== this.cachedTransitiveDependentsRef;
+      config.transitiveDependents !== this.cachedTransitiveDependentsRef ||
+      config.dimmedNodeIds !== this.cachedDimmedNodeIds;
 
     if (edgeInputsChanged) {
       this.edgeMetaDirty = true;
@@ -345,6 +347,7 @@ export class CanvasScene {
       this.cachedShowTransitiveDependents = config.showTransitiveDependents;
       this.cachedTransitiveDepsRef = config.transitiveDeps;
       this.cachedTransitiveDependentsRef = config.transitiveDependents;
+      this.cachedDimmedNodeIds = config.dimmedNodeIds;
     }
   }
 
