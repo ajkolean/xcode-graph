@@ -162,7 +162,6 @@ function shouldDimBySelection(
  * 1. Filter dimming — node doesn't match active checkbox filters
  * 2. Search dimming — node doesn't match fuzzy query
  * 3. Selection/highlight dimming — node not in transitive chain
- * 4. Preview dimming — node doesn't match sidebar hover preview
  *
  * Cluster dimming is intentionally excluded because `hoveredCluster` and
  * `selectedCluster` are local interaction state in GraphCanvas, not signals.
@@ -188,7 +187,7 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
 
   const dimmed = new Set<string>();
   const matchingNodeIds = new Set(filteredNodes.map((n) => n.id));
-  const fuzzyMatchSet = query ? getFuzzyMatchIds(allNodes, query) : null;
+  const fuzzyMatchSet = query ? getFuzzyMatchIds(filteredNodes, query) : null;
 
   for (const node of allNodes) {
     // 1. Filter dimming — node doesn't match active checkbox filters
@@ -221,9 +220,7 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
       dimmed.add(node.id);
     }
 
-    // 4. Preview dimming — intentionally excluded from dimmedNodeIds.
-    //    Preview hover only affects node rendering opacity (via previewFilter
-    //    on SceneConfig), not edge visibility, to avoid jarring edge changes.
+    // Preview dimming was intentionally removed from this PR.
   }
 
   return dimmed;
