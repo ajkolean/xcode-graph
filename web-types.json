@@ -188,11 +188,7 @@
                 "description": "Whether to highlight transitive dependent edges — attribute-bound via ?show-transitive-dependents",
                 "type": "boolean"
               },
-              {
-                "name": "dimmedNodeIds",
-                "description": "Set of node IDs that should be visually dimmed",
-                "type": "Set<string>"
-              }
+              { "name": "dimmedNodeIds", "type": "Set<string>" }
             ],
             "events": [
               {
