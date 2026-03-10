@@ -534,25 +534,26 @@ describe('display.computed', () => {
   });
 
   describe('displayEdges', () => {
-    it('should exclude edges where both endpoints are dimmed by filters', () => {
+    it('should exclude edges where either endpoint is dimmed by filters', () => {
       const nodeA = createTestNode('a', { type: NodeType.Framework, project: 'Core' });
       const nodeB = createTestNode('b', { type: NodeType.App, project: 'Core' });
       const nodeC = createTestNode('c', { type: NodeType.App, project: 'Core' });
       nodes.set([nodeA, nodeB, nodeC]);
       edges.set([
-        createTestEdge('a', 'b'), // one dimmed endpoint → include
+        createTestEdge('a', 'b'), // one dimmed endpoint → exclude
         createTestEdge('b', 'c'), // both dimmed → exclude
-        createTestEdge('a', 'c'), // one dimmed endpoint → include
+        createTestEdge('a', 'c'), // one dimmed endpoint → exclude
       ]);
 
+      // Only Framework type passes filter, so b and c (App) are dimmed
       const filterState = createNodeTypeFilter([NodeType.Framework]);
       filterState.projects.add('Core');
       filters.set(filterState);
       searchQuery.set('');
 
       const result = displayEdges.get();
-      expect(result.length).to.equal(2);
-      expect(result.some((e) => e.source === 'b' && e.target === 'c')).to.equal(false);
+      // All edges touch at least one dimmed node (b or c)
+      expect(result.length).to.equal(0);
     });
 
     it('should include all edges when no filters active', () => {

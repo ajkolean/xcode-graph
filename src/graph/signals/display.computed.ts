@@ -228,8 +228,7 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
 
 /**
  * Computed signal for edges to display on the canvas.
- * Includes edges where at least one endpoint is non-dimmed.
- * Excludes edges where both source and target are dimmed.
+ * Excludes edges where either endpoint is dimmed.
  *
  * @public
  */
@@ -239,5 +238,5 @@ export const displayEdges: Signal.Computed<GraphEdge[]> = new Signal.Computed(()
 
   if (dimmed.size === 0) return allEdges;
 
-  return allEdges.filter((edge) => !dimmed.has(edge.source) || !dimmed.has(edge.target));
+  return allEdges.filter((edge) => !dimmed.has(edge.source) && !dimmed.has(edge.target));
 });

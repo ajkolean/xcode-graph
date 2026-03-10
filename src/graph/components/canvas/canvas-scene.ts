@@ -781,8 +781,7 @@ export class CanvasScene {
       const isSpecial = isCycle || isHighlighted || inChain;
       const sourceDimmed = hasDimmed && dimmed.has(edge.source);
       const targetDimmed = hasDimmed && dimmed.has(edge.target);
-      const isHidden = sourceDimmed && targetDimmed;
-      const isDimmed = !isHidden && (sourceDimmed || targetDimmed);
+      const isHidden = sourceDimmed || targetDimmed;
       const endpoints = this.resolveEdgeEndpointsCached(edge);
       this.edgeMetaMap.set(edge, {
         key,
@@ -790,7 +789,6 @@ export class CanvasScene {
         isHighlighted,
         inChain,
         isSpecial,
-        isDimmed,
         isHidden,
         endpoints,
       });

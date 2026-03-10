@@ -25,9 +25,7 @@ export interface EdgeMeta {
   isHighlighted: boolean;
   inChain: boolean;
   isSpecial: boolean;
-  /** True when exactly one endpoint is dimmed — render at reduced alpha. */
-  isDimmed: boolean;
-  /** True when both endpoints are dimmed — skip rendering entirely. */
+  /** True when either endpoint is dimmed — skip rendering entirely. */
   isHidden: boolean;
   endpoints: {
     sourceNode: GraphNode;
@@ -253,14 +251,14 @@ export function drawClusterArteries(
   const { zoom } = config;
   const hasDimmed = config.dimmedNodeIds.size > 0;
 
-  // Pre-compute the ratio of visible (non-dimmed) nodes per cluster
-  let clusterVisibleRatio: Map<string, number> | null = null;
+  // Pre-compute which clusters are fully dimmed (all member nodes dimmed)
+  let fullyDimmedClusters: Set<string> | null = null;
   if (hasDimmed && config.layout.clusters) {
-    clusterVisibleRatio = new Map();
+    fullyDimmedClusters = new Set();
     for (const cluster of config.layout.clusters) {
-      if (cluster.nodes.length === 0) continue;
-      const visibleCount = cluster.nodes.filter((n) => !config.dimmedNodeIds.has(n.id)).length;
-      clusterVisibleRatio.set(cluster.id, visibleCount / cluster.nodes.length);
+      if (cluster.nodes.length > 0 && cluster.nodes.every((n) => config.dimmedNodeIds.has(n.id))) {
+        fullyDimmedClusters.add(cluster.id);
+      }
     }
   }
 
@@ -282,11 +280,9 @@ export function drawClusterArteries(
 
     if (!isLineInViewportRaw(sx, sy, tx, ty, viewport)) continue;
 
-    // Hide artery if either endpoint cluster has no visible nodes
-    if (clusterVisibleRatio) {
-      const sRatio = clusterVisibleRatio.get(edge.source) ?? 1;
-      const tRatio = clusterVisibleRatio.get(edge.target) ?? 1;
-      if (sRatio === 0 || tRatio === 0) continue;
+    // Hide artery if either endpoint cluster is fully dimmed
+    if (fullyDimmedClusters) {
+      if (fullyDimmedClusters.has(edge.source) || fullyDimmedClusters.has(edge.target)) continue;
     }
     ctx.globalAlpha = 0.2;
 
@@ -323,7 +319,7 @@ export function renderSingleEdge(
     y2: number,
   ) => void,
 ): void {
-  const { endpoints, key: edgeKey, isHighlighted, inChain, isCycle: cycleEdge, isDimmed } = meta;
+  const { endpoints, key: edgeKey, isHighlighted, inChain, isCycle: cycleEdge } = meta;
   if (!endpoints) return;
   if (!isLineInViewportRaw(endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2, viewport))
     return;
@@ -360,10 +356,6 @@ export function renderSingleEdge(
     selectedNode,
     getChainEdgeDepthFn,
   );
-
-  if (isDimmed) {
-    ctx.globalAlpha *= 0.35;
-  }
 
   drawEdgePathFn(ctx, endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2);
 
