@@ -20,7 +20,7 @@
     "lit",
     "visualization"
   ],
-  "packageManager": "pnpm@10.31.0",
+  "packageManager": "pnpm@10.32.0",
   "type": "module",
   "main": "dist/xcodegraph.js",
   "module": "dist/xcodegraph.js",
