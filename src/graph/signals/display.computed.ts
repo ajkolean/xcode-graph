@@ -12,9 +12,7 @@ import { applyGraphFilters } from '@graph/utils/graph-filters';
 import { computeTransitiveDependencies, type TransitiveResult } from '@graph/utils/traversal';
 import { Signal } from '@lit-labs/signals';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
-import { NodeType } from '@shared/schemas/graph.types';
 import { filters, searchQuery } from '@shared/signals/filter.signals';
-import { previewFilter } from '@shared/signals/ui.signals';
 import { edges, nodes } from './data.signals';
 import {
   highlightDirectDependents,
@@ -155,33 +153,15 @@ function shouldDimBySelection(
 }
 
 /**
- * Checks whether a node should be dimmed because it doesn't match the active preview filter.
- * @param node - The graph node to test
- * @param preview - The active preview filter (type and value)
- * @returns `true` if the node does not match the preview filter
- */
-function shouldDimByPreview(node: GraphNode, preview: { type: string; value: string }): boolean {
-  switch (preview.type) {
-    case 'nodeType':
-      return node.type !== preview.value;
-    case 'platform':
-      return node.platform !== preview.value;
-    case 'origin':
-      return node.origin !== preview.value;
-    case 'project':
-      return node.project !== preview.value;
-    case 'package':
-      return !(node.type === NodeType.Package && node.name === preview.value);
-    default:
-      return false;
-  }
-}
-
-/**
  * Pre-computed set of dimmed node IDs.
  *
- * Combines search, selection/highlight-toggle, and preview-filter dimming
+ * Combines filter, search, selection/highlight-toggle, and preview-filter dimming
  * into a single Set that the renderer can check with O(1) `Set.has()`.
+ *
+ * Dimming cascade (first match dims):
+ * 1. Filter dimming — node doesn't match active checkbox filters
+ * 2. Search dimming — node doesn't match fuzzy query
+ * 3. Selection/highlight dimming — node not in transitive chain
  *
  * Cluster dimming is intentionally excluded because `hoveredCluster` and
  * `selectedCluster` are local interaction state in GraphCanvas, not signals.
@@ -189,10 +169,10 @@ function shouldDimByPreview(node: GraphNode, preview: { type: string; value: str
  * @public
  */
 export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed(() => {
+  const allNodes = nodes.get();
   const { filteredNodes } = filteredData.get();
   const query = searchQuery.get();
   const selected = selectedNode.get();
-  const preview = previewFilter.get();
   const { transitiveDeps, transitiveDependents } = transitiveData.get();
 
   const showDirectDepsVal = highlightDirectDeps.get();
@@ -206,14 +186,23 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
     showTransitiveDependentsVal;
 
   const dimmed = new Set<string>();
+  const matchingNodeIds = new Set(filteredNodes.map((n) => n.id));
   const fuzzyMatchSet = query ? getFuzzyMatchIds(filteredNodes, query) : null;
 
-  for (const node of filteredNodes) {
+  for (const node of allNodes) {
+    // 1. Filter dimming — node doesn't match active checkbox filters
+    if (!matchingNodeIds.has(node.id)) {
+      dimmed.add(node.id);
+      continue;
+    }
+
+    // 2. Search dimming — node doesn't match fuzzy query
     if (shouldDimBySearch(node, fuzzyMatchSet)) {
       dimmed.add(node.id);
       continue;
     }
 
+    // 3. Selection/highlight dimming
     if (
       selected &&
       isChainActive &&
@@ -229,13 +218,25 @@ export const dimmedNodeIds: Signal.Computed<Set<string>> = new Signal.Computed((
       )
     ) {
       dimmed.add(node.id);
-      continue;
     }
 
-    if (preview && shouldDimByPreview(node, preview)) {
-      dimmed.add(node.id);
-    }
+    // Preview dimming was intentionally removed from this PR.
   }
 
   return dimmed;
+});
+
+/**
+ * Computed signal for edges to display on the canvas.
+ * Excludes edges where either endpoint is dimmed.
+ *
+ * @public
+ */
+export const displayEdges: Signal.Computed<GraphEdge[]> = new Signal.Computed(() => {
+  const allEdges = edges.get();
+  const dimmed = dimmedNodeIds.get();
+
+  if (dimmed.size === 0) return allEdges;
+
+  return allEdges.filter((edge) => !dimmed.has(edge.source) && !dimmed.has(edge.target));
 });

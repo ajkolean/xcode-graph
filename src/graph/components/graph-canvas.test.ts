@@ -41,7 +41,6 @@ interface GraphCanvasInternals {
   scene: { destroy: () => void } | null;
   isAnimating: boolean;
   nodeAlphaMap: Map<string, AnimatedValue>;
-  fadingOutNodes: Map<string, { node: GraphNode; startTime: number }>;
   manualNodePositions: Map<string, { x: number; y: number }>;
   manualClusterPositions: Map<string, { x: number; y: number }>;
   didInitialFit: boolean;
@@ -434,25 +433,6 @@ describe('xcode-graph-canvas', () => {
 
       const internal = el as unknown as GraphCanvasInternals;
       expect(internal.isAnimating).to.equal(true);
-    });
-  });
-
-  describe('trackRemovedNodesForFadeOut', () => {
-    it('should track removed nodes for fade-out when nodes are filtered', async () => {
-      const el = await fixture<GraphCanvas>(html`<xcode-graph-canvas></xcode-graph-canvas>`);
-      await el.updateComplete;
-
-      const node1 = createTestNode({ id: 'rm1', name: 'Remove1' });
-      const node2 = createTestNode({ id: 'rm2', name: 'Remove2', type: NodeType.Framework });
-
-      el.nodes = [node1, node2];
-      await el.updateComplete;
-
-      el.nodes = [node1];
-      await el.updateComplete;
-
-      const internal = el as unknown as GraphCanvasInternals;
-      expect(internal.fadingOutNodes.has('rm2')).to.equal(true);
     });
   });
 

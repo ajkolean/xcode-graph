@@ -9,13 +9,18 @@ import { ViewMode } from '@shared/schemas/app.types';
 import type { GraphEdge, GraphNode } from '@shared/schemas/graph.types';
 import { NodeType, Origin, Platform } from '@shared/schemas/graph.types';
 import { allPackages, allProjects, filters, searchQuery } from '@shared/signals/filter.signals';
-import { previewFilter } from '@shared/signals/ui.signals';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createAllInclusiveFilters, createNodeTypeFilter } from '@/fixtures';
 import type { SignalSnapshot } from '@/test-utils/signal-helpers';
 import { createSignalSnapshot, restoreSignalSnapshot } from '@/test-utils/signal-helpers';
 import { edges, nodes } from './data.signals';
-import { dimmedNodeIds, displayData, filteredData, transitiveData } from './display.computed';
+import {
+  dimmedNodeIds,
+  displayData,
+  displayEdges,
+  filteredData,
+  transitiveData,
+} from './display.computed';
 import {
   highlightDirectDependents,
   highlightDirectDeps,
@@ -56,7 +61,6 @@ describe('display.computed', () => {
       highlightTransitiveDependents,
       allProjects,
       allPackages,
-      previewFilter,
     ]);
   });
 
@@ -376,151 +380,6 @@ describe('display.computed', () => {
       expect(dimmed.has('b')).toBe(false);
     });
 
-    it('should dim nodes by preview filter (nodeType)', () => {
-      const testNodes = [
-        createTestNode('a', { type: NodeType.App, project: 'Main' }),
-        createTestNode('b', { type: NodeType.Framework, project: 'Main' }),
-      ];
-
-      nodes.set(testNodes);
-      edges.set([]);
-
-      const allFilters = createAllInclusiveFilters();
-      allFilters.projects.add('Main');
-      filters.set(allFilters);
-      searchQuery.set('');
-      previewFilter.set({ type: 'nodeType', value: NodeType.App });
-
-      const dimmed = dimmedNodeIds.get();
-
-      // Framework node should be dimmed (doesn't match App preview)
-      expect(dimmed.has('b')).toBe(true);
-      // App node should NOT be dimmed
-      expect(dimmed.has('a')).toBe(false);
-    });
-
-    it('should dim nodes by preview filter (platform)', () => {
-      const testNodes = [
-        createTestNode('a', { platform: Platform.iOS, project: 'Main' }),
-        createTestNode('b', { platform: Platform.macOS, project: 'Main' }),
-      ];
-
-      nodes.set(testNodes);
-      edges.set([]);
-
-      const allFilters = createAllInclusiveFilters();
-      allFilters.projects.add('Main');
-      filters.set(allFilters);
-      searchQuery.set('');
-      previewFilter.set({ type: 'platform', value: Platform.iOS });
-
-      const dimmed = dimmedNodeIds.get();
-
-      expect(dimmed.has('b')).toBe(true);
-      expect(dimmed.has('a')).toBe(false);
-    });
-
-    it('should dim nodes by preview filter (origin)', () => {
-      const testNodes = [
-        createTestNode('a', { origin: Origin.Local, project: 'Main' }),
-        createTestNode('b', { origin: Origin.External, project: 'Main' }),
-      ];
-
-      nodes.set(testNodes);
-      edges.set([]);
-
-      const allFilters = createAllInclusiveFilters();
-      allFilters.projects.add('Main');
-      filters.set(allFilters);
-      searchQuery.set('');
-      previewFilter.set({ type: 'origin', value: Origin.Local });
-
-      const dimmed = dimmedNodeIds.get();
-
-      expect(dimmed.has('b')).toBe(true);
-      expect(dimmed.has('a')).toBe(false);
-    });
-
-    it('should dim nodes by preview filter (project)', () => {
-      const testNodes = [
-        createTestNode('a', { project: 'CoreProject' }),
-        createTestNode('b', { project: 'UIProject' }),
-      ];
-
-      nodes.set(testNodes);
-      edges.set([]);
-
-      const allFilters = createAllInclusiveFilters();
-      allFilters.projects.add('CoreProject');
-      allFilters.projects.add('UIProject');
-      filters.set(allFilters);
-      searchQuery.set('');
-      previewFilter.set({ type: 'project', value: 'CoreProject' });
-
-      const dimmed = dimmedNodeIds.get();
-
-      expect(dimmed.has('b')).toBe(true);
-      expect(dimmed.has('a')).toBe(false);
-    });
-
-    it('should dim nodes by preview filter (package)', () => {
-      const testNodes = [
-        createTestNode('a', {
-          type: NodeType.Package,
-          name: 'SwiftUI',
-          origin: Origin.External,
-        }),
-        createTestNode('b', {
-          type: NodeType.Package,
-          name: 'Combine',
-          origin: Origin.External,
-        }),
-        createTestNode('c', { type: NodeType.Framework, name: 'SwiftUI', project: 'Main' }),
-      ];
-
-      nodes.set(testNodes);
-      edges.set([]);
-
-      const allFilters = createAllInclusiveFilters();
-      allFilters.projects.add('Main');
-      allFilters.packages.add('SwiftUI');
-      allFilters.packages.add('Combine');
-      filters.set(allFilters);
-      searchQuery.set('');
-      previewFilter.set({ type: 'package', value: 'SwiftUI' });
-
-      const dimmed = dimmedNodeIds.get();
-
-      // Combine package should be dimmed
-      expect(dimmed.has('b')).toBe(true);
-      // Framework named SwiftUI should be dimmed (not a Package type)
-      expect(dimmed.has('c')).toBe(true);
-      // Package named SwiftUI should NOT be dimmed
-      expect(dimmed.has('a')).toBe(false);
-    });
-
-    it('should not dim nodes for an unknown preview filter type', () => {
-      const testNodes = [
-        createTestNode('a', { project: 'Main' }),
-        createTestNode('b', { project: 'Main' }),
-      ];
-
-      nodes.set(testNodes);
-      edges.set([]);
-
-      const allFilters = createAllInclusiveFilters();
-      allFilters.projects.add('Main');
-      filters.set(allFilters);
-      searchQuery.set('');
-      previewFilter.set({ type: 'unknown' as 'nodeType', value: 'test' });
-
-      const dimmed = dimmedNodeIds.get();
-
-      // Unknown filter type should not dim any nodes (default case returns false)
-      expect(dimmed.has('a')).toBe(false);
-      expect(dimmed.has('b')).toBe(false);
-    });
-
     it('should handle transitive deps and dependents in selection chain', () => {
       // a -> b -> c, and d depends on nothing
       const nodeA = createTestNode('a', { project: 'Core' });
@@ -622,11 +481,26 @@ describe('display.computed', () => {
       filters.set(allFilters);
       searchQuery.set('');
       selectedNode.set(null);
-      previewFilter.set(null);
 
       const dimmed = dimmedNodeIds.get();
 
       expect(dimmed.size).toBe(0);
+    });
+
+    it('should dim nodes that fail filter criteria', () => {
+      const nodeA = createTestNode('a', { type: NodeType.Framework, project: 'Core' });
+      const nodeB = createTestNode('b', { type: NodeType.App, project: 'Core' });
+      nodes.set([nodeA, nodeB]);
+      edges.set([]);
+
+      const filterState = createNodeTypeFilter([NodeType.Framework]);
+      filterState.projects.add('Core');
+      filters.set(filterState);
+      searchQuery.set('');
+
+      const dimmed = dimmedNodeIds.get();
+      expect(dimmed.has('b')).toBe(true);
+      expect(dimmed.has('a')).toBe(false);
     });
 
     it('should apply selection dimming when search and selection are both active', () => {
@@ -656,6 +530,45 @@ describe('display.computed', () => {
       // nodeA (selected) and nodeB (direct dep) should NOT be dimmed
       expect(dimmed.has('a')).toBe(false);
       expect(dimmed.has('b')).toBe(false);
+    });
+  });
+
+  describe('displayEdges', () => {
+    it('should exclude edges where either endpoint is dimmed by filters', () => {
+      const nodeA = createTestNode('a', { type: NodeType.Framework, project: 'Core' });
+      const nodeB = createTestNode('b', { type: NodeType.App, project: 'Core' });
+      const nodeC = createTestNode('c', { type: NodeType.App, project: 'Core' });
+      nodes.set([nodeA, nodeB, nodeC]);
+      edges.set([
+        createTestEdge('a', 'b'), // one dimmed endpoint → exclude
+        createTestEdge('b', 'c'), // both dimmed → exclude
+        createTestEdge('a', 'c'), // one dimmed endpoint → exclude
+      ]);
+
+      // Only Framework type passes filter, so b and c (App) are dimmed
+      const filterState = createNodeTypeFilter([NodeType.Framework]);
+      filterState.projects.add('Core');
+      filters.set(filterState);
+      searchQuery.set('');
+
+      const result = displayEdges.get();
+      // All edges touch at least one dimmed node (b or c)
+      expect(result.length).to.equal(0);
+    });
+
+    it('should include all edges when no filters active', () => {
+      const nodeA = createTestNode('a', { project: 'Main' });
+      const nodeB = createTestNode('b', { project: 'Main' });
+      nodes.set([nodeA, nodeB]);
+      edges.set([createTestEdge('a', 'b')]);
+
+      const allFilters = createAllInclusiveFilters();
+      allFilters.projects.add('Main');
+      filters.set(allFilters);
+      searchQuery.set('');
+
+      const result = displayEdges.get();
+      expect(result.length).to.equal(1);
     });
   });
 });

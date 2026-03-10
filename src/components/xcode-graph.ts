@@ -264,8 +264,8 @@ export class GraphApp extends SignalWatcherLitElement {
 
     return html`
       <xcode-graph-tab
-        .displayNodes=${display.filteredNodes}
-        .displayEdges=${display.filteredEdges}
+        .displayNodes=${allNodes.get()}
+        .displayEdges=${allEdges.get()}
         .filteredNodes=${filtered.filteredNodes}
         .filteredEdges=${filtered.filteredEdges}
         .allNodes=${allNodes.get()}

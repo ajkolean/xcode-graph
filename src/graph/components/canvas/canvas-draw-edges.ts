@@ -25,6 +25,8 @@ export interface EdgeMeta {
   isHighlighted: boolean;
   inChain: boolean;
   isSpecial: boolean;
+  /** True when either endpoint is dimmed — skip rendering entirely. */
+  isHidden: boolean;
   endpoints: {
     sourceNode: GraphNode;
     targetNode: GraphNode;
@@ -68,7 +70,7 @@ export function resolveEdgeOpacity(
   if (inChain) {
     return getChainEdgeDepth(edgeKey) === 0 ? 1.0 : 0.5;
   }
-  const baseOpacity = isHighlighted ? 1.0 : 0.2;
+  const baseOpacity = isHighlighted ? 1.0 : 0.4;
   return cycleEdge ? Math.max(baseOpacity, 0.8) : baseOpacity;
 }
 
@@ -238,6 +240,7 @@ export function drawEdgePath(
 // ---------------------------------------------------------------------------
 
 /** Draw aggregated cluster-to-cluster artery lines at low zoom. */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: flat loop with early-exit guards, not genuinely complex
 export function drawClusterArteries(
   ctx: CanvasRenderingContext2D,
   config: SceneConfig,
@@ -247,10 +250,21 @@ export function drawClusterArteries(
   if (!clusterEdges || clusterEdges.length === 0) return;
 
   const { zoom } = config;
+  const hasDimmed = config.dimmedNodeIds.size > 0;
+
+  // Pre-compute which clusters are fully dimmed (all member nodes dimmed)
+  let fullyDimmedClusters: Set<string> | null = null;
+  if (hasDimmed && config.layout.clusters) {
+    fullyDimmedClusters = new Set();
+    for (const cluster of config.layout.clusters) {
+      if (cluster.nodes.length > 0 && cluster.nodes.every((n) => config.dimmedNodeIds.has(n.id))) {
+        fullyDimmedClusters.add(cluster.id);
+      }
+    }
+  }
 
   ctx.save();
   ctx.strokeStyle = config.theme.edgeDefault;
-  ctx.globalAlpha = 0.2;
   ctx.setLineDash([]);
 
   for (const edge of clusterEdges) {
@@ -266,6 +280,12 @@ export function drawClusterArteries(
     const ty = tPos.y;
 
     if (!isLineInViewportRaw(sx, sy, tx, ty, viewport)) continue;
+
+    // Hide artery if either endpoint cluster is fully dimmed
+    if (fullyDimmedClusters) {
+      if (fullyDimmedClusters.has(edge.source) || fullyDimmedClusters.has(edge.target)) continue;
+    }
+    ctx.globalAlpha = 0.4;
 
     ctx.lineWidth = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
 
@@ -337,6 +357,7 @@ export function renderSingleEdge(
     selectedNode,
     getChainEdgeDepthFn,
   );
+
   drawEdgePathFn(ctx, endpoints.x1, endpoints.y1, endpoints.x2, endpoints.y2);
 
   if (zoom >= LOD_THRESHOLDS.ARROWHEADS) {

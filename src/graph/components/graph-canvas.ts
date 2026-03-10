@@ -25,7 +25,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { ErrorService } from '@/services/error-service';
 import type { CanvasEventMap } from './canvas/canvas-keyboard-handler';
 import { handleKeyDown } from './canvas/canvas-keyboard-handler';
-import { CanvasScene, type FadingNode, type SceneConfig } from './canvas/canvas-scene';
+import { CanvasScene, type SceneConfig } from './canvas/canvas-scene';
 import './graph-hidden-dom';
 
 /**
@@ -131,7 +131,17 @@ export class GraphCanvas extends LitElement {
   declare showTransitiveDependents: boolean;
 
   /** Set of node IDs that should be visually dimmed */
-  dimmedNodeIds: Set<string> = new Set();
+  private _dimmedNodeIds: Set<string> = new Set();
+  get dimmedNodeIds(): Set<string> {
+    return this._dimmedNodeIds;
+  }
+  set dimmedNodeIds(value: Set<string>) {
+    if (value !== this._dimmedNodeIds) {
+      this._dimmedNodeIds = value;
+      this.scene?.invalidateEdgeMeta();
+      this.requestRender();
+    }
+  }
 
   @query('#canvas-container')
   private declare containerEl: HTMLDivElement;
@@ -167,9 +177,6 @@ export class GraphCanvas extends LitElement {
 
   // Smooth opacity transitions for selection/deselection
   private nodeAlphaMap = new Map<string, AnimatedValue>();
-
-  // Fade-out animation for removed nodes
-  private fadingOutNodes = new Map<string, FadingNode>();
 
   constructor() {
     super();
@@ -273,46 +280,20 @@ export class GraphCanvas extends LitElement {
     }
   }
 
-  /** Detects nodes removed between updates and queues them for fade-out animation. */
-  private trackRemovedNodesForFadeOut(changedProps: PropertyValues<this>) {
-    const prevNodes = changedProps.get('nodes') as GraphNode[] | undefined;
-    if (!prevNodes || prevNodes.length === 0) return;
-
-    const currentIds = new Set(this.nodes.map((node) => node.id));
-    const now = performance.now();
-    for (const node of prevNodes) {
-      if (!currentIds.has(node.id) && !this.fadingOutNodes.has(node.id)) {
-        this.fadingOutNodes.set(node.id, { node, startTime: now });
-      }
-    }
-    if (this.fadingOutNodes.size > 0) {
-      this.isAnimating = true;
-    }
-  }
-
   /** Recomputes layout, caches, and animation state when reactive properties change. */
   override willUpdate(changedProps: PropertyValues<this>): void {
     if (changedProps.has('nodes') || changedProps.has('edges')) {
-      this.trackRemovedNodesForFadeOut(changedProps);
-
-      const isFilterChange =
-        this.layout.nodePositions.size > 0 &&
-        this.nodes.every((n) => this.layout.nodePositions.has(n.id));
-
-      if (!isFilterChange) {
-        this.layout.enableAnimation = this.enableAnimation;
-        this.layout.computeLayout(this.nodes, this.edges).catch((err) => {
-          ErrorService.getInstance().handleError(err, {
-            category: ErrorCategory.Layout,
-            userMessage: 'Layout computation failed',
-          });
+      this.layout.enableAnimation = this.enableAnimation;
+      this.layout.computeLayout(this.nodes, this.edges).catch((err) => {
+        ErrorService.getInstance().handleError(err, {
+          category: ErrorCategory.Layout,
+          userMessage: 'Layout computation failed',
         });
-        this.manualNodePositions.clear();
-        this.manualClusterPositions.clear();
-        this.scene?.clearCaches();
-        this.didInitialFit = false;
-      }
-
+      });
+      this.manualNodePositions.clear();
+      this.manualClusterPositions.clear();
+      this.scene?.clearCaches();
+      this.didInitialFit = false;
       this.connectedNodesCache = null;
     }
 
@@ -489,8 +470,6 @@ export class GraphCanvas extends LitElement {
 
   /** Recalculates whether the animation loop should remain active based on current state. */
   private updateAnimatingState() {
-    const hasFadingNodes = this.fadingOutNodes.size > 0;
-
     // Only count entries that are still mid-transition — settled entries
     // (progress >= 1) are awaiting cleanup and shouldn't keep the loop alive.
     let hasAlphaAnimations = false;
@@ -512,16 +491,12 @@ export class GraphCanvas extends LitElement {
 
     const hasViewportTransition = this.scene?.hasActiveViewportTransition() ?? false;
 
-    this.isAnimating =
-      needsMotionAnimation || hasFadingNodes || hasAlphaAnimations || hasViewportTransition;
+    this.isAnimating = needsMotionAnimation || hasAlphaAnimations || hasViewportTransition;
   }
 
   /** Builds the scene config and delegates rendering to the canvas scene. */
   private renderScene() {
     if (!this.scene || !this.theme) return;
-
-    // Sync fading nodes into the scene
-    this.scene.fadingOutNodes = this.fadingOutNodes;
 
     const config: SceneConfig = {
       nodes: this.nodes,
@@ -557,8 +532,7 @@ export class GraphCanvas extends LitElement {
       this.containerEl.style.cursor = this.scene.getCursorStyle();
     }
 
-    // Clean up completed fading nodes
-    if (this.fadingOutNodes.size === 0 && this.isAnimating) {
+    if (this.isAnimating) {
       this.updateAnimatingState();
     }
   }

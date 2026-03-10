@@ -213,7 +213,7 @@ export class GraphTab extends SignalWatcherLitElement {
               .transitiveDeps=${this.transitiveDeps}
               .transitiveDependents=${this.transitiveDependents}
               .previewFilter=${Signal.subtle.untrack(() => previewFilter.get())}
-              .dimmedNodeIds=${Signal.subtle.untrack(() => dimmedNodeIds.get())}
+              .dimmedNodeIds=${dimmedNodeIds.get()}
               ?show-direct-deps=${watch(highlightDirectDeps)}
               ?show-transitive-deps=${watch(highlightTransitiveDeps)}
               ?show-direct-dependents=${watch(highlightDirectDependents)}
