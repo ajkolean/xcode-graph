@@ -240,6 +240,7 @@ export function drawEdgePath(
 // ---------------------------------------------------------------------------
 
 /** Draw aggregated cluster-to-cluster artery lines at low zoom. */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: flat loop with early-exit guards, not genuinely complex
 export function drawClusterArteries(
   ctx: CanvasRenderingContext2D,
   config: SceneConfig,
