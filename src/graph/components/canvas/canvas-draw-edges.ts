@@ -70,7 +70,7 @@ export function resolveEdgeOpacity(
   if (inChain) {
     return getChainEdgeDepth(edgeKey) === 0 ? 1.0 : 0.5;
   }
-  const baseOpacity = isHighlighted ? 1.0 : 0.2;
+  const baseOpacity = isHighlighted ? 1.0 : 0.4;
   return cycleEdge ? Math.max(baseOpacity, 0.8) : baseOpacity;
 }
 
@@ -284,7 +284,7 @@ export function drawClusterArteries(
     if (fullyDimmedClusters) {
       if (fullyDimmedClusters.has(edge.source) || fullyDimmedClusters.has(edge.target)) continue;
     }
-    ctx.globalAlpha = 0.2;
+    ctx.globalAlpha = 0.4;
 
     ctx.lineWidth = Math.min(6, 1 + Math.log2(edge.weight)) / zoom;
 

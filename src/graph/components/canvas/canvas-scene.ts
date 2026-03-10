@@ -1211,9 +1211,7 @@ export class CanvasScene {
       this.draggedNodeId = hitNode.id;
       this.isDragging = true;
 
-      const selected = this.config?.selectedNode;
-      const newSelection = selected?.id === hitNode.id ? null : hitNode;
-      this.callbacks.onNodeSelect(newSelection);
+      this.callbacks.onNodeSelect(hitNode);
       return;
     }
 
@@ -1252,7 +1250,9 @@ export class CanvasScene {
     const screenY = evt.clientY - rect.top;
     const worldPos = this.screenToWorldPos(screenX, screenY);
     this.config.manualClusterPositions.set(this.draggedClusterId, worldPos);
-    this.callbacks.onInvalidateEdgePathCache();
+    this.edgeEndpointCache.clear();
+    this.edgeMetaDirty = true;
+    this.bezierPathCache.clear();
     this.callbacks.onRenderRequest();
   }
 
@@ -1280,7 +1280,9 @@ export class CanvasScene {
       x: worldPos.x - clusterPos.x,
       y: worldPos.y - clusterPos.y,
     });
-    this.callbacks.onInvalidateEdgePathCache();
+    this.edgeEndpointCache.clear();
+    this.edgeMetaDirty = true;
+    this.bezierPathCache.clear();
     this.callbacks.onRenderRequest();
   }
 

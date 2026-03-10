@@ -119,7 +119,7 @@ describe('canvas-scene mouse interactions', () => {
       expect(callbacks.onNodeSelect).toHaveBeenCalledWith(node);
     });
 
-    it('deselects node when clicking already-selected node', () => {
+    it('keeps node selected when clicking already-selected node', () => {
       const node = createNode('A');
       sceneAny.config = createMinimalConfig({ selectedNode: node });
       sceneAny.hitTestNode = () => node;
@@ -128,7 +128,7 @@ describe('canvas-scene mouse interactions', () => {
       const canvas: HTMLCanvasElement = sceneAny.canvas;
       canvas.dispatchEvent(mouseEvent('mousedown'));
 
-      expect(callbacks.onNodeSelect).toHaveBeenCalledWith(null);
+      expect(callbacks.onNodeSelect).toHaveBeenCalledWith(node);
     });
   });
 
@@ -212,7 +212,6 @@ describe('canvas-scene mouse interactions', () => {
       canvas.dispatchEvent(mouseEvent('mousemove', { clientX: 200, clientY: 200 }));
 
       expect(config.manualClusterPositions.has('ClusterA')).toBe(true);
-      expect(callbacks.onInvalidateEdgePathCache).toHaveBeenCalled();
       expect(callbacks.onRenderRequest).toHaveBeenCalled();
     });
   });
@@ -241,7 +240,6 @@ describe('canvas-scene mouse interactions', () => {
       canvas.dispatchEvent(mouseEvent('mousemove', { clientX: 150, clientY: 150 }));
 
       expect(config.manualNodePositions.has('N1')).toBe(true);
-      expect(callbacks.onInvalidateEdgePathCache).toHaveBeenCalled();
       expect(callbacks.onRenderRequest).toHaveBeenCalled();
     });
   });

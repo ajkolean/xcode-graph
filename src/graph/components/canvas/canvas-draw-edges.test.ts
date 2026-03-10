@@ -114,9 +114,9 @@ describe('canvas-draw-edges', () => {
       expect(resolveEdgeOpacity('a->b', true, false, false, getDepth)).toBe(1.0);
     });
 
-    it('returns 0.2 for non-highlighted, non-cycle edges', () => {
+    it('returns 0.4 for non-highlighted, non-cycle edges', () => {
       const getDepth = vi.fn();
-      expect(resolveEdgeOpacity('a->b', false, false, false, getDepth)).toBe(0.2);
+      expect(resolveEdgeOpacity('a->b', false, false, false, getDepth)).toBe(0.4);
     });
 
     it('returns at least 0.8 for cycle edges', () => {
