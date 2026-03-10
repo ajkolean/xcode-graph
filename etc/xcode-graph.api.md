@@ -440,6 +440,9 @@ export interface DisplayData extends FilteredData {
 export const displayData: Signal.Computed<DisplayData>;
 
 // @public
+export const displayEdges: Signal.Computed<GraphEdge_2[]>;
+
+// @public
 export const edges: Signal.State<GraphEdge_2[]>;
 
 // @public
